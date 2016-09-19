@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,7 @@ public class CreateNewTeamDialogFragment extends DialogFragment {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    if (!editText.getText().toString().equals("")) {
+                    if (!TextUtils.isEmpty(editText.getText())) {
                         startScout(editText.getText().toString());
                     }
                 }
@@ -58,7 +59,7 @@ public class CreateNewTeamDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if (!editText.getText().toString().equals("")) {
+                        if (!TextUtils.isEmpty(editText.getText())) {
                             startScout(editText.getText().toString());
                         } else {
                             // TODO: 07/31/2016 cancel dismiss of dialog or show snackbar

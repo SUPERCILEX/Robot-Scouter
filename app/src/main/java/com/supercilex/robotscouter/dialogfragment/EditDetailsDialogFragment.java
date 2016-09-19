@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -82,11 +83,11 @@ public class EditDetailsDialogFragment extends DialogFragment {
                         String website = null;
                         String logo = null;
 
-                        if (!teamWebsite.getText().toString().equals("")) {
+                        if (!TextUtils.isEmpty(teamWebsite.getText())) {
                             website = getUrl(teamWebsite.getText().toString());
                         }
 
-                        if (!teamLogo.getText().toString().equals("")) {
+                        if (!TextUtils.isEmpty(teamLogo.getText())) {
                             logo = getUrl(teamLogo.getText().toString());
                         }
 
