@@ -1,7 +1,6 @@
 # Robot Scouter — A scouting app for FIRST Robotics Competition
 
-[![Build Status](https://travis-ci.com/SUPERCILEX/RobotScouter.svg?token=pwEVkccUqDxanPhb3x2q&branch=master)](https://travis-ci.com/SUPERCILEX/RobotScouter)
-[![Build Status](https://travis-ci.org/firebase/FirebaseUI-Android.svg?branch=master)](https://travis-ci.org/firebase/FirebaseUI-Android)
+[![Build Status](https://travis-ci.com/SUPERCILEX/Robot-Scouter.svg?token=pwEVkccUqDxanPhb3x2q&branch=master)](https://travis-ci.com/SUPERCILEX/Robot-Scouter)
 
 FirebaseUI is an open-source library for Android that allows you to
 quickly connect common UI elements to [Firebase](https://firebase.google.com)
