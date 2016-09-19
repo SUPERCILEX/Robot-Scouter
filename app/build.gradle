@@ -1,0 +1,91 @@
+apply plugin: 'com.android.application'
+
+// Make Travis-Ci happy
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+    defaultConfig {
+        manifestPlaceholders = [appName: "@string/app_name"]
+        applicationId "com.supercilex.robotscouter"
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode buildVersionCode()
+        versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+//        jackOptions {
+//            enabled true
+//        }
+    }
+
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//        incremental true
+//    }
+
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+            manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile(name: 'jobdispatcher-release', ext: 'aar')
+
+    // Support libraries
+    compile "com.android.support:appcompat-v7:${project.supportLibVersion}"
+    compile "com.android.support:design:${project.supportLibVersion}"
+    compile "com.android.support:customtabs:${project.supportLibVersion}"
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+
+    // Firebase
+    compile "com.google.firebase:firebase-core:${project.googleVersion}"
+    compile "com.google.firebase:firebase-messaging:${project.googleVersion}"
+    compile "com.google.firebase:firebase-config:${project.googleVersion}"
+    compile "com.google.firebase:firebase-database:${project.googleVersion}"
+    compile "com.google.firebase:firebase-auth:${project.googleVersion}"
+    compile "com.google.firebase:firebase-crash:${project.googleVersion}"
+    compile "com.google.firebase:firebase-invites:${project.googleVersion}"
+    compile 'com.firebaseui:firebase-ui:0.5.3'
+
+    // Third party
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.mikepenz:materialdrawer:5.6.0'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
+    // LeakCanary
+//    debugCompile "com.squareup.leakcanary:leakcanary-android:${project.leakCanaryVersion}"
+
+    // Testing
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+}
+
+apply plugin: 'com.google.gms.google-services'
