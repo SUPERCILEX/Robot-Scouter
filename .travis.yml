@@ -1,28 +1,28 @@
 language: android
 jdk: oraclejdk8
-#android:
-#  components:
-#    - platform-tools
-#    - tools
-#    - build-tools-24.0.2
-#    - android-24
-#    - android-16
-#    - sys-img-armeabi-v7a-android-24
-#    - sys-img-armeabi-v7a-android-16
-#    - extra-android-m2repository
-#    - extra-google-m2repository
-#    - addon-google_apis-google-24
-#    - extra-google-google_play_services
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-24.0.2
+    - android-24
+    - android-16
+    - sys-img-armeabi-v7a-android-24
+    - sys-img-armeabi-v7a-android-16
+    - extra-android-m2repository
+    - extra-google-m2repository
+    - addon-google_apis-google-24
+    - extra-google-google_play_services
 before_install:
   - openssl aes-256-cbc -K $encrypted_95e6a2aa17ed_key -iv $encrypted_95e6a2aa17ed_iv -in secrets.tar.enc -out secrets.tar -d
   - tar xvf secrets.tar
   - mv Android.jks app
   - mv google-services.json app
   - chmod +x gradlew
-#before_script:
-#  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
-#  - echo no | android create avd --force -n test -t android-16 --abi armeabi-v7a
-#  - emulator -avd test -no-audio -no-window &
-#  - android-wait-for-emulator
-#  - adb shell input keyevent 82 &
-#script: ./gradlew clean assemble test connectedCheck
+before_script:
+  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t android-16 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+script: ./gradlew clean assemble test connectedCheck
