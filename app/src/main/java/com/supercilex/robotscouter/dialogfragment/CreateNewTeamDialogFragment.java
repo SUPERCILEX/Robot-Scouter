@@ -3,8 +3,6 @@ package com.supercilex.robotscouter.dialogfragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -18,9 +16,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.supercilex.robotscouter.Constants;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.scout.Scout;
 import com.supercilex.robotscouter.scout.ScoutActivity;
 
 public class CreateNewTeamDialogFragment extends DialogFragment {
@@ -73,21 +69,6 @@ public class CreateNewTeamDialogFragment extends DialogFragment {
     }
 
     private void startScout(String teamNumber) {
-        new Scout().createScoutId(teamNumber);
-
-        Intent intent = new Intent(getContext(), ScoutActivity.class);
-        intent.putExtra(Constants.INTENT_TEAM_NUMBER, teamNumber);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
-        }
-
-        startActivity(intent);
+        startActivity(ScoutActivity.createIntent(getContext(), teamNumber, null));
     }
 }

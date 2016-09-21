@@ -206,9 +206,9 @@ public class MainActivity extends AppCompatActivity {
                 teamHolder.setTeamNumber(teamNumber);
                 teamHolder.setTeamName(team.getName(),
                                        MainActivity.this.getString(R.string.no_name));
-                teamHolder.setTeamLogo(team.getMedia(), MainActivity.this);
-                teamHolder.setListItemClickListener(teamNumber, MainActivity.this, key);
-                teamHolder.setCreateNewScoutListener(teamNumber, MainActivity.this, key);
+                teamHolder.setTeamLogo(MainActivity.this, team.getMedia());
+                teamHolder.setListItemClickListener(MainActivity.this, teamNumber, key);
+                teamHolder.setCreateNewScoutListener(MainActivity.this, teamNumber, key);
 
                 team.fetchLatestData(MainActivity.this, key);
             }

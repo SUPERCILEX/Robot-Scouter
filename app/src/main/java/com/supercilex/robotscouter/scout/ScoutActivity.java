@@ -3,11 +3,14 @@ package com.supercilex.robotscouter.scout;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
@@ -60,6 +63,26 @@ public class ScoutActivity extends AppCompatActivity {
     private CustomTabsServiceConnection mTabsServiceConnection;
     private CustomTabsClient mTabsClient;
 
+    public static Intent createIntent(Context context,
+                                      @NonNull String teamNumber,
+                                      @Nullable String key) {
+        Intent intent = new Intent(context, ScoutActivity.class);
+        intent.putExtra(Constants.INTENT_TEAM_NUMBER, teamNumber);
+        intent.putExtra(Constants.INTENT_TEAM_KEY, key);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
+        }
+
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +102,7 @@ public class ScoutActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         mNumber = getTeamNumber();
+        if (mNumber == null) return;
         getSupportActionBar().setTitle(mNumber);
         mKey = getTeamKey(savedInstanceState);
 
@@ -172,17 +196,18 @@ public class ScoutActivity extends AppCompatActivity {
                             }
                         }
 
-                        if (mTeam.getWebsite() != null) {
-                            mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
-                        } else {
-                            mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
-                        }
-
                         Glide.with(ScoutActivity.this)
                                 .load(mTeam.getMedia())
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .error(R.drawable.ic_android_black_24dp)
                                 .into((ImageView) findViewById(R.id.backdrop));
+
+                        // TODO: 09/20/2016 Use tasks API for this to know when mMenu is ready
+                        if (mTeam.getWebsite() != null) {
+                            mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
+                        } else {
+                            mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
+                        }
                     }
                 }
 
@@ -359,21 +384,20 @@ public class ScoutActivity extends AppCompatActivity {
 
         if (teamNumber != null) {
             return teamNumber;
+        } else {
+            FirebaseCrash.report(new IllegalStateException(
+                    "Could not retrieve team number from intent"));
+            finish();
+            return null;
         }
-
-        throw new IllegalStateException("Could not retrieve team number from intent");
     }
 
     private String getTeamKey(Bundle savedInstanceState) {
-        String teamKeyIntent = getIntent().getStringExtra(Constants.INTENT_TEAM_KEY);
-
-        if (teamKeyIntent != null) {
-            return teamKeyIntent;
-        } else if (savedInstanceState != null) {
+        if (savedInstanceState != null) {
             return savedInstanceState.getString(Constants.INTENT_TEAM_KEY);
+        } else {
+            return getIntent().getStringExtra(Constants.INTENT_TEAM_KEY);
         }
-
-        return null;
     }
 
     private boolean isNetworkAvailable() {
