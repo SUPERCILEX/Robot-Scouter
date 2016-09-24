@@ -28,7 +28,7 @@ task clean(type: Delete) {
 ext {
     versionCode = 1
     supportLibVersion = "24.2.1"
-    googleVersion = "9.4.0"
+    googleVersion = "9.6.0"
     leakCanaryVersion = "1.4"
 
     // Build the version code
