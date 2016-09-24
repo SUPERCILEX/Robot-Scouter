@@ -1,12 +1,11 @@
-package com.supercilex.robotscouter.model.scout.viewholders;
+package com.supercilex.robotscouter.models.scout.viewholders;
 
 import android.view.View;
 import android.widget.CheckBox;
 
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutCheckbox;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutMetric;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutMetric;
 
 public class CheckboxViewHolder extends ScoutViewHolder {
     private CheckBox mName;
@@ -18,11 +17,9 @@ public class CheckboxViewHolder extends ScoutViewHolder {
 
     @Override
     public void initialize(ScoutMetric view, DatabaseReference ref) {
-        ScoutCheckbox scoutCheckbox = (ScoutCheckbox) view;
-
-        setText(scoutCheckbox.getName());
-        setValue(scoutCheckbox.isValue());
-        setOnClickListener(scoutCheckbox, ref);
+        setText(view.getName());
+        setValue((Boolean) view.getValue());
+        setOnClickListener(view, ref);
     }
 
     public void setText(String name) {
@@ -37,7 +34,7 @@ public class CheckboxViewHolder extends ScoutViewHolder {
         return mName.isChecked();
     }
 
-    private void setOnClickListener(final ScoutCheckbox scoutCheckbox,
+    private void setOnClickListener(final ScoutMetric scoutCheckbox,
                                     final DatabaseReference ref) {
         mName.setOnClickListener(new View.OnClickListener() {
             @Override

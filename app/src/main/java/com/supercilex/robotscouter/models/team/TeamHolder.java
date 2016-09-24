@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.model.team;
+package com.supercilex.robotscouter.models.team;
 
 import android.app.Activity;
 import android.support.constraint.ConstraintLayout;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.scout.Scout;
+import com.supercilex.robotscouter.models.scout.Scout;
 import com.supercilex.robotscouter.scout.ScoutActivity;
 
 public class TeamHolder extends RecyclerView.ViewHolder {

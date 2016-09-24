@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.model.scout.viewholders;
+package com.supercilex.robotscouter.models.scout.viewholders;
 
 import android.view.View;
 import android.widget.ImageButton;
@@ -6,8 +6,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutCounter;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutMetric;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutMetric;
 
 public class CounterViewHolder extends ScoutViewHolder {
     private TextView mName;
@@ -25,12 +24,10 @@ public class CounterViewHolder extends ScoutViewHolder {
 
     @Override
     public void initialize(ScoutMetric view, DatabaseReference ref) {
-        ScoutCounter scoutCounter = (ScoutCounter) view;
-
-        setText(scoutCounter.getName());
-        setValue(scoutCounter.getValue());
-        setIncrementListener(scoutCounter, ref);
-        setDecrementListener(scoutCounter, ref);
+        setText(view.getName());
+        setValue((Integer) view.getValue());
+        setIncrementListener(view, ref);
+        setDecrementListener(view, ref);
     }
 
     public void setText(String name) {
@@ -41,7 +38,7 @@ public class CounterViewHolder extends ScoutViewHolder {
         mCount.setText(String.valueOf(value));
     }
 
-    private void setIncrementListener(final ScoutCounter scoutCounter,
+    private void setIncrementListener(final ScoutMetric scoutCounter,
                                       final DatabaseReference ref) {
         mIncrement.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +52,7 @@ public class CounterViewHolder extends ScoutViewHolder {
         });
     }
 
-    private void setDecrementListener(final ScoutCounter scoutCounter,
+    private void setDecrementListener(final ScoutMetric scoutCounter,
                                       final DatabaseReference ref) {
         mDecrement.setOnClickListener(new View.OnClickListener() {
             @Override

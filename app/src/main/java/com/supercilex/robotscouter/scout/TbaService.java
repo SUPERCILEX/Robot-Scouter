@@ -10,7 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.Constants;
-import com.supercilex.robotscouter.model.team.Team;
+import com.supercilex.robotscouter.models.team.Team;
 
 import retrofit2.Call;
 import retrofit2.Callback;

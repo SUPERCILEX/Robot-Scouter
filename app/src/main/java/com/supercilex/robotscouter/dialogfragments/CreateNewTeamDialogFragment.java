@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.dialogfragment;
+package com.supercilex.robotscouter.dialogfragments;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;

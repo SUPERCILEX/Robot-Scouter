@@ -28,12 +28,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.Driver;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Trigger;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -43,8 +37,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.Constants;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.Utils;
-import com.supercilex.robotscouter.dialogfragment.EditDetailsDialogFragment;
-import com.supercilex.robotscouter.model.team.Team;
+import com.supercilex.robotscouter.dialogfragments.EditDetailsDialogFragment;
+import com.supercilex.robotscouter.models.team.Team;
 
 public class ScoutActivity extends AppCompatActivity {
     private Team mTeam;
@@ -266,26 +260,26 @@ public class ScoutActivity extends AppCompatActivity {
     }
 
     private void startDownloadTeamDataJob() {
-        Driver myDriver = new GooglePlayDriver(this);
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(myDriver);
-
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.INTENT_TEAM_NUMBER, mNumber);
-        bundle.putString(Constants.INTENT_TEAM_KEY, mKey);
-
-        Job job = dispatcher.newJobBuilder()
-                .setService(DownloadTeamDataJob.class)
-                .setTag(mNumber)
-                .setReplaceCurrent(true)
-                .setConstraints(Constraint.ON_ANY_NETWORK)
-                .setTrigger(Trigger.NOW)
-                .setExtras(bundle)
-                .build();
-
-        int result = dispatcher.schedule(job);
-        if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-            FirebaseCrash.report(new IllegalArgumentException("Job Scheduler failed."));
-        }
+//        Driver myDriver = new GooglePlayDriver(this);
+//        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(myDriver);
+//
+//        Bundle bundle = new Bundle();
+//        bundle.putString(Constants.INTENT_TEAM_NUMBER, mNumber);
+//        bundle.putString(Constants.INTENT_TEAM_KEY, mKey);
+//
+//        Job job = dispatcher.newJobBuilder()
+//                .setService(DownloadTeamDataJob.class)
+//                .setTag(mNumber)
+//                .setReplaceCurrent(true)
+//                .setConstraints(Constraint.ON_ANY_NETWORK)
+//                .setTrigger(Trigger.NOW)
+//                .setExtras(bundle)
+//                .build();
+//
+//        int result = dispatcher.schedule(job);
+//        if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
+//            FirebaseCrash.report(new IllegalArgumentException("Job Scheduler failed."));
+//        }
     }
 
     private void updateScouts(final ScoutPagerAdapter mScoutPagerAdapter) {

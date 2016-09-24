@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.model.team;
+package com.supercilex.robotscouter.models.team;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;

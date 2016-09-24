@@ -1,10 +1,10 @@
-package com.supercilex.robotscouter.model.scout.viewholders;
+package com.supercilex.robotscouter.models.scout.viewholders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.google.firebase.database.DatabaseReference;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutMetric;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutMetric;
 
 public abstract class ScoutViewHolder extends RecyclerView.ViewHolder {
     public ScoutViewHolder(View itemView) {

@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.model.scout.viewholders;
+package com.supercilex.robotscouter.models.scout.viewholders;
 
 import android.view.View;
 import android.widget.SeekBar;
@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutMetric;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutMetric;
 
 public class SliderViewHolder extends ScoutViewHolder {
     private TextView mName;

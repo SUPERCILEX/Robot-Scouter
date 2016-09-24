@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.model.scout.viewholders;
+package com.supercilex.robotscouter.models.scout.viewholders;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutMetric;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutSpinner;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutMetric;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutSpinner;
 
 public class SpinnerViewHolder extends ScoutViewHolder {
     private TextView mName;
@@ -37,7 +37,7 @@ public class SpinnerViewHolder extends ScoutViewHolder {
     private void initializeSpinner(ScoutSpinner scoutSpinner) {
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(mSpinner.getContext(),
                                                                       android.R.layout.simple_spinner_item,
-                                                                      scoutSpinner.getValues());
+                                                                      scoutSpinner.getValue());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner.setAdapter(spinnerArrayAdapter);

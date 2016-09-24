@@ -12,25 +12,25 @@ import android.view.ViewGroup;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.supercilex.robotscouter.Constants;
 import com.supercilex.robotscouter.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.Utils;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutCheckbox;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutCounter;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutEditText;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutMetric;
-import com.supercilex.robotscouter.model.scout.metrics.ScoutSpinner;
-import com.supercilex.robotscouter.model.scout.viewholders.CheckboxViewHolder;
-import com.supercilex.robotscouter.model.scout.viewholders.CounterViewHolder;
-import com.supercilex.robotscouter.model.scout.viewholders.EditTextViewHolder;
-import com.supercilex.robotscouter.model.scout.viewholders.ScoutViewHolder;
-import com.supercilex.robotscouter.model.scout.viewholders.SpinnerViewHolder;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutMetric;
+import com.supercilex.robotscouter.models.scout.metrics.ScoutSpinner;
+import com.supercilex.robotscouter.models.scout.viewholders.CheckboxViewHolder;
+import com.supercilex.robotscouter.models.scout.viewholders.CounterViewHolder;
+import com.supercilex.robotscouter.models.scout.viewholders.EditTextViewHolder;
+import com.supercilex.robotscouter.models.scout.viewholders.ScoutViewHolder;
+import com.supercilex.robotscouter.models.scout.viewholders.SpinnerViewHolder;
+
+import java.util.ArrayList;
 
 public class ScoutFragment extends Fragment {
     private static final String ARG_SCOUT_KEY = "scout_key";
 
-    private FirebaseRecyclerAdapter mAdapter;
+    private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
 
     public static ScoutFragment newInstance(String key) {
 
@@ -52,9 +52,10 @@ public class ScoutFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.current_scout_fragment_recycler_view);
+        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.current_scout_fragment_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // TODO: 09/22/2016 fix this
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         mAdapter = new FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder>(
@@ -83,13 +84,24 @@ public class ScoutFragment extends Fragment {
                 int viewType = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
 
                 if (viewType == Constants.CHECKBOX) {
-                    return snapshot.getValue(ScoutCheckbox.class);
+                    return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
+                    });
                 } else if (viewType == Constants.COUNTER) {
-                    return snapshot.getValue(ScoutCounter.class);
+                    return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
+                    });
                 } else if (viewType == Constants.SPINNER) {
-                    return snapshot.getValue(ScoutSpinner.class);
+//                    return snapshot.getValue(new GenericTypeIndicator<ScoutSpinner>() {
+//                    });
+                    return new ScoutSpinner(
+                            snapshot.child("name").getValue(String.class),
+                            snapshot.child("value")
+                                    .getValue(new GenericTypeIndicator<ArrayList<String>>() {
+                                    }),
+                            snapshot.child("selectedValue").getValue(Integer.class)
+                    ).setType(Constants.SPINNER);
                 } else if (viewType == Constants.EDIT_TEXT) {
-                    return snapshot.getValue(ScoutEditText.class);
+                    return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
+                    });
                 }
 
                 throw new IllegalArgumentException("Scout class not found at parseSnapshot");

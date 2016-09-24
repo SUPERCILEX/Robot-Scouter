@@ -34,9 +34,9 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.supercilex.robotscouter.dialogfragment.CreateNewTeamDialogFragment;
-import com.supercilex.robotscouter.model.team.Team;
-import com.supercilex.robotscouter.model.team.TeamHolder;
+import com.supercilex.robotscouter.dialogfragments.CreateNewTeamDialogFragment;
+import com.supercilex.robotscouter.models.team.Team;
+import com.supercilex.robotscouter.models.team.TeamHolder;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 

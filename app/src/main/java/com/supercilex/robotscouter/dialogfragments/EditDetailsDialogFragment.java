@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.dialogfragment;
+package com.supercilex.robotscouter.dialogfragments;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -14,7 +14,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.model.team.Team;
+import com.supercilex.robotscouter.models.team.Team;
 
 public class EditDetailsDialogFragment extends DialogFragment {
     private final static String TEAM_NUMBER = "number";
