@@ -3,7 +3,6 @@
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
@@ -14,7 +13,6 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        mavenCentral()
         flatDir {
             dirs 'libs'
         }
@@ -28,7 +26,7 @@ task clean(type: Delete) {
 ext {
     versionCode = 1
     supportLibVersion = "24.2.1"
-    googleVersion = "9.6.0"
+    googleVersion = "9.6.1"
     leakCanaryVersion = "1.4"
 
     // Build the version code
