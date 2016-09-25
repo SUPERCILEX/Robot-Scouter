@@ -8,7 +8,9 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
--keep public class com.supercilex.robotscouter.model.**
+-keepclassmembers class com.supercilex.robotscouter.models.** {
+  *;
+}
 
 -dontwarn okio.**
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
@@ -21,6 +23,7 @@
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+-keepattributes *Annotation*
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
