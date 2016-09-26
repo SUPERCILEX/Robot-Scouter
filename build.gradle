@@ -1,9 +1,8 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         jcenter()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
         classpath 'com.google.gms:google-services:3.0.0'
@@ -24,10 +23,9 @@ task clean(type: Delete) {
 }
 
 ext {
-    versionCode = 1
     supportLibVersion = "24.2.1"
-    googleVersion = "9.6.1"
-    leakCanaryVersion = "1.4"
+    playServicesVersion = "9.6.1"
+    retrofitVersion = "2.1.0"
 
     // Build the version code
     buildVersionCode = {
