@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: 08/05/2016 remove and get signInAnonymous to work
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
