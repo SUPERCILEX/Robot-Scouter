@@ -7,6 +7,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.Constants;
@@ -14,12 +15,11 @@ import com.supercilex.robotscouter.Utils;
 
 import java.util.Map;
 
-public class Team {
+public class Team extends Timestamp {
     private String mNumber;
     private String mName;
     private String mMedia;
     private String mWebsite;
-    private long mLastUpdated;
     private boolean mNewTeam = false;
 
     public Team() {
@@ -63,17 +63,13 @@ public class Team {
         mWebsite = website;
     }
 
-    public Map<String, String> getLastUpdated() {
+    @PropertyName("timestamp")
+    public Map<String, String> getCustomTimestamp() {
         if (!mNewTeam) {
             return ServerValue.TIMESTAMP;
         } else {
             return null;
         }
-    }
-
-    @SuppressWarnings("unused") // Used for Firebase
-    public void setLastUpdated(long time) {
-        mLastUpdated = time;
     }
 
     public String addTeam(@NonNull String teamNumber) {

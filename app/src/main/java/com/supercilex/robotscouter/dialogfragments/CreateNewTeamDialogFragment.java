@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.models.scout.Scout;
 import com.supercilex.robotscouter.scout.ScoutActivity;
 
 public class CreateNewTeamDialogFragment extends DialogFragment {
@@ -69,6 +70,7 @@ public class CreateNewTeamDialogFragment extends DialogFragment {
     }
 
     private void startScout(String teamNumber) {
+        new Scout().createScoutId(teamNumber);
         startActivity(ScoutActivity.createIntent(getContext(), teamNumber, null));
     }
 }
