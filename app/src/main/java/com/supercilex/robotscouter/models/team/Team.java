@@ -12,6 +12,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.Constants;
 import com.supercilex.robotscouter.Utils;
 
+import java.util.Map;
+
 public class Team {
     private String mNumber;
     private String mName;
@@ -61,7 +63,7 @@ public class Team {
         mWebsite = website;
     }
 
-    public java.util.Map<String, String> getLastUpdated() {
+    public Map<String, String> getLastUpdated() {
         if (!mNewTeam) {
             return ServerValue.TIMESTAMP;
         } else {

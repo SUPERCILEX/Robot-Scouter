@@ -8,7 +8,7 @@ android {
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
-        buildToolsVersion "24.0.2"
+        buildToolsVersion "24.0.3"
         compileSdkVersion 24
         targetSdkVersion 24
         minSdkVersion 16
@@ -47,7 +47,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:${project.supportLibVersion}"
     compile "com.android.support:design:${project.supportLibVersion}"
     compile "com.android.support:customtabs:${project.supportLibVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
 
     // Firebase
     compile "com.google.android.gms:play-services:${project.playServicesVersion}"
