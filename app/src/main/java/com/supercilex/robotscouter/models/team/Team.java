@@ -20,7 +20,7 @@ public class Team extends Timestamp {
     private String mName;
     private String mMedia;
     private String mWebsite;
-    private boolean mNewTeam = false;
+    private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
     }
@@ -65,7 +65,7 @@ public class Team extends Timestamp {
 
     @PropertyName("timestamp")
     public Map<String, String> getCustomTimestamp() {
-        if (!mNewTeam) {
+        if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
         } else {
             return null;
@@ -74,7 +74,7 @@ public class Team extends Timestamp {
 
     public String addTeam(@NonNull String teamNumber) {
         mNumber = teamNumber;
-        mNewTeam = true;
+        mShouldUpdateTimestamp = false;
 
         String userId = Utils.getUser().getUid();
         DatabaseReference ref = Utils.getDatabase().getReference();
@@ -87,7 +87,7 @@ public class Team extends Timestamp {
 
         ref.child(Constants.FIREBASE_TEAMS).child(key).setValue(this);
 
-        mNewTeam = false;
+        mShouldUpdateTimestamp = true;
         return key;
     }
 
@@ -111,17 +111,17 @@ public class Team extends Timestamp {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     if (dataSnapshot.child(Constants.FIREBASE_CUSTOM_NAME).getValue() == null) {
-                        dataSnapshot.getRef().child(Constants.FIREBASE_TEAM_NAME).setValue(mName);
+                        dataSnapshot.getRef().child(Constants.FIREBASE_NAME).setValue(mName);
                     }
 
                     if (dataSnapshot.child(Constants.FIREBASE_CUSTOM_WEBSITE).getValue() == null) {
                         dataSnapshot.getRef()
-                                .child(Constants.FIREBASE_TEAM_WEBSITE)
+                                .child(Constants.FIREBASE_WEBSITE)
                                 .setValue(mWebsite);
                     }
 
                     if (dataSnapshot.child(Constants.FIREBASE_CUSTOM_MEDIA).getValue() == null) {
-                        dataSnapshot.getRef().child(Constants.FIREBASE_TEAM_MEDIA).setValue(mMedia);
+                        dataSnapshot.getRef().child(Constants.FIREBASE_MEDIA).setValue(mMedia);
                     }
                 }
             }
@@ -132,7 +132,7 @@ public class Team extends Timestamp {
             }
         });
 
-        ref.child(Constants.FIREBASE_LAST_UPDATED).setValue(ServerValue.TIMESTAMP);
+        ref.child(Constants.FIREBASE_TIMESTAMP).setValue(new Timestamp());
     }
 
     public void updateTeamOverwrite(@NonNull String teamNumber, @NonNull String key) {
@@ -159,11 +159,9 @@ public class Team extends Timestamp {
                     dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_MEDIA).setValue(true);
                 }
 
+                mShouldUpdateTimestamp = false;
                 dataSnapshot.getRef().setValue(Team.this);
-
-                dataSnapshot.getRef()
-                        .child(Constants.FIREBASE_LAST_UPDATED)
-                        .setValue(dataSnapshot.child(Constants.FIREBASE_LAST_UPDATED).getValue());
+                mShouldUpdateTimestamp = true;
             }
 
             @Override

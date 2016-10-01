@@ -93,11 +93,12 @@ public class ScoutFragment extends Fragment {
 //                    return snapshot.getValue(new GenericTypeIndicator<ScoutSpinner>() {
 //                    });
                     return new ScoutSpinner(
-                            snapshot.child("name").getValue(String.class),
-                            snapshot.child("value")
+                            snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                            snapshot.child(Constants.FIREBASE_VALUE)
                                     .getValue(new GenericTypeIndicator<ArrayList<String>>() {
                                     }),
-                            snapshot.child("selectedValue").getValue(Integer.class)
+                            snapshot.child(Constants.FIREBASE_SELECTED_VALUE)
+                                    .getValue(Integer.class)
                     ).setType(Constants.SPINNER);
                 } else if (viewType == Constants.EDIT_TEXT) {
                     return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {

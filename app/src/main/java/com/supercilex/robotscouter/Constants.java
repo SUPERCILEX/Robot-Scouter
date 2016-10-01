@@ -19,13 +19,14 @@ public class Constants {
     public static final String FIREBASE_TEAMS = "teams";
     public static final String FIREBASE_VIEWS = "views";
 
-    public static final String FIREBASE_TEAM_NAME = "name";
-    public static final String FIREBASE_TEAM_WEBSITE = "website";
-    public static final String FIREBASE_TEAM_MEDIA = "media";
-    public static final String FIREBASE_LAST_UPDATED = "lastUpdated";
+    public static final String FIREBASE_NAME = "name";
+    public static final String FIREBASE_WEBSITE = "website";
+    public static final String FIREBASE_MEDIA = "media";
+    public static final String FIREBASE_TIMESTAMP = "timestamp";
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
-    public static final String FIREBASE_CUSTOM_NAME = "customName";
-    public static final String FIREBASE_CUSTOM_WEBSITE = "customWebsite";
-    public static final String FIREBASE_CUSTOM_MEDIA = "customMedia";
+    public static final String FIREBASE_CUSTOM_NAME = "custom-name";
+    public static final String FIREBASE_CUSTOM_WEBSITE = "custom-website";
+    public static final String FIREBASE_CUSTOM_MEDIA = "custom-media";
+    public static final String FIREBASE_SELECTED_VALUE = "selected-value";
 }
