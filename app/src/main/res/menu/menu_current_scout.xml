@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.supercilex.robotscouter.scout.ScoutActivity">
+      tools:context="com.supercilex.robotscouter.ui.scout.ScoutActivity">
     <item
         android:id="@+id/action_visit_tba_team_website"
         android:orderInCategory="0"
