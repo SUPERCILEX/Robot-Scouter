@@ -47,10 +47,9 @@ dependencies {
     compile "com.android.support:appcompat-v7:${project.supportLibVersion}"
     compile "com.android.support:design:${project.supportLibVersion}"
     compile "com.android.support:customtabs:${project.supportLibVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
 
     // Firebase
-    compile "com.google.android.gms:play-services:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-core:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-messaging:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-config:${project.playServicesVersion}"
@@ -63,7 +62,6 @@ dependencies {
     // Third party
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.mikepenz:materialdrawer:5.6.0'
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
 
     // Retrofit

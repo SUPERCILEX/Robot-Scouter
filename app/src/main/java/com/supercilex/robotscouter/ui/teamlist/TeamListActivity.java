@@ -22,9 +22,11 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.supercilex.robotscouter.dialogfragments.CreateNewTeamDialogFragment;
-import com.supercilex.robotscouter.models.team.Team;
-import com.supercilex.robotscouter.models.team.TeamHolder;
+import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.FirebaseUtils;
+import com.supercilex.robotscouter.ztmpfirebase.FirebaseIndexRecyclerAdapter;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -37,7 +39,7 @@ public class TeamListActivity extends AppCompatActivity {
     private static final String MANAGER_STATE = "manager_state";
     private static final String COUNT = "count";
 
-    private FirebaseRecyclerAdapter mAdapter;
+    private FirebaseIndexRecyclerAdapter mAdapter;
     private RecyclerView mTeams;
     private LinearLayoutManager mManager;
 
@@ -75,7 +77,7 @@ public class TeamListActivity extends AppCompatActivity {
                     attachRecyclerViewAdapter();
                 } else {
                     mAuth.signInAnonymously()
-                            .addOnFailureListener(MainActivity.this, new OnFailureListener() {
+                            .addOnFailureListener(TeamListActivity.this, new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     // TODO: 09/24/2016 retry
