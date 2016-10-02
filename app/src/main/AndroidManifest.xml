@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:label">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.teamlist.TeamListActivity"
             android:label="${appName}"
             android:theme="@style/AppTheme.Launcher">
             <intent-filter>
@@ -24,13 +24,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".scout.ScoutActivity"
+            android:name=".ui.scout.ScoutActivity"
             android:label="@string/title_activity_scout"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.supercilex.robotscouter.MainActivity"/>
+                android:value="com.supercilex.robotscouter.ui.teamlist.TeamListActivity"/>
         </activity>
 
         <service

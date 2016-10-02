@@ -1,11 +1,22 @@
 apply plugin: 'com.android.application'
 
-// Make Travis-Ci happy
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
+    defaultConfig {
+        manifestPlaceholders = [appName: "@string/app_name"]
+        applicationId "com.supercilex.robotscouter"
+        buildToolsVersion "24.0.2"
+        compileSdkVersion 24
+        targetSdkVersion 24
+        minSdkVersion 16
+        versionCode buildVersionCode()
+        versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
     signingConfigs {
         config {
             keyAlias keystoreProperties['keyAlias']
@@ -14,28 +25,6 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
-
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
-    defaultConfig {
-        manifestPlaceholders = [appName: "@string/app_name"]
-        applicationId "com.supercilex.robotscouter"
-        minSdkVersion 16
-        targetSdkVersion 24
-        versionCode buildVersionCode()
-        versionName "1.0.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-//        jackOptions {
-//            enabled true
-//        }
-    }
-
-//    compileOptions {
-//        sourceCompatibility JavaVersion.VERSION_1_8
-//        targetCompatibility JavaVersion.VERSION_1_8
-//        incremental true
-//    }
 
     buildTypes {
         release {
@@ -61,23 +50,25 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
 
     // Firebase
-    compile "com.google.firebase:firebase-core:${project.googleVersion}"
-    compile "com.google.firebase:firebase-messaging:${project.googleVersion}"
-    compile "com.google.firebase:firebase-config:${project.googleVersion}"
-    compile "com.google.firebase:firebase-database:${project.googleVersion}"
-    compile "com.google.firebase:firebase-auth:${project.googleVersion}"
-    compile "com.google.firebase:firebase-crash:${project.googleVersion}"
-    compile "com.google.firebase:firebase-invites:${project.googleVersion}"
+    compile "com.google.android.gms:play-services:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-core:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-messaging:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-config:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-database:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-auth:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-crash:${project.playServicesVersion}"
+    compile "com.google.firebase:firebase-invites:${project.playServicesVersion}"
     compile 'com.firebaseui:firebase-ui:0.6.0'
 
     // Third party
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.mikepenz:materialdrawer:5.6.0'
+//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
 
-    // LeakCanary
-//    debugCompile "com.squareup.leakcanary:leakcanary-android:${project.leakCanaryVersion}"
+    // Retrofit
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
 
     // Testing
     testCompile 'junit:junit:4.12'
