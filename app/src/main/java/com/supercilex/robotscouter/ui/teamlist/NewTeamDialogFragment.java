@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 public class NewTeamDialogFragment extends DialogFragment {

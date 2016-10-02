@@ -2,7 +2,7 @@ package com.supercilex.robotscouter.data.model;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.PropertyName;
-import com.supercilex.robotscouter.Constants;
+import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 
