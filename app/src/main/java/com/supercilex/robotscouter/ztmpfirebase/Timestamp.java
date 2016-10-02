@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.models.team;
+package com.supercilex.robotscouter.ztmpfirebase;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
