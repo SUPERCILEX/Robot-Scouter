@@ -2,13 +2,13 @@ package com.supercilex.robotscouter.data.model;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.PropertyName;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
@@ -16,12 +16,13 @@ import com.supercilex.robotscouter.ztmpfirebase.Timestamp;
 
 import java.util.Map;
 
-public class Team {
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+
+public class Team extends Timestamp {
     private String mNumber;
     private String mName;
     private String mMedia;
     private String mWebsite;
-    private Timestamp mTimestamp;
     private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
@@ -31,14 +32,6 @@ public class Team {
         mName = teamName;
         mMedia = teamLogoUrl;
         mWebsite = teamWebsite;
-    }
-
-    public Timestamp getTimestamp() {
-        return mTimestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        mTimestamp = timestamp;
     }
 
     public String getNumber() {
@@ -74,9 +67,11 @@ public class Team {
     }
 
     @PropertyName("timestamp")
-    public Map<String, String> getCustomTimestamp() {
+    @Override
+    protected Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
-            return ServerValue.TIMESTAMP;
+            Log.d(TAG, "getServerValue: ");
+            return super.getServerValue();
         } else {
             return null;
         }

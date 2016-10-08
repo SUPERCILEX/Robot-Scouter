@@ -1,7 +1,5 @@
 package com.supercilex.robotscouter.ztmpfirebase;
 
-import android.util.Log;
-
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
@@ -12,7 +10,7 @@ public class Timestamp {
     private long mTimestamp;
 
     @PropertyName("timestamp")
-    public Map<String, String> getServerValue() {
+    protected Map<String, String> getServerValue() {
         return ServerValue.TIMESTAMP;
     }
 
@@ -21,8 +19,7 @@ public class Timestamp {
         return mTimestamp;
     }
 
-    public void setTimestamp(long time) {
+    protected void setTimestamp(long time) {
         mTimestamp = time;
-        Log.d("time", "setTimestamp: " + time);
     }
 }
