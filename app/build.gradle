@@ -50,7 +50,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
 
     // Firebase
-    compile "com.google.android.gms:play-services:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-core:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-messaging:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-config:${project.playServicesVersion}"

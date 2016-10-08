@@ -16,11 +16,12 @@ import com.supercilex.robotscouter.ztmpfirebase.Timestamp;
 
 import java.util.Map;
 
-public class Team extends Timestamp {
+public class Team {
     private String mNumber;
     private String mName;
     private String mMedia;
     private String mWebsite;
+    private Timestamp mTimestamp;
     private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
@@ -30,6 +31,14 @@ public class Team extends Timestamp {
         mName = teamName;
         mMedia = teamLogoUrl;
         mWebsite = teamWebsite;
+    }
+
+    public Timestamp getTimestamp() {
+        return mTimestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        mTimestamp = timestamp;
     }
 
     public String getNumber() {

@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.util.TagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,8 @@ class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
                 notifyChangedListeners(OnChangedListener.EventType.Changed, index);
             }
         } else {
-            Log.w(TAG, "Key not found at ref: " + snapshot.getRef());
+            Log.w(TagUtils.getTag(FirebaseIndexArray.class),
+                  "Key not found at ref: " + snapshot.getRef());
             if (isMatch(index, key)) {
                 mDataSnapshots.remove(index);
                 notifyChangedListeners(OnChangedListener.EventType.Removed, index);

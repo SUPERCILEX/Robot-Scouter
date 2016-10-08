@@ -228,8 +228,6 @@ public class TeamListActivity extends AppCompatActivity {
             mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
-                    super.onItemRangeInserted(positionStart, itemCount);
-
                     if (mAdapter.getItemCount() >= mSavedState.getInt(COUNT)) {
                         mManager.onRestoreInstanceState(mSavedState.getParcelable(MANAGER_STATE));
                         mAdapter.unregisterAdapterDataObserver(this);

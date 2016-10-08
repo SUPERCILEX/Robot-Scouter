@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.supercilex.robotscouter.util.TagUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -212,7 +213,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * @param databaseError A description of the error that occurred
      */
     protected void onCancelled(DatabaseError databaseError) {
-        Log.w(TAG, databaseError.toException());
+        Log.w(TagUtils.getTag(FirebaseRecyclerAdapter.class), databaseError.toException());
     }
 
     /**
