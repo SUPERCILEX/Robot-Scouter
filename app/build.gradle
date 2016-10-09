@@ -5,11 +5,12 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
-        buildToolsVersion "24.0.3"
-        compileSdkVersion 24
         targetSdkVersion 24
         minSdkVersion 16
         versionCode buildVersionCode()
