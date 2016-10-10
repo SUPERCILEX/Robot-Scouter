@@ -65,7 +65,7 @@ public class Team extends Timestamp {
 
     @PropertyName("timestamp")
     @Override
-    protected Map<String, String> getServerValue() {
+    public Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
             return super.getServerValue();
         } else {
