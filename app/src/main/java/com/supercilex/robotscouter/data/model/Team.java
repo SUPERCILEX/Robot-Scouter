@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.data.model;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
@@ -15,8 +14,6 @@ import com.supercilex.robotscouter.util.FirebaseUtils;
 import com.supercilex.robotscouter.ztmpfirebase.Timestamp;
 
 import java.util.Map;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class Team extends Timestamp {
     private String mNumber;
@@ -70,7 +67,6 @@ public class Team extends Timestamp {
     @Override
     protected Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
-            Log.d(TAG, "getServerValue: ");
             return super.getServerValue();
         } else {
             return null;
