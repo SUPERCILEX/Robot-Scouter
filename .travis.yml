@@ -16,7 +16,6 @@ android:
 before_install:
   - openssl aes-256-cbc -K $encrypted_95e6a2aa17ed_key -iv $encrypted_95e6a2aa17ed_iv -in secrets.tar.enc -out secrets.tar -d
   - tar xvf secrets.tar
-  - mv Android.jks app
   - mv google-services.json app
   - chmod +x gradlew
 before_script:
@@ -25,4 +24,5 @@ before_script:
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-script: ./gradlew clean assemble test connectedCheck
+script:
+  - ./gradlew check clean assemble test connectedCheck connectedAndroidTest --continue --stacktrace
