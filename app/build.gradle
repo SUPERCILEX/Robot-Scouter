@@ -59,7 +59,7 @@ dependencies {
     compile "com.google.firebase:firebase-auth:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-crash:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-invites:${project.playServicesVersion}"
-    compile 'com.firebaseui:firebase-ui:0.6.0'
+    compile 'com.firebaseui:firebase-ui:0.6.1'
 
     // Third party
     compile 'de.hdodenhof:circleimageview:2.1.0'

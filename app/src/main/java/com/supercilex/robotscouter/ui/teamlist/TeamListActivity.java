@@ -349,7 +349,8 @@ public class TeamListActivity extends AppCompatActivity {
                                         .setProviders(AuthUI.EMAIL_PROVIDER,
                                                       AuthUI.GOOGLE_PROVIDER,
                                                       AuthUI.FACEBOOK_PROVIDER)
-                                        .setTosUrl("example.com")
+                                        .setTosUrl("http://www.example.com")
+                                        .setIsSmartLockEnabled(true)
                                         .build(),
                                 RC_SIGN_IN);
                         return true;
