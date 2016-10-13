@@ -7,19 +7,21 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.ztmpfirebase.Timestamp;
 
 import java.util.Map;
 
-public class Team extends Timestamp {
+public class Team {
     private String mNumber;
     private String mName;
     private String mMedia;
     private String mWebsite;
+    private long mTimestamp;
     private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
@@ -64,13 +66,21 @@ public class Team extends Timestamp {
     }
 
     @PropertyName("timestamp")
-    @Override
-    public Map<String, String> getServerValue() {
+    protected Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
-            return super.getServerValue();
+            return ServerValue.TIMESTAMP;
         } else {
             return null;
         }
+    }
+
+    @Exclude
+    public long getTimestamp() {
+        return mTimestamp;
+    }
+
+    protected void setTimestamp(long time) {
+        mTimestamp = time;
     }
 
     public String addTeam(@NonNull String teamNumber) {
@@ -133,7 +143,7 @@ public class Team extends Timestamp {
             }
         });
 
-        ref.child(Constants.FIREBASE_TIMESTAMP).setValue(new Timestamp());
+        ref.child(Constants.FIREBASE_TIMESTAMP).setValue(getServerValue());
     }
 
     public void updateTeamOverwrite(@NonNull String teamNumber, @NonNull String key) {
