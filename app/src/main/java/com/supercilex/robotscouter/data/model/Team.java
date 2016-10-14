@@ -66,7 +66,7 @@ public class Team {
     }
 
     @PropertyName("timestamp")
-    protected Map<String, String> getServerValue() {
+    private Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
         } else {

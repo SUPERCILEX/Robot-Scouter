@@ -32,14 +32,15 @@ ext {
         def versionPropsFile = file('gradle.properties')
 
         if (versionPropsFile.canRead()) {
-            def Properties versionProps = new Properties()
+            Properties versionProps = new Properties()
 
             versionProps.load(new FileInputStream(versionPropsFile))
 
             def code = versionProps['VERSION_CODE'].toInteger() + 1
 
             versionProps['VERSION_CODE'] = code.toString()
-            versionProps.store(versionPropsFile.newWriter(), null)
+            versionProps.store(versionPropsFile.newWriter(),
+                    "# suppress inspection \"UnusedProperty\" for whole file")
 
             return code
         } else {
