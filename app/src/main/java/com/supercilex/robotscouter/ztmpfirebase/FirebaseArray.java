@@ -1,5 +1,3 @@
-package com.supercilex.robotscouter.ztmpfirebase;
-
 /*
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -13,6 +11,8 @@ package com.supercilex.robotscouter.ztmpfirebase;
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.supercilex.robotscouter.ztmpfirebase;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +29,6 @@ class FirebaseArray implements ChildEventListener {
     private Query mQuery;
     private OnChangedListener mListener;
     private List<DataSnapshot> mSnapshots = new ArrayList<>();
-
     public FirebaseArray(Query ref) {
         mQuery = ref;
         mQuery.addChildEventListener(this);
@@ -66,21 +65,21 @@ class FirebaseArray implements ChildEventListener {
             index = getIndexForKey(previousChildKey) + 1;
         }
         mSnapshots.add(index, snapshot);
-        notifyChangedListeners(OnChangedListener.EventType.Added, index);
+        notifyChangedListeners(OnChangedListener.EventType.ADDED, index);
     }
 
     @Override
     public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
         int index = getIndexForKey(snapshot.getKey());
         mSnapshots.set(index, snapshot);
-        notifyChangedListeners(OnChangedListener.EventType.Changed, index);
+        notifyChangedListeners(OnChangedListener.EventType.CHANGED, index);
     }
 
     @Override
     public void onChildRemoved(DataSnapshot snapshot) {
         int index = getIndexForKey(snapshot.getKey());
         mSnapshots.remove(index);
-        notifyChangedListeners(OnChangedListener.EventType.Removed, index);
+        notifyChangedListeners(OnChangedListener.EventType.REMOVED, index);
     }
 
     @Override
@@ -89,12 +88,12 @@ class FirebaseArray implements ChildEventListener {
         mSnapshots.remove(oldIndex);
         int newIndex = previousChildKey == null ? 0 : getIndexForKey(previousChildKey) + 1;
         mSnapshots.add(newIndex, snapshot);
-        notifyChangedListeners(OnChangedListener.EventType.Moved, newIndex, oldIndex);
+        notifyChangedListeners(OnChangedListener.EventType.MOVED, newIndex, oldIndex);
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
-        notifyCancelledListeners(databaseError);
+    public void onCancelled(DatabaseError error) {
+        notifyCancelledListeners(error);
     }
 
     public void setOnChangedListener(OnChangedListener listener) {
@@ -124,6 +123,6 @@ class FirebaseArray implements ChildEventListener {
 
         void onCancelled(DatabaseError databaseError);
 
-        enum EventType {Added, Changed, Removed, Moved}
+        enum EventType {ADDED, CHANGED, REMOVED, MOVED}
     }
 }

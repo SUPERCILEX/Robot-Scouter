@@ -1,5 +1,3 @@
-package com.supercilex.robotscouter.ztmpfirebase;
-
 /*
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -13,6 +11,8 @@ package com.supercilex.robotscouter.ztmpfirebase;
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.supercilex.robotscouter.ztmpfirebase;
 
 import android.support.v7.widget.RecyclerView;
 

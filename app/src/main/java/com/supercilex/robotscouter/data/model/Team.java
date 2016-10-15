@@ -66,7 +66,7 @@ public class Team {
     }
 
     @PropertyName("timestamp")
-    private Map<String, String> getServerValue() {
+    public Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
         } else {
@@ -79,7 +79,7 @@ public class Team {
         return mTimestamp;
     }
 
-    protected void setTimestamp(long time) {
+    public void setTimestamp(long time) {
         mTimestamp = time;
     }
 

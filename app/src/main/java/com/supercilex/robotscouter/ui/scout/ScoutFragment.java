@@ -33,7 +33,6 @@ public class ScoutFragment extends Fragment {
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
 
     public static ScoutFragment newInstance(String key) {
-
         ScoutFragment fragment = new ScoutFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SCOUT_KEY, key);

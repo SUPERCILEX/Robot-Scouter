@@ -1,5 +1,3 @@
-package com.supercilex.robotscouter.ztmpfirebase;
-
 /*
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -14,6 +12,8 @@ package com.supercilex.robotscouter.ztmpfirebase;
  * limitations under the License.
  */
 
+package com.supercilex.robotscouter.ztmpfirebase;
+
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
-import com.supercilex.robotscouter.util.TagUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -89,16 +88,16 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
             @Override
             public void onChanged(EventType type, int index, int oldIndex) {
                 switch (type) {
-                    case Added:
+                    case ADDED:
                         notifyItemInserted(index);
                         break;
-                    case Changed:
+                    case CHANGED:
                         notifyItemChanged(index);
                         break;
-                    case Removed:
+                    case REMOVED:
                         notifyItemRemoved(index);
                         break;
-                    case Moved:
+                    case MOVED:
                         notifyItemMoved(oldIndex, index);
                         break;
                     default:
@@ -179,8 +178,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        ViewGroup view = (ViewGroup) LayoutInflater.from(parent.getContext())
-                .inflate(viewType, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         try {
             Constructor<VH> constructor = mViewHolderClass.getConstructor(View.class);
             return constructor.newInstance(view);
@@ -210,10 +208,10 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * This method will be triggered in the event that this listener either failed at the server,
      * or is removed as a result of the security and Firebase Database rules.
      *
-     * @param databaseError A description of the error that occurred
+     * @param error A description of the error that occurred
      */
-    protected void onCancelled(DatabaseError databaseError) {
-        Log.w(TagUtils.getTag(FirebaseRecyclerAdapter.class), databaseError.toException());
+    protected void onCancelled(DatabaseError error) {
+        Log.w(TAG, error.toException());
     }
 
     /**

@@ -1,5 +1,3 @@
-package com.supercilex.robotscouter.ztmpfirebase;
-
 /*
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -14,21 +12,28 @@ package com.supercilex.robotscouter.ztmpfirebase;
  * limitations under the License.
  */
 
+package com.supercilex.robotscouter.ztmpfirebase;
+
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.util.TagUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
+class FirebaseIndexArray extends FirebaseArray {
     private static final String TAG = FirebaseIndexArray.class.getSimpleName();
 
     private DatabaseReference mRef;
+    private Map<DatabaseReference, ValueEventListener> mRefs = new HashMap<>();
     private List<DataSnapshot> mDataSnapshots = new ArrayList<>();
     private OnChangedListener mListener;
 
@@ -40,8 +45,9 @@ class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
     @Override
     public void cleanup() {
         super.cleanup();
-        for (DataSnapshot snapshot : mDataSnapshots) {
-            snapshot.getRef().removeEventListener((ValueEventListener) this);
+        Set<DatabaseReference> refs = new HashSet<>(mRefs.keySet());
+        for (DatabaseReference ref : refs) {
+            ref.removeEventListener(mRefs.remove(ref));
         }
     }
 
@@ -78,30 +84,9 @@ class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
         super.setOnChangedListener(null);
         super.onChildAdded(keySnapshot, previousChildKey);
         super.setOnChangedListener(mListener);
-        mRef.child(keySnapshot.getKey()).addValueEventListener(this);
-    }
 
-    @Override
-    public void onDataChange(DataSnapshot snapshot) {
-        String key = snapshot.getKey();
-        int index = getIndexForKey(key);
-
-        if (snapshot.getValue() != null) {
-            if (!isMatch(index, key)) {
-                mDataSnapshots.add(index, snapshot);
-                notifyChangedListeners(OnChangedListener.EventType.Added, index);
-            } else {
-                mDataSnapshots.set(index, snapshot);
-                notifyChangedListeners(OnChangedListener.EventType.Changed, index);
-            }
-        } else {
-            Log.w(TagUtils.getTag(FirebaseIndexArray.class),
-                  "Key not found at ref: " + snapshot.getRef());
-            if (isMatch(index, key)) {
-                mDataSnapshots.remove(index);
-                notifyChangedListeners(OnChangedListener.EventType.Removed, index);
-            }
-        }
+        DatabaseReference ref = mRef.child(keySnapshot.getKey());
+        mRefs.put(ref, ref.addValueEventListener(new DataRefSnapshot()));
     }
 
     @Override
@@ -115,7 +100,7 @@ class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
     public void onChildRemoved(DataSnapshot keySnapshot) {
         String key = keySnapshot.getKey();
         int index = getIndexForKey(key);
-        mRef.child(key).removeEventListener((ValueEventListener) this);
+        mRef.child(key).removeEventListener(mRefs.remove(mRef.child(key)));
 
         super.setOnChangedListener(null);
         super.onChildRemoved(keySnapshot);
@@ -123,7 +108,7 @@ class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
 
         if (isMatch(index, key)) {
             mDataSnapshots.remove(index);
-            notifyChangedListeners(OnChangedListener.EventType.Removed, index);
+            notifyChangedListeners(OnChangedListener.EventType.REMOVED, index);
         }
     }
 
@@ -140,13 +125,47 @@ class FirebaseIndexArray extends FirebaseArray implements ValueEventListener {
             DataSnapshot snapshot = mDataSnapshots.remove(oldIndex);
             int newIndex = getIndexForKey(key);
             mDataSnapshots.add(newIndex, snapshot);
-            notifyChangedListeners(OnChangedListener.EventType.Moved, newIndex, oldIndex);
+            notifyChangedListeners(OnChangedListener.EventType.MOVED, newIndex, oldIndex);
         }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError error) {
     }
 
     @Override
     public void setOnChangedListener(OnChangedListener listener) {
         super.setOnChangedListener(listener);
         mListener = listener;
+    }
+
+    private class DataRefSnapshot implements ValueEventListener {
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            String key = snapshot.getKey();
+            int index = getIndexForKey(key);
+
+            if (snapshot.getValue() != null) {
+                if (!isMatch(index, key)) {
+                    mDataSnapshots.add(index, snapshot);
+                    notifyChangedListeners(OnChangedListener.EventType.ADDED, index);
+                } else {
+                    mDataSnapshots.set(index, snapshot);
+                    notifyChangedListeners(OnChangedListener.EventType.CHANGED, index);
+                }
+            } else {
+                Log.w(TAG, "Key not found at ref: " + snapshot.getRef());
+                if (isMatch(index, key)) {
+                    mDataSnapshots.remove(index);
+                    notifyChangedListeners(OnChangedListener.EventType.REMOVED, index);
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            Log.w(TAG, "An error occurred at ref:");
+            notifyCancelledListeners(error);
+        }
     }
 }
