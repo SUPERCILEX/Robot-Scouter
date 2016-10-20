@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.android.tools.build:gradle:2.2.2'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
@@ -23,7 +23,7 @@ task clean(type: Delete) {
 }
 
 ext {
-    supportLibVersion = "24.2.1"
+    supportLibVersion = "25.0.0"
     playServicesVersion = "9.6.1"
     retrofitVersion = "2.1.0"
 
