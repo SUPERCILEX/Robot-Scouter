@@ -94,7 +94,7 @@ public class Team {
         ref.child(Constants.FIREBASE_TEAM_INDEXES)
                 .child(userId)
                 .child(key)
-                .setValue(Long.valueOf(mNumber)); // Need to use long for orderByValue() in TeamListActivity
+                .setValue(mNumber, Long.valueOf(mNumber));
 
         ref.child(Constants.FIREBASE_TEAMS).child(key).setValue(this);
 

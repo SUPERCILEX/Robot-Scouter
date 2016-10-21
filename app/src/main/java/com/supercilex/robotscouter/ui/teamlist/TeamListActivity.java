@@ -198,8 +198,7 @@ public class TeamListActivity extends AppCompatActivity {
                 FirebaseUtils.getDatabase()
                         .getReference()
                         .child(Constants.FIREBASE_TEAM_INDEXES)
-                        .child(mFirebaseUser.getUid())
-                        .orderByValue(),
+                        .child(mFirebaseUser.getUid()),
                 FirebaseUtils.getDatabase().getReference().child(Constants.FIREBASE_TEAMS)) {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {

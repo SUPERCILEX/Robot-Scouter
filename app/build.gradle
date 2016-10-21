@@ -49,7 +49,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:${project.supportLibVersion}"
     compile "com.android.support:design:${project.supportLibVersion}"
     compile "com.android.support:customtabs:${project.supportLibVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta1'
 
     // Firebase
     compile "com.google.firebase:firebase-core:${project.playServicesVersion}"
