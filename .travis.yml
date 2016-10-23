@@ -23,9 +23,4 @@ before_install:
   - tar xvf secrets.tar
   - mv google-services.json app
   - chmod +x gradlew
-before_script:
-  - echo no | android create avd --force -n test -t android-25 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-script: ./gradlew clean check connectedCheck
+script: ./gradlew clean check
