@@ -1,4 +1,5 @@
 language: android
+jdk: oraclejdk9
 group: edge
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
