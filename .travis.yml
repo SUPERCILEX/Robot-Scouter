@@ -11,9 +11,10 @@ android:
   components:
     - platform-tools
     - tools
-    - build-tools
+    - build-tools-25.0.0
     - android-25
-    - sys-img-armeabi-v7a-android-25
+
+    # Extras
     - extra-android-m2repository
     - extra-google-m2repository
     - addon-google_apis-google-25
@@ -23,4 +24,4 @@ before_install:
   - tar xvf secrets.tar
   - mv google-services.json app
   - chmod +x gradlew
-script: ./gradlew clean check
+script: ./gradlew clean assembleDebug check lint

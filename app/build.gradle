@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'checkstyle'
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
@@ -41,6 +40,13 @@ android {
             versionNameSuffix '-DEBUG'
             manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
         }
+    }
+
+    lintOptions {
+        htmlReport true
+        htmlOutput file("lint-report.html")
+        abortOnError true
+        warningsAsErrors true
     }
 }
 
