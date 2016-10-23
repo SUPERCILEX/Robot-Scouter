@@ -17,11 +17,6 @@ android:
     # Extras
     - extra-android-m2repository
     - extra-google-m2repository
-    - addon-google_apis-google-25
     - extra-google-google_play_services
-before_install:
-  - openssl aes-256-cbc -K $encrypted_95e6a2aa17ed_key -iv $encrypted_95e6a2aa17ed_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar
-  - mv google-services.json app
-  - chmod +x gradlew
+before_script: mv /app/dummy-travis-google-services.json /app/google-services.json
 script: ./gradlew clean assembleDebug check lint
