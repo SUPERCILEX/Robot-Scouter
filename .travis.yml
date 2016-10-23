@@ -1,6 +1,5 @@
 language: android
 jdk: oraclejdk8
-# See https://docs.travis-ci.com/user/languages/java/#Caching
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -14,12 +13,10 @@ android:
     - tools
     - build-tools
     - android-25
-    - android-16
-    - sys-img-armeabi-v7a-android-24
-    - sys-img-armeabi-v7a-android-16
+    - sys-img-armeabi-v7a-android-25
     - extra-android-m2repository
     - extra-google-m2repository
-    - addon-google_apis-google-24
+    - addon-google_apis-google-25
     - extra-google-google_play_services
 before_install:
   - openssl aes-256-cbc -K $encrypted_95e6a2aa17ed_key -iv $encrypted_95e6a2aa17ed_iv -in secrets.tar.enc -out secrets.tar -d
@@ -27,9 +24,8 @@ before_install:
   - mv google-services.json app
   - chmod +x gradlew
 before_script:
-  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
-  - echo no | android create avd --force -n test -t android-16 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t android-25 --abi armeabi-v7a
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-script: ./gradlew check clean assemble test connectedCheck connectedAndroidTest --continue --stacktrace
+script: ./gradlew check clean assemble test connectedCheck connectedAndroidTest
