@@ -20,5 +20,6 @@ android:
     - extra-google-m2repository
 before_script:
   - mv app/dummy-travis-google-services.json app/google-services.json
+  - mv dummy-travis-keystore.properties keystore.properties
   - chmod +x gradlew
 script: ./gradlew clean assembleDebug check lint
