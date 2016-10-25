@@ -24,7 +24,7 @@ task clean(type: Delete) {
 
 ext {
     supportLibVersion = "25.0.0"
-    playServicesVersion = "9.6.1"
+    playServicesVersion = "9.8.0"
     retrofitVersion = "2.1.0"
 
     // Build the version code

@@ -63,6 +63,7 @@ dependencies {
     compile "com.google.firebase:firebase-config:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-database:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-auth:${project.playServicesVersion}"
+    compile "com.google.android.gms:play-services-auth:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-crash:${project.playServicesVersion}"
     compile "com.google.firebase:firebase-invites:${project.playServicesVersion}"
     compile 'com.firebaseui:firebase-ui:0.6.1'
