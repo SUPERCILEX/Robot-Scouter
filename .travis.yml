@@ -23,4 +23,4 @@ before_script:
   - mv travis-dummies/keystore.properties keystore.properties
   - mv travis-dummies/keystore.jks app/keystore.jks
   - chmod +x gradlew
-script: ./gradlew clean assembleDebug check lint
+script: ./gradlew clean build lint
