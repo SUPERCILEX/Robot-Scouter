@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.ui.scout.viewholders.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholders.EditTextViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholders.ScoutViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholders.SpinnerViewHolder;
+import com.supercilex.robotscouter.util.CanaryKiller;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
 import com.supercilex.robotscouter.z.FirebaseRecyclerAdapter;
@@ -44,6 +45,7 @@ public class ScoutFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
+        CanaryKiller.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override
