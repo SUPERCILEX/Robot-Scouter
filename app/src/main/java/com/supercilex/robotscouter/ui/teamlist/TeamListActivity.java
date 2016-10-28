@@ -39,6 +39,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
 import com.supercilex.robotscouter.z.FirebaseIndexRecyclerAdapter;
+import com.supercilex.robotscouter.z.FirebaseRecyclerAdapter;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 

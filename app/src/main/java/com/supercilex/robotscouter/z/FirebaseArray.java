@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.supercilex.robotscouter.ztmpfirebase;
+package com.supercilex.robotscouter.z;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

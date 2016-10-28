@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.supercilex.robotscouter.ztmpfirebase;
+package com.supercilex.robotscouter.z;
 
 import android.app.Activity;
 import android.util.Log;
@@ -85,22 +85,10 @@ public abstract class FirebaseListAdapter<T> extends BaseAdapter {
      * @param ref         The Firebase location to watch for data changes. Can also be a slice of a location, using some
      *                    combination of {@code limit()}, {@code startAt()}, and {@code endAt()}.
      */
-    public FirebaseListAdapter(Activity activity, Class<T> modelClass, int modelLayout, Query ref) {
-        this(activity, modelClass, modelLayout, new FirebaseArray(ref));
-    }
-
-    /**
-     * @param activity    The activity containing the ListView
-     * @param modelClass  Firebase will marshall the data at a location into an instance of a class that you provide
-     * @param modelLayout This is the layout used to represent a single list item. You will be responsible for populating an
-     *                    instance of the corresponding view with the data from an instance of modelClass.
-     * @param ref         The Firebase location to watch for data changes. Can also be a slice of a location, using some
-     *                    combination of {@code limit()}, {@code startAt()}, and {@code endAt()}.
-     */
     public FirebaseListAdapter(Activity activity,
                                Class<T> modelClass,
                                int modelLayout,
-                               DatabaseReference ref) {
+                               Query ref) {
         this(activity, modelClass, modelLayout, new FirebaseArray(ref));
     }
 
