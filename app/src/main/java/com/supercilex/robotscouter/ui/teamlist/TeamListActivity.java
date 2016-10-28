@@ -38,8 +38,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.ztmpfirebase.FirebaseIndexRecyclerAdapter;
-import com.supercilex.robotscouter.ztmpfirebase.FirebaseRecyclerAdapter;
+import com.supercilex.robotscouter.z.FirebaseIndexRecyclerAdapter;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -103,8 +102,6 @@ public class TeamListActivity extends AppCompatActivity {
 //        } else {
 //            attachRecyclerViewAdapter();
 //        }
-
-//        LeakCanary.install(getApplication());
 
         mTeams = (RecyclerView) findViewById(R.id.content_main_recycler_view);
         mTeams.setHasFixedSize(true);

@@ -8,6 +8,7 @@
         android:required="false"/>
 
     <application
+        android:name="RobotScouter"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${appName}"
@@ -32,14 +33,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.supercilex.robotscouter.ui.teamlist.TeamListActivity"/>
         </activity>
-
-        <service
-            android:name=".scout.DownloadTeamDataJob"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

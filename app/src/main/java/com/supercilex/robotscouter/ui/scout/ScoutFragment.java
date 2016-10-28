@@ -23,7 +23,6 @@ import com.supercilex.robotscouter.ui.scout.viewholders.ScoutViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholders.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.ztmpfirebase.FirebaseRecyclerAdapter;
 
 import java.util.ArrayList;
 
