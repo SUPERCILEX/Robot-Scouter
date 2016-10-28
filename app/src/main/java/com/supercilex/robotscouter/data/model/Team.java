@@ -17,6 +17,8 @@ import com.supercilex.robotscouter.util.FirebaseUtils;
 import java.util.Map;
 
 public class Team {
+    private String mKey;
+
     private String mNumber;
     private String mName;
     private String mMedia;
@@ -25,6 +27,11 @@ public class Team {
     private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
+    }
+
+    public Team(String key, String number) {
+        mKey = key;
+        mNumber = number;
     }
 
     public Team(String teamName, String teamWebsite, String teamLogoUrl) {
@@ -83,8 +90,15 @@ public class Team {
         mTimestamp = time;
     }
 
-    public String addTeam(@NonNull String teamNumber) {
-        mNumber = teamNumber;
+    public String getKey() {
+        return mKey;
+    }
+
+    public void setKey(String key) {
+        mKey = key;
+    }
+
+    public void addTeam() {
         mShouldUpdateTimestamp = false;
 
         String userId = FirebaseUtils.getUser().getUid();
@@ -99,7 +113,7 @@ public class Team {
         ref.child(Constants.FIREBASE_TEAMS).child(key).setValue(this);
 
         mShouldUpdateTimestamp = true;
-        return key;
+        mKey = key;
     }
 
     public void addTeamData(@NonNull String key) {

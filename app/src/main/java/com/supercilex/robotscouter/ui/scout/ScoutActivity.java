@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scout;
 
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,10 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.customtabs.CustomTabsServiceConnection;
-import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -39,12 +35,10 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
+import com.supercilex.robotscouter.util.TagUtils;
 
 public class ScoutActivity extends AppCompatActivity {
     private Team mTeam;
-    private String mNumber;
-    private String mKey;
-    private String mTbaUrl;
 
     private DatabaseReference mTeamRef;
     private DatabaseReference mScoutRef;
@@ -52,10 +46,6 @@ public class ScoutActivity extends AppCompatActivity {
     private ChildEventListener mScoutListener;
 
     private Menu mMenu;
-
-    private CustomTabsSession mTabsSession;
-    private CustomTabsServiceConnection mTabsServiceConnection;
-    private CustomTabsClient mTabsClient;
 
     public static Intent createIntent(Context context,
                                       @NonNull String teamNumber,
@@ -95,33 +85,27 @@ public class ScoutActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        mNumber = getTeamNumber();
-        if (mNumber == null) return;
-        getSupportActionBar().setTitle(mNumber);
-        mKey = getTeamKey(savedInstanceState);
+        mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());
+        if (mTeam.getNumber() == null) return;
+        getSupportActionBar().setTitle(mTeam.getNumber());
 
         updateScouts(scoutPagerAdapter);
 
         notifyUserOffline(savedInstanceState);
-        prefetchChromeCustomTabs();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (mTeamListener != null) {
             mTeamRef.removeEventListener(mTeamListener);
         }
-
         mScoutRef.removeEventListener(mScoutListener);
-        unbindCustomTabsService();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(Constants.INTENT_TEAM_KEY, mKey);
-
+        savedInstanceState.putString(Constants.INTENT_TEAM_KEY, mTeam.getKey());
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -133,25 +117,26 @@ public class ScoutActivity extends AppCompatActivity {
 
         menu.findItem(R.id.action_visit_tba_team_website)
                 .setTitle(String.format(getString(R.string.menu_item_visit_team_website_on_tba),
-                                        mNumber));
+                                        mTeam.getNumber()));
         menu.findItem(R.id.action_visit_team_website)
-                .setTitle(String.format(getString(R.string.menu_item_visit_team_website), mNumber));
+                .setTitle(String.format(getString(R.string.menu_item_visit_team_website),
+                                        mTeam.getNumber()));
 
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.action_visit_tba_team_website:
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(mTabsSession);
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 builder.setToolbarColor(ContextCompat.getColor(this, R.color.color_primary));
                 builder.setShowTitle(true);
                 CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(this, Uri.parse(mTbaUrl));
-                return true;
+                customTabsIntent.launchUrl(this,
+                                           Uri.parse("https://www.thebluealliance.com/team/"
+                                                             + mTeam.getNumber()));
+                break;
             case R.id.action_visit_team_website:
                 CustomTabsIntent.Builder teamWebsiteBuilder = new CustomTabsIntent.Builder();
                 teamWebsiteBuilder.setToolbarColor(ContextCompat.getColor(this,
@@ -159,22 +144,24 @@ public class ScoutActivity extends AppCompatActivity {
                 teamWebsiteBuilder.setShowTitle(true);
                 CustomTabsIntent teamWebsiteCustomTabsIntent = teamWebsiteBuilder.build();
                 teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
-                return true;
+                break;
             case R.id.action_edit_details:
-                DialogFragment newFragment = EditDetailsDialogFragment.newInstance(mNumber,
-                                                                                   mKey,
+                DialogFragment newFragment = EditDetailsDialogFragment.newInstance(mTeam.getNumber(),
+                                                                                   mTeam.getKey(),
                                                                                    mTeam.getName(),
                                                                                    mTeam.getWebsite(),
                                                                                    mTeam.getMedia());
-                newFragment.show(getSupportFragmentManager(), "editDetails");
+                newFragment.show(getSupportFragmentManager(), TagUtils.getTag(this));
+                break;
             case R.id.action_settings:
-                return true;
+                break;
         }
-        return super.onOptionsItemSelected(item);
+
+        return true;
     }
 
     private void updateUi() {
-        if (mKey != null) {
+        if (mTeam.getKey() != null) {
             mTeamListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -214,7 +201,7 @@ public class ScoutActivity extends AppCompatActivity {
             mTeamRef = FirebaseUtils.getDatabase()
                     .getReference()
                     .child(Constants.FIREBASE_TEAMS)
-                    .child(mKey);
+                    .child(mTeam.getKey());
 
             mTeamRef.addValueEventListener(mTeamListener);
         } else {
@@ -227,22 +214,20 @@ public class ScoutActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getValue() != null) {
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (child.getValue().toString().equals(mNumber)) {
-                                        mKey = child.getKey();
+                                    if (child.getValue().toString().equals(mTeam.getNumber())) {
+                                        mTeam.setKey(child.getKey());
                                         updateUi();
                                         return;
                                     }
                                 }
                             }
 
-                            Team team = new Team();
-                            mKey = team.addTeam(mNumber);
-
-                            new TbaService(mNumber, team, ScoutActivity.this) {
+                            mTeam.addTeam();
+                            new TbaService(mTeam.getNumber(), mTeam, ScoutActivity.this) {
                                 @Override
                                 public void onFinished(Team team, boolean isSuccess) {
                                     if (isSuccess) {
-                                        team.addTeamData(mKey);
+                                        team.addTeamData(mTeam.getKey());
                                         updateUi();
                                     } else {
                                         startDownloadTeamDataJob();
@@ -314,63 +299,9 @@ public class ScoutActivity extends AppCompatActivity {
                 .getReference()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(FirebaseUtils.getUser().getUid())
-                .child(mNumber);
+                .child(mTeam.getNumber());
 
         mScoutRef.addChildEventListener(mScoutListener);
-    }
-
-    private void prefetchChromeCustomTabs() {
-        mTbaUrl = "https://www.thebluealliance.com/team/" + mNumber;
-        mTabsServiceConnection = new CustomTabsServiceConnection() {
-
-            @Override
-            public void onCustomTabsServiceConnected(ComponentName componentName,
-                                                     CustomTabsClient customTabsClient) {
-                if (customTabsClient != null) {
-                    (mTabsClient = customTabsClient).warmup(0L);
-
-                    // Create a new session
-                    occupySession(); // TODO: 08/23/2016 why is client null
-
-                    // Let the session know that it may launch a URL soon
-                    Uri uri = Uri.parse(mTbaUrl);
-                    if (mTabsSession != null) {
-
-                        // If this returns true, custom tabs will work,
-                        // otherwise, you need another alternative if you don't want the user
-                        // to be launched out of the app by default
-                        mTabsSession.mayLaunchUrl(uri, null, null);
-                    }
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mTabsClient = null;
-            }
-        };
-
-        CustomTabsClient.bindCustomTabsService(ScoutActivity.this,
-                                               "com.android.chrome",
-                                               mTabsServiceConnection);
-    }
-
-    private void unbindCustomTabsService() {
-        if (mTabsServiceConnection == null) return;
-
-        unbindService(mTabsServiceConnection);
-        mTabsClient = null;
-        mTabsSession = null;
-    }
-
-    private void occupySession() {
-        if (null == mTabsClient) {
-            // No session without client
-            mTabsSession = null;
-        } else if (mTabsSession == null) {
-            // Create a new one
-            mTabsSession = mTabsClient.newSession(null);
-        }
     }
 
     private String getTeamNumber() {
