@@ -14,6 +14,8 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
+import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
 import com.supercilex.robotscouter.util.TagUtils;
@@ -154,6 +157,14 @@ public class ScoutActivity extends AppCompatActivity {
                 newFragment.show(getSupportFragmentManager(), TagUtils.getTag(this));
                 break;
             case R.id.action_settings:
+                break;
+            case android.R.id.home:
+                if (NavUtils.shouldUpRecreateTask(
+                        this, new Intent(this, TeamListActivity.class))) {
+                    TaskStackBuilder.create(this).addParentStack(this).startActivities();
+                } else {
+                    NavUtils.navigateUpFromSameTask(this);
+                }
                 break;
         }
 
