@@ -52,19 +52,19 @@ android {
 
 dependencies {
     // Support libraries
-    compile "com.android.support:design:${supportLibVersion}"
-    compile "com.android.support:customtabs:${supportLibVersion}"
+    compile "com.android.support:design:$supportLibVersion"
+    compile "com.android.support:customtabs:$supportLibVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta1'
 
     // Firebase
-    compile "com.google.firebase:firebase-core:${playServicesVersion}"
-    compile "com.google.firebase:firebase-messaging:${playServicesVersion}"
-    compile "com.google.firebase:firebase-config:${playServicesVersion}"
-    compile "com.google.firebase:firebase-database:${playServicesVersion}"
-    compile "com.google.firebase:firebase-auth:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
-    compile "com.google.firebase:firebase-crash:${playServicesVersion}"
-    compile "com.google.firebase:firebase-invites:${playServicesVersion}"
+    compile "com.google.firebase:firebase-core:$playServicesVersion"
+    compile "com.google.firebase:firebase-messaging:$playServicesVersion"
+    compile "com.google.firebase:firebase-config:$playServicesVersion"
+    compile "com.google.firebase:firebase-database:$playServicesVersion"
+    compile "com.google.firebase:firebase-auth:$playServicesVersion"
+    compile "com.google.android.gms:play-services-auth:$playServicesVersion"
+    compile "com.google.firebase:firebase-crash:$playServicesVersion"
+    compile "com.google.firebase:firebase-invites:$playServicesVersion"
     compile 'com.firebaseui:firebase-ui:0.6.1'
 
     // Third party
@@ -74,8 +74,8 @@ dependencies {
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
 
     // Retrofit
-    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Testing
     testCompile 'junit:junit:4.12'
