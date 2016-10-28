@@ -162,6 +162,7 @@ public class ScoutActivity extends AppCompatActivity {
                 if (NavUtils.shouldUpRecreateTask(
                         this, new Intent(this, TeamListActivity.class))) {
                     TaskStackBuilder.create(this).addParentStack(this).startActivities();
+                    finish();
                 } else {
                     NavUtils.navigateUpFromSameTask(this);
                 }
