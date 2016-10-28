@@ -3,12 +3,13 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.supercilex.robotscouter">
 
+    <!-- For Chromebooks -->
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false"/>
 
     <application
-        android:name="RobotScouter"
+        android:name=".util.CanaryKiller"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="${appName}"

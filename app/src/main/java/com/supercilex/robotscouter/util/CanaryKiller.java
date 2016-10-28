@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter;
+package com.supercilex.robotscouter.util;
 
 import android.app.Application;
 import android.content.Context;
@@ -9,11 +9,11 @@ import com.squareup.leakcanary.RefWatcher;
 /**
  * A simple class for LeakCanary integration.
  */
-public class RobotScouter extends Application {
+public class CanaryKiller extends Application {
     private RefWatcher refWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {
-        RobotScouter application = (RobotScouter) context.getApplicationContext();
+        CanaryKiller application = (CanaryKiller) context.getApplicationContext();
         return application.refWatcher;
     }
 
