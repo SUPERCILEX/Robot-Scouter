@@ -54,7 +54,7 @@ dependencies {
     // Support libraries
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:customtabs:$supportLibVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta2'
 
     // Firebase
     compile "com.google.firebase:firebase-core:$playServicesVersion"
