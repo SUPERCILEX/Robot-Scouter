@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_activity_layout"
+    android:id="@+id/team_list_activity_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:mContext="com.supercilex.robotscouter.ui.teamlist.TeamListActivity">
+    tools:mContext=".ui.teamlist.TeamListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/activity_main_content_main"/>
+    <include layout="@layout/activity_team_list_content_main"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -33,6 +33,5 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_black_24dp"
         app:fabSize="normal"/>
-
 
 </android.support.design.widget.CoordinatorLayout>

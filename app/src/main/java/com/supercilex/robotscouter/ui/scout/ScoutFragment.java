@@ -53,7 +53,7 @@ public class ScoutFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);
 
-        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.current_scout_fragment_recycler_view);
+        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.scout_data);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // TODO: 09/22/2016 fix this
@@ -61,7 +61,7 @@ public class ScoutFragment extends Fragment {
 
         mAdapter = new FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder>(
                 ScoutMetric.class,
-                R.layout.activity_main_row_layout,
+                R.layout.activity_team_list_row_layout,
                 ScoutViewHolder.class,
                 FirebaseUtils.getDatabase()
                         .getReference()
@@ -114,22 +114,22 @@ public class ScoutFragment extends Fragment {
                 switch (viewType) {
                     case Constants.CHECKBOX:
                         return new CheckboxViewHolder(LayoutInflater.from(parent.getContext())
-                                                              .inflate(R.layout.checkbox,
+                                                              .inflate(R.layout.scout_checkbox,
                                                                        parent,
                                                                        false));
                     case Constants.COUNTER:
                         return new CounterViewHolder(LayoutInflater.from(parent.getContext())
-                                                             .inflate(R.layout.counter,
+                                                             .inflate(R.layout.scout_counter,
                                                                       parent,
                                                                       false));
                     case Constants.SPINNER:
                         return new SpinnerViewHolder(LayoutInflater.from(parent.getContext())
-                                                             .inflate(R.layout.spinner,
+                                                             .inflate(R.layout.scout_spinner,
                                                                       parent,
                                                                       false));
                     case Constants.EDIT_TEXT:
                         return new EditTextViewHolder(LayoutInflater.from(parent.getContext())
-                                                              .inflate(R.layout.edittext,
+                                                              .inflate(R.layout.scout_edittext,
                                                                        parent,
                                                                        false));
                     default:

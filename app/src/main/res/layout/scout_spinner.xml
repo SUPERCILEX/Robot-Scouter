@@ -8,7 +8,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/spinner_text_view"
+        android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -30,4 +30,5 @@
         android:layout_marginTop="16dp"
         app:layout_constraintRight_toRightOf="@+id/constraintLayout7"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout7"/>
+
 </android.support.constraint.ConstraintLayout>

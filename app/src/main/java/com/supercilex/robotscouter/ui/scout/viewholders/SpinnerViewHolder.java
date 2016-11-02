@@ -17,7 +17,7 @@ public class SpinnerViewHolder extends ScoutViewHolder {
 
     public SpinnerViewHolder(View itemView) {
         super(itemView);
-        mName = (TextView) itemView.findViewById(R.id.spinner_text_view);
+        mName = (TextView) itemView.findViewById(R.id.name);
         mSpinner = (Spinner) itemView.findViewById(R.id.spinner);
     }
 

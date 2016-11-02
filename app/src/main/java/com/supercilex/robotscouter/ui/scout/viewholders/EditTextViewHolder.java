@@ -14,8 +14,8 @@ public class EditTextViewHolder extends ScoutViewHolder {
 
     public EditTextViewHolder(View itemView) {
         super(itemView);
-        mName = (TextView) itemView.findViewById(R.id.current_scout_text_view);
-        mNotes = (EditText) itemView.findViewById(R.id.current_scout_edit_text);
+        mName = (TextView) itemView.findViewById(R.id.name);
+        mNotes = (EditText) itemView.findViewById(R.id.notes);
     }
 
     @Override

@@ -56,9 +56,9 @@ public class EditDetailsDialogFragment extends DialogFragment {
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         @SuppressLint("InflateParams") final View view = inflater.inflate(R.layout.add_details_dialog,
                                                                           null);
-        final EditText teamNickname = (EditText) view.findViewById(R.id.add_details_dialog_team_name);
-        final EditText teamWebsite = (EditText) view.findViewById(R.id.add_details_dialog_team_website);
-        final EditText teamLogo = (EditText) view.findViewById(R.id.add_details_dialog_team_logo);
+        final EditText teamNickname = (EditText) view.findViewById(R.id.name);
+        final EditText teamWebsite = (EditText) view.findViewById(R.id.website);
+        final EditText teamLogo = (EditText) view.findViewById(R.id.logo_uri);
 
         teamNickname.setText(getArguments().getString(TEAM_NAME));
         teamWebsite.setText(getArguments().getString(TEAM_WEBSITE));

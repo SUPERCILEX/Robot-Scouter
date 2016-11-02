@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:id="@+id/constraintLayout"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="wrap_content">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/list_view_layout_team_logo"
+        android:id="@+id/logo"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginBottom="8dp"
@@ -32,7 +33,7 @@
         android:textSize="18sp"
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintLeft_toRightOf="@+id/list_view_layout_team_logo"
+        app:layout_constraintLeft_toRightOf="@+id/logo"
         app:layout_constraintRight_toLeftOf="@+id/list_view_layout_start_scout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
@@ -50,7 +51,7 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/list_view_layout_team_logo"
+        app:layout_constraintLeft_toRightOf="@+id/logo"
         app:layout_constraintRight_toLeftOf="@+id/list_view_layout_start_scout"
         app:layout_constraintTop_toTopOf="@+id/guideline"
         app:layout_constraintVertical_bias="0.0"

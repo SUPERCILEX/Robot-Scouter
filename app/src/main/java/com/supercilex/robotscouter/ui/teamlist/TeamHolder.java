@@ -26,7 +26,7 @@ public class TeamHolder extends RecyclerView.ViewHolder {
         mRowLayout = (ConstraintLayout) itemView;
         mNumber = (TextView) itemView.findViewById(R.id.list_view_layout_team_number);
         mName = (TextView) itemView.findViewById(R.id.list_view_layout_team_nickname);
-        mLogo = (ImageView) itemView.findViewById(R.id.list_view_layout_team_logo);
+        mLogo = (ImageView) itemView.findViewById(R.id.logo);
         mNewScout = (ImageButton) itemView.findViewById(R.id.list_view_layout_start_scout);
     }
 

@@ -68,7 +68,7 @@ public class TeamListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_team_list);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -104,7 +104,7 @@ public class TeamListActivity extends AppCompatActivity {
 //            attachRecyclerViewAdapter();
 //        }
 
-        mTeams = (RecyclerView) findViewById(R.id.content_main_recycler_view);
+        mTeams = (RecyclerView) findViewById(R.id.team_list);
         mTeams.setHasFixedSize(true);
         mManager = new LinearLayoutManager(this);
         mTeams.setLayoutManager(mManager);
@@ -170,7 +170,7 @@ public class TeamListActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 // user is signed in!
-                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_activity_layout);
+                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.team_list_activity_layout);
                 Snackbar.make(coordinatorLayout,
                               R.string.successfully_signed_in,
                               Snackbar.LENGTH_LONG).show();
@@ -191,7 +191,7 @@ public class TeamListActivity extends AppCompatActivity {
     private void attachRecyclerViewAdapter() {
         mAdapter = new FirebaseIndexRecyclerAdapter<Team, TeamHolder>(
                 Team.class,
-                R.layout.activity_main_row_layout,
+                R.layout.activity_team_list_row_layout,
                 TeamHolder.class,
                 FirebaseUtils.getDatabase()
                         .getReference()

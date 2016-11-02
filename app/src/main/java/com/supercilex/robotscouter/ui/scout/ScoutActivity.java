@@ -75,7 +75,7 @@ public class ScoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_scout);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.current_scout_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -85,7 +85,7 @@ public class ScoutActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(scoutPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.scouts);
         tabLayout.setupWithViewPager(viewPager);
 
         mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());

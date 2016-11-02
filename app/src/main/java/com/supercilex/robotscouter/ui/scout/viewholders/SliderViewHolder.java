@@ -14,7 +14,7 @@ public class SliderViewHolder extends ScoutViewHolder {
 
     public SliderViewHolder(View itemView) {
         super(itemView);
-        mName = (TextView) itemView.findViewById(R.id.current_scout_text_view);
+        mName = (TextView) itemView.findViewById(R.id.name);
         mSeekBar = (SeekBar) itemView.findViewById(R.id.seek_bar);
     }
 

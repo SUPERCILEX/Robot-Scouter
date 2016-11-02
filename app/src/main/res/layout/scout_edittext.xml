@@ -9,18 +9,18 @@
     android:focusableInTouchMode="true">
 
     <TextView
-        android:id="@+id/current_scout_text_view"
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/current_scout_edit_text"
+        app:layout_constraintBaseline_toBaselineOf="@+id/notes"
         app:layout_constraintLeft_toLeftOf="@+id/constraintLayout6"
         tools:layout_constraintLeft_creator="1"
         tools:text="Example"/>
 
     <EditText
-        android:id="@+id/current_scout_edit_text"
+        android:id="@+id/notes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -30,7 +30,8 @@
         android:inputType="textMultiLine"
         android:windowSoftInputMode="adjustPan"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toRightOf="@+id/current_scout_text_view"
+        app:layout_constraintLeft_toRightOf="@+id/name"
         app:layout_constraintRight_toRightOf="@+id/constraintLayout6"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout6"/>
+
 </android.support.constraint.ConstraintLayout>
