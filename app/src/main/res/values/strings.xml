@@ -1,27 +1,34 @@
 <resources>
     <string name="app_name">Robot Scouter</string>
 
+    <!-- Shared -->
     <string name="action_settings">Settings</string>
-    <string name="title_activity_scout">Scout</string>
-    <string name="cancel">Cancel</string>
     <string name="confirm">OK</string>
-    <string name="team_number_hint">Team Number</string>
-    <string name="no_connection_current_scout">Offline. Data will be saved</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Team List Activity -->
+    <string name="hint_team_number">Team Number</string>
+    <string name="unknown_team">Unknown</string>
     <string name="sign_in">Sign in</string>
-    <string name="no_name">Unknown</string>
-    <string name="team_details">Team details</string>
-    <string name="edit_details">Edit team details</string>
     <string name="successfully_signed_in">Successfully signed in!</string>
-    <string name="menu_item_visit_team_website">Visit team %s\'s website</string>
-    <string name="menu_item_visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
-    <string name="visit_team_on_the_blue_alliance">Visit team on The Blue Alliance</string>
+
+    <!-- Scout Activity -->
+    <string name="title_activity_scout">Scout</string>
+    <string name="edit_details">Edit team details</string>
+    <string name="team_details">Team details</string>
     <string name="visit_team_website">Visit team website</string>
+    <string name="menu_item_visit_team_website">Visit team %s\'s website</string>
+    <string name="visit_team_on_the_blue_alliance">Visit team on The Blue Alliance</string>
+    <string name="menu_item_visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
+    <string name="no_connection_current_scout">Offline. Data will be saved</string>
     <string name="team_name">Team name</string>
     <string name="team_website">Team website</string>
+    <string name="team_logo">Team logo url</string>
+    <string name="hint_notes">Notes</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_new_scout">Create new Scout</string>
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
-    <string name="create_new_scout_accessibility">Create new Scout</string>
-    <string name="notes">Notes</string>
-    <string name="team_logo">Team logo url</string>
 </resources>

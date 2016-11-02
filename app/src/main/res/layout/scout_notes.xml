@@ -26,7 +26,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:hint="@string/notes"
+        android:hint="@string/hint_notes"
         android:inputType="textMultiLine"
         android:windowSoftInputMode="adjustPan"
         app:layout_constraintHorizontal_bias="0.0"

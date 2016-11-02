@@ -129,7 +129,7 @@ public class ScoutFragment extends Fragment {
                                                                       false));
                     case Constants.EDIT_TEXT:
                         return new EditTextViewHolder(LayoutInflater.from(parent.getContext())
-                                                              .inflate(R.layout.scout_edittext,
+                                                              .inflate(R.layout.scout_notes,
                                                                        parent,
                                                                        false));
                     default:

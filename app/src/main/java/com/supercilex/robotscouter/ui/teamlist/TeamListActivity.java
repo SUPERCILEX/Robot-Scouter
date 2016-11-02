@@ -205,7 +205,7 @@ public class TeamListActivity extends AppCompatActivity {
 
                 teamHolder.setTeamNumber(teamNumber);
                 teamHolder.setTeamName(team.getName(),
-                                       TeamListActivity.this.getString(R.string.no_name));
+                                       TeamListActivity.this.getString(R.string.unknown_team));
                 teamHolder.setTeamLogo(TeamListActivity.this, team.getMedia());
                 teamHolder.setListItemClickListener(TeamListActivity.this, teamNumber, key);
                 teamHolder.setCreateNewScoutListener(TeamListActivity.this, teamNumber, key);

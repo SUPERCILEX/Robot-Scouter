@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -66,7 +65,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:background="#0000"
-        android:contentDescription="@string/create_new_scout_accessibility"
+        android:contentDescription="@string/accessibility_new_scout"
         android:src="@drawable/ic_add_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
