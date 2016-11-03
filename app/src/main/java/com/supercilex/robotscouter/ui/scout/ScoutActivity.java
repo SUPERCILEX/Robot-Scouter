@@ -84,9 +84,8 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         updateUi();
 
         mScoutRef = FirebaseUtils.getDatabase()
-                .getReference()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
-                .child(FirebaseUtils.getUser().getUid())
+                .child(FirebaseUtils.getUid())
                 .child(mTeam.getNumber());
         mScoutRef.addChildEventListener(this);
 
@@ -175,15 +174,13 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     private void updateUi() {
         if (mTeam.getKey() != null) {
             mTeamRef = FirebaseUtils.getDatabase()
-                    .getReference()
                     .child(Constants.FIREBASE_TEAMS)
                     .child(mTeam.getKey());
             mTeamRef.addValueEventListener(this);
         } else {
             FirebaseUtils.getDatabase()
-                    .getReference()
                     .child(Constants.FIREBASE_TEAM_INDEXES)
-                    .child(FirebaseUtils.getUser().getUid())
+                    .child(FirebaseUtils.getUid())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

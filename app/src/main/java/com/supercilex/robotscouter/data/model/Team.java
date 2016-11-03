@@ -103,8 +103,8 @@ public class Team {
     public void add() {
         mShouldUpdateTimestamp = false;
 
-        String userId = FirebaseUtils.getUser().getUid();
-        DatabaseReference ref = FirebaseUtils.getDatabase().getReference();
+        String userId = FirebaseUtils.getUid();
+        DatabaseReference ref = FirebaseUtils.getDatabase();
         String key = ref.push().getKey();
 
         ref.child(Constants.FIREBASE_TEAM_INDEXES)
@@ -119,17 +119,12 @@ public class Team {
     }
 
     public void overwriteData() {
-        FirebaseUtils.getDatabase()
-                .getReference()
-                .child(Constants.FIREBASE_TEAMS)
-                .child(mKey)
-                .setValue(this);
+        FirebaseUtils.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey).setValue(this);
     }
 
     public void update(@NonNull String teamNumber, @NonNull String key) {
         mNumber = teamNumber;
         DatabaseReference ref = FirebaseUtils.getDatabase()
-                .getReference()
                 .child(Constants.FIREBASE_TEAMS)
                 .child(key);
 
@@ -165,7 +160,6 @@ public class Team {
     public void updateWithCustomDetails(@NonNull String teamNumber, @NonNull String key) {
         mNumber = teamNumber;
         DatabaseReference ref = FirebaseUtils.getDatabase()
-                .getReference()
                 .child(Constants.FIREBASE_TEAMS)
                 .child(key);
 

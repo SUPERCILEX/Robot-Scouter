@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -56,9 +54,7 @@ public class TeamListActivity extends AppCompatActivity {
     private RecyclerView mTeams;
     private LinearLayoutManager mManager;
 
-    private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private FirebaseUser mFirebaseUser;
 
     private Bundle mSavedState;
     private Toolbar mToolbar;
@@ -73,7 +69,6 @@ public class TeamListActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         mSavedState = savedInstanceState;
-        mAuth = FirebaseAuth.getInstance();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -87,8 +82,7 @@ public class TeamListActivity extends AppCompatActivity {
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mFirebaseUser = firebaseAuth.getCurrentUser();
-                if (mFirebaseUser != null) {
+                if (firebaseAuth.getCurrentUser() != null) {
                     attachRecyclerViewAdapter();
                 } else {
                     // TODO show a tutorial (pretend first time app start)
@@ -96,7 +90,7 @@ public class TeamListActivity extends AppCompatActivity {
                 initializeDrawer();
             }
         };
-        mAuth.addAuthStateListener(mAuthStateListener);
+        FirebaseUtils.getAuth().addAuthStateListener(mAuthStateListener);
 
 //        if (!isSignedIn()) {
 //            signInAnonymously();
@@ -125,7 +119,7 @@ public class TeamListActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener);
+            FirebaseUtils.getAuth().removeAuthStateListener(mAuthStateListener);
         }
 
         if (mAdapter != null) {
@@ -170,20 +164,16 @@ public class TeamListActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 // user is signed in!
-                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.team_list_activity_layout);
-                Snackbar.make(coordinatorLayout,
+                Snackbar.make(findViewById(android.R.id.content),
                               R.string.successfully_signed_in,
                               Snackbar.LENGTH_LONG).show();
 
-                FirebaseDatabase database = FirebaseUtils.getDatabase();
-                mFirebaseUser = FirebaseUtils.getUser();
-                DatabaseReference myRef = database.getReference()
+                DatabaseReference ref = FirebaseUtils.getDatabase()
                         .child("users")
-                        .child(mFirebaseUser.getUid());
-                myRef.child("uid").setValue(mFirebaseUser.getUid());
-                myRef.child("name").setValue(mFirebaseUser.getDisplayName());
-                myRef.child("provider").setValue(mFirebaseUser.getProviderId());
-                myRef.child("email").setValue(mFirebaseUser.getEmail());
+                        .child(FirebaseUtils.getUid());
+                ref.child("name").setValue(FirebaseUtils.getUser().getDisplayName());
+                ref.child("provider").setValue(FirebaseUtils.getUser().getProviderId());
+                ref.child("email").setValue(FirebaseUtils.getUser().getEmail());
             }
         }
     }
@@ -194,10 +184,9 @@ public class TeamListActivity extends AppCompatActivity {
                 R.layout.activity_team_list_row_layout,
                 TeamHolder.class,
                 FirebaseUtils.getDatabase()
-                        .getReference()
                         .child(Constants.FIREBASE_TEAM_INDEXES)
-                        .child(mFirebaseUser.getUid()),
-                FirebaseUtils.getDatabase().getReference().child(Constants.FIREBASE_TEAMS)) {
+                        .child(FirebaseUtils.getUid()),
+                FirebaseUtils.getDatabase().child(Constants.FIREBASE_TEAMS)) {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
                 String teamNumber = team.getNumber();
@@ -236,7 +225,7 @@ public class TeamListActivity extends AppCompatActivity {
 
     // TODO: 08/29/2016 move all old uid to new uid and delete old https://github.com/firebase/FirebaseUI-Android/issues/123
     private void signInAnonymously() {
-        mAuth.signInAnonymously()
+        FirebaseUtils.getAuth().signInAnonymously()
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -254,15 +243,11 @@ public class TeamListActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean isSignedIn() {
-        return (mAuth.getCurrentUser() != null);
-    }
-
     // TODO: 08/04/2016 get rid of this
     private void initializeDrawer() {
         AccountHeader header;
-        if (isSignedIn())
-            if (!mAuth.getCurrentUser().isAnonymous()) {
+        if (FirebaseUtils.getUser() != null)
+            if (!FirebaseUtils.getUser().isAnonymous()) {
                 // already signed in
                 FirebaseUser user = FirebaseUtils.getUser();
                 header = new AccountHeaderBuilder()

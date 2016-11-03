@@ -64,7 +64,6 @@ public class ScoutFragment extends Fragment {
                 R.layout.activity_team_list_row_layout,
                 ScoutViewHolder.class,
                 FirebaseUtils.getDatabase()
-                        .getReference()
                         .child(Constants.FIREBASE_SCOUTS)
                         .child(getArguments().getString(ARG_SCOUT_KEY))
                         .child(Constants.FIREBASE_VIEWS)) {
