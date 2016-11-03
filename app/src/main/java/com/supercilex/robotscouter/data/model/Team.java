@@ -90,15 +90,17 @@ public class Team {
         mTimestamp = time;
     }
 
+    @Exclude
     public String getKey() {
         return mKey;
     }
 
+    @Exclude
     public void setKey(String key) {
         mKey = key;
     }
 
-    public void addTeam() {
+    public void add() {
         mShouldUpdateTimestamp = false;
 
         String userId = FirebaseUtils.getUser().getUid();
@@ -116,15 +118,15 @@ public class Team {
         mKey = key;
     }
 
-    public void addTeamData(@NonNull String key) {
+    public void overwriteData() {
         FirebaseUtils.getDatabase()
                 .getReference()
                 .child(Constants.FIREBASE_TEAMS)
-                .child(key)
+                .child(mKey)
                 .setValue(this);
     }
 
-    public void updateTeam(@NonNull String teamNumber, @NonNull String key) {
+    public void update(@NonNull String teamNumber, @NonNull String key) {
         mNumber = teamNumber;
         DatabaseReference ref = FirebaseUtils.getDatabase()
                 .getReference()
@@ -160,7 +162,7 @@ public class Team {
         ref.child(Constants.FIREBASE_TIMESTAMP).setValue(getServerValue());
     }
 
-    public void updateTeamOverwrite(@NonNull String teamNumber, @NonNull String key) {
+    public void updateWithCustomDetails(@NonNull String teamNumber, @NonNull String key) {
         mNumber = teamNumber;
         DatabaseReference ref = FirebaseUtils.getDatabase()
                 .getReference()

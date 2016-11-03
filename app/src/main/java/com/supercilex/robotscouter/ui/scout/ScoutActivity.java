@@ -40,15 +40,12 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
 import com.supercilex.robotscouter.util.TagUtils;
 
-public class ScoutActivity extends AppCompatActivity {
+public class ScoutActivity extends AppCompatActivity implements ValueEventListener, ChildEventListener {
     private Team mTeam;
-
+    private Menu mMenu;
+    private ScoutPagerAdapter mPagerAdapter;
     private DatabaseReference mTeamRef;
     private DatabaseReference mScoutRef;
-    private ValueEventListener mTeamListener;
-    private ChildEventListener mScoutListener;
-
-    private Menu mMenu;
 
     public static Intent createIntent(Context context,
                                       @NonNull String teamNumber,
@@ -58,11 +55,9 @@ public class ScoutActivity extends AppCompatActivity {
         intent.putExtra(Constants.INTENT_TEAM_KEY, key);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
         }
@@ -78,17 +73,22 @@ public class ScoutActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ScoutPagerAdapter scoutPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager());
+        mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(scoutPagerAdapter);
+        viewPager.setAdapter(mPagerAdapter);
         ((TabLayout) findViewById(R.id.scouts)).setupWithViewPager(viewPager);
 
         mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());
         if (mTeam.getNumber() == null) return;
         getSupportActionBar().setTitle(mTeam.getNumber());
-
         updateUi();
-        updateScouts(scoutPagerAdapter);
+
+        mScoutRef = FirebaseUtils.getDatabase()
+                .getReference()
+                .child(Constants.FIREBASE_SCOUT_INDEXES)
+                .child(FirebaseUtils.getUser().getUid())
+                .child(mTeam.getNumber());
+        mScoutRef.addChildEventListener(this);
 
         if (savedInstanceState == null && !isNetworkAvailable()) {
             Snackbar.make(findViewById(android.R.id.content),
@@ -100,10 +100,8 @@ public class ScoutActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mTeamListener != null) {
-            mTeamRef.removeEventListener(mTeamListener);
-        }
-        mScoutRef.removeEventListener(mScoutListener);
+        mTeamRef.removeEventListener((ValueEventListener) this);
+        mScoutRef.removeEventListener((ChildEventListener) this);
     }
 
     @Override
@@ -176,49 +174,11 @@ public class ScoutActivity extends AppCompatActivity {
 
     private void updateUi() {
         if (mTeam.getKey() != null) {
-            mTeamListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() != null) {
-                        mTeam = dataSnapshot.getValue(Team.class);
-
-                        if (mTeam.getName() != null) {
-                            String title = mTeam.getNumber() + " - " + mTeam.getName();
-
-                            getSupportActionBar().setTitle(title);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                setTaskDescription(new ActivityManager.TaskDescription(title));
-                            }
-                        }
-
-                        Glide.with(ScoutActivity.this)
-                                .load(mTeam.getMedia())
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .error(R.drawable.ic_android_black_24dp)
-                                .into((ImageView) findViewById(R.id.backdrop));
-
-                        if (mMenu != null) {
-                            if (mTeam.getWebsite() != null) {
-                                mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
-                            } else {
-                                mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    FirebaseCrash.report(databaseError.toException());
-                }
-            };
-
             mTeamRef = FirebaseUtils.getDatabase()
                     .getReference()
                     .child(Constants.FIREBASE_TEAMS)
                     .child(mTeam.getKey());
-
-            mTeamRef.addValueEventListener(mTeamListener);
+            mTeamRef.addValueEventListener(this);
         } else {
             FirebaseUtils.getDatabase()
                     .getReference()
@@ -237,13 +197,14 @@ public class ScoutActivity extends AppCompatActivity {
                                 }
                             }
 
-                            mTeam.addTeam();
-                            new TbaService(mTeam.getNumber(), mTeam, ScoutActivity.this) {
+                            mTeam.add();
+                            updateUi();
+                            new TbaService(mTeam, ScoutActivity.this) {
                                 @Override
                                 public void onFinished(Team team, boolean isSuccess) {
                                     if (isSuccess) {
-                                        team.addTeamData(mTeam.getKey());
-                                        updateUi();
+                                        mTeam = team;
+                                        mTeam.overwriteData();
                                     } else {
                                         startDownloadTeamDataJob();
                                     }
@@ -257,6 +218,41 @@ public class ScoutActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        if (dataSnapshot.getValue() != null) {
+            mTeam = dataSnapshot.getValue(Team.class);
+
+            if (mTeam.getName() != null) {
+                String title = mTeam.getNumber() + " - " + mTeam.getName();
+
+                getSupportActionBar().setTitle(title);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    setTaskDescription(new ActivityManager.TaskDescription(title));
+                }
+            }
+
+            Glide.with(ScoutActivity.this)
+                    .load(mTeam.getMedia())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.ic_android_black_24dp)
+                    .into((ImageView) findViewById(R.id.backdrop));
+
+            if (mMenu != null) {
+                if (mTeam.getWebsite() != null) {
+                    mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
+                } else {
+                    mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        FirebaseCrash.report(databaseError.toException());
     }
 
     private void startDownloadTeamDataJob() {
@@ -282,41 +278,22 @@ public class ScoutActivity extends AppCompatActivity {
 //        }
     }
 
-    private void updateScouts(final ScoutPagerAdapter mScoutPagerAdapter) {
-        mScoutListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                mScoutPagerAdapter.add(dataSnapshot.getKey());
-            }
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        mPagerAdapter.add(dataSnapshot.getKey());
+    }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    }
 
-            }
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+        mPagerAdapter.remove(dataSnapshot.getKey());
+    }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                mScoutPagerAdapter.remove(dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
-            }
-        };
-
-        mScoutRef = FirebaseUtils.getDatabase()
-                .getReference()
-                .child(Constants.FIREBASE_SCOUT_INDEXES)
-                .child(FirebaseUtils.getUser().getUid())
-                .child(mTeam.getNumber());
-
-        mScoutRef.addChildEventListener(mScoutListener);
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
     }
 
     private String getTeamNumber() {

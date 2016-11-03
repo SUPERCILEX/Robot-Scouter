@@ -93,8 +93,8 @@ public class EditDetailsDialogFragment extends DialogFragment {
 
                         new Team(teamNickname.getText().toString(),
                                  website,
-                                 logo).updateTeamOverwrite(getArguments().getString(TEAM_NUMBER),
-                                                           getArguments().getString(TEAM_KEY));
+                                 logo).updateWithCustomDetails(getArguments().getString(TEAM_NUMBER),
+                                                               getArguments().getString(TEAM_KEY));
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -107,7 +107,7 @@ public class EditDetailsDialogFragment extends DialogFragment {
         if (url.contains("http://") || url.contains("https://")) {
             return url;
         } else {
-            return "http://www." + url;
+            return "http://" + url;
         }
     }
 }

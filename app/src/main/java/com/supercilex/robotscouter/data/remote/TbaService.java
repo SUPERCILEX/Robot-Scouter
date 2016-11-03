@@ -17,13 +17,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public abstract class TbaService {
-    private String mNumber;
     private Team mTeam;
     private Context mContext;
     private TbaApi mTbaApi;
 
-    public TbaService(String number, Team team, Context context) {
-        mNumber = number;
+    public TbaService(Team team, Context context) {
         mTeam = team;
         mContext = context;
 
@@ -32,7 +30,7 @@ public abstract class TbaService {
 
     private void getTeamInfo() {
         mTbaApi = TbaApi.retrofit.create(TbaApi.class);
-        Call<JsonObject> infoCall = mTbaApi.getTeamInfo(mNumber,
+        Call<JsonObject> infoCall = mTbaApi.getTeamInfo(mTeam.getNumber(),
                                                         "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME);
         infoCall.enqueue(new Callback<JsonObject>() {
             @Override
@@ -70,7 +68,7 @@ public abstract class TbaService {
     private void getTeamMedia() {
         // TODO: 09/11/2016 Make syncronized so doesn't have to wait for team info
         mTbaApi = TbaApi.retrofit.create(TbaApi.class);
-        Call<JsonArray> mediaCall = mTbaApi.getTeamMedia(mNumber,
+        Call<JsonArray> mediaCall = mTbaApi.getTeamMedia(mTeam.getNumber(),
                                                          "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME);
         mediaCall.enqueue(new Callback<JsonArray>() {
             @Override

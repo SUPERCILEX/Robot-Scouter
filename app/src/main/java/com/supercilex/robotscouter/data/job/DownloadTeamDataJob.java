@@ -19,7 +19,7 @@ package com.supercilex.robotscouter.data.job;
 //                    @Override
 //                    public void onFinished(Team team, boolean isSuccess) {
 //                        if (isSuccess) {
-//                            team.updateTeam(number, key);
+//                            team.update(number, key);
 //                            jobFinished(params, false);
 //                        } else {
 //                            jobFinished(params, true);
