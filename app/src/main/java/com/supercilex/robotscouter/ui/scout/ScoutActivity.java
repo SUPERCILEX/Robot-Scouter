@@ -74,27 +74,27 @@ public class ScoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_scout);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ScoutPagerAdapter scoutPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(scoutPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.scouts);
-        tabLayout.setupWithViewPager(viewPager);
+        ((TabLayout) findViewById(R.id.scouts)).setupWithViewPager(viewPager);
 
         mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());
         if (mTeam.getNumber() == null) return;
         getSupportActionBar().setTitle(mTeam.getNumber());
 
+        updateUi();
         updateScouts(scoutPagerAdapter);
 
-        notifyUserOffline(savedInstanceState);
+        if (savedInstanceState == null && !isNetworkAvailable()) {
+            Snackbar.make(findViewById(android.R.id.content),
+                          R.string.no_connection_current_scout,
+                          Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -116,7 +116,6 @@ public class ScoutActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_current_scout, menu);
         mMenu = menu;
-        updateUi();
 
         menu.findItem(R.id.action_visit_tba_team_website)
                 .setTitle(String.format(getString(R.string.menu_item_visit_team_website_on_tba),
@@ -124,6 +123,9 @@ public class ScoutActivity extends AppCompatActivity {
         menu.findItem(R.id.action_visit_team_website)
                 .setTitle(String.format(getString(R.string.menu_item_visit_team_website),
                                         mTeam.getNumber()));
+        if (mTeam.getWebsite() != null) {
+            mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
+        }
 
         return true;
     }
@@ -195,11 +197,12 @@ public class ScoutActivity extends AppCompatActivity {
                                 .error(R.drawable.ic_android_black_24dp)
                                 .into((ImageView) findViewById(R.id.backdrop));
 
-                        // TODO: 09/20/2016 Use tasks API for this to know when mMenu is ready
-                        if (mTeam.getWebsite() != null) {
-                            mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
-                        } else {
-                            mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
+                        if (mMenu != null) {
+                            if (mTeam.getWebsite() != null) {
+                                mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
+                            } else {
+                                mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
+                            }
                         }
                     }
                 }
@@ -338,17 +341,10 @@ public class ScoutActivity extends AppCompatActivity {
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private void notifyUserOffline(Bundle savedInstanceState) {
-        if (savedInstanceState == null && !isNetworkAvailable()) {
-            Snackbar.make(findViewById(android.R.id.content),
-                          R.string.no_connection_current_scout,
-                          Snackbar.LENGTH_SHORT).show();
-        }
     }
 }
