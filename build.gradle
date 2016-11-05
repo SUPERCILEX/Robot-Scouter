@@ -15,6 +15,7 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        maven { url 'https://maven.fabric.io/public' }
     }
 }
 

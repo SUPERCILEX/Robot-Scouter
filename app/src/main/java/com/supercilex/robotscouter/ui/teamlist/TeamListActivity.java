@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -36,8 +38,8 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.z.FirebaseIndexRecyclerAdapter;
-import com.supercilex.robotscouter.z.FirebaseRecyclerAdapter;
+
+import java.util.Arrays;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -328,11 +330,15 @@ public class TeamListActivity extends AppCompatActivity {
                         startActivityForResult(
                                 AuthUI.getInstance().createSignInIntentBuilder()
                                         .setLogo(R.drawable.launch_logo_image)
-                                        .setProviders(AuthUI.EMAIL_PROVIDER,
-                                                      AuthUI.GOOGLE_PROVIDER,
-                                                      AuthUI.FACEBOOK_PROVIDER)
-                                        .setTosUrl("http://www.example.com")
-                                        .setIsSmartLockEnabled(true)
+                                        .setProviders(
+                                                Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
+                                                                      .build(),
+                                                              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                                                      .build(),
+                                                              new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                                                                      .build(),
+                                                              new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
+                                                                      .build()))
                                         .build(),
                                 RC_SIGN_IN);
                         return true;

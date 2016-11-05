@@ -65,7 +65,7 @@ dependencies {
     compile "com.google.android.gms:play-services-auth:$playServicesVersion"
     compile "com.google.firebase:firebase-crash:$playServicesVersion"
     compile "com.google.firebase:firebase-invites:$playServicesVersion"
-    compile 'com.firebaseui:firebase-ui:0.6.2'
+    compile 'com.firebaseui:firebase-ui:1.0.0'
 
     // Third party
     compile 'de.hdodenhof:circleimageview:2.1.0'

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +25,6 @@ import com.supercilex.robotscouter.ui.scout.viewholders.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.CanaryKiller;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.z.FirebaseRecyclerAdapter;
 
 import java.util.ArrayList;
 
