@@ -11,7 +11,7 @@
     <string name="unknown_team">Unknown</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
-    <string name="successfully_signed_in">Successfully signed in!</string>
+    <string name="signed_in">Successfully signed in!</string>
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>

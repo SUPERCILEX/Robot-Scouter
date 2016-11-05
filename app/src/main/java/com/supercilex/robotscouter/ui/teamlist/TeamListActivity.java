@@ -15,7 +15,10 @@ import android.view.View;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +26,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
+import com.supercilex.robotscouter.util.LogFailureListener;
 import com.supercilex.robotscouter.util.TagUtils;
 
 import java.util.Arrays;
@@ -37,9 +41,11 @@ public class TeamListActivity extends AppCompatActivity {
     private static final String MANAGER_STATE = "manager_state";
     private static final String COUNT = "count";
 
+    private RecyclerView mTeams;
     private FirebaseRecyclerAdapter mAdapter;
     private LinearLayoutManager mManager;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private Bundle mSavedState;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -47,6 +53,7 @@ public class TeamListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        mSavedState = savedInstanceState;
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,11 +63,117 @@ public class TeamListActivity extends AppCompatActivity {
             }
         });
 
-        final RecyclerView teams = (RecyclerView) findViewById(R.id.team_list);
-        teams.setHasFixedSize(true);
+        mTeams = (RecyclerView) findViewById(R.id.team_list);
+        mTeams.setHasFixedSize(true);
         mManager = new LinearLayoutManager(this);
-        teams.setLayoutManager(mManager);
+        mTeams.setLayoutManager(mManager);
         // TODO: 09/03/2016 how to know when user is at bottom of RecyclerView for pagination
+
+        if (FirebaseUtils.getUser() != null) {
+            initAdapter();
+        } else {
+            signInAnonymously();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mAdapter != null) {
+            outState.putParcelable(MANAGER_STATE, mManager.onSaveInstanceState());
+            outState.putInt(COUNT, mAdapter.getItemCount());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mAdapter != null) {
+            mAdapter.cleanup();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.team_list, menu);
+        mMenu = menu;
+
+        if (FirebaseUtils.getUser() != null && !FirebaseUtils.getUser().isAnonymous()) {
+            mMenu.findItem(R.id.action_sign_in).setVisible(false);
+        } else {
+            mMenu.findItem(R.id.action_sign_out).setVisible(false);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sign_in:
+                startActivityForResult(
+                        AuthUI.getInstance().createSignInIntentBuilder()
+                                .setLogo(R.drawable.launch_logo_image)
+                                .setProviders(
+                                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
+                                                              .build(),
+                                                      new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                                              .build(),
+                                                      new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                                                              .build(),
+                                                      new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
+                                                              .build()))
+                                .build(),
+                        RC_SIGN_IN);
+                break;
+            case R.id.action_sign_out:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mTeams.setAdapter(null);
+                                mAdapter.cleanup();
+                                mMenu.findItem(R.id.action_sign_in).setVisible(true);
+                                mMenu.findItem(R.id.action_sign_out).setVisible(false);
+                                signInAnonymously();
+                            }
+                        })
+                        .addOnFailureListener(new LogFailureListener());
+                break;
+            case R.id.action_settings:
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                // user is signed in!
+                initAdapter();
+                mMenu.findItem(R.id.action_sign_in).setVisible(false);
+                mMenu.findItem(R.id.action_sign_out).setVisible(true);
+                Snackbar.make(findViewById(android.R.id.content),
+                              R.string.signed_in,
+                              Snackbar.LENGTH_LONG).show();
+
+                DatabaseReference ref = FirebaseUtils.getDatabase()
+                        .child("users")
+                        .child(FirebaseUtils.getUid());
+                ref.child("name").setValue(FirebaseUtils.getUser().getDisplayName());
+                ref.child("provider").setValue(FirebaseUtils.getUser().getProviderId());
+                ref.child("email").setValue(FirebaseUtils.getUser().getEmail());
+            }
+        }
+    }
+
+    private void initAdapter() {
         mAdapter = new FirebaseIndexRecyclerAdapter<Team, TeamHolder>(
                 Team.class,
                 R.layout.activity_team_list_row_layout,
@@ -90,116 +203,36 @@ public class TeamListActivity extends AppCompatActivity {
             }
         };
 
-        teams.setAdapter(mAdapter);
+        mTeams.setAdapter(mAdapter);
 
-        if (savedInstanceState != null) {
+        if (mSavedState != null) {
             mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
-                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(COUNT)) {
-                        mManager.onRestoreInstanceState(savedInstanceState.getParcelable(
-                                MANAGER_STATE));
+                    if (mAdapter.getItemCount() >= mSavedState.getInt(COUNT)) {
+                        mManager.onRestoreInstanceState(mSavedState.getParcelable(MANAGER_STATE));
                         mAdapter.unregisterAdapterDataObserver(this);
                     }
                 }
             });
         }
-
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null) {
-                    teams.setAdapter(mAdapter);
-                } else {
-                    teams.setAdapter(null);
-                }
-            }
-        };
-        FirebaseUtils.getAuth().addAuthStateListener(mAuthStateListener);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        if (mAdapter != null) {
-            outState.putParcelable(MANAGER_STATE, mManager.onSaveInstanceState());
-            outState.putInt(COUNT, mAdapter.getItemCount());
-        }
+    private void signInAnonymously() {
+        FirebaseCrash.log("Attempting to sign in anonymously.");
+        FirebaseUtils.getAuth()
+                .signInAnonymously()
+                .addOnCompleteListener(this, new AnonymousSignInListener())
+                .addOnFailureListener(new LogFailureListener());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mAuthStateListener != null) {
-            FirebaseUtils.getAuth().removeAuthStateListener(mAuthStateListener);
-        }
-        if (mAdapter != null) {
-            mAdapter.cleanup();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-//        if (mDrawer.isDrawerOpen()) {
-//            mDrawer.closeDrawer();
-//        } else {
-        super.onBackPressed();
-//        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.team_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_sign_in:
-                startActivityForResult(
-                        AuthUI.getInstance().createSignInIntentBuilder()
-                                .setLogo(R.drawable.launch_logo_image)
-                                .setProviders(
-                                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
-                                                              .build(),
-                                                      new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                                                              .build(),
-                                                      new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
-                                                              .build(),
-                                                      new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
-                                                              .build()))
-                                .build(),
-                        RC_SIGN_IN);
-                break;
-            case R.id.action_sign_out:
-                AuthUI.getInstance().signOut(this);
-                break;
-            case R.id.action_settings:
-                break;
-        }
-
-        return true;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // user is signed in!
-                Snackbar.make(findViewById(android.R.id.content),
-                              R.string.successfully_signed_in,
-                              Snackbar.LENGTH_LONG).show();
-
-                DatabaseReference ref = FirebaseUtils.getDatabase()
-                        .child("users")
-                        .child(FirebaseUtils.getUid());
-                ref.child("name").setValue(FirebaseUtils.getUser().getDisplayName());
-                ref.child("provider").setValue(FirebaseUtils.getUser().getProviderId());
-                ref.child("email").setValue(FirebaseUtils.getUser().getEmail());
+    private class AnonymousSignInListener implements OnCompleteListener<AuthResult> {
+        @Override
+        public void onComplete(@NonNull Task<AuthResult> task) {
+            if (task.isSuccessful()) {
+                initAdapter();
+            } else {
+                // TODO
             }
         }
     }
