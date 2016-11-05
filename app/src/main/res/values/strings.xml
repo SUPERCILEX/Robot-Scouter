@@ -10,6 +10,7 @@
     <string name="hint_team_number">Team Number</string>
     <string name="unknown_team">Unknown</string>
     <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
     <string name="successfully_signed_in">Successfully signed in!</string>
 
     <!-- Scout Activity -->

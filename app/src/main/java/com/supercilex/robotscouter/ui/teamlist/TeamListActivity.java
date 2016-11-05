@@ -13,35 +13,22 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.ztmpfirebase.FirebaseIndexRecyclerAdapter;
-import com.supercilex.robotscouter.ztmpfirebase.FirebaseRecyclerAdapter;
+import com.supercilex.robotscouter.util.TagUtils;
+
+import java.util.Arrays;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
-// TODO: 06/21/2016 Add sign out flow
 // TODO: 08/10/2016 add Firebase analytics to menu item clicks so I know what stuff to put on top
 // TODO: 08/10/2016 make users enter their team number to setup database with their team as example. Also add Firebase analytics to make sure this isn't getting rid of users.
 // TODO: 08/31/2016 Look for FirebaseCrash.report() and set up FirebaseCrash.log(). log will put logs for the crash.
@@ -52,18 +39,14 @@ public class TeamListActivity extends AppCompatActivity {
 
     private FirebaseRecyclerAdapter mAdapter;
     private LinearLayoutManager mManager;
-
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-
-    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,19 +138,6 @@ public class TeamListActivity extends AppCompatActivity {
                 if (firebaseAuth.getCurrentUser() != null) {
                     teams.setAdapter(mAdapter);
                 } else {
-                    mAuth.signInAnonymously()
-                            .addOnFailureListener(TeamListActivity.this, new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // TODO: 09/24/2016 retry
-                                    Snackbar.make(findViewById(android.R.id.content),
-                                                  "Sign In Failed",
-                                                  Snackbar.LENGTH_SHORT)
-                                            .show();
-                                    FirebaseCrash.report(e);
-                                }
-                            });
-                    // TODO show a tutorial (pretend first time app start)
                     teams.setAdapter(null);
                 }
             }
@@ -191,7 +161,6 @@ public class TeamListActivity extends AppCompatActivity {
         if (mAuthStateListener != null) {
             FirebaseUtils.getAuth().removeAuthStateListener(mAuthStateListener);
         }
-
         if (mAdapter != null) {
             mAdapter.cleanup();
         }
@@ -202,7 +171,7 @@ public class TeamListActivity extends AppCompatActivity {
 //        if (mDrawer.isDrawerOpen()) {
 //            mDrawer.closeDrawer();
 //        } else {
-            super.onBackPressed();
+        super.onBackPressed();
 //        }
     }
 
@@ -215,31 +184,31 @@ public class TeamListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_sign_in:
+                startActivityForResult(
+                        AuthUI.getInstance().createSignInIntentBuilder()
+                                .setLogo(R.drawable.launch_logo_image)
+                                .setProviders(
+                                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
+                                                              .build(),
+                                                      new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                                              .build(),
+                                                      new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                                                              .build(),
+                                                      new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
+                                                              .build()))
+                                .build(),
+                        RC_SIGN_IN);
+                break;
+            case R.id.action_sign_out:
+                AuthUI.getInstance().signOut(this);
+                break;
+            case R.id.action_settings:
+                break;
         }
 
-        startActivityForResult(
-                AuthUI.getInstance().createSignInIntentBuilder()
-                        .setLogo(R.drawable.launch_logo_image)
-                        .setProviders(
-                                Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
-                                                      .build(),
-                                              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                                                      .build(),
-                                              new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
-                                                      .build(),
-                                              new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
-                                                      .build()))
-                        .build(),
-                RC_SIGN_IN);
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
