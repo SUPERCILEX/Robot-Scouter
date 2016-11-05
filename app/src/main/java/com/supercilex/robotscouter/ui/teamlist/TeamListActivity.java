@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +37,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
+import com.supercilex.robotscouter.util.TagUtils;
 
 import java.util.Arrays;
 
@@ -53,46 +53,29 @@ public class TeamListActivity extends AppCompatActivity {
     private static final String COUNT = "count";
 
     private FirebaseRecyclerAdapter mAdapter;
-    private RecyclerView mTeams;
     private LinearLayoutManager mManager;
 
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private Bundle mSavedState;
     private Toolbar mToolbar;
     private Drawer mDrawer;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mSavedState = savedInstanceState;
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new NewTeamDialogFragment().show(getSupportFragmentManager(), "newScout");
+                new NewTeamDialogFragment().show(getSupportFragmentManager(),
+                                                 TagUtils.getTag(this));
             }
         });
 
-        // TODO: 08/05/2016 remove and get signInAnonymous to work
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() != null) {
-                    attachRecyclerViewAdapter();
-                } else {
-                    // TODO show a tutorial (pretend first time app start)
-                }
-                initializeDrawer();
-            }
-        };
-        FirebaseUtils.getAuth().addAuthStateListener(mAuthStateListener);
 
 //        if (!isSignedIn()) {
 //            signInAnonymously();
@@ -100,11 +83,96 @@ public class TeamListActivity extends AppCompatActivity {
 //            attachRecyclerViewAdapter();
 //        }
 
-        mTeams = (RecyclerView) findViewById(R.id.team_list);
-        mTeams.setHasFixedSize(true);
+        // Example Tasks api usage
+//        Tasks.call(new Executor() {
+//            @Override
+//            public void execute(Runnable runnable) {
+//                new Thread(runnable).start();
+//            }
+//        }, new Callable<Scout>() {
+//            @Override
+//            public Scout call() throws Exception {
+//                double i = 0;
+//                Log.e(TagUtils.getTag(TeamListActivity.this), "started");
+//                while (true) {
+//                    i++;
+//                    if (i >= 1000000000L) {
+//                        break;
+//                    }
+//                }
+//                Log.e(TagUtils.getTag(TeamListActivity.this), "long code executed");
+//                return null;
+//            }
+//        }).addOnSuccessListener(new OnSuccessListener<Scout>() {
+//            @Override
+//            public void onSuccess(Scout scout) {
+//                Log.e(TagUtils.getTag(TeamListActivity.this), "onSuccess");
+//            }
+//        });
+
+        final RecyclerView teams = (RecyclerView) findViewById(R.id.team_list);
+        teams.setHasFixedSize(true);
         mManager = new LinearLayoutManager(this);
-        mTeams.setLayoutManager(mManager);
+        teams.setLayoutManager(mManager);
         // TODO: 09/03/2016 how to know when user is at bottom of RecyclerView for pagination
+        mAdapter = new FirebaseIndexRecyclerAdapter<Team, TeamHolder>(
+                Team.class,
+                R.layout.activity_team_list_row_layout,
+                TeamHolder.class,
+                FirebaseUtils.getDatabase()
+                        .child(Constants.FIREBASE_TEAM_INDEXES)
+                        .child(FirebaseUtils.getUid()),
+                FirebaseUtils.getDatabase().child(Constants.FIREBASE_TEAMS)) {
+            @Override
+            public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
+                String teamNumber = team.getNumber();
+                String key = getRef(position).getKey();
+
+                teamHolder.setTeamNumber(teamNumber);
+                teamHolder.setTeamName(team.getName(),
+                                       TeamListActivity.this.getString(R.string.unknown_team));
+                teamHolder.setTeamLogo(TeamListActivity.this, team.getMedia());
+                teamHolder.setListItemClickListener(TeamListActivity.this, teamNumber, key);
+                teamHolder.setCreateNewScoutListener(TeamListActivity.this, teamNumber, key);
+
+                team.fetchLatestData(TeamListActivity.this, key);
+            }
+
+            @Override
+            protected void onCancelled(DatabaseError databaseError) {
+                FirebaseCrash.report(databaseError.toException());
+            }
+        };
+
+        teams.setAdapter(mAdapter);
+
+        if (savedInstanceState != null) {
+            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(COUNT)) {
+                        mManager.onRestoreInstanceState(savedInstanceState.getParcelable(
+                                MANAGER_STATE));
+                        mAdapter.unregisterAdapterDataObserver(this);
+                    }
+                }
+            });
+        }
+
+        // TODO: 08/05/2016 remove and get signInAnonymous to work
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null) {
+                    teams.setAdapter(mAdapter);
+                } else {
+                    // TODO show a tutorial (pretend first time app start)
+                    teams.setAdapter(null);
+                }
+                initializeDrawer();
+            }
+        };
+        FirebaseUtils.getAuth().addAuthStateListener(mAuthStateListener);
     }
 
     @Override
@@ -180,51 +248,6 @@ public class TeamListActivity extends AppCompatActivity {
         }
     }
 
-    private void attachRecyclerViewAdapter() {
-        mAdapter = new FirebaseIndexRecyclerAdapter<Team, TeamHolder>(
-                Team.class,
-                R.layout.activity_team_list_row_layout,
-                TeamHolder.class,
-                FirebaseUtils.getDatabase()
-                        .child(Constants.FIREBASE_TEAM_INDEXES)
-                        .child(FirebaseUtils.getUid()),
-                FirebaseUtils.getDatabase().child(Constants.FIREBASE_TEAMS)) {
-            @Override
-            public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
-                String teamNumber = team.getNumber();
-                String key = getRef(position).getKey();
-
-                teamHolder.setTeamNumber(teamNumber);
-                teamHolder.setTeamName(team.getName(),
-                                       TeamListActivity.this.getString(R.string.unknown_team));
-                teamHolder.setTeamLogo(TeamListActivity.this, team.getMedia());
-                teamHolder.setListItemClickListener(TeamListActivity.this, teamNumber, key);
-                teamHolder.setCreateNewScoutListener(TeamListActivity.this, teamNumber, key);
-
-                team.fetchLatestData(TeamListActivity.this, key);
-            }
-
-            @Override
-            protected void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
-            }
-        };
-
-        mTeams.setAdapter(mAdapter);
-
-        if (mSavedState != null) {
-            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    if (mAdapter.getItemCount() >= mSavedState.getInt(COUNT)) {
-                        mManager.onRestoreInstanceState(mSavedState.getParcelable(MANAGER_STATE));
-                        mAdapter.unregisterAdapterDataObserver(this);
-                    }
-                }
-            });
-        }
-    }
-
     // TODO: 08/29/2016 move all old uid to new uid and delete old https://github.com/firebase/FirebaseUI-Android/issues/123
     private void signInAnonymously() {
         FirebaseUtils.getAuth().signInAnonymously()
@@ -232,7 +255,6 @@ public class TeamListActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            attachRecyclerViewAdapter();
                             initializeDrawer();
                         } else {
                             Snackbar.make(findViewById(android.R.id.content),
