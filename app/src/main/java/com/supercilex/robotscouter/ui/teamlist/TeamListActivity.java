@@ -13,8 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -37,9 +36,8 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.util.TagUtils;
-
-import java.util.Arrays;
+import com.supercilex.robotscouter.ztmpfirebase.FirebaseIndexRecyclerAdapter;
+import com.supercilex.robotscouter.ztmpfirebase.FirebaseRecyclerAdapter;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -58,7 +56,6 @@ public class TeamListActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private Toolbar mToolbar;
-    private Drawer mDrawer;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -75,13 +72,6 @@ public class TeamListActivity extends AppCompatActivity {
                                                  TagUtils.getTag(this));
             }
         });
-
-
-//        if (!isSignedIn()) {
-//            signInAnonymously();
-//        } else {
-//            attachRecyclerViewAdapter();
-//        }
 
         // Example Tasks api usage
 //        Tasks.call(new Executor() {
@@ -159,17 +149,27 @@ public class TeamListActivity extends AppCompatActivity {
             });
         }
 
-        // TODO: 08/05/2016 remove and get signInAnonymous to work
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser() != null) {
                     teams.setAdapter(mAdapter);
                 } else {
+                    mAuth.signInAnonymously()
+                            .addOnFailureListener(TeamListActivity.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // TODO: 09/24/2016 retry
+                                    Snackbar.make(findViewById(android.R.id.content),
+                                                  "Sign In Failed",
+                                                  Snackbar.LENGTH_SHORT)
+                                            .show();
+                                    FirebaseCrash.report(e);
+                                }
+                            });
                     // TODO show a tutorial (pretend first time app start)
                     teams.setAdapter(null);
                 }
-                initializeDrawer();
             }
         };
         FirebaseUtils.getAuth().addAuthStateListener(mAuthStateListener);
@@ -199,11 +199,11 @@ public class TeamListActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mDrawer.isDrawerOpen()) {
-            mDrawer.closeDrawer();
-        } else {
+//        if (mDrawer.isDrawerOpen()) {
+//            mDrawer.closeDrawer();
+//        } else {
             super.onBackPressed();
-        }
+//        }
     }
 
     @Override
@@ -220,10 +220,24 @@ public class TeamListActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
+
+        startActivityForResult(
+                AuthUI.getInstance().createSignInIntentBuilder()
+                        .setLogo(R.drawable.launch_logo_image)
+                        .setProviders(
+                                Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
+                                                      .build(),
+                                              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                                                      .build(),
+                                              new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                                                      .build(),
+                                              new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
+                                                      .build()))
+                        .build(),
+                RC_SIGN_IN);
 
         return super.onOptionsItemSelected(item);
     }
@@ -246,127 +260,5 @@ public class TeamListActivity extends AppCompatActivity {
                 ref.child("email").setValue(FirebaseUtils.getUser().getEmail());
             }
         }
-    }
-
-    // TODO: 08/29/2016 move all old uid to new uid and delete old https://github.com/firebase/FirebaseUI-Android/issues/123
-    private void signInAnonymously() {
-        FirebaseUtils.getAuth().signInAnonymously()
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            initializeDrawer();
-                        } else {
-                            Snackbar.make(findViewById(android.R.id.content),
-                                          "Sign In Failed",
-                                          Snackbar.LENGTH_SHORT)
-                                    .show();
-                            FirebaseCrash.report(task.getException());
-                        }
-                    }
-                });
-    }
-
-    // TODO: 08/04/2016 get rid of this
-    private void initializeDrawer() {
-        AccountHeader header;
-        if (FirebaseUtils.getUser() != null)
-            if (!FirebaseUtils.getUser().isAnonymous()) {
-                // already signed in
-                FirebaseUser user = FirebaseUtils.getUser();
-                header = new AccountHeaderBuilder()
-                        .withActivity(this)
-                        .withHeaderBackground(R.mipmap.ic_launcher)
-                        .withSelectionListEnabledForSingleProfile(false)
-                        .addProfiles(
-                                new ProfileDrawerItem().withName(user.getDisplayName())
-                                        .withEmail(user.getEmail())
-                                        .withIcon(R.drawable.ic_person_black_24dp)
-                        )
-                        .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                            @Override
-                            public boolean onProfileChanged(View view,
-                                                            IProfile profile,
-                                                            boolean currentProfile) {
-                                AuthUI.getInstance()
-                                        .signOut(TeamListActivity.this)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                // user is now signed out
-                                            }
-                                        });
-                                return true;
-                            }
-                        })
-                        .build();
-            } else {
-                header = getNavBarSignedOut();
-            }
-        else {
-            // not signed in
-            header = getNavBarSignedOut();
-        }
-
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1)
-                .withName("R.string.drawer_item_home");
-        mDrawer = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(mToolbar)
-                .withAccountHeader(header)
-                .addDrawerItems(
-                        item1,
-                        new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withIdentifier(2)
-                                .withName("R.string.drawer_item_settings1"),
-                        new SecondaryDrawerItem().withName("R.string.drawer_item_setting2s")
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        // do something with the clicked item :D
-                        return true;
-                    }
-                })
-                .build();
-
-        mDrawer.setSelection(item1);
-    }
-
-    private AccountHeader getNavBarSignedOut() {
-        AccountHeader header;// not signed in
-        header = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withHeaderBackground(R.mipmap.ic_launcher)
-                .withSelectionListEnabledForSingleProfile(false)
-                .addProfiles(
-                        new ProfileDrawerItem().withName(getString(R.string.sign_in))
-                                .withIcon(R.drawable.ic_person_black_24dp)
-                )
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view,
-                                                    IProfile profile,
-                                                    boolean currentProfile) {
-                        // TODO: 09/06/2016 Fix sign in
-                        startActivityForResult(
-                                AuthUI.getInstance().createSignInIntentBuilder()
-                                        .setLogo(R.drawable.launch_logo_image)
-                                        .setProviders(
-                                                Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
-                                                                      .build(),
-                                                              new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
-                                                                      .build(),
-                                                              new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
-                                                                      .build(),
-                                                              new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER)
-                                                                      .build()))
-                                        .build(),
-                                RC_SIGN_IN);
-                        return true;
-                    }
-                })
-                .build();
-        return header;
     }
 }
