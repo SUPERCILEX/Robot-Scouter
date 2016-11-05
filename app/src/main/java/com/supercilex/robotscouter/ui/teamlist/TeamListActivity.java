@@ -56,33 +56,6 @@ public class TeamListActivity extends AppCompatActivity {
             }
         });
 
-        // Example Tasks api usage
-//        Tasks.call(new Executor() {
-//            @Override
-//            public void execute(Runnable runnable) {
-//                new Thread(runnable).start();
-//            }
-//        }, new Callable<Scout>() {
-//            @Override
-//            public Scout call() throws Exception {
-//                double i = 0;
-//                Log.e(TagUtils.getTag(TeamListActivity.this), "started");
-//                while (true) {
-//                    i++;
-//                    if (i >= 1000000000L) {
-//                        break;
-//                    }
-//                }
-//                Log.e(TagUtils.getTag(TeamListActivity.this), "long code executed");
-//                return null;
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<Scout>() {
-//            @Override
-//            public void onSuccess(Scout scout) {
-//                Log.e(TagUtils.getTag(TeamListActivity.this), "onSuccess");
-//            }
-//        });
-
         final RecyclerView teams = (RecyclerView) findViewById(R.id.team_list);
         teams.setHasFixedSize(true);
         mManager = new LinearLayoutManager(this);
