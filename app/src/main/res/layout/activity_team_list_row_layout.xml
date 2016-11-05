@@ -65,7 +65,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:background="#0000"
-        android:contentDescription="@string/accessibility_new_scout"
+        android:contentDescription="@string/new_scout"
         android:src="@drawable/ic_add_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"

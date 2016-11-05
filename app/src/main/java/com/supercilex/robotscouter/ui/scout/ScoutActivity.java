@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
@@ -91,7 +92,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
 
         if (savedInstanceState == null && !isNetworkAvailable()) {
             Snackbar.make(findViewById(android.R.id.content),
-                          R.string.no_connection_current_scout,
+                          R.string.no_connection,
                           Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -111,7 +112,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_current_scout, menu);
+        getMenuInflater().inflate(R.menu.scout, menu);
         mMenu = menu;
 
         menu.findItem(R.id.action_visit_tba_team_website)
@@ -130,6 +131,9 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_new_scout:
+                new Scout().createScoutId(mTeam.getNumber());
+                break;
             case R.id.action_visit_tba_team_website:
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 builder.setToolbarColor(ContextCompat.getColor(this, R.color.color_primary));

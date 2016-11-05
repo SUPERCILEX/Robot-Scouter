@@ -20,14 +20,14 @@
     <string name="menu_item_visit_team_website">Visit team %s\'s website</string>
     <string name="visit_team_on_the_blue_alliance">Visit team on The Blue Alliance</string>
     <string name="menu_item_visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
-    <string name="no_connection_current_scout">Offline. Data will be saved</string>
+    <string name="no_connection">Offline. Data will be saved</string>
     <string name="team_name">Team name</string>
     <string name="team_website">Team website</string>
     <string name="team_logo">Team logo url</string>
     <string name="hint_notes">Notes</string>
+    <string name="new_scout">New Scout</string>
 
     <!-- Accessibility -->
-    <string name="accessibility_new_scout">Create new Scout</string>
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
