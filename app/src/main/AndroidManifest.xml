@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.supercilex.robotscouter">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.supercilex.robotscouter">
 
     <!-- For Chromebooks -->
     <uses-feature
@@ -9,7 +10,7 @@
         android:required="false"/>
 
     <application
-        android:name=".util.CanaryKiller"
+        android:name=".RobotScouter"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,35 +18,52 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
+
         <activity
             android:name=".ui.teamlist.TeamListActivity"
             android:label="${appName}"
             android:theme="@style/AppTheme.Launcher">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
+                <!--TODO-->
                 <data
                     android:host="supercilex.github.io"
                     android:pathPrefix="/Robot-Scouter/teamlist"
                     android:scheme="https"/>
             </intent-filter>
+
         </activity>
+
         <activity
             android:name=".ui.scout.ScoutActivity"
             android:label="@string/title_activity_scout"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/AppTheme.NoActionBar">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.teamlist.TeamListActivity"/>
+
         </activity>
+
+        <service
+            android:name=".data.job.DownloadTeamDataJob"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>"
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

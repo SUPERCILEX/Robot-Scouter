@@ -38,12 +38,13 @@ android {
 
         debug {
             applicationIdSuffix '.debug'
-            versionNameSuffix "-DEBUG:$vCode"
-            manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
+            versionNameSuffix '-DEBUG'
+            manifestPlaceholders = [appName: "Robot Scouter DEBUG: $vCode"]
         }
     }
 
     lintOptions {
+//        todo
         warningsAsErrors true
         htmlReport true
         htmlOutput file("lint-report.html")
@@ -64,7 +65,7 @@ dependencies {
     compile "com.google.firebase:firebase-crash:$playServicesVersion"
     compile "com.google.firebase:firebase-invites:$playServicesVersion"
     compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
-    compile 'com.firebase:firebase-jobdispatcher:0.5.0'
+    compile 'com.firebase:firebase-jobdispatcher-with-gcm-dep:0.5.0'
 
     // Third party
     compile 'com.facebook.android:facebook-android-sdk:4.17.0'

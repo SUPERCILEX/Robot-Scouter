@@ -26,6 +26,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -176,7 +178,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     }
 
     private void updateUi() {
-        if (mTeam.getKey() != null) {
+        if (mTeam.getKey() != null && mTeamRef == null) {
             mTeamRef = FirebaseUtils.getDatabase()
                     .child(Constants.FIREBASE_TEAMS)
                     .child(mTeam.getKey());
@@ -200,17 +202,20 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
 
                             mTeam.add();
                             updateUi();
-                            new TbaService(mTeam, ScoutActivity.this) {
-                                @Override
-                                public void onFinished(Team team, boolean isSuccess) {
-                                    if (isSuccess) {
-                                        mTeam = team;
-                                        mTeam.overwriteData();
-                                    } else {
-                                        startDownloadTeamDataJob();
-                                    }
-                                }
-                            };
+                            TbaService.start(mTeam, ScoutActivity.this)
+                                    .addOnCompleteListener(new OnCompleteListener<Team>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Team> task) {
+                                            if (task.isSuccessful()) {
+                                                mTeam = task.getResult();
+                                                mTeam.overwriteData();
+                                                FirebaseUtils.getDispatcher()
+                                                        .cancel(mTeam.getNumber());
+                                            } else {
+                                                mTeam.fetchLatestData();
+                                            }
+                                        }
+                                    });
                         }
 
                         @Override
@@ -254,29 +259,6 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     @Override
     public void onCancelled(DatabaseError databaseError) {
         FirebaseCrash.report(databaseError.toException());
-    }
-
-    private void startDownloadTeamDataJob() {
-//        Driver myDriver = new GooglePlayDriver(this);
-//        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(myDriver);
-//
-//        Bundle bundle = new Bundle();
-//        bundle.putString(Constants.INTENT_TEAM_NUMBER, mNumber);
-//        bundle.putString(Constants.INTENT_TEAM_KEY, mKey);
-//
-//        Job job = dispatcher.newJobBuilder()
-//                .setService(DownloadTeamDataJob.class)
-//                .setTag(mNumber)
-//                .setReplaceCurrent(true)
-//                .setConstraints(Constraint.ON_ANY_NETWORK)
-//                .setTrigger(Trigger.NOW)
-//                .setExtras(bundle)
-//                .build();
-//
-//        int result = dispatcher.schedule(job);
-//        if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-//            FirebaseCrash.report(new IllegalArgumentException("Job Scheduler failed."));
-//        }
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.model;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -11,6 +10,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
 
@@ -122,11 +122,10 @@ public class Team {
         FirebaseUtils.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey).setValue(this);
     }
 
-    public void update(@NonNull String teamNumber, @NonNull String key) {
-        mNumber = teamNumber;
+    public void update() {
         DatabaseReference ref = FirebaseUtils.getDatabase()
                 .child(Constants.FIREBASE_TEAMS)
-                .child(key);
+                .child(mKey);
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -192,30 +191,10 @@ public class Team {
         });
     }
 
-    public void fetchLatestData(Activity activity, String key) {
-//        long differenceDays = (System.currentTimeMillis() - getLastUpdatedLong()) / (1000 * 60 * 60 * 24);
-//
-//        if (differenceDays >= 7) {
-//            Driver myDriver = new GooglePlayDriver(activity);
-//            FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(myDriver);
-//
-//            Bundle bundle = new Bundle();
-//            bundle.putString(Constants.INTENT_TEAM_NUMBER, mNumber);
-//            bundle.putString(Constants.INTENT_TEAM_KEY, key);
-//
-//            Job job = dispatcher.newJobBuilder()
-//                    .setService(DownloadTeamDataJob.class)
-//                    .setTag(mNumber)
-//                    .setReplaceCurrent(true)
-//                    .setConstraints(Constraint.ON_ANY_NETWORK)
-//                    .setTrigger(Trigger.NOW)
-//                    .setExtras(bundle)
-//                    .build();
-//
-//            int result = dispatcher.schedule(job);
-//            if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-//                FirebaseCrash.report(new IllegalArgumentException("Job Scheduler failed."));
-//            }
-//        }
+    public void fetchLatestData() {
+        long differenceDays = (System.currentTimeMillis() - mTimestamp) / (1000 * 60 * 60 * 24);
+        if (differenceDays >= 7) {
+            DownloadTeamDataJob.start(this);
+        }
     }
 }

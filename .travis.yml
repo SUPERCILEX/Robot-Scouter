@@ -1,3 +1,4 @@
+#TODO
 language: android
 jdk: oraclejdk8
 group: edge
@@ -28,6 +29,4 @@ before_script:
   - mv travis-dummies/keystore.jks app/keystore.jks
   - chmod +x gradlew
 script: ./gradlew clean build lint
-after_script:
-  - echo "LINT REPORT:" >> /dev/stderr
-  - cat app/lint-report.html
+after_script: cat app/lint-report.html

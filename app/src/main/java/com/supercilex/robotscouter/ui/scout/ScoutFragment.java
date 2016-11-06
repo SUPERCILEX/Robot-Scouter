@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.ScoutSpinner;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
@@ -22,7 +23,6 @@ import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
-import com.supercilex.robotscouter.util.CanaryKiller;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
 
@@ -45,7 +45,7 @@ public class ScoutFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
-        CanaryKiller.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

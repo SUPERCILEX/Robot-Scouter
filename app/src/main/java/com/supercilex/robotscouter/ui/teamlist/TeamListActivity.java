@@ -185,16 +185,20 @@ public class TeamListActivity extends AppCompatActivity {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
                 String teamNumber = team.getNumber();
-                String key = getRef(position).getKey();
+                team.setKey(getRef(position).getKey());
 
                 teamHolder.setTeamNumber(teamNumber);
                 teamHolder.setTeamName(team.getName(),
                                        TeamListActivity.this.getString(R.string.unknown_team));
                 teamHolder.setTeamLogo(TeamListActivity.this, team.getMedia());
-                teamHolder.setListItemClickListener(TeamListActivity.this, teamNumber, key);
-                teamHolder.setCreateNewScoutListener(TeamListActivity.this, teamNumber, key);
+                teamHolder.setListItemClickListener(TeamListActivity.this,
+                                                    teamNumber,
+                                                    team.getKey());
+                teamHolder.setCreateNewScoutListener(TeamListActivity.this,
+                                                     teamNumber,
+                                                     team.getKey());
 
-                team.fetchLatestData(TeamListActivity.this, key);
+                team.fetchLatestData();
             }
 
             @Override
