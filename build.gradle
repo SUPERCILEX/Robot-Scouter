@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath 'com.android.tools.build:gradle:2.2.2'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
@@ -15,6 +15,7 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        maven { url 'https://maven.fabric.io/public' }
     }
 }
 
@@ -23,8 +24,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    supportLibVersion = "24.2.1"
-    playServicesVersion = "9.6.1"
+    supportLibVersion = "25.0.0"
+    playServicesVersion = "9.8.0"
     retrofitVersion = "2.1.0"
 
     // Build the version code
@@ -32,14 +33,15 @@ ext {
         def versionPropsFile = file('gradle.properties')
 
         if (versionPropsFile.canRead()) {
-            def Properties versionProps = new Properties()
+            Properties versionProps = new Properties()
 
             versionProps.load(new FileInputStream(versionPropsFile))
 
             def code = versionProps['VERSION_CODE'].toInteger() + 1
 
             versionProps['VERSION_CODE'] = code.toString()
-            versionProps.store(versionPropsFile.newWriter(), null)
+            versionProps.store(versionPropsFile.newWriter(),
+                    "# suppress inspection \"UnusedProperty\" for whole file")
 
             return code
         } else {

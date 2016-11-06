@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Scout {
-    private String mOwner = FirebaseUtils.getUser().getUid();
+    private String mOwner = FirebaseUtils.getUid();
     private Map<String, Object> mScoutMetrics = new LinkedHashMap<>();
 
     public Scout() {
@@ -37,7 +37,6 @@ public class Scout {
 
     public void createScoutId(String teamNumber) {
         DatabaseReference index = FirebaseUtils.getDatabase()
-                .getReference()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(mOwner)
                 .child(teamNumber)
@@ -48,7 +47,6 @@ public class Scout {
         index.setValue(true);
 
         DatabaseReference scouts = FirebaseUtils.getDatabase()
-                .getReference()
                 .child(Constants.FIREBASE_SCOUTS)
                 .child(scoutKey);
 

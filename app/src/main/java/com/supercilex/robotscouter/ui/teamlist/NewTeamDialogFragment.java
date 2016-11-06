@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 public class NewTeamDialogFragment extends DialogFragment {
@@ -35,7 +36,7 @@ public class NewTeamDialogFragment extends DialogFragment {
         final LayoutInflater inflater = getActivity().getLayoutInflater();
         @SuppressLint("InflateParams") final View view = inflater.inflate(R.layout.create_new_team_dialog,
                                                                           null);
-        final EditText editText = (EditText) view.findViewById(R.id.create_new_team_dialog_team_number);
+        final EditText editText = (EditText) view.findViewById(R.id.number);
 
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -69,6 +70,7 @@ public class NewTeamDialogFragment extends DialogFragment {
     }
 
     private void startScout(String teamNumber) {
+        new Scout().createScoutId(teamNumber);
         startActivity(ScoutActivity.createIntent(getContext(), teamNumber, null));
     }
 }

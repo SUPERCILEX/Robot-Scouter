@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.data.model;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.PropertyName;
+import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 
@@ -15,16 +17,18 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
         mSelectedValue = selectedValue;
     }
 
+    @PropertyName(Constants.FIREBASE_SELECTED_VALUE)
     public int getSelectedValue() {
         return mSelectedValue;
     }
 
+    @PropertyName(Constants.FIREBASE_SELECTED_VALUE)
     public void setSelectedValue(int selectedValue) {
         mSelectedValue = selectedValue;
     }
 
     public void setSelectedValue(DatabaseReference databaseReference, int selectedValue) {
-        databaseReference.child("selectedValue").setValue(selectedValue);
+        databaseReference.child(Constants.FIREBASE_SELECTED_VALUE).setValue(selectedValue);
         mSelectedValue = selectedValue;
     }
 }
