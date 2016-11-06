@@ -7,13 +7,14 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
+    def vCode = buildVersionCode()
 
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
         targetSdkVersion 25
         minSdkVersion 16
-        versionCode buildVersionCode()
+        versionCode vCode
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -37,7 +38,7 @@ android {
 
         debug {
             applicationIdSuffix '.debug'
-            versionNameSuffix '-DEBUG'
+            versionNameSuffix "-DEBUG:$vCode"
             manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
         }
     }
