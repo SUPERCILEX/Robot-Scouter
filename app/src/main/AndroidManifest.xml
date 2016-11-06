@@ -33,10 +33,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <!--TODO-->
                 <data
                     android:host="supercilex.github.io"
-                    android:pathPrefix="/Robot-Scouter/teamlist"
+                    android:pathPrefix="/Robot-Scouter/appindextest"
                     android:scheme="https"/>
             </intent-filter>
 
