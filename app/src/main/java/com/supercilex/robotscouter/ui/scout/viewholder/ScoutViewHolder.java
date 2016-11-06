@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.scout.viewholders;
+package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

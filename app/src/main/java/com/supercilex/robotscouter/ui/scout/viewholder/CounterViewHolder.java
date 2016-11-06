@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.scout.viewholders;
+package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.view.View;
 import android.widget.ImageButton;
