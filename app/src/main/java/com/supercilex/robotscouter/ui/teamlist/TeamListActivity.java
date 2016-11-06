@@ -115,7 +115,7 @@ public class TeamListActivity extends AppCompatActivity {
             case R.id.action_sign_in:
                 startActivityForResult(
                         AuthUI.getInstance().createSignInIntentBuilder()
-                                .setLogo(R.drawable.launch_logo_image)
+                                .setLogo(R.drawable.launch_logo)
                                 .setProviders(
                                         Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER)
                                                               .build(),
