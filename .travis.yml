@@ -2,7 +2,7 @@ language: android
 jdk: oraclejdk8
 dist: trusty
 sudo: false
-group: edge
+group: beta
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
