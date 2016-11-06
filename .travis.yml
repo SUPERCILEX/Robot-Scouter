@@ -1,6 +1,6 @@
-#TODO
 language: android
 jdk: oraclejdk8
+dist: trusty
 group: edge
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
