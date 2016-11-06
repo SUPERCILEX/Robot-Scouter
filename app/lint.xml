@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+
+    <issue id="InvalidPackage" severity="ignore"/>
+    <issue id="AppLinksAutoVerifyError" severity="warning"/>
+    <issue id="AppLinksAutoVerifyWarning" severity="warning"/>
+    <issue id="BackButton" severity="warning"/>
+    <issue id="EasterEgg" severity="warning"/>
+    <issue id="FieldGetter" severity="warning"/>
+    <issue id="GoogleAppIndexingApiWarning" severity="warning"/>
+    <issue id="IconExpectedSize" severity="warning"/>
+    <issue id="LogConditional" severity="warning"/>
+    <issue id="MangledCRLF" severity="warning"/>
+    <issue id="MissingRegistered" severity="warning"/>
+    <issue id="NegativeMargin" severity="warning"/>
+    <issue id="NewerVersionAvailable" severity="warning"/>
+    <issue id="SelectableText" severity="warning"/>
+    <issue id="StopShip" severity="warning"/>
+    <issue id="TypographyQuotes" severity="warning"/>
+    <issue id="UnusedIds" severity="warning"/>
+
+    <issue id="UnusedResources">
+        <ignore path="build\generated\res\google-services\debug\values\values.xml"/>
+        <ignore path="build\generated\res\google-services\release\values\values.xml"/>
+    </issue>
+
+</lint>

@@ -44,7 +44,6 @@ android {
     }
 
     lintOptions {
-//        todo
         warningsAsErrors true
         htmlReport true
         htmlOutput file("lint-report.html")

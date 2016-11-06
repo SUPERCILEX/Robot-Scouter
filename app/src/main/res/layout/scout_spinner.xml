@@ -16,6 +16,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:textIsSelectable="false"
         app:layout_constraintLeft_toLeftOf="@+id/constraintLayout7"
         app:layout_constraintRight_toLeftOf="@+id/spinner"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout7"
