@@ -31,6 +31,7 @@ import java.util.ArrayList;
 public class ScoutFragment extends Fragment {
     private static final String ARG_SCOUT_KEY = "scout_key";
 
+    // TODO: 11/06/2016 copy commit 02cc02ed49ae89be6d820ce5405aca5f579e1476
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
 
     public static ScoutFragment newInstance(String key) {
@@ -133,9 +134,7 @@ public class ScoutFragment extends Fragment {
                                                                        parent,
                                                                        false));
                     default:
-                        FirebaseCrash.report(new IllegalStateException(
-                                "Incomplete case statement: onCreateViewHolder"));
-                        return null;
+                        throw new IllegalStateException();
                 }
             }
 
