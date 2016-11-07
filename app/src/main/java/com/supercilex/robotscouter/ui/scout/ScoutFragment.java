@@ -23,8 +23,8 @@ import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
 
 import java.util.ArrayList;
 
@@ -49,7 +49,8 @@ public class ScoutFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);
 
@@ -63,7 +64,7 @@ public class ScoutFragment extends Fragment {
                 ScoutMetric.class,
                 R.layout.activity_team_list_row_layout,
                 ScoutViewHolder.class,
-                FirebaseUtils.getDatabase()
+                BaseHelper.getDatabase()
                         .child(Constants.FIREBASE_SCOUTS)
                         .child(getArguments().getString(ARG_SCOUT_KEY))
                         .child(Constants.FIREBASE_VIEWS)) {

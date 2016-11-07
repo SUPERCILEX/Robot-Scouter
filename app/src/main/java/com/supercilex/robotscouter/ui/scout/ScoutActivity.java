@@ -39,8 +39,8 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
 import com.supercilex.robotscouter.ui.AppCompatActivityBase;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
 
 public class ScoutActivity extends AppCompatActivityBase implements ValueEventListener, ChildEventListener {
     private Team mTeam;
@@ -85,9 +85,9 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mPagerAdapter);
         ((TabLayout) findViewById(R.id.scouts)).setupWithViewPager(viewPager);
-        mScoutRef = FirebaseUtils.getDatabase()
+        mScoutRef = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
-                .child(FirebaseUtils.getUid())
+                .child(BaseHelper.getUid())
                 .child(mTeam.getNumber());
         mScoutRef.addChildEventListener(this);
 
@@ -158,7 +158,7 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
                                                                                    mTeam.getName(),
                                                                                    mTeam.getWebsite(),
                                                                                    mTeam.getMedia());
-                newFragment.show(getSupportFragmentManager(), mHelper.getTag());
+                newFragment.show(getSupportFragmentManager(), getHelper().getTag());
                 break;
             case R.id.action_settings:
                 break;
@@ -178,14 +178,14 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
 
     private void updateUi() {
         if (mTeam.getKey() != null && mTeamRef == null) {
-            mTeamRef = FirebaseUtils.getDatabase()
+            mTeamRef = BaseHelper.getDatabase()
                     .child(Constants.FIREBASE_TEAMS)
                     .child(mTeam.getKey());
             mTeamRef.addValueEventListener(this);
         } else {
-            FirebaseUtils.getDatabase()
+            BaseHelper.getDatabase()
                     .child(Constants.FIREBASE_TEAM_INDEXES)
-                    .child(FirebaseUtils.getUid())
+                    .child(BaseHelper.getUid())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -208,7 +208,7 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
                                             if (task.isSuccessful()) {
                                                 mTeam = task.getResult();
                                                 mTeam.overwriteData();
-                                                FirebaseUtils.getDispatcher()
+                                                BaseHelper.getDispatcher()
                                                         .cancel(mTeam.getNumber());
                                             } else {
                                                 mTeam.fetchLatestData();

@@ -11,8 +11,8 @@ import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
 
 import java.util.Map;
 
@@ -103,8 +103,8 @@ public class Team {
     public void add() {
         mShouldUpdateTimestamp = false;
 
-        String userId = FirebaseUtils.getUid();
-        DatabaseReference ref = FirebaseUtils.getDatabase();
+        String userId = BaseHelper.getUid();
+        DatabaseReference ref = BaseHelper.getDatabase();
         String key = ref.push().getKey();
 
         ref.child(Constants.FIREBASE_TEAM_INDEXES)
@@ -119,11 +119,11 @@ public class Team {
     }
 
     public void overwriteData() {
-        FirebaseUtils.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey).setValue(this);
+        BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey).setValue(this);
     }
 
     public void update() {
-        DatabaseReference ref = FirebaseUtils.getDatabase()
+        DatabaseReference ref = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_TEAMS)
                 .child(mKey);
 
@@ -158,7 +158,7 @@ public class Team {
 
     public void updateWithCustomDetails(@NonNull String teamNumber, @NonNull String key) {
         mNumber = teamNumber;
-        DatabaseReference ref = FirebaseUtils.getDatabase()
+        DatabaseReference ref = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_TEAMS)
                 .child(key);
 

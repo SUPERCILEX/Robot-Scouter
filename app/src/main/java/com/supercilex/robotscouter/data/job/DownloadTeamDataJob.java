@@ -13,8 +13,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
 
 public class DownloadTeamDataJob extends JobService {
     public static void start(Team team) {
@@ -22,14 +22,14 @@ public class DownloadTeamDataJob extends JobService {
         bundle.putString(Constants.INTENT_TEAM_NUMBER, team.getNumber());
         bundle.putString(Constants.INTENT_TEAM_KEY, team.getKey());
 
-        Job job = FirebaseUtils.getDispatcher().newJobBuilder()
+        Job job = BaseHelper.getDispatcher().newJobBuilder()
                 .setService(DownloadTeamDataJob.class)
                 .setTag(team.getNumber())
                 .setExtras(bundle)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
 
-        int result = FirebaseUtils.getDispatcher().schedule(job);
+        int result = BaseHelper.getDispatcher().schedule(job);
         if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
             FirebaseCrash.report(new RuntimeException("DownloadTeamDataJob failed with code: " + result));
         }

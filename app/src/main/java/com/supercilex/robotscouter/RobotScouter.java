@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.supercilex.robotscouter.util.FirebaseUtils;
+import com.supercilex.robotscouter.util.BaseHelper;
 
 /**
  * A simple class for LeakCanary integration.
@@ -28,6 +28,6 @@ public class RobotScouter extends Application {
         }
         refWatcher = LeakCanary.install(this);
 
-        FirebaseUtils.getDispatcher(this);
+        BaseHelper.getDispatcher(this);
     }
 }
