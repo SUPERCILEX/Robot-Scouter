@@ -18,7 +18,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,12 +37,12 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
+import com.supercilex.robotscouter.ui.AppCompatActivityBase;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseUtils;
-import com.supercilex.robotscouter.util.TagUtils;
 
-public class ScoutActivity extends AppCompatActivity implements ValueEventListener, ChildEventListener {
+public class ScoutActivity extends AppCompatActivityBase implements ValueEventListener, ChildEventListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
@@ -76,16 +75,16 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());
+        if (mTeam.getNumber() == null) return;
+        getSupportActionBar().setTitle(mTeam.getNumber());
+
+        updateUi();
+
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mPagerAdapter);
         ((TabLayout) findViewById(R.id.scouts)).setupWithViewPager(viewPager);
-
-        mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());
-        if (mTeam.getNumber() == null) return;
-        getSupportActionBar().setTitle(mTeam.getNumber());
-        updateUi();
-
         mScoutRef = FirebaseUtils.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(FirebaseUtils.getUid())
@@ -159,7 +158,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                                                                                    mTeam.getName(),
                                                                                    mTeam.getWebsite(),
                                                                                    mTeam.getMedia());
-                newFragment.show(getSupportFragmentManager(), TagUtils.getTag(this));
+                newFragment.show(getSupportFragmentManager(), mHelper.getTag());
                 break;
             case R.id.action_settings:
                 break;

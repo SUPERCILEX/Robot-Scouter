@@ -34,8 +34,8 @@ public class NewTeamDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         final LayoutInflater inflater = getActivity().getLayoutInflater();
-        @SuppressLint("InflateParams") final View view = inflater.inflate(R.layout.create_new_team_dialog,
-                                                                          null);
+        @SuppressLint("InflateParams")
+        final View view = inflater.inflate(R.layout.create_new_team_dialog, null);
         final EditText editText = (EditText) view.findViewById(R.id.number);
 
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

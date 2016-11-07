@@ -24,6 +24,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TbaService implements Callable<Team> {
+    private static final String sToken = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
+
     private Team mTeam;
     private Context mContext;
     private TbaApi mTbaApi;
@@ -44,8 +46,8 @@ public class TbaService implements Callable<Team> {
 
     @Override
     public Team call() throws Exception {
-        getTeamInfo();
         getTeamMedia();
+        getTeamInfo();
 
         Task<Void> data = Tasks.whenAll(mInfoTask.getTask(), mMediaTask.getTask());
         try {
@@ -57,7 +59,7 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamInfo() {
-        mTbaApi.getTeamInfo(mTeam.getNumber(), "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME)
+        mTbaApi.getTeamInfo(mTeam.getNumber(), sToken)
                 .enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -74,6 +76,7 @@ public class TbaService implements Callable<Team> {
                         if (teamWebsite != null && !teamWebsite.isJsonNull()) {
                             mTeam.setWebsite(teamWebsite.getAsString());
                         }
+
                         mInfoTask.setResult(null);
                     }
 
@@ -85,35 +88,32 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamMedia() {
-        mTbaApi.getTeamMedia(mTeam.getNumber(), "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME)
+        mTbaApi.getTeamMedia(mTeam.getNumber(), sToken)
                 .enqueue(new Callback<JsonArray>() {
                     @Override
                     public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                         if (!canContinue(mMediaTask, response)) return;
 
                         JsonArray result = response.body();
-
                         for (int i = 0; i < result.size(); i++) {
                             JsonObject mediaObject = result.get(i).getAsJsonObject();
                             String mediaType = mediaObject.get("type").getAsString();
 
                             if (mediaType != null) {
                                 if (mediaType.equals("imgur")) {
-                                    String url = "https://i.imgur.com/" + mediaObject.get(
-                                            "foreign_key")
-                                            .getAsString() + ".png";
+                                    String url = "https://i.imgur.com/"
+                                            + mediaObject.get("foreign_key").getAsString() + ".png";
 
-                                    getMedia(url);
+                                    cacheMedia(url);
                                     break;
                                 } else if (mediaType.equals("cdphotothread")) {
-                                    String url = "https://www.chiefdelphi.com/media/img/" + mediaObject
-                                            .get(
-                                                    "details")
+                                    String url = "https://www.chiefdelphi.com/media/img/"
+                                            + mediaObject.get("details")
                                             .getAsJsonObject()
                                             .get("image_partial")
                                             .getAsString();
 
-                                    getMedia(url);
+                                    cacheMedia(url);
                                     break;
                                 }
                             }
@@ -144,7 +144,7 @@ public class TbaService implements Callable<Team> {
         }
     }
 
-    private void getMedia(String url) {
+    private void cacheMedia(String url) {
         mTeam.setMedia(url);
         Glide.with(mContext).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).preload();
     }
