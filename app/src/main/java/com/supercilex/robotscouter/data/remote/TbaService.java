@@ -104,7 +104,7 @@ public class TbaService implements Callable<Team> {
                                     String url = "https://i.imgur.com/"
                                             + mediaObject.get("foreign_key").getAsString() + ".png";
 
-                                    cacheMedia(url);
+                                    setAndCacheMedia(url);
                                     break;
                                 } else if (mediaType.equals("cdphotothread")) {
                                     String url = "https://www.chiefdelphi.com/media/img/"
@@ -113,7 +113,7 @@ public class TbaService implements Callable<Team> {
                                             .get("image_partial")
                                             .getAsString();
 
-                                    cacheMedia(url);
+                                    setAndCacheMedia(url);
                                     break;
                                 }
                             }
@@ -144,7 +144,7 @@ public class TbaService implements Callable<Team> {
         }
     }
 
-    private void cacheMedia(String url) {
+    private void setAndCacheMedia(String url) {
         mTeam.setMedia(url);
         Glide.with(mContext).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).preload();
     }
