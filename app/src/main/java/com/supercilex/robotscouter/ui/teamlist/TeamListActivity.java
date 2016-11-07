@@ -152,11 +152,11 @@ public class TeamListActivity extends AppCompatActivityBase {
                                          Snackbar.LENGTH_LONG,
                                          R.string.sign_in,
                                          new View.OnClickListener() {
-                                         @Override
-                                         public void onClick(View view) {
-                                             signIn();
-                                         }
-                                     });
+                                             @Override
+                                             public void onClick(View view) {
+                                                 signIn();
+                                             }
+                                         });
             }
         }
     }
