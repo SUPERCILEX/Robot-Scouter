@@ -8,6 +8,10 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
 
+  cat local.properties
+
+
+
   cd ..
   git clone --branch=master $git_mapping_login uploads
   mv Robot-Scouter/app-release.apk uploads/app-release.apk
