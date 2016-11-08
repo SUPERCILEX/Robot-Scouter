@@ -38,8 +38,6 @@ public class TeamListActivity extends AppCompatActivityBase {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        mTeamsFragment = ((TeamsFragment) getSupportFragmentManager().findFragmentByTag(
-                "team_list_fragment"));
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +46,8 @@ public class TeamListActivity extends AppCompatActivityBase {
             }
         });
 
+        mTeamsFragment = ((TeamsFragment) getSupportFragmentManager().findFragmentByTag(
+                "team_list_fragment"));
         if (!BaseHelper.isSignedIn()) {
             signInAnonymously();
         }

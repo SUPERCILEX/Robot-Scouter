@@ -24,10 +24,10 @@
     </android.support.design.widget.AppBarLayout>
 
     <fragment
-        android:id="@+id/team_list_fragment"
         android:name="com.supercilex.robotscouter.ui.teamlist.TeamsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:tag="team_list_fragment"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.FloatingActionButton

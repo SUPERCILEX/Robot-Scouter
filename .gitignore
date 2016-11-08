@@ -1,9 +1,9 @@
 *.iml
 .gradle
 /.idea
-/local.properties
 /build
 /app/build
+/local.properties
 /keystore.properties
 /app/keystore.jks
 /app/google-services.json

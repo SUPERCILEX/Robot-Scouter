@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -25,6 +26,7 @@ public class TeamHolder extends RecyclerView.ViewHolder {
     private ImageView mLogo;
     private ImageButton mNewScout;
 
+    @Keep
     public TeamHolder(View itemView) {
         super(itemView);
         mRowLayout = (ConstraintLayout) itemView;

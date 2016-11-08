@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.data.model;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -40,39 +41,48 @@ public class Team {
         mWebsite = teamWebsite;
     }
 
+    @Keep
     public String getNumber() {
         return mNumber;
     }
 
+    @Keep
     public void setNumber(String number) {
         mNumber = number;
     }
 
+    @Keep
     public String getName() {
         return mName;
     }
 
+    @Keep
     public void setName(String name) {
         mName = name;
     }
 
+    @Keep
     public String getMedia() {
         return mMedia;
     }
 
+    @Keep
     public void setMedia(String media) {
         mMedia = media;
     }
 
+    @Keep
     public String getWebsite() {
         return mWebsite;
     }
 
+    @Keep
     public void setWebsite(String website) {
         mWebsite = website;
     }
 
-    @PropertyName("timestamp")
+    @Keep
+    @PropertyName(Constants.FIREBASE_TIMESTAMP)
     public Map<String, String> getServerValue() {
         if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
@@ -86,6 +96,7 @@ public class Team {
         return mTimestamp;
     }
 
+    @Keep
     public void setTimestamp(long time) {
         mTimestamp = time;
     }
@@ -122,6 +133,8 @@ public class Team {
         BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey).setValue(this);
     }
 
+    // TODO: 11/07/2016 Cleanup this redundant logic: since we are in a team, there is no need to
+    // redownload the team to check for custom stuffk,
     public void update() {
         DatabaseReference ref = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_TEAMS)

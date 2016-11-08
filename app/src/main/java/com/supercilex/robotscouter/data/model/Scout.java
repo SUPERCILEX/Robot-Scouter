@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.data.model;
 
+import android.support.annotation.Keep;
+
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -15,18 +17,22 @@ public class Scout {
     public Scout() {
     }
 
+    @Keep
     public String getOwner() {
         return mOwner;
     }
 
+    @Keep
     public void setOwner(String owner) {
         mOwner = owner;
     }
 
+    @Keep
     public Map<String, Object> getViews() {
         return mScoutMetrics;
     }
 
+    @Keep
     public void setViews(Map<String, Object> views) {
         mScoutMetrics = views;
     }

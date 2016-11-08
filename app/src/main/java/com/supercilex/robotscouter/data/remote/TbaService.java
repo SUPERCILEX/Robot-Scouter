@@ -10,7 +10,6 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.LogFailureListener;
@@ -24,8 +23,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TbaService implements Callable<Team> {
-    private static final String sToken = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
-
     private Team mTeam;
     private Context mContext;
     private TbaApi mTbaApi;
@@ -59,7 +56,7 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamInfo() {
-        mTbaApi.getTeamInfo(mTeam.getNumber(), sToken)
+        mTbaApi.getTeamInfo(mTeam.getNumber(), Constants.TOKEN)
                 .enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -88,7 +85,7 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamMedia() {
-        mTbaApi.getTeamMedia(mTeam.getNumber(), sToken)
+        mTbaApi.getTeamMedia(mTeam.getNumber(), Constants.TOKEN)
                 .enqueue(new Callback<JsonArray>() {
                     @Override
                     public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
