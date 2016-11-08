@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
 
 def keystorePropertiesFile = file("../keystore.properties")
 def keystoreProperties = new Properties()
@@ -47,6 +48,12 @@ android {
         htmlReport true
         htmlOutput file("lint-report.html")
     }
+}
+
+play {
+    track = 'alpha'
+    serviceAccountEmail = 'google-play-auto-publisher@robot-scouter-app.iam.gserviceaccount.com'
+    jsonFile = file('google-play-auto-publisher.json')
 }
 
 dependencies {
