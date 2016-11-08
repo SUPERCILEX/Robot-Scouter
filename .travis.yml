@@ -26,7 +26,7 @@ before_script:
   - mv travis-dummies/keystore.properties keystore.properties
   - mv travis-dummies/keystore.jks app/keystore.jks
 
-  - openssl aes-256-cbc -K $encrypted_2efb677b0ec0_key -iv encrypted_2efb677b0ec0_iv -in secrets.tar.enc -out secrets.tar -d
+  - openssl aes-256-cbc -K $encrypted_2efb677b0ec0_key -iv $encrypted_2efb677b0ec0_iv -in secrets.tar.enc -out secrets.tar -d
   - tar -xvf secrets.tar
   - mv keystore.jks app/keystore.jks
   - mv google-services.json app/google-services.json
