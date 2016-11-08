@@ -33,5 +33,5 @@ before_script:
   - mv google-play-auto-publisher.json app/google-play-auto-publisher.json
 
   - chmod +x gradlew
-script: ./gradlew clean build
+script: ./gradlew clean build publishApkRelease
 after_script: cat app/lint-report.html
