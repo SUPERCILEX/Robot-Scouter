@@ -31,6 +31,8 @@ before_script:
   - mv google-play-auto-publisher.json app/google-play-auto-publisher.json
 
   - chmod +x gradlew
+  - chmod a+x script.sh
+  - chmod a+x upload.sh
 script: ./script.sh
 after_success: ./upload.sh
 after_failure:
