@@ -33,6 +33,7 @@ before_script:
   - chmod +x gradlew
   - chmod a+x script.sh
   - chmod a+x upload.sh
+  - set -x
 script: ./script.sh
 after_success: ./upload.sh
 after_failure:
