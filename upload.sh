@@ -17,11 +17,11 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   mv Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/mapping.txt
   cd uploads
 
-  VERSION_CODE="$(/usr/local/android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk)"
+  APK_INFO=$(/usr/local/android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk)
+  VERSION_CODE=$(echo $APK_INFO | grep 'versionCode=' | awk -F: 'match($0,"versionCode="){ print substr($2,RSTART-8)}' | tr -d "'")
   echo $VERSION_CODE
-
   git add mapping.txt app-release.apk
-  git commit -a -m "$versionCode"
+  git commit -a -m "${VERSION_CODE}\n${APK_INFO}"
   git push -u origin master &> /dev/null
 
   cd ..
