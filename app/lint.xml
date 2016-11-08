@@ -21,6 +21,7 @@
 
     <!-- TODO Add launch_logo to density folders -->
     <issue id="IconDensities" severity="ignore"/>
+    <issue id="IconMissingDensityFolder" severity="ignore"/>
 
     <issue id="UnusedResources">
         <ignore path="build\generated\res\google-services\debug\values\values.xml"/>

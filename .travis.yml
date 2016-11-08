@@ -17,8 +17,6 @@ android:
     - tools
     - platform-tools
     - build-tools-25.0.0
-
-    # Extras
     - extra-android-m2repository
     - extra-google-m2repository
 before_script:
@@ -42,4 +40,4 @@ after_success:
   - tar xf google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
   - echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
   - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
-  - ./google-cloud-sdk/bin/gcloud beta test android run --async --app app/build/output/apk/app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
+  - ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app/build/output/apk/app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
