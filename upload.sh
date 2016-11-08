@@ -19,6 +19,7 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   git commit -a -m "Added new apk + mapping"
   git push -u origin master &> /dev/null
   cd ..
+  cd Robot-Scouter
 
   ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
 fi
