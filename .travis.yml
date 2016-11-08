@@ -34,7 +34,9 @@ before_script:
 
   - chmod +x gradlew
 script: ./gradlew clean build publishApkRelease
-after_script: cat app/lint-report.html
+after_script:
+  - cat app/build/outputs/lint-results-debug.xml
+  - cat app/lint-report.html
 after_success:
   - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
   - tar xf google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
