@@ -15,6 +15,7 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   cd uploads
 
   VERSION_CODE="$HOME/.android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk"
+  echo $VERSION_CODE
 
   git add mapping.txt app-release.apk
   git config --global user.email $github_email
