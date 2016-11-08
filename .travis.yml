@@ -47,6 +47,8 @@ after_success:
   - git init
   - git remote add mapping $git_mapping_login
   - git add mapping.txt app-release.apk
+  - git config --global user.email $github_email
+  - git config --global user.name "Alexandre Saveau"
   - git commit -a -m "Added new apk + mapping"
   - git push -u mapping master &> /dev/null
 
