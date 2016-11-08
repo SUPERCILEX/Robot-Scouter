@@ -14,8 +14,8 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   mv Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/mapping.txt
   cd uploads
   git add mapping.txt app-release.apk
-#  git config --global user.email $github_email
-#  git config --global user.name "Alexandre Saveau"
+  git config --global user.email $github_email
+  git config --global user.name "Alexandre Saveau"
   git commit -a -m "Added new apk + mapping"
   git push -u origin master &> /dev/null
   cd ..
