@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
+if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   mv app/build/outputs/apk/app-release.apk app-release.apk
 
   wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
@@ -8,22 +8,19 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
 
-  cat local.properties
-
-
-
   cd ..
-  git clone --branch=master $git_mapping_login uploads
+  git clone --branch=master $git_mapping_login uploads &> /dev/null
+  git config --global user.email $github_email
+  git config --global user.name "Alexandre Saveau"
+
   mv Robot-Scouter/app-release.apk uploads/app-release.apk
   mv Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/mapping.txt
   cd uploads
 
-  VERSION_CODE="$($HOME/.android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk)"
+  VERSION_CODE="$(/usr/local/android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk)"
   echo $VERSION_CODE
 
   git add mapping.txt app-release.apk
-  git config --global user.email $github_email
-  git config --global user.name "Alexandre Saveau"
   git commit -a -m $VERSION_CODE
   git push -u origin master &> /dev/null
 
