@@ -31,8 +31,8 @@ before_script:
   - mv google-play-auto-publisher.json app/google-play-auto-publisher.json
 
   - chmod +x gradlew
-script: script.sh
-after_success: upload.sh
+script: ./script.sh
+after_success: ./upload.sh
 after_failure:
   - cat app/build/outputs/lint-results-debug.xml
   - cat app/lint-report.html
