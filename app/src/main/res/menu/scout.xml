@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.scout.ScoutActivity">
+
+    <item
+        android:id="@+id/action_new_scout"
+        android:orderInCategory="0"
+        android:title="@string/new_scout"/>
+
+    <item
+        android:id="@+id/action_visit_tba_team_website"
+        android:orderInCategory="1"
+        android:title="@string/visit_team_on_the_blue_alliance"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_visit_team_website"
+        android:orderInCategory="50"
+        android:title="@string/visit_team_website"
+        android:visible="false"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_edit_details"
+        android:orderInCategory="75"
+        android:title="@string/edit_details"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
+</menu>

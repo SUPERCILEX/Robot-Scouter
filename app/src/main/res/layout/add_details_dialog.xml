@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/add_details_dialog_team_name"
+        android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
-        android:id="@+id/add_details_dialog_team_website"
+        android:id="@+id/website"
         android:layout_width="0dp"
         android:layout_height="46dp"
         android:layout_marginEnd="8dp"
@@ -27,10 +27,10 @@
         android:inputType="textUri"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_details_dialog_team_name"/>
+        app:layout_constraintTop_toBottomOf="@+id/name"/>
 
     <EditText
-        android:id="@+id/add_details_dialog_team_logo"
+        android:id="@+id/logo_uri"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -39,5 +39,6 @@
         android:inputType="textUri"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_details_dialog_team_website"/>
+        app:layout_constraintTop_toBottomOf="@+id/website"/>
+
 </android.support.constraint.ConstraintLayout>

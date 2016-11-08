@@ -1,28 +1,43 @@
 language: android
 jdk: oraclejdk8
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
 android:
   components:
-    - platform-tools
+    - android-25
     - tools
-    - build-tools-24.0.2
-    - android-24
-    - android-16
-    - sys-img-armeabi-v7a-android-24
-    - sys-img-armeabi-v7a-android-16
+    - platform-tools
+    - build-tools-25.0.0
+
+    # Extras
     - extra-android-m2repository
     - extra-google-m2repository
-    - addon-google_apis-google-24
-    - extra-google-google_play_services
-before_install:
-  - openssl aes-256-cbc -K $encrypted_95e6a2aa17ed_key -iv $encrypted_95e6a2aa17ed_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar
-  - mv Android.jks app
-  - mv google-services.json app
-  - chmod +x gradlew
 before_script:
-  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
-  - echo no | android create avd --force -n test -t android-16 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-script: ./gradlew clean assemble test connectedCheck
+  - mv travis-dummies/google-services.json app/google-services.json
+  - mv travis-dummies/keystore.properties keystore.properties
+  - mv travis-dummies/keystore.jks app/keystore.jks
+
+  - openssl aes-256-cbc -K $encrypted_2efb677b0ec0_key -iv $encrypted_2efb677b0ec0_iv -in secrets.tar.enc -out secrets.tar -d
+  - tar -xvf secrets.tar
+  - mv keystore.jks app/keystore.jks
+  - mv google-services.json app/google-services.json
+  - mv google-play-auto-publisher.json app/google-play-auto-publisher.json
+
+  - chmod +x gradlew
+script: ./gradlew clean build publishApkRelease
+after_script: cat app/lint-report.html
+after_success:
+  - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
+  - tar xf google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
+  - echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
+  - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
+  - ./google-cloud-sdk/bin/gcloud beta test android run --async --app app/build/output/apk/app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app

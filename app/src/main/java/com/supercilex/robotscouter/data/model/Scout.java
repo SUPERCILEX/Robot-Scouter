@@ -1,32 +1,38 @@
 package com.supercilex.robotscouter.data.model;
 
+import android.support.annotation.Keep;
+
 import com.google.firebase.database.DatabaseReference;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Scout {
-    private String mOwner = FirebaseUtils.getUser().getUid();
+    private String mOwner = BaseHelper.getUid();
     private Map<String, Object> mScoutMetrics = new LinkedHashMap<>();
 
     public Scout() {
     }
 
+    @Keep
     public String getOwner() {
         return mOwner;
     }
 
+    @Keep
     public void setOwner(String owner) {
         mOwner = owner;
     }
 
+    @Keep
     public Map<String, Object> getViews() {
         return mScoutMetrics;
     }
 
+    @Keep
     public void setViews(Map<String, Object> views) {
         mScoutMetrics = views;
     }
@@ -36,8 +42,7 @@ public class Scout {
     }
 
     public void createScoutId(String teamNumber) {
-        DatabaseReference index = FirebaseUtils.getDatabase()
-                .getReference()
+        DatabaseReference index = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(mOwner)
                 .child(teamNumber)
@@ -47,8 +52,7 @@ public class Scout {
 
         index.setValue(true);
 
-        DatabaseReference scouts = FirebaseUtils.getDatabase()
-                .getReference()
+        DatabaseReference scouts = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUTS)
                 .child(scoutKey);
 
