@@ -13,11 +13,15 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   mv Robot-Scouter/app-release.apk uploads/app-release.apk
   mv Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/mapping.txt
   cd uploads
+
+  VERSION_CODE="$HOME/.android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk"
+
   git add mapping.txt app-release.apk
   git config --global user.email $github_email
   git config --global user.name "Alexandre Saveau"
-  git commit -a -m "Added new apk + mapping"
+  git commit -a -m $VERSION_CODE
   git push -u origin master &> /dev/null
+
   cd ..
   cd Robot-Scouter
 
