@@ -35,9 +35,9 @@ before_script:
   - chmod +x gradlew
 script: ./gradlew clean build publishApkRelease
 after_script: cat app/lint-report.html
-#after_success:
-#  - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
-#  - tar xf google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
-#  - echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
-#  - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
-#  - ./google-cloud-sdk/bin/gcloud beta test android run --async --type robo --app app/build/output/apk/app-release.apk --device-ids Nexus5 --os-version-ids 22 --locales fr --orientations portrait --project project-id
+after_success:
+  - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
+  - tar xf google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
+  - echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
+  - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
+  - ./google-cloud-sdk/bin/gcloud beta test android run --async --app app/build/output/apk/app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
