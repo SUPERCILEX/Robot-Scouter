@@ -32,12 +32,22 @@ before_script:
 
   - chmod +x gradlew
 script: ./gradlew clean build publishApkRelease
-after_script:
+after_failure:
   - cat app/build/outputs/lint-results-debug.xml
   - cat app/lint-report.html
 after_success:
+  - aapt dump badging app/build/output/apk/app-release.apk
   - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
   - tar xf google-cloud-sdk-133.0.0-linux-x86_64.tar.gz
-  - echo "y" | ./google-cloud-sdk/bin/gcloud components update beta
+  - echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   - ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
+
+  - ./google-cloud-sdk/bin/gcloud source repos clone mapping-files --project=robot-scouter-app
+  - mv app/build/outputs/mapping/release/mapping.txt mapping-files/mapping.txt
+  - cd mapping-files
+  - git config credential.helper gcloud.sh
+  - git remote add google https://source.developers.google.com/p/robot-scouter-app/r/mapping-files
+  - git add mapping.txt
+  - git commit -a -m "test"
+
   - ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app/build/output/apk/app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
