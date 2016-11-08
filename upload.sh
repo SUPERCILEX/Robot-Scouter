@@ -13,7 +13,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   git config --global user.email $github_email
   git config --global user.name "Alexandre Saveau"
 
-  mv Robot-Scouter/app-release.apk uploads/app-release.apk
+  cp Robot-Scouter/app-release.apk uploads/app-release.apk
   mv Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/mapping.txt
   cd uploads
 
@@ -21,7 +21,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   echo $VERSION_CODE
 
   git add mapping.txt app-release.apk
-  git commit -a -m $versionCode
+  git commit -a -m "$versionCode"
   git push -u origin master &> /dev/null
 
   cd ..
