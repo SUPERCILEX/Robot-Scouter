@@ -21,7 +21,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   echo $VERSION_CODE
 
   git add mapping.txt app-release.apk
-  git commit -a -m $VERSION_CODE
+  git commit -a -m $versionCode
   git push -u origin master &> /dev/null
 
   cd ..
