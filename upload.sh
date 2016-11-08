@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$TRAVIS_PULL_REQUEST" = "false" ]
+if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   mv app/build/outputs/apk/app-release.apk app-release.apk
   mv app/build/outputs/mapping/release/mapping.txt mapping.txt
 
