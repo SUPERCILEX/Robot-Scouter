@@ -14,7 +14,7 @@ if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then
   mv Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/mapping.txt
   cd uploads
 
-  VERSION_CODE="$HOME/.android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk"
+  VERSION_CODE="$($HOME/.android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk)"
   echo $VERSION_CODE
 
   git add mapping.txt app-release.apk
