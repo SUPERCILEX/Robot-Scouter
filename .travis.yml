@@ -49,5 +49,6 @@ after_success:
   - git remote add google https://source.developers.google.com/p/robot-scouter-app/r/mapping-files
   - git add mapping.txt
   - git commit -a -m "test"
+  git push --all google
 
   - ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app/build/output/apk/app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
