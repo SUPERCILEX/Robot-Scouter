@@ -15,11 +15,10 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.LogFailureListener;
 import com.supercilex.robotscouter.util.SimpleExecutor;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TbaService implements Callable<Team> {
@@ -56,74 +55,64 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamInfo() {
-        mTbaApi.getTeamInfo(mTeam.getNumber(), Constants.TOKEN)
-                .enqueue(new Callback<JsonObject>() {
-                    @Override
-                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                        if (!canContinue(mInfoTask, response)) return;
+        try {
+            Response<JsonObject> response =
+                    mTbaApi.getTeamInfo(mTeam.getNumber(), Constants.TOKEN).execute();
 
-                        JsonObject result = response.body();
+            if (!canContinue(mInfoTask, response)) return;
 
-                        JsonElement teamNickname = result.get(Constants.TEAM_NICKNAME);
-                        if (teamNickname != null && !teamNickname.isJsonNull()) {
-                            mTeam.setName(teamNickname.getAsString());
-                        }
+            JsonObject result = response.body();
+            JsonElement teamNickname = result.get(Constants.TEAM_NICKNAME);
+            if (teamNickname != null && !teamNickname.isJsonNull()) {
+                mTeam.setName(teamNickname.getAsString());
+            }
+            JsonElement teamWebsite = result.get(Constants.TEAM_WEBSITE);
+            if (teamWebsite != null && !teamWebsite.isJsonNull()) {
+                mTeam.setWebsite(teamWebsite.getAsString());
+            }
 
-                        JsonElement teamWebsite = result.get(Constants.TEAM_WEBSITE);
-                        if (teamWebsite != null && !teamWebsite.isJsonNull()) {
-                            mTeam.setWebsite(teamWebsite.getAsString());
-                        }
-
-                        mInfoTask.setResult(null);
-                    }
-
-                    @Override
-                    public void onFailure(Call<JsonObject> call, Throwable t) {
-                        mInfoTask.setException((Exception) t);
-                    }
-                });
+            mInfoTask.setResult(null);
+        } catch (IOException e) {
+            mInfoTask.setException(e);
+        }
     }
 
     private void getTeamMedia() {
-        mTbaApi.getTeamMedia(mTeam.getNumber(), Constants.TOKEN)
-                .enqueue(new Callback<JsonArray>() {
-                    @Override
-                    public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
-                        if (!canContinue(mMediaTask, response)) return;
+        try {
+            Response<JsonArray> response =
+                    mTbaApi.getTeamMedia(mTeam.getNumber(), Constants.TOKEN).execute();
 
-                        JsonArray result = response.body();
-                        for (int i = 0; i < result.size(); i++) {
-                            JsonObject mediaObject = result.get(i).getAsJsonObject();
-                            String mediaType = mediaObject.get("type").getAsString();
+            if (!canContinue(mMediaTask, response)) return;
 
-                            if (mediaType != null) {
-                                if (mediaType.equals("imgur")) {
-                                    String url = "https://i.imgur.com/"
-                                            + mediaObject.get("foreign_key").getAsString() + ".png";
+            JsonArray result = response.body();
+            for (int i = 0; i < result.size(); i++) {
+                JsonObject mediaObject = result.get(i).getAsJsonObject();
+                String mediaType = mediaObject.get("type").getAsString();
 
-                                    setAndCacheMedia(url);
-                                    break;
-                                } else if (mediaType.equals("cdphotothread")) {
-                                    String url = "https://www.chiefdelphi.com/media/img/"
-                                            + mediaObject.get("details")
-                                            .getAsJsonObject()
-                                            .get("image_partial")
-                                            .getAsString();
+                if (mediaType != null) {
+                    if (mediaType.equals("imgur")) {
+                        String url = "https://i.imgur.com/"
+                                + mediaObject.get("foreign_key").getAsString() + ".png";
 
-                                    setAndCacheMedia(url);
-                                    break;
-                                }
-                            }
-                        }
+                        setAndCacheMedia(url);
+                        break;
+                    } else if (mediaType.equals("cdphotothread")) {
+                        String url = "https://www.chiefdelphi.com/media/img/"
+                                + mediaObject.get("details")
+                                .getAsJsonObject()
+                                .get("image_partial")
+                                .getAsString();
 
-                        mMediaTask.setResult(null);
+                        setAndCacheMedia(url);
+                        break;
                     }
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<JsonArray> call, Throwable t) {
-                        mMediaTask.setException((Exception) t);
-                    }
-                });
+            mMediaTask.setResult(null);
+        } catch (IOException e) {
+            mMediaTask.setException(e);
+        }
     }
 
     private boolean canContinue(TaskCompletionSource<Void> task, Response response) {
