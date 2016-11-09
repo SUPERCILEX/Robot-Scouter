@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -x -e
 
 if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   openssl aes-256-cbc -K $encrypted_2efb677b0ec0_key -iv $encrypted_2efb677b0ec0_iv -in secrets.tar.enc -out secrets.tar -d
@@ -12,4 +12,4 @@ else
   mv travis-dummies/keystore.jks app/keystore.jks
 fi
 
-set +x
+set +x +e

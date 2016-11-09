@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -x -e
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   ./gradlew clean build publishApkRelease
@@ -6,4 +6,4 @@ else
   ./gradlew clean build
 fi
 
-set +x
+set +x +e
