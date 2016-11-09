@@ -1,4 +1,4 @@
-#!/bin/bash -x -e
+#!/bin/bash -xe
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   mv app/build/outputs/apk/app-release.apk app-release.apk
@@ -27,4 +27,4 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
 fi
 
-set +x +e
+set +xe
