@@ -12,7 +12,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   cd uploads
 
   APK_INFO=$(/usr/local/android-sdk/build-tools/25.0.0/aapt dump badging app-release.apk)
-  VERSION_CODE=$(echo $APK_INFO | grep 'versionCode=' | awk -F: 'match($0,"versionCode="){ print substr($2,RSTART-8)}' | tr -d "'")
+  VERSION_CODE=$(echo $APK_INFO | grep 'versionCode=' | awk -F: 'match($0,"versionCode="){ print substr($2,37,19)}' | tr -d "'")
   git add mapping.txt app-release.apk
   git commit -a -m "${VERSION_CODE}\n Full apk dump: ${APK_INFO}"
   git push -u origin master &> /dev/null
