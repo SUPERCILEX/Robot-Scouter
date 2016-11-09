@@ -17,21 +17,13 @@ android:
     - tools
     - platform-tools
     - build-tools-25.0.0
-
-    # Extras
     - extra-android-m2repository
     - extra-google-m2repository
 before_script:
-  - mv travis-dummies/google-services.json app/google-services.json
-  - mv travis-dummies/keystore.properties keystore.properties
-  - mv travis-dummies/keystore.jks app/keystore.jks
-
-  - openssl aes-256-cbc -K $encrypted_2efb677b0ec0_key -iv encrypted_2efb677b0ec0_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar -xvf secrets.tar
-  - mv keystore.jks app/keystore.jks
-  - mv google-services.json app/google-services.json
-  - mv google-play-auto-publisher.json app/google-play-auto-publisher.json
-
-  - chmod +x gradlew
-script: ./gradlew clean build
-after_script: cat app/lint-report.html
+  - chmod +x gradlew setup.sh build.sh upload.sh
+  - ./setup.sh
+script: ./build.sh
+after_success: ./upload.sh
+after_failure:
+  - cat app/build/outputs/lint-results-debug.xml
+  - cat app/lint-report.html

@@ -44,6 +44,7 @@ android {
     }
 
     lintOptions {
+        abortOnError true
         warningsAsErrors true
         htmlReport true
         htmlOutput file("lint-report.html")

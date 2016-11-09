@@ -20,6 +20,7 @@
     <issue id="UnusedIds" severity="warning"/>
 
     <!-- TODO Add launch_logo to density folders -->
+    <issue id="IconDensities" severity="ignore"/>
     <issue id="IconMissingDensityFolder" severity="ignore"/>
 
     <issue id="UnusedResources">
