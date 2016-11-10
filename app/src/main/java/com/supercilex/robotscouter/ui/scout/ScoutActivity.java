@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -41,20 +40,18 @@ import com.supercilex.robotscouter.ui.AppCompatActivityBase;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.Preconditions;
 
 public class ScoutActivity extends AppCompatActivityBase implements ValueEventListener, ChildEventListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
-    private DatabaseReference mTeamRef;
+    // TODO: 11/09/2016 move this to getScoutRef in Scout.java
     private DatabaseReference mScoutRef;
 
-    public static Intent createIntent(Context context,
-                                      @NonNull String teamNumber,
-                                      @Nullable String key) {
+    public static Intent createIntent(Context context, Team team) {
         Intent intent = new Intent(context, ScoutActivity.class);
-        intent.putExtra(Constants.INTENT_TEAM_NUMBER, teamNumber);
-        intent.putExtra(Constants.INTENT_TEAM_KEY, key);
+        intent.putExtra(Constants.INTENT_TEAM, team);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -75,11 +72,9 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mTeam = new Team(getTeamKey(savedInstanceState), getTeamNumber());
-        if (mTeam.getNumber() == null) return;
-        getSupportActionBar().setTitle(mTeam.getNumber());
-
+        mTeam = getTeam(savedInstanceState);
         updateUi();
+        addTeamListener();
 
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
@@ -101,13 +96,13 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTeamRef.removeEventListener((ValueEventListener) this);
+        mTeam.getTeamRef().removeEventListener((ValueEventListener) this);
         mScoutRef.removeEventListener((ChildEventListener) this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(Constants.INTENT_TEAM_KEY, mTeam.getKey());
+        savedInstanceState.putParcelable(Constants.INTENT_TEAM, mTeam);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -177,11 +172,38 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
     }
 
     private void updateUi() {
-        if (mTeam.getKey() != null && mTeamRef == null) {
-            mTeamRef = BaseHelper.getDatabase()
-                    .child(Constants.FIREBASE_TEAMS)
-                    .child(mTeam.getKey());
-            mTeamRef.addValueEventListener(this);
+        if (mTeam.getName() != null) {
+            String title = mTeam.getNumber() + " - " + mTeam.getName();
+            setActivityTitle(title);
+        } else {
+            setActivityTitle(mTeam.getNumber());
+        }
+
+        Glide.with(ScoutActivity.this)
+                .load(mTeam.getMedia())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.drawable.ic_android_black_24dp)
+                .into((ImageView) findViewById(R.id.backdrop));
+
+        if (mMenu != null) {
+            if (mTeam.getWebsite() != null) {
+                mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
+            } else {
+                mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
+            }
+        }
+    }
+
+    private void setActivityTitle(String title) {
+        getSupportActionBar().setTitle(title);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setTaskDescription(new ActivityManager.TaskDescription(title));
+        }
+    }
+
+    private void addTeamListener() {
+        if (mTeam.getKey() != null) {
+            mTeam.getTeamRef().addValueEventListener(this);
         } else {
             BaseHelper.getDatabase()
                     .child(Constants.FIREBASE_TEAM_INDEXES)
@@ -193,21 +215,21 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
                                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                                     if (child.getValue().toString().equals(mTeam.getNumber())) {
                                         mTeam.setKey(child.getKey());
-                                        updateUi();
+                                        addTeamListener();
                                         return;
                                     }
                                 }
                             }
 
                             mTeam.add();
-                            updateUi();
+                            addTeamListener();
                             TbaService.start(mTeam, ScoutActivity.this)
                                     .addOnCompleteListener(new OnCompleteListener<Team>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Team> task) {
                                             if (task.isSuccessful()) {
                                                 mTeam = task.getResult();
-                                                mTeam.overwriteData();
+                                                mTeam.update();
                                                 BaseHelper.getDispatcher()
                                                         .cancel(mTeam.getNumber());
                                             } else {
@@ -228,36 +250,11 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         if (dataSnapshot.getValue() != null) {
+            String key = mTeam.getKey();
             mTeam = dataSnapshot.getValue(Team.class);
-
-            if (mTeam.getName() != null) {
-                String title = mTeam.getNumber() + " - " + mTeam.getName();
-
-                getSupportActionBar().setTitle(title);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    setTaskDescription(new ActivityManager.TaskDescription(title));
-                }
-            }
-
-            Glide.with(ScoutActivity.this)
-                    .load(mTeam.getMedia())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.ic_android_black_24dp)
-                    .into((ImageView) findViewById(R.id.backdrop));
-
-            if (mMenu != null) {
-                if (mTeam.getWebsite() != null) {
-                    mMenu.findItem(R.id.action_visit_team_website).setVisible(true);
-                } else {
-                    mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
-                }
-            }
+            mTeam.setKey(key);
+            updateUi();
         }
-    }
-
-    @Override
-    public void onCancelled(DatabaseError databaseError) {
-        FirebaseCrash.report(databaseError.toException());
     }
 
     @Override
@@ -278,25 +275,14 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
     }
 
-    private String getTeamNumber() {
-        String teamNumber = getIntent().getStringExtra(Constants.INTENT_TEAM_NUMBER);
-
-        if (teamNumber != null) {
-            return teamNumber;
-        } else {
-            FirebaseCrash.report(new IllegalStateException(
-                    "Could not retrieve team number from intent"));
-            finish();
-            return null;
-        }
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        FirebaseCrash.report(databaseError.toException());
     }
 
-    private String getTeamKey(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            return savedInstanceState.getString(Constants.INTENT_TEAM_KEY);
-        } else {
-            return getIntent().getStringExtra(Constants.INTENT_TEAM_KEY);
-        }
+    public Team getTeam(Bundle savedInstanceState) {
+        return Preconditions.checkNotNull((Team) getIntent().getParcelableExtra(Constants.INTENT_TEAM),
+                                          "Team cannot be null");
     }
 
     private boolean isNetworkAvailable() {

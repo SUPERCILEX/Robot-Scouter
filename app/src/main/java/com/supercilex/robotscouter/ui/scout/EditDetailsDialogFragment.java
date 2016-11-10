@@ -17,6 +17,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 
 public class EditDetailsDialogFragment extends DialogFragment {
+    // TODO: 11/09/2016 move to Constants.java
     private final static String TEAM_NUMBER = "number";
     private final static String TEAM_KEY = "key";
     private final static String TEAM_NAME = "name";

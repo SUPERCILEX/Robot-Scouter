@@ -14,13 +14,15 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
 import com.supercilex.robotscouter.util.BaseHelper;
-import com.supercilex.robotscouter.util.Constants;
 
 public class DownloadTeamDataJob extends JobService {
+    private static final String NUMBER = "number";
+    private static final String KEY = "key";
+
     public static void start(Team team) {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.INTENT_TEAM_NUMBER, team.getNumber());
-        bundle.putString(Constants.INTENT_TEAM_KEY, team.getKey());
+        bundle.putString(NUMBER, team.getNumber());
+        bundle.putString(KEY, team.getKey());
 
         Job job = BaseHelper.getDispatcher().newJobBuilder()
                 .setService(DownloadTeamDataJob.class)
@@ -37,10 +39,9 @@ public class DownloadTeamDataJob extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-        final String number = params.getExtras().getString(Constants.INTENT_TEAM_NUMBER);
-        final String key = params.getExtras().getString(Constants.INTENT_TEAM_KEY);
-
-        TbaService.start(new Team(key, number), getApplicationContext())
+        String number = params.getExtras().getString(NUMBER);
+        String key = params.getExtras().getString(KEY);
+        TbaService.start(new Team(number, key), getApplicationContext())
                 .addOnCompleteListener(new OnCompleteListener<Team>() {
                     @Override
                     public void onComplete(@NonNull Task<Team> task) {

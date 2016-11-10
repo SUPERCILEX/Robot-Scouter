@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.LogFailureListener;
 import com.supercilex.robotscouter.util.SimpleExecutor;
@@ -42,8 +43,8 @@ public class TbaService implements Callable<Team> {
 
     @Override
     public Team call() throws Exception {
-        getTeamMedia();
         getTeamInfo();
+        getTeamMedia();
 
         Task<Void> data = Tasks.whenAll(mInfoTask.getTask(), mMediaTask.getTask());
         try {
@@ -130,8 +131,13 @@ public class TbaService implements Callable<Team> {
         }
     }
 
-    private void setAndCacheMedia(String url) {
+    private void setAndCacheMedia(final String url) {
         mTeam.setMedia(url);
-        Glide.with(mContext).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).preload();
+        BaseHelper.runOnMainThread(mContext, new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(mContext).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).preload();
+            }
+        });
     }
 }

@@ -9,8 +9,7 @@ public class Constants {
     public static final String TOKEN = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
 
     // Intents
-    public final static String INTENT_TEAM_NUMBER = "com.supercilex.robotscouter.TEAM_NUMBER";
-    public static final String INTENT_TEAM_KEY = "com.supercilex.robotscouter.TEAM_KEY";
+    public final static String INTENT_TEAM = "com.supercilex.robotscouter.TEAM";
 
     // Scout ids
     public static final int CHECKBOX = 0;
@@ -27,8 +26,6 @@ public class Constants {
     public static final String FIREBASE_SCOUTS = "scouts";
 
     public static final String FIREBASE_NAME = "name";
-    public static final String FIREBASE_MEDIA = "media";
-    public static final String FIREBASE_WEBSITE = "website";
     public static final String FIREBASE_TIMESTAMP = "timestamp";
 
     public static final String FIREBASE_VIEWS = "views";

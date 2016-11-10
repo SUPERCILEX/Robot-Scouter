@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -62,6 +63,10 @@ public class BaseHelper {
 
     public static <T> String getTag(T clazz) {
         return clazz.getClass().getSimpleName();
+    }
+
+    public static void runOnMainThread(Context context, Runnable runnable) {
+        new Handler(context.getMainLooper()).post(runnable);
     }
 
     public Snackbar getSnackbar(Activity activity, @StringRes int message, int length) {

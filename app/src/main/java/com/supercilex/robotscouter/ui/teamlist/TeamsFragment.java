@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class TeamsFragment extends FragmentBase {
+    // TODO: 11/09/2016 move to Constants.java
     private static final String MANAGER_STATE = "manager_state";
     private static final String COUNT = "count";
 

@@ -78,9 +78,7 @@ public class TeamHolder extends RecyclerView.ViewHolder {
         mRowLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(ScoutActivity.createIntent(mContext,
-                                                                  mTeam.getNumber(),
-                                                                  mTeam.getKey()));
+                mContext.startActivity(ScoutActivity.createIntent(mContext, mTeam));
             }
         });
     }
@@ -90,9 +88,7 @@ public class TeamHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 new Scout().createScoutId(mTeam.getNumber());
-                mContext.startActivity(ScoutActivity.createIntent(mContext,
-                                                                  mTeam.getNumber(),
-                                                                  mTeam.getKey()));
+                mContext.startActivity(ScoutActivity.createIntent(mContext, mTeam));
             }
         });
     }
