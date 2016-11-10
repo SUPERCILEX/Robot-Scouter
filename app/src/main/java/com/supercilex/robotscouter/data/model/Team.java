@@ -21,18 +21,8 @@ import com.supercilex.robotscouter.util.Preconditions;
 import java.util.Map;
 
 public class Team implements Parcelable {
-    public static final Creator<Team> CREATOR = new Creator<Team>() {
-        @Override
-        public Team createFromParcel(Parcel in) {
-            return new Team(in);
-        }
-
-        @Override
-        public Team[] newArray(int size) {
-            return new Team[size];
-        }
-    };
     private String mKey;
+
     private String mNumber;
     private String mName;
     private String mMedia;
@@ -55,18 +45,6 @@ public class Team implements Parcelable {
         mName = teamName;
         mMedia = teamLogoUrl;
         mWebsite = teamWebsite;
-    }
-
-    private Team(Parcel in) {
-        mKey = in.readString();
-        mNumber = in.readString();
-        mName = in.readString();
-        mMedia = in.readString();
-        mWebsite = in.readString();
-        mCustomName = in.readString();
-        mCustomWebsite = in.readString();
-        mCustomMedia = in.readString();
-        mTimestamp = in.readLong();
     }
 
     @Keep
@@ -267,5 +245,29 @@ public class Team implements Parcelable {
         parcel.writeString(mCustomWebsite);
         parcel.writeString(mCustomMedia);
         parcel.writeLong(mTimestamp);
+    }
+
+    public static final Creator<Team> CREATOR = new Creator<Team>() {
+        @Override
+        public Team createFromParcel(Parcel in) {
+            return new Team(in);
+        }
+
+        @Override
+        public Team[] newArray(int size) {
+            return new Team[size];
+        }
+    };
+
+    private Team(Parcel in) {
+        mKey = in.readString();
+        mNumber = in.readString();
+        mName = in.readString();
+        mMedia = in.readString();
+        mWebsite = in.readString();
+        mCustomName = in.readString();
+        mCustomWebsite = in.readString();
+        mCustomMedia = in.readString();
+        mTimestamp = in.readLong();
     }
 }
