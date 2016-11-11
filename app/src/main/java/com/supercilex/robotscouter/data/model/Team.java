@@ -5,20 +5,13 @@ import android.os.Parcelable;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
-
-import java.util.Map;
 
 public class Team implements Parcelable {
     private String mKey;
@@ -27,9 +20,9 @@ public class Team implements Parcelable {
     private String mName;
     private String mMedia;
     private String mWebsite;
-    private String mCustomName;
-    private String mCustomWebsite;
-    private String mCustomMedia;
+    private Boolean mHasCustomName;
+    private Boolean mHasCustomWebsite;
+    private Boolean mHasCustomMedia;
     private long mTimestamp;
     private boolean mShouldUpdateTimestamp = true;
 
@@ -89,49 +82,47 @@ public class Team implements Parcelable {
 
     @Keep
     @PropertyName(Constants.FIREBASE_CUSTOM_NAME)
-    public String getCustomName() {
-        return mCustomName;
+    public Boolean getHasCustomName() {
+        return mHasCustomName;
     }
 
     @Keep
     @PropertyName(Constants.FIREBASE_CUSTOM_NAME)
-    public void setCustomName(String customName) {
-        mCustomName = customName;
+    public void setHasCustomName(boolean hasCustomName) {
+        mHasCustomName = hasCustomName;
     }
 
     @Keep
     @PropertyName(Constants.FIREBASE_CUSTOM_WEBSITE)
-    public String getCustomWebsite() {
-        return mCustomWebsite;
+    public Boolean getHasCustomWebsite() {
+        return mHasCustomWebsite;
     }
 
     @Keep
     @PropertyName(Constants.FIREBASE_CUSTOM_WEBSITE)
-    public void setCustomWebsite(String customWebsite) {
-        mCustomWebsite = customWebsite;
+    public void setHasCustomWebsite(boolean hasCustomWebsite) {
+        mHasCustomWebsite = hasCustomWebsite;
     }
 
     @Keep
     @PropertyName(Constants.FIREBASE_CUSTOM_MEDIA)
-    public String getCustomMedia() {
-        return mCustomMedia;
+    public Boolean getHasCustomMedia() {
+        return mHasCustomMedia;
     }
 
     @Keep
     @PropertyName(Constants.FIREBASE_CUSTOM_MEDIA)
-    public void setCustomMedia(String customMedia) {
-        mCustomMedia = customMedia;
+    public void setHasCustomMedia(boolean hasCustomMedia) {
+        mHasCustomMedia = hasCustomMedia;
     }
 
-    // TODO: 11/09/2016 test this to make sure it doesn't delete timestamp
-    // might have to make it return object
     @Keep
     @PropertyName(Constants.FIREBASE_TIMESTAMP)
-    public Map<String, String> getServerValue() {
+    public Object getServerValue() {
         if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
         } else {
-            return null;
+            return mTimestamp;
         }
     }
 
@@ -156,66 +147,32 @@ public class Team implements Parcelable {
     }
 
     public void add() {
-        mShouldUpdateTimestamp = false;
-
         DatabaseReference ref = BaseHelper.getDatabase();
         mKey = ref.push().getKey();
         ref.child(Constants.FIREBASE_TEAM_INDEXES)
                 .child(BaseHelper.getUid())
                 .child(mKey)
                 .setValue(mNumber, Long.valueOf(mNumber));
-        update();
-
-        mShouldUpdateTimestamp = true;
+        forceUpdate();
     }
 
-    public void update() {
-        if (getCustomName() == null) {
-            setName(mName);
+    public void update(Team newTeam) {
+        if (mHasCustomName == null) {
+            mName = newTeam.getName();
         }
-        if (getCustomWebsite() == null) {
-            setWebsite(mWebsite);
+        if (mHasCustomWebsite == null) {
+            mWebsite = newTeam.getWebsite();
         }
-        if (getCustomMedia() == null) {
-            setMedia(mMedia);
+        if (mHasCustomMedia == null) {
+            mMedia = newTeam.getMedia();
         }
         getTeamRef().setValue(this);
     }
 
-    // TODO: 11/09/2016 remove
-    public void updateWithCustomDetails(@NonNull String teamNumber, @NonNull String key) {
-        mNumber = teamNumber;
-        DatabaseReference ref = BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_TEAMS)
-                .child(key);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Team team = dataSnapshot.getValue(Team.class);
-
-                if (!team.getName().equals(mName)) {
-                    dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_NAME).setValue(true);
-                }
-
-                if (!team.getWebsite().equals(mWebsite)) {
-                    dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_WEBSITE).setValue(true);
-                }
-
-                if (!team.getMedia().equals(mMedia)) {
-                    dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_MEDIA).setValue(true);
-                }
-
-                mShouldUpdateTimestamp = false;
-                dataSnapshot.getRef().setValue(Team.this);
-                mShouldUpdateTimestamp = true;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
-            }
-        });
+    public void forceUpdate() {
+        mShouldUpdateTimestamp = false;
+        getTeamRef().setValue(this);
+        mShouldUpdateTimestamp = true;
     }
 
     @Exclude
@@ -226,7 +183,7 @@ public class Team implements Parcelable {
     public void fetchLatestData() {
         long differenceDays = (System.currentTimeMillis() - mTimestamp) / (1000 * 60 * 60 * 24);
         if (differenceDays >= 7) {
-            DownloadTeamDataJob.start(this);
+//            DownloadTeamDataJob.start(this);
         }
     }
 
@@ -242,9 +199,9 @@ public class Team implements Parcelable {
         parcel.writeString(mName);
         parcel.writeString(mMedia);
         parcel.writeString(mWebsite);
-        parcel.writeString(mCustomName);
-        parcel.writeString(mCustomWebsite);
-        parcel.writeString(mCustomMedia);
+        parcel.writeInt(mHasCustomName != null ? 1 : 0);
+        parcel.writeInt(mHasCustomWebsite != null ? 1 : 0);
+        parcel.writeInt(mHasCustomMedia != null ? 1 : 0);
         parcel.writeLong(mTimestamp);
     }
 
@@ -266,9 +223,17 @@ public class Team implements Parcelable {
         mName = in.readString();
         mMedia = in.readString();
         mWebsite = in.readString();
-        mCustomName = in.readString();
-        mCustomWebsite = in.readString();
-        mCustomMedia = in.readString();
+        mHasCustomName = trueOrNull(in.readInt());
+        mHasCustomWebsite = trueOrNull(in.readInt());
+        mHasCustomMedia = trueOrNull(in.readInt());
         mTimestamp = in.readLong();
+    }
+
+    private Boolean trueOrNull(int in) {
+        if (in != 0) {
+            return true;
+        } else {
+            return null;
+        }
     }
 }

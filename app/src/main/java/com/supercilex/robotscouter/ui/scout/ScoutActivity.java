@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
@@ -148,12 +147,8 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
                 teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
                 break;
             case R.id.action_edit_details:
-                DialogFragment newFragment = EditDetailsDialogFragment.newInstance(mTeam.getNumber(),
-                                                                                   mTeam.getKey(),
-                                                                                   mTeam.getName(),
-                                                                                   mTeam.getWebsite(),
-                                                                                   mTeam.getMedia());
-                newFragment.show(getSupportFragmentManager(), getHelper().getTag());
+                EditDetailsDialogFragment.newInstance(mTeam)
+                        .show(getSupportFragmentManager(), getHelper().getTag());
                 break;
             case R.id.action_settings:
                 break;
@@ -228,8 +223,7 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
                                         @Override
                                         public void onComplete(@NonNull Task<Team> task) {
                                             if (task.isSuccessful()) {
-                                                mTeam = task.getResult();
-                                                mTeam.update();
+                                                mTeam.update(task.getResult());
                                                 BaseHelper.getDispatcher()
                                                         .cancel(mTeam.getNumber());
                                             } else {

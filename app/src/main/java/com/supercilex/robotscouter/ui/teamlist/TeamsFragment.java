@@ -101,7 +101,7 @@ public class TeamsFragment extends FragmentBase {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
                 team.setKey(getRef(position).getKey());
-                teamHolder.setContext(getActivity()).setTeam(team).init();
+                teamHolder.setFragment(TeamsFragment.this).setTeam(team).init();
                 team.fetchLatestData();
             }
 

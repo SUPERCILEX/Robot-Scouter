@@ -31,10 +31,10 @@ public class Constants {
     public static final String FIREBASE_VIEWS = "views";
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
-
-    public static final String FIREBASE_CUSTOM_NAME = "custom-name";
-    public static final String FIREBASE_CUSTOM_WEBSITE = "custom-website";
-    public static final String FIREBASE_CUSTOM_MEDIA = "custom-media";
     public static final String FIREBASE_SELECTED_VALUE = "selected-value";
+
+    public static final String FIREBASE_CUSTOM_NAME = "has-custom-name";
+    public static final String FIREBASE_CUSTOM_WEBSITE = "has-custom-website";
+    public static final String FIREBASE_CUSTOM_MEDIA = "has-custom-media";
     // [END FIREBASE CHILD NAMES]
 }

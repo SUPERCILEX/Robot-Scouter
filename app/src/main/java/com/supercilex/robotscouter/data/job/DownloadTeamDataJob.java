@@ -14,15 +14,12 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
 import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.util.Constants;
 
 public class DownloadTeamDataJob extends JobService {
-    private static final String NUMBER = "number";
-    private static final String KEY = "key";
-
     public static void start(Team team) {
         Bundle bundle = new Bundle();
-        bundle.putString(NUMBER, team.getNumber());
-        bundle.putString(KEY, team.getKey());
+        bundle.putParcelable(Constants.INTENT_TEAM, team);
 
         Job job = BaseHelper.getDispatcher().newJobBuilder()
                 .setService(DownloadTeamDataJob.class)
@@ -39,14 +36,13 @@ public class DownloadTeamDataJob extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-        String number = params.getExtras().getString(NUMBER);
-        String key = params.getExtras().getString(KEY);
-        TbaService.start(new Team(number, key), getApplicationContext())
+        final Team team = params.getExtras().getParcelable(Constants.INTENT_TEAM);
+        TbaService.start(team, getApplicationContext())
                 .addOnCompleteListener(new OnCompleteListener<Team>() {
                     @Override
                     public void onComplete(@NonNull Task<Team> task) {
                         if (task.isSuccessful()) {
-                            task.getResult().update();
+                            team.update(task.getResult()); // todo test doesn't overwrite custom details
                             jobFinished(params, false);
                         } else {
                             jobFinished(params, true);
