@@ -44,7 +44,6 @@ android {
     }
 
     lintOptions {
-        enable 'NewerVersionAvailable'
         abortOnError true
         warningsAsErrors true
         htmlReport true
@@ -76,7 +75,7 @@ dependencies {
 
     // Third party
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'net.yslibrary.licenseadapter:licenseadapter:1.2.3'
+    compile 'net.yslibrary.licenseadapter:licenseadapter:1.2.4'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 

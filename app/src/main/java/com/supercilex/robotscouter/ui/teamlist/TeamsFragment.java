@@ -43,7 +43,7 @@ public class TeamsFragment extends FragmentBase {
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.team_list, container, false);
 
-        mManager = new LinearLayoutManager(getActivity());
+        mManager = new LinearLayoutManager(getContext());
         mTeams = (RecyclerView) rootView.findViewById(R.id.list);
         mTeams.setHasFixedSize(true);
         mTeams.setLayoutManager(mManager);
@@ -76,6 +76,13 @@ public class TeamsFragment extends FragmentBase {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mManager = null;
+        mTeams.setAdapter(null);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         cleanup();
@@ -101,7 +108,9 @@ public class TeamsFragment extends FragmentBase {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
                 team.setKey(getRef(position).getKey());
-                teamHolder.setFragment(TeamsFragment.this).setTeam(team).init();
+                teamHolder.setContext(getContext())
+                        .setTeam(team)
+                        .init();
                 team.fetchLatestData();
             }
 

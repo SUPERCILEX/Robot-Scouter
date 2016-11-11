@@ -13,7 +13,7 @@
     <issue id="MangledCRLF" severity="warning"/>
     <issue id="MissingRegistered" severity="warning"/>
     <issue id="NegativeMargin" severity="warning"/>
-    <!--<issue id="NewerVersionAvailable" severity="warning"/>-->
+    <issue id="NewerVersionAvailable" severity="warning"/>
     <issue id="SelectableText" severity="warning"/>
     <issue id="StopShip" severity="warning"/>
     <issue id="TypographyQuotes" severity="warning"/>
