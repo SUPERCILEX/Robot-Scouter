@@ -88,6 +88,9 @@ public class TeamListActivity extends AppCompatActivityBase {
                         })
                         .addOnFailureListener(new LogFailureListener());
                 break;
+            case R.id.action_licenses:
+                new LicensesDialogFragment().show(getSupportFragmentManager(),
+                                                  getHelper().getTag());
             case R.id.action_settings:
                 break;
         }

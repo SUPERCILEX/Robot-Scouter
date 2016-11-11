@@ -42,7 +42,7 @@ ext {
 
             versionProps['VERSION_CODE'] = code.toString()
             versionProps.store(versionPropsFile.newWriter(),
-                    "# suppress inspection \"UnusedProperty\" for whole file")
+                    "suppress inspection \"UnusedProperty\" for whole file")
 
             return code
         } else {

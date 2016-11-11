@@ -41,7 +41,7 @@ public class TeamsFragment extends FragmentBase {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              final Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.team_list, container, false);
+        View rootView = inflater.inflate(R.layout.recycler_view, container, false);
 
         mManager = new LinearLayoutManager(getContext());
         mTeams = (RecyclerView) rootView.findViewById(R.id.list);

@@ -13,6 +13,7 @@
     <string name="sign_out">Sign out</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="sign_in_failed">Anonymous sign in failed</string>
+    <string name="licenses">Licenses</string>
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
