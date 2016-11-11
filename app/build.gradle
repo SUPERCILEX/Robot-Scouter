@@ -44,10 +44,10 @@ android {
     }
 
     lintOptions {
-        abortOnError true
+        enable 'NewerVersionAvailable'
+        checkAllWarnings true
         warningsAsErrors true
-        htmlReport true
-        htmlOutput file("lint-report.html")
+        abortOnError true
     }
 }
 
