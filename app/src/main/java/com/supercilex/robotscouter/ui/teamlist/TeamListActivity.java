@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 // TODO: 08/10/2016 add Firebase analytics to menu item clicks so I know what stuff to put on top
 // TODO: 08/10/2016 make users enter their team number to setup database with their team as example. Also add Firebase analytics to make sure this isn't getting rid of users.
 
+@SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivityBase {
     private TeamsFragment mTeamsFragment;
     private Menu mMenu;

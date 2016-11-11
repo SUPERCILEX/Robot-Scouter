@@ -41,8 +41,7 @@ public class EditDetailsDialogFragment extends DialogFragment {
         mTeam = getArguments().getParcelable(Constants.INTENT_TEAM);
 
         // Get the layout inflater
-        View rootView = getActivity().getLayoutInflater()
-                .inflate(R.layout.add_details_dialog, null);
+        View rootView = View.inflate(getContext(), R.layout.add_details_dialog, null);
         final EditText name = (EditText) rootView.findViewById(R.id.name);
         final EditText website = (EditText) rootView.findViewById(R.id.website);
         final EditText media = (EditText) rootView.findViewById(R.id.media);
@@ -51,7 +50,8 @@ public class EditDetailsDialogFragment extends DialogFragment {
         website.setText(mTeam.getWebsite());
         media.setText(mTeam.getMedia());
 
-        return new AlertDialog.Builder(getActivity()).setView(rootView)
+        return new AlertDialog.Builder(getActivity())
+                .setView(rootView)
                 .setTitle(getString(R.string.team_details))
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
@@ -70,10 +70,8 @@ public class EditDetailsDialogFragment extends DialogFragment {
                         }
                         mTeam.forceUpdate();
                     }
-                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
                 })
+                .setNegativeButton(R.string.cancel, null)
                 .create();
     }
 

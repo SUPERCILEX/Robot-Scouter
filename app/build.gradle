@@ -44,7 +44,7 @@ android {
     }
 
     lintOptions {
-        enable 'NewerVersionAvailable'
+//        baseline file("lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
         abortOnError true
@@ -77,7 +77,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'net.yslibrary.licenseadapter:licenseadapter:1.2.4'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"

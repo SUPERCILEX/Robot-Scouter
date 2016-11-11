@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -23,7 +22,7 @@ public class LicensesDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = getActivity().getLayoutInflater().inflate(R.layout.recycler_view, null);
+        View rootView = View.inflate(getContext(), R.layout.recycler_view, null);
 
         List<LicenseEntry> licenses = new ArrayList<>();
 
@@ -47,13 +46,10 @@ public class LicensesDialogFragment extends DialogFragment {
 
         Licenses.load(licenses);
 
-        return new AlertDialog.Builder(getActivity()).setView(rootView)
+        return new AlertDialog.Builder(getActivity())
+                .setView(rootView)
                 .setTitle(getString(R.string.licenses))
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                })
+                .setPositiveButton(R.string.confirm, null)
                 .create();
     }
 }
