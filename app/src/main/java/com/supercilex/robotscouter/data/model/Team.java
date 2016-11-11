@@ -124,6 +124,7 @@ public class Team implements Parcelable {
     }
 
     // TODO: 11/09/2016 test this to make sure it doesn't delete timestamp
+    // might have to make it return object
     @Keep
     @PropertyName(Constants.FIREBASE_TIMESTAMP)
     public Map<String, String> getServerValue() {

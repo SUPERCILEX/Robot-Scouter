@@ -43,7 +43,7 @@
                 app:titleMarginTop="13dp"/>
 
             <android.support.design.widget.TabLayout
-                android:id="@+id/scouts"
+                android:id="@+id/scout_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"

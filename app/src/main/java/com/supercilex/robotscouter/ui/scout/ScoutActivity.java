@@ -3,8 +3,6 @@ package com.supercilex.robotscouter.ui.scout;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -72,21 +70,23 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mTeam = getTeam(savedInstanceState);
+        mTeam = Preconditions.checkNotNull((Team) getIntent().getParcelableExtra(Constants.INTENT_TEAM),
+                                           "Team cannot be null");
         updateUi();
         addTeamListener();
 
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        // TODO: 11/10/2016 this is the to keep in activity, all else goes to fragment
         viewPager.setAdapter(mPagerAdapter);
-        ((TabLayout) findViewById(R.id.scouts)).setupWithViewPager(viewPager);
+        ((TabLayout) findViewById(R.id.scout_tabs)).setupWithViewPager(viewPager);
         mScoutRef = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(BaseHelper.getUid())
                 .child(mTeam.getNumber());
         mScoutRef.addChildEventListener(this);
 
-        if (savedInstanceState == null && !isNetworkAvailable()) {
+        if (savedInstanceState == null && !BaseHelper.isNetworkAvailable(this)) {
             Snackbar.make(findViewById(android.R.id.content),
                           R.string.no_connection,
                           Snackbar.LENGTH_SHORT).show();
@@ -278,18 +278,5 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
     @Override
     public void onCancelled(DatabaseError databaseError) {
         FirebaseCrash.report(databaseError.toException());
-    }
-
-    public Team getTeam(Bundle savedInstanceState) {
-        return Preconditions.checkNotNull((Team) getIntent().getParcelableExtra(Constants.INTENT_TEAM),
-                                          "Team cannot be null");
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -2,6 +2,8 @@ package com.supercilex.robotscouter.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -50,7 +52,7 @@ public class BaseHelper {
         return sDispatcher;
     }
 
-    public static FirebaseJobDispatcher getDispatcher(Context context) {
+    public static FirebaseJobDispatcher getNewDispatcher(Context context) {
         if (sDispatcher == null) {
             sDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
         }
@@ -83,5 +85,12 @@ public class BaseHelper {
                              @StringRes int actionMessage,
                              View.OnClickListener listener) {
         getSnackbar(activity, message, length).setAction(actionMessage, listener).show();
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
