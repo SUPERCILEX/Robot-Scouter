@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="4" by="lint 2.3.0-alpha1">
+
+    <issue
+        id="InvalidPackage"
+        message="Invalid package reference in library; not included in Android: `java.nio.file`. Referenced from `okio.Okio`.">
+        <location
+            file="C:\Users\gojun\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.8.0\5ea7af56cc7c567ed9856d99efb30740e9b17ff\okio-1.8.0.jar"/>
+    </issue>
+
+    <issue
+        id="InvalidPackage"
+        message="Invalid package reference in library; not included in Android: `java.lang.invoke`. Referenced from `retrofit2.Platform.Java8`.">
+        <location
+            file="C:\Users\gojun\.gradle\caches\modules-2\files-2.1\com.squareup.retrofit2\retrofit\2.1.0\2de7cd8b95b7021b1d597f049bcb422055119f2c\retrofit-2.1.0.jar"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.google_crash_reporting_api_key` appears to be unused"
+        errorLine1="    &lt;string name=&quot;google_crash_reporting_api_key&quot; translatable=&quot;false&quot;>AIzaSyDnknBjdqVfDqGmQnT9ecLV-HtBbBy1QxM&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build\generated\res\google-services\release\values\values.xml"
+            line="8"
+            column="13"/>
+        <location
+            file="build\generated\res\google-services\debug\values\values.xml"
+            line="8"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-hdpi`: launch_logo.png (found in drawable-mdpi)">
+        <location
+            file="src\main\res\drawable-hdpi"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xhdpi`: launch_logo.png (found in drawable-mdpi)">
+        <location
+            file="src\main\res\drawable-xhdpi"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xxhdpi`: launch_logo.png (found in drawable-mdpi)">
+        <location
+            file="src\main\res\drawable-xxhdpi"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xxxhdpi`: launch_logo.png (found in drawable-mdpi)">
+        <location
+            file="src\main\res\drawable-xxxhdpi"/>
+    </issue>
+
+</issues>

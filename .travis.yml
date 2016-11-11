@@ -24,4 +24,4 @@ before_script:
   - ./setup.sh
 script: ./build.sh
 after_success: ./upload.sh
-after_failure: cat app/build/outputs/lint-results.html app/build/outputs/lint-results.xml
+after_failure: cat app/build/outputs/lint-results.xml app/build/outputs/lint-results.html

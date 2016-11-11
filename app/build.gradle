@@ -44,7 +44,7 @@ android {
     }
 
     lintOptions {
-//        baseline file("lint-baseline.xml")
+        baseline file("lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
         abortOnError true
@@ -61,10 +61,12 @@ dependencies {
     // Support libraries
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:customtabs:$supportLibVersion"
+    compile "com.android.support:palette-v7:$supportLibVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
 
     // Firebase
     compile 'com.firebaseui:firebase-ui:1.0.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.+' //todo remove once f ui upgrades
     compile "com.google.firebase:firebase-core:$playServicesVersion"
     compile "com.google.firebase:firebase-messaging:$playServicesVersion"
     compile "com.google.firebase:firebase-config:$playServicesVersion"
@@ -77,7 +79,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'net.yslibrary.licenseadapter:licenseadapter:1.2.4'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
