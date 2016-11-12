@@ -30,10 +30,10 @@ public class TeamHolder extends RecyclerView.ViewHolder {
     public TeamHolder(View itemView) {
         super(itemView);
         mRowLayout = (ConstraintLayout) itemView;
-        mNumber = (TextView) itemView.findViewById(R.id.list_view_layout_team_number);
-        mName = (TextView) itemView.findViewById(R.id.list_view_layout_team_nickname);
+        mNumber = (TextView) itemView.findViewById(R.id.number);
+        mName = (TextView) itemView.findViewById(R.id.name);
         mLogo = (ImageView) itemView.findViewById(R.id.logo);
-        mNewScout = (ImageButton) itemView.findViewById(R.id.list_view_layout_start_scout);
+        mNewScout = (ImageButton) itemView.findViewById(R.id.new_scout);
     }
 
     public TeamHolder setContext(Context context) {

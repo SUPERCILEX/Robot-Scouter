@@ -1,66 +1,60 @@
 package com.supercilex.robotscouter.ui.scout;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.VisibleKeyboardDialog;
+import com.supercilex.robotscouter.ui.KeyboardDialog;
 import com.supercilex.robotscouter.util.BaseHelper;
 
-public class EditDetailsDialog extends VisibleKeyboardDialog {
+public class EditDetailsDialog extends KeyboardDialog {
     private Team mTeam;
+    private EditText mName;
+    private EditText mWebsite;
+    private EditText mMedia;
 
     public static EditDetailsDialog newInstance(Team team) {
-        EditDetailsDialog dialogFragment = new EditDetailsDialog();
-        dialogFragment.setArguments(BaseHelper.getTeamBundle(team));
-        return dialogFragment;
+        EditDetailsDialog dialog = new EditDetailsDialog();
+        dialog.setArguments(BaseHelper.getTeamBundle(team));
+        return dialog;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View rootView = View.inflate(getContext(), R.layout.edit_details_dialog, null);
         mTeam = mHelper.getTeam();
+        mName = (EditText) rootView.findViewById(R.id.name);
+        mWebsite = (EditText) rootView.findViewById(R.id.website);
+        mMedia = (EditText) rootView.findViewById(R.id.media);
 
-        // Get the layout inflater
-        View rootView = View.inflate(getContext(), R.layout.add_details_dialog, null);
-        final EditText name = (EditText) rootView.findViewById(R.id.name);
-        final EditText website = (EditText) rootView.findViewById(R.id.website);
-        final EditText media = (EditText) rootView.findViewById(R.id.media);
+        mName.setText(mTeam.getName());
+        mWebsite.setText(mTeam.getWebsite());
+        mMedia.setText(mTeam.getMedia());
+        return createDialog(rootView, R.string.team_details);
+    }
 
-        name.setText(mTeam.getName());
-        website.setText(mTeam.getWebsite());
-        media.setText(mTeam.getMedia());
-
-        return new AlertDialog.Builder(getActivity())
-                .setView(rootView)
-                .setTitle(getString(R.string.team_details))
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (isCustomDetail(mTeam.getName(), name)) {
-                            mTeam.setHasCustomName(true);
-                            mTeam.setName(name.getText().toString());
-                        }
-                        if (isCustomDetail(mTeam.getWebsite(), website)) {
-                            mTeam.setHasCustomWebsite(true);
-                            mTeam.setWebsite(getValidUrl(website.getText().toString()));
-                        }
-                        if (isCustomDetail(mTeam.getMedia(), media)) {
-                            mTeam.setHasCustomMedia(true);
-                            mTeam.setMedia(getValidUrl(media.getText().toString()));
-                        }
-                        mTeam.forceUpdate();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .create();
+    @Override
+    public boolean onClick() {
+        if (isCustomDetail(mTeam.getName(), mName)) {
+            mTeam.setHasCustomName(true);
+            mTeam.setName(mName.getText().toString());
+        }
+        if (isCustomDetail(mTeam.getWebsite(), mWebsite)) {
+            mTeam.setHasCustomWebsite(true);
+            mTeam.setWebsite(formatUrl(mWebsite.getText().toString()));
+        }
+        if (isCustomDetail(mTeam.getMedia(), mMedia)) {
+            mTeam.setHasCustomMedia(true);
+            mTeam.setMedia(formatUrl(mMedia.getText().toString()));
+        }
+        mTeam.forceUpdate();
+        return true;
     }
 
     private boolean isCustomDetail(String current, EditText possibleUpdate) {
@@ -68,7 +62,7 @@ public class EditDetailsDialog extends VisibleKeyboardDialog {
                 && !TextUtils.isEmpty(possibleUpdate.getText());
     }
 
-    private String getValidUrl(String url) {
+    private String formatUrl(String url) {
         if (url.contains("http://") || url.contains("https://")) {
             return url;
         } else {

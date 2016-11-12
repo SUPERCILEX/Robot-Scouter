@@ -49,7 +49,7 @@ public class LicensesDialog extends DialogBase {
         return new AlertDialog.Builder(getActivity())
                 .setView(rootView)
                 .setTitle(getString(R.string.licenses))
-                .setPositiveButton(R.string.confirm, null)
+                .setPositiveButton(android.R.string.ok, null)
                 .create();
     }
 }

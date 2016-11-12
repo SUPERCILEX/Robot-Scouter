@@ -20,7 +20,7 @@
         tools:src="@drawable/ic_android_black_24dp"/>
 
     <TextView
-        android:id="@+id/list_view_layout_team_number"
+        android:id="@+id/number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
@@ -34,13 +34,13 @@
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/logo"
-        app:layout_constraintRight_toLeftOf="@+id/list_view_layout_start_scout"
+        app:layout_constraintRight_toLeftOf="@+id/new_scout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         tools:text="2521"/>
 
     <TextView
-        android:id="@+id/list_view_layout_team_nickname"
+        android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -53,13 +53,13 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/logo"
-        app:layout_constraintRight_toLeftOf="@+id/list_view_layout_start_scout"
+        app:layout_constraintRight_toLeftOf="@+id/new_scout"
         app:layout_constraintTop_toTopOf="@+id/guideline"
         app:layout_constraintVertical_bias="0.0"
         tools:text="SERT"/>
 
     <ImageButton
-        android:id="@+id/list_view_layout_start_scout"
+        android:id="@+id/new_scout"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginBottom="8dp"

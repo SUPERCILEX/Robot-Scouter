@@ -3,8 +3,6 @@
 
     <!-- Shared -->
     <string name="action_settings">Settings</string>
-    <string name="confirm">OK</string>
-    <string name="cancel">Cancel</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team Number</string>
@@ -14,6 +12,7 @@
     <string name="signed_in">Successfully signed in!</string>
     <string name="sign_in_failed">Anonymous sign in failed</string>
     <string name="licenses">Licenses</string>
+    <string name="invalid_team_number">Oops! Make sure your team number is greater than 0 and smaller than 100000</string>
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>

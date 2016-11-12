@@ -63,7 +63,7 @@ public class ScoutFragment extends Fragment {
 
         mAdapter = new FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder>(
                 ScoutMetric.class,
-                R.layout.activity_team_list_row_layout,
+                R.layout.team_list_row_layout,
                 ScoutViewHolder.class,
                 BaseHelper.getDatabase()
                         .child(Constants.FIREBASE_SCOUTS)

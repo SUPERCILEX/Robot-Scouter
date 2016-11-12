@@ -36,7 +36,7 @@ public class TeamListActivity extends AppCompatBase {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_NoActionBar);
+        setTheme(R.style.RobotScouter_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));

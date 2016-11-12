@@ -75,7 +75,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         // TODO: 11/10/2016 this is the to keep in activity, all else goes to fragment
         viewPager.setAdapter(mPagerAdapter);
-        ((TabLayout) findViewById(R.id.scout_tabs)).setupWithViewPager(viewPager);
+        ((TabLayout) findViewById(R.id.tabs)).setupWithViewPager(viewPager);
         mScoutRef = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(BaseHelper.getUid())

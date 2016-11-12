@@ -15,12 +15,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="${appName}"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/RobotScouter">
 
         <activity
             android:name=".ui.teamlist.TeamListActivity"
             android:label="${appName}"
-            android:theme="@style/AppTheme.Launcher">
+            android:theme="@style/RobotScouter.Launcher">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -45,7 +45,7 @@
             android:name=".ui.scout.ScoutActivity"
             android:label="@string/title_activity_scout"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/RobotScouter.NoActionBar">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

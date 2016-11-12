@@ -99,7 +99,7 @@ public class TeamsFragment extends FragmentBase {
     private void initAdapter() {
         mAdapter = new FirebaseIndexRecyclerAdapter<Team, TeamHolder>(
                 Team.class,
-                R.layout.activity_team_list_row_layout,
+                R.layout.team_list_row_layout,
                 TeamHolder.class,
                 BaseHelper.getDatabase()
                         .child(Constants.FIREBASE_TEAM_INDEXES)
