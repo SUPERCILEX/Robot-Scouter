@@ -42,20 +42,14 @@ public class Scout {
         mScoutMetrics.put(database.push().getKey(), view);
     }
 
-    public void createScoutId(String teamNumber) {
-        DatabaseReference index = getRef(teamNumber).push();
-
-        String scoutKey = index.getKey();
-
-        index.setValue(true);
-
+    public String createScoutId(String teamNumber) {
+        DatabaseReference index = getIndicesRef(teamNumber).push();
         DatabaseReference scouts = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUTS)
-                .child(scoutKey);
+                .child(index.getKey());
 
-        addView(scouts,
-                new ScoutMetric<>("example yes or no value pos 1",
-                                  false).setType(Constants.CHECKBOX));
+        addView(scouts, new ScoutMetric<>("example yes or no value pos 1",
+                                          false).setType(Constants.CHECKBOX));
         addView(scouts, new ScoutMetric<>("test pos 2", true).setType(Constants.CHECKBOX));
         addView(scouts, new ScoutMetric<>("auto scores pos 3", 0).setType(Constants.COUNTER));
         addView(scouts, new ScoutMetric<>("teleop scores pos 4", 0).setType(Constants.COUNTER));
@@ -72,10 +66,13 @@ public class Scout {
                 new ScoutMetric<>("note 2 pos 6", "some other note").setType(Constants.EDIT_TEXT));
 
         scouts.setValue(this);
+        index.setValue(true);
+
+        return index.getKey();
     }
 
     @Exclude
-    public static DatabaseReference getRef(String teamNumber) {
+    public static DatabaseReference getIndicesRef(String teamNumber) {
         return BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDICES)
                 .child(BaseHelper.getUid())

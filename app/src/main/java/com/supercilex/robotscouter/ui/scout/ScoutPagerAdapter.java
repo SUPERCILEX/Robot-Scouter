@@ -5,15 +5,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class ScoutPagerAdapter extends FragmentStatePagerAdapter {
-    public static final int SAVE_STATE = 0;
-    public static final int UPDATE = 1;
+    private static final int SAVE_STATE = 1;
+    private static final int UPDATE = 0;
 
     private List<String> mKeys = new ArrayList<>();
     private TabLayout mTabLayout;
+    private String mSavedTabKey;
+    private boolean mManuallyAddedTab;
 
     ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout) {
         super(fm);
@@ -40,27 +44,46 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
         return "SCOUT " + (getCount() - position);
     }
 
-    void clear() {
-        mKeys.clear();
-    }
-
-    String getSelectedTabKey(int adjust) {
+    String getSelectedTabKey() {
         if (mTabLayout.getSelectedTabPosition() != -1) {
-            return mKeys.get((getCount() - adjust) - mTabLayout.getSelectedTabPosition());
+            return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
         } else {
             return null;
         }
     }
 
-    void add(String key) {
-        mKeys.add(0, key);
+    void setSavedTabKey(String savedTabKey) {
+        mSavedTabKey = savedTabKey;
     }
 
-    void update(String selectedTabKey) {
-        notifyDataSetChanged();
-        if (selectedTabKey != null) {
-            TabLayout.Tab tab = mTabLayout.getTabAt(getCount() - mKeys.indexOf(selectedTabKey));
-            if (tab != null) tab.select();
+    void setManuallyAddedScout() {
+        mManuallyAddedTab = true;
+    }
+
+    void update(DataSnapshot snapshot) {
+        String selectedTabKey = getSelectedTabKey();
+        mKeys.clear();
+        for (DataSnapshot scoutIndex : snapshot.getChildren()) {
+            mKeys.add(0, scoutIndex.getKey());
         }
+
+        notifyDataSetChanged();
+        if (!mManuallyAddedTab) {
+            if (mSavedTabKey != null) {
+                selectTab(mSavedTabKey, SAVE_STATE);
+                mSavedTabKey = null;
+            } else if (selectedTabKey != null) {
+                selectTab(selectedTabKey, UPDATE);
+            }
+        } else {
+            TabLayout.Tab tab = mTabLayout.getTabAt(0);
+            if (tab != null) tab.select();
+            mManuallyAddedTab = false;
+        }
+    }
+
+    private void selectTab(String selectedTabKey, int adjust) {
+        TabLayout.Tab tab = mTabLayout.getTabAt(getCount() - (mKeys.indexOf(selectedTabKey) + adjust));
+        if (tab != null) tab.select();
     }
 }

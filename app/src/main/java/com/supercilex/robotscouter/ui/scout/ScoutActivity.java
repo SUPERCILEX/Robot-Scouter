@@ -41,7 +41,6 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
     private ValueEventListener mTeamRefListener;
-    private String mSavedScoutKey;
 
     public static Intent createIntent(Context context, Team team) {
         Intent intent = BaseHelper.getTeamIntent(team).setClass(context, ScoutActivity.class);
@@ -75,9 +74,9 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         if (savedInstanceState != null) {
-            mSavedScoutKey = savedInstanceState.getString(Constants.SCOUT_KEY);
+            mPagerAdapter.setSavedTabKey(savedInstanceState.getString(Constants.SCOUT_KEY));
         }
-        Scout.getRef(mTeam.getNumber()).addValueEventListener(this);
+        Scout.getIndicesRef(mTeam.getNumber()).addValueEventListener(this);
 
         if (savedInstanceState == null && !BaseHelper.isNetworkAvailable(this)) {
             Snackbar.make(findViewById(android.R.id.content),
@@ -90,13 +89,13 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     protected void onDestroy() {
         super.onDestroy();
         mTeam.getRef().removeEventListener(mTeamRefListener);
-        Scout.getRef(mTeam.getNumber()).removeEventListener(this);
+        Scout.getIndicesRef(mTeam.getNumber()).removeEventListener(this);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(Constants.SCOUT_KEY,
-                           mPagerAdapter.getSelectedTabKey(ScoutPagerAdapter.SAVE_STATE));
+                           mPagerAdapter.getSelectedTabKey());
         super.onSaveInstanceState(outState);
     }
 
@@ -123,6 +122,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         switch (item.getItemId()) {
             case R.id.action_new_scout:
                 new Scout().createScoutId(mTeam.getNumber());
+                mPagerAdapter.setManuallyAddedScout();
                 break;
             case R.id.action_visit_tba_team_website:
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
@@ -251,17 +251,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     @Override
     public void onDataChange(DataSnapshot snapshot) {
         if (snapshot.getValue() != null) {
-            String selectedTabKey = mPagerAdapter.getSelectedTabKey(ScoutPagerAdapter.UPDATE);
-            mPagerAdapter.clear();
-            for (DataSnapshot scoutIndex : snapshot.getChildren()) {
-                mPagerAdapter.add(scoutIndex.getKey());
-            }
-            if (mSavedScoutKey != null) {
-                mPagerAdapter.update(mSavedScoutKey);
-                mSavedScoutKey = null;
-            } else {
-                mPagerAdapter.update(selectedTabKey);
-            }
+            mPagerAdapter.update(snapshot);
         }
     }
 
