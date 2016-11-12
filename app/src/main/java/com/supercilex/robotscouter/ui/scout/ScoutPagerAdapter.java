@@ -24,8 +24,6 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
         return ScoutFragment.newInstance(mKeyList.get(position));
     }
 
@@ -40,14 +38,14 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     void add(String key) {
-        TabLayout.Tab tab = mTabLayout.getTabAt(0);
         mKeyList.add(0, key);
         notifyDataSetChanged();
+        TabLayout.Tab tab = mTabLayout.getTabAt(0);
         if (tab != null) tab.select();
     }
 
     void remove(String key) {
-        TabLayout.Tab tab = mTabLayout.getTabAt(mKeyList.indexOf(key));
+        TabLayout.Tab tab = mTabLayout.getTabAt(mTabLayout.getSelectedTabPosition());
         mKeyList.remove(key);
         notifyDataSetChanged();
         if (tab != null) tab.select();

@@ -3,10 +3,8 @@
 
     <issue
         id="InvalidPackage"
-        message="Invalid package reference in library; not included in Android: `java.nio.file`. Referenced from `okio.Okio`.">
-        <ignore regexp="okio-1.8.0.jar" />
-        <ignore regexp="retrofit-2.1.0.jar" />
-    </issue>
+        message="Invalid package reference in library; not included in Android: `java.nio.file`. Referenced from `okio.Okio`."
+        severity="ignore"/>
 
     <issue
         id="UnusedResources"
