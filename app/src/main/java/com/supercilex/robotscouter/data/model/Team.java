@@ -29,15 +29,8 @@ public class Team implements Parcelable {
     public Team() {
     }
 
-    public Team(@NonNull String number, String key) {
-        mKey = key;
+    public Team(@NonNull String number) {
         mNumber = number;
-    }
-
-    public Team(String teamName, String teamWebsite, String teamLogoUrl) {
-        mName = teamName;
-        mMedia = teamLogoUrl;
-        mWebsite = teamWebsite;
     }
 
     @Keep
@@ -147,10 +140,7 @@ public class Team implements Parcelable {
     }
 
     public void add() {
-        DatabaseReference index = BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_TEAM_INDEXES)
-                .child(BaseHelper.getUid())
-                .push();
+        DatabaseReference index = getIndicesRef().push();
         mKey = index.getKey();
         index.setValue(mNumber, Long.valueOf(mNumber));
         forceUpdate();
@@ -166,18 +156,25 @@ public class Team implements Parcelable {
         if (mHasCustomMedia == null) {
             mMedia = newTeam.getMedia();
         }
-        getTeamRef().setValue(this);
+        getRef().setValue(this);
     }
 
     public void forceUpdate() {
         mShouldUpdateTimestamp = false;
-        getTeamRef().setValue(this);
+        getRef().setValue(this);
         mShouldUpdateTimestamp = true;
     }
 
     @Exclude
-    public DatabaseReference getTeamRef() {
+    public DatabaseReference getRef() {
         return BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey);
+    }
+
+    @Exclude
+    public static DatabaseReference getIndicesRef() {
+        return BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_TEAM_INDICES)
+                .child(BaseHelper.getUid());
     }
 
     public void fetchLatestData() {

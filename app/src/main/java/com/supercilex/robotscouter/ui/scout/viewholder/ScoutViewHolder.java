@@ -11,5 +11,5 @@ public abstract class ScoutViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    public abstract void initialize(ScoutMetric view, DatabaseReference ref);
+    public abstract void bind(ScoutMetric view, DatabaseReference ref);
 }

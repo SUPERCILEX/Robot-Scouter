@@ -31,8 +31,8 @@ import java.util.ArrayList;
 public class ScoutFragment extends Fragment {
     private static final String ARG_SCOUT_KEY = "scout_key";
 
-    // TODO: 11/06/2016 copy commit 02cc02ed49ae89be6d820ce5405aca5f579e1476
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
+    private LinearLayoutManager mManager;
 
     public static ScoutFragment newInstance(String key) {
         ScoutFragment fragment = new ScoutFragment();
@@ -50,14 +50,24 @@ public class ScoutFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mAdapter != null) {
+            outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
+            outState.putInt(Constants.LIST_COUNT, mAdapter.getItemCount());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);
 
         final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.scout_data);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mManager);
         // TODO: 09/22/2016 fix this
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
@@ -73,7 +83,7 @@ public class ScoutFragment extends Fragment {
             public void populateViewHolder(ScoutViewHolder viewHolder,
                                            ScoutMetric view,
                                            int position) {
-                viewHolder.initialize(view, getRef(position));
+                viewHolder.bind(view, getRef(position));
             }
 
             @Override
@@ -143,8 +153,21 @@ public class ScoutFragment extends Fragment {
                 return getItem(position).getType();
             }
         };
-
         recyclerView.setAdapter(mAdapter);
+
+        if (savedInstanceState != null) {
+            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(Constants.LIST_COUNT)) {
+                        mManager.onRestoreInstanceState(savedInstanceState.getParcelable(
+                                Constants.MANAGER_STATE));
+                        mAdapter.unregisterAdapterDataObserver(this);
+                    }
+                }
+            });
+        }
+
         return rootView;
     }
 }

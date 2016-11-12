@@ -18,10 +18,14 @@ public class Constants {
     public static final int EDIT_TEXT = 3;
     public static final int SLIDER = 4;
 
+    public static final String MANAGER_STATE = "manager_state";
+    public static final String LIST_COUNT = "count";
+    public static final String SCOUT_KEY = "scout_key";
+
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]
-    public static final String FIREBASE_TEAM_INDEXES = "team-indexes";
-    public static final String FIREBASE_SCOUT_INDEXES = "scout-indexes";
+    public static final String FIREBASE_TEAM_INDICES = "team-indices";
+    public static final String FIREBASE_SCOUT_INDICES = "scout-indices";
     public static final String FIREBASE_TEAMS = "teams";
     public static final String FIREBASE_SCOUTS = "scouts";
 

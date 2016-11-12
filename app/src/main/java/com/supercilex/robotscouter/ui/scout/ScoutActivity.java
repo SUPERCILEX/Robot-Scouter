@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
@@ -41,9 +40,8 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
-    // TODO: 11/09/2016 move this to getScoutRef in Scout.java
-    private DatabaseReference mScoutRef;
     private ValueEventListener mTeamRefListener;
+    private String mSavedScoutKey;
 
     public static Intent createIntent(Context context, Team team) {
         Intent intent = BaseHelper.getTeamIntent(team).setClass(context, ScoutActivity.class);
@@ -74,14 +72,12 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(), tabLayout);
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        // TODO: 11/10/2016 this is the to keep in activity, all else goes to fragment
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        mScoutRef = BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_SCOUT_INDEXES)
-                .child(BaseHelper.getUid())
-                .child(mTeam.getNumber());
-        mScoutRef.addValueEventListener(this);
+        if (savedInstanceState != null) {
+            mSavedScoutKey = savedInstanceState.getString(Constants.SCOUT_KEY);
+        }
+        Scout.getRef(mTeam.getNumber()).addValueEventListener(this);
 
         if (savedInstanceState == null && !BaseHelper.isNetworkAvailable(this)) {
             Snackbar.make(findViewById(android.R.id.content),
@@ -93,8 +89,15 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTeam.getTeamRef().removeEventListener(mTeamRefListener);
-        mScoutRef.removeEventListener(this);
+        mTeam.getRef().removeEventListener(mTeamRefListener);
+        Scout.getRef(mTeam.getNumber()).removeEventListener(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(Constants.SCOUT_KEY,
+                           mPagerAdapter.getSelectedTabKey(ScoutPagerAdapter.SAVE_STATE));
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -190,12 +193,12 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
     private void addTeamListener() {
         if (mTeam.getKey() != null) {
-            mTeamRefListener = mTeam.getTeamRef().addValueEventListener(new ValueEventListener() {
+            mTeamRefListener = mTeam.getRef().addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getValue() != null) {
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
                         String key = mTeam.getKey();
-                        mTeam = dataSnapshot.getValue(Team.class);
+                        mTeam = snapshot.getValue(Team.class);
                         mTeam.setKey(key);
                         updateUi();
                     }
@@ -207,61 +210,63 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 }
             });
         } else {
-            BaseHelper.getDatabase()
-                    .child(Constants.FIREBASE_TEAM_INDEXES)
-                    .child(BaseHelper.getUid())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.getValue() != null) {
-                                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                                    if (child.getValue().toString().equals(mTeam.getNumber())) {
-                                        mTeam.setKey(child.getKey());
-                                        addTeamListener();
-                                        return;
+            Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            if (child.getValue().toString().equals(mTeam.getNumber())) {
+                                mTeam.setKey(child.getKey());
+                                addTeamListener();
+                                return;
+                            }
+                        }
+                    }
+
+                    mTeam.add();
+                    addTeamListener();
+                    TbaService.start(mTeam, ScoutActivity.this)
+                            .addOnCompleteListener(new OnCompleteListener<Team>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Team> task) {
+                                    if (task.isSuccessful()) {
+                                        mTeam.update(task.getResult());
+                                        BaseHelper.getDispatcher()
+                                                .cancel(mTeam.getNumber());
+                                    } else {
+                                        mTeam.fetchLatestData();
                                     }
                                 }
-                            }
+                            });
+                }
 
-                            mTeam.add();
-                            addTeamListener();
-                            TbaService.start(mTeam, ScoutActivity.this)
-                                    .addOnCompleteListener(new OnCompleteListener<Team>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Team> task) {
-                                            if (task.isSuccessful()) {
-                                                mTeam.update(task.getResult());
-                                                BaseHelper.getDispatcher()
-                                                        .cancel(mTeam.getNumber());
-                                            } else {
-                                                mTeam.fetchLatestData();
-                                            }
-                                        }
-                                    });
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            FirebaseCrash.report(databaseError.toException());
-                        }
-                    });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    FirebaseCrash.report(error.toException());
+                }
+            });
         }
     }
 
     @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-        if (dataSnapshot.getValue() != null) {
-            String selectedTabKey = mPagerAdapter.getSelectedTabKey();
+    public void onDataChange(DataSnapshot snapshot) {
+        if (snapshot.getValue() != null) {
+            String selectedTabKey = mPagerAdapter.getSelectedTabKey(ScoutPagerAdapter.UPDATE);
             mPagerAdapter.clear();
-            for (DataSnapshot scoutIndex : dataSnapshot.getChildren()) {
+            for (DataSnapshot scoutIndex : snapshot.getChildren()) {
                 mPagerAdapter.add(scoutIndex.getKey());
             }
-            mPagerAdapter.update(selectedTabKey);
+            if (mSavedScoutKey != null) {
+                mPagerAdapter.update(mSavedScoutKey);
+                mSavedScoutKey = null;
+            } else {
+                mPagerAdapter.update(selectedTabKey);
+            }
         }
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
-        FirebaseCrash.report(databaseError.toException());
+    public void onCancelled(DatabaseError error) {
+        FirebaseCrash.report(error.toException());
     }
 }

@@ -22,7 +22,7 @@ public class SpinnerViewHolder extends ScoutViewHolder {
     }
 
     @Override
-    public void initialize(ScoutMetric view, DatabaseReference ref) {
+    public void bind(ScoutMetric view, DatabaseReference ref) {
         ScoutSpinner scoutSpinner = (ScoutSpinner) view;
 
         setText(scoutSpinner.getName());

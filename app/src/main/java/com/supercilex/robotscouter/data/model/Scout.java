@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.data.model;
 import android.support.annotation.Keep;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -11,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Scout {
-    private String mOwner = BaseHelper.getUid();
+    private String mOwner;
     private Map<String, ScoutMetric> mScoutMetrics = new LinkedHashMap<>();
 
     public Scout() {
@@ -42,11 +43,7 @@ public class Scout {
     }
 
     public void createScoutId(String teamNumber) {
-        DatabaseReference index = BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_SCOUT_INDEXES)
-                .child(mOwner)
-                .child(teamNumber)
-                .push();
+        DatabaseReference index = getRef(teamNumber).push();
 
         String scoutKey = index.getKey();
 
@@ -75,5 +72,13 @@ public class Scout {
                 new ScoutMetric<>("note 2 pos 6", "some other note").setType(Constants.EDIT_TEXT));
 
         scouts.setValue(this);
+    }
+
+    @Exclude
+    public static DatabaseReference getRef(String teamNumber) {
+        return BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_SCOUT_INDICES)
+                .child(BaseHelper.getUid())
+                .child(teamNumber);
     }
 }

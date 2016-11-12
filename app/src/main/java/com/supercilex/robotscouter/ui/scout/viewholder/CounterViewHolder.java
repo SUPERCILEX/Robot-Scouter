@@ -23,7 +23,7 @@ public class CounterViewHolder extends ScoutViewHolder {
     }
 
     @Override
-    public void initialize(ScoutMetric view, DatabaseReference ref) {
+    public void bind(ScoutMetric view, DatabaseReference ref) {
         setText(view.getName());
         setValue((Integer) view.getValue());
         setIncrementListener(view, ref);

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ScoutPagerAdapter extends FragmentStatePagerAdapter {
+    public static final int SAVE_STATE = 0;
+    public static final int UPDATE = 1;
+
     private List<String> mKeys = new ArrayList<>();
     private TabLayout mTabLayout;
 
@@ -41,9 +44,9 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
         mKeys.clear();
     }
 
-    String getSelectedTabKey() {
+    String getSelectedTabKey(int adjust) {
         if (mTabLayout.getSelectedTabPosition() != -1) {
-            return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
+            return mKeys.get((getCount() - adjust) - mTabLayout.getSelectedTabPosition());
         } else {
             return null;
         }

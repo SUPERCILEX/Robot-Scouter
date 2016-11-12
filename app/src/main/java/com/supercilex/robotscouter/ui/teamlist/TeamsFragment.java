@@ -20,10 +20,6 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class TeamsFragment extends StickyFragment {
-    // TODO: 11/09/2016 move to Constants.java
-    private static final String MANAGER_STATE = "manager_state";
-    private static final String COUNT = "count";
-
     private RecyclerView mTeams;
     private FirebaseRecyclerAdapter mAdapter;
     private LinearLayoutManager mManager;
@@ -53,9 +49,9 @@ public class TeamsFragment extends StickyFragment {
             mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
-                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(COUNT)) {
+                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(Constants.LIST_COUNT)) {
                         mManager.onRestoreInstanceState(savedInstanceState.getParcelable(
-                                MANAGER_STATE));
+                                Constants.MANAGER_STATE));
                         mAdapter.unregisterAdapterDataObserver(this);
                     }
                 }
@@ -67,11 +63,11 @@ public class TeamsFragment extends StickyFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         if (mAdapter != null) {
-            outState.putParcelable(MANAGER_STATE, mManager.onSaveInstanceState());
-            outState.putInt(COUNT, mAdapter.getItemCount());
+            outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
+            outState.putInt(Constants.LIST_COUNT, mAdapter.getItemCount());
         }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -100,9 +96,7 @@ public class TeamsFragment extends StickyFragment {
                 Team.class,
                 R.layout.team_list_row_layout,
                 TeamHolder.class,
-                BaseHelper.getDatabase()
-                        .child(Constants.FIREBASE_TEAM_INDEXES)
-                        .child(BaseHelper.getUid()),
+                Team.getIndicesRef(),
                 BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS)) {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {

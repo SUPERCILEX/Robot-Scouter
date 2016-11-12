@@ -19,7 +19,7 @@ public class EditTextViewHolder extends ScoutViewHolder {
     }
 
     @Override
-    public void initialize(ScoutMetric view, DatabaseReference ref) {
+    public void bind(ScoutMetric view, DatabaseReference ref) {
         setText(view.getName());
         setValue((String) view.getValue());
         setOnFocusChangeListener(view, ref);

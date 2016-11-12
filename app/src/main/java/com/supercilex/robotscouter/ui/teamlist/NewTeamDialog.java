@@ -30,7 +30,7 @@ public class NewTeamDialog extends KeyboardDialog {
         if (isValid(teamNumber)) {
             teamNumber = String.valueOf(Long.parseLong(teamNumber));
             new Scout().createScoutId(teamNumber);
-            startActivity(ScoutActivity.createIntent(getContext(), new Team(teamNumber, null)));
+            startActivity(ScoutActivity.createIntent(getContext(), new Team(teamNumber)));
             return true;
         } else {
             mInputLayout.setError(getString(R.string.invalid_team_number));
