@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -9,9 +10,11 @@ import java.util.List;
 
 class ScoutPagerAdapter extends FragmentStatePagerAdapter {
     private List<String> mKeyList = new ArrayList<>();
+    private TabLayout mTabLayout;
 
-    ScoutPagerAdapter(FragmentManager fm) {
+    ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout) {
         super(fm);
+        mTabLayout = tabLayout;
     }
 
     @Override
@@ -37,12 +40,16 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     void add(String key) {
+        TabLayout.Tab tab = mTabLayout.getTabAt(0);
         mKeyList.add(0, key);
         notifyDataSetChanged();
+        if (tab != null) tab.select();
     }
 
     void remove(String key) {
+        TabLayout.Tab tab = mTabLayout.getTabAt(mKeyList.indexOf(key));
         mKeyList.remove(key);
         notifyDataSetChanged();
+        if (tab != null) tab.select();
     }
 }

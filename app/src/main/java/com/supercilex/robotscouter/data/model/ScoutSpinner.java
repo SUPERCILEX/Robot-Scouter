@@ -31,7 +31,6 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
         mSelectedValue = selectedValue;
     }
 
-    @Keep
     public void setSelectedValue(DatabaseReference databaseReference, int selectedValue) {
         databaseReference.child(Constants.FIREBASE_SELECTED_VALUE).setValue(selectedValue);
         mSelectedValue = selectedValue;

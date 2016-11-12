@@ -48,13 +48,13 @@ public class ScoutMetric<T> {
         return mType;
     }
 
-    public ScoutMetric<T> setType(int type) {
-        mType = type;
-        return this;
-    }
-
     @Keep
     public void setType(Integer type) {
         mType = type;
+    }
+
+    public ScoutMetric<T> setType(int type) {
+        mType = type;
+        return this;
     }
 }
