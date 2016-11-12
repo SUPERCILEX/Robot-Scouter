@@ -9,10 +9,11 @@
     </issue>
 
     <issue
-        id="InvalidPackage"
-        message="Invalid package reference in library; not included in Android: `java.lang.invoke`. Referenced from `retrofit2.Platform.Java8`.">
+        id="InvalidPackage">
         <location
             file="$HOME/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/retrofit/2.1.0/2de7cd8b95b7021b1d597f049bcb422055119f2c/retrofit-2.1.0.jar"/>
+        <location
+            file="$HOME/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.8.0/5ea7af56cc7c567ed9856d99efb30740e9b17ff/okio-1.8.0.jar"/>
     </issue>
 
     <issue
@@ -34,28 +35,28 @@
         id="IconDensities"
         message="Missing the following drawables in `drawable-hdpi`: launch_logo.png (found in drawable-mdpi)">
         <location
-            file="src/main/res/drawable-hdpi"/>
+            file="app/src/main/res/drawable-hdpi"/>
     </issue>
 
     <issue
         id="IconDensities"
         message="Missing the following drawables in `drawable-xhdpi`: launch_logo.png (found in drawable-mdpi)">
         <location
-            file="src/main/res/drawable-xhdpi"/>
+            file="app/src/main/res/drawable-xhdpi"/>
     </issue>
 
     <issue
         id="IconDensities"
         message="Missing the following drawables in `drawable-xxhdpi`: launch_logo.png (found in drawable-mdpi)">
         <location
-            file="src/main/res/drawable-xxhdpi"/>
+            file="app/src/main/res/drawable-xxhdpi"/>
     </issue>
 
     <issue
         id="IconDensities"
         message="Missing the following drawables in `drawable-xxxhdpi`: launch_logo.png (found in drawable-mdpi)">
         <location
-            file="src/main/res/drawable-xxxhdpi"/>
+            file="app/src/main/res/drawable-xxxhdpi"/>
     </issue>
 
 </issues>
