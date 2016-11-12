@@ -147,12 +147,12 @@ public class Team implements Parcelable {
     }
 
     public void add() {
-        DatabaseReference ref = BaseHelper.getDatabase();
-        mKey = ref.push().getKey();
-        ref.child(Constants.FIREBASE_TEAM_INDEXES)
+        DatabaseReference index = BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_TEAM_INDEXES)
                 .child(BaseHelper.getUid())
-                .child(mKey)
-                .setValue(mNumber, Long.valueOf(mNumber));
+                .push();
+        mKey = index.getKey();
+        index.setValue(mNumber, Long.valueOf(mNumber));
         forceUpdate();
     }
 

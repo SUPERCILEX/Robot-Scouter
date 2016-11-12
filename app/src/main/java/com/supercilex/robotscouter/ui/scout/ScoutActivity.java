@@ -24,7 +24,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,12 +37,13 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ScoutActivity extends AppCompatBase implements ValueEventListener, ChildEventListener {
+public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
     // TODO: 11/09/2016 move this to getScoutRef in Scout.java
     private DatabaseReference mScoutRef;
+    private ValueEventListener mTeamRefListener;
 
     public static Intent createIntent(Context context, Team team) {
         Intent intent = BaseHelper.getTeamIntent(team).setClass(context, ScoutActivity.class);
@@ -81,7 +81,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
                 .child(Constants.FIREBASE_SCOUT_INDEXES)
                 .child(BaseHelper.getUid())
                 .child(mTeam.getNumber());
-        mScoutRef.addChildEventListener(this);
+        mScoutRef.addValueEventListener(this);
 
         if (savedInstanceState == null && !BaseHelper.isNetworkAvailable(this)) {
             Snackbar.make(findViewById(android.R.id.content),
@@ -93,8 +93,8 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTeam.getTeamRef().removeEventListener((ValueEventListener) this);
-        mScoutRef.removeEventListener((ChildEventListener) this);
+        mTeam.getTeamRef().removeEventListener(mTeamRefListener);
+        mScoutRef.removeEventListener(this);
     }
 
     @Override
@@ -190,7 +190,22 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
 
     private void addTeamListener() {
         if (mTeam.getKey() != null) {
-            mTeam.getTeamRef().addValueEventListener(this);
+            mTeamRefListener = mTeam.getTeamRef().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() != null) {
+                        String key = mTeam.getKey();
+                        mTeam = dataSnapshot.getValue(Team.class);
+                        mTeam.setKey(key);
+                        updateUi();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    FirebaseCrash.report(error.toException());
+                }
+            });
         } else {
             BaseHelper.getDatabase()
                     .child(Constants.FIREBASE_TEAM_INDEXES)
@@ -236,29 +251,13 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
     @Override
     public void onDataChange(DataSnapshot dataSnapshot) {
         if (dataSnapshot.getValue() != null) {
-            String key = mTeam.getKey();
-            mTeam = dataSnapshot.getValue(Team.class);
-            mTeam.setKey(key);
-            updateUi();
+            String selectedTabKey = mPagerAdapter.getSelectedTabKey();
+            mPagerAdapter.clear();
+            for (DataSnapshot scoutIndex : dataSnapshot.getChildren()) {
+                mPagerAdapter.add(scoutIndex.getKey());
+            }
+            mPagerAdapter.update(selectedTabKey);
         }
-    }
-
-    @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        mPagerAdapter.add(dataSnapshot.getKey());
-    }
-
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-    }
-
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-        mPagerAdapter.remove(dataSnapshot.getKey());
-    }
-
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
     }
 
     @Override

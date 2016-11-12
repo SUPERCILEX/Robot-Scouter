@@ -15,11 +15,11 @@ import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.FragmentBase;
+import com.supercilex.robotscouter.ui.StickyFragment;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class TeamsFragment extends FragmentBase {
+public class TeamsFragment extends StickyFragment {
     // TODO: 11/09/2016 move to Constants.java
     private static final String MANAGER_STATE = "manager_state";
     private static final String COUNT = "count";
@@ -31,7 +31,6 @@ public class TeamsFragment extends FragmentBase {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         if (BaseHelper.isSignedIn()) {
             initAdapter();
         }

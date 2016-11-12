@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ScoutPagerAdapter extends FragmentStatePagerAdapter {
-    private List<String> mKeyList = new ArrayList<>();
+    private List<String> mKeys = new ArrayList<>();
     private TabLayout mTabLayout;
 
     ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout) {
@@ -24,12 +24,12 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return ScoutFragment.newInstance(mKeyList.get(position));
+        return ScoutFragment.newInstance(mKeys.get(position));
     }
 
     @Override
     public int getCount() {
-        return mKeyList.size();
+        return mKeys.size();
     }
 
     @Override
@@ -37,17 +37,27 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter {
         return "SCOUT " + (getCount() - position);
     }
 
-    void add(String key) {
-        mKeyList.add(0, key);
-        notifyDataSetChanged();
-        TabLayout.Tab tab = mTabLayout.getTabAt(0);
-        if (tab != null) tab.select();
+    void clear() {
+        mKeys.clear();
     }
 
-    void remove(String key) {
-        TabLayout.Tab tab = mTabLayout.getTabAt(mTabLayout.getSelectedTabPosition());
-        mKeyList.remove(key);
+    String getSelectedTabKey() {
+        if (mTabLayout.getSelectedTabPosition() != -1) {
+            return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
+        } else {
+            return null;
+        }
+    }
+
+    void add(String key) {
+        mKeys.add(0, key);
+    }
+
+    void update(String selectedTabKey) {
         notifyDataSetChanged();
-        if (tab != null) tab.select();
+        if (selectedTabKey != null) {
+            TabLayout.Tab tab = mTabLayout.getTabAt(getCount() - mKeys.indexOf(selectedTabKey));
+            if (tab != null) tab.select();
+        }
     }
 }

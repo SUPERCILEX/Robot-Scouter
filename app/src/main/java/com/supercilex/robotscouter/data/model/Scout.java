@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Scout {
     private String mOwner = BaseHelper.getUid();
-    private Map<String, Object> mScoutMetrics = new LinkedHashMap<>();
+    private Map<String, ScoutMetric> mScoutMetrics = new LinkedHashMap<>();
 
     public Scout() {
     }
@@ -28,12 +28,12 @@ public class Scout {
     }
 
     @Keep
-    public Map<String, Object> getViews() {
+    public Map<String, ScoutMetric> getViews() {
         return mScoutMetrics;
     }
 
     @Keep
-    public void setViews(Map<String, Object> views) {
+    public void setViews(Map<String, ScoutMetric> views) {
         mScoutMetrics = views;
     }
 
