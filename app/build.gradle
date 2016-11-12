@@ -44,6 +44,7 @@ android {
     }
 
     lintOptions {
+        disable 'InvalidPackage'
         baseline file("lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
