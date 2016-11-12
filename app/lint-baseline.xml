@@ -4,16 +4,8 @@
     <issue
         id="InvalidPackage"
         message="Invalid package reference in library; not included in Android: `java.nio.file`. Referenced from `okio.Okio`.">
-        <location
-            file="$HOME/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.8.0/5ea7af56cc7c567ed9856d99efb30740e9b17ff/okio-1.8.0.jar"/>
-    </issue>
-
-    <issue
-        id="InvalidPackage">
-        <location
-            file="$HOME/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/retrofit/2.1.0/2de7cd8b95b7021b1d597f049bcb422055119f2c/retrofit-2.1.0.jar"/>
-        <location
-            file="$HOME/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.8.0/5ea7af56cc7c567ed9856d99efb30740e9b17ff/okio-1.8.0.jar"/>
+        <ignore regexp="okio-1.8.0.jar" />
+        <ignore regexp="retrofit-2.1.0.jar" />
     </issue>
 
     <issue
@@ -36,6 +28,13 @@
         message="Missing the following drawables in `drawable-hdpi`: launch_logo.png (found in drawable-mdpi)">
         <location
             file="app/src/main/res/drawable-hdpi"/>
+    </issue>
+
+    <issue
+        id="IconMissingDensityFolder"
+        message="Missing density variation folders in `src/main/res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi, drawable-xxxhdpi">
+        <location
+            file="app/src/main/res"/>
     </issue>
 
     <issue
