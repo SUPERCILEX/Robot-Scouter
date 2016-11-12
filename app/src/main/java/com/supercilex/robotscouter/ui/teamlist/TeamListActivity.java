@@ -18,7 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.ui.AppCompatActivityBase;
+import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.LogFailureListener;
 
@@ -30,7 +30,7 @@ import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 // TODO: 08/10/2016 make users enter their team number to setup database with their team as example. Also add Firebase analytics to make sure this isn't getting rid of users.
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-public class TeamListActivity extends AppCompatActivityBase {
+public class TeamListActivity extends AppCompatBase {
     private TeamsFragment mTeamsFragment;
     private Menu mMenu;
 
@@ -44,7 +44,7 @@ public class TeamListActivity extends AppCompatActivityBase {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new NewTeamDialogFragment().show(getSupportFragmentManager(), getHelper().getTag());
+                new NewTeamDialog().show(getSupportFragmentManager(), mHelper.getTag());
             }
         });
 
@@ -91,8 +91,8 @@ public class TeamListActivity extends AppCompatActivityBase {
                         .addOnFailureListener(new LogFailureListener());
                 break;
             case R.id.action_licenses:
-                new LicensesDialogFragment().show(getSupportFragmentManager(),
-                                                  getHelper().getTag());
+                new LicensesDialog().show(getSupportFragmentManager(),
+                                          mHelper.getTag());
             case R.id.action_settings:
                 break;
         }
@@ -109,7 +109,7 @@ public class TeamListActivity extends AppCompatActivityBase {
                 mTeamsFragment.setAdapter();
                 mMenu.findItem(R.id.action_sign_in).setVisible(false);
                 mMenu.findItem(R.id.action_sign_out).setVisible(true);
-                getHelper().showSnackbar(R.string.signed_in, Snackbar.LENGTH_LONG);
+                mHelper.showSnackbar(R.string.signed_in, Snackbar.LENGTH_LONG);
 
                 DatabaseReference ref = BaseHelper.getDatabase()
                         .child("users")
@@ -152,15 +152,15 @@ public class TeamListActivity extends AppCompatActivityBase {
             if (task.isSuccessful()) {
                 mTeamsFragment.setAdapter();
             } else {
-                getHelper().showSnackbar(R.string.sign_in_failed,
-                                         Snackbar.LENGTH_LONG,
-                                         R.string.sign_in,
-                                         new View.OnClickListener() {
-                                             @Override
-                                             public void onClick(View view) {
-                                                 signIn();
-                                             }
-                                         });
+                mHelper.showSnackbar(R.string.sign_in_failed,
+                                     Snackbar.LENGTH_LONG,
+                                     R.string.sign_in,
+                                     new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View view) {
+                                             signIn();
+                                         }
+                                     });
             }
         }
     }

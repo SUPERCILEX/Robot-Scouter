@@ -4,41 +4,29 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.ui.VisibleKeyboardDialog;
+import com.supercilex.robotscouter.util.BaseHelper;
 
-public class EditDetailsDialogFragment extends DialogFragment {
+public class EditDetailsDialog extends VisibleKeyboardDialog {
     private Team mTeam;
 
-    public static EditDetailsDialogFragment newInstance(Team team) {
-        EditDetailsDialogFragment dialogFragment = new EditDetailsDialogFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(Constants.INTENT_TEAM, team);
-        dialogFragment.setArguments(args);
-
+    public static EditDetailsDialog newInstance(Team team) {
+        EditDetailsDialog dialogFragment = new EditDetailsDialog();
+        dialogFragment.setArguments(BaseHelper.getTeamBundle(team));
         return dialogFragment;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow()
-                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mTeam = getArguments().getParcelable(Constants.INTENT_TEAM);
+        mTeam = mHelper.getTeam();
 
         // Get the layout inflater
         View rootView = View.inflate(getContext(), R.layout.add_details_dialog, null);

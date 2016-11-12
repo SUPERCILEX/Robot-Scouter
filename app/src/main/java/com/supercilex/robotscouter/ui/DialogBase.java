@@ -2,14 +2,14 @@ package com.supercilex.robotscouter.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 
-public class FragmentBase extends Fragment {
-    protected FragmentHelper mHelper;
+public class DialogBase extends DialogFragment {
+    protected DialogHelper mHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHelper = new FragmentHelper(this);
+        mHelper = new DialogHelper(this);
     }
 }

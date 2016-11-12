@@ -33,13 +33,12 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaService;
-import com.supercilex.robotscouter.ui.AppCompatActivityBase;
+import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.Preconditions;
 
-public class ScoutActivity extends AppCompatActivityBase implements ValueEventListener, ChildEventListener {
+public class ScoutActivity extends AppCompatBase implements ValueEventListener, ChildEventListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
@@ -47,8 +46,7 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
     private DatabaseReference mScoutRef;
 
     public static Intent createIntent(Context context, Team team) {
-        Intent intent = new Intent(context, ScoutActivity.class);
-        intent.putExtra(Constants.INTENT_TEAM, team);
+        Intent intent = BaseHelper.getTeamIntent(team).setClass(context, ScoutActivity.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -69,8 +67,7 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mTeam = Preconditions.checkNotNull((Team) getIntent().getParcelableExtra(Constants.INTENT_TEAM),
-                                           "Team cannot be null");
+        mTeam = mHelper.getTeam();
         updateUi();
         addTeamListener();
 
@@ -97,12 +94,6 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
         super.onDestroy();
         mTeam.getTeamRef().removeEventListener((ValueEventListener) this);
         mScoutRef.removeEventListener((ChildEventListener) this);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelable(Constants.INTENT_TEAM, mTeam);
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -147,8 +138,8 @@ public class ScoutActivity extends AppCompatActivityBase implements ValueEventLi
                 teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
                 break;
             case R.id.action_edit_details:
-                EditDetailsDialogFragment.newInstance(mTeam)
-                        .show(getSupportFragmentManager(), getHelper().getTag());
+                EditDetailsDialog.newInstance(mTeam)
+                        .show(getSupportFragmentManager(), mHelper.getTag());
                 break;
             case R.id.action_settings:
                 break;

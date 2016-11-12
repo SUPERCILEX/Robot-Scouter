@@ -2,9 +2,12 @@ package com.supercilex.robotscouter.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -16,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Team;
 
 public class BaseHelper {
     private static FirebaseDatabase sDatabase;
@@ -71,6 +75,33 @@ public class BaseHelper {
         new Handler(context.getMainLooper()).post(runnable);
     }
 
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    public static Intent getTeamIntent(@NonNull Team team) {
+        return new Intent().putExtra(Constants.INTENT_TEAM, team);
+    }
+
+    public static Team getTeam(Intent intent) {
+        return (Team) Preconditions.checkNotNull(intent.getParcelableExtra(Constants.INTENT_TEAM),
+                                                 "Team cannot be null");
+    }
+
+    public static Bundle getTeamBundle(@NonNull Team team) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Constants.INTENT_TEAM, team);
+        return bundle;
+    }
+
+    public static Team getTeam(Bundle arguments) {
+        return (Team) Preconditions.checkNotNull(arguments.getParcelable(Constants.INTENT_TEAM),
+                                                 "Team cannot be null");
+    }
+
     public Snackbar getSnackbar(Activity activity, @StringRes int message, int length) {
         return Snackbar.make(activity.findViewById(R.id.root), message, length);
     }
@@ -85,12 +116,5 @@ public class BaseHelper {
                              @StringRes int actionMessage,
                              View.OnClickListener listener) {
         getSnackbar(activity, message, length).setAction(actionMessage, listener).show();
-    }
-
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.StringRes;
 import android.view.View;
 
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 public class ActivityHelper extends BaseHelper {
@@ -26,5 +27,9 @@ public class ActivityHelper extends BaseHelper {
 
     public String getTag() {
         return getTag(mActivity);
+    }
+
+    public Team getTeam() {
+        return BaseHelper.getTeam(mActivity.getIntent());
     }
 }

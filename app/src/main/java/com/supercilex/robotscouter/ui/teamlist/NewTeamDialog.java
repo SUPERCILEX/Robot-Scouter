@@ -4,12 +4,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,20 +15,14 @@ import android.widget.TextView;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.VisibleKeyboardDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
-public class NewTeamDialogFragment extends DialogFragment {
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getDialog().getWindow()
-                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-    }
-
+public class NewTeamDialog extends VisibleKeyboardDialog {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.create_new_team_dialog, null);
+        View rootView = View.inflate(getContext(), R.layout.new_team_dialog, null);
         final EditText editText = (EditText) rootView.findViewById(R.id.number);
 
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {

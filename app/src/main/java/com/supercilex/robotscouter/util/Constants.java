@@ -9,7 +9,7 @@ public class Constants {
     public static final String TOKEN = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
 
     // Intents
-    public final static String INTENT_TEAM = "com.supercilex.robotscouter.TEAM";
+    public final static String INTENT_TEAM = "com.supercilex.robotscouter.Team";
 
     // Scout ids
     public static final int CHECKBOX = 0;
