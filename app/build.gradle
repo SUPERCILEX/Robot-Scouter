@@ -50,6 +50,10 @@ android {
         warningsAsErrors true
         abortOnError true
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
 }
 
 play {
