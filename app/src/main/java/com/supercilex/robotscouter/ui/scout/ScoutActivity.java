@@ -209,17 +209,13 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.header);
         if (vibrantSwatch != null) {
             int opaque = vibrantSwatch.getRgb();
-            toolbarLayout.setContentScrimColor(getColorWithAlpha(opaque, 0.55f));
+            toolbarLayout.setContentScrimColor(getTransparentColor(opaque));
             toolbarLayout.setStatusBarScrimColor(opaque);
-
-            // TODO: 11/12/2016 Looks transparent for some reason
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            toolbar.setTitleTextColor(vibrantSwatch.getBodyTextColor());
         }
     }
 
-    private int getColorWithAlpha(int opaque, float alpha) {
-        return Color.argb(Math.round(Color.alpha(opaque) * alpha),
+    private int getTransparentColor(int opaque) {
+        return Color.argb(Math.round(Color.alpha(opaque) * 0.55f),
                           Color.red(opaque),
                           Color.green(opaque),
                           Color.blue(opaque));
