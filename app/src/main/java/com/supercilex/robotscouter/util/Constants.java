@@ -8,8 +8,11 @@ public class Constants {
     public static final String TEAM_WEBSITE = "website";
     public static final String TOKEN = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
 
-    // Intents
+    // Intents/Bundles
     public final static String INTENT_TEAM = "com.supercilex.robotscouter.Team";
+    public static final String MANAGER_STATE = "manager_state";
+    public static final String ITEM_COUNT = "count";
+    public static final String SCOUT_KEY = "scout_key";
 
     // Scout ids
     public static final int CHECKBOX = 0;
@@ -17,10 +20,6 @@ public class Constants {
     public static final int SPINNER = 2;
     public static final int EDIT_TEXT = 3;
     public static final int SLIDER = 4;
-
-    public static final String MANAGER_STATE = "manager_state";
-    public static final String LIST_COUNT = "count";
-    public static final String SCOUT_KEY = "scout_key";
 
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]

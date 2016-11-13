@@ -35,7 +35,7 @@ public class TeamsFragment extends StickyFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
-                             final Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recycler_view, container, false);
 
         mManager = new LinearLayoutManager(getContext());
@@ -43,30 +43,13 @@ public class TeamsFragment extends StickyFragment {
         mTeams.setHasFixedSize(true);
         mTeams.setLayoutManager(mManager);
         mTeams.setAdapter(mAdapter);
-        // TODO: 09/03/2016 how to know when user is at bottom of RecyclerView for pagination
-
-        if (savedInstanceState != null) {
-            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(Constants.LIST_COUNT)) {
-                        mManager.onRestoreInstanceState(savedInstanceState.getParcelable(
-                                Constants.MANAGER_STATE));
-                        mAdapter.unregisterAdapterDataObserver(this);
-                    }
-                }
-            });
-        }
-
+        BaseHelper.restoreFirebaseRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mAdapter != null) {
-            outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
-            outState.putInt(Constants.LIST_COUNT, mAdapter.getItemCount());
-        }
+        BaseHelper.saveFirebaseRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 
@@ -85,8 +68,8 @@ public class TeamsFragment extends StickyFragment {
     }
 
     public void cleanup() {
+        mTeams.setAdapter(null);
         if (mAdapter != null) {
-            mTeams.setAdapter(null);
             mAdapter.cleanup();
         }
     }

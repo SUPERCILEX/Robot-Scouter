@@ -51,10 +51,7 @@ public class ScoutFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mAdapter != null) {
-            outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
-            outState.putInt(Constants.LIST_COUNT, mAdapter.getItemCount());
-        }
+        BaseHelper.saveFirebaseRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 
@@ -154,20 +151,7 @@ public class ScoutFragment extends Fragment {
             }
         };
         recyclerView.setAdapter(mAdapter);
-
-        if (savedInstanceState != null) {
-            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    if (mAdapter.getItemCount() >= savedInstanceState.getInt(Constants.LIST_COUNT)) {
-                        mManager.onRestoreInstanceState(savedInstanceState.getParcelable(
-                                Constants.MANAGER_STATE));
-                        mAdapter.unregisterAdapterDataObserver(this);
-                    }
-                }
-            });
-        }
-
+        BaseHelper.restoreFirebaseRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;
     }
 }

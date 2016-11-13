@@ -7,9 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -100,6 +102,37 @@ public class BaseHelper {
     public static Team getTeam(Bundle arguments) {
         return (Team) Preconditions.checkNotNull(arguments.getParcelable(Constants.INTENT_TEAM),
                                                  "Team cannot be null");
+    }
+
+    public static void restoreFirebaseRecyclerViewState(Bundle savedInstanceState,
+                                                        final RecyclerView.Adapter adapter,
+                                                        final RecyclerView.LayoutManager layoutManager) {
+        if (savedInstanceState != null) {
+            final Parcelable managerState = savedInstanceState.getParcelable(Constants.MANAGER_STATE);
+            final int count = savedInstanceState.getInt(Constants.ITEM_COUNT);
+            if (adapter.getItemCount() >= count) {
+                layoutManager.onRestoreInstanceState(managerState);
+            } else {
+                adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                    @Override
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        if (adapter.getItemCount() >= count) {
+                            layoutManager.onRestoreInstanceState(managerState);
+                            adapter.unregisterAdapterDataObserver(this);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    public static void saveFirebaseRecyclerViewState(Bundle outState,
+                                                     RecyclerView.Adapter adapter,
+                                                     RecyclerView.LayoutManager layoutManager) {
+        if (adapter != null) {
+            outState.putParcelable(Constants.MANAGER_STATE, layoutManager.onSaveInstanceState());
+            outState.putInt(Constants.ITEM_COUNT, adapter.getItemCount());
+        }
     }
 
     public Snackbar getSnackbar(Activity activity, @StringRes int message, int length) {
