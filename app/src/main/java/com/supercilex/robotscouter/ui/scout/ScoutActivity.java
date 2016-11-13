@@ -3,17 +3,21 @@ package com.supercilex.robotscouter.ui.scout;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +25,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
@@ -36,7 +42,7 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ScoutActivity extends AppCompatBase implements ValueEventListener {
+public class ScoutActivity extends AppCompatBase implements ValueEventListener, Palette.PaletteAsyncListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
@@ -169,11 +175,24 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             setActivityTitle(mTeam.getNumber());
         }
 
-        Glide.with(ScoutActivity.this)
+        Glide.with(this)
                 .load(mTeam.getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.ic_android_black_24dp)
                 .into((ImageView) findViewById(R.id.backdrop));
+
+        Glide.with(this)
+                .load(mTeam.getMedia())
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        if (bitmap != null && !bitmap.isRecycled()) {
+                            Palette.from(bitmap).generate(ScoutActivity.this);
+                        }
+                    }
+                });
+
 
         if (mMenu != null) {
             if (mTeam.getWebsite() != null) {
@@ -182,6 +201,28 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
             }
         }
+    }
+
+    @Override
+    public void onGenerated(Palette palette) {
+        Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+        CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.header);
+        if (vibrantSwatch != null) {
+            int opaque = vibrantSwatch.getRgb();
+            toolbarLayout.setContentScrimColor(getColorWithAlpha(opaque, 0.55f));
+            toolbarLayout.setStatusBarScrimColor(opaque);
+
+            // TODO: 11/12/2016 Looks transparent for some reason
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar.setTitleTextColor(vibrantSwatch.getBodyTextColor());
+        }
+    }
+
+    private int getColorWithAlpha(int opaque, float alpha) {
+        return Color.argb(Math.round(Color.alpha(opaque) * alpha),
+                          Color.red(opaque),
+                          Color.green(opaque),
+                          Color.blue(opaque));
     }
 
     private void setActivityTitle(String title) {
