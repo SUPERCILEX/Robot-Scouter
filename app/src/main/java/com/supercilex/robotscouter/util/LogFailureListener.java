@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 public class LogFailureListener implements OnFailureListener {
     @Override
     public void onFailure(@NonNull Exception e) {
-        if (!(e instanceof FirebaseNetworkException) && !(e.getCause() instanceof UnknownHostException)) {
+        if (!(e instanceof FirebaseNetworkException) && !(e instanceof UnknownHostException)) {
             FirebaseCrash.report(e);
         }
     }
