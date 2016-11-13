@@ -2,24 +2,26 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/needed_for_CollapsingToolbarLayout_to_save_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        tools:ignore="UnusedIds">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="256dp"
             android:fitsSystemWindows="true"
-            app:contentScrim="@color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:titleEnabled="false">
 
