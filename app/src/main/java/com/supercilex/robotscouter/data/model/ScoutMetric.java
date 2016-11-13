@@ -5,6 +5,7 @@ import android.support.annotation.Keep;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.util.Constants;
 
+@Keep
 public class ScoutMetric<T> {
     private String mName;
     private T mValue;
@@ -18,22 +19,18 @@ public class ScoutMetric<T> {
         mValue = value;
     }
 
-    @Keep
     public String getName() {
         return mName;
     }
 
-    @Keep
     public void setName(String name) {
         mName = name;
     }
 
-    @Keep
     public T getValue() {
         return mValue;
     }
 
-    @Keep
     public void setValue(T value) {
         mValue = value;
     }
@@ -43,12 +40,10 @@ public class ScoutMetric<T> {
         mValue = value;
     }
 
-    @Keep
     public int getType() {
         return mType;
     }
 
-    @Keep
     public void setType(Integer type) {
         mType = type;
     }
