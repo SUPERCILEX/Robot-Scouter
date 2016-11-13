@@ -46,7 +46,6 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
-    private ValueEventListener mTeamRefListener;
 
     public static Intent createIntent(Context context, Team team) {
         Intent intent = BaseHelper.getTeamIntent(team).setClass(context, ScoutActivity.class);
@@ -75,14 +74,15 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
         addTeamListener();
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(), tabLayout);
+        mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
+                                              tabLayout,
+                                              Scout.getIndicesRef(mTeam.getNumber()));
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         if (savedInstanceState != null) {
             mPagerAdapter.setSavedTabKey(savedInstanceState.getString(Constants.SCOUT_KEY));
         }
-        Scout.getIndicesRef(mTeam.getNumber()).addValueEventListener(this);
 
         if (savedInstanceState == null && !BaseHelper.isNetworkAvailable(this)) {
             Snackbar.make(findViewById(android.R.id.content),
@@ -94,8 +94,8 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTeam.getRef().removeEventListener(mTeamRefListener);
-        Scout.getIndicesRef(mTeam.getNumber()).removeEventListener(this);
+        mTeam.getRef().removeEventListener(this);
+        mPagerAdapter.cleanup();
     }
 
     @Override
@@ -230,22 +230,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
 
     private void addTeamListener() {
         if (mTeam.getKey() != null) {
-            mTeamRefListener = mTeam.getRef().addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null) {
-                        String key = mTeam.getKey();
-                        mTeam = snapshot.getValue(Team.class);
-                        mTeam.setKey(key);
-                        updateUi();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    FirebaseCrash.report(error.toException());
-                }
-            });
+            mTeam.getRef().addValueEventListener(this);
         } else {
             Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -288,7 +273,10 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
     @Override
     public void onDataChange(DataSnapshot snapshot) {
         if (snapshot.getValue() != null) {
-            mPagerAdapter.update(snapshot);
+            String key = mTeam.getKey();
+            mTeam = snapshot.getValue(Team.class);
+            mTeam.setKey(key);
+            updateUi();
         }
     }
 
