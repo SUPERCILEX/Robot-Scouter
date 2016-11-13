@@ -54,7 +54,25 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
     @Override
     public void onDataChange(DataSnapshot snapshot) {
         if (snapshot.getValue() != null) {
-            update(snapshot);
+            String selectedTabKey = getSelectedTabKey();
+            mKeys.clear();
+            for (DataSnapshot scoutIndex : snapshot.getChildren()) {
+                mKeys.add(0, scoutIndex.getKey());
+            }
+
+            notifyDataSetChanged();
+            if (!mManuallyAddedTab) {
+                if (mSavedTabKey != null) {
+                    selectTab(mSavedTabKey, SAVE_STATE);
+                    mSavedTabKey = null;
+                } else if (selectedTabKey != null) {
+                    selectTab(selectedTabKey, UPDATE);
+                }
+            } else {
+                TabLayout.Tab tab = mTabLayout.getTabAt(0);
+                if (tab != null) tab.select();
+                mManuallyAddedTab = false;
+            }
         }
     }
 
@@ -76,28 +94,6 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
 
     void setManuallyAddedScout() {
         mManuallyAddedTab = true;
-    }
-
-    private void update(DataSnapshot snapshot) {
-        String selectedTabKey = getSelectedTabKey();
-        mKeys.clear();
-        for (DataSnapshot scoutIndex : snapshot.getChildren()) {
-            mKeys.add(0, scoutIndex.getKey());
-        }
-
-        notifyDataSetChanged();
-        if (!mManuallyAddedTab) {
-            if (mSavedTabKey != null) {
-                selectTab(mSavedTabKey, SAVE_STATE);
-                mSavedTabKey = null;
-            } else if (selectedTabKey != null) {
-                selectTab(selectedTabKey, UPDATE);
-            }
-        } else {
-            TabLayout.Tab tab = mTabLayout.getTabAt(0);
-            if (tab != null) tab.select();
-            mManuallyAddedTab = false;
-        }
     }
 
     private void selectTab(String selectedTabKey, int adjust) {
