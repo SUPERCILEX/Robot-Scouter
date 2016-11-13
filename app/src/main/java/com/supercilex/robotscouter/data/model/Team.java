@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
+import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
@@ -33,6 +34,18 @@ public class Team implements Parcelable {
         mNumber = number;
     }
 
+    public Team(Team team) {
+        mKey = team.getKey();
+        mNumber = team.getNumber();
+        mName = team.getName();
+        mMedia = team.getMedia();
+        mWebsite = team.getWebsite();
+        mHasCustomName = team.getHasCustomName();
+        mHasCustomWebsite = team.getHasCustomWebsite();
+        mHasCustomMedia = team.getHasCustomMedia();
+        mTimestamp = team.getTimestamp();
+    }
+
     @Keep
     public String getNumber() {
         return mNumber;
@@ -54,16 +67,6 @@ public class Team implements Parcelable {
     }
 
     @Keep
-    public String getMedia() {
-        return mMedia;
-    }
-
-    @Keep
-    public void setMedia(String media) {
-        mMedia = media;
-    }
-
-    @Keep
     public String getWebsite() {
         return mWebsite;
     }
@@ -71,6 +74,16 @@ public class Team implements Parcelable {
     @Keep
     public void setWebsite(String website) {
         mWebsite = website;
+    }
+
+    @Keep
+    public String getMedia() {
+        return mMedia;
+    }
+
+    @Keep
+    public void setMedia(String media) {
+        mMedia = media;
     }
 
     @Keep
@@ -180,7 +193,7 @@ public class Team implements Parcelable {
     public void fetchLatestData() {
         long differenceDays = (System.currentTimeMillis() - mTimestamp) / (1000 * 60 * 60 * 24);
         if (differenceDays >= 7) {
-//            DownloadTeamDataJob.start(this);
+            DownloadTeamDataJob.start(this);
         }
     }
 

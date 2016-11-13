@@ -29,7 +29,7 @@ public class TbaService implements Callable<Team> {
     private TaskCompletionSource<Void> mMediaTask = new TaskCompletionSource<>();
 
     private TbaService(Team team, Context context) {
-        mTeam = team;
+        mTeam = new Team(team);
         mContext = context;
         mTbaApi = TbaApi.retrofit.create(TbaApi.class);
     }
@@ -111,7 +111,7 @@ public class TbaService implements Callable<Team> {
             throw new IllegalStateException("Error code: "
                                                     + response.code()
                                                     + "\n Error message: "
-                                                    + response.errorBody());
+                                                    + response.errorBody().toString());
         }
     }
 
