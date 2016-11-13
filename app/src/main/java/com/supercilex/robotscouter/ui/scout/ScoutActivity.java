@@ -215,7 +215,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
     }
 
     private int getTransparentColor(int opaque) {
-        return Color.argb(Math.round(Color.alpha(opaque) * 0.55f),
+        return Color.argb(Math.round(Color.alpha(opaque) * 0.6f),
                           Color.red(opaque),
                           Color.green(opaque),
                           Color.blue(opaque));
