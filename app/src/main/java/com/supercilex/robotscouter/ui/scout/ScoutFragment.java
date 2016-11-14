@@ -56,8 +56,7 @@ public class ScoutFragment extends Fragment { // NOPMD
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             // NOPMD todo I'm at max 14 CyclomaticComplexity which is bad
+    public View onCreateView(LayoutInflater inflater, // NOPMD TODO CyclomaticComplexity 14 == bad
                              ViewGroup container,
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);

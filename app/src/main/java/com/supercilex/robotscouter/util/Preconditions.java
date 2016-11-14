@@ -18,8 +18,8 @@ public final class Preconditions {
             String errorMessageTemplate,
             Object... errorMessageArgs) {
         if (val == null) {
-            throw new NullPointerException(String.format(errorMessageTemplate,
-                                                         errorMessageArgs)); // NOPMD
+            throw new NullPointerException(String.format(errorMessageTemplate, // NOPMD
+                                                         errorMessageArgs));
         }
         return val;
     }
