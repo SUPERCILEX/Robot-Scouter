@@ -31,7 +31,7 @@ public class TbaService implements Callable<Team> {
     private TbaService(Team team, Context context) {
         mTeam = new Team(team);
         mContext = context;
-        mTbaApi = TbaApi.retrofit.create(TbaApi.class);
+        mTbaApi = TbaApi.RETROFIT.create(TbaApi.class);
     }
 
     public static Task<Team> start(Team team, Context context) {
@@ -49,8 +49,8 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamInfo() throws IOException {
-        Response<JsonObject> response =
-                mTbaApi.getTeamInfo(mTeam.getNumber(), Constants.TOKEN).execute();
+        Response<JsonObject> response
+                = mTbaApi.getTeamInfo(mTeam.getNumber(), Constants.TOKEN).execute();
 
         if (!canContinue(mInfoTask, response)) return;
 
@@ -68,8 +68,8 @@ public class TbaService implements Callable<Team> {
     }
 
     private void getTeamMedia() throws IOException {
-        Response<JsonArray> response =
-                mTbaApi.getTeamMedia(mTeam.getNumber(), Constants.TOKEN).execute();
+        Response<JsonArray> response
+                = mTbaApi.getTeamMedia(mTeam.getNumber(), Constants.TOKEN).execute();
 
         if (!canContinue(mMediaTask, response)) return;
 

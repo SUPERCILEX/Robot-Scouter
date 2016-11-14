@@ -11,11 +11,11 @@ import com.supercilex.robotscouter.util.BaseHelper;
  * A simple class for LeakCanary integration.
  */
 public class RobotScouter extends Application {
-    private RefWatcher refWatcher;
+    private RefWatcher mRefWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {
         RobotScouter application = (RobotScouter) context.getApplicationContext();
-        return application.refWatcher;
+        return application.mRefWatcher;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class RobotScouter extends Application {
             // You should not init your app in this process.
             return;
         }
-        refWatcher = LeakCanary.install(this);
+        mRefWatcher = LeakCanary.install(this);
 
         BaseHelper.getNewDispatcher(this);
     }

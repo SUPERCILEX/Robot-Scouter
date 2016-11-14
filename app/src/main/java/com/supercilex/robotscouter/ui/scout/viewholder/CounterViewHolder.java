@@ -43,9 +43,9 @@ public class CounterViewHolder extends ScoutViewHolder {
         mIncrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int value = Integer.valueOf(mCount.getText().toString()) + 1;
+                int value = Integer.parseInt(mCount.getText().toString()) + 1;
 
-                mCount.setText(String.valueOf(value));
+                mCount.setText(value);
 
                 scoutCounter.setValue(ref, value);
             }
@@ -57,10 +57,10 @@ public class CounterViewHolder extends ScoutViewHolder {
         mDecrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Integer.valueOf(mCount.getText().toString()) > 0) {
-                    int value = Integer.valueOf(mCount.getText().toString()) - 1;
+                if (Integer.parseInt(mCount.getText().toString()) > 0) {
+                    int value = Integer.parseInt(mCount.getText().toString()) - 1;
 
-                    mCount.setText(String.valueOf(value));
+                    mCount.setText(value);
 
                     scoutCounter.setValue(ref, value);
                 }

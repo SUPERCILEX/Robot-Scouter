@@ -16,6 +16,56 @@ allprojects {
         flatDir { dirs 'libs' }
         maven { url 'https://maven.fabric.io/public' }
     }
+//
+//    apply plugin: 'checkstyle'
+//    apply plugin: 'findbugs'
+//    apply plugin: 'pmd'
+//
+//    checkstyle {
+//        showViolations true
+//        toolVersion '7.2'
+//    }
+//
+//    task checkstyle(type: Checkstyle) {
+//        configFile rootProject.file('checkstyle.xml')
+//        source 'src'
+//        include '**/*.java'
+//        exclude '**/gen/**'
+//
+//        classpath = files()
+//    }
+//
+//    task findbugs(type: FindBugs) {
+//        ignoreFailures = false
+//        effort = "max"
+//        reportLevel = "high"
+//        classes = files("$project.buildDir/intermediates/classes/")
+//
+//        source 'src'
+//        include '**/*.java'
+//        exclude '**/gen/**'
+//
+//        reports {
+//            xml.enabled false
+//            html.enabled true
+//        }
+//
+//        classpath = files()
+//    }
+//
+//    task pmd(type: Pmd) {
+//        ignoreFailures = true
+//        ruleSets = [ "java-basic", "java-strings", "java-braces" ]
+//
+//        source 'src'
+//        include '**/*.java'
+//        exclude '**/gen/**'
+//
+//        reports {
+//            xml.enabled = true
+//            html.enabled = true
+//        }
+//    }
 }
 
 task clean(type: Delete) {

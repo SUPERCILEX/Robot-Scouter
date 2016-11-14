@@ -1,0 +1,74 @@
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+check.dependsOn /*'checkstyle', */'findbugs'/*, 'pmd'*/
+
+def configDir = "${project.rootDir}/quality"
+def reportsDir = "${project.buildDir}/reports"
+
+task checkstyle(type: Checkstyle) {
+    configFile file("$configDir/checkstyle/checkstyle.xml")
+    configProperties.checkstyleSuppressionsPath = file("$configDir/checkstyle/suppressions.xml").absolutePath
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
+}
+
+task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
+    ignoreFailures = false
+    effort = "max"
+    reportLevel = "high"
+    excludeFilter = new File("$configDir/findbugs/findbugs-filter.xml")
+    classes = files("${project.rootDir}/app/build/intermediates/classes")
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination "$reportsDir/findbugs/findbugs.xml"
+        }
+        html {
+            destination "$reportsDir/findbugs/findbugs.html"
+        }
+    }
+
+    classpath = files()
+}
+
+task pmd(type: Pmd) {
+    ignoreFailures = false
+    ruleSetFiles = files("$configDir/pmd/pmd-ruleset.xml")
+    ruleSets = []
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination "$reportsDir/pmd/pmd.xml"
+        }
+        html {
+            destination "$reportsDir/pmd/pmd.html"
+        }
+    }
+}
+
+android {
+    lintOptions {
+        disable 'InvalidPackage'
+        baseline file("$configDir/lint/lint-baseline.xml")
+        checkAllWarnings true
+        warningsAsErrors true
+        abortOnError true
+        htmlOutput file("$reportsDir/lint/lint-results.html")
+        xmlOutput file("$reportsDir/lint/lint-results.xml")
+    }
+}

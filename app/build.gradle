@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
+apply from: '../config/quality.gradle'
 
 def keystorePropertiesFile = file("../keystore.properties")
 def keystoreProperties = new Properties()
@@ -41,14 +42,6 @@ android {
             versionNameSuffix '-DEBUG'
             manifestPlaceholders = [appName: "Robot Scouter DEBUG: $vCode"]
         }
-    }
-
-    lintOptions {
-        disable 'InvalidPackage'
-        baseline file("lint-baseline.xml")
-        checkAllWarnings true
-        warningsAsErrors true
-        abortOnError true
     }
 
     dexOptions {

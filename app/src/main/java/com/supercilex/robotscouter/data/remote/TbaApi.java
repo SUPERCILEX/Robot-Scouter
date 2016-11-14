@@ -11,7 +11,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 interface TbaApi {
-    Retrofit retrofit = new Retrofit.Builder()
+    Retrofit RETROFIT = new Retrofit.Builder()
             .baseUrl("https://www.thebluealliance.com/api/v2/team/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();

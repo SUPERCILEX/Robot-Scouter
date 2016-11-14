@@ -103,21 +103,19 @@ public class TeamListActivity extends AppCompatBase {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // user is signed in!
-                mTeamsFragment.setAdapter();
-                mMenu.findItem(R.id.action_sign_in).setVisible(false);
-                mMenu.findItem(R.id.action_sign_out).setVisible(true);
-                mHelper.showSnackbar(R.string.signed_in, Snackbar.LENGTH_LONG);
+        if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
+            // user is signed in!
+            mTeamsFragment.setAdapter();
+            mMenu.findItem(R.id.action_sign_in).setVisible(false);
+            mMenu.findItem(R.id.action_sign_out).setVisible(true);
+            mHelper.showSnackbar(R.string.signed_in, Snackbar.LENGTH_LONG);
 
-                DatabaseReference ref = BaseHelper.getDatabase()
-                        .child("users")
-                        .child(BaseHelper.getUid());
-                ref.child("name").setValue(BaseHelper.getUser().getDisplayName());
-                ref.child("provider").setValue(BaseHelper.getUser().getProviderId());
-                ref.child("email").setValue(BaseHelper.getUser().getEmail());
-            }
+            DatabaseReference ref = BaseHelper.getDatabase()
+                    .child("users")
+                    .child(BaseHelper.getUid());
+            ref.child("name").setValue(BaseHelper.getUser().getDisplayName());
+            ref.child("provider").setValue(BaseHelper.getUser().getProviderId());
+            ref.child("email").setValue(BaseHelper.getUser().getEmail());
         }
     }
 
