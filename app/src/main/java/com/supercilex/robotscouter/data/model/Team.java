@@ -28,6 +28,7 @@ public class Team implements Parcelable {
     private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
+        // Needed for Firebase
     }
 
     public Team(@NonNull String number) {
@@ -209,9 +210,9 @@ public class Team implements Parcelable {
         parcel.writeString(mName);
         parcel.writeString(mMedia);
         parcel.writeString(mWebsite);
-        parcel.writeInt(mHasCustomName != null ? 1 : 0);
-        parcel.writeInt(mHasCustomWebsite != null ? 1 : 0);
-        parcel.writeInt(mHasCustomMedia != null ? 1 : 0);
+        parcel.writeInt(mHasCustomName == null ? 0 : 1);
+        parcel.writeInt(mHasCustomWebsite == null ? 0 : 1);
+        parcel.writeInt(mHasCustomMedia == null ? 0 : 1);
         parcel.writeLong(mTimestamp);
     }
 

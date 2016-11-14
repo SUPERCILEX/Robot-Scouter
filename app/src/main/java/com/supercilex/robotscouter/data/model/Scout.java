@@ -13,9 +13,14 @@ import java.util.Map;
 
 public class Scout {
     private String mOwner;
-    private Map<String, ScoutMetric> mScoutMetrics = new LinkedHashMap<>();
+    private Map<String, ScoutMetric> mScoutMetrics;
 
-    public Scout() {
+    @Exclude
+    public static DatabaseReference getIndicesRef(String teamNumber) {
+        return BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_SCOUT_INDICES)
+                .child(BaseHelper.getUid())
+                .child(teamNumber);
     }
 
     @Keep
@@ -47,6 +52,7 @@ public class Scout {
         DatabaseReference scouts = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUTS)
                 .child(index.getKey());
+        mScoutMetrics = new LinkedHashMap<>();
 
         addView(scouts, new ScoutMetric<>("example yes or no value pos 1",
                                           false).setType(Constants.CHECKBOX));
@@ -69,13 +75,5 @@ public class Scout {
         index.setValue(true);
 
         return index.getKey();
-    }
-
-    @Exclude
-    public static DatabaseReference getIndicesRef(String teamNumber) {
-        return BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_SCOUT_INDICES)
-                .child(BaseHelper.getUid())
-                .child(teamNumber);
     }
 }

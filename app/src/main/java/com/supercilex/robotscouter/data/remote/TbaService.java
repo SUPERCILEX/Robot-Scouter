@@ -21,7 +21,8 @@ import java.util.concurrent.Callable;
 
 import retrofit2.Response;
 
-public class TbaService implements Callable<Team> {
+public final class TbaService implements Callable<Team> {
+    private static final int ERROR_404 = 404;
     private Team mTeam;
     private Context mContext;
     private TbaApi mTbaApi;
@@ -41,7 +42,7 @@ public class TbaService implements Callable<Team> {
     }
 
     @Override
-    public Team call() throws Exception {
+    public Team call() throws Exception { // NOPMD
         getTeamInfo();
         getTeamMedia();
         Tasks.await(Tasks.whenAll(mInfoTask.getTask(), mMediaTask.getTask()));
@@ -104,7 +105,7 @@ public class TbaService implements Callable<Team> {
     private boolean canContinue(TaskCompletionSource<Void> task, Response response) {
         if (response.isSuccessful()) {
             return true;
-        } else if (response.code() == 404) {
+        } else if (response.code() == ERROR_404) {
             task.setResult(null);
             return false;
         } else {

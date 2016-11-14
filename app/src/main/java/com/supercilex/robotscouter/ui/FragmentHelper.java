@@ -9,6 +9,7 @@ public class FragmentHelper extends BaseHelper {
     private Fragment mFragment;
 
     public FragmentHelper(Fragment fragment) {
+        super();
         mFragment = fragment;
     }
 

@@ -14,8 +14,7 @@ public class RobotScouter extends Application {
     private RefWatcher mRefWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {
-        RobotScouter application = (RobotScouter) context.getApplicationContext();
-        return application.mRefWatcher;
+        return ((RobotScouter) context.getApplicationContext()).mRefWatcher;
     }
 
     @Override

@@ -11,6 +11,7 @@ public class ActivityHelper extends BaseHelper {
     private Activity mActivity;
 
     public ActivityHelper(Activity activity) {
+        super();
         mActivity = activity;
     }
 

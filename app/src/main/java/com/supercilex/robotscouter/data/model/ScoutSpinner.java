@@ -12,6 +12,8 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
     private int mSelectedValue;
 
     public ScoutSpinner() {
+        super();
+        // Needed for Firebase
     }
 
     public ScoutSpinner(String name, ArrayList<String> values, int selectedValue) {

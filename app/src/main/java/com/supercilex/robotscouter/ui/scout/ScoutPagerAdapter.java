@@ -64,7 +64,7 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
             if (!mManuallyAddedTab) {
                 if (mSavedTabKey != null) {
                     selectTab(mSavedTabKey, SAVE_STATE);
-                    mSavedTabKey = null;
+                    mSavedTabKey = null; // NOPMD todo maybe?
                 } else if (selectedTabKey != null) {
                     selectTab(selectedTabKey, UPDATE);
                 }
@@ -80,7 +80,7 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
         mRef.removeEventListener(this);
     }
 
-    String getSelectedTabKey() {
+    public String getSelectedTabKey() {
         if (mTabLayout.getSelectedTabPosition() != -1) {
             return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
         } else {
@@ -88,11 +88,11 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
         }
     }
 
-    void setSavedTabKey(String savedTabKey) {
+    public void setSavedTabKey(String savedTabKey) {
         mSavedTabKey = savedTabKey;
     }
 
-    void setManuallyAddedScout() {
+    public void setManuallyAddedScout() {
         mManuallyAddedTab = true;
     }
 

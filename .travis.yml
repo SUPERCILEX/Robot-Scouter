@@ -28,3 +28,4 @@ after_failure:
   - cat app/build/reports/lint/lint-results.xml
   - cat app/build/reports/lint/lint-results.html
   - cat app/build/reports/findbugs/findbugs.html
+  - cat app/build/reports/pmd/pmd.html

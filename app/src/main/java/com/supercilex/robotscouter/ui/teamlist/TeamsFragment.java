@@ -56,7 +56,7 @@ public class TeamsFragment extends StickyFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mManager = null;
+        mManager = null; // NOPMD fixes memory leak
         mTeams.setAdapter(null);
     }
 

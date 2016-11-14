@@ -162,8 +162,9 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener, 
                     NavUtils.navigateUpFromSameTask(this);
                 }
                 break;
+            default:
+                return true;
         }
-
         return true;
     }
 

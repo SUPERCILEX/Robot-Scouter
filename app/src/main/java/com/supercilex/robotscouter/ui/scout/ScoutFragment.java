@@ -28,7 +28,7 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 
-public class ScoutFragment extends Fragment {
+public class ScoutFragment extends Fragment { // NOPMD
     private static final String ARG_SCOUT_KEY = "scout_key";
 
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
@@ -57,6 +57,7 @@ public class ScoutFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater,
+                             // NOPMD todo I'm at max 14 CyclomaticComplexity which is bad
                              ViewGroup container,
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);
@@ -99,8 +100,7 @@ public class ScoutFragment extends Fragment {
                     return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
                     });
                 } else if (viewType == Constants.SPINNER) {
-//                    return snapshot.getValue(new GenericTypeIndicator<ScoutSpinner>() {
-//                    });
+//                  return snapshot.getValue(new GenericTypeIndicator<ScoutSpinner>() {}); NOPMD
                     return new ScoutSpinner(
                             snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                             snapshot.child(Constants.FIREBASE_VALUE)

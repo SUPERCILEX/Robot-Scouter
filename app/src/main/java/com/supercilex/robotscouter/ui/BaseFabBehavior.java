@@ -8,9 +8,9 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class BaseFabBehavior extends FloatingActionButton.Behavior {
-    public BaseFabBehavior(Context context, AttributeSet attrs) {
-        // Needed for xml layout inflation
+    public BaseFabBehavior(Context context, AttributeSet attrs) { // NOPMD
         super();
+        // Needed for xml layout inflation
     }
 
     @Override

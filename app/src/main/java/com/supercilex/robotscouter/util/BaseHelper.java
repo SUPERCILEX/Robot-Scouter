@@ -29,16 +29,20 @@ public class BaseHelper {
     private static FirebaseJobDispatcher sDispatcher;
 
     public static DatabaseReference getDatabase() {
-        if (sDatabase == null) {
-            sDatabase = FirebaseDatabase.getInstance();
-            sDatabase.setPersistenceEnabled(true);
+        synchronized (BaseHelper.class) {
+            if (sDatabase == null) {
+                sDatabase = FirebaseDatabase.getInstance();
+                sDatabase.setPersistenceEnabled(true);
+            }
         }
         return sDatabase.getReference();
     }
 
     public static FirebaseAuth getAuth() {
-        if (sAuth == null) {
-            sAuth = FirebaseAuth.getInstance();
+        synchronized (BaseHelper.class) {
+            if (sAuth == null) {
+                sAuth = FirebaseAuth.getInstance();
+            }
         }
         return sAuth;
     }
@@ -59,8 +63,10 @@ public class BaseHelper {
     }
 
     public static FirebaseJobDispatcher getNewDispatcher(Context context) {
-        if (sDispatcher == null) {
-            sDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
+        synchronized (BaseHelper.class) {
+            if (sDispatcher == null) {
+                sDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
+            }
         }
         return sDispatcher;
     }

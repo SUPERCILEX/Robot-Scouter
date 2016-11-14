@@ -22,8 +22,8 @@ public abstract class KeyboardDialog extends DialogBase implements DialogInterfa
     public void setOnEditorActionListener(final EditText editText) {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null
-                        && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                if (event != null
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
                         || (actionId == EditorInfo.IME_ACTION_DONE)
                         && !TextUtils.isEmpty(editText.getText())) {
                     onClick();

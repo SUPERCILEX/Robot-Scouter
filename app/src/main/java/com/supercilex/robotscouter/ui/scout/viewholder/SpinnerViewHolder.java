@@ -57,7 +57,7 @@ public class SpinnerViewHolder extends ScoutViewHolder {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                // Cancel
             }
         });
     }

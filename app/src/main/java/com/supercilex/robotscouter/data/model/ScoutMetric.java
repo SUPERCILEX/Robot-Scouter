@@ -12,10 +12,11 @@ public class ScoutMetric<T> {
     private int mType;
 
     public ScoutMetric() {
+        // Needed for Firebase
     }
 
     public ScoutMetric(String name, T value) {
-        setName(name);
+        mName = name;
         mValue = value;
     }
 
