@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
-apply from: '../config/quality.gradle'
+apply from: '../quality/quality.gradle'
 
 def keystorePropertiesFile = file("../keystore.properties")
 def keystoreProperties = new Properties()
