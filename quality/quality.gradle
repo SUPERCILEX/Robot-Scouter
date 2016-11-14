@@ -6,6 +6,10 @@ check.dependsOn /*'checkstyle', */'findbugs'/*, 'pmd'*/
 def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
 
+checkstyle {
+    toolVersion = '7.2'
+}
+
 task checkstyle(type: Checkstyle) {
     configFile file("$configDir/checkstyle/checkstyle.xml")
     configProperties.checkstyleSuppressionsPath = file("$configDir/checkstyle/suppressions.xml").absolutePath
