@@ -42,7 +42,8 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ScoutActivity extends AppCompatBase implements ValueEventListener, Palette.PaletteAsyncListener {
+public class ScoutActivity extends AppCompatBase
+        implements ValueEventListener, Palette.PaletteAsyncListener {
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;

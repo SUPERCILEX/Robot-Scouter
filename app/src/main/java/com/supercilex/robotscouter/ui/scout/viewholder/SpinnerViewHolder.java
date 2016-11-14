@@ -35,9 +35,10 @@ public class SpinnerViewHolder extends ScoutViewHolder {
     }
 
     private void initializeSpinner(ScoutSpinner scoutSpinner) {
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(mSpinner.getContext(),
-                                                                      android.R.layout.simple_spinner_item,
-                                                                      scoutSpinner.getValue());
+        ArrayAdapter<String> spinnerArrayAdapter =
+                new ArrayAdapter<>(mSpinner.getContext(),
+                                   android.R.layout.simple_spinner_item,
+                                   scoutSpinner.getValue());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner.setAdapter(spinnerArrayAdapter);

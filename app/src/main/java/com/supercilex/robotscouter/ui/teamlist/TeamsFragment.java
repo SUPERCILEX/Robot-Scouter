@@ -43,13 +43,13 @@ public class TeamsFragment extends StickyFragment {
         mTeams.setHasFixedSize(true);
         mTeams.setLayoutManager(mManager);
         mTeams.setAdapter(mAdapter);
-        BaseHelper.restoreFirebaseRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveFirebaseRecyclerViewState(outState, mAdapter, mManager);
+        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 

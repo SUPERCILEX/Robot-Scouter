@@ -51,7 +51,7 @@ public class ScoutFragment extends Fragment { // NOPMD
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveFirebaseRecyclerViewState(outState, mAdapter, mManager);
+        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 
@@ -150,7 +150,7 @@ public class ScoutFragment extends Fragment { // NOPMD
             }
         };
         recyclerView.setAdapter(mAdapter);
-        BaseHelper.restoreFirebaseRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;
     }
 }

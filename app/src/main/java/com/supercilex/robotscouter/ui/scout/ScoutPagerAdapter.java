@@ -97,7 +97,8 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
     }
 
     private void selectTab(String selectedTabKey, int adjust) {
-        TabLayout.Tab tab = mTabLayout.getTabAt(getCount() - (mKeys.indexOf(selectedTabKey) + adjust));
+        TabLayout.Tab tab = mTabLayout.getTabAt(getCount() -
+                                                        (mKeys.indexOf(selectedTabKey) + adjust));
         if (tab != null) tab.select();
     }
 

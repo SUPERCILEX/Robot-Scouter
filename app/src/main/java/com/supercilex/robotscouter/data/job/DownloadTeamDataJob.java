@@ -44,7 +44,8 @@ public class DownloadTeamDataJob extends JobService {
 
         int result = BaseHelper.getDispatcher().schedule(job);
         if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-            FirebaseCrash.report(new RuntimeException("DownloadTeamDataJob failed with code: " + result));
+            FirebaseCrash.report(new RuntimeException("DownloadTeamDataJob failed with code: "
+                                                              + result));
         }
     }
 

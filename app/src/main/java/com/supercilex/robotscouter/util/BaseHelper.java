@@ -110,11 +110,12 @@ public class BaseHelper {
                                                  "Team cannot be null");
     }
 
-    public static void restoreFirebaseRecyclerViewState(Bundle savedInstanceState,
-                                                        final RecyclerView.Adapter adapter,
-                                                        final RecyclerView.LayoutManager layoutManager) {
+    public static void restoreRecyclerViewState(Bundle savedInstanceState,
+                                                final RecyclerView.Adapter adapter,
+                                                final RecyclerView.LayoutManager layoutManager) {
         if (savedInstanceState != null) {
-            final Parcelable managerState = savedInstanceState.getParcelable(Constants.MANAGER_STATE);
+            final Parcelable managerState =
+                    savedInstanceState.getParcelable(Constants.MANAGER_STATE);
             final int count = savedInstanceState.getInt(Constants.ITEM_COUNT);
             if (adapter.getItemCount() >= count) {
                 layoutManager.onRestoreInstanceState(managerState);
@@ -132,9 +133,9 @@ public class BaseHelper {
         }
     }
 
-    public static void saveFirebaseRecyclerViewState(Bundle outState,
-                                                     RecyclerView.Adapter adapter,
-                                                     RecyclerView.LayoutManager layoutManager) {
+    public static void saveRecyclerViewState(Bundle outState,
+                                             RecyclerView.Adapter adapter,
+                                             RecyclerView.LayoutManager layoutManager) {
         if (adapter != null) {
             outState.putParcelable(Constants.MANAGER_STATE, layoutManager.onSaveInstanceState());
             outState.putInt(Constants.ITEM_COUNT, adapter.getItemCount());
