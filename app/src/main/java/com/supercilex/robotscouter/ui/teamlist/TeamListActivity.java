@@ -30,7 +30,8 @@ import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 // so I know what stuff to put on top
 
 // TODO: 08/10/2016 If firebase bug isn't resolved,
-// make users enter their team number to setup database with their team as example.
+// make users enter their team number to setup
+// database with their team as example.
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatBase {
