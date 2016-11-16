@@ -47,6 +47,18 @@ public class Team implements Parcelable {
         mTimestamp = team.getTimestamp();
     }
 
+    @Exclude
+    public static DatabaseReference getIndicesRef() {
+        return BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_TEAM_INDICES)
+                .child(BaseHelper.getUid());
+    }
+
+    @Exclude
+    public DatabaseReference getRef() {
+        return BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey);
+    }
+
     @Keep
     public String getNumber() {
         return mNumber;
@@ -177,18 +189,6 @@ public class Team implements Parcelable {
         mShouldUpdateTimestamp = false;
         getRef().setValue(this);
         mShouldUpdateTimestamp = true;
-    }
-
-    @Exclude
-    public DatabaseReference getRef() {
-        return BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey);
-    }
-
-    @Exclude
-    public static DatabaseReference getIndicesRef() {
-        return BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_TEAM_INDICES)
-                .child(BaseHelper.getUid());
     }
 
     public void fetchLatestData() {

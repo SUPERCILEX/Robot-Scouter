@@ -55,6 +55,10 @@ public class BaseHelper {
         return getUser().getUid();
     }
 
+    public static boolean isSignedIn() {
+        return getUser() != null;
+    }
+
     public static FirebaseJobDispatcher getDispatcher() {
         if (sDispatcher == null) {
             throw new IllegalStateException("FirebaseJobDispatcher was null");
@@ -71,10 +75,6 @@ public class BaseHelper {
         return sDispatcher;
     }
 
-    public static boolean isSignedIn() {
-        return getUser() != null;
-    }
-
     public static <T> String getTag(T clazz) {
         return clazz.getClass().getSimpleName();
     }
@@ -83,7 +83,7 @@ public class BaseHelper {
         new Handler(context.getMainLooper()).post(runnable);
     }
 
-    public static boolean isNetworkAvailable(Context context) {
+    protected static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
@@ -94,15 +94,15 @@ public class BaseHelper {
         return new Intent().putExtra(Constants.INTENT_TEAM, team);
     }
 
-    public static Team getTeam(Intent intent) {
-        return (Team) Preconditions.checkNotNull(intent.getParcelableExtra(Constants.INTENT_TEAM),
-                                                 "Team cannot be null");
-    }
-
     public static Bundle getTeamBundle(@NonNull Team team) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.INTENT_TEAM, team);
         return bundle;
+    }
+
+    public static Team getTeam(Intent intent) {
+        return (Team) Preconditions.checkNotNull(intent.getParcelableExtra(Constants.INTENT_TEAM),
+                                                 "Team cannot be null");
     }
 
     public static Team getTeam(Bundle arguments) {
@@ -142,19 +142,19 @@ public class BaseHelper {
         }
     }
 
-    public Snackbar getSnackbar(Activity activity, @StringRes int message, int length) {
+    protected Snackbar getSnackbar(Activity activity, @StringRes int message, int length) {
         return Snackbar.make(activity.findViewById(R.id.root), message, length);
     }
 
-    public void showSnackbar(Activity activity, @StringRes int message, int length) {
+    protected void showSnackbar(Activity activity, @StringRes int message, int length) {
         getSnackbar(activity, message, length).show();
     }
 
-    public void showSnackbar(Activity activity,
-                             @StringRes int message,
-                             int length,
-                             @StringRes int actionMessage,
-                             View.OnClickListener listener) {
+    protected void showSnackbar(Activity activity,
+                                @StringRes int message,
+                                int length,
+                                @StringRes int actionMessage,
+                                View.OnClickListener listener) {
         getSnackbar(activity, message, length).setAction(actionMessage, listener).show();
     }
 }

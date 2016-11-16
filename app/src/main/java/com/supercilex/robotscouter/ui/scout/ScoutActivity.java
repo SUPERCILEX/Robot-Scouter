@@ -77,7 +77,7 @@ public class ScoutActivity extends AppCompatBase
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              Scout.getIndicesRef(mTeam.getNumber()));
+                                              Scout.getIndicesRef().child(mTeam.getNumber()));
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -85,7 +85,7 @@ public class ScoutActivity extends AppCompatBase
             mPagerAdapter.setSavedTabKey(savedInstanceState.getString(Constants.SCOUT_KEY));
         }
 
-        if (savedInstanceState == null && !BaseHelper.isNetworkAvailable(this)) {
+        if (savedInstanceState == null && !mHelper.isNetworkAvailable()) {
             Snackbar.make(findViewById(android.R.id.content),
                           R.string.no_connection,
                           Snackbar.LENGTH_SHORT).show();

@@ -16,11 +16,10 @@ public class Scout {
     private Map<String, ScoutMetric> mScoutMetrics;
 
     @Exclude
-    public static DatabaseReference getIndicesRef(String teamNumber) {
+    public static DatabaseReference getIndicesRef() {
         return BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUT_INDICES)
-                .child(BaseHelper.getUid())
-                .child(teamNumber);
+                .child(BaseHelper.getUid());
     }
 
     @Keep
@@ -48,7 +47,7 @@ public class Scout {
     }
 
     public String createScoutId(String teamNumber) {
-        DatabaseReference index = getIndicesRef(teamNumber).push();
+        DatabaseReference index = getIndicesRef().child(teamNumber).push();
         DatabaseReference scouts = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUTS)
                 .child(index.getKey());

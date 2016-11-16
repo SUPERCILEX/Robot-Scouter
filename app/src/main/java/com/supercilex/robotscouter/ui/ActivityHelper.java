@@ -33,4 +33,8 @@ public class ActivityHelper extends BaseHelper {
     public Team getTeam() {
         return BaseHelper.getTeam(mActivity.getIntent());
     }
+
+    public boolean isNetworkAvailable() {
+        return BaseHelper.isNetworkAvailable(mActivity);
+    }
 }

@@ -45,7 +45,7 @@ public class CounterViewHolder extends ScoutViewHolder {
             public void onClick(View view) {
                 int value = Integer.parseInt(mCount.getText().toString()) + 1;
 
-                mCount.setText(value);
+                mCount.setText(String.valueOf(value));
 
                 scoutCounter.setValue(ref, value);
             }
@@ -60,7 +60,7 @@ public class CounterViewHolder extends ScoutViewHolder {
                 if (Integer.parseInt(mCount.getText().toString()) > 0) {
                     int value = Integer.parseInt(mCount.getText().toString()) - 1;
 
-                    mCount.setText(value);
+                    mCount.setText(String.valueOf(value));
 
                     scoutCounter.setValue(ref, value);
                 }
