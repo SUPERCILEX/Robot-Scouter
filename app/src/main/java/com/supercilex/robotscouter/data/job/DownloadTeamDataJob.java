@@ -63,7 +63,7 @@ public class DownloadTeamDataJob extends JobService {
         if (params.getExtras().getBoolean("custom-media")) team.setHasCustomMedia(true);
         team.setTimestamp(params.getExtras().getLong("timestamp"));
 
-        TbaService.start(team, getApplicationContext())
+        TbaService.fetch(team, getApplicationContext())
                 .addOnCompleteListener(new OnCompleteListener<Team>() {
                     @Override
                     public void onComplete(@NonNull Task<Team> task) {

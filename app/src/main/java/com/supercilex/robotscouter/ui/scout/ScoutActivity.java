@@ -249,7 +249,7 @@ public class ScoutActivity extends AppCompatBase
 
                     mTeam.add();
                     addTeamListener();
-                    TbaService.start(mTeam, ScoutActivity.this)
+                    TbaService.fetch(mTeam, ScoutActivity.this)
                             .addOnCompleteListener(new OnCompleteListener<Team>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Team> task) {
