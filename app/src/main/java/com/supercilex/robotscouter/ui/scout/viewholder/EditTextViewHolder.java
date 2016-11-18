@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
@@ -19,7 +19,7 @@ public class EditTextViewHolder extends ScoutViewHolder {
     }
 
     @Override
-    public void bind(ScoutMetric view, DatabaseReference ref) {
+    public void bind(ScoutMetric view, Query ref) {
         setText(view.getName());
         setValue((String) view.getValue());
         setOnFocusChangeListener(view, ref);
@@ -34,7 +34,7 @@ public class EditTextViewHolder extends ScoutViewHolder {
     }
 
     private void setOnFocusChangeListener(final ScoutMetric scoutEditText,
-                                          final DatabaseReference ref) {
+                                          final Query ref) {
         mNotes.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

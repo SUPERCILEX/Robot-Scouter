@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
@@ -23,7 +23,7 @@ public class CounterViewHolder extends ScoutViewHolder {
     }
 
     @Override
-    public void bind(ScoutMetric view, DatabaseReference ref) {
+    public void bind(ScoutMetric view, Query ref) {
         setText(view.getName());
         setValue((Integer) view.getValue());
         setIncrementListener(view, ref);
@@ -39,7 +39,7 @@ public class CounterViewHolder extends ScoutViewHolder {
     }
 
     private void setIncrementListener(final ScoutMetric scoutCounter,
-                                      final DatabaseReference ref) {
+                                      final Query ref) {
         mIncrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +53,7 @@ public class CounterViewHolder extends ScoutViewHolder {
     }
 
     private void setDecrementListener(final ScoutMetric scoutCounter,
-                                      final DatabaseReference ref) {
+                                      final Query ref) {
         mDecrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

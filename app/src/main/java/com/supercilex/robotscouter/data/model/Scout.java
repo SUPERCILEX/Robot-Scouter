@@ -4,6 +4,7 @@ import android.support.annotation.Keep;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -42,8 +43,8 @@ public class Scout {
         mScoutMetrics = views;
     }
 
-    private void addView(DatabaseReference database, ScoutMetric view) {
-        mScoutMetrics.put(database.push().getKey(), view);
+    private void addView(Query query, ScoutMetric view) {
+        mScoutMetrics.put(query.getRef().push().getKey(), view);
     }
 
     public String createScoutId(String teamNumber) {

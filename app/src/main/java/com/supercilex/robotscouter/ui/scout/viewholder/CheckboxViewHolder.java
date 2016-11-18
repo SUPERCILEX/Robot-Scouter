@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.ui.scout.viewholder;
 import android.view.View;
 import android.widget.CheckBox;
 
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
@@ -16,7 +16,7 @@ public class CheckboxViewHolder extends ScoutViewHolder {
     }
 
     @Override
-    public void bind(ScoutMetric view, DatabaseReference ref) {
+    public void bind(ScoutMetric view, Query ref) {
         setText(view.getName());
         setValue((Boolean) view.getValue());
         setOnClickListener(view, ref);
@@ -35,7 +35,7 @@ public class CheckboxViewHolder extends ScoutViewHolder {
     }
 
     private void setOnClickListener(final ScoutMetric scoutCheckbox,
-                                    final DatabaseReference ref) {
+                                    final Query ref) {
         mName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

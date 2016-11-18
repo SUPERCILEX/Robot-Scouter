@@ -8,13 +8,13 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventListener {
+public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventListener {
     private static final int SAVE_STATE = 1;
     private static final int UPDATE = 0;
 
@@ -22,13 +22,13 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
     private TabLayout mTabLayout;
     private String mSavedTabKey;
     private boolean mManuallyAddedTab;
-    private DatabaseReference mRef;
+    private Query mQuery;
 
-    ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, DatabaseReference ref) {
+    public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, Query query) {
         super(fm);
         mTabLayout = tabLayout;
-        mRef = ref;
-        mRef.addValueEventListener(this);
+        mQuery = query;
+        mQuery.addValueEventListener(this);
     }
 
     @Override
@@ -77,7 +77,7 @@ class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventL
     }
 
     public void cleanup() {
-        mRef.removeEventListener(this);
+        mQuery.removeEventListener(this);
     }
 
     public String getSelectedTabKey() {
