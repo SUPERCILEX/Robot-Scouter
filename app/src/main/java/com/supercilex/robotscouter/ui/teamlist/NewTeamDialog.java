@@ -18,7 +18,7 @@ public class NewTeamDialog extends KeyboardDialog {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.new_team_dialog, null);
+        View rootView = View.inflate(getContext(), R.layout.dialog_new_team, null);
         mInputLayout = (TextInputLayout) rootView.findViewById(R.id.input_layout);
         setOnEditorActionListener(mInputLayout.getEditText());
         return createDialog(rootView, R.string.new_scout);

@@ -59,9 +59,9 @@ public class ScoutFragment extends Fragment { // NOPMD
     public View onCreateView(LayoutInflater inflater, // NOPMD TODO CyclomaticComplexity 14 == bad
                              ViewGroup container,
                              final Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.current_scout_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.recycler_view, container, false);
 
-        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.scout_data);
+        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         mManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mManager);

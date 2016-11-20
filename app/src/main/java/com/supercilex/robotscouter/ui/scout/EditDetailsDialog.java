@@ -27,7 +27,7 @@ public class EditDetailsDialog extends KeyboardDialog {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.edit_details_dialog, null);
+        View rootView = View.inflate(getContext(), R.layout.dialog_edit_details, null);
         mTeam = mHelper.getTeam();
         mName = (EditText) rootView.findViewById(R.id.name);
         mWebsite = (EditText) rootView.findViewById(R.id.website);
