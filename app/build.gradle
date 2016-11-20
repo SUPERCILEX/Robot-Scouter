@@ -1,20 +1,23 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
+apply from: '../quality/quality.gradle'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystorePropertiesFile = file("../keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+    def vCode = buildVersionCode()
+
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
-        buildToolsVersion "24.0.2"
-        compileSdkVersion 24
-        targetSdkVersion 24
+        targetSdkVersion 25
         minSdkVersion 16
-        versionCode buildVersionCode()
-        versionName "1.0.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode vCode
+        versionName "1.0.0-$vCode"
     }
 
     signingConfigs {
@@ -37,42 +40,56 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
-            manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
+            manifestPlaceholders = [appName: "Robot Scouter DEBUG: $vCode"]
         }
     }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+}
+
+play {
+    track = 'alpha'
+    serviceAccountEmail = 'google-play-auto-publisher@robot-scouter-app.iam.gserviceaccount.com'
+    jsonFile = file('google-play-auto-publisher.json')
 }
 
 dependencies {
     // Support libraries
-    compile "com.android.support:appcompat-v7:${project.supportLibVersion}"
-    compile "com.android.support:design:${project.supportLibVersion}"
-    compile "com.android.support:customtabs:${project.supportLibVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha8'
+    compile "com.android.support:design:$supportLibVersion"
+    compile "com.android.support:customtabs:$supportLibVersion"
+    compile "com.android.support:palette-v7:$supportLibVersion"
+    compile "com.android.support:cardview-v7:$supportLibVersion"
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
-    // Firebase
-    compile "com.google.android.gms:play-services:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-core:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-messaging:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-config:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-database:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-auth:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-crash:${project.playServicesVersion}"
-    compile "com.google.firebase:firebase-invites:${project.playServicesVersion}"
-    compile 'com.firebaseui:firebase-ui:0.6.0'
+    // Firebase UI
+    compile 'com.firebaseui:firebase-ui-auth:1.0.0'
+    compile 'com.firebaseui:firebase-ui-database:1.0.0'
+    compile "com.google.firebase:firebase-auth:$playServicesVersion"
+    compile "com.google.firebase:firebase-database:$playServicesVersion"
+    compile 'com.facebook.android:facebook-android-sdk:4.17.0'
+    compile("com.twitter.sdk.android:twitter:2.1.1@aar") { transitive = true }
+
+    // Firebase core
+    compile "com.google.firebase:firebase-core:$playServicesVersion"
+    compile "com.google.firebase:firebase-messaging:$playServicesVersion"
+    compile "com.google.firebase:firebase-config:$playServicesVersion"
+    compile "com.google.firebase:firebase-crash:$playServicesVersion"
+    compile "com.google.firebase:firebase-invites:$playServicesVersion"
+    compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    compile 'com.firebase:firebase-jobdispatcher-with-gcm-dep:0.5.0'
 
     // Third party
-    compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.mikepenz:materialdrawer:5.6.0'
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'net.yslibrary.licenseadapter:licenseadapter:1.2.4'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
     // Retrofit
-    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
-
-    // Testing
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

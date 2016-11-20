@@ -1,4 +1,4 @@
-# Robot Scouter — A scouting app for FIRST Robotics Competition
+# Robot Scouter — A scouting app for FIRST Robotics Competition Teams
 
 [![Build Status](https://travis-ci.com/SUPERCILEX/Robot-Scouter.svg?token=pwEVkccUqDxanPhb3x2q&branch=master)](https://travis-ci.com/SUPERCILEX/Robot-Scouter)
 

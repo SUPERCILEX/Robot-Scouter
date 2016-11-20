@@ -1,8 +1,3 @@
-# For Firebase reflection to work
--keepclassmembers class com.supercilex.robotscouter.models.** {
-  *;
-}
-
 # Retrofit
 -dontwarn okio.**
 -dontnote retrofit2.Platform

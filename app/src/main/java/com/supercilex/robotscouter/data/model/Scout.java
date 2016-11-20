@@ -1,60 +1,61 @@
 package com.supercilex.robotscouter.data.model;
 
+import android.support.annotation.Keep;
+
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.Query;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Scout {
-    private String mOwner = FirebaseUtils.getUser().getUid();
-    private Map<String, Object> mScoutMetrics = new LinkedHashMap<>();
+    private String mOwner;
+    private Map<String, ScoutMetric> mScoutMetrics;
 
-    public Scout() {
+    @Exclude
+    public static DatabaseReference getIndicesRef() {
+        return BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_SCOUT_INDICES)
+                .child(BaseHelper.getUid());
     }
 
+    @Keep
     public String getOwner() {
         return mOwner;
     }
 
+    @Keep
     public void setOwner(String owner) {
         mOwner = owner;
     }
 
-    public Map<String, Object> getViews() {
+    @Keep
+    public Map<String, ScoutMetric> getViews() {
         return mScoutMetrics;
     }
 
-    public void setViews(Map<String, Object> views) {
+    @Keep
+    public void setViews(Map<String, ScoutMetric> views) {
         mScoutMetrics = views;
     }
 
-    private void addView(DatabaseReference database, ScoutMetric view) {
-        mScoutMetrics.put(database.push().getKey(), view);
+    private void addView(Query query, ScoutMetric view) {
+        mScoutMetrics.put(query.getRef().push().getKey(), view);
     }
 
-    public void createScoutId(String teamNumber) {
-        DatabaseReference index = FirebaseUtils.getDatabase()
-                .getReference()
-                .child(Constants.FIREBASE_SCOUT_INDEXES)
-                .child(mOwner)
-                .child(teamNumber)
-                .push();
-
-        String scoutKey = index.getKey();
-
-        index.setValue(true);
-
-        DatabaseReference scouts = FirebaseUtils.getDatabase()
-                .getReference()
+    public String createScoutId(String teamNumber) {
+        DatabaseReference index = getIndicesRef().child(teamNumber).push();
+        DatabaseReference scouts = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUTS)
-                .child(scoutKey);
+                .child(index.getKey());
+        mScoutMetrics = new LinkedHashMap<>();
 
-        addView(scouts,
-                new ScoutMetric<>("example yes or no value pos 1",
-                                  false).setType(Constants.CHECKBOX));
+        addView(scouts, new ScoutMetric<>("example yes or no value pos 1",
+                                          false).setType(Constants.CHECKBOX));
         addView(scouts, new ScoutMetric<>("test pos 2", true).setType(Constants.CHECKBOX));
         addView(scouts, new ScoutMetric<>("auto scores pos 3", 0).setType(Constants.COUNTER));
         addView(scouts, new ScoutMetric<>("teleop scores pos 4", 0).setType(Constants.COUNTER));
@@ -71,5 +72,8 @@ public class Scout {
                 new ScoutMetric<>("note 2 pos 6", "some other note").setType(Constants.EDIT_TEXT));
 
         scouts.setValue(this);
+        index.setValue(true);
+
+        return index.getKey();
     }
 }

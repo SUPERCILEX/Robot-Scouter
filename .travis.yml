@@ -1,28 +1,32 @@
 language: android
 jdk: oraclejdk8
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
 android:
   components:
-    - platform-tools
+    - android-25
     - tools
-    - build-tools-24.0.2
-    - android-24
-    - android-16
-    - sys-img-armeabi-v7a-android-24
-    - sys-img-armeabi-v7a-android-16
+    - platform-tools
+    - build-tools-25.0.0
     - extra-android-m2repository
     - extra-google-m2repository
-    - addon-google_apis-google-24
-    - extra-google-google_play_services
-before_install:
-  - openssl aes-256-cbc -K $encrypted_95e6a2aa17ed_key -iv $encrypted_95e6a2aa17ed_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar
-  - mv Android.jks app
-  - mv google-services.json app
-  - chmod +x gradlew
 before_script:
-  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
-  - echo no | android create avd --force -n test -t android-16 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-script: ./gradlew clean assemble test connectedCheck
+  - chmod +x gradlew setup.sh build.sh upload.sh
+  - ./setup.sh
+script: ./build.sh
+after_success: ./upload.sh
+after_failure:
+  - cat app/build/reports/lint/lint-results.xml
+  - cat app/build/reports/lint/lint-results.html
+  - cat app/build/reports/checkstyle/checkstyle.html
+  - cat app/build/reports/findbugs/findbugs.html
+  - cat app/build/reports/pmd/pmd.html

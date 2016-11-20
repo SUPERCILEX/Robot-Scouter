@@ -1,204 +1,250 @@
 package com.supercilex.robotscouter.data.model;
 
-import android.app.Activity;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseUtils;
+import com.supercilex.robotscouter.util.Preconditions;
 
-public class Team {
+public class Team implements Parcelable {
+    private String mKey;
+
     private String mNumber;
     private String mName;
     private String mMedia;
     private String mWebsite;
-    private long mLastUpdated;
-    private boolean mNewTeam = false;
+    private Boolean mHasCustomName;
+    private Boolean mHasCustomWebsite;
+    private Boolean mHasCustomMedia;
+    private long mTimestamp;
+    private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
+        // Needed for Firebase
     }
 
-    public Team(String teamName, String teamWebsite, String teamLogoUrl) {
-        mName = teamName;
-        mMedia = teamLogoUrl;
-        mWebsite = teamWebsite;
+    public Team(@NonNull String number) {
+        mNumber = number;
     }
 
+    public Team(Team team) {
+        mKey = team.getKey();
+        mNumber = team.getNumber();
+        mName = team.getName();
+        mMedia = team.getMedia();
+        mWebsite = team.getWebsite();
+        mHasCustomName = team.getHasCustomName();
+        mHasCustomWebsite = team.getHasCustomWebsite();
+        mHasCustomMedia = team.getHasCustomMedia();
+        mTimestamp = team.getTimestamp();
+    }
+
+    @Exclude
+    public static DatabaseReference getIndicesRef() {
+        return BaseHelper.getDatabase()
+                .child(Constants.FIREBASE_TEAM_INDICES)
+                .child(BaseHelper.getUid());
+    }
+
+    @Exclude
+    public DatabaseReference getRef() {
+        return BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS).child(mKey);
+    }
+
+    @Keep
     public String getNumber() {
         return mNumber;
     }
 
+    @Keep
     public void setNumber(String number) {
         mNumber = number;
     }
 
+    @Keep
     public String getName() {
         return mName;
     }
 
+    @Keep
     public void setName(String name) {
         mName = name;
     }
 
-    public String getMedia() {
-        return mMedia;
-    }
-
-    public void setMedia(String media) {
-        mMedia = media;
-    }
-
+    @Keep
     public String getWebsite() {
         return mWebsite;
     }
 
+    @Keep
     public void setWebsite(String website) {
         mWebsite = website;
     }
 
-    public java.util.Map<String, String> getLastUpdated() {
-        if (!mNewTeam) {
+    @Keep
+    public String getMedia() {
+        return mMedia;
+    }
+
+    @Keep
+    public void setMedia(String media) {
+        mMedia = media;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_CUSTOM_NAME)
+    public Boolean getHasCustomName() {
+        return mHasCustomName;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_CUSTOM_NAME)
+    public void setHasCustomName(boolean hasCustomName) {
+        mHasCustomName = hasCustomName;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_CUSTOM_WEBSITE)
+    public Boolean getHasCustomWebsite() {
+        return mHasCustomWebsite;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_CUSTOM_WEBSITE)
+    public void setHasCustomWebsite(boolean hasCustomWebsite) {
+        mHasCustomWebsite = hasCustomWebsite;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_CUSTOM_MEDIA)
+    public Boolean getHasCustomMedia() {
+        return mHasCustomMedia;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_CUSTOM_MEDIA)
+    public void setHasCustomMedia(boolean hasCustomMedia) {
+        mHasCustomMedia = hasCustomMedia;
+    }
+
+    @Keep
+    @PropertyName(Constants.FIREBASE_TIMESTAMP)
+    public Object getServerValue() {
+        if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
         } else {
-            return null;
+            return mTimestamp;
         }
     }
 
-    @SuppressWarnings("unused") // Used for Firebase
-    public void setLastUpdated(long time) {
-        mLastUpdated = time;
+    @Exclude
+    public long getTimestamp() {
+        return mTimestamp;
     }
 
-    public String addTeam(@NonNull String teamNumber) {
-        mNumber = teamNumber;
-        mNewTeam = true;
-
-        String userId = FirebaseUtils.getUser().getUid();
-        DatabaseReference ref = FirebaseUtils.getDatabase().getReference();
-        String key = ref.push().getKey();
-
-        ref.child(Constants.FIREBASE_TEAM_INDEXES)
-                .child(userId)
-                .child(key)
-                .setValue(Long.valueOf(mNumber)); // Need to use long for orderByValue() in TeamListActivity
-
-        ref.child(Constants.FIREBASE_TEAMS).child(key).setValue(this);
-
-        mNewTeam = false;
-        return key;
+    @Keep
+    public void setTimestamp(long time) {
+        mTimestamp = time;
     }
 
-    public void addTeamData(@NonNull String key) {
-        FirebaseUtils.getDatabase()
-                .getReference()
-                .child(Constants.FIREBASE_TEAMS)
-                .child(key)
-                .setValue(this);
+    @Exclude
+    public String getKey() {
+        return mKey;
     }
 
-    public void updateTeam(@NonNull String teamNumber, @NonNull String key) {
-        mNumber = teamNumber;
-        DatabaseReference ref = FirebaseUtils.getDatabase()
-                .getReference()
-                .child(Constants.FIREBASE_TEAMS)
-                .child(key);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    if (dataSnapshot.child(Constants.FIREBASE_CUSTOM_NAME).getValue() == null) {
-                        dataSnapshot.getRef().child(Constants.FIREBASE_TEAM_NAME).setValue(mName);
-                    }
-
-                    if (dataSnapshot.child(Constants.FIREBASE_CUSTOM_WEBSITE).getValue() == null) {
-                        dataSnapshot.getRef()
-                                .child(Constants.FIREBASE_TEAM_WEBSITE)
-                                .setValue(mWebsite);
-                    }
-
-                    if (dataSnapshot.child(Constants.FIREBASE_CUSTOM_MEDIA).getValue() == null) {
-                        dataSnapshot.getRef().child(Constants.FIREBASE_TEAM_MEDIA).setValue(mMedia);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
-            }
-        });
-
-        ref.child(Constants.FIREBASE_LAST_UPDATED).setValue(ServerValue.TIMESTAMP);
+    @Exclude
+    public void setKey(String key) {
+        mKey = key;
     }
 
-    public void updateTeamOverwrite(@NonNull String teamNumber, @NonNull String key) {
-        mNumber = teamNumber;
-        DatabaseReference ref = FirebaseUtils.getDatabase()
-                .getReference()
-                .child(Constants.FIREBASE_TEAMS)
-                .child(key);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Team team = dataSnapshot.getValue(Team.class);
-
-                if (!team.getName().equals(mName)) {
-                    dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_NAME).setValue(true);
-                }
-
-                if (!team.getWebsite().equals(mWebsite)) {
-                    dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_WEBSITE).setValue(true);
-                }
-
-                if (!team.getMedia().equals(mMedia)) {
-                    dataSnapshot.getRef().child(Constants.FIREBASE_CUSTOM_MEDIA).setValue(true);
-                }
-
-                dataSnapshot.getRef().setValue(Team.this);
-
-                dataSnapshot.getRef()
-                        .child(Constants.FIREBASE_LAST_UPDATED)
-                        .setValue(dataSnapshot.child(Constants.FIREBASE_LAST_UPDATED).getValue());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
-            }
-        });
+    public void add() {
+        DatabaseReference index = getIndicesRef().push();
+        mKey = index.getKey();
+        index.setValue(mNumber, Long.valueOf(mNumber));
+        forceUpdate();
     }
 
-    public void fetchLatestData(Activity activity, String key) {
-//        long differenceDays = (System.currentTimeMillis() - getLastUpdatedLong()) / (1000 * 60 * 60 * 24);
-//
-//        if (differenceDays >= 7) {
-//            Driver myDriver = new GooglePlayDriver(activity);
-//            FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(myDriver);
-//
-//            Bundle bundle = new Bundle();
-//            bundle.putString(Constants.INTENT_TEAM_NUMBER, mNumber);
-//            bundle.putString(Constants.INTENT_TEAM_KEY, key);
-//
-//            Job job = dispatcher.newJobBuilder()
-//                    .setService(DownloadTeamDataJob.class)
-//                    .setTag(mNumber)
-//                    .setReplaceCurrent(true)
-//                    .setConstraints(Constraint.ON_ANY_NETWORK)
-//                    .setTrigger(Trigger.NOW)
-//                    .setExtras(bundle)
-//                    .build();
-//
-//            int result = dispatcher.schedule(job);
-//            if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-//                FirebaseCrash.report(new IllegalArgumentException("Job Scheduler failed."));
-//            }
-//        }
+    public void update(Team newTeam) {
+        if (mHasCustomName == null) {
+            mName = newTeam.getName();
+        }
+        if (mHasCustomWebsite == null) {
+            mWebsite = newTeam.getWebsite();
+        }
+        if (mHasCustomMedia == null) {
+            mMedia = newTeam.getMedia();
+        }
+        getRef().setValue(this);
+    }
+
+    public void forceUpdate() {
+        mShouldUpdateTimestamp = false;
+        getRef().setValue(this);
+        mShouldUpdateTimestamp = true;
+    }
+
+    public void fetchLatestData() {
+        long differenceDays = (System.currentTimeMillis() - mTimestamp) / (1000 * 60 * 60 * 24);
+        if (differenceDays >= 7) {
+            DownloadTeamDataJob.start(this);
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mKey);
+        parcel.writeString(Preconditions.checkNotNull(mNumber, "Team number cannot be null."));
+        parcel.writeString(mName);
+        parcel.writeString(mMedia);
+        parcel.writeString(mWebsite);
+        parcel.writeInt(mHasCustomName == null ? 0 : 1);
+        parcel.writeInt(mHasCustomWebsite == null ? 0 : 1);
+        parcel.writeInt(mHasCustomMedia == null ? 0 : 1);
+        parcel.writeLong(mTimestamp);
+    }
+
+    public static final Creator<Team> CREATOR = new Creator<Team>() {
+        @Override
+        public Team createFromParcel(Parcel in) {
+            return new Team(in);
+        }
+
+        @Override
+        public Team[] newArray(int size) {
+            return new Team[size];
+        }
+    };
+
+    private Team(Parcel in) {
+        mKey = in.readString();
+        mNumber = in.readString();
+        mName = in.readString();
+        mMedia = in.readString();
+        mWebsite = in.readString();
+        mHasCustomName = trueOrNull(in.readInt());
+        mHasCustomWebsite = trueOrNull(in.readInt());
+        mHasCustomMedia = trueOrNull(in.readInt());
+        mTimestamp = in.readLong();
+    }
+
+    private Boolean trueOrNull(int in) {
+        if (in != 0) {
+            return true;
+        } else {
+            return null;
+        }
     }
 }
