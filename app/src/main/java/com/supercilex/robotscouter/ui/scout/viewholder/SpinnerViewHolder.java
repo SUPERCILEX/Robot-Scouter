@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,9 +23,9 @@ public class SpinnerViewHolder extends ScoutViewHolder<ArrayList<String>, TextVi
     }
 
     @Override
-    public void bind(ScoutMetric<ArrayList<String>> metric, Query query) {
-        super.bind(metric, query);
-        ScoutSpinner scoutSpinner = (ScoutSpinner) metric;
+    public void bind(ScoutMetric<ArrayList<String>> metric) {
+        super.bind(metric);
+        ScoutSpinner scoutSpinner = (ScoutSpinner) mMetric;
         ArrayAdapter<String> spinnerArrayAdapter =
                 new ArrayAdapter<>(mSpinner.getContext(),
                                    android.R.layout.simple_spinner_item,
@@ -36,14 +37,16 @@ public class SpinnerViewHolder extends ScoutViewHolder<ArrayList<String>, TextVi
     }
 
     @Override
-    public void setClickListeners(final ScoutMetric<ArrayList<String>> metric, final Query query) {
+    public void setClickListeners(final Query query,
+                                  final SimpleItemAnimator animator) {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView parent,
                                        View view,
                                        int itemPosition,
                                        long id) {
-                ((ScoutSpinner) metric).setSelectedValue(query, itemPosition);
+                animator.setSupportsChangeAnimations(false);
+                ((ScoutSpinner) mMetric).setSelectedValue(query, itemPosition);
             }
 
             @Override

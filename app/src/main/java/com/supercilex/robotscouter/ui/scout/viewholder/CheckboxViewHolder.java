@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.CheckBox;
 
@@ -12,17 +13,18 @@ public class CheckboxViewHolder extends ScoutViewHolder<Boolean, CheckBox> {
     }
 
     @Override
-    public void bind(ScoutMetric<Boolean> metric, Query query) {
-        super.bind(metric, query);
-        mName.setChecked(metric.getValue());
+    public void bind(ScoutMetric<Boolean> metric) {
+        super.bind(metric);
+        mName.setChecked(mMetric.getValue());
     }
 
     @Override
-    public void setClickListeners(final ScoutMetric<Boolean> metric, final Query query) {
+    public void setClickListeners(final Query query,
+                                  final SimpleItemAnimator animator) {
         mName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                metric.setValue(query, mName.isChecked());
+                mMetric.setValue(query, mName.isChecked(), animator);
             }
         });
     }

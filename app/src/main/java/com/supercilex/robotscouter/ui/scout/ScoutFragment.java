@@ -30,26 +30,24 @@ public class ScoutFragment extends Fragment { // NOPMD
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, // NOPMD TODO CyclomaticComplexity 14 == bad
+    public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
-                             final Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recycler_view, container, false);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         mManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mManager);
-        // TODO: 09/22/2016 fix this
-        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         mAdapter = new ScoutAdapter(
                 ScoutMetric.class,
-                R.layout.team_list_row_layout,
                 ScoutViewHolder.class,
                 BaseHelper.getDatabase()
                         .child(Constants.FIREBASE_SCOUTS)
                         .child(getArguments().getString(Constants.SCOUT_KEY))
-                        .child(Constants.FIREBASE_VIEWS));
+                        .child(Constants.FIREBASE_VIEWS),
+                (SimpleItemAnimator) recyclerView.getItemAnimator());
         recyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;

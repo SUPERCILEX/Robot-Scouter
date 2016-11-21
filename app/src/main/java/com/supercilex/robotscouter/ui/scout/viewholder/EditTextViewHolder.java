@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,18 +18,19 @@ public class EditTextViewHolder extends ScoutViewHolder<String, TextView> {
     }
 
     @Override
-    public void bind(ScoutMetric<String> metric, Query query) {
-        super.bind(metric, query);
-        mNotes.setText(metric.getValue());
+    public void bind(ScoutMetric<String> metric) {
+        super.bind(metric);
+        mNotes.setText(mMetric.getValue());
     }
 
     @Override
-    public void setClickListeners(final ScoutMetric<String> metric, final Query query) {
+    public void setClickListeners(final Query query,
+                                  final SimpleItemAnimator animator) {
         mNotes.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    metric.setValue(query, mNotes.getText().toString());
+                    mMetric.setValue(query, mNotes.getText().toString(), animator);
                 }
             }
         });

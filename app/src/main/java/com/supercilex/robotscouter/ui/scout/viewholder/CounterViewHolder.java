@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,19 +22,20 @@ public class CounterViewHolder extends ScoutViewHolder<Integer, TextView> {
     }
 
     @Override
-    public void bind(ScoutMetric<Integer> metric, Query query) {
-        super.bind(metric, query);
-        mCount.setText(String.valueOf(metric.getValue()));
+    public void bind(ScoutMetric<Integer> metric) {
+        super.bind(metric);
+        mCount.setText(String.valueOf(mMetric.getValue()));
     }
 
     @Override
-    public void setClickListeners(final ScoutMetric<Integer> metric, final Query query) {
+    public void setClickListeners(final Query query,
+                                  final SimpleItemAnimator animator) {
         mIncrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int value = Integer.parseInt(mCount.getText().toString()) + 1;
                 mCount.setText(String.valueOf(value));
-                metric.setValue(query, value);
+                mMetric.setValue(query, value, animator);
             }
         });
 
@@ -43,7 +45,7 @@ public class CounterViewHolder extends ScoutViewHolder<Integer, TextView> {
                 if (Integer.parseInt(mCount.getText().toString()) > 0) {
                     int value = Integer.parseInt(mCount.getText().toString()) - 1;
                     mCount.setText(String.valueOf(value));
-                    metric.setValue(query, value);
+                    mMetric.setValue(query, value, animator);
                 }
             }
         });

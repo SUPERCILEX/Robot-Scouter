@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -22,16 +23,21 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 
 public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> {
+    private SimpleItemAnimator mAnimator;
+
     public ScoutAdapter(Class<ScoutMetric> modelClass,
-                        int modelLayout,
                         Class<ScoutViewHolder> viewHolderClass,
-                        Query ref) {
-        super(modelClass, modelLayout, viewHolderClass, ref);
+                        Query ref,
+                        SimpleItemAnimator animator) {
+        super(modelClass, 0, viewHolderClass, ref);
+        mAnimator = animator;
     }
 
     @Override
-    public void populateViewHolder(ScoutViewHolder viewHolder, ScoutMetric view, int position) {
-        viewHolder.bind(view, getRef(position));
+    public void populateViewHolder(ScoutViewHolder viewHolder, ScoutMetric metric, int position) {
+        viewHolder.bind(metric);
+        viewHolder.setClickListeners(getRef(position), mAnimator);
+        mAnimator.setSupportsChangeAnimations(true);
     }
 
     @Override

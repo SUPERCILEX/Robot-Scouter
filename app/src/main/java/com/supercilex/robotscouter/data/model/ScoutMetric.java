@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.model;
 
 import android.support.annotation.Keep;
+import android.support.v7.widget.SimpleItemAnimator;
 
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
@@ -36,7 +37,8 @@ public class ScoutMetric<T> {
         mValue = value;
     }
 
-    public void setValue(Query query, T value) {
+    public void setValue(Query query, T value, SimpleItemAnimator animator) {
+        animator.setSupportsChangeAnimations(false);
         query.getRef().child(Constants.FIREBASE_VALUE).setValue(value);
         mValue = value;
     }
