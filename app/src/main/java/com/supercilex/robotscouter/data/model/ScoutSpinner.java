@@ -21,6 +21,11 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
         mSelectedValue = selectedValue;
     }
 
+    @Override
+    public int getType() {
+        return Constants.SPINNER;
+    }
+
     @Keep
     @PropertyName(Constants.FIREBASE_SELECTED_VALUE)
     public int getSelectedValue() {

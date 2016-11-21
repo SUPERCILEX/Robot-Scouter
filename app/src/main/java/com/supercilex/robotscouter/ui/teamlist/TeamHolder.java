@@ -36,17 +36,9 @@ public class TeamHolder extends RecyclerView.ViewHolder {
         mNewScout = (ImageButton) itemView.findViewById(R.id.new_scout);
     }
 
-    public TeamHolder setContext(Context context) {
+    public void bind(Context context, Team team) {
         mContext = context;
-        return this;
-    }
-
-    public TeamHolder setTeam(Team team) {
         mTeam = team;
-        return this;
-    }
-
-    public void bind() {
         setTeamNumber();
         setTeamName();
         setTeamLogo();

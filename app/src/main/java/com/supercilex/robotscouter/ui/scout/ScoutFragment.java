@@ -10,23 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.ScoutSpinner;
-import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
-import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
-import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolder;
-import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-
-import java.util.ArrayList;
 
 public class ScoutFragment extends Fragment { // NOPMD
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
@@ -53,87 +42,14 @@ public class ScoutFragment extends Fragment { // NOPMD
         // TODO: 09/22/2016 fix this
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        mAdapter = new FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder>(
+        mAdapter = new ScoutAdapter(
                 ScoutMetric.class,
                 R.layout.team_list_row_layout,
                 ScoutViewHolder.class,
                 BaseHelper.getDatabase()
                         .child(Constants.FIREBASE_SCOUTS)
                         .child(getArguments().getString(Constants.SCOUT_KEY))
-                        .child(Constants.FIREBASE_VIEWS)) {
-            @Override
-            public void populateViewHolder(ScoutViewHolder viewHolder,
-                                           ScoutMetric view,
-                                           int position) {
-                viewHolder.bind(view, getRef(position));
-            }
-
-            @Override
-            protected void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
-            }
-
-            @Override
-            protected ScoutMetric parseSnapshot(DataSnapshot snapshot) {
-                int viewType = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
-
-                if (viewType == Constants.CHECKBOX) {
-                    return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
-                    });
-                } else if (viewType == Constants.COUNTER) {
-                    return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
-                    });
-                } else if (viewType == Constants.SPINNER) {
-//                  return snapshot.getValue(new GenericTypeIndicator<ScoutSpinner>() {}); NOPMD
-                    return new ScoutSpinner(
-                            snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                            snapshot.child(Constants.FIREBASE_VALUE)
-                                    .getValue(new GenericTypeIndicator<ArrayList<String>>() {
-                                    }),
-                            snapshot.child(Constants.FIREBASE_SELECTED_VALUE)
-                                    .getValue(Integer.class)
-                    ).setType(Constants.SPINNER);
-                } else if (viewType == Constants.EDIT_TEXT) {
-                    return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
-                    });
-                }
-
-                throw new IllegalArgumentException("Scout class not found at parseSnapshot");
-            }
-
-            @Override
-            public ScoutViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                switch (viewType) {
-                    case Constants.CHECKBOX:
-                        return new CheckboxViewHolder(LayoutInflater.from(parent.getContext())
-                                                              .inflate(R.layout.scout_checkbox,
-                                                                       parent,
-                                                                       false));
-                    case Constants.COUNTER:
-                        return new CounterViewHolder(LayoutInflater.from(parent.getContext())
-                                                             .inflate(R.layout.scout_counter,
-                                                                      parent,
-                                                                      false));
-                    case Constants.EDIT_TEXT:
-                        return new EditTextViewHolder(LayoutInflater.from(parent.getContext())
-                                                              .inflate(R.layout.scout_notes,
-                                                                       parent,
-                                                                       false));
-                    case Constants.SPINNER:
-                        return new SpinnerViewHolder(LayoutInflater.from(parent.getContext())
-                                                             .inflate(R.layout.scout_spinner,
-                                                                      parent,
-                                                                      false));
-                    default:
-                        throw new IllegalStateException();
-                }
-            }
-
-            @Override
-            public int getItemViewType(int position) {
-                return getItem(position).getType();
-            }
-        };
+                        .child(Constants.FIREBASE_VIEWS));
         recyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;

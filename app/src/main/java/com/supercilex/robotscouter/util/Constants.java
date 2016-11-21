@@ -17,8 +17,8 @@ public class Constants {
     // Scout ids
     public static final int CHECKBOX = 0;
     public static final int COUNTER = 1;
-    public static final int SPINNER = 2;
     public static final int EDIT_TEXT = 3;
+    public static final int SPINNER = 2;
     public static final int SLIDER = 4;
 
     // *** CAUTION--DO NOT TOUCH! ***
