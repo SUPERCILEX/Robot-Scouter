@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.scout;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -18,10 +19,10 @@ public class EditDetailsDialog extends KeyboardDialog {
     private EditText mWebsite;
     private EditText mMedia;
 
-    public static EditDetailsDialog newInstance(Team team) {
+    public static void show(Team team, FragmentManager manager) {
         EditDetailsDialog dialog = new EditDetailsDialog();
         dialog.setArguments(BaseHelper.getTeamBundle(team));
-        return dialog;
+        dialog.show(manager, BaseHelper.getTag(EditDetailsDialog.class));
     }
 
     @NonNull

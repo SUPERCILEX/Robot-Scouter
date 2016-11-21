@@ -46,7 +46,7 @@ public class TeamHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
-    public void init() {
+    public void bind() {
         setTeamNumber();
         setTeamName();
         setTeamLogo();

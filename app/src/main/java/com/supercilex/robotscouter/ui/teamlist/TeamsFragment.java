@@ -86,7 +86,7 @@ public class TeamsFragment extends StickyFragment {
                 team.setKey(getRef(position).getKey());
                 teamHolder.setContext(getContext())
                         .setTeam(team)
-                        .init();
+                        .bind();
                 team.fetchLatestData();
             }
 

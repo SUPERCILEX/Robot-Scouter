@@ -28,6 +28,7 @@
     <string name="team_logo">Team logo url</string>
     <string name="hint_notes">Notes</string>
     <string name="new_scout">New Scout</string>
+    <string name="edit_scout_templates">Edit scout templates</string>
 
     <!-- Accessibility -->
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>

@@ -168,7 +168,8 @@ public class Team implements Parcelable {
     public void add() {
         DatabaseReference index = getIndicesRef().push();
         mKey = index.getKey();
-        index.setValue(mNumber, Long.valueOf(mNumber));
+        Long number = Long.valueOf(mNumber);
+        index.setValue(number, number);
         forceUpdate();
     }
 

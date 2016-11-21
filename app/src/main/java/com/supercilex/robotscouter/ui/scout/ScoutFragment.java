@@ -29,30 +29,15 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 
 public class ScoutFragment extends Fragment { // NOPMD
-    private static final String ARG_SCOUT_KEY = "scout_key";
-
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolder> mAdapter;
     private LinearLayoutManager mManager;
 
     public static ScoutFragment newInstance(String key) {
-        ScoutFragment fragment = new ScoutFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_SCOUT_KEY, key);
+        args.putString(Constants.SCOUT_KEY, key);
+        ScoutFragment fragment = new ScoutFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mAdapter.cleanup();
-        RobotScouter.getRefWatcher(getActivity()).watch(this);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -61,7 +46,7 @@ public class ScoutFragment extends Fragment { // NOPMD
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recycler_view, container, false);
 
-        final RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         mManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mManager);
@@ -74,7 +59,7 @@ public class ScoutFragment extends Fragment { // NOPMD
                 ScoutViewHolder.class,
                 BaseHelper.getDatabase()
                         .child(Constants.FIREBASE_SCOUTS)
-                        .child(getArguments().getString(ARG_SCOUT_KEY))
+                        .child(getArguments().getString(Constants.SCOUT_KEY))
                         .child(Constants.FIREBASE_VIEWS)) {
             @Override
             public void populateViewHolder(ScoutViewHolder viewHolder,
@@ -129,16 +114,16 @@ public class ScoutFragment extends Fragment { // NOPMD
                                                              .inflate(R.layout.scout_counter,
                                                                       parent,
                                                                       false));
-                    case Constants.SPINNER:
-                        return new SpinnerViewHolder(LayoutInflater.from(parent.getContext())
-                                                             .inflate(R.layout.scout_spinner,
-                                                                      parent,
-                                                                      false));
                     case Constants.EDIT_TEXT:
                         return new EditTextViewHolder(LayoutInflater.from(parent.getContext())
                                                               .inflate(R.layout.scout_notes,
                                                                        parent,
                                                                        false));
+                    case Constants.SPINNER:
+                        return new SpinnerViewHolder(LayoutInflater.from(parent.getContext())
+                                                             .inflate(R.layout.scout_spinner,
+                                                                      parent,
+                                                                      false));
                     default:
                         throw new IllegalStateException();
                 }
@@ -152,5 +137,18 @@ public class ScoutFragment extends Fragment { // NOPMD
         recyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 }

@@ -48,12 +48,12 @@ public class TeamListActivity extends AppCompatBase {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new NewTeamDialog().show(getSupportFragmentManager(), mHelper.getTag());
+                NewTeamDialog.show(getSupportFragmentManager());
             }
         });
 
-        mTeamsFragment = ((TeamsFragment) getSupportFragmentManager().findFragmentByTag(
-                "team_list_fragment"));
+        mTeamsFragment = (TeamsFragment) getSupportFragmentManager()
+                .findFragmentByTag("team_list_fragment");
         if (!BaseHelper.isSignedIn()) {
             signInAnonymously();
         }
@@ -95,7 +95,7 @@ public class TeamListActivity extends AppCompatBase {
                         .addOnFailureListener(new LogFailureListener());
                 break;
             case R.id.action_licenses:
-                new LicensesDialog().show(getSupportFragmentManager(), mHelper.getTag());
+                LicensesDialog.show(getSupportFragmentManager());
                 break;
             case R.id.action_settings:
                 break;

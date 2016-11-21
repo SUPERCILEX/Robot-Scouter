@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.supercilex.robotscouter.R;
@@ -11,9 +12,14 @@ import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.KeyboardDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.util.BaseHelper;
 
 public class NewTeamDialog extends KeyboardDialog {
     private TextInputLayout mInputLayout;
+
+    public static void show(FragmentManager manager) {
+        new NewTeamDialog().show(manager, BaseHelper.getTag(NewTeamDialog.class));
+    }
 
     @NonNull
     @Override

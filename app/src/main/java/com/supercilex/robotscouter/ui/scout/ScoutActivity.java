@@ -131,6 +131,9 @@ public class ScoutActivity extends AppCompatBase
                 new Scout().createScoutId(mTeam.getNumber());
                 mPagerAdapter.setManuallyAddedScout();
                 break;
+            case R.id.action_edit_scout_template:
+                EditScoutTemplates.show(getSupportFragmentManager());
+                break;
             case R.id.action_visit_tba_team_website:
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 builder.setToolbarColor(ContextCompat.getColor(this, R.color.color_primary));
@@ -149,8 +152,7 @@ public class ScoutActivity extends AppCompatBase
                 teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
                 break;
             case R.id.action_edit_details:
-                EditDetailsDialog.newInstance(mTeam)
-                        .show(getSupportFragmentManager(), mHelper.getTag());
+                EditDetailsDialog.show(mTeam, getSupportFragmentManager());
                 break;
             case R.id.action_settings:
                 break;

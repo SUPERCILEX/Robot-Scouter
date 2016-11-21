@@ -26,10 +26,6 @@ public class ActivityHelper extends BaseHelper {
         showSnackbar(mActivity, message, length, actionMessage, listener);
     }
 
-    public String getTag() {
-        return getTag(mActivity);
-    }
-
     public Team getTeam() {
         return BaseHelper.getTeam(mActivity.getIntent());
     }
