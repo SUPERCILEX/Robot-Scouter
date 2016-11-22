@@ -77,7 +77,8 @@ public class ScoutActivity extends AppCompatBase
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              Scout.getIndicesRef().child(mTeam.getNumber()));
+                                              Scout.getIndicesRef(),
+                                              mTeam.getNumber());
         ViewPager viewPager = (ViewPager) findViewById(R.id.container);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

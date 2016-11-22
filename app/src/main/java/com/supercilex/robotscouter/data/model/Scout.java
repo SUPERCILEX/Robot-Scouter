@@ -48,7 +48,7 @@ public class Scout {
     }
 
     public String createScoutId(String teamNumber) {
-        DatabaseReference index = getIndicesRef().child(teamNumber).push();
+        DatabaseReference index = getIndicesRef().push();
         DatabaseReference scouts = BaseHelper.getDatabase()
                 .child(Constants.FIREBASE_SCOUTS)
                 .child(index.getKey());
@@ -72,7 +72,7 @@ public class Scout {
                 new ScoutMetric<>("note 2 pos 6", "some other note").setType(Constants.EDIT_TEXT));
 
         scouts.setValue(this);
-        index.setValue(true);
+        index.setValue(Long.parseLong(teamNumber));
 
         return index.getKey();
     }

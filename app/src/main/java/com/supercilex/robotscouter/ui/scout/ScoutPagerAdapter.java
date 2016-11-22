@@ -24,11 +24,11 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
     private boolean mManuallyAddedTab;
     private Query mQuery;
 
-    public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, Query query) {
+    public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, Query query, String number) {
         super(fm);
         mTabLayout = tabLayout;
         mQuery = query;
-        mQuery.addValueEventListener(this);
+        mQuery.orderByValue().equalTo(Long.parseLong(number)).addValueEventListener(this);
     }
 
     @Override
