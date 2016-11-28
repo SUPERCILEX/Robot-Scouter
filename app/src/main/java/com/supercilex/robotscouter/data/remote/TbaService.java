@@ -22,6 +22,9 @@ import retrofit2.Response;
 
 public final class TbaService implements Callable<Team> {
     private static final int ERROR_404 = 404;
+    private static final String CHIEF_DELPHI = "cdphotothread";
+    private static final String IMGUR = "imgur";
+
     private Team mTeam;
     private Context mContext;
     private TbaApi mTbaApi;
@@ -77,13 +80,13 @@ public final class TbaService implements Callable<Team> {
             String mediaType = mediaObject.get("type").getAsString();
 
             if (mediaType != null) {
-                if (mediaType.equals("imgur")) {
+                if (mediaType.equals(IMGUR)) {
                     String url = "https://i.imgur.com/"
                             + mediaObject.get("foreign_key").getAsString() + ".png";
 
                     setAndCacheMedia(url);
                     break;
-                } else if (mediaType.equals("cdphotothread")) {
+                } else if (mediaType.equals(CHIEF_DELPHI)) {
                     String url = "https://www.chiefdelphi.com/media/img/"
                             + mediaObject.get("details")
                             .getAsJsonObject()
