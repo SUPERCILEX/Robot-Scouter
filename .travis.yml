@@ -16,7 +16,7 @@ android:
     - android-25
     - tools
     - platform-tools
-    - build-tools-25.0.0
+    - build-tools-25.0.1
     - extra-android-m2repository
     - extra-google-m2repository
 before_script:
@@ -25,8 +25,8 @@ before_script:
 script: ./build.sh
 after_success: ./upload.sh
 after_failure:
-  - cat app/build/reports/lint/lint-results.xml
-  - cat app/build/reports/lint/lint-results.html
-  - cat app/build/reports/checkstyle/checkstyle.html
-  - cat app/build/reports/findbugs/findbugs.html
-  - cat app/build/reports/pmd/pmd.html
+  - cat app/build/reports/lint-results.xml
+  - cat app/build/reports/lint-results.html
+  - cat app/build/reports/checkstyle.html
+  - cat app/build/reports/findbugs.html
+  - cat app/build/reports/pmd.html

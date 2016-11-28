@@ -138,7 +138,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
             <!-- Checks if a line is too long. -->
             <property name="max"
                       value="${com.puppycrawl.tools.checkstyle.checks.sizes.LineLength.max}"
-                      default="100"/>
+                      default="115"/>
             <property name="severity" value="error"/>
 
             <!--

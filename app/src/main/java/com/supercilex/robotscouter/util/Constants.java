@@ -1,6 +1,11 @@
 package com.supercilex.robotscouter.util;
 
+import com.firebase.ui.auth.AuthUI;
 import com.supercilex.robotscouter.BuildConfig;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Constants {
     // The Blue Alliance API
@@ -20,6 +25,16 @@ public class Constants {
     public static final int EDIT_TEXT = 3;
     public static final int SPINNER = 2;
     public static final int SLIDER = 4;
+
+    /**
+     * The list of all supported authentication providers in Firebase Auth UI.
+     */
+    public static final List<AuthUI.IdpConfig> ALL_PROVIDERS =
+            Collections.unmodifiableList(
+                    Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
+                                  new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
+                                  new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                  new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()));
 
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]

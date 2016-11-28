@@ -20,9 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.LogFailureListener;
-
-import java.util.Arrays;
 
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -128,15 +127,7 @@ public class TeamListActivity extends AppCompatBase {
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setLogo(R.drawable.launch_logo)
-                        .setProviders(
-                                Arrays.asList(new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.EMAIL_PROVIDER).build(),
-                                              new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                              new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.FACEBOOK_PROVIDER).build(),
-                                              new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.TWITTER_PROVIDER).build()))
+                        .setProviders(Constants.ALL_PROVIDERS)
                         .build(),
                 RC_SIGN_IN);
     }
