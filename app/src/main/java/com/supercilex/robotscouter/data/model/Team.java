@@ -15,8 +15,9 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
 
 public class Team implements Parcelable {
-    private String mKey;
+    private static final int WEEK = 7;
 
+    private String mKey;
     private String mNumber;
     private String mName;
     private String mMedia;
@@ -194,7 +195,7 @@ public class Team implements Parcelable {
 
     public void fetchLatestData() {
         long differenceDays = (System.currentTimeMillis() - mTimestamp) / (1000 * 60 * 60 * 24);
-        if (differenceDays >= 7) {
+        if (differenceDays >= WEEK) {
             DownloadTeamDataJob.start(this);
         }
     }
