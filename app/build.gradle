@@ -17,7 +17,7 @@ android {
         targetSdkVersion 25
         minSdkVersion 16
         versionCode vCode
-        versionName "0.1.0-$vCode"
+        versionName "0.1.0.$vCode"
     }
 
     signingConfigs {
