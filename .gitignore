@@ -1,11 +1,11 @@
 *.iml
 .gradle
+build
 /.idea/workspace.xml
 /.idea/libraries
-/build
-/app/build
 /local.properties
 /keystore.properties
+/gradle.properties
 /app/keystore.jks
 /app/google-services.json
 /app/google-play-auto-publisher.json

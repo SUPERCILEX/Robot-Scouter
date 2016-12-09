@@ -69,6 +69,8 @@ play {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
     // Support libraries
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:customtabs:$supportLibVersion"
@@ -77,12 +79,15 @@ dependencies {
 
     // Firebase UI
     // Auth
-    compile 'com.firebaseui:firebase-ui-auth:1.0.1'
+    compile('com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:-SNAPSHOT') { changing = true }
+//    compile 'com.firebaseui:firebase-ui-auth:1.0.1'
     compile "com.google.firebase:firebase-auth:$playServicesVersion"
     compile "com.google.android.gms:play-services-auth:$playServicesVersion"
     compile "com.android.support:cardview-v7:$supportLibVersion"
     // Database
-    compile 'com.firebaseui:firebase-ui-database:1.0.1'
+    compile('com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:-SNAPSHOT') { changing = true }
+
+//    compile 'com.firebaseui:firebase-ui-database:1.0.1'
     compile "com.google.firebase:firebase-database:$playServicesVersion"
 
     // Firebase job dispatcher

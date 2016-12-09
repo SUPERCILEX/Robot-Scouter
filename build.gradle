@@ -15,6 +15,7 @@ allprojects {
         jcenter()
         flatDir { dirs 'libs' }
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://jitpack.io' }
     }
 }
 
