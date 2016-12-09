@@ -17,7 +17,7 @@ android {
         applicationId "com.supercilex.robotscouter"
         targetSdkVersion 25
         versionCode vCode
-        versionName "1.0.0-$vCode"
+        versionName "0.1.0.$vCode"
     }
 
     signingConfigs {
