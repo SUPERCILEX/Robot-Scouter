@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.data.model;
+package com.supercilex.robotscouter.data.model; // NOPMD
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -395,7 +395,7 @@ public class Team implements Parcelable {
         }
 
         public Team build() {
-            return new Team(mNumber,
+            return new Team(mNumber, // NOPMD
                             mKey,
                             mTemplateKey,
                             mName,

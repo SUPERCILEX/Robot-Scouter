@@ -118,11 +118,7 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fab:
-                NewTeamDialog.show(getSupportFragmentManager());
-                break;
-        }
+        if (v.getId() == R.id.fab) NewTeamDialog.show(getSupportFragmentManager());
     }
 
     private void signIn() {

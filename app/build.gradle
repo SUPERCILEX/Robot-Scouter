@@ -34,7 +34,8 @@ android {
         dev {
             // Enable pre-dexing to produce an APK that can be tested on
             // Android 5.0+ without the time-consuming DEX build processes.
-            minSdkVersion 25
+//            minSdkVersion 25 TODO figure out lint
+            minSdkVersion 16
         }
 
         prod {

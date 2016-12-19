@@ -17,6 +17,8 @@
 
         <exclude name="IfStmtsMustUseBraces"/>
 
+        <exclude name="IfElseStmtsMustUseBraces"/>
+
     </rule>
 
     <rule ref="rulesets/java/clone.xml"/>

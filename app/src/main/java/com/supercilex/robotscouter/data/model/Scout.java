@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class Scout {
     private String mOwner;
-    private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>();
+    private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>(); // NOPMD
 
     @Exclude
     public static DatabaseReference getIndicesRef() {

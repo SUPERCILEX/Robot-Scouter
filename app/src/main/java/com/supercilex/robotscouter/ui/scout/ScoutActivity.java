@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.scout;
+package com.supercilex.robotscouter.ui.scout; // NOPMD
 
 import android.app.ActivityManager;
 import android.content.Context;

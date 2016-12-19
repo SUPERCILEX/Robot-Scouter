@@ -9,7 +9,8 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
-public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView> implements View.OnFocusChangeListener {
+public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView>
+        implements View.OnFocusChangeListener {
     private EditText mNotes;
 
     public EditTextViewHolder(View itemView) {

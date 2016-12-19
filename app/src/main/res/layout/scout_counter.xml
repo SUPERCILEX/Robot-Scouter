@@ -16,6 +16,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/count"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/decrement_counter"
+        tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
     <include layout="@layout/scout_counter_base"/>

@@ -71,7 +71,7 @@ public class User {
         }
 
         public User build() {
-            return new User(mUid, mEmail, mName, mPhotoUrl);
+            return new User(mUid, mEmail, mName, mPhotoUrl); // NOPMD
         }
     }
 }

@@ -31,20 +31,17 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
 
     @Override
     public void onClick(View v) {
-        int value;
-        switch (v.getId()) {
-            case R.id.increment_counter:
-                value = Integer.parseInt(mCount.getText().toString()) + 1;
-                mCount.setText(String.valueOf(value));
-                updateMetricValue(value);
-                break;
-            case R.id.decrement_counter:
-                if (Integer.parseInt(mCount.getText().toString()) > 0) {
-                    value = Integer.parseInt(mCount.getText().toString()) - 1;
-                    mCount.setText(String.valueOf(value));
-                    updateMetricValue(value);
-                }
-                break;
+        int id = v.getId();
+        if (id == R.id.increment_counter) {
+            int value = Integer.parseInt(mCount.getText().toString()) + 1;
+            mCount.setText(String.valueOf(value));
+            updateMetricValue(value);
+        } else if (id == R.id.decrement_counter
+                && Integer.parseInt(mCount.getText()
+                                            .toString()) > 0) { // don't allow negative values
+            int value = Integer.parseInt(mCount.getText().toString()) - 1;
+            mCount.setText(String.valueOf(value));
+            updateMetricValue(value);
         }
     }
 }

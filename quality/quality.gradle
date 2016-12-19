@@ -7,7 +7,7 @@ def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
 
 checkstyle {
-    toolVersion = '7.2'
+    toolVersion = '7.3'
 }
 
 task checkstyle(type: Checkstyle) {
@@ -65,7 +65,8 @@ task pmd(type: Pmd) {
 
 android {
     lintOptions {
-        disable 'InvalidPackage'
+        disable 'InvalidPackage', // Needed because of Okio
+        'RestrictedApi' // TODO remove in android gradle plugin beta2
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true

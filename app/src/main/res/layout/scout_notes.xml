@@ -14,8 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
+        android:textIsSelectable="false"
         app:layout_constraintBaseline_toBaselineOf="@+id/notes"
         app:layout_constraintLeft_toLeftOf="parent"
+        tools:ignore="UnknownIdInLayout"
         tools:layout_constraintLeft_creator="1"
         tools:text="Example"/>
 

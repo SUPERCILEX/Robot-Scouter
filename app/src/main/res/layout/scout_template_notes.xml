@@ -18,6 +18,7 @@
         android:inputType="text"
         app:layout_constraintBaseline_toBaselineOf="@+id/notes"
         app:layout_constraintLeft_toLeftOf="parent"
+        tools:ignore="UnknownIdInLayout"
         tools:layout_constraintLeft_creator="1"
         tools:text="Example"/>
 

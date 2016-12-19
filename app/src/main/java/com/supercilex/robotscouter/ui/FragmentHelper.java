@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 public class FragmentHelper extends BaseHelper {
-    private Fragment mFragment;
+    private Fragment mFragment; // NOPMD
 
     public FragmentHelper(Fragment fragment) {
         super();
