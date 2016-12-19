@@ -19,6 +19,14 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements View
     }
 
     @Override
+    public void onClick(View v) {
+        if (mName.hasFocus()) {
+            updateMetricName(mName.getText().toString());
+        }
+        super.onClick(v);
+    }
+
+    @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) updateMetricName(mName.getText().toString());
     }

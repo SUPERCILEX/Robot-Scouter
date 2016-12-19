@@ -26,6 +26,14 @@ public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements Vi
     }
 
     @Override
+    public void onClick(View v) {
+        if (mCheckBoxName.hasFocus()) {
+            updateMetricName(mCheckBoxName.getText().toString());
+        }
+        super.onClick(v);
+    }
+
+    @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) updateMetricName(mCheckBoxName.getText().toString());
     }
