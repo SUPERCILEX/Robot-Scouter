@@ -15,16 +15,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.auth.FirebaseUser;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.LogFailureListener;
-
-import java.util.Arrays;
-
-import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 // TODO: 08/10/2016 add Firebase analytics to menu item clicks
 // so I know what stuff to put on top
@@ -34,7 +31,8 @@ import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 // database with their team as example.
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-public class TeamListActivity extends AppCompatBase {
+public class TeamListActivity extends AppCompatBase implements View.OnClickListener {
+    private static final int RC_SIGN_IN = 100;
     private TeamsFragment mTeamsFragment;
     private Menu mMenu;
 
@@ -45,18 +43,11 @@ public class TeamListActivity extends AppCompatBase {
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new NewTeamDialog().show(getSupportFragmentManager(), mHelper.getTag());
-            }
-        });
+        mTeamsFragment = (TeamsFragment) getSupportFragmentManager()
+                .findFragmentByTag("team_list_fragment");
+        findViewById(R.id.fab).setOnClickListener(this);
 
-        mTeamsFragment = ((TeamsFragment) getSupportFragmentManager().findFragmentByTag(
-                "team_list_fragment"));
-        if (!BaseHelper.isSignedIn()) {
-            signInAnonymously();
-        }
+        if (!BaseHelper.isSignedIn()) signInAnonymously();
     }
 
     @Override
@@ -95,7 +86,7 @@ public class TeamListActivity extends AppCompatBase {
                         .addOnFailureListener(new LogFailureListener());
                 break;
             case R.id.action_licenses:
-                new LicensesDialog().show(getSupportFragmentManager(), mHelper.getTag());
+                LicensesDialog.show(getSupportFragmentManager());
                 break;
             case R.id.action_settings:
                 break;
@@ -115,56 +106,54 @@ public class TeamListActivity extends AppCompatBase {
             mMenu.findItem(R.id.action_sign_out).setVisible(true);
             mHelper.showSnackbar(R.string.signed_in, Snackbar.LENGTH_LONG);
 
-            DatabaseReference ref = BaseHelper.getDatabase()
-                    .child("users")
-                    .child(BaseHelper.getUid());
-            ref.child("name").setValue(BaseHelper.getUser().getDisplayName());
-            ref.child("provider").setValue(BaseHelper.getUser().getProviderId());
-            ref.child("email").setValue(BaseHelper.getUser().getEmail());
+            FirebaseUser user = BaseHelper.getUser();
+            new User.Builder(user.getUid())
+                    .setEmail(user.getEmail())
+                    .setName(user.getDisplayName())
+                    .setPhotoUrl(user.getPhotoUrl())
+                    .build()
+                    .add();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.fab) NewTeamDialog.show(getSupportFragmentManager());
     }
 
     private void signIn() {
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
+                        .setProviders(Constants.ALL_PROVIDERS)
+                        .setTheme(R.style.RobotScouter)
                         .setLogo(R.drawable.launch_logo)
-                        .setProviders(
-                                Arrays.asList(new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.EMAIL_PROVIDER).build(),
-                                              new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                              new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.FACEBOOK_PROVIDER).build(),
-                                              new AuthUI.IdpConfig
-                                                      .Builder(AuthUI.TWITTER_PROVIDER).build()))
+                        .setShouldLinkAccounts(true)
+                        .setTosUrl("https://www.example.com")
                         .build(),
                 RC_SIGN_IN);
     }
 
     private void signInAnonymously() {
-        FirebaseCrash.log("Attempting to sign in anonymously.");
         BaseHelper.getAuth()
                 .signInAnonymously()
-                .addOnCompleteListener(this, new AnonymousSignInListener())
-                .addOnFailureListener(new LogFailureListener());
-    }
-
-    private class AnonymousSignInListener implements OnCompleteListener<AuthResult> {
-        @Override
-        public void onComplete(@NonNull Task<AuthResult> task) {
-            if (task.isSuccessful()) {
-                mTeamsFragment.setAdapter();
-            } else {
-                mHelper.showSnackbar(R.string.sign_in_failed,
-                                     Snackbar.LENGTH_LONG,
-                                     R.string.sign_in,
-                                     new View.OnClickListener() {
-                                         @Override
-                                         public void onClick(View view) {
-                                             signIn();
-                                         }
-                                     });
-            }
-        }
+                .addOnFailureListener(new LogFailureListener())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            mTeamsFragment.setAdapter();
+                        } else {
+                            mHelper.showSnackbar(R.string.sign_in_failed,
+                                                 Snackbar.LENGTH_LONG,
+                                                 R.string.sign_in,
+                                                 new View.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(View v) {
+                                                         signIn();
+                                                     }
+                                                 });
+                        }
+                    }
+                });
     }
 }

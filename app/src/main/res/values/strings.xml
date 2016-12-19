@@ -28,6 +28,11 @@
     <string name="team_logo">Team logo url</string>
     <string name="hint_notes">Notes</string>
     <string name="new_scout">New Scout</string>
+    <string name="edit_scout_templates">Edit scout templates</string>
+    <string name="checkbox_name">Checkbox name</string>
+    <string name="counter_name">Counter name</string>
+    <string name="note_name">Note name</string>
+    <string name="spinner_name">Item selector name</string>
 
     <!-- Accessibility -->
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>

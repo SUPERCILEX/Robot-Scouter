@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true">
+    <!-- TODO why focusable on root -->
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:hint="@string/note_name"
+        android:inputType="text"
+        app:layout_constraintBaseline_toBaselineOf="@+id/notes"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:ignore="UnknownIdInLayout"
+        tools:layout_constraintLeft_creator="1"
+        tools:text="Example"/>
+
+    <include layout="@layout/scout_notes_base"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -13,10 +13,12 @@ before_install:
   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
 android:
   components:
-    - android-25
+    # https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943
     - tools
+    - tools
+    - build-tools-25.0.2
+    - android-25
     - platform-tools
-    - build-tools-25.0.0
     - extra-android-m2repository
     - extra-google-m2repository
 before_script:
@@ -25,8 +27,8 @@ before_script:
 script: ./build.sh
 after_success: ./upload.sh
 after_failure:
-  - cat app/build/reports/lint/lint-results.xml
-  - cat app/build/reports/lint/lint-results.html
-  - cat app/build/reports/checkstyle/checkstyle.html
-  - cat app/build/reports/findbugs/findbugs.html
-  - cat app/build/reports/pmd/pmd.html
+  - cat app/build/reports/lint-results.xml
+  - cat app/build/reports/lint-results.html
+  - cat app/build/reports/checkstyle.html
+  - cat app/build/reports/findbugs.html
+  - cat app/build/reports/pmd.html

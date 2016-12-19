@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LicensesDialog extends DialogBase {
+    private static final String TAG = "LicensesDialog";
+
+    public static void show(FragmentManager manager) {
+        new LicensesDialog().show(manager, TAG);
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

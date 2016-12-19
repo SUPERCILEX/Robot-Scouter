@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,30 +12,23 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.ScoutSpinner;
 
-public class SpinnerViewHolder extends ScoutViewHolder {
-    private TextView mName;
+import java.util.ArrayList;
+
+public class SpinnerViewHolder extends ScoutViewHolderBase<ArrayList<String>, TextView>
+        implements AdapterView.OnItemSelectedListener {
     private Spinner mSpinner;
 
     public SpinnerViewHolder(View itemView) {
         super(itemView);
-        mName = (TextView) itemView.findViewById(R.id.name);
         mSpinner = (Spinner) itemView.findViewById(R.id.spinner);
     }
 
     @Override
-    public void bind(ScoutMetric view, Query ref) {
-        ScoutSpinner scoutSpinner = (ScoutSpinner) view;
-
-        setText(scoutSpinner.getName());
-        initializeSpinner(scoutSpinner);
-        setOnItemSelectedListener(scoutSpinner, ref);
-    }
-
-    public void setText(String name) {
-        mName.setText(name);
-    }
-
-    private void initializeSpinner(ScoutSpinner scoutSpinner) {
+    public void bind(ScoutMetric<ArrayList<String>> metric,
+                     Query query,
+                     SimpleItemAnimator animator) {
+        super.bind(metric, query, animator);
+        ScoutSpinner scoutSpinner = (ScoutSpinner) mMetric;
         ArrayAdapter<String> spinnerArrayAdapter =
                 new ArrayAdapter<>(mSpinner.getContext(),
                                    android.R.layout.simple_spinner_item,
@@ -43,23 +37,16 @@ public class SpinnerViewHolder extends ScoutViewHolder {
 
         mSpinner.setAdapter(spinnerArrayAdapter);
         mSpinner.setSelection(scoutSpinner.getSelectedValue());
+        mSpinner.setOnItemSelectedListener(this);
     }
 
-    private void setOnItemSelectedListener(final ScoutSpinner scoutSpinner,
-                                           final Query ref) {
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent,
-                                       View view,
-                                       int itemPosition,
-                                       long id) {
-                scoutSpinner.setSelectedValue(ref, itemPosition);
-            }
+    @Override
+    public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
+        ((ScoutSpinner) mMetric).setSelectedValue(mQuery, itemPosition, mAnimator);
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                // Cancel
-            }
-        });
+    @Override
+    public void onNothingSelected(AdapterView<?> view) {
+        // Cancel
     }
 }

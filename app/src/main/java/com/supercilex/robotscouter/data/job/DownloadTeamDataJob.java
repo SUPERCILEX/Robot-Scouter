@@ -12,7 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.remote.TbaService;
+import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 public class DownloadTeamDataJob extends JobService {
@@ -38,7 +38,7 @@ public class DownloadTeamDataJob extends JobService {
         Job job = BaseHelper.getDispatcher().newJobBuilder()
                 .setService(DownloadTeamDataJob.class)
                 .setTag(team.getNumber())
-                .setExtras(/*BaseHelper.getTeamBundle(team)*/ bundle)
+                .setExtras(/*team.getBundle()*/ bundle)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
 
@@ -51,19 +51,21 @@ public class DownloadTeamDataJob extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-//        final Team team = BaseHelper.getTeam(params.getExtras());
-        final Team team = new Team();
-        team.setKey(params.getExtras().getString("key"));
-        team.setNumber(params.getExtras().getString("number"));
-        team.setName(params.getExtras().getString("name"));
-        team.setWebsite(params.getExtras().getString("website"));
-        team.setMedia(params.getExtras().getString("media"));
-        if (params.getExtras().getBoolean("custom-name")) team.setHasCustomName(true);
-        if (params.getExtras().getBoolean("custom-website")) team.setHasCustomWebsite(true);
-        if (params.getExtras().getBoolean("custom-media")) team.setHasCustomMedia(true);
-        team.setTimestamp(params.getExtras().getLong("timestamp"));
+//        final Team team = Team.getTeam(params.getExtras());
 
-        TbaService.fetch(team, getApplicationContext())
+        final Bundle extras = params.getExtras();
+        final Team team = new Team.Builder(extras.getString("number"))
+                .setKey(extras.getString("key"))
+                .setName(extras.getString("name"))
+                .setWebsite(extras.getString("website"))
+                .setMedia(extras.getString("media"))
+                .setHasCustomName(extras.getBoolean("custom-name"))
+                .setHasCustomWebsite(extras.getBoolean("custom-website"))
+                .setHasCustomMedia(extras.getBoolean("custom-media"))
+                .setTimestamp(extras.getLong("timestamp"))
+                .build();
+
+        TbaApi.fetch(team, getApplicationContext())
                 .addOnCompleteListener(new OnCompleteListener<Team>() {
                     @Override
                     public void onComplete(@NonNull Task<Team> task) {

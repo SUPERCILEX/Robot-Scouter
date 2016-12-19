@@ -4,8 +4,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0-alpha1'
+        classpath 'com.android.tools.build:gradle:2.3.0-beta1'
         classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.firebase:firebase-plugins:1.0.4'
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0-beta1'
     }
 }
@@ -13,8 +14,8 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        flatDir { dirs 'libs' }
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -23,8 +24,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    supportLibVersion = "25.0.1"
-    playServicesVersion = "9.8.0"
+    supportLibVersion = "25.1.0"
+    playServicesVersion = "10.0.1"
     retrofitVersion = "2.1.0"
 
     // Build the version code
@@ -36,9 +37,9 @@ ext {
 
             versionProps.load(new FileInputStream(versionPropsFile))
 
-            def code = versionProps['VERSION_CODE'].toInteger() + 1
+            def code = versionProps['versionCode'].toInteger() + 1
 
-            versionProps['VERSION_CODE'] = code.toString()
+            versionProps['versionCode'] = code.toString()
             versionProps.store(versionPropsFile.newWriter(),
                     "suppress inspection \"UnusedProperty\" for whole file")
 
@@ -47,4 +48,9 @@ ext {
             throw new GradleException("Could not read gradle.properties!")
         }
     }
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }

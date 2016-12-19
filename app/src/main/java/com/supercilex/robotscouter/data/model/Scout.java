@@ -1,26 +1,70 @@
 package com.supercilex.robotscouter.data.model;
 
+import android.os.Bundle;
 import android.support.annotation.Keep;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Scout {
     private String mOwner;
-    private Map<String, ScoutMetric> mScoutMetrics;
+    private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>(); // NOPMD
 
     @Exclude
     public static DatabaseReference getIndicesRef() {
-        return BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_SCOUT_INDICES)
-                .child(BaseHelper.getUid());
+        return Constants.FIREBASE_SCOUT_INDICES.child(BaseHelper.getUid());
+    }
+
+    public static void add(final Team team) {
+        final DatabaseReference indexRef = getIndicesRef().push();
+        DatabaseReference scoutRef = Constants.FIREBASE_SCOUTS.child(indexRef.getKey());
+
+        ScoutCopier scoutCopier = new ScoutCopier(scoutRef) {
+            @Override
+            protected void onDone() {
+                indexRef.setValue(Long.parseLong(team.getNumber()));
+            }
+        };
+        if (team.getTemplateKey() == null) {
+            Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(scoutCopier);
+        } else {
+            Constants.FIREBASE_SCOUT_TEMPLATES
+                    .child(team.getTemplateKey())
+                    .addListenerForSingleValueEvent(scoutCopier);
+        }
+//        mScoutMetrics = new LinkedHashMap<>();
+//
+//        addView(scoutRef, new ScoutMetric<>("example yes or no value pos 1",
+//                                          false).setType((Integer) Constants.CHECKBOX));
+//        addView(scoutRef, new ScoutMetric<>("test pos 2", true).setType((Integer) Constants.CHECKBOX));
+//        addView(scoutRef, new ScoutMetric<>("auto scores pos 3", 0).setType((Integer) Constants.COUNTER));
+//        addView(scoutRef, new ScoutMetric<>("teleop scores pos 4", 0).setType((Integer) Constants.COUNTER));
+//        ArrayList<String> list = new ArrayList<>();
+//        list.add("test");
+//        list.add("test 2");
+//        list.add("test 3");
+//        list.add("test 4");
+//        addView(scoutRef, new ScoutSpinner("some name", list, 0));
+//        addView(scoutRef, new ScoutSpinner("foobar!", list, 0));
+//        addView(scoutRef,
+//                new ScoutMetric<>("note 1 pos 5", "some note").setType((Integer) Constants.EDIT_TEXT));
+//        addView(scoutRef,
+//                new ScoutMetric<>("note 2 pos 6", "some other note").setType((Integer) Constants.EDIT_TEXT));
+    }
+
+    public static Bundle getScoutKeyBundle(String key) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SCOUT_KEY, key);
+        return bundle;
+    }
+
+    public static String getScoutKey(Bundle bundle) {
+        return bundle.getString(Constants.SCOUT_KEY);
     }
 
     @Keep
@@ -29,51 +73,11 @@ public class Scout {
     }
 
     @Keep
-    public void setOwner(String owner) {
-        mOwner = owner;
-    }
-
-    @Keep
     public Map<String, ScoutMetric> getViews() {
         return mScoutMetrics;
     }
 
-    @Keep
-    public void setViews(Map<String, ScoutMetric> views) {
-        mScoutMetrics = views;
-    }
-
-    private void addView(Query query, ScoutMetric view) {
-        mScoutMetrics.put(query.getRef().push().getKey(), view);
-    }
-
-    public String createScoutId(String teamNumber) {
-        DatabaseReference index = getIndicesRef().child(teamNumber).push();
-        DatabaseReference scouts = BaseHelper.getDatabase()
-                .child(Constants.FIREBASE_SCOUTS)
-                .child(index.getKey());
-        mScoutMetrics = new LinkedHashMap<>();
-
-        addView(scouts, new ScoutMetric<>("example yes or no value pos 1",
-                                          false).setType(Constants.CHECKBOX));
-        addView(scouts, new ScoutMetric<>("test pos 2", true).setType(Constants.CHECKBOX));
-        addView(scouts, new ScoutMetric<>("auto scores pos 3", 0).setType(Constants.COUNTER));
-        addView(scouts, new ScoutMetric<>("teleop scores pos 4", 0).setType(Constants.COUNTER));
-        ArrayList<String> list = new ArrayList<>();
-        list.add("test");
-        list.add("test 2");
-        list.add("test 3");
-        list.add("test 4");
-        addView(scouts, new ScoutSpinner("some name", list, 0).setType(Constants.SPINNER));
-        addView(scouts, new ScoutSpinner("foobar!", list, 0).setType(Constants.SPINNER));
-        addView(scouts,
-                new ScoutMetric<>("note 1 pos 5", "some note").setType(Constants.EDIT_TEXT));
-        addView(scouts,
-                new ScoutMetric<>("note 2 pos 6", "some other note").setType(Constants.EDIT_TEXT));
-
-        scouts.setValue(this);
-        index.setValue(true);
-
-        return index.getKey();
+    public void addView(String key, ScoutMetric view) {
+        mScoutMetrics.put(key, view);
     }
 }

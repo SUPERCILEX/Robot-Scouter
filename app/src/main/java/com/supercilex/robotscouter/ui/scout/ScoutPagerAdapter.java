@@ -21,7 +21,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
     private List<String> mKeys = new ArrayList<>();
     private TabLayout mTabLayout;
     private String mSavedTabKey;
-    private boolean mManuallyAddedTab;
+    private boolean mIsManuallyAddedTab;
     private Query mQuery;
 
     public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, Query query) {
@@ -53,25 +53,23 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
 
     @Override
     public void onDataChange(DataSnapshot snapshot) {
-        if (snapshot.getValue() != null) {
-            String selectedTabKey = getSelectedTabKey();
-            mKeys.clear();
-            for (DataSnapshot scoutIndex : snapshot.getChildren()) {
-                mKeys.add(0, scoutIndex.getKey());
-            }
+        String selectedTabKey = getSelectedTabKey();
+        mKeys.clear();
+        for (DataSnapshot scoutIndex : snapshot.getChildren()) {
+            mKeys.add(0, scoutIndex.getKey());
+        }
 
-            notifyDataSetChanged();
-            if (!mManuallyAddedTab) {
-                if (mSavedTabKey != null) {
-                    selectTab(mSavedTabKey, SAVE_STATE);
-                    mSavedTabKey = null; // NOPMD todo maybe?
-                } else if (selectedTabKey != null) {
-                    selectTab(selectedTabKey, UPDATE);
-                }
-            } else {
-                TabLayout.Tab tab = mTabLayout.getTabAt(0);
-                if (tab != null) tab.select();
-                mManuallyAddedTab = false;
+        notifyDataSetChanged();
+        if (mIsManuallyAddedTab) {
+            TabLayout.Tab tab = mTabLayout.getTabAt(0);
+            if (tab != null) tab.select();
+            mIsManuallyAddedTab = false;
+        } else {
+            if (mSavedTabKey != null) {
+                selectTab(mSavedTabKey, SAVE_STATE);
+                mSavedTabKey = null; // NOPMD todo maybe?
+            } else if (selectedTabKey != null) {
+                selectTab(selectedTabKey, UPDATE);
             }
         }
     }
@@ -93,7 +91,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
     }
 
     public void setManuallyAddedScout() {
-        mManuallyAddedTab = true;
+        mIsManuallyAddedTab = true;
     }
 
     private void selectTab(String selectedTabKey, int adjust) {

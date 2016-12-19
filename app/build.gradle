@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-crash'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'project-report'
 apply from: '../quality/quality.gradle'
 
 def keystorePropertiesFile = file("../keystore.properties")
@@ -8,16 +10,15 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.2"
     def vCode = buildVersionCode()
 
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
         targetSdkVersion 25
-        minSdkVersion 16
         versionCode vCode
-        versionName "1.0.0-$vCode"
+        versionName "0.1.0.$vCode"
     }
 
     signingConfigs {
@@ -29,18 +30,32 @@ android {
         }
     }
 
+    productFlavors {
+        dev {
+            // Enable pre-dexing to produce an APK that can be tested on
+            // Android 5.0+ without the time-consuming DEX build processes.
+//            minSdkVersion 25 TODO figure out lint
+            minSdkVersion 16
+        }
+
+        prod {
+            // The actual minSdkVersion for the production version.
+            minSdkVersion 16
+        }
+    }
+
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+            manifestPlaceholders = [appName: "Robot Scouter DEBUG: $vCode"]
+        }
+
         release {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
-        }
-
-        debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-DEBUG'
-            manifestPlaceholders = [appName: "Robot Scouter DEBUG: $vCode"]
         }
     }
 
@@ -55,21 +70,43 @@ play {
     jsonFile = file('google-play-auto-publisher.json')
 }
 
+configurations {
+    devDebugCompile
+    prodDebugCompile
+    devReleaseCompile
+    prodReleaseCompile
+}
+
+android.variantFilter { variant ->
+    if (variant.name == 'devRelease') variant.setIgnore(true)
+}
+
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
     // Support libraries
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:customtabs:$supportLibVersion"
     compile "com.android.support:palette-v7:$supportLibVersion"
-    compile "com.android.support:cardview-v7:$supportLibVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Firebase UI
-    compile 'com.firebaseui:firebase-ui-auth:1.0.0'
-    compile 'com.firebaseui:firebase-ui-database:1.0.0'
+    // Auth
+    compile('com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:-SNAPSHOT') {
+        changing = true
+    }
+//    compile 'com.firebaseui:firebase-ui-auth:1.1.0'
     compile "com.google.firebase:firebase-auth:$playServicesVersion"
+    compile "com.google.android.gms:play-services-auth:$playServicesVersion"
+    compile "com.android.support:cardview-v7:$supportLibVersion"
+    // Database
+    compile('com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:-SNAPSHOT') {
+        changing = true
+    }
+//    compile 'com.firebaseui:firebase-ui-database:1.1.0'
     compile "com.google.firebase:firebase-database:$playServicesVersion"
-    compile 'com.facebook.android:facebook-android-sdk:4.17.0'
-    compile("com.twitter.sdk.android:twitter:2.1.1@aar") { transitive = true }
+
+    compile 'com.firebase:firebase-jobdispatcher:0.5.1'
 
     // Firebase core
     compile "com.google.firebase:firebase-core:$playServicesVersion"
@@ -77,15 +114,15 @@ dependencies {
     compile "com.google.firebase:firebase-config:$playServicesVersion"
     compile "com.google.firebase:firebase-crash:$playServicesVersion"
     compile "com.google.firebase:firebase-invites:$playServicesVersion"
-    compile "com.google.android.gms:play-services-gcm:$playServicesVersion"
-    compile 'com.firebase:firebase-jobdispatcher-with-gcm-dep:0.5.0'
 
     // Third party
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.github.clans:fab:1.6.4'
     compile 'net.yslibrary.licenseadapter:licenseadapter:1.2.4'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    devReleaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    prodReleaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
