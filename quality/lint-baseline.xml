@@ -30,7 +30,7 @@
 
     <issue
         id="IconMissingDensityFolder"
-        message="Missing density variation folders in `src/main/res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi, drawable-xxxhdpi">
+        message="Missing density variation folders in `src/main/res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi">
         <location
             file="app/src/main/res"/>
     </issue>
