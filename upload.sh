@@ -3,7 +3,7 @@
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   mv app/build/outputs/apk/app-prod-release.apk app-release.apk
   cd ..
-  git clone --branch=master $git_mapping_login uploads &> /dev/null
+  git clone --branch=master "https://SUPERCILEX:$git_mapping_login@github.com/SUPERCILEX/mapping.txt-files.git" uploads &> /dev/null
   git config --global user.email "saveau.alexandre@gmail.com"
   git config --global user.name "Alexandre Saveau"
 
