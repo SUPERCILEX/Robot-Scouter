@@ -1,12 +1,8 @@
 *.iml
 .gradle
+.idea
 build
-/.idea/workspace.xml
-/.idea/libraries
-/local.properties
-/keystore.properties
-/gradle.properties
+/*.properties
+app/*.json
 /app/keystore.jks
-/app/google-services.json
-/app/google-play-auto-publisher.json
 /app/src/main/res/values/config.xml

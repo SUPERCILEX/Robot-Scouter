@@ -4,23 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true">
+    <!-- TODO why focusable on root -->
 
-    <TextView
+    <EditText
         android:id="@+id/name"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textIsSelectable="false"
+        android:hint="@string/note_name"
+        android:inputType="text"
+        app:layout_constraintBaseline_toBaselineOf="@+id/notes"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/spinner"
-        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
         tools:text="Example"/>
 
-    <include layout="@layout/scout_spinner_base"/>
+    <include layout="@layout/scout_notes_base"/>
 
 </android.support.constraint.ConstraintLayout>

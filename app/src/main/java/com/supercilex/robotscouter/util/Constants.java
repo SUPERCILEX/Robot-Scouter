@@ -1,17 +1,16 @@
 package com.supercilex.robotscouter.util;
 
 import com.firebase.ui.auth.AuthUI;
-import com.supercilex.robotscouter.BuildConfig;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Constants {
+public final class Constants {
     // The Blue Alliance API
     public static final String TEAM_NICKNAME = "nickname";
     public static final String TEAM_WEBSITE = "website";
-    public static final String TOKEN = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
 
     // Intents/Bundles
     public static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
@@ -22,8 +21,8 @@ public class Constants {
     // Scout ids
     public static final int CHECKBOX = 0;
     public static final int COUNTER = 1;
-    public static final int EDIT_TEXT = 3;
     public static final int SPINNER = 2;
+    public static final int EDIT_TEXT = 3;
     public static final int SLIDER = 4;
 
     /**
@@ -38,21 +37,36 @@ public class Constants {
 
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]
-    public static final String FIREBASE_TEAM_INDICES = "team-indices";
-    public static final String FIREBASE_SCOUT_INDICES = "scout-indices";
-    public static final String FIREBASE_TEAMS = "teams";
-    public static final String FIREBASE_SCOUTS = "scouts";
+    public static final DatabaseReference FIREBASE_USERS = BaseHelper.getDatabase().child("users");
 
-    public static final String FIREBASE_NAME = "name";
+    // Team
+    public static final DatabaseReference FIREBASE_TEAMS = BaseHelper.getDatabase().child("teams");
+    public static final DatabaseReference FIREBASE_TEAM_INDICES =
+            BaseHelper.getDatabase().child("team-indices");
     public static final String FIREBASE_TIMESTAMP = "timestamp";
+    public static final String FIREBASE_TEMPLATE_KEY = "templateKey";
 
+    // Scout
+    public static final DatabaseReference FIREBASE_SCOUTS =
+            BaseHelper.getDatabase().child("scouts");
+    public static final DatabaseReference FIREBASE_SCOUT_INDICES =
+            BaseHelper.getDatabase().child("scout-indices");
+
+    // Scout views
     public static final String FIREBASE_VIEWS = "views";
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
-    public static final String FIREBASE_SELECTED_VALUE = "selected-value";
+    public static final String FIREBASE_NAME = "name";
+    public static final String FIREBASE_SELECTED_VALUE = "selectedValue";
 
-    public static final String FIREBASE_CUSTOM_NAME = "has-custom-name";
-    public static final String FIREBASE_CUSTOM_WEBSITE = "has-custom-website";
-    public static final String FIREBASE_CUSTOM_MEDIA = "has-custom-media";
+    // Scout template
+    public static final DatabaseReference FIREBASE_DEFAULT_TEMPLATE =
+            BaseHelper.getDatabase().child("default-template");
+    public static final DatabaseReference FIREBASE_SCOUT_TEMPLATES =
+            BaseHelper.getDatabase().child("scout-templates");
     // [END FIREBASE CHILD NAMES]
+
+    private Constants() {
+        // no instance
+    }
 }

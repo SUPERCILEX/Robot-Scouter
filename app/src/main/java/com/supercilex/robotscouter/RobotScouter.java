@@ -27,6 +27,6 @@ public class RobotScouter extends Application {
         }
         mRefWatcher = LeakCanary.install(this);
 
-        BaseHelper.getNewDispatcher(this);
+        BaseHelper.resetJobDispatcher(this);
     }
 }

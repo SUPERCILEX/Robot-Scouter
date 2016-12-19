@@ -14,7 +14,8 @@ import com.supercilex.robotscouter.data.model.ScoutSpinner;
 
 import java.util.ArrayList;
 
-public class SpinnerViewHolder extends ScoutViewHolder<ArrayList<String>, TextView> {
+public class SpinnerViewHolder extends ScoutViewHolderBase<ArrayList<String>, TextView>
+        implements AdapterView.OnItemSelectedListener {
     private Spinner mSpinner;
 
     public SpinnerViewHolder(View itemView) {
@@ -23,8 +24,10 @@ public class SpinnerViewHolder extends ScoutViewHolder<ArrayList<String>, TextVi
     }
 
     @Override
-    public void bind(ScoutMetric<ArrayList<String>> metric) {
-        super.bind(metric);
+    public void bind(ScoutMetric<ArrayList<String>> metric,
+                     Query query,
+                     SimpleItemAnimator animator) {
+        super.bind(metric, query, animator);
         ScoutSpinner scoutSpinner = (ScoutSpinner) mMetric;
         ArrayAdapter<String> spinnerArrayAdapter =
                 new ArrayAdapter<>(mSpinner.getContext(),
@@ -34,25 +37,16 @@ public class SpinnerViewHolder extends ScoutViewHolder<ArrayList<String>, TextVi
 
         mSpinner.setAdapter(spinnerArrayAdapter);
         mSpinner.setSelection(scoutSpinner.getSelectedValue());
+        mSpinner.setOnItemSelectedListener(this);
     }
 
     @Override
-    public void setClickListeners(final Query query,
-                                  final SimpleItemAnimator animator) {
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView parent,
-                                       View view,
-                                       int itemPosition,
-                                       long id) {
-                animator.setSupportsChangeAnimations(false);
-                ((ScoutSpinner) mMetric).setSelectedValue(query, itemPosition);
-            }
+    public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
+        ((ScoutSpinner) mMetric).setSelectedValue(mQuery, itemPosition, mAnimator);
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView adapterView) {
-                // Cancel
-            }
-        });
+    @Override
+    public void onNothingSelected(AdapterView<?> view) {
+        // Cancel
     }
 }

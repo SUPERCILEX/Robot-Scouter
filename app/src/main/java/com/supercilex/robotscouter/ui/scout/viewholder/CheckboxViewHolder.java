@@ -7,25 +7,20 @@ import android.widget.CheckBox;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
-public class CheckboxViewHolder extends ScoutViewHolder<Boolean, CheckBox> {
+public class CheckboxViewHolder extends ScoutViewHolderBase<Boolean, CheckBox> implements View.OnClickListener {
     public CheckboxViewHolder(View itemView) {
         super(itemView);
     }
 
     @Override
-    public void bind(ScoutMetric<Boolean> metric) {
-        super.bind(metric);
+    public void bind(ScoutMetric<Boolean> metric, Query query, SimpleItemAnimator animator) {
+        super.bind(metric, query, animator);
         mName.setChecked(mMetric.getValue());
+        mName.setOnClickListener(this);
     }
 
     @Override
-    public void setClickListeners(final Query query,
-                                  final SimpleItemAnimator animator) {
-        mName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMetric.setValue(query, mName.isChecked(), animator);
-            }
-        });
+    public void onClick(View v) {
+        updateMetricValue(mName.isChecked());
     }
 }

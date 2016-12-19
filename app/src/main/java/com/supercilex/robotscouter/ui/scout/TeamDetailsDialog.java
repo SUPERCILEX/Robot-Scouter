@@ -11,25 +11,26 @@ import android.widget.EditText;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.KeyboardDialog;
-import com.supercilex.robotscouter.util.BaseHelper;
 
-public class EditDetailsDialog extends KeyboardDialog {
+public class TeamDetailsDialog extends KeyboardDialog {
+    private static final String TAG = "TeamDetailsDialog";
+
     private Team mTeam;
     private EditText mName;
     private EditText mWebsite;
     private EditText mMedia;
 
     public static void show(Team team, FragmentManager manager) {
-        EditDetailsDialog dialog = new EditDetailsDialog();
-        dialog.setArguments(BaseHelper.getTeamBundle(team));
-        dialog.show(manager, BaseHelper.getTag(EditDetailsDialog.class));
+        TeamDetailsDialog dialog = new TeamDetailsDialog();
+        dialog.setArguments(team.getBundle());
+        dialog.show(manager, TAG);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View rootView = View.inflate(getContext(), R.layout.dialog_edit_details, null);
-        mTeam = mHelper.getTeam();
+        mTeam = Team.getTeam(getArguments());
         mName = (EditText) rootView.findViewById(R.id.name);
         mWebsite = (EditText) rootView.findViewById(R.id.website);
         mMedia = (EditText) rootView.findViewById(R.id.media);

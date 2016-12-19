@@ -36,30 +36,34 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.remote.TbaService;
+import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.ui.AppCompatBase;
+import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutActivity extends AppCompatBase
         implements ValueEventListener, Palette.PaletteAsyncListener {
+    private static final String INTENT_ADD_SCOUT = "add_scout";
+
     private Team mTeam;
     private Menu mMenu;
     private ScoutPagerAdapter mPagerAdapter;
 
-    public static Intent createIntent(Context context, Team team) {
-        Intent intent = BaseHelper.getTeamIntent(team).setClass(context, ScoutActivity.class);
+    public static void start(Context context, Team team, boolean addScout) {
+        Intent starter = team.getIntent().setClass(context, ScoutActivity.class);
+        starter.putExtra(INTENT_ADD_SCOUT, addScout);
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        starter.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            starter.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
+            starter.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT);
         }
 
-        return intent;
+        context.startActivity(starter);
     }
 
     @Override
@@ -70,16 +74,17 @@ public class ScoutActivity extends AppCompatBase
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mTeam = mHelper.getTeam();
+        mTeam = Team.getTeam(getIntent());
         updateUi();
         addTeamListener();
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              Scout.getIndicesRef(),
-                                              mTeam.getNumber());
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+                                              Scout.getIndicesRef()
+                                                      .orderByValue()
+                                                      .equalTo(Long.parseLong(mTeam.getNumber())));
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         if (savedInstanceState != null) {
@@ -102,8 +107,7 @@ public class ScoutActivity extends AppCompatBase
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(Constants.SCOUT_KEY,
-                           mPagerAdapter.getSelectedTabKey());
+        outState.putString(Constants.SCOUT_KEY, mPagerAdapter.getSelectedTabKey());
         super.onSaveInstanceState(outState);
     }
 
@@ -129,11 +133,11 @@ public class ScoutActivity extends AppCompatBase
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_scout:
-                new Scout().createScoutId(mTeam.getNumber());
+                Scout.add(mTeam);
                 mPagerAdapter.setManuallyAddedScout();
                 break;
-            case R.id.action_edit_scout_template:
-                EditScoutTemplates.show(getSupportFragmentManager());
+            case R.id.action_edit_scout_templates:
+                ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeam);
                 break;
             case R.id.action_visit_tba_team_website:
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
@@ -152,8 +156,8 @@ public class ScoutActivity extends AppCompatBase
                 CustomTabsIntent teamWebsiteCustomTabsIntent = teamWebsiteBuilder.build();
                 teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
                 break;
-            case R.id.action_edit_details:
-                EditDetailsDialog.show(mTeam, getSupportFragmentManager());
+            case R.id.action_edit_team_details:
+                TeamDetailsDialog.show(mTeam, getSupportFragmentManager());
                 break;
             case R.id.action_settings:
                 break;
@@ -236,6 +240,10 @@ public class ScoutActivity extends AppCompatBase
     private void addTeamListener() {
         if (mTeam.getKey() != null) {
             mTeam.getRef().addValueEventListener(this);
+            if (shouldAddNewScout()) {
+                Scout.add(mTeam);
+                getIntent().putExtra(INTENT_ADD_SCOUT, false);
+            }
         } else {
             Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -252,7 +260,7 @@ public class ScoutActivity extends AppCompatBase
 
                     mTeam.add();
                     addTeamListener();
-                    TbaService.fetch(mTeam, ScoutActivity.this)
+                    TbaApi.fetch(mTeam, ScoutActivity.this)
                             .addOnCompleteListener(new OnCompleteListener<Team>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Team> task) {
@@ -275,14 +283,21 @@ public class ScoutActivity extends AppCompatBase
         }
     }
 
+    private boolean shouldAddNewScout() {
+        return getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false);
+    }
+
     @Override
     public void onDataChange(DataSnapshot snapshot) {
-        if (snapshot.getValue() != null) {
-            String key = mTeam.getKey();
-            mTeam = snapshot.getValue(Team.class);
-            mTeam.setKey(key);
-            updateUi();
+        if (snapshot.getValue() == null) {
+            finish();
+            return;
         }
+
+        String key = mTeam.getKey();
+        mTeam = snapshot.getValue(Team.class);
+        mTeam.setKey(key);
+        updateUi();
     }
 
     @Override

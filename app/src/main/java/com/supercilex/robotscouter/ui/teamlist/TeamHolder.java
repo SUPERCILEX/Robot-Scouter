@@ -12,11 +12,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
-public class TeamHolder extends RecyclerView.ViewHolder {
+public class TeamHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private Context mContext;
     private Team mTeam;
 
@@ -42,8 +41,8 @@ public class TeamHolder extends RecyclerView.ViewHolder {
         setTeamNumber();
         setTeamName();
         setTeamLogo();
-        setListItemClickListener();
-        setCreateNewScoutListener();
+        mRowLayout.setOnClickListener(this);
+        mNewScout.setOnClickListener(this);
     }
 
     private void setTeamNumber() {
@@ -66,22 +65,8 @@ public class TeamHolder extends RecyclerView.ViewHolder {
                 .into(mLogo);
     }
 
-    private void setListItemClickListener() {
-        mRowLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContext.startActivity(ScoutActivity.createIntent(mContext, mTeam));
-            }
-        });
-    }
-
-    private void setCreateNewScoutListener() {
-        mNewScout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new Scout().createScoutId(mTeam.getNumber());
-                mContext.startActivity(ScoutActivity.createIntent(mContext, mTeam));
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        ScoutActivity.start(mContext, mTeam, v.getId() == R.id.new_scout);
     }
 }

@@ -5,7 +5,7 @@ package com.supercilex.robotscouter.util;
  */
 public final class Preconditions {
     private Preconditions() {
-        // This class shouldn't be initialized
+        // no instance
     }
 
     /**

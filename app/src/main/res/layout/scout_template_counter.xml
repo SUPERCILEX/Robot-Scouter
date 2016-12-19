@@ -6,21 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <EditText
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:hint="@string/counter_name"
+        android:inputType="text"
         android:textIsSelectable="false"
+        app:layout_constraintBaseline_toBaselineOf="@+id/count"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/spinner"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/decrement_counter"
         tools:text="Example"/>
 
-    <include layout="@layout/scout_spinner_base"/>
+    <include layout="@layout/scout_counter_base"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -11,7 +11,7 @@
         android:title="@string/new_scout"/>
 
     <item
-        android:id="@+id/action_edit_scout_template"
+        android:id="@+id/action_edit_scout_templates"
         android:orderInCategory="1"
         android:title="@string/edit_scout_templates"/>
 
@@ -29,7 +29,7 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_edit_details"
+        android:id="@+id/action_edit_team_details"
         android:orderInCategory="75"
         android:title="@string/edit_details"
         app:showAsAction="never"/>

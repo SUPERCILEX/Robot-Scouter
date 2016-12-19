@@ -10,21 +10,31 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
-public abstract class ScoutViewHolder<TMetric, VView extends TextView> extends RecyclerView.ViewHolder {
+public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> extends RecyclerView.ViewHolder {
     protected VView mName;
     protected ScoutMetric<TMetric> mMetric;
+    protected Query mQuery;
+    protected SimpleItemAnimator mAnimator;
 
     @SuppressLint("WrongViewCast")
-    public ScoutViewHolder(View itemView) {
+    public ScoutViewHolderBase(View itemView) {
         super(itemView);
+        //noinspection unchecked
         mName = (VView) itemView.findViewById(R.id.name);
     }
 
-    public void bind(ScoutMetric<TMetric> metric) {
+    public void bind(ScoutMetric<TMetric> metric, Query query, SimpleItemAnimator animator) {
         mMetric = metric;
         mName.setText(mMetric.getName());
+        mQuery = query;
+        mAnimator = animator;
     }
 
-    public abstract void setClickListeners(final Query query,
-                                           final SimpleItemAnimator animator);
+    protected void updateMetricName(String name) {
+        mMetric.setName(mQuery, name, mAnimator);
+    }
+
+    protected void updateMetricValue(TMetric value) {
+        mMetric.setValue(mQuery, value, mAnimator);
+    }
 }

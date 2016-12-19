@@ -11,7 +11,6 @@ import android.view.View;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.DialogBase;
-import com.supercilex.robotscouter.util.BaseHelper;
 
 import net.yslibrary.licenseadapter.LicenseAdapter;
 import net.yslibrary.licenseadapter.LicenseEntry;
@@ -21,8 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LicensesDialog extends DialogBase {
+    private static final String TAG = "LicensesDialog";
+
     public static void show(FragmentManager manager) {
-        new LicensesDialog().show(manager, BaseHelper.getTag(LicensesDialog.class));
+        new LicensesDialog().show(manager, TAG);
     }
 
     @NonNull

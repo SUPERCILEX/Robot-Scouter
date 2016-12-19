@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
@@ -19,17 +20,17 @@ import com.supercilex.robotscouter.ui.StickyFragment;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
+import java.lang.ref.WeakReference;
+
 public class TeamsFragment extends StickyFragment {
     private RecyclerView mTeams;
     private FirebaseRecyclerAdapter mAdapter;
-    private LinearLayoutManager mManager;
+    private WeakReference<LinearLayoutManager> mManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BaseHelper.isSignedIn()) {
-            initAdapter();
-        }
+        if (BaseHelper.isSignedIn()) initAdapter();
     }
 
     @Override
@@ -37,27 +38,20 @@ public class TeamsFragment extends StickyFragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.recycler_view, container, false);
-
-        mManager = new LinearLayoutManager(getContext());
         mTeams = (RecyclerView) rootView.findViewById(R.id.list);
         mTeams.setHasFixedSize(true);
-        mTeams.setLayoutManager(mManager);
+        mManager = new WeakReference<>(new LinearLayoutManager(getContext()));
+        mTeams.setLayoutManager(mManager.get());
         mTeams.setAdapter(mAdapter);
-        BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager.get());
         return rootView;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mManager = null; // NOPMD fixes memory leak
         mTeams.setAdapter(null);
+        mTeams.setLayoutManager(null);
     }
 
     @Override
@@ -67,11 +61,15 @@ public class TeamsFragment extends StickyFragment {
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
+        super.onSaveInstanceState(outState);
+    }
+
     public void cleanup() {
         mTeams.setAdapter(null);
-        if (mAdapter != null) {
-            mAdapter.cleanup();
-        }
+        if (mAdapter != null) mAdapter.cleanup();
     }
 
     private void initAdapter() {
@@ -80,7 +78,7 @@ public class TeamsFragment extends StickyFragment {
                 R.layout.team_list_row_layout,
                 TeamHolder.class,
                 Team.getIndicesRef(),
-                BaseHelper.getDatabase().child(Constants.FIREBASE_TEAMS)) {
+                Constants.FIREBASE_TEAMS) {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
                 team.setKey(getRef(position).getKey());
@@ -89,8 +87,16 @@ public class TeamsFragment extends StickyFragment {
             }
 
             @Override
-            protected void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
                 FirebaseCrash.report(databaseError.toException());
+            }
+
+            @Override
+            public void onIndexMismatch(int index, DataSnapshot snapshot) {
+                super.onIndexMismatch(index, snapshot);
+                FirebaseCrash.report(new IllegalStateException("Index mismatch at index: "
+                                                                       + index + " for snapshot: "
+                                                                       + snapshot));
             }
         };
     }

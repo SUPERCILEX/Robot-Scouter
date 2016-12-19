@@ -9,7 +9,7 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 
-public class EditTextViewHolder extends ScoutViewHolder<String, TextView> {
+public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView> implements View.OnFocusChangeListener {
     private EditText mNotes;
 
     public EditTextViewHolder(View itemView) {
@@ -18,21 +18,16 @@ public class EditTextViewHolder extends ScoutViewHolder<String, TextView> {
     }
 
     @Override
-    public void bind(ScoutMetric<String> metric) {
-        super.bind(metric);
+    public void bind(ScoutMetric<String> metric, Query query, SimpleItemAnimator animator) {
+        super.bind(metric, query, animator);
         mNotes.setText(mMetric.getValue());
+        mNotes.setOnFocusChangeListener(this);
     }
 
     @Override
-    public void setClickListeners(final Query query,
-                                  final SimpleItemAnimator animator) {
-        mNotes.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    mMetric.setValue(query, mNotes.getText().toString(), animator);
-                }
-            }
-        });
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus && v.getId() == R.id.notes) {
+            updateMetricValue(mNotes.getText().toString());
+        }
     }
 }
