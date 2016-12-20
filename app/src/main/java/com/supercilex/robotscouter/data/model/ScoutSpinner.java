@@ -3,12 +3,14 @@ package com.supercilex.robotscouter.data.model;
 import android.support.annotation.Keep;
 import android.support.v7.widget.SimpleItemAnimator;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 
 public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
+    @Exclude
     private int mSelectedValue;
 
     public ScoutSpinner() {
@@ -21,6 +23,7 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
         mSelectedValue = selectedValue;
     }
 
+    @Keep
     @Override
     public int getType() {
         return Constants.SPINNER;

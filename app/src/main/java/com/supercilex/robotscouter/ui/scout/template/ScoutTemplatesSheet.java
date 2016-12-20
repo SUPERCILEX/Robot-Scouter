@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.model.ScoutCopier;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.BottomSheetBase;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.ScoutCopier;
 
 public class ScoutTemplatesSheet extends BottomSheetBase {
     private static final String TAG = "ScoutTemplatesSheet";

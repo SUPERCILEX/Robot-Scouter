@@ -1,13 +1,19 @@
 package com.supercilex.robotscouter.data.model;
 
 import android.net.Uri;
+import android.support.annotation.Keep;
 
+import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.util.Constants;
 
 public class User {
+    @Exclude
     private final String mUid;
+    @Exclude
     private String mEmail;
+    @Exclude
     private String mName;
+    @Exclude
     private Uri mPhotoUrl;
 
     private User(String uid, String email, String name, Uri photoUrl) {
@@ -17,26 +23,32 @@ public class User {
         mPhotoUrl = photoUrl;
     }
 
+    @Keep
     public String getEmail() {
         return mEmail;
     }
 
+    @Keep
     public void setEmail(String email) {
         mEmail = email;
     }
 
+    @Keep
     public String getName() {
         return mName;
     }
 
+    @Keep
     public void setName(String name) {
         mName = name;
     }
 
+    @Keep
     public String getPhotoUrl() {
         return mPhotoUrl == null ? null : mPhotoUrl.toString();
     }
 
+    @Keep
     public void setPhotoUrl(Uri photoUrl) {
         mPhotoUrl = photoUrl;
     }

@@ -1,11 +1,12 @@
-package com.supercilex.robotscouter.data.model;
+package com.supercilex.robotscouter.util;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.data.model.ScoutMetric;
 
 public abstract class ScoutCopier implements ValueEventListener {
     private Query mCopyToQuery;

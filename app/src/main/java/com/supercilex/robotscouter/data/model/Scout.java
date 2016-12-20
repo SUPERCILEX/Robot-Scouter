@@ -7,13 +7,28 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.ScoutCopier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Scout {
+    @Exclude
     private String mOwner;
+    @Exclude
     private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>(); // NOPMD
+
+    @Exclude
+    public static Bundle getScoutKeyBundle(String key) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SCOUT_KEY, key);
+        return bundle;
+    }
+
+    @Exclude
+    public static String getScoutKey(Bundle bundle) {
+        return bundle.getString(Constants.SCOUT_KEY);
+    }
 
     @Exclude
     public static DatabaseReference getIndicesRef() {
@@ -55,16 +70,6 @@ public class Scout {
 //                new ScoutMetric<>("note 1 pos 5", "some note").setType((Integer) Constants.EDIT_TEXT));
 //        addView(scoutRef,
 //                new ScoutMetric<>("note 2 pos 6", "some other note").setType((Integer) Constants.EDIT_TEXT));
-    }
-
-    public static Bundle getScoutKeyBundle(String key) {
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.SCOUT_KEY, key);
-        return bundle;
-    }
-
-    public static String getScoutKey(Bundle bundle) {
-        return bundle.getString(Constants.SCOUT_KEY);
     }
 
     @Keep

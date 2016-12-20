@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.Preconditions;
 import java.util.concurrent.TimeUnit;
 
 public class Team implements Parcelable {
+    @Exclude
     public static final Creator<Team> CREATOR = new Creator<Team>() {
         @Override
         public Team createFromParcel(Parcel in) {
@@ -46,18 +47,30 @@ public class Team implements Parcelable {
         }
     };
 
+    @Exclude
     private static final int WEEK = 7;
 
+    @Exclude
     private String mNumber;
+    @Exclude
     private String mKey;
+    @Exclude
     private String mTemplateKey;
+    @Exclude
     private String mName;
+    @Exclude
     private String mMedia;
+    @Exclude
     private String mWebsite;
+    @Exclude
     private boolean mHasCustomName;
+    @Exclude
     private boolean mHasCustomWebsite;
+    @Exclude
     private boolean mHasCustomMedia;
+    @Exclude
     private long mTimestamp;
+    @Exclude
     private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
@@ -127,7 +140,6 @@ public class Team implements Parcelable {
 
     @Keep
     public void setNumber(String number) {
-        if (mNumber != null) throw new IllegalStateException("Team number cannot be changed");
         mNumber = number;
     }
 
@@ -138,7 +150,6 @@ public class Team implements Parcelable {
 
     @Exclude
     public void setKey(String key) {
-        if (mKey != null) throw new IllegalStateException("Team key cannot be changed");
         mKey = key;
     }
 
