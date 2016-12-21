@@ -92,9 +92,7 @@ public class ScoutActivity extends AppCompatBase
         }
 
         if (savedInstanceState == null && !mHelper.isNetworkAvailable()) {
-            Snackbar.make(findViewById(android.R.id.content),
-                          R.string.no_connection,
-                          Snackbar.LENGTH_SHORT).show();
+            mHelper.showSnackbar(R.string.no_connection, Snackbar.LENGTH_SHORT);
         }
     }
 

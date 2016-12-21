@@ -5,9 +5,9 @@ import android.support.annotation.Keep;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.supercilex.robotscouter.data.util.ScoutCopier;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.ScoutCopier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,12 +46,11 @@ public class Scout {
             }
         };
         if (team.getTemplateKey() == null) {
-            Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(scoutCopier);
+            scoutCopier.setFromQuery(Constants.FIREBASE_DEFAULT_TEMPLATE);
         } else {
-            Constants.FIREBASE_SCOUT_TEMPLATES
-                    .child(team.getTemplateKey())
-                    .addListenerForSingleValueEvent(scoutCopier);
+            scoutCopier.setFromQuery(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()));
         }
+        scoutCopier.performTransformation();
 //        mScoutMetrics = new LinkedHashMap<>();
 //
 //        addView(scoutRef, new ScoutMetric<>("example yes or no value pos 1",

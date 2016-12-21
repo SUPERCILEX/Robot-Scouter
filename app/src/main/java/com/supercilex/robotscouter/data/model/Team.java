@@ -23,18 +23,17 @@ public class Team implements Parcelable {
     @Exclude
     public static final Creator<Team> CREATOR = new Creator<Team>() {
         @Override
-        public Team createFromParcel(Parcel in) {
-            return new Builder(in.readString())
-                    .setKey(in.readString())
-                    .setTemplateKey(in.readString())
-                    .setName(in.readString())
-                    .setMedia(in.readString())
-                    .setWebsite(in.readString())
-                    .setHasCustomName(getBooleanForInt(in.readInt()))
-                    .setHasCustomMedia(getBooleanForInt(in.readInt()))
-                    .setHasCustomWebsite(getBooleanForInt(in.readInt()))
-                    .setTimestamp(in.readLong())
-                    .build();
+        public Team createFromParcel(Parcel source) {
+            return new Team(source.readString(),
+                            source.readString(),
+                            source.readString(),
+                            source.readString(),
+                            source.readString(),
+                            source.readString(),
+                            getBooleanForInt(source.readInt()),
+                            getBooleanForInt(source.readInt()),
+                            getBooleanForInt(source.readInt()),
+                            source.readLong());
         }
 
         @Override
@@ -84,8 +83,8 @@ public class Team implements Parcelable {
                  String media,
                  String website,
                  boolean hasCustomName,
-                 boolean hasCustomWebsite,
                  boolean hasCustomMedia,
+                 boolean hasCustomWebsite,
                  long timestamp) {
         mNumber = number;
         mKey = key;
@@ -298,17 +297,17 @@ public class Team implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(Preconditions.checkNotNull(mNumber, "Team number cannot be null."));
-        parcel.writeString(mKey);
-        parcel.writeString(mTemplateKey);
-        parcel.writeString(mName);
-        parcel.writeString(mMedia);
-        parcel.writeString(mWebsite);
-        parcel.writeInt(getIntForBoolean(mHasCustomName));
-        parcel.writeInt(getIntForBoolean(mHasCustomMedia));
-        parcel.writeInt(getIntForBoolean(mHasCustomWebsite));
-        parcel.writeLong(mTimestamp);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Preconditions.checkNotNull(mNumber, "Team number cannot be null."));
+        dest.writeString(mKey);
+        dest.writeString(mTemplateKey);
+        dest.writeString(mName);
+        dest.writeString(mMedia);
+        dest.writeString(mWebsite);
+        dest.writeInt(getIntForBoolean(mHasCustomName));
+        dest.writeInt(getIntForBoolean(mHasCustomMedia));
+        dest.writeInt(getIntForBoolean(mHasCustomWebsite));
+        dest.writeLong(mTimestamp);
     }
 
     private int getIntForBoolean(boolean value) {
@@ -390,13 +389,13 @@ public class Team implements Parcelable {
             return this;
         }
 
-        public Builder setHasCustomWebsite(boolean hasCustomWebsite) {
-            mHasCustomWebsite = hasCustomWebsite;
+        public Builder setHasCustomMedia(boolean hasCustomMedia) {
+            mHasCustomMedia = hasCustomMedia;
             return this;
         }
 
-        public Builder setHasCustomMedia(boolean hasCustomMedia) {
-            mHasCustomMedia = hasCustomMedia;
+        public Builder setHasCustomWebsite(boolean hasCustomWebsite) {
+            mHasCustomWebsite = hasCustomWebsite;
             return this;
         }
 
@@ -413,8 +412,9 @@ public class Team implements Parcelable {
                             mMedia,
                             mWebsite,
                             mHasCustomName,
+                            mHasCustomMedia,
                             mHasCustomWebsite,
-                            mHasCustomMedia, mTimestamp);
+                            mTimestamp);
         }
     }
 }

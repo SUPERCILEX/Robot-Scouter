@@ -106,7 +106,10 @@ dependencies {
 //    compile 'com.firebaseui:firebase-ui-database:1.1.0'
     compile "com.google.firebase:firebase-database:$playServicesVersion"
 
-    compile 'com.firebase:firebase-jobdispatcher:0.5.1'
+//    compile 'com.firebase:firebase-jobdispatcher:0.5.1'
+    compile('com.github.SUPERCILEX.firebase-jobdispatcher-android:firebase-jobdispatcher:patch-1-SNAPSHOT') {
+        changing = true
+    }
 
     // Firebase core
     compile "com.google.firebase:firebase-core:$playServicesVersion"

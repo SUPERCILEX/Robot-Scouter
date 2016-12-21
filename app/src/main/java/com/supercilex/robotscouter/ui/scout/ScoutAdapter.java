@@ -81,7 +81,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     }
 
     @Override
-    public void onCancelled(DatabaseError databaseError) {
-        FirebaseCrash.report(databaseError.toException());
+    public void onCancelled(DatabaseError error) {
+        FirebaseCrash.report(error.toException());
     }
 }

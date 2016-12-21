@@ -10,9 +10,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.ScoutCopier;
 import com.supercilex.robotscouter.ui.BottomSheetBase;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.ScoutCopier;
 
 public class ScoutTemplatesSheet extends BottomSheetBase {
     private static final String TAG = "ScoutTemplatesSheet";
@@ -37,13 +37,13 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             templateKey = newTemplateRef.getKey();
             final String finalTemplateKey = templateKey;
-            Constants.FIREBASE_DEFAULT_TEMPLATE
-                    .addListenerForSingleValueEvent(new ScoutCopier(newTemplateRef) {
-                        @Override
-                        protected void onDone() {
-                            team.updateTemplateKey(finalTemplateKey);
-                        }
-                    });
+            new ScoutCopier(Constants.FIREBASE_DEFAULT_TEMPLATE, newTemplateRef) {
+                @Override
+                protected void onDone() {
+                    team.updateTemplateKey(finalTemplateKey);
+                }
+            }
+                    .performTransformation();
         }
 
         getChildFragmentManager()

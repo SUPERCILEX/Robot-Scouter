@@ -3,7 +3,9 @@ package com.supercilex.robotscouter.data.model;
 import android.net.Uri;
 import android.support.annotation.Keep;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.util.Constants;
 
 public class User {
@@ -57,7 +59,20 @@ public class User {
         Constants.FIREBASE_USERS.child(mUid).setValue(this);
     }
 
-    public static class Builder {
+    public void transferData(String prevUid) {
+        if (prevUid == null) return;
+
+        DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
+        DatabaseReference prevScoutRef = Constants.FIREBASE_SCOUT_INDICES.child(prevUid);
+
+        new FirebaseCopier(prevTeamRef, Team.getIndicesRef()).performTransformation();
+        new FirebaseCopier(prevScoutRef, Scout.getIndicesRef()).performTransformation();
+
+        prevTeamRef.removeValue();
+        prevScoutRef.removeValue();
+    }
+
+    public static final class Builder {
         private final String mUid;
         private String mEmail;
         private String mName;

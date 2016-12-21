@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -21,7 +22,7 @@ import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.LogFailureListener;
+import com.supercilex.robotscouter.util.TaskFailureLogger;
 
 // TODO: 08/10/2016 add Firebase analytics to menu item clicks
 // so I know what stuff to put on top
@@ -78,12 +79,11 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
                             @Override
                             public void onSuccess(Void aVoid) {
                                 mTeamsFragment.cleanup();
-                                mMenu.findItem(R.id.action_sign_in).setVisible(true);
-                                mMenu.findItem(R.id.action_sign_out).setVisible(false);
+                                setMenuIsSignedIn(false);
                                 signInAnonymously();
                             }
                         })
-                        .addOnFailureListener(new LogFailureListener());
+                        .addOnFailureListener(new TaskFailureLogger());
                 break;
             case R.id.action_licenses:
                 LicensesDialog.show(getSupportFragmentManager());
@@ -102,23 +102,30 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
         if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
             // user is signed in!
             mTeamsFragment.setAdapter();
-            mMenu.findItem(R.id.action_sign_in).setVisible(false);
-            mMenu.findItem(R.id.action_sign_out).setVisible(true);
             mHelper.showSnackbar(R.string.signed_in, Snackbar.LENGTH_LONG);
+            setMenuIsSignedIn(true);
 
-            FirebaseUser user = BaseHelper.getUser();
-            new User.Builder(user.getUid())
-                    .setEmail(user.getEmail())
-                    .setName(user.getDisplayName())
-                    .setPhotoUrl(user.getPhotoUrl())
-                    .build()
-                    .add();
+            FirebaseUser firebaseUser = BaseHelper.getUser();
+            User user = new User.Builder(firebaseUser.getUid())
+                    .setEmail(firebaseUser.getEmail())
+                    .setName(firebaseUser.getDisplayName())
+                    .setPhotoUrl(firebaseUser.getPhotoUrl())
+                    .build();
+            user.add();
+
+            IdpResponse response = IdpResponse.fromResultIntent(intent);
+            if (response != null) user.transferData(response.getPrevUid());
         }
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) NewTeamDialog.show(getSupportFragmentManager());
+    }
+
+    private void setMenuIsSignedIn(boolean signedIn) {
+        mMenu.findItem(R.id.action_sign_in).setVisible(!signedIn);
+        mMenu.findItem(R.id.action_sign_out).setVisible(signedIn);
     }
 
     private void signIn() {
@@ -136,7 +143,7 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
     private void signInAnonymously() {
         BaseHelper.getAuth()
                 .signInAnonymously()
-                .addOnFailureListener(new LogFailureListener())
+                .addOnFailureListener(new TaskFailureLogger())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

@@ -87,13 +87,13 @@ public class TeamsFragment extends StickyFragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                FirebaseCrash.report(databaseError.toException());
+            public void onCancelled(DatabaseError error) {
+                FirebaseCrash.report(error.toException());
             }
 
             @Override
-            public void onIndexMismatch(int index, DataSnapshot snapshot) {
-                super.onIndexMismatch(index, snapshot);
+            public void onJoinFailed(int index, DataSnapshot snapshot) {
+                super.onJoinFailed(index, snapshot);
                 FirebaseCrash.report(new IllegalStateException("Index mismatch at index: "
                                                                        + index + " for snapshot: "
                                                                        + snapshot));
@@ -102,6 +102,7 @@ public class TeamsFragment extends StickyFragment {
     }
 
     public void setAdapter() {
+        cleanup();
         initAdapter();
         mTeams.setAdapter(mAdapter);
     }

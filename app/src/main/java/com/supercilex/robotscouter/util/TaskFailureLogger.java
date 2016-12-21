@@ -8,7 +8,7 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.net.UnknownHostException;
 
-public class LogFailureListener implements OnFailureListener {
+public class TaskFailureLogger implements OnFailureListener {
     @Override
     public void onFailure(@NonNull Exception e) {
         if (!(e instanceof FirebaseNetworkException) && !(e instanceof UnknownHostException)) {
