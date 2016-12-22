@@ -339,11 +339,11 @@ public class Team implements Parcelable {
         if (!(obj instanceof Team)) return false;
         Team team = (Team) obj;
         return mNumber.equals(team.mNumber)
-                && (mKey == null ? team.mKey == null : mKey.equals(team.mKey))
-                && (mTemplateKey == null ? team.mTemplateKey == null : mTemplateKey.equals(team.mTemplateKey))
-                && (mName == null ? team.mName == null : mName.equals(team.mName))
-                && (mMedia == null ? team.mMedia == null : mMedia.equals(team.mMedia))
-                && (mWebsite == null ? team.mWebsite == null : mWebsite.equals(team.mWebsite))
+                && (mKey == null ? team.mKey == null : mKey.equals(team.mKey)) // NOPMD
+                && (mTemplateKey == null ? team.mTemplateKey == null : mTemplateKey.equals(team.mTemplateKey)) // NOPMD
+                && (mName == null ? team.mName == null : mName.equals(team.mName)) // NOPMD
+                && (mMedia == null ? team.mMedia == null : mMedia.equals(team.mMedia)) // NOPMD
+                && (mWebsite == null ? team.mWebsite == null : mWebsite.equals(team.mWebsite)) // NOPMD
                 && mHasCustomName == team.mHasCustomName
                 && mHasCustomMedia == team.mHasCustomMedia
                 && mHasCustomWebsite == team.mHasCustomWebsite
