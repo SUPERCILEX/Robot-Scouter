@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
@@ -64,9 +65,9 @@ public class Team implements Parcelable {
     @Exclude
     private boolean mHasCustomName;
     @Exclude
-    private boolean mHasCustomWebsite;
-    @Exclude
     private boolean mHasCustomMedia;
+    @Exclude
+    private boolean mHasCustomWebsite;
     @Exclude
     private long mTimestamp;
     @Exclude
@@ -138,6 +139,7 @@ public class Team implements Parcelable {
     }
 
     @Keep
+    @RestrictTo(RestrictTo.Scope.TESTS)
     public void setNumber(String number) {
         mNumber = number;
     }
@@ -158,6 +160,7 @@ public class Team implements Parcelable {
     }
 
     @Keep
+    @RestrictTo(RestrictTo.Scope.TESTS)
     public void setTemplateKey(String templateKey) {
         mTemplateKey = templateKey;
     }
@@ -256,6 +259,7 @@ public class Team implements Parcelable {
     }
 
     @Keep
+    @RestrictTo(RestrictTo.Scope.TESTS)
     public void setTimestamp(long time) {
         mTimestamp = time;
     }
@@ -312,6 +316,38 @@ public class Team implements Parcelable {
 
     private int getIntForBoolean(boolean value) {
         return value ? 1 : 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + mNumber.hashCode();
+        result = 31 * result + (mKey == null ? 0 : mKey.hashCode());
+        result = 31 * result + (mTemplateKey == null ? 0 : mTemplateKey.hashCode());
+        result = 31 * result + (mName == null ? 0 : mName.hashCode());
+        result = 31 * result + (mMedia == null ? 0 : mMedia.hashCode());
+        result = 31 * result + (mWebsite == null ? 0 : mWebsite.hashCode());
+        result = 31 * result + (mHasCustomName ? 1 : 0);
+        result = 31 * result + (mHasCustomMedia ? 1 : 0);
+        result = 31 * result + (mHasCustomWebsite ? 1 : 0);
+        result = 31 * result + (int) (mTimestamp ^ (mTimestamp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Team)) return false;
+        Team team = (Team) obj;
+        return mNumber.equals(team.mNumber)
+                && (mKey == null ? team.mKey == null : mKey.equals(team.mKey))
+                && (mTemplateKey == null ? team.mTemplateKey == null : mTemplateKey.equals(team.mTemplateKey))
+                && (mName == null ? team.mName == null : mName.equals(team.mName))
+                && (mMedia == null ? team.mMedia == null : mMedia.equals(team.mMedia))
+                && (mWebsite == null ? team.mWebsite == null : mWebsite.equals(team.mWebsite))
+                && mHasCustomName == team.mHasCustomName
+                && mHasCustomMedia == team.mHasCustomMedia
+                && mHasCustomWebsite == team.mHasCustomWebsite
+                && mTimestamp == team.mTimestamp;
     }
 
     @Override

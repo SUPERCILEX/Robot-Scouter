@@ -12,9 +12,8 @@ import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.supercilex.robotscouter.R;
@@ -144,22 +143,24 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
         BaseHelper.getAuth()
                 .signInAnonymously()
                 .addOnFailureListener(new TaskFailureLogger())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            mTeamsFragment.setAdapter();
-                        } else {
-                            mHelper.showSnackbar(R.string.sign_in_failed,
-                                                 Snackbar.LENGTH_LONG,
-                                                 R.string.sign_in,
-                                                 new View.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(View v) {
-                                                         signIn();
-                                                     }
-                                                 });
-                        }
+                    public void onSuccess(AuthResult result) {
+                        mTeamsFragment.setAdapter();
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        mHelper.showSnackbar(R.string.sign_in_failed,
+                                             Snackbar.LENGTH_LONG,
+                                             R.string.sign_in,
+                                             new View.OnClickListener() {
+                                                 @Override
+                                                 public void onClick(View v) {
+                                                     signIn();
+                                                 }
+                                             });
                     }
                 });
     }
