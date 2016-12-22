@@ -75,11 +75,11 @@ public class BaseHelper {
         new Handler(context.getMainLooper()).post(runnable);
     }
 
-    protected static boolean isNetworkAvailable(Context context) {
+    public static boolean isOffline(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return !(activeNetworkInfo != null && activeNetworkInfo.isConnected());
     }
 
     public static void restoreRecyclerViewState(Bundle savedInstanceState,

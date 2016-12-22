@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +11,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.util.BaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +22,26 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
     private static final int UPDATE = 0;
 
     private List<String> mKeys = new ArrayList<>();
+
     private TabLayout mTabLayout;
     private String mSavedTabKey;
     private boolean mIsManuallyAddedTab;
-    private Query mQuery;
 
-    public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, Query query) {
+    private Query mQuery;
+    private String mTeamNumber;
+
+    public ScoutPagerAdapter(FragmentManager fm,
+                             TabLayout tabLayout,
+                             String teamNumber,
+                             Context context) {
         super(fm);
         mTabLayout = tabLayout;
-        mQuery = query;
+        mTeamNumber = teamNumber;
+        if (BaseHelper.isOffline(context)) {
+            mQuery = Scout.getIndicesRef();
+        } else {
+            mQuery = Scout.getIndicesRef().orderByValue().equalTo(Long.parseLong(mTeamNumber));
+        }
         mQuery.addValueEventListener(this);
     }
 
@@ -56,7 +70,9 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
         String selectedTabKey = getSelectedTabKey();
         mKeys.clear();
         for (DataSnapshot scoutIndex : snapshot.getChildren()) {
-            mKeys.add(0, scoutIndex.getKey());
+            if (scoutIndex.getValue().toString().equals(mTeamNumber)) {
+                mKeys.add(0, scoutIndex.getKey());
+            }
         }
 
         notifyDataSetChanged();

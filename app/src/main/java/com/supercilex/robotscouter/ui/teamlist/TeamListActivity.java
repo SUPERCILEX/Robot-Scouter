@@ -112,6 +112,8 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
                     .build();
             user.add();
 
+            // TODO: 12/22/2016 On login, do database init: Scout.getIndicesRef...
+
             IdpResponse response = IdpResponse.fromResultIntent(intent);
             if (response != null) user.transferData(response.getPrevUid());
         }

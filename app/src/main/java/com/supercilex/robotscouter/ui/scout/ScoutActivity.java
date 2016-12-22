@@ -70,9 +70,8 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              Scout.getIndicesRef()
-                                                      .orderByValue()
-                                                      .equalTo(Long.parseLong(mTeam.getNumber())));
+                                              mTeam.getNumber(),
+                                              this);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -80,7 +79,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             mPagerAdapter.setSavedTabKey(savedInstanceState.getString(Constants.SCOUT_KEY));
         }
 
-        if (savedInstanceState == null && !mHelper.isNetworkAvailable()) {
+        if (savedInstanceState == null && mHelper.isOffline()) {
             mHelper.showSnackbar(R.string.no_connection, Snackbar.LENGTH_SHORT);
         }
     }

@@ -25,7 +25,7 @@ public class ActivityHelper extends BaseHelper {
         showSnackbar(mActivity, message, length, actionMessage, listener);
     }
 
-    public boolean isNetworkAvailable() {
-        return BaseHelper.isNetworkAvailable(mActivity);
+    public boolean isOffline() {
+        return BaseHelper.isOffline(mActivity);
     }
 }
