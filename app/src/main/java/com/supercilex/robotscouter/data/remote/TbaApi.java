@@ -33,7 +33,7 @@ public final class TbaApi implements Callable<Team> {
 
     private TbaApi(Team team, Context context) {
         mTeam = new Team.Builder(team).build();
-        mContext = context;
+        mContext = context.getApplicationContext();
         mTbaService = TbaService.RETROFIT.create(TbaService.class);
     }
 
