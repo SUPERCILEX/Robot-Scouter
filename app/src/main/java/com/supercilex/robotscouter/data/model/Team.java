@@ -366,7 +366,7 @@ public class Team implements Parcelable {
                 "Should update timestamp: " + mShouldUpdateTimestamp;
     }
 
-    public static final class Builder {
+    public static class Builder implements com.supercilex.robotscouter.data.util.Builder<Team> {
         private final String mNumber;
         private String mKey;
         private String mTemplateKey;
@@ -440,6 +440,7 @@ public class Team implements Parcelable {
             return this;
         }
 
+        @Override
         public Team build() {
             return new Team(mNumber, // NOPMD
                             mKey,
