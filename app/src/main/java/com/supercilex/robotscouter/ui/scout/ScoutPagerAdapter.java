@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scout;
 
-import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +11,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Scout;
-import com.supercilex.robotscouter.util.BaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,20 +26,11 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
     private boolean mIsManuallyAddedTab;
 
     private Query mQuery;
-    private String mTeamNumber;
 
-    public ScoutPagerAdapter(FragmentManager fm,
-                             TabLayout tabLayout,
-                             String teamNumber,
-                             Context context) {
+    public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, String teamNumber) {
         super(fm);
         mTabLayout = tabLayout;
-        mTeamNumber = teamNumber;
-        if (BaseHelper.isOffline(context)) {
-            mQuery = Scout.getIndicesRef();
-        } else {
-            mQuery = Scout.getIndicesRef().orderByValue().equalTo(Long.parseLong(mTeamNumber));
-        }
+        mQuery = Scout.getIndicesRef().orderByValue().equalTo(Long.parseLong(teamNumber));
         mQuery.addValueEventListener(this);
     }
 
@@ -70,9 +59,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
         String selectedTabKey = getSelectedTabKey();
         mKeys.clear();
         for (DataSnapshot scoutIndex : snapshot.getChildren()) {
-            if (scoutIndex.getValue().toString().equals(mTeamNumber)) {
-                mKeys.add(0, scoutIndex.getKey());
-            }
+            mKeys.add(0, scoutIndex.getKey());
         }
 
         notifyDataSetChanged();

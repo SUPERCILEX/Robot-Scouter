@@ -70,8 +70,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              mTeam.getNumber(),
-                                              this);
+                                              mTeam.getNumber());
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

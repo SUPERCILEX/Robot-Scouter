@@ -14,10 +14,6 @@ import com.supercilex.robotscouter.ui.AppCompatBase;
 // TODO: 08/10/2016 add Firebase analytics to menu item clicks
 // so I know what stuff to put on top
 
-// TODO: 08/10/2016 If firebase bug isn't resolved,
-// make users enter their team number to setup
-// database with their team as example.
-
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatBase implements View.OnClickListener {
     private AuthHelper mAuthHelper;
