@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui;
 
 import android.app.Activity;
 import android.support.annotation.StringRes;
-import android.view.View;
 
 import com.supercilex.robotscouter.util.BaseHelper;
 
@@ -16,13 +15,6 @@ public class ActivityHelper extends BaseHelper {
 
     public void showSnackbar(@StringRes int message, int length) {
         showSnackbar(mActivity, message, length);
-    }
-
-    public void showSnackbar(@StringRes int message,
-                             int length,
-                             @StringRes int actionMessage,
-                             View.OnClickListener listener) {
-        showSnackbar(mActivity, message, length, actionMessage, listener);
     }
 
     public boolean isOffline() {

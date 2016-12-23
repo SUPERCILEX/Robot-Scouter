@@ -1,8 +1,6 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="RobotScouter" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
@@ -13,25 +11,17 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
     <style name="RobotScouter.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
-    <style name="TextLabel" parent="TextAppearance.Design.Hint">
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="RobotScouter.Text">
+    <style name="RobotScouter.HintText" parent="TextAppearance.Design.Hint">
         <item name="android:textColor">@color/color_accent</item>
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">8sp</item>
     </style>
 
-    <style name="RobotScouter.ErrorText" parent="RobotScouter.Text">
+    <style name="RobotScouter.ErrorText" parent="RobotScouter.HintText">
         <item name="android:textColor">@color/errorColor</item>
     </style>
 

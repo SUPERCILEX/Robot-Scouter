@@ -34,7 +34,9 @@
 
                 <data
                     android:host="supercilex.github.io"
-                    android:pathPrefix="/Robot-Scouter/appindextest"
+                    android:scheme="http"/>
+                <data
+                    android:host="supercilex.github.io"
                     android:scheme="https"/>
             </intent-filter>
 

@@ -14,7 +14,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
-import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
 
@@ -101,7 +101,7 @@ public class Team implements Parcelable {
 
     @Exclude
     public static DatabaseReference getIndicesRef() {
-        return Constants.FIREBASE_TEAM_INDICES.child(BaseHelper.getUid());
+        return Constants.FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
     }
 
     @Exclude

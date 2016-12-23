@@ -16,6 +16,7 @@ public class TeamCopier extends FirebaseCopier {
     public void transform(DataSnapshot copySnapshot) {
         mToQuery.getRef()
                 .child(copySnapshot.getKey())
-                .setValue(copySnapshot.getValue(), copySnapshot.getValue());
+                .setValue(copySnapshot.getValue(),
+                          copySnapshot.getValue()); // TODO: 12/22/2016 test copying
     }
 }

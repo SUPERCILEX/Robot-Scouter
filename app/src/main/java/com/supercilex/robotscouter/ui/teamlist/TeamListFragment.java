@@ -22,7 +22,7 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.lang.ref.WeakReference;
 
-public class TeamsFragment extends StickyFragment {
+public class TeamListFragment extends StickyFragment {
     private RecyclerView mTeams;
     private FirebaseRecyclerAdapter mAdapter;
     private WeakReference<LinearLayoutManager> mManager;
@@ -30,7 +30,7 @@ public class TeamsFragment extends StickyFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BaseHelper.isSignedIn()) initAdapter();
+        if (AuthHelper.isSignedIn()) initAdapter();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class TeamsFragment extends StickyFragment {
         };
     }
 
-    public void setAdapter() {
+    public void resetAdapter() {
         cleanup();
         initAdapter();
         mTeams.setAdapter(mAdapter);

@@ -6,7 +6,7 @@ import android.support.annotation.Keep;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.data.util.ScoutCopier;
-import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class Scout {
 
     @Exclude
     public static DatabaseReference getIndicesRef() {
-        return Constants.FIREBASE_SCOUT_INDICES.child(BaseHelper.getUid());
+        return Constants.FIREBASE_SCOUT_INDICES.child(AuthHelper.getUid());
     }
 
     public static void add(final Team team) {
