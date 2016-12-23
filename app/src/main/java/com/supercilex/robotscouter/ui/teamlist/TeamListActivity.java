@@ -121,7 +121,21 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.fab) NewTeamDialog.show(getSupportFragmentManager());
+        if (v.getId() == R.id.fab) {
+            if (BaseHelper.isSignedIn()) {
+                NewTeamDialog.show(getSupportFragmentManager());
+            } else {
+                mHelper.showSnackbar(R.string.sign_in_required,
+                                     Snackbar.LENGTH_LONG,
+                                     R.string.sign_in,
+                                     new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View v) {
+                                             signIn();
+                                         }
+                                     });
+            }
+        }
     }
 
     private void setMenuIsSignedIn(boolean signedIn) {
@@ -144,7 +158,6 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
     private void signInAnonymously() {
         BaseHelper.getAuth()
                 .signInAnonymously()
-                .addOnFailureListener(new TaskFailureLogger())
                 .addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult result) {
@@ -164,6 +177,7 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
                                                  }
                                              });
                     }
-                });
+                })
+                .addOnFailureListener(new TaskFailureLogger());
     }
 }
