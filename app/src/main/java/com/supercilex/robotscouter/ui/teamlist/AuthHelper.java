@@ -130,7 +130,7 @@ public class AuthHelper {
                 .addOnFailureListener(new TaskFailureLogger());
     }
 
-    public void showSignInRequiredSnackbar() {
+    public void startSignInResolution() {
         BaseHelper.showSnackbar(mActivity,
                                 R.string.sign_in_required,
                                 Snackbar.LENGTH_LONG,
