@@ -10,8 +10,7 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 
 public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
-    @Exclude
-    private int mSelectedValue;
+    @Exclude private int mSelectedValue;
 
     public ScoutSpinner() {
         super();

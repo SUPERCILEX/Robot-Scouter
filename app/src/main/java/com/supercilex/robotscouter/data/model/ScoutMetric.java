@@ -12,12 +12,9 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 
 public class ScoutMetric<T> {
-    @Exclude
-    private String mName;
-    @Exclude
-    private T mValue;
-    @Exclude
-    private int mType;
+    @Exclude private String mName;
+    @Exclude private T mValue;
+    @Exclude private int mType;
 
     public ScoutMetric() {
         // Needed for Firebase

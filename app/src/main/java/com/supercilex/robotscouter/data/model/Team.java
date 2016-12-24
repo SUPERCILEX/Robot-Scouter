@@ -47,31 +47,19 @@ public class Team implements Parcelable {
         }
     };
 
-    @Exclude
-    private static final int WEEK = 7;
+    @Exclude private static final int WEEK = 7;
 
-    @Exclude
-    private String mNumber;
-    @Exclude
-    private String mKey;
-    @Exclude
-    private String mTemplateKey;
-    @Exclude
-    private String mName;
-    @Exclude
-    private String mMedia;
-    @Exclude
-    private String mWebsite;
-    @Exclude
-    private boolean mHasCustomName;
-    @Exclude
-    private boolean mHasCustomMedia;
-    @Exclude
-    private boolean mHasCustomWebsite;
-    @Exclude
-    private long mTimestamp;
-    @Exclude
-    private boolean mShouldUpdateTimestamp = true;
+    @Exclude private String mNumber;
+    @Exclude private String mKey;
+    @Exclude private String mTemplateKey;
+    @Exclude private String mName;
+    @Exclude private String mMedia;
+    @Exclude private String mWebsite;
+    @Exclude private boolean mHasCustomName;
+    @Exclude private boolean mHasCustomMedia;
+    @Exclude private boolean mHasCustomWebsite;
+    @Exclude private long mTimestamp;
+    @Exclude private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
         // Needed for Firebase
