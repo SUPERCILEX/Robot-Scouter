@@ -7,37 +7,38 @@
 
     <item
         android:id="@+id/action_new_scout"
+        android:icon="@drawable/ic_add_white_24dp"
         android:orderInCategory="0"
-        android:title="@string/new_scout"/>
-
-    <item
-        android:id="@+id/action_edit_scout_templates"
-        android:orderInCategory="1"
-        android:title="@string/edit_scout_templates"/>
+        android:title="@string/new_scout"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_visit_tba_team_website"
-        android:orderInCategory="2"
+        android:icon="@drawable/ic_launch_white_24dp"
+        android:orderInCategory="1"
         android:title="@string/visit_team_on_the_blue_alliance"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_visit_team_website"
-        android:orderInCategory="50"
+        android:icon="@drawable/ic_launch_white_24dp"
+        android:orderInCategory="3"
         android:title="@string/visit_team_website"
         android:visible="false"
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_edit_team_details"
-        android:orderInCategory="75"
-        android:title="@string/edit_details"
+        android:id="@+id/action_edit_scout_templates"
+        android:icon="@drawable/ic_mode_edit_white_24dp"
+        android:orderInCategory="4"
+        android:title="@string/edit_scout_templates"
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/action_edit_team_details"
+        android:icon="@drawable/ic_mode_edit_white_24dp"
+        android:orderInCategory="5"
+        android:title="@string/edit_details"
         app:showAsAction="never"/>
 
 </menu>

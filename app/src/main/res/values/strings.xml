@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
 
     <!-- Team List Activity -->
-    <string name="hint_team_number">Team Number</string>
+    <string name="hint_team_number">Team number</string>
     <string name="unknown_team">Unknown</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
@@ -28,7 +28,7 @@
     <string name="team_website">Team website</string>
     <string name="team_logo">Team logo url</string>
     <string name="hint_notes">Notes</string>
-    <string name="new_scout">New Scout</string>
+    <string name="new_scout">New scout</string>
     <string name="edit_scout_templates">Edit scout templates</string>
     <string name="checkbox_name">Checkbox name</string>
     <string name="counter_name">Counter name</string>

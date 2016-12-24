@@ -19,7 +19,7 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
     private AuthHelper mAuthHelper;
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.RobotScouter_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
@@ -27,7 +27,7 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
 
         findViewById(R.id.fab).setOnClickListener(this);
         mAuthHelper = AuthHelper.init(this);
-        DeepLinkHelper.init(this);
+        DeepLinkHandler.init(this);
     }
 
     @Override
@@ -49,10 +49,8 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
             case R.id.action_licenses:
                 LicensesDialog.show(getSupportFragmentManager());
                 break;
-            case R.id.action_settings:
-                break;
             default:
-                return true;
+                return false;
         }
         return true;
     }

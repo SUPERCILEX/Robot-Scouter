@@ -133,8 +133,6 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mTeam, getSupportFragmentManager());
                 break;
-            case R.id.action_settings:
-                break;
             case android.R.id.home:
                 if (NavUtils.shouldUpRecreateTask(
                         this, new Intent(this, TeamListActivity.class))) {
@@ -145,7 +143,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 }
                 break;
             default:
-                return true;
+                return false;
         }
         return true;
     }
