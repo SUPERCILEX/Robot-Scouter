@@ -6,11 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.util.ScoutCopier;
+import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.ui.BottomSheetBase;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -37,13 +38,13 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             templateKey = newTemplateRef.getKey();
             final String finalTemplateKey = templateKey;
-            new ScoutCopier(Constants.FIREBASE_DEFAULT_TEMPLATE, newTemplateRef) {
+            new FirebaseCopier(Constants.FIREBASE_DEFAULT_TEMPLATE, newTemplateRef) {
                 @Override
-                protected void onDone() {
+                public void onDataChange(DataSnapshot snapshot) {
+                    super.onDataChange(snapshot);
                     team.updateTemplateKey(finalTemplateKey);
                 }
-            }
-                    .performTransformation();
+            }.performTransformation();
         }
 
         getChildFragmentManager()
