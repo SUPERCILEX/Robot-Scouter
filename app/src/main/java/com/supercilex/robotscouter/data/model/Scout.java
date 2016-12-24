@@ -3,9 +3,11 @@ package com.supercilex.robotscouter.data.model;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.supercilex.robotscouter.data.util.ScoutCopier;
+import com.supercilex.robotscouter.data.util.FirebaseCopier;
+import com.supercilex.robotscouter.data.util.FirebaseTransformer;
 import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -13,10 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Scout {
-    @Exclude
-    private String mOwner;
-    @Exclude
-    private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>(); // NOPMD
+    @Exclude private String mOwner;
+    @Exclude private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>(); // NOPMD
 
     @Exclude
     public static Bundle getScoutKeyBundle(String key) {
@@ -39,9 +39,10 @@ public class Scout {
         final DatabaseReference indexRef = getIndicesRef().push();
         DatabaseReference scoutRef = Constants.FIREBASE_SCOUTS.child(indexRef.getKey());
 
-        ScoutCopier scoutCopier = new ScoutCopier(scoutRef) {
+        FirebaseTransformer scoutCopier = new FirebaseCopier(scoutRef) {
             @Override
-            protected void onDone() {
+            public void onDataChange(DataSnapshot snapshot) {
+                super.onDataChange(snapshot);
                 indexRef.setValue(Long.parseLong(team.getNumber()));
             }
         };

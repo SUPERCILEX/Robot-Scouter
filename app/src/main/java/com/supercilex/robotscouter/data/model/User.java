@@ -6,8 +6,7 @@ import android.support.annotation.Keep;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.supercilex.robotscouter.data.util.ScoutCopier;
-import com.supercilex.robotscouter.data.util.TeamCopier;
+import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.util.Constants;
 
 public class User {
@@ -67,7 +66,7 @@ public class User {
         final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
         final DatabaseReference prevScoutRef = Constants.FIREBASE_SCOUT_INDICES.child(prevUid);
 
-        new TeamCopier(prevTeamRef, Team.getIndicesRef()) {
+        new FirebaseCopier(prevTeamRef, Team.getIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 super.onDataChange(snapshot);
@@ -75,7 +74,7 @@ public class User {
             }
         }.performTransformation();
 
-        new ScoutCopier(prevScoutRef, Scout.getIndicesRef()) {
+        new FirebaseCopier(prevScoutRef, Scout.getIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 super.onDataChange(snapshot);

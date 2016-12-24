@@ -14,6 +14,8 @@ public class FirebaseCopier extends FirebaseTransformer {
 
     @Override
     public void transform(DataSnapshot copySnapshot) {
-        mToQuery.getRef().child(copySnapshot.getKey()).setValue(copySnapshot.getValue());
+        mToQuery.getRef()
+                .child(copySnapshot.getKey())
+                .setValue(copySnapshot.getValue(), copySnapshot.getPriority());
     }
 }
