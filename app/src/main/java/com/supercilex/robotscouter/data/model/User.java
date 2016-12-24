@@ -10,14 +10,10 @@ import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.util.Constants;
 
 public class User {
-    @Exclude
-    private final String mUid;
-    @Exclude
-    private String mEmail;
-    @Exclude
-    private String mName;
-    @Exclude
-    private Uri mPhotoUrl;
+    @Exclude private final String mUid;
+    @Exclude private String mEmail;
+    @Exclude private String mName;
+    @Exclude private Uri mPhotoUrl;
 
     private User(String uid, String email, String name, Uri photoUrl) {
         mUid = uid;
