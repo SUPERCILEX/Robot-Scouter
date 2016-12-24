@@ -7,7 +7,7 @@ import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.util.Constants;
 
-public abstract class ScoutCopier extends FirebaseCopier {
+public class ScoutCopier extends FirebaseCopier {
     private Scout mScoutCopy;
 
     public ScoutCopier(Query to) {
@@ -28,7 +28,6 @@ public abstract class ScoutCopier extends FirebaseCopier {
     public void onDataChange(DataSnapshot snapshot) {
         super.onDataChange(snapshot);
         mToQuery.getRef().setValue(mScoutCopy);
-        onDone();
     }
 
     @Override
@@ -40,6 +39,4 @@ public abstract class ScoutCopier extends FirebaseCopier {
     public void setFromQuery(Query from) {
         super.setFromQuery(getViewsRef(from));
     }
-
-    protected abstract void onDone();
 }

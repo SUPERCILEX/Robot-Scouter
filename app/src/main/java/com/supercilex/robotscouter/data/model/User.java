@@ -3,8 +3,10 @@ package com.supercilex.robotscouter.data.model;
 import android.net.Uri;
 import android.support.annotation.Keep;
 
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.supercilex.robotscouter.data.util.ScoutCopier;
 import com.supercilex.robotscouter.data.util.TeamCopier;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -62,14 +64,24 @@ public class User {
     public void transferData(String prevUid) {
         if (prevUid == null) return;
 
-        DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
-        DatabaseReference prevScoutRef = Constants.FIREBASE_SCOUT_INDICES.child(prevUid);
+        final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
+        final DatabaseReference prevScoutRef = Constants.FIREBASE_SCOUT_INDICES.child(prevUid);
 
-        new TeamCopier(prevTeamRef, Team.getIndicesRef()).performTransformation();
-        new TeamCopier(prevScoutRef, Scout.getIndicesRef()).performTransformation();
+        new TeamCopier(prevTeamRef, Team.getIndicesRef()) {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                super.onDataChange(snapshot);
+                prevTeamRef.removeValue();
+            }
+        }.performTransformation();
 
-        prevTeamRef.removeValue();
-        prevScoutRef.removeValue();
+        new ScoutCopier(prevScoutRef, Scout.getIndicesRef()) {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                super.onDataChange(snapshot);
+                prevScoutRef.removeValue();
+            }
+        }.performTransformation();
     }
 
     public static class Builder implements com.supercilex.robotscouter.data.util.Builder<User> {
