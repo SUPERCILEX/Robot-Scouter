@@ -50,10 +50,10 @@ public class TeamHolder extends RecyclerView.ViewHolder implements View.OnClickL
     }
 
     private void setTeamName() {
-        if (mTeam.getName() != null) {
-            mName.setText(mTeam.getName());
-        } else {
+        if (mTeam.getName() == null) {
             mName.setText(mContext.getString(R.string.unknown_team));
+        } else {
+            mName.setText(mTeam.getName());
         }
     }
 

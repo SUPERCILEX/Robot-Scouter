@@ -43,7 +43,7 @@
 
         <exclude name="DataflowAnomalyAnalysis"/>
 
-        <exclude name="DefaultPackage"/>
+        <exclude name="UseConcurrentHashMap"/>
 
     </rule>
 
@@ -51,7 +51,7 @@
 
         <exclude name="ImmutableField"/>
 
-        <exclude name="ConfusingTernary"/>
+        <exclude name="AccessorClassGeneration"/>
 
     </rule>
 

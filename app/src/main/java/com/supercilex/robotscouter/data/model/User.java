@@ -106,7 +106,7 @@ public class User {
 
         @Override
         public User build() {
-            return new User(mUid, mEmail, mName, mPhotoUrl); // NOPMD
+            return new User(mUid, mEmail, mName, mPhotoUrl);
         }
     }
 }

@@ -18,9 +18,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.supercilex.robotscouter.R;
 
-public class BaseHelper {
+public final class BaseHelper {
     private static FirebaseDatabase sDatabase;
     private static FirebaseJobDispatcher sDispatcher;
+
+    private BaseHelper() {
+        // no instance
+    }
 
     public static DatabaseReference getDatabase() {
         synchronized (BaseHelper.class) {

@@ -85,10 +85,10 @@ public class AppBarViewHolder {
     }
 
     private String getTitle() {
-        if (mTeam.getName() != null) {
-            return mTeam.getNumber() + " - " + mTeam.getName();
-        } else {
+        if (mTeam.getName() == null) {
             return mTeam.getNumber();
+        } else {
+            return mTeam.getNumber() + " - " + mTeam.getName();
         }
     }
 
@@ -106,11 +106,7 @@ public class AppBarViewHolder {
 
     private void bindMenu() {
         if (mActionVisitTeamWebsite != null) {
-            if (mTeam.getWebsite() != null) {
-                mActionVisitTeamWebsite.setVisible(true);
-            } else {
-                mActionVisitTeamWebsite.setVisible(false);
-            }
+            mActionVisitTeamWebsite.setVisible(mTeam.getWebsite() != null);
         }
     }
 

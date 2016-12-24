@@ -5,16 +5,15 @@ import android.support.annotation.StringRes;
 
 import com.supercilex.robotscouter.util.BaseHelper;
 
-public class ActivityHelper extends BaseHelper {
+public class ActivityHelper {
     private Activity mActivity;
 
     public ActivityHelper(Activity activity) {
-        super();
         mActivity = activity;
     }
 
     public void showSnackbar(@StringRes int message, int length) {
-        showSnackbar(mActivity, message, length);
+        BaseHelper.showSnackbar(mActivity, message, length);
     }
 
     public boolean isOffline() {

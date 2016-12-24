@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class Scout {
     @Exclude private String mOwner;
-    @Exclude private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>(); // NOPMD
+    @Exclude private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>();
 
     @Exclude
     public static Bundle getScoutKeyBundle(String key) {

@@ -430,7 +430,7 @@ public class Team implements Parcelable {
 
         @Override
         public Team build() {
-            return new Team(mNumber, // NOPMD
+            return new Team(mNumber,
                             mKey,
                             mTemplateKey,
                             mName,

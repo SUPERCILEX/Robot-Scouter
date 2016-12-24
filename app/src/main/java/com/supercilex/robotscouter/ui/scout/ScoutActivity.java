@@ -149,13 +149,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     }
 
     private void addTeamListener() {
-        if (mTeam.getKey() != null) {
-            mTeam.getRef().addValueEventListener(this);
-            if (shouldAddNewScout()) {
-                Scout.add(mTeam);
-                getIntent().putExtra(INTENT_ADD_SCOUT, false);
-            }
-        } else {
+        if (mTeam.getKey() == null) {
             Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -191,6 +185,12 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                     FirebaseCrash.report(error.toException());
                 }
             });
+        } else {
+            mTeam.getRef().addValueEventListener(this);
+            if (shouldAddNewScout()) {
+                Scout.add(mTeam);
+                getIntent().putExtra(INTENT_ADD_SCOUT, false);
+            }
         }
     }
 

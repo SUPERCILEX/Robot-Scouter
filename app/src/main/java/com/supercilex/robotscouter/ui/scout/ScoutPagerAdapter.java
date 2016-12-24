@@ -68,7 +68,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
             if (tab != null) tab.select();
             mIsManuallyAddedTab = false;
         } else {
-            if (mSavedTabKey != null) {
+            if (mSavedTabKey != null) { // NOPMD
                 selectTab(mSavedTabKey, SAVE_STATE);
                 mSavedTabKey = null; // NOPMD todo maybe?
             } else if (selectedTabKey != null) {
@@ -82,10 +82,10 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
     }
 
     public String getSelectedTabKey() {
-        if (mTabLayout.getSelectedTabPosition() != -1) {
-            return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
-        } else {
+        if (mTabLayout.getSelectedTabPosition() == -1) {
             return null;
+        } else {
+            return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
         }
     }
 

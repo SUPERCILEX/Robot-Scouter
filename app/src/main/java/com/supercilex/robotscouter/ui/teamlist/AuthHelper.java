@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
-public class AuthHelper {
+public final class AuthHelper {
     private static final int RC_SIGN_IN = 100;
 
     private static FirebaseAuth sAuth;
