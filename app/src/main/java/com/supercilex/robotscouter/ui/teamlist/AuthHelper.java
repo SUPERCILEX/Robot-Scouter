@@ -173,8 +173,6 @@ public final class AuthHelper {
                     .build();
             user.add();
 
-            // TODO: 12/22/2016 On login, do database init: Scout.getIndicesRef...
-
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (response != null) user.transferData(response.getPrevUid());
         }
