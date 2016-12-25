@@ -66,7 +66,7 @@ public final class Constants {
             BaseHelper.getDatabase().child("scout-templates");
     // [END FIREBASE CHILD NAMES]
 
-    public final static String HTML_IMPORT_TEAM;
+    public static final String HTML_IMPORT_TEAM;
 
     static {
         HTML_IMPORT_TEAM = "<!doctype html>\n" +
