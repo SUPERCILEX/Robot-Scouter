@@ -69,7 +69,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
             if (tab != null) tab.select();
             mIsManuallyAddedTab = false;
         } else {
-            if (!TextUtils.isEmpty(mSavedTabKey)) {
+            if (!TextUtils.isEmpty(mSavedTabKey)) { // NOPMD
                 selectTab(mSavedTabKey, SAVE_STATE);
                 mSavedTabKey = null; // NOPMD todo maybe?
             } else if (!TextUtils.isEmpty(selectedTabKey)) {
