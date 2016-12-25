@@ -8,15 +8,19 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
+import com.supercilex.robotscouter.data.model.ScoutSpinner;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.Constants;
+
+import java.util.ArrayList;
 
 public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> {
     private SimpleItemAnimator mAnimator;
@@ -72,7 +76,26 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
 
     @Override
     protected ScoutMetric parseSnapshot(DataSnapshot snapshot) {
-        return ScoutMetric.getMetric(snapshot);
+        switch (snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class)) {
+            case Constants.CHECKBOX:
+                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
+                });
+            case Constants.COUNTER:
+                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
+                });
+            case Constants.EDIT_TEXT:
+                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
+                });
+            case Constants.SPINNER:
+                return new ScoutSpinner(
+                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                        snapshot.child(Constants.FIREBASE_VALUE)
+                                .getValue(new GenericTypeIndicator<ArrayList<String>>() {
+                                }),
+                        snapshot.child(Constants.FIREBASE_SELECTED_VALUE).getValue(Integer.class));
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override

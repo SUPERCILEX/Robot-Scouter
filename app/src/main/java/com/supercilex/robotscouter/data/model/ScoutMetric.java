@@ -3,13 +3,9 @@ package com.supercilex.robotscouter.data.model;
 import android.support.annotation.Keep;
 import android.support.v7.widget.SimpleItemAnimator;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
-
-import java.util.ArrayList;
 
 public class ScoutMetric<T> {
     @Exclude private String mName;
@@ -23,30 +19,6 @@ public class ScoutMetric<T> {
     public ScoutMetric(String name, T value) {
         mName = name;
         mValue = value;
-    }
-
-    @Exclude
-    public static ScoutMetric getMetric(DataSnapshot snapshot) {
-        switch (snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class)) {
-            case Constants.CHECKBOX:
-                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
-                });
-            case Constants.COUNTER:
-                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
-                });
-            case Constants.EDIT_TEXT:
-                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
-                });
-            case Constants.SPINNER:
-                return new ScoutSpinner(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        snapshot.child(Constants.FIREBASE_VALUE)
-                                .getValue(new GenericTypeIndicator<ArrayList<String>>() {
-                                }),
-                        snapshot.child(Constants.FIREBASE_SELECTED_VALUE).getValue(Integer.class));
-            default:
-                throw new IllegalStateException();
-        }
     }
 
     @Keep
