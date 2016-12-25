@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.remote;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -79,7 +80,7 @@ public final class TbaApi implements Callable<Team> {
             JsonObject mediaObject = result.get(i).getAsJsonObject();
             String mediaType = mediaObject.get("type").getAsString();
 
-            if (mediaType != null) {
+            if (!TextUtils.isEmpty(mediaType)) {
                 if (mediaType.equals(IMGUR)) {
                     String url = "https://i.imgur.com/"
                             + mediaObject.get("foreign_key").getAsString() + ".png";

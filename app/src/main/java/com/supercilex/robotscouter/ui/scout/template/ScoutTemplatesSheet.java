@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.template;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
 
         final Team team = Team.getTeam(getArguments());
         String templateKey = team.getTemplateKey();
-        if (templateKey == null) {
+        if (TextUtils.isEmpty(templateKey)) {
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             templateKey = newTemplateRef.getKey();
             final String finalTemplateKey = templateKey;

@@ -5,6 +5,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,7 +58,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
     }
 
     private void setTeamName() {
-        if (mTeam.getName() == null) {
+        if (TextUtils.isEmpty(mTeam.getName())) {
             mName.setText(mFragment.getString(R.string.unknown_team));
         } else {
             mName.setText(mTeam.getName());

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -100,7 +101,7 @@ public class AppBarViewHolder {
 
     private void bindMenu() {
         if (mActionVisitTeamWebsite != null) {
-            mActionVisitTeamWebsite.setVisible(mTeam.getWebsite() != null);
+            mActionVisitTeamWebsite.setVisible(!TextUtils.isEmpty(mTeam.getWebsite()));
         }
     }
 

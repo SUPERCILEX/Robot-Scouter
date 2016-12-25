@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.data.model;
 
 import android.net.Uri;
 import android.support.annotation.Keep;
+import android.text.TextUtils;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -57,7 +58,7 @@ public class User {
     }
 
     public void transferData(String prevUid) {
-        if (prevUid == null) return;
+        if (TextUtils.isEmpty(prevUid)) return;
 
         final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
         final DatabaseReference prevScoutRef = Constants.FIREBASE_SCOUT_INDICES.child(prevUid);

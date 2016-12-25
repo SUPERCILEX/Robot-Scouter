@@ -4,6 +4,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.text.TextUtils;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
@@ -68,10 +69,10 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
             if (tab != null) tab.select();
             mIsManuallyAddedTab = false;
         } else {
-            if (mSavedTabKey != null) { // NOPMD
+            if (!TextUtils.isEmpty(mSavedTabKey)) {
                 selectTab(mSavedTabKey, SAVE_STATE);
                 mSavedTabKey = null; // NOPMD todo maybe?
-            } else if (selectedTabKey != null) {
+            } else if (!TextUtils.isEmpty(selectedTabKey)) {
                 selectTab(selectedTabKey, UPDATE);
             }
         }

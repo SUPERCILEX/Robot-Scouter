@@ -14,6 +14,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -153,7 +154,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     }
 
     private void addTeamListener() {
-        if (mTeam.getKey() == null) {
+        if (TextUtils.isEmpty(mTeam.getKey())) {
             Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
