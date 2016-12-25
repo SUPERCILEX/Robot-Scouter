@@ -83,7 +83,11 @@ public final class AuthHelper {
     public void initMenu(Menu menu) {
         mActionSignIn = menu.findItem(R.id.action_sign_in);
         mActionSignOut = menu.findItem(R.id.action_sign_out);
-        toggleMenuSignIn(isSignedIn());
+        if (isSignedIn() && !getUser().isAnonymous()) {
+            toggleMenuSignIn(true);
+        } else {
+            toggleMenuSignIn(false);
+        }
     }
 
     private void initDeepLinkReceiver() {
