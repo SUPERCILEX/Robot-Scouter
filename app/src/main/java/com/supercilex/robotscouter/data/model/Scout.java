@@ -3,8 +3,12 @@ package com.supercilex.robotscouter.data.model;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.FirebaseTransformer;
 import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
@@ -46,6 +50,30 @@ public class Scout {
             scoutCopier.setFromQuery(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()));
         }
         scoutCopier.performTransformation();
+    }
+
+    public static void delete(String key) {
+        getIndicesRef().child(key).removeValue();
+        Constants.FIREBASE_SCOUTS.child(key).removeValue();
+    }
+
+    public static void deleteAll(String teamNumber) {
+        getIndicesRef().orderByValue()
+                .equalTo(Long.valueOf(teamNumber))
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        for (DataSnapshot keySnapshot : snapshot.getChildren()) {
+                            Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
+                            keySnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        FirebaseCrash.report(error.toException());
+                    }
+                });
     }
 
     @Keep

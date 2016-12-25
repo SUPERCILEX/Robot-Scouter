@@ -43,6 +43,8 @@
     <string name="team_website">Team website</string>
     <string name="team_logo">Team logo url</string>
 
+    <string name="delete_scout">Delete scout</string>
+
     <string name="hint_notes">Notes</string>
     <string name="checkbox_name">Checkbox name</string>
     <string name="counter_name">Counter name</string>

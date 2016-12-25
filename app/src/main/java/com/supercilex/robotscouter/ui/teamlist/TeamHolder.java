@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.DeleteTeamDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 public class TeamHolder extends RecyclerView.ViewHolder
@@ -98,7 +99,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
                 DeepLinkSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
                 break;
             case R.id.action_delete:
-                // todo
+                DeleteTeamDialog.show(mFragment.getActivity().getSupportFragmentManager(), mTeam);
                 break;
             default:
                 return false;

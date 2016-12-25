@@ -1,10 +1,14 @@
 package com.supercilex.robotscouter.ui.scout;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,14 +22,22 @@ import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ScoutFragment extends FragmentBase {
+public class ScoutFragment extends FragmentBase implements MenuItem.OnMenuItemClickListener {
     protected FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
     protected LinearLayoutManager mManager;
+    private String mScoutKey;
 
     public static ScoutFragment newInstance(String key) {
         ScoutFragment fragment = new ScoutFragment();
         fragment.setArguments(Scout.getScoutKeyBundle(key));
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        mScoutKey = Scout.getScoutKey(getArguments());
     }
 
     @Override
@@ -43,13 +55,19 @@ public class ScoutFragment extends FragmentBase {
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
                 Constants.FIREBASE_SCOUTS
-                        .child(Scout.getScoutKey(getArguments()))
+                        .child(mScoutKey)
                         .child(Constants.FIREBASE_VIEWS),
                 (SimpleItemAnimator) recyclerView.getItemAnimator());
         recyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(Menu.NONE, R.id.action_delete, 100, R.string.delete_scout)
+                .setOnMenuItemClickListener(this);
     }
 
     @Override
@@ -63,5 +81,14 @@ public class ScoutFragment extends FragmentBase {
     public void onSaveInstanceState(Bundle outState) {
         BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item.getItemId() == R.id.action_delete) {
+            Scout.delete(mScoutKey);
+            return true;
+        }
+        return false;
     }
 }

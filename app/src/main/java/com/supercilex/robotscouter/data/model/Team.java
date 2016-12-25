@@ -163,6 +163,11 @@ public class Team implements Parcelable {
         mName = name;
     }
 
+    @Exclude
+    public String getFormattedName() {
+        return getName() == null ? getNumber() : getNumber() + " - " + getName();
+    }
+
     @Keep
     public String getMedia() {
         return mMedia;
@@ -278,14 +283,18 @@ public class Team implements Parcelable {
         getRef().child(Constants.FIREBASE_TEMPLATE_KEY).setValue(mTemplateKey);
     }
 
+    public void delete() {
+        getIndicesRef().child(getKey()).removeValue();
+        if (getTemplateKey() != null) {
+            Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey()).removeValue();
+        }
+        getRef().removeValue();
+        Scout.deleteAll(getNumber());
+    }
+
     public void fetchLatestData() {
         long differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp);
         if (differenceDays >= WEEK) DownloadTeamDataJob.start(this);
-    }
-
-    @Exclude
-    public String getFormattedName() {
-        return getName() == null ? getNumber() : getNumber() + " - " + getName();
     }
 
     @Override
