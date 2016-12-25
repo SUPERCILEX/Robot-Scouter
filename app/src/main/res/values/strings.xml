@@ -2,44 +2,52 @@
     <string name="app_name">Robot Scouter</string>
 
     <!-- Common -->
+    <string name="confirm_deletion">Are you sure?</string>
+    <string name="connection_required">You need to be online</string>
+    <string name="sign_in_required">You need to be signed in</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
+    <string name="invalid_team_number">Oops! Make sure your team number is greater than 0 and smaller than 100000</string>
+
     <string name="unknown_team">Unknown</string>
+    <string name="delete">Delete</string>
+
     <string name="share">Share</string>
     <string name="share_title">Share team %s</string>
     <string name="share_message">Edit team %s with me!</string>
     <string name="share_call_to_action">Import team %s into Robot Scouter</string>
-    <string name="connection_required">You need to be online</string>
-    <string name="delete">Delete</string>
+
+    <string name="licenses">Licenses</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
-    <string name="sign_in_required">You need to be signed in</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="sign_in_failed">Anonymous sign in failed</string>
-    <string name="licenses">Licenses</string>
-
-    <string name="invalid_team_number">Oops! Make sure your team number is greater than 0 and smaller than 100000</string>
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
-    <string name="edit_details">Edit team details</string>
-    <string name="team_details">Team details</string>
+    <string name="no_connection">Offline. Data will be saved</string>
+
+    <string name="new_scout">New scout</string>
+
     <string name="visit_team_website">Visit team website</string>
     <string name="menu_item_visit_team_website">Visit team %s\'s website</string>
     <string name="visit_team_on_the_blue_alliance">Visit team on The Blue Alliance</string>
     <string name="menu_item_visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
-    <string name="no_connection">Offline. Data will be saved</string>
+
+    <string name="edit_scout_templates">Edit scout templates</string>
+
+    <string name="edit_details">Edit team details</string>
+    <string name="team_details">Team details</string>
     <string name="team_name">Team name</string>
     <string name="team_website">Team website</string>
     <string name="team_logo">Team logo url</string>
+
     <string name="hint_notes">Notes</string>
-    <string name="new_scout">New scout</string>
-    <string name="edit_scout_templates">Edit scout templates</string>
     <string name="checkbox_name">Checkbox name</string>
     <string name="counter_name">Counter name</string>
-    <string name="note_name">Note name</string>
     <string name="spinner_name">Item selector name</string>
+    <string name="note_name">Note name</string>
 
     <!-- Accessibility -->
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>
