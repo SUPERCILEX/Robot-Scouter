@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
@@ -24,43 +23,53 @@ public class DeepLinkSender {
     private static final String APP_LINK_START = "https://supercilex.github.io/?" + DeepLinkReceiver.TEAM_KEY + "=";
     private static final String APP_LINK_END = "&" + DeepLinkReceiver.UTM_SOURCE + "=" + DeepLinkReceiver.UTM_SOURCE_VALUE;
 
-    public static void launchInvitationIntent(final FragmentActivity activity, final Team team) {
+    private FragmentActivity mActivity;
+    private Team mTeam;
+
+    public DeepLinkSender(FragmentActivity activity, Team team) {
+        mActivity = activity;
+        mTeam = team;
+    }
+
+    public static void launchInvitationIntent(FragmentActivity activity, Team team) {
+        new DeepLinkSender(activity, team).fetchKeysQuery();
+    }
+
+    private void fetchKeysQuery() {
         new KeysQueryBuilder(Scout.getIndicesRef(), DeepLinkReceiver.SCOUT_KEY)
                 .build()
                 .addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
                     public void onSuccess(String scoutQuery) {
                         String deepLink = APP_LINK_START +
-                                team.getKey() +
+                                mTeam.getKey() +
                                 ":" +
-                                team.getNumber() +
+                                mTeam.getNumber() +
                                 scoutQuery +
                                 APP_LINK_END;
-                        activity.startActivityForResult(getInvitationIntent(activity,
-                                                                            team,
-                                                                            deepLink), 9);
+                        mActivity.startActivityForResult(getInvitationIntent(deepLink), 9);
                     }
                 })
                 .addOnFailureListener(new TaskFailureLogger());
     }
 
-    private static Intent getInvitationIntent(Context context, Team team, String deepLink) {
-        return new AppInviteInvitation.IntentBuilder(String.format(context.getString(R.string.share_title),
-                                                                   team.getFormattedName()))
-                .setMessage(String.format(context.getString(R.string.share_message),
-                                          team.getFormattedName()))
+    private Intent getInvitationIntent(String deepLink) {
+        return new AppInviteInvitation.IntentBuilder(String.format(mActivity.getString(R.string.share_title),
+                                                                   mTeam.getFormattedName()))
+                .setMessage(String.format(mActivity.getString(R.string.share_message),
+                                          mTeam.getFormattedName()))
                 .setDeepLink(Uri.parse(deepLink))
-                .setEmailSubject(String.format(context.getString(R.string.share_call_to_action),
-                                               team.getFormattedName()))
-                .setEmailHtmlContent(getFormattedHtml(team))
+                .setEmailSubject(String.format(mActivity.getString(R.string.share_call_to_action),
+                                               mTeam.getFormattedName()))
+                .setEmailHtmlContent(getFormattedHtml())
                 .build();
     }
 
-    private static String getFormattedHtml(Team team) {
+    private String getFormattedHtml() {
         return String.format(Constants.HTML_IMPORT_TEAM,
-                             team.getFormattedName(),
-                             team.getFormattedName(),
-                             team.getMedia());
+                             mTeam.getFormattedName(),
+                             mTeam.getFormattedName(),
+                             mTeam.getMedia());
     }
 
     private static class KeysQueryBuilder implements Builder<Task<String>>, ValueEventListener {
@@ -85,9 +94,9 @@ public class DeepLinkSender {
         public void onDataChange(DataSnapshot snapshot) {
             StringBuilder builder = new StringBuilder();
             for (DataSnapshot keySnapshot : snapshot.getChildren()) {
-                builder.append("&")
+                builder.append('&')
                         .append(mKeyName)
-                        .append("=")
+                        .append('=')
                         .append(keySnapshot.getKey());
             }
             mKeysTask.setResult(builder.toString());

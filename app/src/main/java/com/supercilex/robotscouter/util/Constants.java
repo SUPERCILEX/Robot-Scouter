@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class Constants {
     // The Blue Alliance API
     public static final String TEAM_NICKNAME = "nickname";
