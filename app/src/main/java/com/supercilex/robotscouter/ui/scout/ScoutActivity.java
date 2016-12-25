@@ -115,9 +115,6 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             case R.id.action_share:
                 DeepLinkSender.launchInvitationIntent(this, mTeam);
                 break;
-            case R.id.action_edit_scout_templates:
-                ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeam);
-                break;
             case R.id.action_visit_tba_team_website:
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 builder.setToolbarColor(ContextCompat.getColor(this, R.color.color_primary));
@@ -134,6 +131,9 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 teamWebsiteBuilder.setShowTitle(true);
                 CustomTabsIntent teamWebsiteCustomTabsIntent = teamWebsiteBuilder.build();
                 teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
+                break;
+            case R.id.action_edit_scout_templates:
+                ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeam);
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mTeam, getSupportFragmentManager());

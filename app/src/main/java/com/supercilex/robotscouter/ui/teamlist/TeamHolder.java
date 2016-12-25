@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.support.annotation.Keep;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,7 +18,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.BaseHelper;
 
 public class TeamHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
@@ -97,13 +95,6 @@ public class TeamHolder extends RecyclerView.ViewHolder
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                if (BaseHelper.isOffline(mFragment.getContext())) {
-                    BaseHelper.showSnackbar(mFragment.getActivity(),
-                                            R.string.connection_required,
-                                            Snackbar.LENGTH_LONG);
-                    break;
-                }
-
                 DeepLinkSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
                 break;
             case R.id.action_delete:

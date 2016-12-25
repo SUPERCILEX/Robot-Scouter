@@ -17,7 +17,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -105,6 +111,7 @@ public final class AuthHelper {
                     public void onSuccess(AuthResult result) {
                         mTeamsFragment.resetAdapter();
                         initDeepLinkReceiver();
+                        DatabaseInitializer.init();
                     }
                 })
                 .addOnFailureListener(mActivity, new OnFailureListener() {
@@ -176,5 +183,28 @@ public final class AuthHelper {
     private void toggleMenuSignIn(boolean isSignedIn) {
         mActionSignIn.setVisible(!isSignedIn);
         mActionSignOut.setVisible(isSignedIn);
+    }
+
+    private static final class DatabaseInitializer implements ValueEventListener {
+        private DatabaseInitializer() {
+            Team.getIndicesRef().addListenerForSingleValueEvent(this);
+            Scout.getIndicesRef().addListenerForSingleValueEvent(this);
+            Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(this);
+            Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
+        }
+
+        public static void init() {
+            new DatabaseInitializer();
+        }
+
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            // This allows the database to work offline
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            FirebaseCrash.report(error.toException());
+        }
     }
 }

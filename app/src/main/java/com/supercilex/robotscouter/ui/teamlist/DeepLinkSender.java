@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
@@ -16,6 +17,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.Builder;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
@@ -32,6 +34,12 @@ public class DeepLinkSender {
     }
 
     public static void launchInvitationIntent(FragmentActivity activity, Team team) {
+        if (BaseHelper.isOffline(activity)) {
+            BaseHelper.showSnackbar(activity,
+                                    R.string.connection_required,
+                                    Snackbar.LENGTH_LONG);
+            return;
+        }
         new DeepLinkSender(activity, team).fetchKeysQuery();
     }
 
