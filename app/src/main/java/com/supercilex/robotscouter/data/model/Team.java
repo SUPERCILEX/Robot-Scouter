@@ -283,6 +283,10 @@ public class Team implements Parcelable {
         if (differenceDays >= WEEK) DownloadTeamDataJob.start(this);
     }
 
+    public String getFormattedName() {
+        return getName() == null ? getNumber() : getNumber() + " - " + getName();
+    }
+
     @Override
     public int describeContents() {
         return 0;

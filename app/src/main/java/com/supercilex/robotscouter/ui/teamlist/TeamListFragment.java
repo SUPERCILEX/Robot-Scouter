@@ -82,7 +82,7 @@ public class TeamListFragment extends StickyFragment {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
                 team.setKey(getRef(position).getKey());
-                teamHolder.bind(getContext(), team);
+                teamHolder.bind(TeamListFragment.this, team);
                 team.fetchLatestData();
             }
 

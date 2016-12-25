@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
+import com.supercilex.robotscouter.ui.teamlist.DeepLinkBuilder;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -109,6 +110,9 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             case R.id.action_new_scout:
                 Scout.add(mTeam);
                 mPagerAdapter.setManuallyAddedScout();
+                break;
+            case R.id.action_share:
+                DeepLinkBuilder.launchInvitationIntent(this, mTeam);
                 break;
             case R.id.action_edit_scout_templates:
                 ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeam);

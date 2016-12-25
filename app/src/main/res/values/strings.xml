@@ -1,18 +1,24 @@
 <resources>
     <string name="app_name">Robot Scouter</string>
 
-    <!-- Shared -->
-    <string name="action_settings">Settings</string>
+    <!-- Common -->
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
     <string name="unknown_team">Unknown</string>
+    <string name="share">Share</string>
+    <string name="share_title">Share team %s</string>
+    <string name="share_message">Edit team %s with me!</string>
+    <string name="share_call_to_action">Import team %s into Robot Scouter</string>
+    <string name="connection_required">You need to be online</string>
+    <string name="delete">Delete</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
     <string name="sign_in_required">You need to be signed in</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="sign_in_failed">Anonymous sign in failed</string>
     <string name="licenses">Licenses</string>
+
     <string name="invalid_team_number">Oops! Make sure your team number is greater than 0 and smaller than 100000</string>
 
     <!-- Scout Activity -->
