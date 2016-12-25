@@ -103,7 +103,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
                     break;
                 }
 
-                DeepLinkBuilder.launchInvitationIntent(mFragment.getActivity(), mTeam);
+                DeepLinkSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
                 break;
             case R.id.action_delete:
                 // todo

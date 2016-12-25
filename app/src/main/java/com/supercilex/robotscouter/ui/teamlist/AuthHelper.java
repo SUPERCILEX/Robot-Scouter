@@ -28,6 +28,8 @@ public final class AuthHelper {
 
     private static FirebaseAuth sAuth;
 
+    private DeepLinkReceiver mLinkReceiver;
+
     private FragmentActivity mActivity;
     private TeamListFragment mTeamsFragment;
     private MenuItem mActionSignIn;
@@ -64,17 +66,23 @@ public final class AuthHelper {
 
     public static AuthHelper init(TeamListActivity activity) {
         AuthHelper helper = new AuthHelper(activity);
-        if (!isSignedIn()) helper.signInAnonymously();
+        if (isSignedIn()) {
+            helper.initDeepLinkReceiver();
+        } else {
+            helper.signInAnonymously();
+        }
         return helper;
     }
 
     public void initMenu(Menu menu) {
         mActionSignIn = menu.findItem(R.id.action_sign_in);
         mActionSignOut = menu.findItem(R.id.action_sign_out);
-        if (isSignedIn()) {
-            toggleMenuSignIn(true);
-        } else {
-            toggleMenuSignIn(false);
+        toggleMenuSignIn(isSignedIn());
+    }
+
+    private void initDeepLinkReceiver() {
+        if (mLinkReceiver == null) {
+            mLinkReceiver = DeepLinkReceiver.init(mActivity);
         }
     }
 
@@ -96,6 +104,7 @@ public final class AuthHelper {
                     @Override
                     public void onSuccess(AuthResult result) {
                         mTeamsFragment.resetAdapter();
+                        initDeepLinkReceiver();
                     }
                 })
                 .addOnFailureListener(mActivity, new OnFailureListener() {
@@ -148,6 +157,7 @@ public final class AuthHelper {
             mTeamsFragment.resetAdapter();
             BaseHelper.showSnackbar(mActivity, R.string.signed_in, Snackbar.LENGTH_LONG);
             toggleMenuSignIn(true);
+            initDeepLinkReceiver();
 
             User user = new User.Builder(getUser().getUid())
                     .setEmail(getUser().getEmail())

@@ -20,12 +20,12 @@ import com.supercilex.robotscouter.data.util.Builder;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
-public class DeepLinkBuilder {
-    private static final String APP_LINK_START = "https://supercilex.github.io/?" + DeepLinkHandler.TEAM_KEY + "=";
-    private static final String APP_LINK_END = "&" + DeepLinkHandler.UTM_SOURCE + "=" + DeepLinkHandler.UTM_SOURCE_VALUE;
+public class DeepLinkSender {
+    private static final String APP_LINK_START = "https://supercilex.github.io/?" + DeepLinkReceiver.TEAM_KEY + "=";
+    private static final String APP_LINK_END = "&" + DeepLinkReceiver.UTM_SOURCE + "=" + DeepLinkReceiver.UTM_SOURCE_VALUE;
 
     public static void launchInvitationIntent(final FragmentActivity activity, final Team team) {
-        new KeysQueryBuilder(Scout.getIndicesRef(), DeepLinkHandler.SCOUT_KEY)
+        new KeysQueryBuilder(Scout.getIndicesRef(), DeepLinkReceiver.SCOUT_KEY)
                 .build()
                 .addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override

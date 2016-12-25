@@ -27,7 +27,6 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
 
         findViewById(R.id.fab).setOnClickListener(this);
         mAuthHelper = AuthHelper.init(this);
-        DeepLinkHandler.init(this);
     }
 
     @Override
