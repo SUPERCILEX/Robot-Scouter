@@ -19,8 +19,6 @@ import com.supercilex.robotscouter.util.Constants;
 public class ScoutTemplatesSheet extends BottomSheetBase {
     private static final String TAG = "ScoutTemplatesSheet";
 
-//    private ScoutPagerAdapter mPagerAdapter;
-
     public static void show(FragmentManager manager, Team team) {
         ScoutTemplatesSheet sheet = new ScoutTemplatesSheet();
         sheet.setArguments(team.getBundle());
@@ -53,22 +51,12 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
                 .add(R.id.root, ScoutTemplateFragment.newInstance(templateKey))
                 .commit();
 
-//        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
-//        mPagerAdapter = new ScoutTemplatesPagerAdapter(
-//                getChildFragmentManager(),
-//                tabLayout,
-//                Constants.FIREBASE_SCOUT_TEMPLATES);
-//        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-//        viewPager.setAdapter(mPagerAdapter);
-//        tabLayout.setupWithViewPager(viewPager);
-
         return rootView;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        mPagerAdapter.cleanup();
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 }
