@@ -6,7 +6,8 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:context=".ui.scout.ScoutActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/needed_for_CollapsingToolbarLayout_to_save_state"
