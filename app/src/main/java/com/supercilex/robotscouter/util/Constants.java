@@ -9,16 +9,6 @@ import java.util.List;
 
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class Constants {
-    // The Blue Alliance API
-    public static final String TEAM_NICKNAME = "nickname";
-    public static final String TEAM_WEBSITE = "website";
-
-    // Intents/Bundles
-    public static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
-    public static final String MANAGER_STATE = "manager_state";
-    public static final String ITEM_COUNT = "count";
-    public static final String SCOUT_KEY = "scout_key";
-
     // Scout ids
     public static final int CHECKBOX = 0;
     public static final int COUNTER = 1;
@@ -44,8 +34,6 @@ public final class Constants {
     public static final DatabaseReference FIREBASE_TEAMS = BaseHelper.getDatabase().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
             BaseHelper.getDatabase().child("team-indices");
-    public static final String FIREBASE_TIMESTAMP = "timestamp";
-    public static final String FIREBASE_TEMPLATE_KEY = "templateKey";
 
     // Scout
     public static final DatabaseReference FIREBASE_SCOUTS =

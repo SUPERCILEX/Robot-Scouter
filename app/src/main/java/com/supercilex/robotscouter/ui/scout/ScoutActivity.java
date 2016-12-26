@@ -33,7 +33,6 @@ import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
 import com.supercilex.robotscouter.ui.teamlist.DeepLinkSender;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.BaseHelper;
-import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     private static final String INTENT_ADD_SCOUT = "add_scout";
@@ -72,7 +71,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         String scoutKey = null;
         if (savedInstanceState != null) {
-            scoutKey = savedInstanceState.getString(Constants.SCOUT_KEY);
+            scoutKey = Scout.getScoutKey(savedInstanceState);
         }
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
@@ -97,7 +96,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(Constants.SCOUT_KEY, mPagerAdapter.getCurrentScoutKey());
+        outState.putAll(Scout.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         super.onSaveInstanceState(outState);
     }
 

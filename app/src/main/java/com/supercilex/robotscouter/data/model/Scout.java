@@ -18,19 +18,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Scout {
+    @Exclude private static final String SCOUT_KEY = "scout_key";
+
     @Exclude private String mOwner;
     @Exclude private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>();
 
     @Exclude
     public static Bundle getScoutKeyBundle(String key) {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.SCOUT_KEY, key);
+        bundle.putString(SCOUT_KEY, key);
         return bundle;
     }
 
     @Exclude
     public static String getScoutKey(Bundle bundle) {
-        return bundle.getString(Constants.SCOUT_KEY);
+        return bundle.getString(SCOUT_KEY);
     }
 
     @Exclude

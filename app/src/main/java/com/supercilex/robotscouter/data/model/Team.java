@@ -47,6 +47,11 @@ public class Team implements Parcelable {
         }
     };
 
+    @Exclude private static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
+
+    @Exclude private static final String FIREBASE_TIMESTAMP = "timestamp";
+    @Exclude private static final String FIREBASE_TEMPLATE_KEY = "templateKey";
+
     @Exclude private static final int WEEK = 7;
 
     @Exclude private String mNumber;
@@ -94,25 +99,25 @@ public class Team implements Parcelable {
 
     @Exclude
     public static Team getTeam(Intent intent) {
-        return (Team) Preconditions.checkNotNull(intent.getParcelableExtra(Constants.INTENT_TEAM),
+        return (Team) Preconditions.checkNotNull(intent.getParcelableExtra(INTENT_TEAM),
                                                  "Team cannot be null");
     }
 
     @Exclude
     public static Team getTeam(Bundle arguments) {
-        return (Team) Preconditions.checkNotNull(arguments.getParcelable(Constants.INTENT_TEAM),
+        return (Team) Preconditions.checkNotNull(arguments.getParcelable(INTENT_TEAM),
                                                  "Team cannot be null");
     }
 
     @Exclude
     public Intent getIntent() {
-        return new Intent().putExtra(Constants.INTENT_TEAM, this);
+        return new Intent().putExtra(INTENT_TEAM, this);
     }
 
     @Exclude
     public Bundle getBundle() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.INTENT_TEAM, this);
+        bundle.putParcelable(INTENT_TEAM, this);
         return bundle;
     }
 
@@ -237,7 +242,7 @@ public class Team implements Parcelable {
     }
 
     @Keep
-    @PropertyName(Constants.FIREBASE_TIMESTAMP)
+    @PropertyName(FIREBASE_TIMESTAMP)
     public Object getServerValue() {
         if (mShouldUpdateTimestamp) {
             return ServerValue.TIMESTAMP;
@@ -280,7 +285,7 @@ public class Team implements Parcelable {
 
     public void updateTemplateKey(String key) {
         mTemplateKey = key;
-        getRef().child(Constants.FIREBASE_TEMPLATE_KEY).setValue(mTemplateKey);
+        getRef().child(FIREBASE_TEMPLATE_KEY).setValue(mTemplateKey);
     }
 
     public void delete() {

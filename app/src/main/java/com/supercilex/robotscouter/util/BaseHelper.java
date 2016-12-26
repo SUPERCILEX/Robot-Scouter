@@ -19,6 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.supercilex.robotscouter.R;
 
 public final class BaseHelper {
+    private static final String MANAGER_STATE = "manager_state";
+    private static final String ITEM_COUNT = "count";
+
     private static FirebaseDatabase sDatabase;
     private static FirebaseJobDispatcher sDispatcher;
 
@@ -64,8 +67,8 @@ public final class BaseHelper {
                                                 final RecyclerView.Adapter adapter,
                                                 final RecyclerView.LayoutManager layoutManager) {
         if (savedInstanceState != null) {
-            final Parcelable managerState = savedInstanceState.getParcelable(Constants.MANAGER_STATE);
-            final int count = savedInstanceState.getInt(Constants.ITEM_COUNT);
+            final Parcelable managerState = savedInstanceState.getParcelable(MANAGER_STATE);
+            final int count = savedInstanceState.getInt(ITEM_COUNT);
             if (adapter.getItemCount() >= count) {
                 layoutManager.onRestoreInstanceState(managerState);
             } else {
@@ -86,8 +89,8 @@ public final class BaseHelper {
                                              RecyclerView.Adapter adapter,
                                              RecyclerView.LayoutManager layoutManager) {
         if (adapter != null) {
-            outState.putParcelable(Constants.MANAGER_STATE, layoutManager.onSaveInstanceState());
-            outState.putInt(Constants.ITEM_COUNT, adapter.getItemCount());
+            outState.putParcelable(MANAGER_STATE, layoutManager.onSaveInstanceState());
+            outState.putInt(ITEM_COUNT, adapter.getItemCount());
         }
     }
 

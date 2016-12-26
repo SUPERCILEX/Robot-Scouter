@@ -13,7 +13,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.BaseHelper;
-import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskExecutor;
 
 import java.io.IOException;
@@ -22,9 +21,11 @@ import java.util.concurrent.Callable;
 import retrofit2.Response;
 
 public final class TbaApi implements Callable<Team> {
-    private static final int ERROR_404 = 404;
-    private static final String CHIEF_DELPHI = "cdphotothread";
+    private static final String TEAM_NICKNAME = "nickname";
+    private static final String TEAM_WEBSITE = "website";
     private static final String IMGUR = "imgur";
+    private static final String CHIEF_DELPHI = "cdphotothread";
+    private static final int ERROR_404 = 404;
 
     private Team mTeam;
     private Context mContext;
@@ -57,11 +58,11 @@ public final class TbaApi implements Callable<Team> {
         if (cannotContinue(mInfoTask, response)) return;
 
         JsonObject result = response.body();
-        JsonElement teamNickname = result.get(Constants.TEAM_NICKNAME);
+        JsonElement teamNickname = result.get(TEAM_NICKNAME);
         if (teamNickname != null && !teamNickname.isJsonNull()) {
             mTeam.setName(teamNickname.getAsString());
         }
-        JsonElement teamWebsite = result.get(Constants.TEAM_WEBSITE);
+        JsonElement teamWebsite = result.get(TEAM_WEBSITE);
         if (teamWebsite != null && !teamWebsite.isJsonNull()) {
             mTeam.setWebsite(teamWebsite.getAsString());
         }
