@@ -15,13 +15,16 @@
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
-    <style name="RobotScouter.HintText" parent="TextAppearance.Design.Hint">
-        <item name="android:textColor">@color/color_accent</item>
+    <style name="RobotScouter.Text">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="RobotScouter.Text.HintText" parent="TextAppearance.Design.Hint">
         <item name="android:textSize">16sp</item>
         <item name="android:lineSpacingExtra">8sp</item>
     </style>
 
-    <style name="RobotScouter.ErrorText" parent="RobotScouter.HintText">
+    <style name="RobotScouter.Text.ErrorText">
         <item name="android:textColor">@color/errorColor</item>
     </style>
 
