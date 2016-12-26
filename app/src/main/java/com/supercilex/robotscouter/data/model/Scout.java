@@ -38,7 +38,7 @@ public class Scout {
         return Constants.FIREBASE_SCOUT_INDICES.child(AuthHelper.getUid());
     }
 
-    public static void add(Team team) {
+    public static String add(Team team) {
         DatabaseReference indexRef = getIndicesRef().push();
         indexRef.setValue(Long.parseLong(team.getNumber()));
         DatabaseReference scoutRef = Constants.FIREBASE_SCOUTS.child(indexRef.getKey());
@@ -50,6 +50,7 @@ public class Scout {
             scoutCopier.setFromQuery(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()));
         }
         scoutCopier.performTransformation();
+        return indexRef.getKey();
     }
 
     public static void delete(String key) {

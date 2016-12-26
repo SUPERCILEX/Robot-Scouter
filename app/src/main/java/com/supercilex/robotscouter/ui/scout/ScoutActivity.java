@@ -67,18 +67,21 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
         mTeam = Team.getTeam(getIntent());
         mHolder.bind(mTeam);
-        addTeamListener();
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        String scoutKey = null;
+        if (savedInstanceState != null) {
+            scoutKey = savedInstanceState.getString(Constants.SCOUT_KEY);
+        }
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              mTeam.getNumber());
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+                                              mTeam.getNumber(),
+                                              scoutKey);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        if (savedInstanceState != null) {
-            mPagerAdapter.setSavedTabKey(savedInstanceState.getString(Constants.SCOUT_KEY));
-        }
+
+        addTeamListener();
 
         if (savedInstanceState == null && mHelper.isOffline()) {
             mHelper.showSnackbar(R.string.no_connection, Snackbar.LENGTH_SHORT);
@@ -94,7 +97,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(Constants.SCOUT_KEY, mPagerAdapter.getSelectedTabKey());
+        outState.putString(Constants.SCOUT_KEY, mPagerAdapter.getCurrentScoutKey());
         super.onSaveInstanceState(outState);
     }
 
@@ -109,8 +112,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_scout:
-                Scout.add(mTeam);
-                mPagerAdapter.setManuallyAddedScout();
+                mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
                 break;
             case R.id.action_share:
                 DeepLinkSender.launchInvitationIntent(this, mTeam);
@@ -192,15 +194,11 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             });
         } else {
             mTeam.getRef().addValueEventListener(this);
-            if (shouldAddNewScout()) {
-                Scout.add(mTeam);
+            if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
+                mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
                 getIntent().putExtra(INTENT_ADD_SCOUT, false);
             }
         }
-    }
-
-    private boolean shouldAddNewScout() {
-        return getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false);
     }
 
     @Override

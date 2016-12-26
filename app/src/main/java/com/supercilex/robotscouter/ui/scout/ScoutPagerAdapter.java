@@ -4,7 +4,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.text.TextUtils;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
@@ -16,21 +15,20 @@ import com.supercilex.robotscouter.data.model.Scout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements ValueEventListener {
-    private static final int SAVE_STATE = 1;
-    private static final int UPDATE = 0;
-
+public class ScoutPagerAdapter extends FragmentStatePagerAdapter
+        implements ValueEventListener, TabLayout.OnTabSelectedListener {
     private List<String> mKeys = new ArrayList<>();
-
+    private String mCurrentScoutKey;
     private TabLayout mTabLayout;
-    private String mSavedTabKey;
-    private boolean mIsManuallyAddedTab;
-
     private Query mQuery;
 
-    public ScoutPagerAdapter(FragmentManager fm, TabLayout tabLayout, String teamNumber) {
+    public ScoutPagerAdapter(FragmentManager fm,
+                             TabLayout tabLayout,
+                             String teamNumber,
+                             String currentScoutKey) {
         super(fm);
         mTabLayout = tabLayout;
+        mCurrentScoutKey = currentScoutKey;
         mQuery = Scout.getIndicesRef().orderByValue().equalTo(Long.parseLong(teamNumber));
         mQuery.addValueEventListener(this);
     }
@@ -55,57 +53,55 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter implements Valu
         return "SCOUT " + (getCount() - position);
     }
 
+    public String getCurrentScoutKey() {
+        return mCurrentScoutKey;
+    }
+
+    public void setCurrentScoutKey(String currentScoutKey) {
+        mCurrentScoutKey = currentScoutKey;
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        mCurrentScoutKey = mKeys.get(tab.getPosition());
+    }
+
     @Override
     public void onDataChange(DataSnapshot snapshot) {
-        String selectedTabKey = getSelectedTabKey();
         mKeys.clear();
         for (DataSnapshot scoutIndex : snapshot.getChildren()) {
             mKeys.add(0, scoutIndex.getKey());
         }
 
+        mTabLayout.removeOnTabSelectedListener(this);
         notifyDataSetChanged();
-        if (mIsManuallyAddedTab) {
-            TabLayout.Tab tab = mTabLayout.getTabAt(0);
-            if (tab != null) tab.select();
-            mIsManuallyAddedTab = false;
+        if (mCurrentScoutKey != null) {
+            selectTab(mKeys.indexOf(mCurrentScoutKey));
         } else {
-            if (!TextUtils.isEmpty(mSavedTabKey)) { // NOPMD
-                selectTab(mSavedTabKey, SAVE_STATE);
-                mSavedTabKey = null; // NOPMD todo maybe?
-            } else if (!TextUtils.isEmpty(selectedTabKey)) {
-                selectTab(selectedTabKey, UPDATE);
-            }
+            selectTab(0);
         }
+        mTabLayout.addOnTabSelectedListener(this);
     }
 
-    public void cleanup() {
-        mQuery.removeEventListener(this);
-    }
-
-    public String getSelectedTabKey() {
-        if (mTabLayout.getSelectedTabPosition() == -1) {
-            return null;
-        } else {
-            return mKeys.get((getCount() - 1) - mTabLayout.getSelectedTabPosition());
-        }
-    }
-
-    public void setSavedTabKey(String savedTabKey) {
-        mSavedTabKey = savedTabKey;
-    }
-
-    public void setManuallyAddedScout() {
-        mIsManuallyAddedTab = true;
-    }
-
-    private void selectTab(String selectedTabKey, int adjust) {
-        TabLayout.Tab tab = mTabLayout.getTabAt(getCount() -
-                                                        (mKeys.indexOf(selectedTabKey) + adjust));
+    private void selectTab(int index) {
+        TabLayout.Tab tab = mTabLayout.getTabAt(index);
         if (tab != null) tab.select();
     }
 
     @Override
     public void onCancelled(DatabaseError error) {
         FirebaseCrash.report(error.toException());
+    }
+
+    public void cleanup() {
+        mQuery.removeEventListener(this);
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
     }
 }
