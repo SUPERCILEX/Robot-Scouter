@@ -76,10 +76,10 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         mTabLayout.removeOnTabSelectedListener(this);
         notifyDataSetChanged();
         mTabLayout.addOnTabSelectedListener(this);
-        if (mCurrentScoutKey != null) {
-            selectTab(mKeys.indexOf(mCurrentScoutKey));
-        } else {
+        if (mCurrentScoutKey == null) {
             selectTab(0);
+        } else {
+            selectTab(mKeys.indexOf(mCurrentScoutKey));
         }
     }
 
@@ -99,9 +99,11 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
+        // Not interesting
     }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+        // Not interesting
     }
 }
