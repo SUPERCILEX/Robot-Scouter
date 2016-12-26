@@ -60,7 +60,7 @@ public class Scout {
 
     public static void deleteAll(String teamNumber) {
         getIndicesRef().orderByValue()
-                .equalTo(Long.valueOf(teamNumber))
+                .equalTo(Long.parseLong(teamNumber))
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
