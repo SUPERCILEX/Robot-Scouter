@@ -31,7 +31,7 @@ public class LicensesDialog extends DialogBase {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View rootView = View.inflate(getContext(), R.layout.recycler_view, null);
 
-        List<LicenseEntry> licenses = new ArrayList<>();
+        List<LicenseEntry> licenses = new ArrayList<>(); // TODO check that I have them all
 
         licenses.add(Licenses.noContent("Firebase",
                                         "Google Inc.",
@@ -53,9 +53,9 @@ public class LicensesDialog extends DialogBase {
 
         Licenses.load(licenses);
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getContext())
                 .setView(rootView)
-                .setTitle(getString(R.string.licenses))
+                .setTitle(R.string.licenses)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
     }

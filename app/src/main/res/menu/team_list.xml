@@ -21,4 +21,10 @@
         android:title="@string/licenses"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="3"
+        android:title="@string/about"
+        app:showAsAction="never"/>
+
 </menu>

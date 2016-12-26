@@ -18,11 +18,15 @@
     <string name="share_message">Edit team %s with me!</string>
     <string name="share_call_to_action">Import team %s into Robot Scouter</string>
 
-    <string name="licenses">Licenses</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="sign_in_failed">Anonymous sign in failed</string>
+
+    <string name="about">About</string>
+    <string name="licenses">Licenses</string>
+
+    <string name="developed_with_love">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a>!</string>
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>

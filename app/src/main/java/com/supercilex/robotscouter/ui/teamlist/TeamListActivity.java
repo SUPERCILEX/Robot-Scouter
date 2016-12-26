@@ -48,6 +48,9 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
             case R.id.action_licenses:
                 LicensesDialog.show(getSupportFragmentManager());
                 break;
+            case R.id.action_about:
+                AboutDialog.show(getSupportFragmentManager());
+                break;
             default:
                 return false;
         }
