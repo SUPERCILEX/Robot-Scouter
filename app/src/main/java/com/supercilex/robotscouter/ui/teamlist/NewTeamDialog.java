@@ -19,7 +19,7 @@ import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 public class NewTeamDialog extends KeyboardDialog implements TextView.OnEditorActionListener {
     private static final String TAG = "NewTeamDialog";
 
-    private TextInputLayout mInputLayout;
+    private TextInputLayout mTeamNumberLayout;
 
     public static void show(FragmentManager manager) {
         new NewTeamDialog().show(manager, TAG);
@@ -29,8 +29,8 @@ public class NewTeamDialog extends KeyboardDialog implements TextView.OnEditorAc
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View rootView = View.inflate(getContext(), R.layout.dialog_new_team, null);
-        mInputLayout = (TextInputLayout) rootView.findViewById(R.id.input_layout);
-        mInputLayout.getEditText().setOnEditorActionListener(this);
+        mTeamNumberLayout = (TextInputLayout) rootView.findViewById(R.id.team_number_layout);
+        mTeamNumberLayout.getEditText().setOnEditorActionListener(this);
         return createDialog(rootView, R.string.new_scout);
     }
 
@@ -39,7 +39,7 @@ public class NewTeamDialog extends KeyboardDialog implements TextView.OnEditorAc
         if (event != null
                 && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
                 || (actionId == EditorInfo.IME_ACTION_DONE)
-                && !TextUtils.isEmpty(mInputLayout.getEditText().getText())) {
+                && !TextUtils.isEmpty(mTeamNumberLayout.getEditText().getText())) {
             onClick();
             return true;
         }
@@ -48,13 +48,13 @@ public class NewTeamDialog extends KeyboardDialog implements TextView.OnEditorAc
 
     @Override
     public boolean onClick() {
-        String teamNumber = mInputLayout.getEditText().getText().toString();
+        String teamNumber = mTeamNumberLayout.getEditText().getText().toString();
         if (isValid(teamNumber)) {
             teamNumber = String.valueOf(Long.parseLong(teamNumber));
             ScoutActivity.start(getContext(), new Team.Builder(teamNumber).build(), true);
             return true;
         } else {
-            mInputLayout.setError(getString(R.string.invalid_team_number));
+            mTeamNumberLayout.setError(getString(R.string.invalid_team_number));
             return false;
         }
     }

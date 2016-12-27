@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.scout;
+package com.supercilex.robotscouter.ui;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.KeyboardDialog;
 
 public class TeamDetailsDialog extends KeyboardDialog {
     private static final String TAG = "TeamDetailsDialog";

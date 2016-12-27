@@ -13,7 +13,7 @@
         android:layout_marginTop="16dp"
         android:contentDescription="@string/accessibility_decrement_counter"
         android:src="@drawable/ic_remove_black_24dp"
-        app:layout_constraintRight_toLeftOf="@+id/count"
+        app:layout_constraintRight_toLeftOf="@id/count"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
@@ -26,8 +26,8 @@
         android:textSize="18sp"
         android:textStyle="normal|bold"
         app:layout_constraintBottom_toBottomOf="@+id/increment_counter"
-        app:layout_constraintRight_toLeftOf="@+id/increment_counter"
-        app:layout_constraintTop_toTopOf="@+id/increment_counter"
+        app:layout_constraintRight_toLeftOf="@id/increment_counter"
+        app:layout_constraintTop_toTopOf="@id/increment_counter"
         tools:text="10"/>
 
     <ImageButton
