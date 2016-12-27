@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.data.model; // NOPMD
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -10,11 +11,14 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
+import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.job.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
@@ -309,6 +313,27 @@ public class Team implements Parcelable {
                 DownloadTeamDataJob.start(this);
             }
         }
+    }
+
+    public void visitTbaWebsite(Context context) {
+        getCustomTabsIntent(context).launchUrl(
+                context,
+                Uri.parse("https://www.thebluealliance.com/team/" + getNumber()));
+    }
+
+    public void visitTeamWebsite(Context context) {
+        getCustomTabsIntent(context).launchUrl(context, Uri.parse(getWebsite()));
+    }
+
+    private CustomTabsIntent getCustomTabsIntent(Context context) {
+        return new CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
+                .setShowTitle(true)
+                .addDefaultShareMenuItem()
+                .enableUrlBarHiding()
+                .setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left)
+                .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
+                .build();
     }
 
     @Override

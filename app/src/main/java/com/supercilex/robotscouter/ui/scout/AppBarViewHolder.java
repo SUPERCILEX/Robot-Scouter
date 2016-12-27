@@ -88,14 +88,13 @@ public class AppBarViewHolder {
     }
 
     public void initMenu(Menu menu) {
-        menu.findItem(R.id.action_visit_tba_team_website).setTitle(
-                String.format(mActivity.getString(R.string.menu_item_visit_team_website_on_tba),
-                              mTeam.getNumber()));
+        menu.findItem(R.id.action_visit_tba_team_website)
+                .setTitle(mActivity.getString(R.string.visit_team_website_on_tba,
+                                              mTeam.getNumber()));
 
         mActionVisitTeamWebsite = menu.findItem(R.id.action_visit_team_website);
-        mActionVisitTeamWebsite.setTitle(
-                String.format(mActivity.getString(R.string.menu_item_visit_team_website),
-                              mTeam.getNumber()));
+        mActionVisitTeamWebsite.setTitle(mActivity.getString(R.string.visit_team_website,
+                                                             mTeam.getNumber()));
         bindMenu();
     }
 

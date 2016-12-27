@@ -8,44 +8,33 @@
     <item
         android:id="@+id/action_new_scout"
         android:icon="@drawable/ic_add_white_24dp"
-        android:orderInCategory="0"
         android:title="@string/new_scout"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_share_white_24dp"
-        android:orderInCategory="1"
         android:title="@string/share"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_visit_tba_team_website"
         android:icon="@drawable/ic_launch_white_24dp"
-        android:orderInCategory="2"
-        android:title="@string/visit_team_on_the_blue_alliance"
-        app:showAsAction="never"/>
+        tools:ignore="MenuTitle"/>
 
     <item
         android:id="@+id/action_visit_team_website"
         android:icon="@drawable/ic_launch_white_24dp"
-        android:orderInCategory="3"
-        android:title="@string/visit_team_website"
-        android:visible="false"
-        app:showAsAction="never"/>
+        android:visible="false"/>
 
     <item
         android:id="@+id/action_edit_scout_templates"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:orderInCategory="4"
-        android:title="@string/edit_scout_templates"
-        app:showAsAction="never"/>
+        android:title="@string/edit_scout_templates"/>
 
     <item
         android:id="@+id/action_edit_team_details"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:orderInCategory="5"
-        android:title="@string/edit_details"
-        app:showAsAction="never"/>
+        android:title="@string/edit_team_details"/>
 
 </menu>

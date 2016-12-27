@@ -2,16 +2,13 @@ package com.supercilex.robotscouter.ui.scout;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -117,12 +114,10 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 DeepLinkSender.launchInvitationIntent(this, mTeam);
                 break;
             case R.id.action_visit_tba_team_website:
-                getCctIntent().launchUrl(
-                        this,
-                        Uri.parse("https://www.thebluealliance.com/team/" + mTeam.getNumber()));
+                mTeam.visitTbaWebsite(this);
                 break;
             case R.id.action_visit_team_website:
-                getCctIntent().launchUrl(this, Uri.parse(mTeam.getWebsite()));
+                mTeam.visitTeamWebsite(this);
                 break;
             case R.id.action_edit_scout_templates:
                 ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeam);
@@ -143,17 +138,6 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 return false;
         }
         return true;
-    }
-
-    private CustomTabsIntent getCctIntent() {
-        return new CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
-                .setShowTitle(true)
-                .addDefaultShareMenuItem()
-                .enableUrlBarHiding()
-                .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
-                .setExitAnimations(this, R.anim.slide_in_left, R.anim.slide_out_right)
-                .build();
     }
 
     private void addTeamListener() {

@@ -34,14 +34,12 @@
 
     <string name="new_scout">New scout</string>
 
-    <string name="visit_team_website">Visit team website</string>
-    <string name="menu_item_visit_team_website">Visit team %s\'s website</string>
-    <string name="visit_team_on_the_blue_alliance">Visit team on The Blue Alliance</string>
-    <string name="menu_item_visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
+    <string name="visit_team_website">Visit team %s\'s website</string>
+    <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
 
     <string name="edit_scout_templates">Edit scout templates</string>
 
-    <string name="edit_details">Edit team details</string>
+    <string name="edit_team_details">Edit team details</string>
     <string name="team_details">Team details</string>
     <string name="team_name">Team name</string>
     <string name="team_website">Team website</string>

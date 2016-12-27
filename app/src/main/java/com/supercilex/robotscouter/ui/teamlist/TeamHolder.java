@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.DeleteTeamDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.ui.scout.TeamDetailsDialog;
 
 public class TeamHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
@@ -84,12 +85,31 @@ public class TeamHolder extends RecyclerView.ViewHolder
         menu.setHeaderTitle(mTeam.getFormattedName());
         menu.add(Menu.NONE,
                  R.id.action_share,
-                 0,
-                 R.string.share).setOnMenuItemClickListener(this);
+                 Menu.NONE,
+                 R.string.share)
+                .setOnMenuItemClickListener(this);
+        menu.add(Menu.NONE,
+                 R.id.action_visit_tba_team_website,
+                 Menu.NONE,
+                 mFragment.getString(R.string.visit_team_website_on_tba, mTeam.getNumber()))
+                .setOnMenuItemClickListener(this);
+        if (!TextUtils.isEmpty(mTeam.getWebsite())) {
+            menu.add(Menu.NONE,
+                     R.id.action_visit_team_website,
+                     Menu.NONE,
+                     mFragment.getString(R.string.visit_team_website, mTeam.getNumber()))
+                    .setOnMenuItemClickListener(this);
+        }
+        menu.add(Menu.NONE,
+                 R.id.action_edit_team_details,
+                 Menu.NONE,
+                 R.string.edit_team_details)
+                .setOnMenuItemClickListener(this);
         menu.add(Menu.NONE,
                  R.id.action_delete,
-                 0,
-                 R.string.delete).setOnMenuItemClickListener(this);
+                 Menu.NONE,
+                 R.string.delete)
+                .setOnMenuItemClickListener(this);
     }
 
     @Override
@@ -97,6 +117,15 @@ public class TeamHolder extends RecyclerView.ViewHolder
         switch (item.getItemId()) {
             case R.id.action_share:
                 DeepLinkSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
+                break;
+            case R.id.action_visit_tba_team_website:
+                mTeam.visitTbaWebsite(mFragment.getContext());
+                break;
+            case R.id.action_visit_team_website:
+                mTeam.visitTeamWebsite(mFragment.getContext());
+                break;
+            case R.id.action_edit_team_details:
+                TeamDetailsDialog.show(mTeam, mFragment.getActivity().getSupportFragmentManager());
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.show(mFragment.getActivity().getSupportFragmentManager(), mTeam);

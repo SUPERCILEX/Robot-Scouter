@@ -62,13 +62,12 @@ public class DeepLinkSender {
     }
 
     private Intent getInvitationIntent(String deepLink) {
-        return new AppInviteInvitation.IntentBuilder(String.format(mActivity.getString(R.string.share_title),
-                                                                   mTeam.getFormattedName()))
-                .setMessage(String.format(mActivity.getString(R.string.share_message),
-                                          mTeam.getFormattedName()))
+        return new AppInviteInvitation.IntentBuilder(mActivity.getString(R.string.share_title,
+                                                                         mTeam.getFormattedName()))
+                .setMessage(mActivity.getString(R.string.share_message, mTeam.getFormattedName()))
                 .setDeepLink(Uri.parse(deepLink))
-                .setEmailSubject(String.format(mActivity.getString(R.string.share_call_to_action),
-                                               mTeam.getFormattedName()))
+                .setEmailSubject(mActivity.getString(R.string.share_call_to_action,
+                                                     mTeam.getFormattedName()))
                 .setEmailHtmlContent(getFormattedHtml())
                 .build();
     }
