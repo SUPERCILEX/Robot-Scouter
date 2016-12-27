@@ -116,7 +116,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                DeepLinkSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
+                TeamSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
                 break;
             case R.id.action_visit_tba_team_website:
                 mTeam.visitTbaWebsite(mFragment.getContext());

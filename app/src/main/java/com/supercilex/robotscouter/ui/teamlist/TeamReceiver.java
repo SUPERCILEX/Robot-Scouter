@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DeepLinkReceiver implements ResultCallback<AppInviteInvitationResult> {
+public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     public static final String UTM_SOURCE = "utm_source";
     public static final String UTM_SOURCE_VALUE = "robotscouter";
     public static final String TEAM_KEY = "team";
@@ -34,7 +34,7 @@ public class DeepLinkReceiver implements ResultCallback<AppInviteInvitationResul
 
     private FragmentActivity mActivity;
 
-    private DeepLinkReceiver(FragmentActivity activity) {
+    private TeamReceiver(FragmentActivity activity) {
         mActivity = activity;
 
         // Check for deep links
@@ -48,8 +48,8 @@ public class DeepLinkReceiver implements ResultCallback<AppInviteInvitationResul
                 .setResultCallback(this);
     }
 
-    public static DeepLinkReceiver init(FragmentActivity activity) {
-        return new DeepLinkReceiver(activity);
+    public static TeamReceiver init(FragmentActivity activity) {
+        return new TeamReceiver(activity);
     }
 
     @Override

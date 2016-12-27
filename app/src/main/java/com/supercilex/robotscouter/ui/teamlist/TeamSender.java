@@ -21,14 +21,14 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
-public class DeepLinkSender {
-    private static final String APP_LINK_START = "https://supercilex.github.io/?" + DeepLinkReceiver.TEAM_KEY + "=";
-    private static final String APP_LINK_END = "&" + DeepLinkReceiver.UTM_SOURCE + "=" + DeepLinkReceiver.UTM_SOURCE_VALUE;
+public class TeamSender {
+    private static final String APP_LINK_START = "https://supercilex.github.io/?" + TeamReceiver.TEAM_KEY + "=";
+    private static final String APP_LINK_END = "&" + TeamReceiver.UTM_SOURCE + "=" + TeamReceiver.UTM_SOURCE_VALUE;
 
     private FragmentActivity mActivity;
     private Team mTeam;
 
-    public DeepLinkSender(FragmentActivity activity, Team team) {
+    public TeamSender(FragmentActivity activity, Team team) {
         mActivity = activity;
         mTeam = team;
     }
@@ -40,11 +40,11 @@ public class DeepLinkSender {
                                     Snackbar.LENGTH_LONG);
             return;
         }
-        new DeepLinkSender(activity, team).fetchKeysQuery();
+        new TeamSender(activity, team).fetchKeysQuery();
     }
 
     private void fetchKeysQuery() {
-        new KeysQueryBuilder(Scout.getIndicesRef(), DeepLinkReceiver.SCOUT_KEY)
+        new KeysQueryBuilder(Scout.getIndicesRef(), TeamReceiver.SCOUT_KEY)
                 .build()
                 .addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override

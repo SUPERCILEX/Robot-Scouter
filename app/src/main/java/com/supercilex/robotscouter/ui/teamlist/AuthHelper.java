@@ -34,7 +34,7 @@ public final class AuthHelper {
 
     private static FirebaseAuth sAuth;
 
-    private DeepLinkReceiver mLinkReceiver;
+    private TeamReceiver mLinkReceiver;
 
     private FragmentActivity mActivity;
     private TeamListFragment mTeamsFragment;
@@ -92,7 +92,7 @@ public final class AuthHelper {
 
     private void initDeepLinkReceiver() {
         if (mLinkReceiver == null) {
-            mLinkReceiver = DeepLinkReceiver.init(mActivity);
+            mLinkReceiver = TeamReceiver.init(mActivity);
         }
     }
 

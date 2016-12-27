@@ -27,8 +27,8 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.ui.AppCompatBase;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
-import com.supercilex.robotscouter.ui.teamlist.DeepLinkSender;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
+import com.supercilex.robotscouter.ui.teamlist.TeamSender;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 public class ScoutActivity extends AppCompatBase implements ValueEventListener {
@@ -111,7 +111,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
                 break;
             case R.id.action_share:
-                DeepLinkSender.launchInvitationIntent(this, mTeam);
+                TeamSender.launchInvitationIntent(this, mTeam);
                 break;
             case R.id.action_visit_tba_team_website:
                 mTeam.visitTbaWebsite(this);
