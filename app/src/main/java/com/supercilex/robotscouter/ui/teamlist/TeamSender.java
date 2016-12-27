@@ -36,7 +36,7 @@ public class TeamSender {
     public static void launchInvitationIntent(FragmentActivity activity, Team team) {
         if (BaseHelper.isOffline(activity)) {
             BaseHelper.showSnackbar(activity,
-                                    R.string.connection_required,
+                                    R.string.no_connection,
                                     Snackbar.LENGTH_LONG);
             return;
         }

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,7 +30,7 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
-public final class AuthHelper {
+public class AuthHelper {
     private static final int RC_SIGN_IN = 100;
 
     private static FirebaseAuth sAuth;
@@ -122,7 +123,7 @@ public final class AuthHelper {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         BaseHelper.showSnackbar(mActivity,
-                                                R.string.sign_in_failed,
+                                                R.string.anonymous_sign_in_failed,
                                                 Snackbar.LENGTH_LONG,
                                                 R.string.sign_in,
                                                 new View.OnClickListener() {
@@ -164,21 +165,51 @@ public final class AuthHelper {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN && resultCode == ResultCodes.OK) {
-            mTeamsFragment.resetAdapter();
-            BaseHelper.showSnackbar(mActivity, R.string.signed_in, Snackbar.LENGTH_LONG);
-            toggleMenuSignIn(true);
-            initDeepLinkReceiver();
-
-            User user = new User.Builder(getUser().getUid())
-                    .setEmail(getUser().getEmail())
-                    .setName(getUser().getDisplayName())
-                    .setPhotoUrl(getUser().getPhotoUrl())
-                    .build();
-            user.add();
-
+        if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-            if (response != null) user.transferData(response.getPrevUid());
+
+            if (resultCode == ResultCodes.OK) {
+                mTeamsFragment.resetAdapter();
+                BaseHelper.showSnackbar(mActivity, R.string.signed_in, Snackbar.LENGTH_LONG);
+                toggleMenuSignIn(true);
+
+                initDeepLinkReceiver();
+
+                User user = new User.Builder(getUser().getUid())
+                        .setEmail(getUser().getEmail())
+                        .setName(getUser().getDisplayName())
+                        .setPhotoUrl(getUser().getPhotoUrl())
+                        .build();
+                user.add();
+                if (response != null) user.transferData(response.getPrevUid());
+            } else {
+                if (response == null) return; // User cancelled sign in
+
+                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    BaseHelper.showSnackbar(mActivity,
+                                            R.string.no_connection,
+                                            Snackbar.LENGTH_LONG,
+                                            R.string.try_again,
+                                            new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    signIn();
+                                                }
+                                            });
+                    return;
+                }
+
+                BaseHelper.showSnackbar(mActivity,
+                                        R.string.sign_in_failed,
+                                        Snackbar.LENGTH_LONG,
+                                        R.string.try_again,
+                                        new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                signIn();
+                                            }
+                                        });
+            }
         }
     }
 

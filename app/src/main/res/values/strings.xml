@@ -3,7 +3,7 @@
 
     <!-- Common -->
     <string name="confirm_deletion">Are you sure?</string>
-    <string name="connection_required">No internet connection</string>
+    <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
 
     <!-- Team List Activity -->
@@ -21,7 +21,9 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
     <string name="signed_in">Successfully signed in!</string>
-    <string name="sign_in_failed">Anonymous sign in failed</string>
+    <string name="anonymous_sign_in_failed">Anonymous sign in failed</string>
+    <string name="sign_in_failed">Sign in failed</string>
+    <string name="try_again">Try again</string>
 
     <string name="about">About</string>
     <string name="licenses">Licenses</string>
@@ -30,7 +32,7 @@
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
-    <string name="no_connection">Offline. Data will be saved</string>
+    <string name="offline_reassurance">Offline. Data will be saved</string>
 
     <string name="new_scout">New scout</string>
 
