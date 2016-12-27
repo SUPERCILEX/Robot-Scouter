@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui;
+package com.supercilex.robotscouter.ui.common;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.DialogBase;
 
 public class DeleteTeamDialog extends DialogBase implements AlertDialog.OnClickListener {
     private static final String TAG = "DeleteTeamDialog";

@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui;
+package com.supercilex.robotscouter.ui.common;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
+
+import com.supercilex.robotscouter.ui.DialogBase;
 
 public abstract class KeyboardDialog extends DialogBase implements DialogInterface.OnShowListener {
     public abstract boolean onClick();

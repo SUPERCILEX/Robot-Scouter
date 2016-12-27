@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.KeyboardDialog;
+import com.supercilex.robotscouter.ui.common.KeyboardDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 public class NewTeamDialog extends KeyboardDialog implements TextView.OnEditorActionListener {

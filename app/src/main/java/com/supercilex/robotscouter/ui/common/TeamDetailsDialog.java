@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui;
+package com.supercilex.robotscouter.ui.common;
 
 import android.app.Dialog;
 import android.os.Bundle;

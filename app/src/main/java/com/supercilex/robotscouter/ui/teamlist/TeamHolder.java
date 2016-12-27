@@ -17,8 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.DeleteTeamDialog;
-import com.supercilex.robotscouter.ui.TeamDetailsDialog;
+import com.supercilex.robotscouter.ui.common.DeleteTeamDialog;
+import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 public class TeamHolder extends RecyclerView.ViewHolder
