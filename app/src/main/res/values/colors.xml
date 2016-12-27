@@ -3,5 +3,5 @@
     <color name="color_primary">#2A56C6</color>
     <color name="color_primary_dark">#1C3AA9</color>
     <color name="color_accent">#FF4081</color>
-    <color name="errorColor">#FF3300</color>
+    <color name="errorColor">#E62E00</color>
 </resources>
