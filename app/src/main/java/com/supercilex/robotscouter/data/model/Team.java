@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.data.model; // NOPMD
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,6 +16,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
+import com.supercilex.robotscouter.data.job.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
@@ -297,9 +300,15 @@ public class Team implements Parcelable {
         Scout.deleteAll(getNumber());
     }
 
-    public void fetchLatestData() {
+    public void fetchLatestData(Context context) {
         long differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp);
-        if (differenceDays >= WEEK) DownloadTeamDataJob.start(this);
+        if (differenceDays >= WEEK) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                DownloadTeamDataJob21.start(this, context);
+            } else {
+                DownloadTeamDataJob.start(this);
+            }
+        }
     }
 
     @Override

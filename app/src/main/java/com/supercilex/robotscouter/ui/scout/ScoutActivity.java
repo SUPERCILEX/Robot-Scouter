@@ -180,7 +180,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                                         BaseHelper.getDispatcher()
                                                 .cancel(mTeam.getNumber());
                                     } else {
-                                        mTeam.fetchLatestData();
+                                        mTeam.fetchLatestData(ScoutActivity.this);
                                     }
                                 }
                             });
