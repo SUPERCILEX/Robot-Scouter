@@ -117,21 +117,12 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 DeepLinkSender.launchInvitationIntent(this, mTeam);
                 break;
             case R.id.action_visit_tba_team_website:
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                builder.setToolbarColor(ContextCompat.getColor(this, R.color.color_primary));
-                builder.setShowTitle(true);
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(this,
-                                           Uri.parse("https://www.thebluealliance.com/team/"
-                                                             + mTeam.getNumber()));
+                getCctIntent().launchUrl(
+                        this,
+                        Uri.parse("https://www.thebluealliance.com/team/" + mTeam.getNumber()));
                 break;
             case R.id.action_visit_team_website:
-                CustomTabsIntent.Builder teamWebsiteBuilder = new CustomTabsIntent.Builder();
-                teamWebsiteBuilder.setToolbarColor(ContextCompat.getColor(this,
-                                                                          R.color.color_primary));
-                teamWebsiteBuilder.setShowTitle(true);
-                CustomTabsIntent teamWebsiteCustomTabsIntent = teamWebsiteBuilder.build();
-                teamWebsiteCustomTabsIntent.launchUrl(this, Uri.parse(mTeam.getWebsite()));
+                getCctIntent().launchUrl(this, Uri.parse(mTeam.getWebsite()));
                 break;
             case R.id.action_edit_scout_templates:
                 ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeam);
@@ -152,6 +143,17 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 return false;
         }
         return true;
+    }
+
+    private CustomTabsIntent getCctIntent() {
+        return new CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(this, R.color.color_primary))
+                .setShowTitle(true)
+                .addDefaultShareMenuItem()
+                .enableUrlBarHiding()
+                .setStartAnimations(this, R.anim.slide_in_right, R.anim.slide_out_left)
+                .setExitAnimations(this, R.anim.slide_in_left, R.anim.slide_out_right)
+                .build();
     }
 
     private void addTeamListener() {
