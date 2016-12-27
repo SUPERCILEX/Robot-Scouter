@@ -23,8 +23,8 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutFragment extends FragmentBase implements MenuItem.OnMenuItemClickListener {
-    protected FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
-    protected LinearLayoutManager mManager;
+    private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
+    private LinearLayoutManager mManager;
     private String mScoutKey;
 
     public static ScoutFragment newInstance(String key) {
