@@ -3,8 +3,8 @@
 
     <!-- Common -->
     <string name="confirm_deletion">Are you sure?</string>
-    <string name="connection_required">You need to be online</string>
-    <string name="sign_in_required">You need to be signed in</string>
+    <string name="connection_required">No internet connection</string>
+    <string name="sign_in_required">Sign in required</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
@@ -26,7 +26,7 @@
     <string name="about">About</string>
     <string name="licenses">Licenses</string>
 
-    <string name="developed_with_love">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a>!</string>
+    <string name="developed_with_love">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!</string>
 
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
