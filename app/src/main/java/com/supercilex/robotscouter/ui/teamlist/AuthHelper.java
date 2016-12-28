@@ -104,7 +104,7 @@ public class AuthHelper {
                         .setTheme(R.style.RobotScouter)
                         .setLogo(R.drawable.launch_logo)
                         .setShouldLinkAccounts(true)
-                        .setTosUrl("https://www.example.com") // TODO
+                        .setTosUrl("https://supercilex.github.io/privacy-policy/")
                         .build(),
                 RC_SIGN_IN);
     }
