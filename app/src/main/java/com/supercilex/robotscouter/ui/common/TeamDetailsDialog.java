@@ -55,7 +55,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     @Override
     protected EditText getLastEditText() {
-        return mMediaEditText;
+        return mWebsiteEditText;
     }
 
     @Override
