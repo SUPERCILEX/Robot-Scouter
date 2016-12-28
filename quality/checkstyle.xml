@@ -19,7 +19,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
     </module>
 
     <module name="RegexpSingleline">
-        <!-- Checks that FIXME is not used in comments.  TODO is preferred.
+        <!-- Checks that FIX-ME is not used in comments.  TO-DO is preferred.
         -->
         <property name="format" value="((//.*)|(\*.*))FIXME"/>
         <property name="message"

@@ -20,40 +20,4 @@
             line="8"/>
     </issue>
 
-    <!-- TODO remove -->
-    <issue
-        id="IconDensities"
-        message="Missing the following drawables in `drawable-hdpi`: launch_logo.png (found in drawable-mdpi)">
-        <location
-            file="app/src/main/res/drawable-hdpi"/>
-    </issue>
-
-    <issue
-        id="IconMissingDensityFolder"
-        message="Missing density variation folders in `src/main/res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi">
-        <location
-            file="app/src/main/res"/>
-    </issue>
-
-    <issue
-        id="IconDensities"
-        message="Missing the following drawables in `drawable-xhdpi`: launch_logo.png (found in drawable-mdpi)">
-        <location
-            file="app/src/main/res/drawable-xhdpi"/>
-    </issue>
-
-    <issue
-        id="IconDensities"
-        message="Missing the following drawables in `drawable-xxhdpi`: launch_logo.png (found in drawable-mdpi)">
-        <location
-            file="app/src/main/res/drawable-xxhdpi"/>
-    </issue>
-
-    <issue
-        id="IconDensities"
-        message="Missing the following drawables in `drawable-xxxhdpi`: launch_logo.png (found in drawable-mdpi)">
-        <location
-            file="app/src/main/res/drawable-xxxhdpi"/>
-    </issue>
-
 </issues>
