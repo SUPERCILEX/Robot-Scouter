@@ -12,7 +12,7 @@
         android:name=".RobotScouter"
         android:allowBackup="true"
         android:fullBackupContent="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="${appName}"
         android:theme="@style/RobotScouter">
 
