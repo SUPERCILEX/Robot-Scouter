@@ -31,7 +31,7 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_add_white_24dp"
         app:fabSize="normal"
-        app:layout_behavior="com.supercilex.robotscouter.ui.FabBehaviorBase"/>
+        app:layout_behavior="com.supercilex.robotscouter.ui.HideOnScrollFabBehavior"/>
 
     <fragment
         android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
