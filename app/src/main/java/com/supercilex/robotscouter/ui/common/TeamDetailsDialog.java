@@ -95,7 +95,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) return; // Only consider views losing focus
 
-        switch (v.getId()) {
+        switch (v.getId()) { // NOPMD
             case R.id.name:
                 validateNotEmpty(mNameInputLayout);
                 break;
@@ -137,11 +137,11 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     private String formatUrl(String url) {
-        url = url.trim();
-        if (url.contains("http://") || url.contains("https://")) {
-            return url;
+        String trimmedUrl = url.trim();
+        if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
+            return trimmedUrl;
         } else {
-            return "http://" + url;
+            return "http://" + trimmedUrl;
         }
     }
 }
