@@ -20,4 +20,19 @@
             line="8"/>
     </issue>
 
+    <issue
+        category="Usability:Icons"
+        explanation="Launcher icons should be in the PNG format. This requirement is enforced by the The Google Play Developer Console."
+        id="IconLauncherFormat"
+        message="Launcher icons must be in PNG format"
+        priority="6"
+        quickfix="studio"
+        severity="Error"
+        summary="Wrong launcher icon format"
+        url="https://developer.android.com/guide/practices/ui_guidelines/icon_design_launcher.html#size"
+        urls="https://developer.android.com/guide/practices/ui_guidelines/icon_design_launcher.html#size">
+        <location
+            file="app/src/main/res/drawable/ic_launcher.xml"/>
+    </issue>
+
 </issues>
