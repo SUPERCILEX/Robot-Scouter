@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseAppIndex;
+import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.Indexable;
 import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
 import com.google.firebase.appindexing.builders.Indexables;
@@ -283,6 +284,10 @@ public class Team implements Parcelable {
         Long number = getNumberAsLong();
         index.setValue(number, number);
         forceUpdate();
+        FirebaseUserActions.getInstance()
+                .end(new Action.Builder(Action.Builder.ADD_ACTION)
+                             .setObject(getFormattedName(), getDeepLink())
+                             .build());
     }
 
     public void update(Team newTeam) {
