@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseAppIndex;
@@ -190,7 +191,7 @@ public class Team implements Parcelable {
     @Exclude
     @NonNull
     public String getFormattedName() {
-        return getName() == null ? getNumber() : getNumber() + " - " + getName();
+        return TextUtils.isEmpty(getName()) ? getNumber() : getNumber() + " - " + getName();
     }
 
     @Keep
