@@ -42,8 +42,9 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
             indexableTeams.add(team.getIndexable());
         }
 
-        if (indexableTeams.size() > 0) {
-            FirebaseAppIndex.getInstance().update(indexableTeams.toArray(new Indexable[0]));
+        if (!indexableTeams.isEmpty()) {
+            FirebaseAppIndex.getInstance()
+                    .update(indexableTeams.toArray(new Indexable[indexableTeams.size()]));
         }
     }
 
@@ -68,11 +69,11 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
             List<Task<Void>> teamTasks = new ArrayList<>();
 
             for (DataSnapshot teamIndexSnapshot : snapshot.getChildren()) {
-                final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>();
+                final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>(); // NOPMD
                 teamTasks.add(teamTask.getTask());
 
                 Constants.FIREBASE_TEAMS.child(teamIndexSnapshot.getKey())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                        .addListenerForSingleValueEvent(new ValueEventListener() { // NOPMD
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 if (snapshot.getValue() == null) {
