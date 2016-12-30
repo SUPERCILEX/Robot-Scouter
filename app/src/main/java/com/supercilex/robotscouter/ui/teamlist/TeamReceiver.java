@@ -50,13 +50,14 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
         Uri deepLink = mActivity.getIntent().getData();
-        // Consume intent
-        mActivity.setIntent(new Intent());
         if (deepLink == null
                 || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
                 || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
             return; // Nothing to see here
         }
+
+        // Consume intent
+        mActivity.setIntent(new Intent());
 
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {

@@ -114,8 +114,8 @@ public class AuthHelper {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult result) {
-                        initDeepLinkReceiver();
                         DatabaseInitializer.init();
+                        initDeepLinkReceiver();
                     }
                 })
                 .addOnSuccessListener(mActivity, new OnSuccessListener<AuthResult>() {
