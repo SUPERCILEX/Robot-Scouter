@@ -1,8 +1,6 @@
-# Robot Scouter — FIRST Robot Scouting made simple and collaborative
+# Robot Scouter — FIRST Robot Scouting made simple and collaborative [![Build Status](https://travis-ci.org/SUPERCILEX/Robot-Scouter.svg?branch=master)](https://travis-ci.org/SUPERCILEX/Robot-Scouter)
 
-[![Build Status](https://travis-ci.org/SUPERCILEX/Robot-Scouter.svg?branch=master)](https://travis-ci.org/SUPERCILEX/Robot-Scouter)
-
-<a href='https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' style="width:450px; height:150px;"/></a>
+<a href='https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="270" height="100"/></a>
 
 Robot Scouter is an open-source Android app that makes FIRST Robot scouting simple and collaborative.
 
@@ -26,13 +24,13 @@ the [contribution guidelines](CONTRIBUTING.md) before getting in too deep.
 
 ### Learning
  * Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter
- * Take careful note of the [Firebase Real-time Database]() and [Firebase-UI](https://github.com/firebase/FirebaseUI-Android)
+ * Take careful note of the [Firebase Realtime Database](https://firebase.google.com/docs/database/) and [Firebase-UI](https://github.com/firebase/FirebaseUI-Android)
 
 ## Environment setup
 
-1. [Move the dummy files](setup.sh#L6) into position
+1. [Move the dummy files](setup.sh#L7) into position
 1. If you are working with the database or need access to other Firebase technologies,
-[create your own Firebase project]() and replace the dummy [google-services.json](travis-dummies/google-services.json)
+[create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase) and replace the dummy [google-services.json](travis-dummies/google-services.json)
 with the one created in your Firebase project
 1. Run `./gradlew check` to make sure the Travis build will pass
 1. That's it!
