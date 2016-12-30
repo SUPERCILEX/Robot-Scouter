@@ -11,9 +11,6 @@ import android.view.View;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.AppCompatBase;
 
-// TODO: 08/10/2016 add Firebase analytics to menu item clicks
-// so I know what stuff to put on top
-
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatBase implements View.OnClickListener {
     private AuthHelper mAuthHelper;
