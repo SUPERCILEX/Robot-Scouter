@@ -22,17 +22,15 @@
 
     <issue
         category="Usability:Icons"
-        explanation="Launcher icons should be in the PNG format. This requirement is enforced by the The Google Play Developer Console."
-        id="IconLauncherFormat"
-        message="Launcher icons must be in PNG format"
-        priority="6"
-        quickfix="studio"
-        severity="Error"
-        summary="Wrong launcher icon format"
-        url="https://developer.android.com/guide/practices/ui_guidelines/icon_design_launcher.html#size"
-        urls="https://developer.android.com/guide/practices/ui_guidelines/icon_design_launcher.html#size">
+        explanation="If an icon is repeated under different names, you can consolidate and just use one of the icons and delete the others to make your application smaller. However, duplicated icons usually are not intentional and can sometimes point to icons that were accidentally overwritten or accidentally not updated."
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: ic_launch_logo.png, ic_launcher.png"
+        priority="3" severity="Error"
+        summary="Duplicated icons under different names">
         <location
-            file="app/src/main/res/drawable/ic_launcher.xml"/>
+            file="app\src\main\res\drawable-xxhdpi\ic_launcher.png"/>
+        <location
+            file="app\src\main\res\drawable-mdpi\ic_launch_logo.png"/>
     </issue>
 
 </issues>

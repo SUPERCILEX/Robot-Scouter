@@ -102,7 +102,7 @@ public class AuthHelper {
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setProviders(Constants.ALL_PROVIDERS)
                         .setTheme(R.style.RobotScouter)
-                        .setLogo(R.drawable.ic_launcher)
+                        .setLogo(R.drawable.ic_logo)
                         .setShouldLinkAccounts(true)
                         .setTosUrl("https://supercilex.github.io/privacy-policy/")
                         .build(),
