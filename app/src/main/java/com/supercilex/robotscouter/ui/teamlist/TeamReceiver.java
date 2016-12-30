@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
@@ -17,20 +18,18 @@ import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
-    public static final String UTM_SOURCE = "utm_source";
-    public static final String UTM_SOURCE_VALUE = "robotscouter";
-    public static final String TEAM_KEY = "team";
-    public static final String SCOUT_KEY = "scout";
+    public static final String TEAM_QUERY_KEY = "team";
+    public static final String SCOUT_QUERY_KEY = "scout";
+    private static final String UTM_SOURCE = "utm_source";
+    private static final String UTM_SOURCE_VALUE = "robotscouter";
+
+    public static final String APP_LINK_BASE =
+            "https://supercilex.github.io/?" +
+                    TeamReceiver.UTM_SOURCE + "=" + TeamReceiver.UTM_SOURCE_VALUE +
+                    "&" + TeamReceiver.TEAM_QUERY_KEY + "=";
 
     private FragmentActivity mActivity;
 
@@ -54,59 +53,40 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
 
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
+        Uri deepLink = mActivity.getIntent().getData();
+        // Consume intent
+        mActivity.setIntent(new Intent());
+        if (deepLink == null
+                || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
+                || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
+            return; // Nothing to see here
+        }
+
+        // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
-            String deepLink = AppInviteReferral.getDeepLink(result.getInvitationIntent());
-            Map<String, List<String>> queryParams = splitQuery(deepLink);
+            Team team = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
 
-            if (queryParams.get(UTM_SOURCE).get(0).equals(UTM_SOURCE_VALUE)) {
-                // Consume intent
-                mActivity.setIntent(new Intent());
+            Team.getIndicesRef().addListenerForSingleValueEvent(
+                    new CheckTeamExistsListener(team.getKey(), team.getNumber()));
 
-                // Format: -key:2521
-                String[] team = queryParams.get(TEAM_KEY).get(0).split(":");
-                String teamKey = team[0];
-                String teamNumber = team[1];
-                Team.getIndicesRef().addListenerForSingleValueEvent(
-                        new CheckTeamExistsListener(teamKey, teamNumber));
-
-                List<String> scouts = queryParams.get(SCOUT_KEY);
-                for (String scoutKey : scouts) {
-                    Scout.getIndicesRef()
-                            .child(scoutKey)
-                            .setValue(Long.valueOf(teamNumber));
-                }
+            List<String> scouts = deepLink.getQueryParameters(SCOUT_QUERY_KEY);
+            for (String scoutKey : scouts) {
+                Scout.getIndicesRef()
+                        .child(scoutKey)
+                        .setValue(team.getNumberAsLong());
             }
+        } else { // Received normal intent
+            ScoutActivity.start(mActivity, getTeam(deepLink), false);
         }
     }
 
-    private Map<String, List<String>> splitQuery(String url) {
-        Map<String, List<String>> queryPairs = new HashMap<>();
-        String[] pairs = new String[0];
-        try {
-            pairs = new URL(url).getQuery().split("&");
-        } catch (MalformedURLException e) {
-            FirebaseCrash.report(e);
-        }
+    private Team getTeam(Uri deepLink) {
+        // Format: -key:2521
+        String[] team = deepLink.getQueryParameter(TEAM_QUERY_KEY).split(":");
+        String teamKey = team[0];
+        String teamNumber = team[1];
 
-        try {
-            for (String pair : pairs) {
-                int index = pair.indexOf('=');
-                String key = index > 0
-                        ? URLDecoder.decode(pair.substring(0, index), "UTF-8") : pair;
-
-                if (!queryPairs.containsKey(key)) {
-                    queryPairs.put(key, new ArrayList<String>()); // NOPMD
-                }
-
-                String value = index > 0 && pair.length() > index + 1
-                        ? URLDecoder.decode(pair.substring(index + 1), "UTF-8") : "";
-                queryPairs.get(key).add(value);
-            }
-        } catch (UnsupportedEncodingException e) {
-            FirebaseCrash.report(e);
-        }
-
-        return queryPairs;
+        return new Team.Builder(teamNumber).setKey(teamKey).build();
     }
 
     private class CheckTeamExistsListener implements ValueEventListener {

@@ -110,10 +110,11 @@ dependencies {
 
     // Firebase core
     compile "com.google.firebase:firebase-core:$playServicesVersion"
-    compile "com.google.firebase:firebase-messaging:$playServicesVersion"
-    compile "com.google.firebase:firebase-config:$playServicesVersion"
     compile "com.google.firebase:firebase-crash:$playServicesVersion"
     compile "com.google.firebase:firebase-invites:$playServicesVersion"
+    compile "com.google.firebase:firebase-appindexing:$playServicesVersion"
+    compile "com.google.firebase:firebase-config:$playServicesVersion"
+    compile "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // Third party
     compile 'com.github.bumptech.glide:glide:3.7.0'

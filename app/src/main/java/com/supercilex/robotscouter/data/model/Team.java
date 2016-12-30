@@ -14,14 +14,20 @@ import android.support.annotation.RestrictTo;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 
+import com.google.firebase.appindexing.Action;
+import com.google.firebase.appindexing.FirebaseAppIndex;
+import com.google.firebase.appindexing.Indexable;
+import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
+import com.google.firebase.appindexing.builders.Indexables;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.job.DownloadTeamDataJob;
-import com.supercilex.robotscouter.data.job.DownloadTeamDataJob21;
+import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
+import com.supercilex.robotscouter.data.client.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
+import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
 
@@ -71,7 +77,6 @@ public class Team implements Parcelable {
     @Exclude private boolean mHasCustomMedia;
     @Exclude private boolean mHasCustomWebsite;
     @Exclude private long mTimestamp;
-    @Exclude private boolean mShouldUpdateTimestamp = true;
 
     public Team() {
         // Needed for Firebase
@@ -134,6 +139,7 @@ public class Team implements Parcelable {
     }
 
     @Keep
+    @NonNull
     public String getNumber() {
         return mNumber;
     }
@@ -142,6 +148,11 @@ public class Team implements Parcelable {
     @RestrictTo(RestrictTo.Scope.TESTS)
     public void setNumber(String number) {
         mNumber = number;
+    }
+
+    @Exclude
+    public long getNumberAsLong() {
+        return Long.parseLong(mNumber);
     }
 
     @Exclude
@@ -176,6 +187,7 @@ public class Team implements Parcelable {
     }
 
     @Exclude
+    @NonNull
     public String getFormattedName() {
         return getName() == null ? getNumber() : getNumber() + " - " + getName();
     }
@@ -251,11 +263,7 @@ public class Team implements Parcelable {
     @Keep
     @PropertyName(FIREBASE_TIMESTAMP)
     public Object getServerValue() {
-        if (mShouldUpdateTimestamp) {
-            return ServerValue.TIMESTAMP;
-        } else {
-            return mTimestamp;
-        }
+        return ServerValue.TIMESTAMP;
     }
 
     @Exclude
@@ -272,7 +280,7 @@ public class Team implements Parcelable {
     public void add() {
         DatabaseReference index = getIndicesRef().push();
         mKey = index.getKey();
-        Long number = Long.valueOf(mNumber);
+        Long number = getNumberAsLong();
         index.setValue(number, number);
         forceUpdate();
     }
@@ -281,13 +289,12 @@ public class Team implements Parcelable {
         if (!mHasCustomName) mName = newTeam.getName();
         if (!mHasCustomWebsite) mWebsite = newTeam.getWebsite();
         if (!mHasCustomMedia) mMedia = newTeam.getMedia();
-        getRef().setValue(this);
+        forceUpdate();
     }
 
     public void forceUpdate() {
-        mShouldUpdateTimestamp = false;
         getRef().setValue(this);
-        mShouldUpdateTimestamp = true;
+        FirebaseAppIndex.getInstance().update(getIndexable());
     }
 
     public void updateTemplateKey(String key) {
@@ -301,7 +308,8 @@ public class Team implements Parcelable {
             Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey()).removeValue();
         }
         getRef().removeValue();
-        Scout.deleteAll(getNumber());
+        Scout.deleteAll(getNumberAsLong());
+        FirebaseAppIndex.getInstance().remove(getDeepLink());
     }
 
     public void fetchLatestData(Context context) {
@@ -325,6 +333,7 @@ public class Team implements Parcelable {
         getCustomTabsIntent(context).launchUrl(context, Uri.parse(getWebsite()));
     }
 
+    @Exclude
     private CustomTabsIntent getCustomTabsIntent(Context context) {
         return new CustomTabsIntent.Builder()
                 .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
@@ -333,6 +342,28 @@ public class Team implements Parcelable {
                 .enableUrlBarHiding()
                 .setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left)
                 .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
+                .build();
+    }
+
+    @Exclude
+    public Indexable getIndexable() {
+        DigitalDocumentBuilder builder = Indexables.digitalDocumentBuilder()
+                .setUrl(getDeepLink())
+                .setName(getFormattedName())
+                .setMetadata(new Indexable.Metadata.Builder().setWorksOffline(true));
+        if (getMedia() != null) builder.setImage(getMedia());
+        return builder.build();
+    }
+
+    @Exclude
+    public String getDeepLink() {
+        return TeamReceiver.APP_LINK_BASE + getKey() + ":" + getNumber();
+    }
+
+    @Exclude
+    public Action getViewAction() {
+        return new Action.Builder(Action.Builder.VIEW_ACTION)
+                .setObject(getFormattedName(), getDeepLink())
                 .build();
     }
 
@@ -403,8 +434,7 @@ public class Team implements Parcelable {
                 "Website: " + mWebsite + "\n" +
                 "Has custom name: " + mHasCustomName + "\n" +
                 "Has custom media: " + mHasCustomMedia + "\n" +
-                "Has custom website: " + mHasCustomWebsite + "\n" +
-                "Should update timestamp: " + mShouldUpdateTimestamp;
+                "Has custom website: " + mHasCustomWebsite + "\n";
     }
 
     public static class Builder implements com.supercilex.robotscouter.data.util.Builder<Team> {

@@ -15,6 +15,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -111,12 +112,17 @@ public class AuthHelper {
 
     private void signInAnonymously() {
         getAuth().signInAnonymously()
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult result) {
+                        initDeepLinkReceiver();
+                        DatabaseInitializer.init();
+                    }
+                })
                 .addOnSuccessListener(mActivity, new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult result) {
                         mTeamsFragment.resetAdapter();
-                        initDeepLinkReceiver();
-                        DatabaseInitializer.init();
                     }
                 })
                 .addOnFailureListener(mActivity, new OnFailureListener() {
@@ -140,18 +146,24 @@ public class AuthHelper {
     public void signOut() {
         AuthUI.getInstance()
                 .signOut(mActivity)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        signInAnonymously();
+                        FirebaseAppIndex.getInstance().removeAll();
+                    }
+                })
                 .addOnSuccessListener(mActivity, new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         mTeamsFragment.cleanup();
                         toggleMenuSignIn(false);
-                        signInAnonymously();
                     }
                 })
                 .addOnFailureListener(new TaskFailureLogger());
     }
 
-    public void startSignInResolution() {
+    public void showSignInResolution() {
         BaseHelper.showSnackbar(mActivity,
                                 R.string.sign_in_required,
                                 Snackbar.LENGTH_LONG,

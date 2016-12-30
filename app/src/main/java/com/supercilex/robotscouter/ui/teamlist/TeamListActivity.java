@@ -66,7 +66,7 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
             if (AuthHelper.isSignedIn()) {
                 NewTeamDialog.show(getSupportFragmentManager());
             } else {
-                mAuthHelper.startSignInResolution();
+                mAuthHelper.showSignInResolution();
             }
         }
     }

@@ -42,7 +42,7 @@ public class Scout {
 
     public static String add(Team team) {
         DatabaseReference indexRef = getIndicesRef().push();
-        indexRef.setValue(Long.parseLong(team.getNumber()));
+        indexRef.setValue(team.getNumberAsLong());
         DatabaseReference scoutRef = Constants.FIREBASE_SCOUTS.child(indexRef.getKey());
 
         FirebaseTransformer scoutCopier = new FirebaseCopier(scoutRef);
@@ -60,9 +60,9 @@ public class Scout {
         Constants.FIREBASE_SCOUTS.child(key).removeValue();
     }
 
-    public static void deleteAll(String teamNumber) {
+    public static void deleteAll(long teamNumber) {
         getIndicesRef().orderByValue()
-                .equalTo(Long.parseLong(teamNumber))
+                .equalTo(teamNumber)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {

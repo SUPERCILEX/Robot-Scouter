@@ -22,9 +22,6 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
 public class TeamSender {
-    private static final String APP_LINK_START = "https://supercilex.github.io/?" + TeamReceiver.TEAM_KEY + "=";
-    private static final String APP_LINK_END = "&" + TeamReceiver.UTM_SOURCE + "=" + TeamReceiver.UTM_SOURCE_VALUE;
-
     private FragmentActivity mActivity;
     private Team mTeam;
 
@@ -44,17 +41,15 @@ public class TeamSender {
     }
 
     private void fetchKeysQuery() {
-        new KeysQueryBuilder(Scout.getIndicesRef(), TeamReceiver.SCOUT_KEY)
+        new KeysQueryBuilder(Scout.getIndicesRef()
+                                     .orderByValue()
+                                     .equalTo(mTeam.getNumberAsLong()),
+                             TeamReceiver.SCOUT_QUERY_KEY)
                 .build()
                 .addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
                     public void onSuccess(String scoutQuery) {
-                        String deepLink = APP_LINK_START +
-                                mTeam.getKey() +
-                                ":" +
-                                mTeam.getNumber() +
-                                scoutQuery +
-                                APP_LINK_END;
+                        String deepLink = mTeam.getDeepLink() + scoutQuery;
                         mActivity.startActivityForResult(getInvitationIntent(deepLink), 9);
                     }
                 })
@@ -83,12 +78,11 @@ public class TeamSender {
         private Query mIndicesQuery;
         private String mKeyName;
 
-        private TaskCompletionSource<String> mKeysTask;
+        private TaskCompletionSource<String> mKeysTask = new TaskCompletionSource<>();
 
         public KeysQueryBuilder(Query indicesQuery, String keyName) {
             mIndicesQuery = indicesQuery;
             mKeyName = keyName;
-            mKeysTask = new TaskCompletionSource<>();
         }
 
         @Override

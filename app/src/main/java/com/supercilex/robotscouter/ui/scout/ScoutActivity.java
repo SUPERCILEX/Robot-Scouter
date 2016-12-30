@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -73,7 +74,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         }
         mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                               tabLayout,
-                                              mTeam.getNumber(),
+                                              mTeam.getNumberAsLong(),
                                               scoutKey);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -83,6 +84,18 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         if (savedInstanceState == null && mHelper.isOffline()) {
             mHelper.showSnackbar(R.string.offline_reassurance, Snackbar.LENGTH_SHORT);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUserActions.getInstance().start(mTeam.getViewAction());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FirebaseUserActions.getInstance().end(mTeam.getViewAction());
     }
 
     @Override
@@ -175,7 +188,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    FirebaseCrash.report(error.toException());
+                    ScoutActivity.this.onCancelled(error);
                 }
             });
         } else {

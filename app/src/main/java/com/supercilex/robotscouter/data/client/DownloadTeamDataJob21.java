@@ -1,23 +1,26 @@
-package com.supercilex.robotscouter.data.job;
+package com.supercilex.robotscouter.data.client;
 
-import android.os.Bundle;
+import android.app.job.JobInfo;
+import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
+import android.content.ComponentName;
+import android.content.Context;
+import android.os.Build;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.JobParameters;
-import com.firebase.jobdispatcher.JobService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
-import com.supercilex.robotscouter.util.BaseHelper;
 
-public class DownloadTeamDataJob extends JobService {
-    public static void start(Team team) {
-        Bundle bundle = new Bundle();
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+public class DownloadTeamDataJob21 extends JobService {
+    public static void start(Team team, Context context) {
+        PersistableBundle bundle = new PersistableBundle();
         bundle.putString("key", team.getKey());
         bundle.putString("template-key", team.getTemplateKey());
         bundle.putString("number", team.getNumber());
@@ -25,42 +28,42 @@ public class DownloadTeamDataJob extends JobService {
         bundle.putString("website", team.getWebsite());
         bundle.putString("media", team.getMedia());
         if (team.getHasCustomName() != null) {
-            bundle.putBoolean("custom-name", team.getHasCustomName());
+            bundle.putInt("custom-name", team.getHasCustomName() ? 1 : 0);
         }
         if (team.getHasCustomWebsite() != null) {
-            bundle.putBoolean("custom-website", team.getHasCustomWebsite());
+            bundle.putInt("custom-website", team.getHasCustomWebsite() ? 1 : 0);
         }
         if (team.getHasCustomMedia() != null) {
-            bundle.putBoolean("custom-media", team.getHasCustomMedia());
+            bundle.putInt("custom-media", team.getHasCustomMedia() ? 1 : 0);
         }
         bundle.putLong("timestamp", team.getTimestamp());
 
-        Job job = BaseHelper.getDispatcher().newJobBuilder()
-                .setService(DownloadTeamDataJob.class)
-                .setTag(team.getNumber())
+        JobInfo jobInfo = new JobInfo.Builder(Integer.parseInt(team.getNumber()),
+                                              new ComponentName(context.getPackageName(),
+                                                                DownloadTeamDataJob21.class.getName()))
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setExtras(bundle)
-                .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
 
-        int result = BaseHelper.getDispatcher().schedule(job);
-        if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-            FirebaseCrash.report(new RuntimeException("DownloadTeamDataJob failed with code: "
-                                                              + result));
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = scheduler.schedule(jobInfo);
+        if (result != JobScheduler.RESULT_SUCCESS) {
+            FirebaseCrash.report(new RuntimeException("DownloadTeamDataJob21 failed"));
         }
     }
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-        Bundle extras = params.getExtras();
+        PersistableBundle extras = params.getExtras();
         final Team oldTeam = new Team.Builder(extras.getString("number"))
                 .setKey(extras.getString("key"))
                 .setTemplateKey(extras.getString("template-key"))
                 .setName(extras.getString("name"))
                 .setWebsite(extras.getString("website"))
                 .setMedia(extras.getString("media"))
-                .setHasCustomName(extras.getBoolean("custom-name"))
-                .setHasCustomWebsite(extras.getBoolean("custom-website"))
-                .setHasCustomMedia(extras.getBoolean("custom-media"))
+                .setHasCustomName(extras.getInt("custom-name") == 1)
+                .setHasCustomWebsite(extras.getInt("custom-website") == 1)
+                .setHasCustomMedia(extras.getInt("custom-media") == 1)
                 .setTimestamp(extras.getLong("timestamp"))
                 .build();
 
@@ -82,7 +85,7 @@ public class DownloadTeamDataJob extends JobService {
     }
 
     @Override
-    public boolean onStopJob(JobParameters job) {
+    public boolean onStopJob(JobParameters params) {
         return true;
     }
 }
