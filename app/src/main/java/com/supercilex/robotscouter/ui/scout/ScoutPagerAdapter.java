@@ -78,6 +78,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         mTabLayout.addOnTabSelectedListener(this);
         if (mCurrentScoutKey == null) {
             selectTab(0);
+            mCurrentScoutKey = mKeys.get(0);
         } else {
             selectTab(mKeys.indexOf(mCurrentScoutKey));
         }
