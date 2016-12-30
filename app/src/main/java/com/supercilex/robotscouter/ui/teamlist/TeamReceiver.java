@@ -14,15 +14,11 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
-import java.util.List;
-
 public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     public static final String TEAM_QUERY_KEY = "team";
-    public static final String SCOUT_QUERY_KEY = "scout";
     private static final String UTM_SOURCE = "utm_source";
     private static final String UTM_SOURCE_VALUE = "robotscouter";
 
@@ -68,13 +64,6 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
 
             Team.getIndicesRef().addListenerForSingleValueEvent(
                     new CheckTeamExistsListener(team.getKey(), team.getNumber()));
-
-            List<String> scouts = deepLink.getQueryParameters(SCOUT_QUERY_KEY);
-            for (String scoutKey : scouts) {
-                Scout.getIndicesRef()
-                        .child(scoutKey)
-                        .setValue(team.getNumberAsLong());
-            }
         } else { // Received normal intent
             ScoutActivity.start(mActivity, getTeam(deepLink), false);
         }

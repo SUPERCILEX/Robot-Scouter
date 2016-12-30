@@ -30,7 +30,7 @@
     <item
         android:id="@+id/action_edit_scout_templates"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/edit_scout_templates"/>
+        android:title="@string/edit_scout_template"/>
 
     <item
         android:id="@+id/action_edit_team_details"

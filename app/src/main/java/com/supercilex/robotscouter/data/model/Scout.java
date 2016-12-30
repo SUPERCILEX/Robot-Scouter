@@ -11,7 +11,6 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.FirebaseTransformer;
-import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.Map;
 public class Scout {
     @Exclude private static final String SCOUT_KEY = "scout_key";
 
-    @Exclude private String mOwner;
     @Exclude private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>();
 
     @Exclude
@@ -36,12 +34,12 @@ public class Scout {
     }
 
     @Exclude
-    public static DatabaseReference getIndicesRef() {
-        return Constants.FIREBASE_SCOUT_INDICES.child(AuthHelper.getUid());
+    public static DatabaseReference getIndicesRef(String teamKey) {
+        return Constants.FIREBASE_SCOUT_INDICES.child(teamKey);
     }
 
     public static String add(Team team) {
-        DatabaseReference indexRef = getIndicesRef().push();
+        DatabaseReference indexRef = getIndicesRef(team.getKey()).push();
         indexRef.setValue(team.getNumberAsLong());
         DatabaseReference scoutRef = Constants.FIREBASE_SCOUTS.child(indexRef.getKey());
 
@@ -52,36 +50,30 @@ public class Scout {
             scoutCopier.setFromQuery(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()));
         }
         scoutCopier.performTransformation();
+
         return indexRef.getKey();
     }
 
-    public static void delete(String key) {
-        getIndicesRef().child(key).removeValue();
-        Constants.FIREBASE_SCOUTS.child(key).removeValue();
+    public static void delete(String teamKey, String scoutKey) {
+        getIndicesRef(teamKey).child(scoutKey).removeValue();
+        Constants.FIREBASE_SCOUTS.child(scoutKey).removeValue();
     }
 
-    public static void deleteAll(long teamNumber) {
-        getIndicesRef().orderByValue()
-                .equalTo(teamNumber)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        for (DataSnapshot keySnapshot : snapshot.getChildren()) {
-                            Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
-                            keySnapshot.getRef().removeValue();
-                        }
-                    }
+    public static void deleteAll(String teamKey) {
+        getIndicesRef(teamKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot keySnapshot : snapshot.getChildren()) {
+                    Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
+                    keySnapshot.getRef().removeValue();
+                }
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        FirebaseCrash.report(error.toException());
-                    }
-                });
-    }
-
-    @Keep
-    public String getOwner() {
-        return mOwner;
+            @Override
+            public void onCancelled(DatabaseError error) {
+                FirebaseCrash.report(error.toException());
+            }
+        });
     }
 
     @Keep

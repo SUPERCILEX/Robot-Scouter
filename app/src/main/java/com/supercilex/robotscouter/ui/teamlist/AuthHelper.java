@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.util.BaseHelper;
@@ -233,7 +232,7 @@ public class AuthHelper {
     private static final class DatabaseInitializer implements ValueEventListener {
         private DatabaseInitializer() {
             Team.getIndicesRef().addListenerForSingleValueEvent(this);
-            Scout.getIndicesRef().addListenerForSingleValueEvent(this);
+            Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
         }

@@ -23,13 +23,17 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutFragment extends FragmentBase implements MenuItem.OnMenuItemClickListener {
+    private static final String TEAM_KEY = "team_key";
+
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
     private LinearLayoutManager mManager;
     private String mScoutKey;
 
-    public static ScoutFragment newInstance(String key) {
+    public static ScoutFragment newInstance(String teamKey, String scoutKey) {
         ScoutFragment fragment = new ScoutFragment();
-        fragment.setArguments(Scout.getScoutKeyBundle(key));
+        Bundle bundle = Scout.getScoutKeyBundle(scoutKey);
+        bundle.putString(TEAM_KEY, teamKey);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -86,7 +90,7 @@ public class ScoutFragment extends FragmentBase implements MenuItem.OnMenuItemCl
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.action_delete) {
-            Scout.delete(mScoutKey);
+            Scout.delete(getArguments().getString(TEAM_KEY), mScoutKey);
             return true;
         }
         return false;

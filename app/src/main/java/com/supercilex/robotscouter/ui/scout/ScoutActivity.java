@@ -65,21 +65,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
         mTeam = Team.getTeam(getIntent());
         mHolder.bind(mTeam);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        String scoutKey = null;
-        if (savedInstanceState != null) {
-            scoutKey = Scout.getScoutKey(savedInstanceState);
-        }
-        mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
-                                              tabLayout,
-                                              mTeam.getNumberAsLong(),
-                                              scoutKey);
-        viewPager.setAdapter(mPagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);
-
-        addTeamListener();
+        addTeamAndScoutListeners(savedInstanceState);
 
         if (savedInstanceState == null && mHelper.isOffline()) {
             mHelper.showSnackbar(R.string.offline_reassurance, Snackbar.LENGTH_SHORT);
@@ -154,7 +140,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         return true;
     }
 
-    private void addTeamListener() {
+    private void addTeamAndScoutListeners(final Bundle savedInstanceState) {
         if (TextUtils.isEmpty(mTeam.getKey())) {
             Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -163,14 +149,14 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                         for (DataSnapshot child : snapshot.getChildren()) {
                             if (child.getValue().toString().equals(mTeam.getNumber())) {
                                 mTeam.setKey(child.getKey());
-                                addTeamListener();
+                                addTeamAndScoutListeners(savedInstanceState);
                                 return;
                             }
                         }
                     }
 
                     mTeam.add();
-                    addTeamListener();
+                    addTeamAndScoutListeners(savedInstanceState);
                     TbaApi.fetch(mTeam, ScoutActivity.this)
                             .addOnCompleteListener(new OnCompleteListener<Team>() {
                                 @Override
@@ -193,6 +179,20 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
             });
         } else {
             mTeam.getRef().addValueEventListener(this);
+
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+            ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+            String scoutKey = null;
+            if (savedInstanceState != null) {
+                scoutKey = Scout.getScoutKey(savedInstanceState);
+            }
+            mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
+                                                  tabLayout,
+                                                  mTeam.getKey(),
+                                                  scoutKey);
+            viewPager.setAdapter(mPagerAdapter);
+            tabLayout.setupWithViewPager(viewPager);
+
             if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
                 mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
                 getIntent().putExtra(INTENT_ADD_SCOUT, false);

@@ -313,7 +313,7 @@ public class Team implements Parcelable {
             Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey()).removeValue();
         }
         getRef().removeValue();
-        Scout.deleteAll(getNumberAsLong());
+        Scout.deleteAll(getKey());
         FirebaseAppIndex.getInstance().remove(getDeepLink());
     }
 

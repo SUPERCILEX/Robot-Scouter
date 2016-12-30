@@ -24,12 +24,12 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
 
     public ScoutPagerAdapter(FragmentManager fm,
                              TabLayout tabLayout,
-                             long teamNumber,
+                             String teamKey,
                              String currentScoutKey) {
         super(fm);
         mTabLayout = tabLayout;
         mCurrentScoutKey = currentScoutKey;
-        mQuery = Scout.getIndicesRef().orderByValue().equalTo(teamNumber);
+        mQuery = Scout.getIndicesRef(teamKey);
         mQuery.addValueEventListener(this);
     }
 
@@ -40,7 +40,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
 
     @Override
     public Fragment getItem(int position) {
-        return ScoutFragment.newInstance(mKeys.get(position));
+        return ScoutFragment.newInstance(mQuery.getRef().getKey(), mKeys.get(position));
     }
 
     @Override

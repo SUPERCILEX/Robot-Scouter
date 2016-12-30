@@ -61,21 +61,11 @@ public class User {
         if (TextUtils.isEmpty(prevUid)) return;
 
         final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
-        final DatabaseReference prevScoutRef = Constants.FIREBASE_SCOUT_INDICES.child(prevUid);
-
         new FirebaseCopier(prevTeamRef, Team.getIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 super.onDataChange(snapshot);
                 prevTeamRef.removeValue();
-            }
-        }.performTransformation();
-
-        new FirebaseCopier(prevScoutRef, Scout.getIndicesRef()) {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                super.onDataChange(snapshot);
-                prevScoutRef.removeValue();
             }
         }.performTransformation();
     }
