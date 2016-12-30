@@ -1,5 +1,4 @@
-Want to contribute? Great! First, read this page (including the small print at
-the end).
+# Want to contribute? Awesome! First, read this page
 
 ## Before you contribute
 Before we can use your code, you must sign the [SUPERCILEX Individual Contributor License Agreement]()
@@ -24,8 +23,3 @@ If not, go file an issue about this to make sure this is a desirable change.
 All submissions, including submissions by project members, require review. We
 use Github pull requests for this purpose. We adhere to the
 [Google Java style guide](https://google.github.io/styleguide/javaguide.html).
-
-## The small print
-Contributions made by corporations are covered by a different agreement than the
-one above, the [Software Grant and Corporate Contributor License
-Agreement](https://cla.developers.google.com/about/google-corporate).

@@ -4,22 +4,17 @@ Please take a look at [open issues](https://github.com/SUPERCILEX/Robot-Scouter/
 
 If not, please feel free to fill in the following info so we can help faster!
 
-### Step 1: Are you in the right place?
-  * For issues or feature requests related to the code **in this repository** file a GitHub issue.
-  * For general technical questions, post a question on [StackOverflow](http://stackoverflow.com/) tagged appropriately.
-
-### Step 2: Describe your environment
-  * Android device: _____
-  * Android OS version: _____
+### Step 1: Describe your environment
   * Robot Scouter version: _____
-  
-### Step 3: Describe the problem:
+  * Android OS version: _____
+  * Android device: _____
 
+### Step 2: Describe the problem:
 #### Steps to reproduce:
   1. _____
   2. _____
   3. _____
-  
+
 #### Observed Results:
   * What happened?  This could be a description, `logcat` output, etc.
   
