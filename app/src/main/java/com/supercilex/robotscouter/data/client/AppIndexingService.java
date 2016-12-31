@@ -15,7 +15,9 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.TeamIndices;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.Builder;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
@@ -48,27 +50,29 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
         }
     }
 
-    private static class TeamRetriever implements ValueEventListener, OnSuccessListener<Void>, OnFailureListener {
+    private static class TeamRetriever
+            implements Builder<Task<List<Team>>>, OnSuccessListener<List<DataSnapshot>>, OnFailureListener {
         private TaskCompletionSource<List<Team>> mAllTeamsTask = new TaskCompletionSource<>();
         private List<Team> mTeams = new ArrayList<>();
 
         private TeamRetriever() {
-            Team.getIndicesRef().addListenerForSingleValueEvent(this);
+            TeamIndices.getAll().addOnSuccessListener(this).addOnFailureListener(this);
         }
 
         public static Task<List<Team>> getAll() {
-            return new TeamRetriever().getTask();
+            return new TeamRetriever().build();
         }
 
-        private Task<List<Team>> getTask() {
+        @Override
+        public Task<List<Team>> build() {
             return mAllTeamsTask.getTask();
         }
 
         @Override
-        public void onDataChange(DataSnapshot snapshot) {
+        public void onSuccess(List<DataSnapshot> snapshots) {
             List<Task<Void>> teamTasks = new ArrayList<>();
 
-            for (DataSnapshot teamIndexSnapshot : snapshot.getChildren()) {
+            for (DataSnapshot teamIndexSnapshot : snapshots) {
                 final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>(); // NOPMD
                 teamTasks.add(teamTask.getTask());
 
@@ -90,28 +94,22 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                             @Override
                             public void onCancelled(DatabaseError error) {
                                 teamTask.setException(error.toException());
-                                TeamRetriever.this.onCancelled(error);
+                                FirebaseCrash.report(error.toException());
                             }
                         });
             }
 
-            Tasks.whenAll(teamTasks).addOnSuccessListener(this).addOnFailureListener(this);
-        }
-
-        @Override
-        public void onSuccess(Void aVoid) {
-            mAllTeamsTask.setResult(mTeams);
+            Tasks.whenAll(teamTasks).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mAllTeamsTask.setResult(mTeams);
+                }
+            }).addOnFailureListener(this);
         }
 
         @Override
         public void onFailure(@NonNull Exception e) {
             mAllTeamsTask.setException(e);
-        }
-
-        @Override
-        public void onCancelled(DatabaseError error) {
-            mAllTeamsTask.setException(error.toException());
-            FirebaseCrash.report(error.toException());
         }
     }
 }

@@ -10,15 +10,11 @@ import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
-    public static final String TEAM_QUERY_KEY = "team";
+    private static final String TEAM_QUERY_KEY = "team";
     private static final String UTM_SOURCE = "utm_source";
     private static final String UTM_SOURCE_VALUE = "robotscouter";
 
@@ -62,11 +58,11 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
             Team team = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
-
-            Team.getIndicesRef().addListenerForSingleValueEvent(
-                    new CheckTeamExistsListener(team.getKey(), team.getNumber()));
+            Long number = team.getNumberAsLong();
+            Team.getIndicesRef().child(team.getKey()).setValue(number, number);
+            launchTeam(team);
         } else { // Received normal intent
-            ScoutActivity.start(mActivity, getTeam(deepLink), false);
+            launchTeam(getTeam(deepLink));
         }
     }
 
@@ -79,38 +75,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
         return new Team.Builder(teamNumber).setKey(teamKey).build();
     }
 
-    private class CheckTeamExistsListener implements ValueEventListener {
-        private String mTeamKey;
-        private String mTeamNumber;
-
-        public CheckTeamExistsListener(String teamKey, String teamNumber) {
-            mTeamKey = teamKey;
-            mTeamNumber = teamNumber;
-        }
-
-        @Override
-        public void onDataChange(DataSnapshot snapshot) {
-            for (DataSnapshot teamKey : snapshot.getChildren()) {
-                if (teamKey.getValue().equals(mTeamNumber)) {
-                    launchTeam();
-                    return;
-                }
-            }
-
-            Long number = Long.valueOf(mTeamNumber);
-            Team.getIndicesRef().child(mTeamKey).setValue(number, number);
-            launchTeam();
-        }
-
-        @Override
-        public void onCancelled(DatabaseError error) {
-            FirebaseCrash.report(error.toException());
-        }
-
-        private void launchTeam() {
-            ScoutActivity.start(mActivity,
-                                new Team.Builder(mTeamNumber).setKey(mTeamKey).build(),
-                                false);
-        }
+    private void launchTeam(Team team) {
+        ScoutActivity.start(mActivity, team, false);
     }
 }

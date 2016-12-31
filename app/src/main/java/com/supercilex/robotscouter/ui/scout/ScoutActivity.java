@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.crash.FirebaseCrash;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.TeamIndices;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
@@ -32,6 +34,8 @@ import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.ui.teamlist.TeamSender;
 import com.supercilex.robotscouter.util.BaseHelper;
+
+import java.util.List;
 
 public class ScoutActivity extends AppCompatBase implements ValueEventListener {
     private static final String INTENT_ADD_SCOUT = "add_scout";
@@ -142,16 +146,14 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
     private void addTeamAndScoutListeners(final Bundle savedInstanceState) {
         if (TextUtils.isEmpty(mTeam.getKey())) {
-            Team.getIndicesRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            TeamIndices.getAll().addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
                 @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null) {
-                        for (DataSnapshot child : snapshot.getChildren()) {
-                            if (child.getValue().toString().equals(mTeam.getNumber())) {
-                                mTeam.setKey(child.getKey());
-                                addTeamAndScoutListeners(savedInstanceState);
-                                return;
-                            }
+                public void onSuccess(List<DataSnapshot> snapshots) {
+                    for (DataSnapshot keySnapshot : snapshots) {
+                        if (keySnapshot.getValue().equals(mTeam.getNumberAsLong())) {
+                            mTeam.setKey(keySnapshot.getKey());
+                            addTeamAndScoutListeners(savedInstanceState);
+                            return;
                         }
                     }
 
@@ -163,18 +165,12 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                                 public void onComplete(@NonNull Task<Team> task) {
                                     if (task.isSuccessful()) {
                                         mTeam.update(task.getResult());
-                                        BaseHelper.getDispatcher()
-                                                .cancel(mTeam.getNumber());
+                                        BaseHelper.getDispatcher().cancel(mTeam.getNumber());
                                     } else {
                                         mTeam.fetchLatestData(ScoutActivity.this);
                                     }
                                 }
                             });
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    ScoutActivity.this.onCancelled(error);
                 }
             });
         } else {
