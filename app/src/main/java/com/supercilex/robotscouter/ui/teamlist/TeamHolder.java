@@ -68,7 +68,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
     private void setTeamLogo() {
         Glide.with(mFragment)
                 .load(mTeam.getMedia())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .error(R.drawable.ic_android_black_24dp)
                 .into(mLogo);
     }

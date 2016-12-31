@@ -123,7 +123,10 @@ public final class TbaApi implements Callable<Team> {
         BaseHelper.runOnMainThread(mContext, new Runnable() {
             @Override
             public void run() {
-                Glide.with(mContext).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).preload();
+                Glide.with(mContext)
+                        .load(url)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .preload();
             }
         });
     }

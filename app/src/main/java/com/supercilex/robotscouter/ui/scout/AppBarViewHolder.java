@@ -49,7 +49,7 @@ public class AppBarViewHolder {
     private void loadImages() {
         Glide.with(mActivity)
                 .load(mTeam.getMedia())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .error(R.drawable.ic_android_black_24dp)
                 .into(mBackdrop);
 
