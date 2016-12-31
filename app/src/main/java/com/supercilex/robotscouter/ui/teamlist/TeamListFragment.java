@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
@@ -89,14 +88,6 @@ public class TeamListFragment extends StickyFragment {
             @Override
             public void onCancelled(DatabaseError error) {
                 FirebaseCrash.report(error.toException());
-            }
-
-            @Override
-            public void onJoinFailed(int index, DataSnapshot snapshot) {
-                super.onJoinFailed(index, snapshot);
-                FirebaseCrash.report(new IllegalStateException("Index mismatch at index: "
-                                                                       + index + " for snapshot: "
-                                                                       + snapshot));
             }
         };
     }
