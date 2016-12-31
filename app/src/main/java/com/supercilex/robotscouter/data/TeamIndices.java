@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.data.util.Builder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamIndices implements Builder<Task<List<DataSnapshot>>>, ValueEventListener {
+public final class TeamIndices implements Builder<Task<List<DataSnapshot>>>, ValueEventListener {
     private TaskCompletionSource<List<DataSnapshot>> mTeamIndicesTask = new TaskCompletionSource<>();
     private List<DataSnapshot> mTeamIndicesSnapshots = new ArrayList<>();
 

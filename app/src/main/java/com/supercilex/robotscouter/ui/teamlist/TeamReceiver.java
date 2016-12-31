@@ -13,7 +13,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
-public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
+public final class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     private static final String TEAM_QUERY_KEY = "team";
     private static final String UTM_SOURCE = "utm_source";
     private static final String UTM_SOURCE_VALUE = "robotscouter";
