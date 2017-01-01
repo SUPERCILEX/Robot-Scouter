@@ -15,6 +15,7 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.appindexing.FirebaseUserActions;
@@ -309,13 +310,17 @@ public class Team implements Parcelable {
     }
 
     public void delete() {
-        getIndicesRef().child(getKey()).removeValue();
-        if (getTemplateKey() != null) {
-            Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey()).removeValue();
-        }
-        getRef().removeValue();
-        Scout.deleteAll(getKey());
-        FirebaseAppIndex.getInstance().remove(getDeepLink());
+        Scout.deleteAll(getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                getRef().removeValue();
+                getIndicesRef().child(getKey()).removeValue();
+                if (getTemplateKey() != null) {
+                    Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey()).removeValue();
+                }
+                FirebaseAppIndex.getInstance().remove(getDeepLink());
+            }
+        });
     }
 
     public void fetchLatestData(Context context) {

@@ -3,6 +3,8 @@ package com.supercilex.robotscouter.data.model;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +61,8 @@ public class Scout {
         Constants.FIREBASE_SCOUTS.child(scoutKey).removeValue();
     }
 
-    public static void deleteAll(String teamKey) {
+    public static Task<Void> deleteAll(String teamKey) {
+        final TaskCompletionSource<Void> deleteTask = new TaskCompletionSource<>();
         getIndicesRef(teamKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -67,13 +70,16 @@ public class Scout {
                     Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
                     keySnapshot.getRef().removeValue();
                 }
+                deleteTask.setResult(null);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
+                deleteTask.setException(error.toException());
                 FirebaseCrash.report(error.toException());
             }
         });
+        return deleteTask.getTask();
     }
 
     @Keep
