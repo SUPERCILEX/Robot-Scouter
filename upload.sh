@@ -24,5 +24,5 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   tar xf google-cloud-sdk-138.0.0-linux-x86_64.tar.gz
   echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
-  ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --project robot-scouter-app
+  ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --timeout 1h --max-depth 100 --project robot-scouter-app
 fi
