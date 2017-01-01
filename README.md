@@ -34,3 +34,7 @@ the [contribution guidelines](CONTRIBUTING.md) before getting in too deep.
 with the one created in your Firebase project
 1. Run `./gradlew check` to make sure the Travis build will pass
 1. That's it!
+
+## Pssst...
+
+If you want to get the latest build from master, you can join the [alpha testers community](https://plus.google.com/communities/111840458526472018249).
