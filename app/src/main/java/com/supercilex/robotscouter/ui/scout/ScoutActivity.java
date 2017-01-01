@@ -146,33 +146,37 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
 
     private void addTeamAndScoutListeners(final Bundle savedInstanceState) {
         if (TextUtils.isEmpty(mTeam.getKey())) {
-            TeamIndices.getAll().addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
-                @Override
-                public void onSuccess(List<DataSnapshot> snapshots) {
-                    for (DataSnapshot keySnapshot : snapshots) {
-                        if (keySnapshot.getValue().equals(mTeam.getNumberAsLong())) {
-                            mTeam.setKey(keySnapshot.getKey());
-                            addTeamAndScoutListeners(savedInstanceState);
-                            return;
-                        }
-                    }
-
-                    mTeam.add();
-                    addTeamAndScoutListeners(savedInstanceState);
-                    TbaApi.fetch(mTeam, ScoutActivity.this)
-                            .addOnCompleteListener(new OnCompleteListener<Team>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Team> task) {
-                                    if (task.isSuccessful()) {
-                                        mTeam.update(task.getResult());
-                                        BaseHelper.getDispatcher().cancel(mTeam.getNumber());
-                                    } else {
-                                        mTeam.fetchLatestData(ScoutActivity.this);
-                                    }
+            TeamIndices.getAll()
+                    .addOnSuccessListener(this, new OnSuccessListener<List<DataSnapshot>>() {
+                        @Override
+                        public void onSuccess(List<DataSnapshot> snapshots) {
+                            for (DataSnapshot keySnapshot : snapshots) {
+                                if (keySnapshot.getValue().equals(mTeam.getNumberAsLong())) {
+                                    mTeam.setKey(keySnapshot.getKey());
+                                    addTeamAndScoutListeners(savedInstanceState);
+                                    return;
                                 }
-                            });
-                }
-            });
+                            }
+
+                            mTeam.add();
+                            addTeamAndScoutListeners(savedInstanceState);
+                            TbaApi.fetch(mTeam, ScoutActivity.this)
+                                    .addOnCompleteListener(
+                                            ScoutActivity.this,
+                                            new OnCompleteListener<Team>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Team> task) {
+                                                    if (task.isSuccessful()) {
+                                                        mTeam.update(task.getResult());
+                                                        BaseHelper.getDispatcher()
+                                                                .cancel(mTeam.getNumber());
+                                                    } else {
+                                                        mTeam.fetchLatestData(ScoutActivity.this);
+                                                    }
+                                                }
+                                            });
+                        }
+                    });
         } else {
             mTeam.getRef().addValueEventListener(this);
 
