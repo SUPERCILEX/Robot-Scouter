@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.Constants;
 public class ScoutTemplatesSheet extends BottomSheetBase {
     private static final String TAG = "ScoutTemplatesSheet";
 
+    private RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
     private LinearLayoutManager mManager;
 
@@ -56,9 +57,9 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
             }.performTransformation();
         }
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         mManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mManager);
+        mRecyclerView.setLayoutManager(mManager);
 
         mAdapter = new ScoutTemplateAdapter(
                 ScoutMetric.class,
@@ -66,8 +67,8 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
                 Constants.FIREBASE_SCOUT_TEMPLATES
                         .child(templateKey)
                         .child(Constants.FIREBASE_VIEWS),
-                (SimpleItemAnimator) recyclerView.getItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+                (SimpleItemAnimator) mRecyclerView.getItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
         return rootView;
@@ -76,6 +77,7 @@ public class ScoutTemplatesSheet extends BottomSheetBase {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
         mAdapter.cleanup();
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
