@@ -34,7 +34,7 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
                                        .enableAutoManage(mActivity, null)
                                        .addApi(AppInvite.API)
                                        .build(),
-                               mActivity,
+                               null,
                                false)
                 .setResultCallback(this);
     }
