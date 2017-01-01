@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.appindexing.Indexable;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.TeamIndices;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.Builder;
+import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
@@ -56,7 +58,14 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
         private List<Team> mTeams = new ArrayList<>();
 
         private TeamRetriever() {
-            TeamIndices.getAll().addOnSuccessListener(this).addOnFailureListener(this);
+            AuthHelper.onSignedIn(new OnSuccessListener<FirebaseAuth>() {
+                @Override
+                public void onSuccess(FirebaseAuth result) {
+                    TeamIndices.getAll()
+                            .addOnSuccessListener(TeamRetriever.this)
+                            .addOnFailureListener(TeamRetriever.this);
+                }
+            });
         }
 
         public static Task<List<Team>> getAll() {

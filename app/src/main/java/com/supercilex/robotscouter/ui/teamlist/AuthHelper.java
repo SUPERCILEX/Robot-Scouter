@@ -71,6 +71,18 @@ public class AuthHelper {
         return getUser() != null;
     }
 
+    public static void onSignedIn(final OnSuccessListener<FirebaseAuth> listener) {
+        getAuth().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+                if (auth.getCurrentUser() != null) {
+                    listener.onSuccess(auth);
+                    getAuth().removeAuthStateListener(this);
+                }
+            }
+        });
+    }
+
     public static AuthHelper init(TeamListActivity activity) {
         AuthHelper helper = new AuthHelper(activity);
         if (isSignedIn()) {

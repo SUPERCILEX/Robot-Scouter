@@ -52,9 +52,6 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
             return; // Nothing to see here
         }
 
-        // Consume intent
-        mActivity.setIntent(new Intent());
-
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
             Team team = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
@@ -77,5 +74,8 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
 
     private void launchTeam(Team team) {
         ScoutActivity.start(mActivity, team, false);
+
+        // Consume intent
+        mActivity.setIntent(new Intent());
     }
 }
