@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="developed_with_love">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!</string>
+</resources>
