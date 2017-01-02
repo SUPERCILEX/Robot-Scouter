@@ -23,6 +23,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <fragment
+        android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag="team_list_fragment"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -32,12 +39,5 @@
         android:src="@drawable/ic_add_white_24dp"
         app:fabSize="normal"
         app:layout_behavior="com.supercilex.robotscouter.ui.ScrollAwareFabBehavior"/>
-
-    <fragment
-        android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:tag="team_list_fragment"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </android.support.design.widget.CoordinatorLayout>
