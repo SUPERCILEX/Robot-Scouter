@@ -76,7 +76,13 @@ public class AuthHelper {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 if (auth.getCurrentUser() == null) {
-                    auth.signInAnonymously();
+                    auth.signInAnonymously()
+                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult result) {
+                                    DatabaseInitializer.init();
+                                }
+                            });
                 } else {
                     listener.onSuccess(auth);
                     getAuth().removeAuthStateListener(this);
