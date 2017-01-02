@@ -11,6 +11,8 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="RobotScouter.NoActionBar.TransparentStatusBar"/>
+
     <style name="RobotScouter.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
