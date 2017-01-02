@@ -15,7 +15,7 @@ public class TeamSender {
     private FragmentActivity mActivity;
     private Team mTeam;
 
-    public TeamSender(FragmentActivity activity, Team team) {
+    private TeamSender(FragmentActivity activity, Team team) {
         mActivity = activity;
         mTeam = team;
 
