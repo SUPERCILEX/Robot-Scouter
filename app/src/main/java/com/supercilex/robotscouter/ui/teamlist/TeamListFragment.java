@@ -77,7 +77,7 @@ public class TeamListFragment extends StickyFragment
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+                FloatingActionButton fab = getFab();
                 if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
                     // User scrolled down and the FAB is currently visible -> hide the FAB
                     fab.hide();
@@ -149,11 +149,10 @@ public class TeamListFragment extends StickyFragment
                 resetMenu();
                 break;
             case R.id.action_edit_team_details:
-                TeamDetailsDialog.show(mSelectedTeams.get(0),
-                                       getActivity().getSupportFragmentManager());
+                TeamDetailsDialog.show(mSelectedTeams.get(0), getChildFragmentManager());
                 break;
             case R.id.action_delete:
-                DeleteTeamDialog.show(getActivity().getSupportFragmentManager(), mSelectedTeams);
+                DeleteTeamDialog.show(getChildFragmentManager(), mSelectedTeams);
                 break;
             case android.R.id.home:
                 resetMenu();
@@ -316,14 +315,14 @@ public class TeamListFragment extends StickyFragment
         mMenu.findItem(R.id.action_share).setVisible(visible);
         mMenu.findItem(R.id.action_delete).setVisible(visible);
         ((AppCompatBase) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(visible);
-        if (visible) ((FloatingActionButton) getActivity().findViewById(R.id.fab)).hide();
+        if (visible) (getFab()).hide();
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
         mMenu.findItem(R.id.action_licenses).setVisible(visible);
         mMenu.findItem(R.id.action_about).setVisible(visible);
         if (visible) {
-            ((FloatingActionButton) getActivity().findViewById(R.id.fab)).show();
+            (getFab()).show();
             ((AppCompatBase) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {
                 mMenu.findItem(R.id.action_sign_in).setVisible(false);
@@ -363,6 +362,10 @@ public class TeamListFragment extends StickyFragment
             mAdapter.notifyItemChanged(i);
         }
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(true);
+    }
+
+    private FloatingActionButton getFab() {
+        return (FloatingActionButton) getActivity().findViewById(R.id.fab);
     }
 
     /**
