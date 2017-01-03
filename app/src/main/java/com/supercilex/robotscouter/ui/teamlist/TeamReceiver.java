@@ -12,6 +12,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +56,10 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
         if (result.getStatus().isSuccess()) {
             List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
             for (Team team : teams) {
-                Long number = team.getNumberAsLong();
+                long number = team.getNumberAsLong();
                 Team.getIndicesRef().child(team.getKey()).setValue(number, number);
             }
-            if (teams.size() == 1) launchTeam(teams.get(0));
+            if (teams.size() == Constants.SINGLE_ITEM) launchTeam(teams.get(0));
         } else { // Received normal one team intent
             launchTeam(getTeam(deepLink).get(0));
         }
@@ -72,7 +73,7 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
             String teamKey = teamPairSplit[0];
             String teamNumber = teamPairSplit[1];
 
-            teams.add(new Team.Builder(teamNumber).setKey(teamKey).build());
+            teams.add(new Team.Builder(teamNumber).setKey(teamKey).build()); // NOPMD
         }
         return teams;
     }

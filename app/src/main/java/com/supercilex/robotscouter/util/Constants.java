@@ -11,6 +11,7 @@ import java.util.List;
 public final class Constants {
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
+    public static final int SINGLE_ITEM = 1;
 
     // Scout ids
     public static final int CHECKBOX = 0;

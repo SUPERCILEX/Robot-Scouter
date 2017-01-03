@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.teamlist;
+package com.supercilex.robotscouter.ui.teamlist; // NOPMD
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -55,10 +55,10 @@ public class TeamListFragment extends StickyFragment
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (auth.getCurrentUser() != null) {
-            if (mAdapter == null) resetAdapter();
-        } else {
+        if (auth.getCurrentUser() == null) {
             if (mAdapter != null) cleanup();
+        } else {
+            if (mAdapter == null) resetAdapter();
         }
     }
 
@@ -81,10 +81,8 @@ public class TeamListFragment extends StickyFragment
                 if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
                     // User scrolled down and the FAB is currently visible -> hide the FAB
                     fab.hide();
-                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
-                    // User scrolled up and the FAB is currently not visible -> show the FAB
-                    if (mSelectedTeams.isEmpty()) fab.show();
-                }
+                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE && mSelectedTeams.isEmpty())
+                    fab.show();
             }
         });
         return rootView;
@@ -131,7 +129,7 @@ public class TeamListFragment extends StickyFragment
         if (!mSelectedTeams.isEmpty()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            if (mSelectedTeams.size() == 1) showTeamSpecificItems();
+            if (mSelectedTeams.size() == Constants.SINGLE_ITEM) showTeamSpecificItems();
             setToolbarTitle();
         }
     }
@@ -239,6 +237,8 @@ public class TeamListFragment extends StickyFragment
                             }
                         }
                         break;
+                    default:
+                        break;
                 }
                 super.onChanged(type, index, oldIndex);
             }
@@ -290,7 +290,7 @@ public class TeamListFragment extends StickyFragment
         } else {
             if (mSelectedTeams.isEmpty()) {
                 resetMenu();
-            } else if (mSelectedTeams.size() == 1) {
+            } else if (mSelectedTeams.size() == Constants.SINGLE_ITEM) {
                 showTeamSpecificItems();
             } else {
                 hideTeamSpecificMenuItems();

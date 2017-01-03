@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.List;
 
-public class TeamSender {
+public final class TeamSender {
     private FragmentActivity mActivity;
     private List<Team> mTeams;
 
