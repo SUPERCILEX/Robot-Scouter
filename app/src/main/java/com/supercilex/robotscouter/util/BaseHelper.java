@@ -63,7 +63,7 @@ public final class BaseHelper {
     public static void restoreRecyclerViewState(Bundle savedInstanceState,
                                                 final RecyclerView.Adapter adapter,
                                                 final RecyclerView.LayoutManager layoutManager) {
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && adapter != null && layoutManager != null) {
             final Parcelable managerState = savedInstanceState.getParcelable(Constants.MANAGER_STATE);
             final int count = savedInstanceState.getInt(Constants.ITEM_COUNT);
             if (adapter.getItemCount() >= count) {
