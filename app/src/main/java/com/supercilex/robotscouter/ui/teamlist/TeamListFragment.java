@@ -49,16 +49,15 @@ public class TeamListFragment extends StickyFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (AuthHelper.isSignedIn()) initAdapter();
         AuthHelper.getAuth().addAuthStateListener(this);
     }
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (auth.getCurrentUser() == null) {
-            if (mAdapter != null) cleanup();
-        } else {
-            if (mAdapter == null) resetAdapter();
+        cleanup();
+        if (auth.getCurrentUser() != null) {
+            initAdapter();
+            if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
         }
     }
 
@@ -259,17 +258,10 @@ public class TeamListFragment extends StickyFragment
     }
 
     private void cleanup() {
-        mRecyclerView.setAdapter(null);
         if (mAdapter != null) {
             mAdapter.cleanup();
-            resetMenu();
         }
-    }
-
-    private void resetAdapter() {
-        cleanup();
-        initAdapter();
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(null);
     }
 
     @Override
