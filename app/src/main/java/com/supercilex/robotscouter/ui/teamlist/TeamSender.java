@@ -29,12 +29,18 @@ public final class TeamSender {
         mActivity.startActivityForResult(getInvitationIntent(deepLinkBuilder.toString()), 9);
     }
 
-    public static void launchInvitationIntent(FragmentActivity activity, List<Team> teams) {
+    /**
+     * @return true if a share intent was launched, false otherwise
+     */
+    public static boolean launchInvitationIntent(FragmentActivity activity, List<Team> teams) {
         if (BaseHelper.isOffline(activity)) {
             BaseHelper.showSnackbar(activity, R.string.no_connection, Snackbar.LENGTH_LONG);
-            return;
+            return false;
         }
-        if (!teams.isEmpty()) new TeamSender(activity, teams);
+        if (teams.isEmpty()) return false;
+
+        new TeamSender(activity, teams);
+        return true;
     }
 
     private Intent getInvitationIntent(String deepLink) {

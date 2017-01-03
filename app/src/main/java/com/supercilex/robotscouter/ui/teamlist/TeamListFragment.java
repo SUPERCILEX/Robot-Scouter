@@ -141,7 +141,7 @@ public class TeamListFragment extends StickyFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                TeamSender.launchInvitationIntent(getActivity(), mSelectedTeams);
+                if (TeamSender.launchInvitationIntent(getActivity(), mSelectedTeams)) resetMenu();
                 break;
             case R.id.action_visit_tba_team_website:
                 mSelectedTeams.get(0).visitTbaWebsite(getContext());
