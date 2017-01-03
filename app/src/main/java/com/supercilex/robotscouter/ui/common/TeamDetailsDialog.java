@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
 
 public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocusChangeListener {
     private static final String TAG = "TeamDetailsDialog";
@@ -85,6 +87,12 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
             }
 
             mTeam.forceUpdate();
+
+            // If we are being called from TeamListFragment, reset the menu if the click was consumed
+            Fragment fragment = getParentFragment();
+            if (fragment instanceof TeamListFragment) {
+                ((TeamListFragment) fragment).resetMenu();
+            }
 
             return true;
         } else {

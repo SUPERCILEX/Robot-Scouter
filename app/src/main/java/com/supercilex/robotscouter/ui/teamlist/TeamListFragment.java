@@ -345,7 +345,7 @@ public class TeamListFragment extends StickyFragment
                 .setTitle(String.valueOf(mSelectedTeams.size()));
     }
 
-    private void resetMenu() {
+    public void resetMenu() {
         setContextMenuItemsVisible(false);
         setNormalMenuItemsVisible(true);
         mSelectedTeams.clear();
