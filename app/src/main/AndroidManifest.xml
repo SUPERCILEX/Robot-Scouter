@@ -9,7 +9,7 @@
         android:required="false"/>
 
     <application
-        android:name=".RobotScouter"
+        android:name=".BugCatcher"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"

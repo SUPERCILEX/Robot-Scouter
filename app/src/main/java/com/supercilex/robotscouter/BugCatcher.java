@@ -2,6 +2,7 @@ package com.supercilex.robotscouter;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.StrictMode;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
@@ -10,11 +11,11 @@ import com.supercilex.robotscouter.util.BaseHelper;
 /**
  * A simple class for LeakCanary integration.
  */
-public class RobotScouter extends Application {
+public class BugCatcher extends Application {
     private RefWatcher mRefWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {
-        return ((RobotScouter) context.getApplicationContext()).mRefWatcher;
+        return ((BugCatcher) context.getApplicationContext()).mRefWatcher;
     }
 
     @Override
@@ -26,6 +27,15 @@ public class RobotScouter extends Application {
             return;
         }
         mRefWatcher = LeakCanary.install(this);
+
+        if (BuildConfig.DEBUG) {
+            // Enable StrictMode
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                                           .detectAll()
+                                           .penaltyLog()
+                                           .penaltyDeath()
+                                           .build());
+        }
 
         BaseHelper.resetJobDispatcher(this);
     }
