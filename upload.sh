@@ -3,7 +3,7 @@
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   mv app/build/outputs/apk/app-prod-release.apk app-release.apk
   cd ..
-  git clone --branch=master "https://SUPERCILEX:$git_mapping_login@github.com/SUPERCILEX/mapping.txt-files.git" uploads &> /dev/null
+  git clone --branch=master "https://SUPERCILEX:${git_mapping_login}@github.com/SUPERCILEX/mapping.txt-files.git" uploads &> /dev/null
   git config --global user.email "saveau.alexandre@gmail.com"
   git config --global user.name "Alex Saveau"
 
@@ -12,7 +12,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   cd uploads
 
   APK_INFO=$(/usr/local/android-sdk/build-tools/25.0.2/aapt dump badging app-release.apk) &> /dev/null
-  VERSION_CODE=$(echo $APK_INFO | grep 'versionCode=' | awk -F: 'match($0,"versionCode="){ print substr($2,37,19)}' | tr -d "'") &> /dev/null
+  VERSION_CODE=$(echo ${APK_INFO} | grep 'versionCode=' | awk -F: 'match($0,"versionCode="){ print substr($2,37,19)}' | tr -d "'") &> /dev/null
   git add mapping.txt app-release.apk
   git commit -a -m "$(printf "${VERSION_CODE}\n Full apk dump: ${APK_INFO}")"
   git push -u origin master &> /dev/null
