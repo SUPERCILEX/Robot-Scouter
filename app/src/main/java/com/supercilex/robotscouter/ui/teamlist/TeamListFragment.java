@@ -142,9 +142,11 @@ public class TeamListFragment extends StickyFragment
                 break;
             case R.id.action_visit_tba_team_website:
                 mSelectedTeams.get(0).visitTbaWebsite(getContext());
+                resetMenu();
                 break;
             case R.id.action_visit_team_website:
                 mSelectedTeams.get(0).visitTeamWebsite(getContext());
+                resetMenu();
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mSelectedTeams.get(0),
