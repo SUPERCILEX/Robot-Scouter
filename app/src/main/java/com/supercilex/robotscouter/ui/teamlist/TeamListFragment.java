@@ -38,6 +38,8 @@ public class TeamListFragment extends StickyFragment
         implements TeamMenuRequestListener, FirebaseAuth.AuthStateListener {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
+    private Bundle mSavedInstanceState;
+
     private RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter mAdapter;
     private WeakReference<LinearLayoutManager> mManager;
@@ -58,6 +60,8 @@ public class TeamListFragment extends StickyFragment
         if (auth.getCurrentUser() != null) {
             initAdapter();
             if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
+            restoreState(mSavedInstanceState);
+            mSavedInstanceState = null;
         }
     }
 
@@ -66,13 +70,13 @@ public class TeamListFragment extends StickyFragment
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        mSavedInstanceState = savedInstanceState;
         View rootView = inflater.inflate(R.layout.recycler_view, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         mRecyclerView.setHasFixedSize(true);
         mManager = new WeakReference<>(new LinearLayoutManager(getContext()));
         mRecyclerView.setLayoutManager(mManager.get());
         mRecyclerView.setAdapter(mAdapter);
-        restoreState(savedInstanceState);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
