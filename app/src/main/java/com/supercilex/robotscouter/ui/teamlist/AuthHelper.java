@@ -30,7 +30,7 @@ import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;
 
-public class AuthHelper {
+public class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
 
     private static FirebaseAuth sAuth;
@@ -142,12 +142,7 @@ public class AuthHelper {
                                                 R.string.anonymous_sign_in_failed,
                                                 Snackbar.LENGTH_LONG,
                                                 R.string.sign_in,
-                                                new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        signIn();
-                                                    }
-                                                });
+                                                AuthHelper.this);
                     }
                 })
                 .addOnFailureListener(new TaskFailureLogger());
@@ -177,12 +172,7 @@ public class AuthHelper {
                                 R.string.sign_in_required,
                                 Snackbar.LENGTH_LONG,
                                 R.string.sign_in,
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        signIn();
-                                    }
-                                });
+                                this);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -210,12 +200,7 @@ public class AuthHelper {
                                             R.string.no_connection,
                                             Snackbar.LENGTH_LONG,
                                             R.string.try_again,
-                                            new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    signIn();
-                                                }
-                                            });
+                                            this);
                     return;
                 }
 
@@ -223,12 +208,7 @@ public class AuthHelper {
                                         R.string.sign_in_failed,
                                         Snackbar.LENGTH_LONG,
                                         R.string.try_again,
-                                        new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                signIn();
-                                            }
-                                        });
+                                        this);
             }
         }
     }
@@ -236,6 +216,11 @@ public class AuthHelper {
     private void toggleMenuSignIn(boolean isSignedIn) {
         mActionSignIn.setVisible(!isSignedIn);
         mActionSignOut.setVisible(isSignedIn);
+    }
+
+    @Override
+    public void onClick(View v) {
+        signIn();
     }
 
     private static final class DatabaseInitializer implements ValueEventListener {
