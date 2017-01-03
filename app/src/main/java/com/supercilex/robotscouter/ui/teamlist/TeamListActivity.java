@@ -61,6 +61,13 @@ public class TeamListActivity extends AppCompatBase implements View.OnClickListe
     }
 
     @Override
+    public void onBackPressed() {
+        TeamListFragment teamListFragment = (TeamListFragment)
+                getSupportFragmentManager().findFragmentByTag("team_list_fragment");
+        if (!teamListFragment.onBackPressed()) super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
             if (AuthHelper.isSignedIn()) {

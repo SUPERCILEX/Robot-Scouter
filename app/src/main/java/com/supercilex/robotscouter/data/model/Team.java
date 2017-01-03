@@ -368,7 +368,12 @@ public class Team implements Parcelable {
 
     @Exclude
     public String getDeepLink() {
-        return TeamReceiver.APP_LINK_BASE + getKey() + ":" + getNumber();
+        return TeamReceiver.APP_LINK_BASE + getLinkKeyNumberPair();
+    }
+
+    @Exclude
+    public String getLinkKeyNumberPair() {
+        return "&" + TeamReceiver.TEAM_QUERY_KEY + "=" + getKey() + ":" + getNumber();
     }
 
     @Exclude

@@ -35,6 +35,7 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.ui.teamlist.TeamSender;
 import com.supercilex.robotscouter.util.BaseHelper;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ScoutActivity extends AppCompatBase implements ValueEventListener {
@@ -115,7 +116,7 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
                 mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
                 break;
             case R.id.action_share:
-                TeamSender.launchInvitationIntent(this, mTeam);
+                TeamSender.launchInvitationIntent(this, Collections.singletonList(mTeam));
                 break;
             case R.id.action_visit_tba_team_website:
                 mTeam.visitTbaWebsite(this);

@@ -13,15 +13,14 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
-    private static final String TEAM_QUERY_KEY = "team";
+    public static final String TEAM_QUERY_KEY = "team";
     private static final String UTM_SOURCE = "utm_source";
     private static final String UTM_SOURCE_VALUE = "robotscouter";
-
-    public static final String APP_LINK_BASE =
-            "https://supercilex.github.io/?" +
-                    TeamReceiver.UTM_SOURCE + "=" + TeamReceiver.UTM_SOURCE_VALUE +
-                    "&" + TeamReceiver.TEAM_QUERY_KEY + "=";
+    public static final String APP_LINK_BASE = "https://supercilex.github.io/?" + TeamReceiver.UTM_SOURCE + "=" + TeamReceiver.UTM_SOURCE_VALUE;
 
     private FragmentActivity mActivity;
 
@@ -54,22 +53,28 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
 
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
-            Team team = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
-            Long number = team.getNumberAsLong();
-            Team.getIndicesRef().child(team.getKey()).setValue(number, number);
-            launchTeam(team);
-        } else { // Received normal intent
-            launchTeam(getTeam(deepLink));
+            List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
+            for (Team team : teams) {
+                Long number = team.getNumberAsLong();
+                Team.getIndicesRef().child(team.getKey()).setValue(number, number);
+            }
+            if (teams.size() == 1) launchTeam(teams.get(0));
+        } else { // Received normal one team intent
+            launchTeam(getTeam(deepLink).get(0));
         }
     }
 
-    private Team getTeam(Uri deepLink) {
-        // Format: -key:2521
-        String[] team = deepLink.getQueryParameter(TEAM_QUERY_KEY).split(":");
-        String teamKey = team[0];
-        String teamNumber = team[1];
+    private List<Team> getTeam(Uri deepLink) {
+        List<Team> teams = new ArrayList<>();
+        for (String teamPair : deepLink.getQueryParameters(TEAM_QUERY_KEY)) {
+            // Format: -key:2521
+            String[] teamPairSplit = teamPair.split(":");
+            String teamKey = teamPairSplit[0];
+            String teamNumber = teamPairSplit[1];
 
-        return new Team.Builder(teamNumber).setKey(teamKey).build();
+            teams.add(new Team.Builder(teamNumber).setKey(teamKey).build());
+        }
+        return teams;
     }
 
     private void launchTeam(Team team) {

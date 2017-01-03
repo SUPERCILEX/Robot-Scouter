@@ -1,56 +1,92 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.common.DeleteTeamDialog;
-import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class TeamHolder extends RecyclerView.ViewHolder
-        implements View.OnClickListener, View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
-    private Fragment mFragment;
+        implements View.OnClickListener, View.OnLongClickListener {
     private Team mTeam;
+    private Fragment mFragment;
+    private TeamMenuRequestListener mMenuManager;
+    private boolean mIsItemSelected;
+    private boolean mCouldItemBeSelected;
 
     private ConstraintLayout mRowLayout;
+    private CircleImageView mLogo;
     private TextView mNumber;
     private TextView mName;
-    private ImageView mLogo;
     private ImageButton mNewScout;
 
     @Keep
     public TeamHolder(View itemView) {
         super(itemView);
         mRowLayout = (ConstraintLayout) itemView;
+        mLogo = (CircleImageView) itemView.findViewById(R.id.logo);
         mNumber = (TextView) itemView.findViewById(R.id.number);
         mName = (TextView) itemView.findViewById(R.id.name);
-        mLogo = (ImageView) itemView.findViewById(R.id.logo);
         mNewScout = (ImageButton) itemView.findViewById(R.id.new_scout);
     }
 
-    public void bind(Fragment fragment, Team team) {
-        mFragment = fragment;
+    public void bind(Team team,
+                     Fragment fragment,
+                     TeamMenuRequestListener menuManager,
+                     boolean isItemSelected,
+                     boolean couldItemBeSelected) {
         mTeam = team;
+        mFragment = fragment;
+        mMenuManager = menuManager;
+        mIsItemSelected = isItemSelected;
+        mCouldItemBeSelected = couldItemBeSelected;
+
+        mNewScout.setBackground(getRippleDrawable());
         setTeamNumber();
         setTeamName();
-        setTeamLogo();
-        mRowLayout.setOnClickListener(this);
-        mRowLayout.setOnCreateContextMenuListener(this);
+        updateItemStatus();
+
+        mLogo.setOnClickListener(this);
         mNewScout.setOnClickListener(this);
+        mRowLayout.setOnClickListener(this);
+        mRowLayout.setOnLongClickListener(this);
+    }
+
+    private void updateItemStatus() {
+        if (mIsItemSelected) {
+            mLogo.setImageDrawable(ContextCompat.getDrawable(mFragment.getContext(),
+                                                             R.drawable.ic_done_grey_144dp));
+            mRowLayout.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
+        } else {
+            setTeamLogo();
+            mRowLayout.setBackground(getRippleDrawable());
+        }
+        mNewScout.setVisibility(mCouldItemBeSelected ? View.GONE : View.VISIBLE);
+    }
+
+    private Drawable getRippleDrawable() {
+        int[] attrs = new int[]{android.R.attr.selectableItemBackground};
+        TypedArray typedArray = mFragment.getContext().obtainStyledAttributes(attrs);
+        try {
+            return typedArray.getDrawable(0);
+        } finally {
+            typedArray.recycle();
+        }
     }
 
     private void setTeamNumber() {
@@ -69,70 +105,29 @@ public class TeamHolder extends RecyclerView.ViewHolder
         Glide.with(mFragment)
                 .load(mTeam.getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.ic_android_black_24dp)
+                .placeholder(R.drawable.ic_android_black_144dp)
+                .error(R.drawable.ic_android_black_144dp)
                 .into(mLogo);
     }
 
     @Override
     public void onClick(View v) {
-        ScoutActivity.start(mFragment.getContext(), mTeam, v.getId() == R.id.new_scout);
+        if (v.getId() == R.id.logo || mIsItemSelected || mCouldItemBeSelected) {
+            onTeamContextMenuRequested();
+        } else {
+            ScoutActivity.start(mFragment.getContext(), mTeam, v.getId() == R.id.new_scout);
+        }
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu,
-                                    View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle(mTeam.getFormattedName());
-        menu.add(Menu.NONE,
-                 R.id.action_share,
-                 Menu.NONE,
-                 R.string.share)
-                .setOnMenuItemClickListener(this);
-        menu.add(Menu.NONE,
-                 R.id.action_visit_tba_team_website,
-                 Menu.NONE,
-                 mFragment.getString(R.string.visit_team_website_on_tba, mTeam.getNumber()))
-                .setOnMenuItemClickListener(this);
-        if (!TextUtils.isEmpty(mTeam.getWebsite())) {
-            menu.add(Menu.NONE,
-                     R.id.action_visit_team_website,
-                     Menu.NONE,
-                     mFragment.getString(R.string.visit_team_website, mTeam.getNumber()))
-                    .setOnMenuItemClickListener(this);
-        }
-        menu.add(Menu.NONE,
-                 R.id.action_edit_team_details,
-                 Menu.NONE,
-                 R.string.edit_team_details)
-                .setOnMenuItemClickListener(this);
-        menu.add(Menu.NONE,
-                 R.id.action_delete,
-                 Menu.NONE,
-                 R.string.delete)
-                .setOnMenuItemClickListener(this);
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_share:
-                TeamSender.launchInvitationIntent(mFragment.getActivity(), mTeam);
-                break;
-            case R.id.action_visit_tba_team_website:
-                mTeam.visitTbaWebsite(mFragment.getContext());
-                break;
-            case R.id.action_visit_team_website:
-                mTeam.visitTeamWebsite(mFragment.getContext());
-                break;
-            case R.id.action_edit_team_details:
-                TeamDetailsDialog.show(mTeam, mFragment.getActivity().getSupportFragmentManager());
-                break;
-            case R.id.action_delete:
-                DeleteTeamDialog.show(mFragment.getActivity().getSupportFragmentManager(), mTeam);
-                break;
-            default:
-                return false;
-        }
+    public boolean onLongClick(View v) {
+        onTeamContextMenuRequested();
         return true;
+    }
+
+    private void onTeamContextMenuRequested() {
+        mIsItemSelected = !mIsItemSelected;
+        updateItemStatus();
+        mMenuManager.onTeamContextMenuRequested(mTeam);
     }
 }

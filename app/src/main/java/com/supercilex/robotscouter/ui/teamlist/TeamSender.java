@@ -11,41 +11,52 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
+import java.util.List;
+
 public class TeamSender {
     private FragmentActivity mActivity;
-    private Team mTeam;
+    private List<Team> mTeams;
 
-    private TeamSender(FragmentActivity activity, Team team) {
+    private TeamSender(FragmentActivity activity, List<Team> teams) {
         mActivity = activity;
-        mTeam = team;
+        mTeams = teams;
 
-        String deepLink = mTeam.getDeepLink();
-        mActivity.startActivityForResult(getInvitationIntent(deepLink), 9);
+        StringBuilder deepLinkBuilder = new StringBuilder(TeamReceiver.APP_LINK_BASE);
+        for (Team team : teams) {
+            deepLinkBuilder.append(team.getLinkKeyNumberPair());
+        }
+
+        mActivity.startActivityForResult(getInvitationIntent(deepLinkBuilder.toString()), 9);
     }
 
-    public static void launchInvitationIntent(FragmentActivity activity, Team team) {
+    public static void launchInvitationIntent(FragmentActivity activity, List<Team> teams) {
         if (BaseHelper.isOffline(activity)) {
             BaseHelper.showSnackbar(activity, R.string.no_connection, Snackbar.LENGTH_LONG);
             return;
         }
-        new TeamSender(activity, team);
+        if (!teams.isEmpty()) new TeamSender(activity, teams);
     }
 
     private Intent getInvitationIntent(String deepLink) {
         return new AppInviteInvitation.IntentBuilder(mActivity.getString(R.string.share_title,
-                                                                         mTeam.getFormattedName()))
-                .setMessage(mActivity.getString(R.string.share_message, mTeam.getFormattedName()))
+                                                                         getFormattedTeamName()))
+                .setMessage(mActivity.getString(R.string.share_message, getFormattedTeamName()))
                 .setDeepLink(Uri.parse(deepLink))
                 .setEmailSubject(mActivity.getString(R.string.share_call_to_action,
-                                                     mTeam.getFormattedName()))
+                                                     getFormattedTeamName()))
                 .setEmailHtmlContent(getFormattedHtml())
                 .build();
     }
 
     private String getFormattedHtml() {
         return String.format(Constants.HTML_IMPORT_TEAM,
-                             mTeam.getFormattedName(),
-                             mTeam.getFormattedName(),
-                             mTeam.getMedia());
+                             getFormattedTeamName(),
+                             getFormattedTeamName(),
+                             mTeams.get(0).getMedia());
+    }
+
+    private String getFormattedTeamName() {
+        String formattedName = mTeams.get(0).getFormattedName();
+        return mTeams.size() == 1 ? formattedName : formattedName + " and more";
     }
 }
