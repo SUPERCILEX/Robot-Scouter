@@ -28,7 +28,8 @@ public class BugCatcher extends Application {
         }
         mRefWatcher = LeakCanary.install(this);
 
-        if (BuildConfig.DEBUG) {
+        // TODO see https://github.com/firebase/quickstart-android/issues/176#issuecomment-268841466
+        if (/*BuildConfig.DEBUG*/false) {
             // Enable StrictMode
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                                            .detectAll()
