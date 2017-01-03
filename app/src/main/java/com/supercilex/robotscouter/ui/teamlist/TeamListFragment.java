@@ -74,6 +74,19 @@ public class TeamListFragment extends StickyFragment
         mRecyclerView.setLayoutManager(mManager.get());
         mRecyclerView.setAdapter(mAdapter);
         restoreState(savedInstanceState);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+                if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
+                    // User scrolled down and the FAB is currently visible -> hide the FAB
+                    fab.hide();
+                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE) {
+                    // User scrolled up and the FAB is currently not visible -> show the FAB
+                    if (mSelectedTeams.isEmpty()) fab.show();
+                }
+            }
+        });
         return rootView;
     }
 
@@ -119,8 +132,7 @@ public class TeamListFragment extends StickyFragment
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
             if (mSelectedTeams.size() == 1) showTeamSpecificItems();
-            ((AppCompatBase) getActivity()).getSupportActionBar()
-                    .setTitle(String.valueOf(mSelectedTeams.size()));
+            setToolbarTitle();
         }
     }
 
@@ -184,7 +196,6 @@ public class TeamListFragment extends StickyFragment
                 Constants.FIREBASE_TEAMS) {
             @Override
             public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
-                team.setKey(getRef(position).getKey());
                 team.fetchLatestData(getContext());
                 teamHolder.bind(team,
                                 TeamListFragment.this,
@@ -195,8 +206,48 @@ public class TeamListFragment extends StickyFragment
 
             @Override
             public void onChanged(EventType type, int index, int oldIndex) {
+                switch (type) {
+                    case ADDED:
+                        break;
+                    case CHANGED:
+                    case MOVED:
+                        for (Team oldTeam : mSelectedTeams) {
+                            Team team = getItem(index);
+                            if (oldTeam.getKey().equals(team.getKey())) {
+                                mSelectedTeams.remove(oldTeam);
+                                mSelectedTeams.add(team);
+                                break;
+                            }
+                        }
+                        break;
+                    case REMOVED:
+                        if (!mSelectedTeams.isEmpty()) {
+                            List<Team> tmpTeams = new ArrayList<>();
+                            for (int i = 0; i < getItemCount(); i++) {
+                                tmpTeams.add(getItem(i));
+                            }
+                            for (Team oldTeam : mSelectedTeams) {
+                                if (!tmpTeams.contains(oldTeam)) { // We found the deleted item
+                                    mSelectedTeams.remove(oldTeam);
+                                    if (mSelectedTeams.isEmpty()) {
+                                        resetMenu();
+                                    } else {
+                                        setToolbarTitle();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                }
                 super.onChanged(type, index, oldIndex);
-//                if (!mSelectedTeams.isEmpty()) resetMenu(); // TODO bad solution that crashes things
+            }
+
+            @Override
+            public Team getItem(int position) {
+                Team team = super.getItem(position);
+                team.setKey(getRef(position).getKey());
+                return team;
             }
 
             @Override
@@ -229,8 +280,7 @@ public class TeamListFragment extends StickyFragment
         } else {
             mSelectedTeams.add(team);
         }
-        ((AppCompatBase) getActivity()).getSupportActionBar()
-                .setTitle(String.valueOf(mSelectedTeams.size()));
+        setToolbarTitle();
 
         if (hadNormalMenu) {
             setNormalMenuItemsVisible(false);
@@ -291,6 +341,11 @@ public class TeamListFragment extends StickyFragment
         mMenu.findItem(R.id.action_visit_tba_team_website).setVisible(false);
         mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
         mMenu.findItem(R.id.action_edit_team_details).setVisible(false);
+    }
+
+    private void setToolbarTitle() {
+        ((AppCompatBase) getActivity()).getSupportActionBar()
+                .setTitle(String.valueOf(mSelectedTeams.size()));
     }
 
     private void resetMenu() {

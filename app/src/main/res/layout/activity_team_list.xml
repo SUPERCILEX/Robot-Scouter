@@ -37,7 +37,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add_white_24dp"
-        app:fabSize="normal"
-        app:layout_behavior="com.supercilex.robotscouter.ui.ScrollAwareFabBehavior"/>
+        app:fabSize="normal"/>
 
 </android.support.design.widget.CoordinatorLayout>

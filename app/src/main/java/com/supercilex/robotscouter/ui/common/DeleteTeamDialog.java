@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 
@@ -37,8 +38,8 @@ public class DeleteTeamDialog extends DialogBase implements AlertDialog.OnClickL
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        for (Team team : (Team[]) getArguments().getParcelableArray(TEAMS_KEY)) {
-            team.delete();
+        for (Parcelable parcelable : getArguments().getParcelableArray(TEAMS_KEY)) {
+            ((Team) parcelable).delete();
         }
     }
 }
