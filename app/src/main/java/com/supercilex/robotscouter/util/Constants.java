@@ -9,6 +9,9 @@ import java.util.List;
 
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class Constants {
+    public static final String MANAGER_STATE = "manager_state";
+    public static final String ITEM_COUNT = "count";
+
     // Scout ids
     public static final int CHECKBOX = 0;
     public static final int COUNTER = 1;

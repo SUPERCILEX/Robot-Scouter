@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
@@ -29,10 +32,10 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class TeamListFragment extends StickyFragment implements TeamMenuRequestListener {
+public class TeamListFragment extends StickyFragment
+        implements TeamMenuRequestListener, FirebaseAuth.AuthStateListener {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
     private RecyclerView mRecyclerView;
@@ -47,6 +50,16 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if (AuthHelper.isSignedIn()) initAdapter();
+        AuthHelper.getAuth().addAuthStateListener(this);
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+        if (auth.getCurrentUser() != null) {
+            if (mAdapter == null) resetAdapter();
+        } else {
+            if (mAdapter != null) cleanup();
+        }
     }
 
     @Nullable
@@ -64,11 +77,15 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
         return rootView;
     }
 
-    public void restoreState(@Nullable Bundle savedInstanceState) {
+    private void restoreState(@Nullable Bundle savedInstanceState) {
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager.get());
-        if (savedInstanceState != null) {
-            Team[] teamsArray = (Team[]) savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
-            mSelectedTeams = new ArrayList<>(Arrays.asList(teamsArray));
+        if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
+            final Parcelable[] parcelables =
+                    savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
+            for (Parcelable parcelable : parcelables) {
+                mSelectedTeams.add((Team) parcelable);
+            }
+            notifyItemsChanged();
         }
     }
 
@@ -101,7 +118,7 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
         if (!mSelectedTeams.isEmpty()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            if (mSelectedTeams.size() == 1) showTeamSpecificItems(mSelectedTeams.get(0));
+            if (mSelectedTeams.size() == 1) showTeamSpecificItems();
             ((AppCompatBase) getActivity()).getSupportActionBar()
                     .setTitle(String.valueOf(mSelectedTeams.size()));
         }
@@ -146,6 +163,7 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
     public void onDestroy() {
         super.onDestroy();
         cleanup();
+        AuthHelper.getAuth().removeAuthStateListener(this);
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
@@ -178,7 +196,7 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
             @Override
             public void onChanged(EventType type, int index, int oldIndex) {
                 super.onChanged(type, index, oldIndex);
-                if (!mSelectedTeams.isEmpty()) resetMenu(); // TODO bad solution
+//                if (!mSelectedTeams.isEmpty()) resetMenu(); // TODO bad solution that crashes things
             }
 
             @Override
@@ -188,7 +206,7 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
         };
     }
 
-    public void cleanup() {
+    private void cleanup() {
         mRecyclerView.setAdapter(null);
         if (mAdapter != null) {
             mAdapter.cleanup();
@@ -196,7 +214,7 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
         }
     }
 
-    public void resetAdapter() {
+    private void resetAdapter() {
         cleanup();
         initAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -217,25 +235,27 @@ public class TeamListFragment extends StickyFragment implements TeamMenuRequestL
         if (hadNormalMenu) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            showTeamSpecificItems(team);
+            showTeamSpecificItems();
             notifyItemsChanged();
         } else {
             if (mSelectedTeams.isEmpty()) {
                 resetMenu();
             } else if (mSelectedTeams.size() == 1) {
-                showTeamSpecificItems(team);
+                showTeamSpecificItems();
             } else {
                 hideTeamSpecificMenuItems();
             }
         }
     }
 
-    private void showTeamSpecificItems(Team team) {
+    private void showTeamSpecificItems() {
+        Team team = mSelectedTeams.get(0);
+
         mMenu.findItem(R.id.action_visit_tba_team_website)
                 .setVisible(true)
                 .setTitle(getString(R.string.visit_team_website_on_tba, team.getNumber()));
         mMenu.findItem(R.id.action_visit_team_website)
-                .setVisible(true)
+                .setVisible(team.getWebsite() != null)
                 .setTitle(getString(R.string.visit_team_website, team.getNumber()));
         mMenu.findItem(R.id.action_edit_team_details).setVisible(true);
     }

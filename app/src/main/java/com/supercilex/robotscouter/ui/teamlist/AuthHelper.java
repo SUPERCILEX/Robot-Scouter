@@ -38,14 +38,11 @@ public class AuthHelper {
     private TeamReceiver mLinkReceiver;
 
     private FragmentActivity mActivity;
-    private TeamListFragment mTeamsFragment;
     private MenuItem mActionSignIn;
     private MenuItem mActionSignOut;
 
-    private AuthHelper(TeamListActivity activity) {
+    private AuthHelper(FragmentActivity activity) {
         mActivity = activity;
-        mTeamsFragment = (TeamListFragment) mActivity.getSupportFragmentManager()
-                .findFragmentByTag("team_list_fragment");
     }
 
     public static FirebaseAuth getAuth() {
@@ -91,7 +88,7 @@ public class AuthHelper {
         });
     }
 
-    public static AuthHelper init(TeamListActivity activity) {
+    public static AuthHelper init(FragmentActivity activity) {
         AuthHelper helper = new AuthHelper(activity);
         if (isSignedIn()) {
             helper.initDeepLinkReceiver();
@@ -138,12 +135,6 @@ public class AuthHelper {
                         initDeepLinkReceiver();
                     }
                 })
-                .addOnSuccessListener(mActivity, new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult result) {
-                        mTeamsFragment.resetAdapter();
-                    }
-                })
                 .addOnFailureListener(mActivity, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -175,7 +166,6 @@ public class AuthHelper {
                 .addOnSuccessListener(mActivity, new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mTeamsFragment.cleanup();
                         toggleMenuSignIn(false);
                     }
                 })
@@ -200,7 +190,6 @@ public class AuthHelper {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == ResultCodes.OK) {
-                mTeamsFragment.resetAdapter();
                 BaseHelper.showSnackbar(mActivity, R.string.signed_in, Snackbar.LENGTH_LONG);
                 toggleMenuSignIn(true);
 
