@@ -61,7 +61,7 @@ public class TeamListFragment extends StickyFragment
             initAdapter();
             if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
             restoreState(mSavedInstanceState);
-            mSavedInstanceState = null;
+            mSavedInstanceState = null; // NOPMD
         }
     }
 
