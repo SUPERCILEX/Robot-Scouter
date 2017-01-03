@@ -19,7 +19,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     private Team mTeam;
 
-    private TextInputLayout mNameInputLayout;
     private TextInputLayout mMediaInputLayout;
     private TextInputLayout mWebsiteInputLayout;
     private EditText mNameEditText;
@@ -38,7 +37,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         mTeam = Team.getTeam(getArguments());
 
         View rootView = View.inflate(getContext(), R.layout.dialog_edit_details, null);
-        mNameInputLayout = (TextInputLayout) rootView.findViewById(R.id.name_layout);
         mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
         mWebsiteInputLayout = (TextInputLayout) rootView.findViewById(R.id.website_layout);
         mNameEditText = (EditText) rootView.findViewById(R.id.name);
