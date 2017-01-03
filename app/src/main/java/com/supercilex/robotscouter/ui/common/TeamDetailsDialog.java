@@ -124,7 +124,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     @Nullable
     private String formatUrl(String url) {
         String trimmedUrl = url.trim();
-        if (url.isEmpty()) return null;
+        if (trimmedUrl.isEmpty()) return null;
         if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
             return trimmedUrl;
         } else {
