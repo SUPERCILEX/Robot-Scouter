@@ -66,19 +66,21 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
         if (isWebsiteValid && isMediaValid) {
             String name = mNameEditText.getText().toString();
-            if (mTeam.getName() == null ? name != null : !mTeam.getName().equals(name)) {
+            if (mTeam.getName() == null ? !TextUtils.isEmpty(name) : !mTeam.getName()
+                    .equals(name)) {
                 mTeam.setHasCustomName(true);
                 mTeam.setName(name);
             }
 
             String media = formatUrl(mMediaEditText.getText().toString());
-            if (mTeam.getMedia() == null ? media != null : !mTeam.getMedia().equals(media)) {
+            if (mTeam.getMedia() == null ? !TextUtils.isEmpty(media) : !mTeam.getMedia()
+                    .equals(media)) {
                 mTeam.setHasCustomMedia(true);
                 mTeam.setMedia(media);
             }
 
             String website = formatUrl(mWebsiteEditText.getText().toString());
-            if (mTeam.getWebsite() == null ? website != null : !mTeam.getWebsite()
+            if (mTeam.getWebsite() == null ? !TextUtils.isEmpty(website) : !mTeam.getWebsite()
                     .equals(website)) {
                 mTeam.setHasCustomWebsite(true);
                 mTeam.setWebsite(website);
