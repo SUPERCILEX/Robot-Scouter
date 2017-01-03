@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.common;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
@@ -60,25 +61,25 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     @Override
     public boolean onClick() {
-        boolean isNameValid = validateNotEmpty(mNameInputLayout);
         boolean isMediaValid = validateUrl(mMediaInputLayout);
         boolean isWebsiteValid = validateUrl(mWebsiteInputLayout);
 
-        if (isNameValid && isWebsiteValid && isMediaValid) {
+        if (isWebsiteValid && isMediaValid) {
             String name = mNameEditText.getText().toString();
-            if (!mTeam.getName().equals(name)) {
+            if (mTeam.getName() == null ? name != null : !mTeam.getName().equals(name)) {
                 mTeam.setHasCustomName(true);
                 mTeam.setName(name);
             }
 
             String media = formatUrl(mMediaEditText.getText().toString());
-            if (!mTeam.getMedia().equals(media)) {
+            if (mTeam.getMedia() == null ? media != null : !mTeam.getMedia().equals(media)) {
                 mTeam.setHasCustomMedia(true);
                 mTeam.setMedia(media);
             }
 
             String website = formatUrl(mWebsiteEditText.getText().toString());
-            if (!mTeam.getWebsite().equals(website)) {
+            if (mTeam.getWebsite() == null ? website != null : !mTeam.getWebsite()
+                    .equals(website)) {
                 mTeam.setHasCustomWebsite(true);
                 mTeam.setWebsite(website);
             }
@@ -96,9 +97,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         if (hasFocus) return; // Only consider views losing focus
 
         switch (v.getId()) { // NOPMD
-            case R.id.name:
-                validateNotEmpty(mNameInputLayout);
-                break;
             case R.id.media:
                 validateUrl(mMediaInputLayout);
                 break;
@@ -108,21 +106,12 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         }
     }
 
-    private boolean validateNotEmpty(TextInputLayout inputLayout) {
-        if (isEmpty(inputLayout)) {
-            inputLayout.setError(getString(R.string.required_field));
-            return false;
-        } else {
-            inputLayout.setError(null);
-            return true;
-        }
-    }
-
     private boolean validateUrl(TextInputLayout inputLayout) {
-        boolean isValid = !isEmpty(inputLayout)
-                && Patterns.WEB_URL.matcher(formatUrl(inputLayout.getEditText()
-                                                              .getText()
-                                                              .toString())).matches();
+        if (TextUtils.isEmpty(inputLayout.getEditText().getText())) return true;
+
+        boolean isValid = Patterns.WEB_URL.matcher(formatUrl(inputLayout.getEditText()
+                                                                     .getText()
+                                                                     .toString())).matches();
         if (isValid) {
             inputLayout.setError(null);
             return true;
@@ -132,12 +121,10 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         }
     }
 
-    private boolean isEmpty(TextInputLayout inputLayout) {
-        return TextUtils.isEmpty(inputLayout.getEditText().getText());
-    }
-
+    @Nullable
     private String formatUrl(String url) {
         String trimmedUrl = url.trim();
+        if (url.isEmpty()) return null;
         if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
             return trimmedUrl;
         } else {
