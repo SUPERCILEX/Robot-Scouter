@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.BaseHelper;
@@ -133,6 +132,11 @@ public class AuthHelper implements View.OnClickListener {
                     @Override
                     public void onSuccess(AuthResult result) {
                         DatabaseInitializer.init();
+                    }
+                })
+                .addOnSuccessListener(mActivity, new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult result) {
                         initDeepLinkReceiver();
                     }
                 })
@@ -226,7 +230,6 @@ public class AuthHelper implements View.OnClickListener {
 
     private static final class DatabaseInitializer implements ValueEventListener {
         private DatabaseInitializer() {
-            Team.getIndicesRef().addListenerForSingleValueEvent(this);
             Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
@@ -238,7 +241,7 @@ public class AuthHelper implements View.OnClickListener {
 
         @Override
         public void onDataChange(DataSnapshot snapshot) {
-            // This allows the database to work offline
+            // This allows the database to work offline without any setup
         }
 
         @Override

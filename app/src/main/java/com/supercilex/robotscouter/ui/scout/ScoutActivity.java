@@ -73,7 +73,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         addTeamAndScoutListeners(savedInstanceState);
 
         if (savedInstanceState == null && BaseHelper.isOffline(this)) {
-            BaseHelper.showSnackbar(this, R.string.offline_reassurance, Snackbar.LENGTH_SHORT);
+            BaseHelper.showSnackbar(this, R.string.offline_reassurance, Snackbar.LENGTH_LONG);
         }
     }
 
