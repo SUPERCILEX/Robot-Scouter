@@ -15,6 +15,7 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
+import com.firebase.ui.auth.util.Preconditions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseAppIndex;
@@ -32,7 +33,6 @@ import com.supercilex.robotscouter.data.client.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.Preconditions;
 
 import java.util.concurrent.TimeUnit;
 
