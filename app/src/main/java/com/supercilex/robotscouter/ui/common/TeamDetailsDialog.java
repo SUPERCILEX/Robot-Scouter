@@ -61,28 +61,28 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     @Override
     public boolean onClick() {
-        boolean isMediaValid = validateUrl(mMediaInputLayout);
-        boolean isWebsiteValid = validateUrl(mWebsiteInputLayout);
+        boolean isMediaValid = validateUrl(mMediaEditText.getText(), mMediaInputLayout);
+        boolean isWebsiteValid = validateUrl(mWebsiteEditText.getText(), mWebsiteInputLayout);
 
         if (isWebsiteValid && isMediaValid) {
             String name = mNameEditText.getText().toString();
             if (mTeam.getName() == null ? !TextUtils.isEmpty(name) : !mTeam.getName()
                     .equals(name)) {
-                mTeam.setHasCustomName(true);
+                mTeam.setHasCustomName();
                 mTeam.setName(name);
             }
 
-            String media = formatUrl(mMediaEditText.getText().toString());
+            String media = formatUrl(mMediaEditText.getText());
             if (mTeam.getMedia() == null ? !TextUtils.isEmpty(media) : !mTeam.getMedia()
                     .equals(media)) {
-                mTeam.setHasCustomMedia(true);
+                mTeam.setHasCustomMedia();
                 mTeam.setMedia(media);
             }
 
-            String website = formatUrl(mWebsiteEditText.getText().toString());
+            String website = formatUrl(mWebsiteEditText.getText());
             if (mTeam.getWebsite() == null ? !TextUtils.isEmpty(website) : !mTeam.getWebsite()
                     .equals(website)) {
-                mTeam.setHasCustomWebsite(true);
+                mTeam.setHasCustomWebsite();
                 mTeam.setWebsite(website);
             }
 
@@ -106,22 +106,20 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
         switch (v.getId()) {
             case R.id.media:
-                validateUrl(mMediaInputLayout);
+                validateUrl(mMediaEditText.getText(), mMediaInputLayout);
                 break;
             case R.id.website:
-                validateUrl(mWebsiteInputLayout);
+                validateUrl(mWebsiteEditText.getText(), mWebsiteInputLayout);
                 break;
             default:
                 break;
         }
     }
 
-    private boolean validateUrl(TextInputLayout inputLayout) {
-        if (TextUtils.isEmpty(inputLayout.getEditText().getText())) return true;
+    private boolean validateUrl(CharSequence url, TextInputLayout inputLayout) {
+        if (TextUtils.isEmpty(url)) return true;
 
-        boolean isValid = Patterns.WEB_URL.matcher(formatUrl(inputLayout.getEditText()
-                                                                     .getText()
-                                                                     .toString())).matches();
+        boolean isValid = Patterns.WEB_URL.matcher(formatUrl(url)).matches();
         if (isValid) {
             inputLayout.setError(null);
             return true;
@@ -132,8 +130,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     @Nullable
-    private String formatUrl(String url) {
-        String trimmedUrl = url.trim();
+    private String formatUrl(CharSequence url) {
+        String trimmedUrl = url.toString().trim();
         if (trimmedUrl.isEmpty()) return null;
         if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
             return trimmedUrl;

@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -28,17 +29,16 @@ import com.supercilex.robotscouter.data.TeamIndices;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
-import com.supercilex.robotscouter.ui.AppCompatBase;
+import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
-import com.supercilex.robotscouter.ui.teamlist.TeamSender;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 import java.util.Collections;
 import java.util.List;
 
-public class ScoutActivity extends AppCompatBase implements ValueEventListener {
+public class ScoutActivity extends AppCompatActivity implements ValueEventListener {
     private static final String INTENT_ADD_SCOUT = "add_scout";
 
     private Team mTeam;
@@ -72,8 +72,8 @@ public class ScoutActivity extends AppCompatBase implements ValueEventListener {
         mHolder.bind(mTeam);
         addTeamAndScoutListeners(savedInstanceState);
 
-        if (savedInstanceState == null && mHelper.isOffline()) {
-            mHelper.showSnackbar(R.string.offline_reassurance, Snackbar.LENGTH_SHORT);
+        if (savedInstanceState == null && BaseHelper.isOffline(this)) {
+            BaseHelper.showSnackbar(this, R.string.offline_reassurance, Snackbar.LENGTH_SHORT);
         }
     }
 

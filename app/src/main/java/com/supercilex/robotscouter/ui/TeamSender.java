@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.teamlist;
+package com.supercilex.robotscouter.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 

@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.teamlist;
+package com.supercilex.robotscouter.ui;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.model.User;
+import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskFailureLogger;

@@ -3,16 +3,17 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.ui.AppCompatBase;
+import com.supercilex.robotscouter.ui.AuthHelper;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-public class TeamListActivity extends AppCompatBase implements View.OnClickListener {
+public class TeamListActivity extends AppCompatActivity implements View.OnClickListener {
     private AuthHelper mAuthHelper;
 
     @Override

@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -23,8 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.BugCatcher;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.AppCompatBase;
-import com.supercilex.robotscouter.ui.StickyFragment;
+import com.supercilex.robotscouter.ui.AuthHelper;
+import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.DeleteTeamDialog;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.util.BaseHelper;
@@ -34,7 +36,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamListFragment extends StickyFragment
+public class TeamListFragment extends Fragment
         implements TeamMenuRequestListener, FirebaseAuth.AuthStateListener {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
@@ -50,6 +52,7 @@ public class TeamListFragment extends StickyFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         setHasOptionsMenu(true);
         AuthHelper.getAuth().addAuthStateListener(this);
     }
@@ -310,7 +313,8 @@ public class TeamListFragment extends StickyFragment
     private void setContextMenuItemsVisible(boolean visible) {
         mMenu.findItem(R.id.action_share).setVisible(visible);
         mMenu.findItem(R.id.action_delete).setVisible(visible);
-        ((AppCompatBase) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(visible);
+        ((AppCompatActivity) getActivity()).getSupportActionBar()
+                .setDisplayHomeAsUpEnabled(visible);
         if (visible) (getFab()).hide();
     }
 
@@ -319,7 +323,7 @@ public class TeamListFragment extends StickyFragment
         mMenu.findItem(R.id.action_about).setVisible(visible);
         if (visible) {
             (getFab()).show();
-            ((AppCompatBase) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {
                 mMenu.findItem(R.id.action_sign_in).setVisible(false);
                 mMenu.findItem(R.id.action_sign_out).setVisible(true);
@@ -341,7 +345,7 @@ public class TeamListFragment extends StickyFragment
     }
 
     private void setToolbarTitle() {
-        ((AppCompatBase) getActivity()).getSupportActionBar()
+        ((AppCompatActivity) getActivity()).getSupportActionBar()
                 .setTitle(String.valueOf(mSelectedTeams.size()));
     }
 

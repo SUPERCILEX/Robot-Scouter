@@ -6,15 +6,15 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.DialogBase;
 
 import java.util.List;
 
-public class DeleteTeamDialog extends DialogBase implements AlertDialog.OnClickListener {
+public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnClickListener {
     private static final String TAG = "DeleteTeamDialog";
     private static final String TEAMS_KEY = "teams_key";
 

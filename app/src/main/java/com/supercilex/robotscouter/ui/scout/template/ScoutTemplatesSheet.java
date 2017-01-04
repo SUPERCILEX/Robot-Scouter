@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,12 +19,11 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
-import com.supercilex.robotscouter.ui.BottomSheetBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ScoutTemplatesSheet extends BottomSheetBase {
+public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
     private static final String TAG = "ScoutTemplatesSheet";
 
     private RecyclerView mRecyclerView;

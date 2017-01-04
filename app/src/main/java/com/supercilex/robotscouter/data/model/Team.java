@@ -29,7 +29,7 @@ import com.google.firebase.database.ServerValue;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob21;
-import com.supercilex.robotscouter.ui.teamlist.AuthHelper;
+import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.Preconditions;
@@ -102,8 +102,8 @@ public class Team implements Parcelable {
         mMedia = media;
         mWebsite = website;
         mHasCustomName = hasCustomName;
-        mHasCustomWebsite = hasCustomWebsite;
         mHasCustomMedia = hasCustomMedia;
+        mHasCustomWebsite = hasCustomWebsite;
         mTimestamp = timestamp;
     }
 
@@ -229,8 +229,8 @@ public class Team implements Parcelable {
     }
 
     @Keep
-    public void setHasCustomName(boolean hasCustomName) {
-        mHasCustomName = hasCustomName;
+    public void setHasCustomName() {
+        mHasCustomName = true;
     }
 
     @Keep
@@ -244,8 +244,8 @@ public class Team implements Parcelable {
     }
 
     @Keep
-    public void setHasCustomMedia(boolean hasCustomMedia) {
-        mHasCustomMedia = hasCustomMedia;
+    public void setHasCustomMedia() {
+        mHasCustomMedia = true;
     }
 
     @Keep
@@ -259,13 +259,13 @@ public class Team implements Parcelable {
     }
 
     @Keep
-    public void setHasCustomWebsite(boolean hasCustomWebsite) {
-        mHasCustomWebsite = hasCustomWebsite;
+    public void setHasCustomWebsite() {
+        mHasCustomWebsite = true;
     }
 
     @Keep
     @PropertyName(FIREBASE_TIMESTAMP)
-    public Object getServerValue() {
+    public Object getServerTimestamp() {
         return ServerValue.TIMESTAMP;
     }
 
@@ -293,15 +293,29 @@ public class Team implements Parcelable {
     }
 
     public void update(Team newTeam) {
+        if (equals(newTeam)) return;
+        checkForMatchingDetails(newTeam);
         if (!mHasCustomName) mName = newTeam.getName();
-        if (!mHasCustomWebsite) mWebsite = newTeam.getWebsite();
         if (!mHasCustomMedia) mMedia = newTeam.getMedia();
+        if (!mHasCustomWebsite) mWebsite = newTeam.getWebsite();
         forceUpdate();
     }
 
     public void forceUpdate() {
         getRef().setValue(this);
         FirebaseAppIndex.getInstance().update(getIndexable());
+    }
+
+    private void checkForMatchingDetails(Team newTeam) {
+        if (mHasCustomName && getName().equals(newTeam.getName())) {
+            mHasCustomName = false;
+        }
+        if (mHasCustomMedia && getMedia().equals(newTeam.getMedia())) {
+            mHasCustomMedia = false;
+        }
+        if (mHasCustomWebsite && getWebsite().equals(newTeam.getWebsite())) {
+            mHasCustomWebsite = false;
+        }
     }
 
     public void updateTemplateKey(String key) {
@@ -461,8 +475,8 @@ public class Team implements Parcelable {
         private String mMedia;
         private String mWebsite;
         private boolean mHasCustomName;
-        private boolean mHasCustomWebsite;
         private boolean mHasCustomMedia;
+        private boolean mHasCustomWebsite;
         private long mTimestamp;
 
         public Builder(@NonNull String number) {
@@ -477,8 +491,8 @@ public class Team implements Parcelable {
             mMedia = team.getMedia();
             mWebsite = team.getWebsite();
             if (team.getHasCustomName() != null) mHasCustomName = team.getHasCustomName();
-            if (team.getHasCustomWebsite() != null) mHasCustomWebsite = team.getHasCustomWebsite();
             if (team.getHasCustomMedia() != null) mHasCustomMedia = team.getHasCustomMedia();
+            if (team.getHasCustomWebsite() != null) mHasCustomWebsite = team.getHasCustomWebsite();
             mTimestamp = team.getTimestamp();
         }
 

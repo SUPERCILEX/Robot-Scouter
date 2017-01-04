@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -17,12 +18,11 @@ import com.supercilex.robotscouter.BugCatcher;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.ui.FragmentBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ScoutFragment extends FragmentBase implements MenuItem.OnMenuItemClickListener {
+public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickListener {
     private static final String TEAM_KEY = "team_key";
 
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
