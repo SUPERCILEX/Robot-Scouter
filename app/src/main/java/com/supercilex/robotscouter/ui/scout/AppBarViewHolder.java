@@ -41,7 +41,7 @@ public class AppBarViewHolder {
         if (mTeam != null && mTeam.equals(team)) return;
         mTeam = team;
         mActivity.getSupportActionBar().setTitle(mTeam.getFormattedName());
-        setTaskDescription(null, ContextCompat.getColor(mActivity, R.color.color_primary));
+        setTaskDescription(null, ContextCompat.getColor(mActivity, R.color.colorPrimary));
         loadImages();
         bindMenu();
     }

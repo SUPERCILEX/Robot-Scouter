@@ -361,7 +361,7 @@ public class Team implements Parcelable {
     @Exclude
     private CustomTabsIntent getCustomTabsIntent(Context context) {
         return new CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(context, R.color.color_primary))
+                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setShowTitle(true)
                 .addDefaultShareMenuItem()
                 .enableUrlBarHiding()
