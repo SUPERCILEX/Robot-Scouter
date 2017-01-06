@@ -68,7 +68,7 @@ public class Team implements Parcelable {
     @Exclude private static final String FIREBASE_TIMESTAMP = "timestamp";
     @Exclude private static final String FIREBASE_TEMPLATE_KEY = "templateKey";
 
-    @Exclude private static final int WEEK = 7;
+    @Exclude private static final int FRESHNESS_DAYS = 4;
 
     @Exclude private String mNumber;
     @Exclude private String mKey;
@@ -339,7 +339,7 @@ public class Team implements Parcelable {
 
     public void fetchLatestData(Context context) {
         long differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp);
-        if (differenceDays >= WEEK) {
+        if (differenceDays >= FRESHNESS_DAYS) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 DownloadTeamDataJob21.start(this, context);
             } else {
