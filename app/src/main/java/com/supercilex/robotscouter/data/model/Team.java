@@ -293,7 +293,11 @@ public class Team implements Parcelable {
     }
 
     public void update(Team newTeam) {
-        if (equals(newTeam)) return;
+        if (equals(newTeam)) {
+            getRef().child(FIREBASE_TIMESTAMP).setValue(getServerTimestamp());
+            return;
+        }
+
         checkForMatchingDetails(newTeam);
         if (!mHasCustomName) mName = newTeam.getName();
         if (!mHasCustomMedia) mMedia = newTeam.getMedia();
