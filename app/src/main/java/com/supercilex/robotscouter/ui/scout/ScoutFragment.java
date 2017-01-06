@@ -14,8 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.supercilex.robotscouter.BugCatcher;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
@@ -78,7 +78,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
-        BugCatcher.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

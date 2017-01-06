@@ -22,8 +22,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
-import com.supercilex.robotscouter.BugCatcher;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamSender;
@@ -181,7 +181,7 @@ public class TeamListFragment extends Fragment
         super.onDestroy();
         cleanup();
         AuthHelper.getAuth().removeAuthStateListener(this);
-        BugCatcher.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

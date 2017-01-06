@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.supercilex.robotscouter.util.BaseHelper;
@@ -11,11 +13,11 @@ import com.supercilex.robotscouter.util.BaseHelper;
 /**
  * A simple class for LeakCanary integration.
  */
-public class BugCatcher extends Application {
+public class RobotScouter extends Application {
     private RefWatcher mRefWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {
-        return ((BugCatcher) context.getApplicationContext()).mRefWatcher;
+        return ((RobotScouter) context.getApplicationContext()).mRefWatcher;
     }
 
     @Override
@@ -37,7 +39,14 @@ public class BugCatcher extends Application {
                                            .penaltyDeath()
                                            .build());
         }
+        // END QUALITY CHECKS
 
         BaseHelper.resetJobDispatcher(this);
+
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        config.setDefaults(R.xml.remote_config_defaults);
+        config.setConfigSettings(new FirebaseRemoteConfigSettings.Builder()
+                                         .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                                         .build());
     }
 }

@@ -23,6 +23,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
@@ -120,8 +121,9 @@ public class AuthHelper implements View.OnClickListener {
                         .setProviders(Constants.ALL_PROVIDERS)
                         .setTheme(R.style.RobotScouter)
                         .setLogo(R.drawable.ic_logo)
-                        .setShouldLinkAccounts(true)
                         .setTosUrl("https://supercilex.github.io/privacy-policy/")
+                        .setIsSmartLockEnabled(BuildConfig.DEBUG)
+                        .setShouldLinkAccounts(true)
                         .build(),
                 RC_SIGN_IN);
     }

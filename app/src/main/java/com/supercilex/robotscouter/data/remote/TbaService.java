@@ -21,6 +21,6 @@ public interface TbaService {
     @GET("frc{number}?X-TBA-App-Id=" + TOKEN)
     Call<JsonObject> getTeamInfo(@Path("number") String number);
 
-    @GET("frc{number}/media?X-TBA-App-Id=" + TOKEN)
-    Call<JsonArray> getTeamMedia(@Path("number") String number);
+    @GET("frc{number}/{year}/media?X-TBA-App-Id=" + TOKEN)
+    Call<JsonArray> getTeamMedia(@Path("number") String number, @Path("year") String year);
 }

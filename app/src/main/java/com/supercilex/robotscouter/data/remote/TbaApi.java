@@ -5,9 +5,11 @@ import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -21,6 +23,7 @@ import java.util.concurrent.Callable;
 import retrofit2.Response;
 
 public final class TbaApi implements Callable<Team> {
+    private static final String TEAM_MEDIA_YEAR = "team_media_year";
     private static final String TEAM_NICKNAME = "nickname";
     private static final String TEAM_WEBSITE = "website";
     private static final String IMGUR = "imgur";
@@ -45,6 +48,16 @@ public final class TbaApi implements Callable<Team> {
 
     @Override
     public Team call() throws Exception { // NOPMD
+        Task<Void> teamMediaYearFetchTask = FirebaseRemoteConfig.getInstance()
+                .fetch()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseRemoteConfig.getInstance().activateFetched();
+                    }
+                });
+        Tasks.await(teamMediaYearFetchTask);
+
         getTeamInfo();
         getTeamMedia();
         Tasks.await(Tasks.whenAll(mInfoTask.getTask(), mMediaTask.getTask()));
@@ -52,8 +65,8 @@ public final class TbaApi implements Callable<Team> {
     }
 
     private void getTeamInfo() throws IOException {
-        Response<JsonObject> response
-                = mTbaService.getTeamInfo(mTeam.getNumber()).execute();
+        Response<JsonObject> response =
+                mTbaService.getTeamInfo(mTeam.getNumber()).execute();
 
         if (cannotContinue(mInfoTask, response)) return;
 
@@ -71,8 +84,11 @@ public final class TbaApi implements Callable<Team> {
     }
 
     private void getTeamMedia() throws IOException {
-        Response<JsonArray> response
-                = mTbaService.getTeamMedia(mTeam.getNumber()).execute();
+        Response<JsonArray> response =
+                mTbaService.getTeamMedia(mTeam.getNumber(),
+                                         FirebaseRemoteConfig.getInstance()
+                                                 .getString(TEAM_MEDIA_YEAR))
+                        .execute();
 
         if (cannotContinue(mMediaTask, response)) return;
 

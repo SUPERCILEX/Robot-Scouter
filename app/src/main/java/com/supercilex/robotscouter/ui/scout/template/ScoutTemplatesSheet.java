@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
-import com.supercilex.robotscouter.BugCatcher;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
@@ -79,7 +79,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
         super.onDestroy();
         mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
         mAdapter.cleanup();
-        BugCatcher.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override
