@@ -105,7 +105,6 @@ public class TeamHolder extends RecyclerView.ViewHolder
         Glide.with(mFragment)
                 .load(mTeam.getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .placeholder(R.drawable.ic_android_black_144dp)
                 .error(R.drawable.ic_android_black_144dp)
                 .into(mLogo);
     }

@@ -33,6 +33,7 @@
                 android:contentDescription="@string/accessibility_robot_icon"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
+                android:src="@drawable/ic_android_black_144dp"
                 app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar
