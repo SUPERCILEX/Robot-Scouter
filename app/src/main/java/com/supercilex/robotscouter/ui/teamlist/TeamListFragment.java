@@ -27,7 +27,6 @@ import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamSender;
-import com.supercilex.robotscouter.ui.common.DeleteTeamDialog;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;

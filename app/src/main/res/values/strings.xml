@@ -3,7 +3,6 @@
     <string name="app_name">Robot Scouter</string>
 
     <!-- Common -->
-    <string name="confirm_deletion">Are you sure?</string>
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
 
@@ -13,6 +12,8 @@
 
     <string name="unknown_team">Unknown</string>
     <string name="delete">Delete</string>
+    <string name="caution_delete">The following teams will be deleted for you and your teammates:\n\n%s</string>
+    <string name="confirm_deletion">Are you sure?</string>
 
     <string name="share">Share</string>
     <string name="share_title">Share team %s</string>
