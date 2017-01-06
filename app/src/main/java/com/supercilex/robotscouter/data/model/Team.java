@@ -36,7 +36,7 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
-public class Team implements Parcelable {
+public class Team implements Parcelable, Comparable<Team> {
     @Exclude
     public static final Creator<Team> CREATOR = new Creator<Team>() {
         @Override
@@ -454,6 +454,19 @@ public class Team implements Parcelable {
                 && mHasCustomMedia == team.mHasCustomMedia
                 && mHasCustomWebsite == team.mHasCustomWebsite
                 && mTimestamp == team.mTimestamp;
+    }
+
+    @Override
+    public int compareTo(Team team) {
+        long number = getNumberAsLong();
+        long otherTeamNumber = team.getNumberAsLong();
+        if (number > otherTeamNumber) {
+            return 1;
+        } else if (number == otherTeamNumber) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     @Override

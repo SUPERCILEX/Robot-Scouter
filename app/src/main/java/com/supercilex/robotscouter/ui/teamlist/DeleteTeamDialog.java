@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnClickListener {
@@ -37,6 +38,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
         for (Parcelable parcelable : getArguments().getParcelableArray(TEAMS_KEY)) {
             mTeams.add((Team) parcelable);
         }
+        Collections.sort(mTeams);
     }
 
     @NonNull
