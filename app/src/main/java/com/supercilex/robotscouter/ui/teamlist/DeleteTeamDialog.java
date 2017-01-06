@@ -47,7 +47,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
             deletedTeams.append(i + 1)
                     .append(". ")
                     .append(mTeams.get(i).getFormattedName())
-                    .append("\n");
+                    .append('\n');
         }
 
         return new AlertDialog.Builder(getContext())
