@@ -8,8 +8,7 @@ import java.util.concurrent.Executor;
 
 public class TaskExecutor implements Executor {
     public static <TResult> Task<TResult> execute(Callable<TResult> callable) {
-        return Tasks.call(new TaskExecutor(), callable)
-                .addOnFailureListener(new TaskFailureLogger());
+        return Tasks.call(new TaskExecutor(), callable);
     }
 
     @Override

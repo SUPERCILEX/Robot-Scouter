@@ -21,7 +21,6 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.Builder;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.TaskFailureLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        TeamRetriever.getAll()
-                .addOnSuccessListener(this)
-                .addOnFailureListener(new TaskFailureLogger());
+        TeamRetriever.getAll().addOnSuccessListener(this);
     }
 
     @Override

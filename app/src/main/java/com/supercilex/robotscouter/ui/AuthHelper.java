@@ -29,7 +29,6 @@ import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.TaskFailureLogger;
 
 public class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
@@ -151,8 +150,7 @@ public class AuthHelper implements View.OnClickListener {
                                                 R.string.sign_in,
                                                 AuthHelper.this);
                     }
-                })
-                .addOnFailureListener(new TaskFailureLogger());
+                });
     }
 
     public void signOut() {
@@ -170,8 +168,7 @@ public class AuthHelper implements View.OnClickListener {
                     public void onSuccess(Void aVoid) {
                         toggleMenuSignIn(false);
                     }
-                })
-                .addOnFailureListener(new TaskFailureLogger());
+                });
     }
 
     public void showSignInResolution() {
