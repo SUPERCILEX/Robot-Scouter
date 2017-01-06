@@ -10,7 +10,9 @@ import com.supercilex.robotscouter.util.Constants;
 public class ScoutMetric<T> {
     @Exclude private String mName;
     @Exclude private T mValue;
-    @Exclude private int mType;
+    @Exclude
+    @MetricType
+    private int mType;
 
     public ScoutMetric() {
         // Needed for Firebase
@@ -54,22 +56,23 @@ public class ScoutMetric<T> {
     }
 
     @Keep
+    @MetricType
     public int getType() {
         return mType;
     }
 
     @Keep
-    public void setType(int type) {
+    public void setType(@MetricType int type) {
         mType = type;
     }
 
     @Override
     public String toString() {
         String metricType;
-        if (mType == Constants.CHECKBOX) metricType = "Checkbox";
-        else if (mType == Constants.COUNTER) metricType = "Counter";
-        else if (mType == Constants.EDIT_TEXT) metricType = "Note";
-        else if (mType == Constants.SPINNER) metricType = "Spinner";
+        if (mType == MetricType.CHECKBOX) metricType = "Checkbox";
+        else if (mType == MetricType.COUNTER) metricType = "Counter";
+        else if (mType == MetricType.EDIT_TEXT) metricType = "Note";
+        else if (mType == MetricType.SPINNER) metricType = "Spinner";
         else throw new IllegalStateException();
         return metricType + " \"" + mName + "\": " + mValue;
     }

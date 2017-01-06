@@ -13,13 +13,6 @@ public final class Constants {
     public static final String ITEM_COUNT = "count";
     public static final int SINGLE_ITEM = 1;
 
-    // Scout ids
-    public static final int CHECKBOX = 0;
-    public static final int COUNTER = 1;
-    public static final int SPINNER = 2;
-    public static final int EDIT_TEXT = 3;
-    public static final int SLIDER = 4;
-
     /**
      * The list of all supported authentication providers in Firebase Auth UI.
      */

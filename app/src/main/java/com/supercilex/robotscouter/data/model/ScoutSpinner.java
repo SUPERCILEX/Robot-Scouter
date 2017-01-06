@@ -23,9 +23,10 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
     }
 
     @Keep
+    @MetricType
     @Override
     public int getType() {
-        return Constants.SPINNER;
+        return MetricType.SPINNER;
     }
 
     @Keep

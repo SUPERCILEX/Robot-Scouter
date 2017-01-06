@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.MetricType;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.ScoutSpinner;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
@@ -43,27 +44,27 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     }
 
     @Override
-    public ScoutViewHolderBase onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ScoutViewHolderBase onCreateViewHolder(ViewGroup parent, @MetricType int viewType) {
         switch (viewType) {
-            case Constants.CHECKBOX:
+            case MetricType.CHECKBOX:
                 return new CheckboxViewHolder(
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.scout_checkbox,
                                          parent,
                                          false));
-            case Constants.COUNTER:
+            case MetricType.COUNTER:
                 return new CounterViewHolder(
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.scout_counter,
                                          parent,
                                          false));
-            case Constants.EDIT_TEXT:
+            case MetricType.EDIT_TEXT:
                 return new EditTextViewHolder(
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.scout_notes,
                                          parent,
                                          false));
-            case Constants.SPINNER:
+            case MetricType.SPINNER:
                 return new SpinnerViewHolder(
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.scout_spinner,
@@ -77,16 +78,16 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     @Override
     protected ScoutMetric parseSnapshot(DataSnapshot snapshot) {
         switch (snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class)) {
-            case Constants.CHECKBOX:
+            case MetricType.CHECKBOX:
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
                 });
-            case Constants.COUNTER:
+            case MetricType.COUNTER:
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
                 });
-            case Constants.EDIT_TEXT:
+            case MetricType.EDIT_TEXT:
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
                 });
-            case Constants.SPINNER:
+            case MetricType.SPINNER:
                 return new ScoutSpinner(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         snapshot.child(Constants.FIREBASE_VALUE)
@@ -99,6 +100,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     }
 
     @Override
+    @MetricType
     public int getItemViewType(int position) {
         return getItem(position).getType();
     }
