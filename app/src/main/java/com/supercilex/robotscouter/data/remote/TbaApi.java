@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.TaskExecutor;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Response;
 
@@ -48,8 +49,8 @@ public final class TbaApi implements Callable<Team> {
 
     @Override
     public Team call() throws Exception { // NOPMD
-        Task<Void> teamMediaYearFetchTask = FirebaseRemoteConfig.getInstance()
-                .fetch()
+        Task<Void> teamMediaYearFetchTask = BaseHelper
+                .fetchRemoteConfigValues(TimeUnit.HOURS.toSeconds(12))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

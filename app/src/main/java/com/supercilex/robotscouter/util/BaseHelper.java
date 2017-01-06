@@ -14,8 +14,10 @@ import android.view.View;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.R;
 
 public final class BaseHelper {
@@ -47,6 +49,14 @@ public final class BaseHelper {
         synchronized (BaseHelper.class) {
             sDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context.getApplicationContext()));
         }
+    }
+
+    public static Task<Void> fetchRemoteConfigValues(long defaultCacheExpiration) {
+        FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
+        long cacheExpiration = config.getInfo()
+                .getConfigSettings()
+                .isDeveloperModeEnabled() ? 0L : defaultCacheExpiration;
+        return config.fetch(cacheExpiration);
     }
 
     public static void runOnMainThread(Context context, Runnable runnable) {
