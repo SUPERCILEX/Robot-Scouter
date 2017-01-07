@@ -121,7 +121,7 @@ public class AuthHelper implements View.OnClickListener {
                         .setTheme(R.style.RobotScouter)
                         .setLogo(R.drawable.ic_logo)
                         .setTosUrl("https://supercilex.github.io/privacy-policy/")
-                        .setIsSmartLockEnabled(BuildConfig.DEBUG)
+                        .setIsSmartLockEnabled(!BuildConfig.DEBUG)
                         .setShouldLinkAccounts(true)
                         .build(),
                 RC_SIGN_IN);
