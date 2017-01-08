@@ -11,8 +11,6 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.firebase.ui.auth.util.Preconditions;
@@ -27,11 +25,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
-import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.concurrent.TimeUnit;
@@ -353,25 +351,12 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     public void visitTbaWebsite(Context context) {
-        getCustomTabsIntent(context).launchUrl(
-                context,
-                Uri.parse("https://www.thebluealliance.com/team/" + getNumber()));
+        Uri tbaUrl = Uri.parse("https://www.thebluealliance.com/team/" + getNumber());
+        BaseHelper.launchUrl(context, tbaUrl);
     }
 
     public void visitTeamWebsite(Context context) {
-        getCustomTabsIntent(context).launchUrl(context, Uri.parse(getWebsite()));
-    }
-
-    @Exclude
-    private CustomTabsIntent getCustomTabsIntent(Context context) {
-        return new CustomTabsIntent.Builder()
-                .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setShowTitle(true)
-                .addDefaultShareMenuItem()
-                .enableUrlBarHiding()
-                .setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left)
-                .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
-                .build();
+        BaseHelper.launchUrl(context, Uri.parse(getWebsite()));
     }
 
     @Exclude
