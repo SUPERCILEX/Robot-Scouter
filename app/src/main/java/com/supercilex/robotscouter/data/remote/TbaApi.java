@@ -48,7 +48,7 @@ public final class TbaApi implements Callable<Team> {
     }
 
     @Override
-    public Team call() throws Exception { // NOPMD
+    public Team call() throws Exception {
         Task<Void> teamMediaYearFetchTask = BaseHelper
                 .fetchRemoteConfigValues(TimeUnit.HOURS.toSeconds(12))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

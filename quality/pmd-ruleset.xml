@@ -97,7 +97,11 @@
 
     <rule ref="rulesets/java/sunsecure.xml"/>
 
-    <rule ref="rulesets/java/strictexception.xml"/>
+    <rule ref="rulesets/java/strictexception.xml">
+
+        <exclude name="SignatureDeclareThrowsException"/>
+
+    </rule>
 
     <rule ref="rulesets/java/strings.xml"/>
 

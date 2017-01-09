@@ -69,13 +69,13 @@ public class TeamHolder extends RecyclerView.ViewHolder
     }
 
     private void updateItemStatus() {
+        mRowLayout.setBackground(getRippleDrawable());
         if (mIsItemSelected) {
             mLogo.setImageDrawable(ContextCompat.getDrawable(mFragment.getContext(),
                                                              R.drawable.ic_done_grey_144dp));
             mRowLayout.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
         } else {
             setTeamLogo();
-            mRowLayout.setBackground(getRippleDrawable());
         }
         mNewScout.setVisibility(mCouldItemBeSelected ? View.GONE : View.VISIBLE);
     }
