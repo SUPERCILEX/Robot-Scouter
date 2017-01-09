@@ -79,6 +79,7 @@ public class TeamListFragment extends Fragment
         mManager = new WeakReference<>(new LinearLayoutManager(getContext()));
         mRecyclerView.setLayoutManager(mManager.get());
         mRecyclerView.setAdapter(mAdapter);
+
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -86,10 +87,12 @@ public class TeamListFragment extends Fragment
                 if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
                     // User scrolled down and the FAB is currently visible -> hide the FAB
                     fab.hide();
-                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE && mSelectedTeams.isEmpty())
+                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE && mSelectedTeams.isEmpty()) {
                     fab.show();
+                }
             }
         });
+
         return rootView;
     }
 
@@ -226,10 +229,7 @@ public class TeamListFragment extends Fragment
                         break;
                     case REMOVED:
                         if (!mSelectedTeams.isEmpty()) {
-                            List<Team> tmpTeams = new ArrayList<>();
-                            for (int i = 0; i < getItemCount(); i++) {
-                                tmpTeams.add(getItem(i));
-                            }
+                            List<Team> tmpTeams = mAdapter.getItems();
                             for (Team oldTeam : mSelectedTeams) {
                                 if (!tmpTeams.contains(oldTeam)) { // We found the deleted item
                                     mSelectedTeams.remove(oldTeam);

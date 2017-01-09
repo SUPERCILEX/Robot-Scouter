@@ -7,9 +7,9 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
+public class ScoutSpinner extends ScoutMetric<List<String>> {
     @Exclude private int mSelectedValue;
 
     public ScoutSpinner() {
@@ -17,7 +17,7 @@ public class ScoutSpinner extends ScoutMetric<ArrayList<String>> {
         // Needed for Firebase
     }
 
-    public ScoutSpinner(String name, ArrayList<String> values, int selectedValue) {
+    public ScoutSpinner(String name, List<String> values, int selectedValue) {
         super(name, values);
         mSelectedValue = selectedValue;
     }

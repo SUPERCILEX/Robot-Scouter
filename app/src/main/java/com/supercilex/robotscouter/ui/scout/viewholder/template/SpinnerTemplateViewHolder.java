@@ -7,7 +7,7 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 // TODO: 12/18/2016 let user edit spinner list items
 public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements View.OnFocusChangeListener {
@@ -16,7 +16,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements View
     }
 
     @Override
-    public void bind(ScoutMetric<ArrayList<String>> metric,
+    public void bind(ScoutMetric<List<String>> metric,
                      Query query,
                      SimpleItemAnimator animator) {
         super.bind(metric, query, animator);

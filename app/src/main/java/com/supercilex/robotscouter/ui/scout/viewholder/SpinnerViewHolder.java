@@ -12,9 +12,9 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.ScoutSpinner;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class SpinnerViewHolder extends ScoutViewHolderBase<ArrayList<String>, TextView>
+public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextView>
         implements AdapterView.OnItemSelectedListener {
     private Spinner mSpinner;
 
@@ -24,7 +24,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<ArrayList<String>, Te
     }
 
     @Override
-    public void bind(ScoutMetric<ArrayList<String>> metric,
+    public void bind(ScoutMetric<List<String>> metric,
                      Query query,
                      SimpleItemAnimator animator) {
         super.bind(metric, query, animator);
