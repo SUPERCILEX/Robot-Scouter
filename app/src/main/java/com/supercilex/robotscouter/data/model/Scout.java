@@ -90,4 +90,26 @@ public class Scout {
     public void addView(String key, ScoutMetric view) {
         mScoutMetrics.put(key, view);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Scout scout = (Scout) o;
+
+        return mScoutMetrics.equals(scout.mScoutMetrics);
+    }
+
+    @Override
+    public int hashCode() {
+        return mScoutMetrics.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Scout{" +
+                "mScoutMetrics=" + mScoutMetrics +
+                '}';
+    }
 }

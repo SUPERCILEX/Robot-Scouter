@@ -135,4 +135,20 @@ public class TeamHolder extends RecyclerView.ViewHolder
         updateItemStatus();
         mMenuManager.onTeamContextMenuRequested(mTeam);
     }
+
+    @Override
+    public String toString() {
+        return "TeamHolder{" +
+                "mTeam=" + mTeam +
+                ", mFragment=" + mFragment +
+                ", mMenuManager=" + mMenuManager +
+                ", mIsItemSelected=" + mIsItemSelected +
+                ", mCouldItemBeSelected=" + mCouldItemBeSelected +
+                ", mRowLayout=" + mRowLayout +
+                ", mLogo=" + mLogo +
+                ", mNumber=" + mNumber +
+                ", mName=" + mName +
+                ", mNewScout=" + mNewScout +
+                '}';
+    }
 }

@@ -70,6 +70,39 @@ public class User {
         }.performTransformation();
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return mUid.equals(user.mUid)
+                && (mEmail == null ? user.mEmail == null : mEmail.equals(user.mEmail))
+                && (mName == null ? user.mName == null : mName.equals(user.mName))
+                && (mPhotoUrl == null ? user.mPhotoUrl == null : mPhotoUrl.equals(user.mPhotoUrl));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mUid.hashCode();
+        result = 31 * result + (mEmail == null ? 0 : mEmail.hashCode());
+        result = 31 * result + (mName == null ? 0 : mName.hashCode());
+        result = 31 * result + (mPhotoUrl == null ? 0 : mPhotoUrl.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "mUid='" + mUid + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mPhotoUrl=" + mPhotoUrl +
+                '}';
+    }
+
     public static class Builder implements com.supercilex.robotscouter.data.util.Builder<User> {
         private final String mUid;
         private String mEmail;

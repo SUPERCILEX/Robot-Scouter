@@ -411,8 +411,7 @@ public class Team implements Parcelable, Comparable<Team> {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + mNumber.hashCode();
+        int result = mNumber.hashCode();
         result = 31 * result + (mKey == null ? 0 : mKey.hashCode());
         result = 31 * result + (mTemplateKey == null ? 0 : mTemplateKey.hashCode());
         result = 31 * result + (mName == null ? 0 : mName.hashCode());
@@ -425,20 +424,24 @@ public class Team implements Parcelable, Comparable<Team> {
         return result;
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Team)) return false;
-        Team team = (Team) obj;
-        return mNumber.equals(team.mNumber)
-                && (mKey == null ? team.mKey == null : mKey.equals(team.mKey)) // NOPMD
-                && (mTemplateKey == null ? team.mTemplateKey == null : mTemplateKey.equals(team.mTemplateKey)) // NOPMD
-                && (mName == null ? team.mName == null : mName.equals(team.mName)) // NOPMD
-                && (mMedia == null ? team.mMedia == null : mMedia.equals(team.mMedia)) // NOPMD
-                && (mWebsite == null ? team.mWebsite == null : mWebsite.equals(team.mWebsite)) // NOPMD
-                && mHasCustomName == team.mHasCustomName
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Team team = (Team) o;
+
+        return mHasCustomName == team.mHasCustomName
                 && mHasCustomMedia == team.mHasCustomMedia
                 && mHasCustomWebsite == team.mHasCustomWebsite
-                && mTimestamp == team.mTimestamp;
+                && mTimestamp == team.mTimestamp
+                && (mNumber == null ? team.mNumber == null : mNumber.equals(team.mNumber))
+                && (mKey == null ? team.mKey == null : mKey.equals(team.mKey))
+                && (mTemplateKey == null ? team.mTemplateKey == null : mTemplateKey.equals(team.mTemplateKey))
+                && (mName == null ? team.mName == null : mName.equals(team.mName))
+                && (mMedia == null ? team.mMedia == null : mMedia.equals(team.mMedia))
+                && (mWebsite == null ? team.mWebsite == null : mWebsite.equals(team.mWebsite));
     }
 
     @Override
@@ -458,15 +461,17 @@ public class Team implements Parcelable, Comparable<Team> {
     public String toString() {
         return "Team " + mNumber + " last updated " +
                 TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp) +
-                " day(s) ago:\n" +
-                "Key: " + mKey + "\n" +
-                "Scout template key: " + mTemplateKey + "\n" +
-                "Name: " + mName + "\n" +
-                "Media: " + mMedia + "\n" +
-                "Website: " + mWebsite + "\n" +
-                "Has custom name: " + mHasCustomName + "\n" +
-                "Has custom media: " + mHasCustomMedia + "\n" +
-                "Has custom website: " + mHasCustomWebsite + "\n";
+                " day(s) ago{" +
+                ", mKey='" + mKey + '\'' +
+                ", mTemplateKey='" + mTemplateKey + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mMedia='" + mMedia + '\'' +
+                ", mWebsite='" + mWebsite + '\'' +
+                ", mHasCustomName=" + mHasCustomName +
+                ", mHasCustomMedia=" + mHasCustomMedia +
+                ", mHasCustomWebsite=" + mHasCustomWebsite +
+                ", mTimestamp=" + mTimestamp +
+                '}';
     }
 
     public static class Builder implements com.supercilex.robotscouter.data.util.Builder<Team> {

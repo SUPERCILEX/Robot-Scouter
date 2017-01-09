@@ -66,13 +66,35 @@ public class ScoutMetric<T> {
         mType = type;
     }
 
+
+    @SuppressWarnings("PMD.UselessParentheses")
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ScoutMetric<?> metric = (ScoutMetric<?>) o;
+
+        return mType == metric.mType
+                && (mName == null ? metric.mName == null : mName.equals(metric.mName))
+                && (mValue == null ? metric.mValue == null : mValue.equals(metric.mValue));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mName == null ? 0 : mName.hashCode();
+        result = 31 * result + (mValue == null ? 0 : mValue.hashCode());
+        result = 31 * result + mType;
+        return result;
+    }
+
     @Override
     public String toString() {
         String metricType;
-        if (mType == MetricType.CHECKBOX) metricType = "Checkbox";
-        else if (mType == MetricType.COUNTER) metricType = "Counter";
-        else if (mType == MetricType.EDIT_TEXT) metricType = "Note";
-        else if (mType == MetricType.SPINNER) metricType = "Spinner";
+        if (getType() == MetricType.CHECKBOX) metricType = "Checkbox";
+        else if (getType() == MetricType.COUNTER) metricType = "Counter";
+        else if (getType() == MetricType.EDIT_TEXT) metricType = "Note";
+        else if (getType() == MetricType.SPINNER) metricType = "Spinner";
         else throw new IllegalStateException();
         return metricType + " \"" + mName + "\": " + mValue;
     }
