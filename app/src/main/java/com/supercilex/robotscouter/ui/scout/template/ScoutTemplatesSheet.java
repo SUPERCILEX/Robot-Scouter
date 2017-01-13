@@ -6,12 +6,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
@@ -27,7 +27,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
     private static final String TAG = "ScoutTemplatesSheet";
 
     private RecyclerView mRecyclerView;
-    private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
+    private ScoutTemplateAdapter mAdapter;
     private LinearLayoutManager mManager;
 
     public static void show(FragmentManager manager, Team team) {
@@ -70,6 +70,21 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                0) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView,
+                                  RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return mAdapter.onMove(viewHolder, target);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+        }).attachToRecyclerView(mRecyclerView);
 
         return rootView;
     }

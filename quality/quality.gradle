@@ -65,8 +65,7 @@ task pmd(type: Pmd) {
 
 android {
     lintOptions {
-        disable 'InvalidPackage', // Needed because of Okio
-        'RestrictedApi' // TODO remove in android gradle plugin beta2
+        disable 'InvalidPackage' // Needed because of Okio
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
