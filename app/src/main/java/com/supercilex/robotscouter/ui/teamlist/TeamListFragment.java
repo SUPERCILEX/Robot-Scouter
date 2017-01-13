@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -212,7 +213,9 @@ public class TeamListFragment extends Fragment
             }
 
             @Override
-            public void onChanged(EventType type, int index, int oldIndex) {
+            public void onChildChanged(ChangeEventListener.EventType type,
+                                       int index,
+                                       int oldIndex) {
                 switch (type) {
                     case ADDED:
                         break;
@@ -246,7 +249,7 @@ public class TeamListFragment extends Fragment
                     default:
                         break;
                 }
-                super.onChanged(type, index, oldIndex);
+                super.onChildChanged(type, index, oldIndex);
             }
 
             @Override

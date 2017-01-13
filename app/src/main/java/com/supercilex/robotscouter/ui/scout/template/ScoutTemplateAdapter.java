@@ -6,6 +6,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.firebase.ui.database.ChangeEventListener;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
@@ -66,14 +67,14 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
     }
 
     @Override
-    public void onChanged(EventType type, int index, int oldIndex) {
+    public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
         if (!mChangeQueue.isEmpty() && mChangeQueue.remove(0) == index) {
             if (!mMoveQueue.isEmpty() && index == mMoveQueue.get(0).first) {
                 Pair<Integer, Integer> movement = mMoveQueue.remove(0);
                 notifyItemMoved(movement.first, movement.second);
             }
         } else {
-            super.onChanged(type, index, oldIndex);
+            super.onChildChanged(type, index, oldIndex);
         }
     }
 
