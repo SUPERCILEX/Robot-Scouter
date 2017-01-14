@@ -26,7 +26,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
     private Team mTeam;
     private Fragment mFragment;
-    private TeamMenuRequestListener mMenuManager;
+    private TeamMenuManager mMenuManager;
     private boolean mIsItemSelected;
     private boolean mCouldItemBeSelected;
 
@@ -48,7 +48,7 @@ public class TeamHolder extends RecyclerView.ViewHolder
 
     public void bind(Team team,
                      Fragment fragment,
-                     TeamMenuRequestListener menuManager,
+                     TeamMenuManager menuManager,
                      boolean isItemSelected,
                      boolean couldItemBeSelected) {
         mTeam = team;

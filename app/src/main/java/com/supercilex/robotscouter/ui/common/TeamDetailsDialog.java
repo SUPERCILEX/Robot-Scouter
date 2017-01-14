@@ -80,8 +80,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
             }
 
             String website = formatUrl(mWebsiteEditText.getText());
-            if (mTeam.getWebsite() == null ? !TextUtils.isEmpty(website) : !mTeam.getWebsite()
-                    .equals(website)) {
+            if (mTeam.getWebsite() == null
+                    ? !TextUtils.isEmpty(website) : !mTeam.getWebsite().equals(website)) {
                 mTeam.setHasCustomWebsite();
                 mTeam.setWebsite(website);
             }

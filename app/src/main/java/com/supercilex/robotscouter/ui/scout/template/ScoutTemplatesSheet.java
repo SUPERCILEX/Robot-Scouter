@@ -71,20 +71,8 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
         mRecyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-                0) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView,
-                                  RecyclerView.ViewHolder viewHolder,
-                                  RecyclerView.ViewHolder target) {
-                return mAdapter.onMove(viewHolder, target);
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            }
-        }).attachToRecyclerView(mRecyclerView);
+        new ItemTouchHelper(new ScoutTemplateItemTouchCallback(mAdapter))
+                .attachToRecyclerView(mRecyclerView);
 
         return rootView;
     }

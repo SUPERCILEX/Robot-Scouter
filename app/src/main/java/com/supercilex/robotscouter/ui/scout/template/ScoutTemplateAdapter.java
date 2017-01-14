@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.ChangeEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
@@ -21,17 +22,14 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateV
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoutTemplateAdapter extends ScoutAdapter {
-    private Query mQuery;
-    private List<Integer> mChangeQueue = new ArrayList<>();
-    private List<Pair<Integer, Integer>> mMoveQueue = new ArrayList<>();
+public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallback {
+    private List<Pair<Integer, Integer>> mItemChangeQueue = new ArrayList<>();
 
     public ScoutTemplateAdapter(Class<ScoutMetric> modelClass,
                                 Class<ScoutViewHolderBase> viewHolderClass,
                                 Query query,
                                 SimpleItemAnimator animator) {
         super(modelClass, viewHolderClass, query, animator);
-        mQuery = query;
     }
 
     @Override
@@ -68,38 +66,36 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
 
     @Override
     public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
-        if (!mChangeQueue.isEmpty() && mChangeQueue.remove(0) == index) {
-            if (!mMoveQueue.isEmpty() && index == mMoveQueue.get(0).first) {
-                Pair<Integer, Integer> movement = mMoveQueue.remove(0);
-                notifyItemMoved(movement.first, movement.second);
-            }
-        } else {
+        if (mItemChangeQueue.isEmpty() || type != ChangeEventListener.EventType.MOVED) {
             super.onChildChanged(type, index, oldIndex);
+        } else {
+            Pair<Integer, Integer> movement = mItemChangeQueue.get(0);
+            Integer fromPos = movement.first;
+            Integer toPos = movement.second;
+            if (index == toPos) {
+                notifyItemMoved(fromPos, toPos);
+                mItemChangeQueue.remove(0);
+            }
         }
     }
 
-    public boolean onMove(RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+    @Override
+    public boolean onMove(RecyclerView recyclerView,
+                          RecyclerView.ViewHolder viewHolder,
+                          RecyclerView.ViewHolder target) {
         int fromPos = viewHolder.getAdapterPosition();
         int toPos = target.getAdapterPosition();
-        mMoveQueue.add(new Pair<>(fromPos, toPos));
-        List<ScoutMetric> metrics = getItems();
-        metrics.add(toPos, metrics.remove(fromPos));
-
-        if (toPos < fromPos) { // Moving item up
-            for (int i = toPos; i <= fromPos; i++) {
-                setItem(i, metrics.get(i));
-            }
-        } else {
-            for (int i = fromPos; i <= toPos; i++) {
-                setItem(i, metrics.get(i));
-            }
+        mItemChangeQueue.add(new Pair<>(fromPos, toPos));
+        List<DataSnapshot> snapshots = getSnapshots();
+        snapshots.add(toPos, snapshots.remove(fromPos));
+        for (int i = 0; i < snapshots.size(); i++) {
+            snapshots.get(i).getRef().setPriority(i);
         }
-
         return true;
     }
 
-    private void setItem(int position, ScoutMetric metric) {
-        mQuery.getRef().child(String.valueOf(position)).setValue(metric);
-        mChangeQueue.add(position);
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
     }
 }
