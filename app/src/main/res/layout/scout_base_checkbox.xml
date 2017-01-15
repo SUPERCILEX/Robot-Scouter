@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Any changes here must be reflected in scout_template_checkbox.xml too -->
     <CheckBox
         android:id="@+id/name"
         style="@style/RobotScouter.Text"

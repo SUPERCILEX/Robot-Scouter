@@ -4,7 +4,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,7 @@ import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TeamHolder extends RecyclerView.ViewHolder
+public class TeamViewHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
     private Team mTeam;
     private Fragment mFragment;
@@ -30,16 +29,14 @@ public class TeamHolder extends RecyclerView.ViewHolder
     private boolean mIsItemSelected;
     private boolean mCouldItemBeSelected;
 
-    private ConstraintLayout mRowLayout;
     private CircleImageView mLogo;
     private TextView mNumber;
     private TextView mName;
     private ImageButton mNewScout;
 
     @Keep
-    public TeamHolder(View itemView) {
+    public TeamViewHolder(View itemView) {
         super(itemView);
-        mRowLayout = (ConstraintLayout) itemView;
         mLogo = (CircleImageView) itemView.findViewById(R.id.logo);
         mNumber = (TextView) itemView.findViewById(R.id.number);
         mName = (TextView) itemView.findViewById(R.id.name);
@@ -64,16 +61,16 @@ public class TeamHolder extends RecyclerView.ViewHolder
 
         mLogo.setOnClickListener(this);
         mNewScout.setOnClickListener(this);
-        mRowLayout.setOnClickListener(this);
-        mRowLayout.setOnLongClickListener(this);
+        itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
     }
 
     private void updateItemStatus() {
-        mRowLayout.setBackground(getRippleDrawable());
+        itemView.setBackground(getRippleDrawable());
         if (mIsItemSelected) {
             mLogo.setImageDrawable(ContextCompat.getDrawable(mFragment.getContext(),
                                                              R.drawable.ic_done_grey_144dp));
-            mRowLayout.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
+            itemView.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
         } else {
             setTeamLogo();
         }
@@ -138,13 +135,12 @@ public class TeamHolder extends RecyclerView.ViewHolder
 
     @Override
     public String toString() {
-        return "TeamHolder{" +
+        return "TeamViewHolder{" +
                 "mTeam=" + mTeam +
                 ", mFragment=" + mFragment +
                 ", mMenuManager=" + mMenuManager +
                 ", mIsItemSelected=" + mIsItemSelected +
                 ", mCouldItemBeSelected=" + mCouldItemBeSelected +
-                ", mRowLayout=" + mRowLayout +
                 ", mLogo=" + mLogo +
                 ", mNumber=" + mNumber +
                 ", mName=" + mName +

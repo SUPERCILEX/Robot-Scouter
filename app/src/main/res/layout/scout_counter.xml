@@ -20,6 +20,6 @@
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
-    <include layout="@layout/scout_counter_base"/>
+    <include layout="@layout/scout_base_counter"/>
 
 </android.support.constraint.ConstraintLayout>

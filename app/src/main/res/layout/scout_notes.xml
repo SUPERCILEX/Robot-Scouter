@@ -20,6 +20,6 @@
         tools:layout_constraintLeft_creator="1"
         tools:text="Example"/>
 
-    <include layout="@layout/scout_notes_base"/>
+    <include layout="@layout/scout_base_notes"/>
 
 </android.support.constraint.ConstraintLayout>

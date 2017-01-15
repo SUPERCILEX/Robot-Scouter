@@ -36,7 +36,7 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.Collections;
 
 public class ScoutTemplatesSheet extends BottomSheetDialogFragment
-        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
+        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener, OnStartDragListener {
     private static final String TAG = "ScoutTemplatesSheet";
 
     private RecyclerView mRecyclerView;
@@ -45,6 +45,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
     private String mTemplateKey;
     private View mRootView;
     private FloatingActionMenu mFam;
+    private ItemTouchHelper mItemTouchHelper;
 
     public static void show(FragmentManager manager, Team team) {
         ScoutTemplatesSheet sheet = new ScoutTemplatesSheet();
@@ -109,12 +110,18 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                         .child(mTemplateKey)
                         .child(Constants.FIREBASE_VIEWS),
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator(),
-                mRootView);
+                mRootView,
+                this);
         mRecyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
-        new ItemTouchHelper(new ScoutTemplateItemTouchCallback(mAdapter))
-                .attachToRecyclerView(mRecyclerView);
+        mItemTouchHelper = new ItemTouchHelper(new ScoutTemplateItemTouchCallback(mAdapter));
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    @Override
+    public void startDrag(RecyclerView.ViewHolder holder) {
+        mItemTouchHelper.startDrag(holder);
     }
 
     private void initFabMenu() {

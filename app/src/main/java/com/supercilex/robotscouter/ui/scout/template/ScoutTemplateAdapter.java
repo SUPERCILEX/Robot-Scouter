@@ -1,9 +1,11 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,21 +31,37 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
     private boolean mIsMovingItem;
     private int mScrollToPosition = -1;
     private View mRootView;
+    private OnStartDragListener mDragListener;
 
     public ScoutTemplateAdapter(Class<ScoutMetric> modelClass,
                                 Class<ScoutViewHolderBase> viewHolderClass,
                                 Query query,
                                 SimpleItemAnimator animator,
-                                View rootView) {
+                                View rootView,
+                                OnStartDragListener dragListener) {
         super(modelClass, viewHolderClass, query, animator);
         mRootView = rootView;
+        mDragListener = dragListener;
     }
 
     @Override
-    public void populateViewHolder(ScoutViewHolderBase viewHolder,
+    public void populateViewHolder(final ScoutViewHolderBase viewHolder,
                                    ScoutMetric metric,
                                    int position) {
         super.populateViewHolder(viewHolder, metric, position);
+
+        viewHolder.itemView.findViewById(R.id.reorder)
+                .setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                            viewHolder.itemView.clearFocus(); // Saves data
+                            mDragListener.startDrag(viewHolder);
+                        }
+                        return false;
+                    }
+                });
+
         if (position == mScrollToPosition) {
             ((ScoutTemplateViewHolder) viewHolder).requestFocus();
             mScrollToPosition = -1;

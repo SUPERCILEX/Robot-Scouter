@@ -8,6 +8,8 @@
     android:layout_marginEnd="16dp"
     android:layout_marginStart="16dp">
 
+    <include layout="@layout/scout_template_base_reorder"/>
+
     <EditText
         android:id="@+id/name"
         android:layout_width="0dp"
@@ -17,12 +19,12 @@
         android:layout_marginTop="16dp"
         android:hint="@string/spinner_name"
         android:inputType="text"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/reorder"
         app:layout_constraintRight_toLeftOf="@+id/spinner"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
-    <include layout="@layout/scout_spinner_base"/>
+    <include layout="@layout/scout_base_spinner"/>
 
 </android.support.constraint.ConstraintLayout>

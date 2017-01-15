@@ -12,14 +12,14 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.List;
 
-public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamHolder> {
+public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamViewHolder> {
     private Fragment mFragment;
     private TeamMenuManager mMenuManager;
 
     public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
         super(Team.class,
               R.layout.team_list_row_layout,
-              TeamHolder.class,
+              TeamViewHolder.class,
               Team.getIndicesRef(),
               Constants.FIREBASE_TEAMS);
         mFragment = fragment;
@@ -27,7 +27,7 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamHold
     }
 
     @Override
-    public void populateViewHolder(TeamHolder teamHolder, Team team, int position) {
+    public void populateViewHolder(TeamViewHolder teamHolder, Team team, int position) {
         team.fetchLatestData(mFragment.getContext());
         teamHolder.bind(team,
                         mFragment,
