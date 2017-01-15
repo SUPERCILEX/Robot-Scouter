@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -44,6 +45,7 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
         return new TeamReceiver(activity);
     }
 
+    @SuppressLint("LogConditional")
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
         Log.i("TeamReceiver", "onResult: intent " + mActivity.getIntent());
