@@ -1,11 +1,9 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
@@ -45,21 +43,8 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
         return new TeamReceiver(activity);
     }
 
-    @SuppressLint("LogConditional")
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
-        String TAG = "TeamReceiver"; //NOPMD
-        Log.i(TAG, "onResult: intent " + mActivity.getIntent());
-        Uri deepLink = mActivity.getIntent().getData();
-        Log.i(TAG, "onResult: deepLink " + deepLink);
-        if (deepLink == null
-                || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
-                || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
-            Log.i(TAG, "onResult: returned");
-            return; // Nothing to see here
-        }
-
-        Log.i(TAG, "onResult: status " + result.getStatus());
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
             List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
@@ -68,7 +53,14 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
                 Team.getIndicesRef().child(team.getKey()).setValue(number, number);
             }
             if (teams.size() == Constants.SINGLE_ITEM) launchTeam(teams.get(0));
-        } else { // Received normal one team intent
+        } else { // Received normal intent
+            Uri deepLink = mActivity.getIntent().getData();
+            if (deepLink == null
+                    || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
+                    || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
+                return; // Nothing to see here
+            }
+
             launchTeam(getTeam(deepLink).get(0));
         }
     }
