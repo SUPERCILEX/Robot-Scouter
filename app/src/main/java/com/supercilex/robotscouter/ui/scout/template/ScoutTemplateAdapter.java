@@ -1,13 +1,15 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
@@ -18,18 +20,21 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.CheckboxTemplate
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.EditTextTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder;
+import com.supercilex.robotscouter.util.BaseHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallback {
-    private List<Pair<Integer, Integer>> mItemChangeQueue = new ArrayList<>();
+    private boolean mIsMovingItem = false;
+    private View mRootView;
 
     public ScoutTemplateAdapter(Class<ScoutMetric> modelClass,
                                 Class<ScoutViewHolderBase> viewHolderClass,
                                 Query query,
-                                SimpleItemAnimator animator) {
+                                SimpleItemAnimator animator,
+                                View rootView) {
         super(modelClass, viewHolderClass, query, animator);
+        mRootView = rootView;
     }
 
     @Override
@@ -66,26 +71,17 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
 
     @Override
     public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
-        if (mItemChangeQueue.isEmpty() || type != ChangeEventListener.EventType.MOVED) {
-            super.onChildChanged(type, index, oldIndex);
-        } else {
-            Pair<Integer, Integer> movement = mItemChangeQueue.get(0);
-            Integer fromPos = movement.first;
-            Integer toPos = movement.second;
-            if (index == toPos) {
-                notifyItemMoved(fromPos, toPos);
-                mItemChangeQueue.remove(0);
-            }
-        }
+        if (!mIsMovingItem) super.onChildChanged(type, index, oldIndex);
     }
 
     @Override
     public boolean onMove(RecyclerView recyclerView,
                           RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
+        mIsMovingItem = true;
         int fromPos = viewHolder.getAdapterPosition();
         int toPos = target.getAdapterPosition();
-        mItemChangeQueue.add(new Pair<>(fromPos, toPos));
+        notifyItemMoved(fromPos, toPos);
         List<DataSnapshot> snapshots = getSnapshots();
         snapshots.add(toPos, snapshots.remove(fromPos));
         for (int i = 0; i < snapshots.size(); i++) {
@@ -96,6 +92,28 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+        final int position = viewHolder.getAdapterPosition();
+        final ScoutMetric deletedMetric = getItem(position);
+        final DatabaseReference deletedRef = getRef(position);
 
+        viewHolder.itemView.clearFocus(); // Needed to prevent the item from being re-added
+        deletedRef.removeValue();
+
+        BaseHelper.showSnackbar(
+                mRootView,
+                R.string.deleted,
+                Snackbar.LENGTH_LONG,
+                R.string.undo,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deletedRef.setValue(deletedMetric, position);
+                    }
+                });
+    }
+
+    @Override
+    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        mIsMovingItem = false;
     }
 }

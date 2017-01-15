@@ -42,6 +42,8 @@
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
 
     <string name="edit_scout_template">Edit scout template</string>
+    <string name="deleted">Deleted</string>
+    <string name="undo">Undo</string>
 
     <string name="edit_team_details">Edit team details</string>
     <string name="team_details">Team details</string>

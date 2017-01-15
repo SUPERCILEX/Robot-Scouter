@@ -144,7 +144,7 @@ public class AuthHelper implements View.OnClickListener {
                 .addOnFailureListener(mActivity, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        BaseHelper.showSnackbar(mActivity,
+                        BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
                                                 R.string.anonymous_sign_in_failed,
                                                 Snackbar.LENGTH_LONG,
                                                 R.string.sign_in,
@@ -172,7 +172,7 @@ public class AuthHelper implements View.OnClickListener {
     }
 
     public void showSignInResolution() {
-        BaseHelper.showSnackbar(mActivity,
+        BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
                                 R.string.sign_in_required,
                                 Snackbar.LENGTH_LONG,
                                 R.string.sign_in,
@@ -184,7 +184,9 @@ public class AuthHelper implements View.OnClickListener {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == ResultCodes.OK) {
-                BaseHelper.showSnackbar(mActivity, R.string.signed_in, Snackbar.LENGTH_LONG);
+                BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
+                                        R.string.signed_in,
+                                        Snackbar.LENGTH_LONG);
                 toggleMenuSignIn(true);
 
                 initDeepLinkReceiver();
@@ -200,7 +202,7 @@ public class AuthHelper implements View.OnClickListener {
                 if (response == null) return; // User cancelled sign in
 
                 if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    BaseHelper.showSnackbar(mActivity,
+                    BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
                                             R.string.no_connection,
                                             Snackbar.LENGTH_LONG,
                                             R.string.try_again,
@@ -208,7 +210,7 @@ public class AuthHelper implements View.OnClickListener {
                     return;
                 }
 
-                BaseHelper.showSnackbar(mActivity,
+                BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
                                         R.string.sign_in_failed,
                                         Snackbar.LENGTH_LONG,
                                         R.string.try_again,

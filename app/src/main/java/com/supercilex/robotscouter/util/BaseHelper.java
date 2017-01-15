@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -106,21 +105,29 @@ public final class BaseHelper {
         }
     }
 
-    public static Snackbar getSnackbar(Activity activity, @StringRes int message, int length) {
-        // Can't use android.R.id.content or the snackbar will cover up the FAB
-        return Snackbar.make(activity.findViewById(R.id.root), message, length);
+    private static Snackbar getSnackbar(View coordinatorLayoutView,
+                                        @StringRes int message,
+                                        int length) {
+        // Can't use android.R.id.content or the snackbar will cover up the FAB and not be dismissible
+        return Snackbar.make(coordinatorLayoutView, message, length);
     }
 
-    public static void showSnackbar(Activity activity, @StringRes int message, int length) {
-        getSnackbar(activity, message, length).show();
+    public static Snackbar showSnackbar(View coordinatorLayoutView,
+                                        @StringRes int message,
+                                        int length) {
+        Snackbar snackbar = getSnackbar(coordinatorLayoutView, message, length);
+        snackbar.show();
+        return snackbar;
     }
 
-    public static void showSnackbar(Activity activity,
-                                    @StringRes int message,
-                                    int length,
-                                    @StringRes int actionMessage,
-                                    View.OnClickListener listener) {
-        getSnackbar(activity, message, length).setAction(actionMessage, listener).show();
+    public static Snackbar showSnackbar(View coordinatorLayoutView,
+                                        @StringRes int message,
+                                        int length,
+                                        @StringRes int actionMessage,
+                                        View.OnClickListener listener) {
+        Snackbar snackbar = getSnackbar(coordinatorLayoutView, message, length);
+        snackbar.setAction(actionMessage, listener).show();
+        return snackbar;
     }
 
     public static void launchUrl(Context context, Uri url) {

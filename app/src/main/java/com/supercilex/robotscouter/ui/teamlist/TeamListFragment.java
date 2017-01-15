@@ -59,8 +59,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mSavedInstanceState = savedInstanceState;
-        View rootView = inflater.inflate(R.layout.recycler_view, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
         mMenuHelper.setRecyclerView(mRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mManager = new WeakReference<>(new LinearLayoutManager(getContext()));
@@ -80,7 +79,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             }
         });
 
-        return rootView;
+        return mRecyclerView;
     }
 
     @Override

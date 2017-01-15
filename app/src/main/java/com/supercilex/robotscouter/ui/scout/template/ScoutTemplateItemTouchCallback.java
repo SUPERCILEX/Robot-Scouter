@@ -7,7 +7,7 @@ public class ScoutTemplateItemTouchCallback extends ItemTouchHelper.SimpleCallba
     private ItemTouchCallback mCallback;
 
     public ScoutTemplateItemTouchCallback(ItemTouchCallback callback) {
-        super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0);
+        super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT);
         mCallback = callback;
     }
 
@@ -21,5 +21,11 @@ public class ScoutTemplateItemTouchCallback extends ItemTouchHelper.SimpleCallba
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         mCallback.onSwiped(viewHolder, direction);
+    }
+
+    @Override
+    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        super.clearView(recyclerView, viewHolder);
+        mCallback.clearView(recyclerView, viewHolder);
     }
 }

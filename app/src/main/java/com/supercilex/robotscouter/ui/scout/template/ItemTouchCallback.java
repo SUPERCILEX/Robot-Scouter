@@ -15,4 +15,9 @@ public interface ItemTouchCallback {
      * @see ItemTouchHelper.SimpleCallback#onSwiped(RecyclerView.ViewHolder, int)
      */
     void onSwiped(RecyclerView.ViewHolder viewHolder, int direction);
+
+    /**
+     * @see ItemTouchHelper.SimpleCallback#clearView(RecyclerView, RecyclerView.ViewHolder)
+     */
+    void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder);
 }

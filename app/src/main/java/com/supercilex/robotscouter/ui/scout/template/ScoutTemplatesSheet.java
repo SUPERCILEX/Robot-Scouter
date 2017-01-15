@@ -40,7 +40,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recycler_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_scout_template, container, false);
 
         final Team team = Team.getTeam(getArguments());
         String templateKey = team.getTemplateKey();
@@ -67,7 +67,8 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment {
                 Constants.FIREBASE_SCOUT_TEMPLATES
                         .child(templateKey)
                         .child(Constants.FIREBASE_VIEWS),
-                (SimpleItemAnimator) mRecyclerView.getItemAnimator());
+                (SimpleItemAnimator) mRecyclerView.getItemAnimator(),
+                rootView);
         mRecyclerView.setAdapter(mAdapter);
         BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
