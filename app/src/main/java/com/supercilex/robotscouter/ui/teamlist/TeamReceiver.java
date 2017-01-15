@@ -48,7 +48,7 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
     @SuppressLint("LogConditional")
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
-        final String TAG = "TeamReceiver";
+        final String TAG = "TeamReceiver"; //NOPMD
         Log.i(TAG, "onResult: intent " + mActivity.getIntent());
         Uri deepLink = mActivity.getIntent().getData();
         Log.i(TAG, "onResult: deepLink " + deepLink);
