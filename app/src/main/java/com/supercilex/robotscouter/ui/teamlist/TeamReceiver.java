@@ -45,8 +45,7 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
 
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
-        // Received invite from Firebase dynamic links
-        if (result.getStatus().isSuccess()) {
+        if (result.getStatus().isSuccess()) { // Received invite from Firebase dynamic links
             List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
             for (Team team : teams) {
                 long number = team.getNumberAsLong();
