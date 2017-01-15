@@ -93,7 +93,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     super.onDataChange(snapshot);
-                    team.updateTemplateKey(mTemplateKey);
+                    team.updateTemplateKey(mTemplateKey, getContext());
                 }
             }.performTransformation();
         }

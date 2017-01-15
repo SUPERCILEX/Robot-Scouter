@@ -161,7 +161,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                                 }
                             }
 
-                            mTeam.add();
+                            mTeam.add(ScoutActivity.this);
                             addTeamAndScoutListeners(savedInstanceState);
                             TbaApi.fetch(mTeam, ScoutActivity.this)
                                     .addOnCompleteListener(

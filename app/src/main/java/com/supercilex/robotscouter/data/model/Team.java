@@ -65,6 +65,7 @@ public class Team implements Parcelable, Comparable<Team> {
 
     @Exclude private static final String FIREBASE_TIMESTAMP = "timestamp";
     @Exclude private static final String FIREBASE_TEMPLATE_KEY = "templateKey";
+    @Exclude private static final String SCOUT_TEMPLATE = "com.supercilex.robotscouter.scout_template";
 
     @Exclude private static final int FRESHNESS_DAYS = 4;
 
@@ -279,11 +280,13 @@ public class Team implements Parcelable, Comparable<Team> {
         mTimestamp = time;
     }
 
-    public void add() {
+    public void add(Context context) {
         DatabaseReference index = getIndicesRef().push();
         mKey = index.getKey();
         Long number = getNumberAsLong();
         index.setValue(number, number);
+        mTemplateKey = context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
+                .getString(SCOUT_TEMPLATE, null);
         forceUpdate();
         FirebaseUserActions.getInstance()
                 .end(new Action.Builder(Action.Builder.ADD_ACTION)
@@ -321,9 +324,13 @@ public class Team implements Parcelable, Comparable<Team> {
         }
     }
 
-    public void updateTemplateKey(String key) {
+    public void updateTemplateKey(String key, Context context) {
         mTemplateKey = key;
         getRef().child(FIREBASE_TEMPLATE_KEY).setValue(mTemplateKey);
+        context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
+                .edit()
+                .putString(SCOUT_TEMPLATE, key)
+                .apply();
     }
 
     public void delete() {
