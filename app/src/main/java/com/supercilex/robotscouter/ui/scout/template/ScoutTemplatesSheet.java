@@ -73,7 +73,6 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                              ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_scout_template, container, false);
-        mFam = (FloatingActionMenu) mRootView.findViewById(R.id.fab_menu);
 
         getTemplateKey();
         setupRecyclerView(savedInstanceState);
@@ -119,6 +118,8 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
     }
 
     private void initFabMenu() {
+        mFam = (FloatingActionMenu) mRootView.findViewById(R.id.fab_menu);
+
         mRootView.findViewById(R.id.add_checkbox).setOnClickListener(this);
         mRootView.findViewById(R.id.add_counter).setOnClickListener(this);
         mRootView.findViewById(R.id.add_spinner).setOnClickListener(this);
