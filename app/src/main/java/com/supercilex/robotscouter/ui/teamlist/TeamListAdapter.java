@@ -64,8 +64,6 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamHold
                     }
                 }
                 break;
-            default:
-                break;
         }
         super.onChildChanged(type, index, oldIndex);
     }

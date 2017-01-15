@@ -53,6 +53,8 @@
 
         <exclude name="AccessorClassGeneration"/>
 
+        <exclude name="SwitchStmtsShouldHaveDefault"/>
+
     </rule>
 
     <rule ref="rulesets/java/empty.xml"/>

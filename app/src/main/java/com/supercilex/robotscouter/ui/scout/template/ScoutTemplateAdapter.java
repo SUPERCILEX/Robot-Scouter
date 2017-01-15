@@ -87,11 +87,8 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
         if (type == ChangeEventListener.EventType.MOVED) {
             if (!mIsMovingItem) super.onChildChanged(type, index, oldIndex);
             return;
-        } else if (type == ChangeEventListener.EventType.ADDED) {
-            if (index == mScrollToPosition) {
-                RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
-                recyclerView.scrollToPosition(mScrollToPosition);
-            }
+        } else if (type == ChangeEventListener.EventType.ADDED && index == mScrollToPosition) {
+            ((RecyclerView) mRootView.findViewById(R.id.list)).scrollToPosition(mScrollToPosition);
         }
         super.onChildChanged(type, index, oldIndex);
     }

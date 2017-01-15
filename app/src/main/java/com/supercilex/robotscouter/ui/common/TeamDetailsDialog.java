@@ -104,15 +104,11 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) return; // Only consider views losing focus
 
-        switch (v.getId()) {
-            case R.id.media:
-                validateUrl(mMediaEditText.getText(), mMediaInputLayout);
-                break;
-            case R.id.website:
-                validateUrl(mWebsiteEditText.getText(), mWebsiteInputLayout);
-                break;
-            default:
-                break;
+        int id = v.getId();
+        if (id == R.id.media) {
+            validateUrl(mMediaEditText.getText(), mMediaInputLayout);
+        } else if (id == R.id.website) {
+            validateUrl(mWebsiteEditText.getText(), mWebsiteInputLayout);
         }
     }
 

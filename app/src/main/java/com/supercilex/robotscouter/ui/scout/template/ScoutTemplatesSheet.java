@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -153,6 +154,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
         mFam.close(true);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         mFam.close(true);
