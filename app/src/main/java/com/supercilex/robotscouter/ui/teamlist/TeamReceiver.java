@@ -48,17 +48,18 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
     @SuppressLint("LogConditional")
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
-        Log.i("TeamReceiver", "onResult: intent " + mActivity.getIntent());
+        final String TAG = "TeamReceiver";
+        Log.i(TAG, "onResult: intent " + mActivity.getIntent());
         Uri deepLink = mActivity.getIntent().getData();
-        Log.i("TeamReceiver", "onResult: deepLink " + deepLink);
+        Log.i(TAG, "onResult: deepLink " + deepLink);
         if (deepLink == null
                 || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
                 || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
-            Log.i("TeamReceiver", "onResult: returned");
+            Log.i(TAG, "onResult: returned");
             return; // Nothing to see here
         }
 
-        Log.i("TeamReceiver", "onResult: status " + result.getStatus());
+        Log.i(TAG, "onResult: status " + result.getStatus());
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
             List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
