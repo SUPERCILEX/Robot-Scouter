@@ -21,10 +21,15 @@ import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.Indexable;
 import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
 import com.google.firebase.appindexing.builders.Indexables;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.TeamIndices;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.ui.AuthHelper;
@@ -32,6 +37,7 @@ import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Team implements Parcelable, Comparable<Team> {
@@ -324,23 +330,63 @@ public class Team implements Parcelable, Comparable<Team> {
         }
     }
 
-    public void updateTemplateKey(String key, Context context) {
+    public void updateTemplateKey(final String key, Context context) {
         mTemplateKey = key;
         getRef().child(FIREBASE_TEMPLATE_KEY).setValue(mTemplateKey);
         context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
                 .edit()
                 .putString(SCOUT_TEMPLATE, key)
                 .apply();
+        TeamIndices.getAll().addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
+            private final ValueEventListener TEAM_TEMPLATE_UPDATER = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    DataSnapshot templateSnapshot = snapshot.child(FIREBASE_TEMPLATE_KEY);
+                    if (templateSnapshot.getValue() == null) {
+                        templateSnapshot.getRef().setValue(key);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    FirebaseCrash.report(error.toException());
+                }
+            };
+
+            @Override
+            public void onSuccess(List<DataSnapshot> snapshots) {
+                for (DataSnapshot snapshot : snapshots) {
+                    Constants.FIREBASE_TEAMS
+                            .child(snapshot.getKey())
+                            .addListenerForSingleValueEvent(TEAM_TEMPLATE_UPDATER);
+                }
+            }
+        });
     }
 
-    public void delete() {
+    public void delete(Context context) {
+        final Context appContext = context.getApplicationContext();
         Scout.deleteAll(getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 getRef().removeValue();
                 getIndicesRef().child(getKey()).removeValue();
                 if (getTemplateKey() != null) {
-                    Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey()).removeValue();
+                    TeamIndices.getAll()
+                            .addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
+                                @Override
+                                public void onSuccess(List<DataSnapshot> snapshots) {
+                                    if (snapshots.isEmpty()) {
+                                        Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey())
+                                                .removeValue();
+                                        appContext.getSharedPreferences(SCOUT_TEMPLATE,
+                                                                        Context.MODE_PRIVATE)
+                                                .edit()
+                                                .clear()
+                                                .apply();
+                                    }
+                                }
+                            });
                 }
                 FirebaseAppIndex.getInstance().remove(getDeepLink());
             }
