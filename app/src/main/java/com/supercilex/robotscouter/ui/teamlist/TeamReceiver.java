@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
@@ -45,13 +46,17 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
 
     @Override
     public void onResult(@NonNull AppInviteInvitationResult result) {
+        Log.i("TeamReceiver", "onResult: intent " + mActivity.getIntent());
         Uri deepLink = mActivity.getIntent().getData();
+        Log.i("TeamReceiver", "onResult: deepLink " + deepLink);
         if (deepLink == null
                 || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
                 || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
+            Log.i("TeamReceiver", "onResult: returned");
             return; // Nothing to see here
         }
 
+        Log.i("TeamReceiver", "onResult: status " + result.getStatus());
         // Received invite from Firebase dynamic links
         if (result.getStatus().isSuccess()) {
             List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
