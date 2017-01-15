@@ -7,7 +7,7 @@ public class ScoutTemplateItemTouchCallback extends ItemTouchHelper.SimpleCallba
     private ItemTouchCallback mCallback;
 
     public ScoutTemplateItemTouchCallback(ItemTouchCallback callback) {
-        super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT);
+        super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
         mCallback = callback;
     }
 

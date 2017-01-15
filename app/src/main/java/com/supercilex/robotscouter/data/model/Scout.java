@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.data.model;
 
 import android.os.Bundle;
-import android.support.annotation.Keep;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -15,13 +14,12 @@ import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.FirebaseTransformer;
 import com.supercilex.robotscouter.util.Constants;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class Scout {
+public final class Scout {
     @Exclude private static final String SCOUT_KEY = "scout_key";
 
-    @Exclude private Map<String, ScoutMetric> mScoutMetrics = new HashMap<>();
+    private Scout() {
+        // no instance
+    }
 
     @Exclude
     public static Bundle getScoutKeyBundle(String key) {
@@ -80,36 +78,5 @@ public class Scout {
             }
         });
         return deleteTask.getTask();
-    }
-
-    @Keep
-    public Map<String, ScoutMetric> getViews() {
-        return mScoutMetrics;
-    }
-
-    public void addView(String key, ScoutMetric view) {
-        mScoutMetrics.put(key, view);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Scout scout = (Scout) o;
-
-        return mScoutMetrics.equals(scout.mScoutMetrics);
-    }
-
-    @Override
-    public int hashCode() {
-        return mScoutMetrics.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Scout{" +
-                "mScoutMetrics=" + mScoutMetrics +
-                '}';
     }
 }

@@ -198,7 +198,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
 
             if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
                 mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
-                getIntent().putExtra(INTENT_ADD_SCOUT, false);
+                getIntent().removeExtra(INTENT_ADD_SCOUT);
             }
         }
     }

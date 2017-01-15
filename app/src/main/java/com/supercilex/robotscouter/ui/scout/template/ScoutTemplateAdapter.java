@@ -19,13 +19,15 @@ import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CheckboxTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.EditTextTemplateViewHolder;
+import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 import java.util.List;
 
 public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallback {
-    private boolean mIsMovingItem = false;
+    private boolean mIsMovingItem;
+    private int mScrollToPosition = -1;
     private View mRootView;
 
     public ScoutTemplateAdapter(Class<ScoutMetric> modelClass,
@@ -35,6 +37,17 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
                                 View rootView) {
         super(modelClass, viewHolderClass, query, animator);
         mRootView = rootView;
+    }
+
+    @Override
+    public void populateViewHolder(ScoutViewHolderBase viewHolder,
+                                   ScoutMetric metric,
+                                   int position) {
+        super.populateViewHolder(viewHolder, metric, position);
+        if (position == mScrollToPosition) {
+            ((ScoutTemplateViewHolder) viewHolder).requestFocus();
+            mScrollToPosition = -1;
+        }
     }
 
     @Override
@@ -52,7 +65,7 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
                                 .inflate(R.layout.scout_template_counter,
                                          parent,
                                          false));
-            case MetricType.EDIT_TEXT:
+            case MetricType.NOTE:
                 return new EditTextTemplateViewHolder(
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.scout_template_notes,
@@ -71,7 +84,16 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
 
     @Override
     public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
-        if (!mIsMovingItem) super.onChildChanged(type, index, oldIndex);
+        if (type == ChangeEventListener.EventType.MOVED) {
+            if (!mIsMovingItem) super.onChildChanged(type, index, oldIndex);
+            return;
+        } else if (type == ChangeEventListener.EventType.ADDED) {
+            if (index == mScrollToPosition) {
+                RecyclerView recyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
+                recyclerView.scrollToPosition(mScrollToPosition);
+            }
+        }
+        super.onChildChanged(type, index, oldIndex);
     }
 
     @Override
@@ -81,12 +103,15 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
         mIsMovingItem = true;
         int fromPos = viewHolder.getAdapterPosition();
         int toPos = target.getAdapterPosition();
+
         notifyItemMoved(fromPos, toPos);
+
         List<DataSnapshot> snapshots = getSnapshots();
         snapshots.add(toPos, snapshots.remove(fromPos));
         for (int i = 0; i < snapshots.size(); i++) {
             snapshots.get(i).getRef().setPriority(i);
         }
+
         return true;
     }
 
@@ -115,5 +140,9 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         mIsMovingItem = false;
+    }
+
+    public void addItemToScrollQueue(int position) {
+        mScrollToPosition = position;
     }
 }

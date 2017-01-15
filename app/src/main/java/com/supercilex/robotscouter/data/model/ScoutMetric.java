@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.model;
 
 import android.support.annotation.Keep;
+import android.support.annotation.RestrictTo;
 import android.support.v7.widget.SimpleItemAnimator;
 
 import com.google.firebase.database.Exclude;
@@ -14,13 +15,15 @@ public class ScoutMetric<T> {
     @MetricType
     private int mType;
 
+    @RestrictTo(RestrictTo.Scope.TESTS)
     public ScoutMetric() {
         // Needed for Firebase
     }
 
-    public ScoutMetric(String name, T value) {
+    public ScoutMetric(String name, T value, @MetricType int type) {
         mName = name;
         mValue = value;
+        mType = type;
     }
 
     @Keep
@@ -93,7 +96,7 @@ public class ScoutMetric<T> {
         String metricType;
         if (getType() == MetricType.CHECKBOX) metricType = "Checkbox";
         else if (getType() == MetricType.COUNTER) metricType = "Counter";
-        else if (getType() == MetricType.EDIT_TEXT) metricType = "Note";
+        else if (getType() == MetricType.NOTE) metricType = "Note";
         else if (getType() == MetricType.SPINNER) metricType = "Spinner";
         else throw new IllegalStateException();
         return metricType + " \"" + mName + "\": " + mValue;

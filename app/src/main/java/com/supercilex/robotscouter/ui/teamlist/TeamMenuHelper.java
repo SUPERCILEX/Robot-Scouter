@@ -216,14 +216,14 @@ public class TeamMenuHelper implements TeamMenuManager {
         mMenu.findItem(R.id.action_delete).setVisible(visible);
         ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(visible);
-        if (visible) (getFab()).hide();
+        if (visible) getFab().hide();
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
         mMenu.findItem(R.id.action_licenses).setVisible(visible);
         mMenu.findItem(R.id.action_about).setVisible(visible);
         if (visible) {
-            (getFab()).show();
+            getFab().show();
             ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                     .setTitle(R.string.app_name);
             if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {

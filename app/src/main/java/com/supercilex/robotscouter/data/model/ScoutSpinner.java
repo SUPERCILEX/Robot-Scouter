@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.model;
 
 import android.support.annotation.Keep;
+import android.support.annotation.RestrictTo;
 import android.support.v7.widget.SimpleItemAnimator;
 
 import com.google.firebase.database.Exclude;
@@ -12,21 +13,14 @@ import java.util.List;
 public class ScoutSpinner extends ScoutMetric<List<String>> {
     @Exclude private int mSelectedValue;
 
+    @RestrictTo(RestrictTo.Scope.TESTS)
     public ScoutSpinner() {
-        super();
-        // Needed for Firebase
+        super(); // Needed for Firebase
     }
 
     public ScoutSpinner(String name, List<String> values, int selectedValue) {
-        super(name, values);
+        super(name, values, MetricType.SPINNER);
         mSelectedValue = selectedValue;
-    }
-
-    @Keep
-    @MetricType
-    @Override
-    public int getType() {
-        return MetricType.SPINNER;
     }
 
     @Keep

@@ -8,7 +8,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
 
-public class EditTextTemplateViewHolder extends EditTextViewHolder {
+public class EditTextTemplateViewHolder extends EditTextViewHolder implements ScoutTemplateViewHolder {
     public EditTextTemplateViewHolder(View itemView) {
         super(itemView);
     }
@@ -25,5 +25,10 @@ public class EditTextTemplateViewHolder extends EditTextViewHolder {
         if (!hasFocus && v.getId() == R.id.name) {
             updateMetricName(mName.getText().toString());
         }
+    }
+
+    @Override
+    public void requestFocus() {
+        mName.requestFocus();
     }
 }

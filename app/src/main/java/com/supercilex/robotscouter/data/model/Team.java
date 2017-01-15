@@ -79,6 +79,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Exclude private boolean mHasCustomWebsite;
     @Exclude private long mTimestamp;
 
+    @RestrictTo(RestrictTo.Scope.TESTS)
     public Team() {
         // Needed for Firebase
     }

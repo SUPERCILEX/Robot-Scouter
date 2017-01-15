@@ -9,13 +9,12 @@ import java.lang.annotation.RetentionPolicy;
         MetricType.CHECKBOX,
         MetricType.COUNTER,
         MetricType.SPINNER,
-        MetricType.EDIT_TEXT,
+        MetricType.NOTE,
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface MetricType {
     int CHECKBOX = 0; // NOPMD
     int COUNTER = 1;
     int SPINNER = 2;
-    int EDIT_TEXT = 3;
-    int SLIDER = 4;
+    int NOTE = 3;
 }

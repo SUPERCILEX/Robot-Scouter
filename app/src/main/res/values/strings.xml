@@ -41,10 +41,6 @@
     <string name="visit_team_website">Visit team %s\'s website</string>
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
 
-    <string name="edit_scout_template">Edit scout template</string>
-    <string name="deleted">Deleted</string>
-    <string name="undo">Undo</string>
-
     <string name="edit_team_details">Edit team details</string>
     <string name="team_details">Team details</string>
     <string name="team_name">Team name</string>
@@ -52,9 +48,15 @@
     <string name="team_logo">Team logo url</string>
     <string name="malformed_url">Make sure you have a valid url.</string>
 
-
     <string name="delete_scout">Delete scout</string>
 
+    <string name="edit_scout_template">Edit scout template</string>
+    <string name="deleted">Deleted</string>
+    <string name="undo">Undo</string>
+    <string name="add_checkbox">Add checkbox</string>
+    <string name="add_counter">Add counter</string>
+    <string name="add_spinner">Add selector</string>
+    <string name="add_note">Add note</string>
     <string name="hint_notes">Notes</string>
     <string name="checkbox_name">Checkbox name</string>
     <string name="counter_name">Counter name</string>

@@ -37,8 +37,7 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
             mCount.setText(String.valueOf(value));
             updateMetricValue(value);
         } else if (id == R.id.decrement_counter
-                && Integer.parseInt(mCount.getText()
-                                            .toString()) > 0) { // don't allow negative values
+                && Integer.parseInt(mCount.getText().toString()) > 0) { // no negative values
             int value = Integer.parseInt(mCount.getText().toString()) - 1;
             mCount.setText(String.valueOf(value));
             updateMetricValue(value);

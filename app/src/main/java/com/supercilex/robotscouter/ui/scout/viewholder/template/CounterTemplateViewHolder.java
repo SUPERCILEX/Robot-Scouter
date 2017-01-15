@@ -7,7 +7,7 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 
-public class CounterTemplateViewHolder extends CounterViewHolder implements View.OnFocusChangeListener {
+public class CounterTemplateViewHolder extends CounterViewHolder implements ScoutTemplateViewHolder {
     public CounterTemplateViewHolder(View itemView) {
         super(itemView);
     }
@@ -29,5 +29,10 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements View
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) updateMetricName(mName.getText().toString());
+    }
+
+    @Override
+    public void requestFocus() {
+        mName.requestFocus();
     }
 }

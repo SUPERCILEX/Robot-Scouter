@@ -58,7 +58,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
                                 .inflate(R.layout.scout_counter,
                                          parent,
                                          false));
-            case MetricType.EDIT_TEXT:
+            case MetricType.NOTE:
                 return new EditTextViewHolder(
                         LayoutInflater.from(parent.getContext())
                                 .inflate(R.layout.scout_notes,
@@ -84,7 +84,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
             case MetricType.COUNTER:
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
                 });
-            case MetricType.EDIT_TEXT:
+            case MetricType.NOTE:
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
                 });
             case MetricType.SPINNER:

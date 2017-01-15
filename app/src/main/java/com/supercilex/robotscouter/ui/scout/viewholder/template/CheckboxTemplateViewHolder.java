@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
 
-public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements View.OnFocusChangeListener {
+public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements ScoutTemplateViewHolder {
     private EditText mCheckBoxName;
 
     public CheckboxTemplateViewHolder(View itemView) {
@@ -36,5 +36,10 @@ public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements Vi
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) updateMetricName(mCheckBoxName.getText().toString());
+    }
+
+    @Override
+    public void requestFocus() {
+        mCheckBoxName.requestFocus();
     }
 }
