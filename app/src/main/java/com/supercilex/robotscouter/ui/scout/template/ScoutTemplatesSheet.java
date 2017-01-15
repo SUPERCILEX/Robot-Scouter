@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -37,7 +36,7 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.Collections;
 
 public class ScoutTemplatesSheet extends BottomSheetDialogFragment
-        implements View.OnClickListener, View.OnTouchListener, DialogInterface.OnShowListener {
+        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
     private static final String TAG = "ScoutTemplatesSheet";
 
     private RecyclerView mRecyclerView;
@@ -124,7 +123,15 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
         mRootView.findViewById(R.id.add_counter).setOnClickListener(this);
         mRootView.findViewById(R.id.add_spinner).setOnClickListener(this);
         mRootView.findViewById(R.id.add_note).setOnClickListener(this);
-        mRecyclerView.setOnTouchListener(this);
+
+        // This lets us close the fam when the recyclerview it touched
+        mRecyclerView.addOnItemTouchListener(this);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+        mFam.close(true);
+        return false;
     }
 
     @Override
@@ -154,13 +161,6 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
         mFam.close(true);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        mFam.close(true);
-        return false;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -173,5 +173,15 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
     public void onSaveInstanceState(Bundle outState) {
         BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        // We only care about onInterceptTouchEvent
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        // We only care about onInterceptTouchEvent
     }
 }
