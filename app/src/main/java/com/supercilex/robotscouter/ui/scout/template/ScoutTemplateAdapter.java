@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
+import android.annotation.SuppressLint;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +53,7 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
 
         viewHolder.itemView.findViewById(R.id.reorder)
                 .setOnTouchListener(new View.OnTouchListener() {
+                    @SuppressLint("ClickableViewAccessibility")
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
