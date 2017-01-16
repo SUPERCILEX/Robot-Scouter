@@ -21,5 +21,7 @@ If not, go file an issue about this to make sure this is a desirable change.
 
 ## Code reviews
 All submissions, including submissions by project members, require review. We
-use Github pull requests for this purpose. We adhere to the
+use Github pull requests for this purpose. We adhere to a slightly customized
 [Google Java style guide](https://google.github.io/styleguide/javaguide.html).
+To get the [Robot Scouter style guide](Robot_Scouter_style.xml),
+[import it into Intellij](https://www.jetbrains.com/help/idea/2016.3/code-style-schemes.html).
