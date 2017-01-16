@@ -34,11 +34,6 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     }
 
     @Override
-    public int getItemPosition(Object object) {
-        return POSITION_NONE;
-    }
-
-    @Override
     public Fragment getItem(int position) {
         return ScoutFragment.newInstance(mQuery.getRef().getKey(), mKeys.get(position));
     }
@@ -46,6 +41,11 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public int getCount() {
         return mKeys.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 
     @Override
@@ -91,13 +91,13 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         if (tab != null) tab.select();
     }
 
+    public void cleanup() {
+        mQuery.removeEventListener(this);
+    }
+
     @Override
     public void onCancelled(DatabaseError error) {
         FirebaseCrash.report(error.toException());
-    }
-
-    public void cleanup() {
-        mQuery.removeEventListener(this);
     }
 
     @Override

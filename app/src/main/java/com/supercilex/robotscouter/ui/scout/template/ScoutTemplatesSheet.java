@@ -82,6 +82,14 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
         return mRootView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
+        mAdapter.cleanup();
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
+    }
+
     private void getTemplateKey() {
         final Team team = Team.getTeam(getArguments());
         mTemplateKey = team.getTemplateKey();
@@ -167,14 +175,6 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
         }
         mAdapter.addItemToScrollQueue(itemCount);
         mFam.close(true);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
-        mAdapter.cleanup();
-        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

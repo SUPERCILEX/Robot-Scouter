@@ -69,9 +69,9 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(Menu.NONE, R.id.action_delete, 100, R.string.delete_scout)
-                .setOnMenuItemClickListener(this);
+    public void onSaveInstanceState(Bundle outState) {
+        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -82,9 +82,9 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
-        super.onSaveInstanceState(outState);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(Menu.NONE, R.id.action_delete, 100, R.string.delete_scout)
+                .setOnMenuItemClickListener(this);
     }
 
     @Override

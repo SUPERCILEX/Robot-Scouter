@@ -83,14 +83,10 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        mMenuHelper.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mMenuHelper.onOptionsItemSelected(item);
+    public void onSaveInstanceState(Bundle outState) {
+        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
+        mMenuHelper.saveState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -109,10 +105,14 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
-        mMenuHelper.saveState(outState);
-        super.onSaveInstanceState(outState);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        mMenuHelper.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mMenuHelper.onOptionsItemSelected(item);
     }
 
     private void initAdapter() {

@@ -463,21 +463,6 @@ public class Team implements Parcelable, Comparable<Team> {
         return value ? 1 : 0;
     }
 
-    @Override
-    public int hashCode() {
-        int result = mNumber.hashCode();
-        result = 31 * result + (mKey == null ? 0 : mKey.hashCode());
-        result = 31 * result + (mTemplateKey == null ? 0 : mTemplateKey.hashCode());
-        result = 31 * result + (mName == null ? 0 : mName.hashCode());
-        result = 31 * result + (mMedia == null ? 0 : mMedia.hashCode());
-        result = 31 * result + (mWebsite == null ? 0 : mWebsite.hashCode());
-        result = 31 * result + (mHasCustomName ? 1 : 0);
-        result = 31 * result + (mHasCustomMedia ? 1 : 0);
-        result = 31 * result + (mHasCustomWebsite ? 1 : 0);
-        result = 31 * result + (int) (mTimestamp ^ (mTimestamp >>> 32));
-        return result;
-    }
-
     @SuppressWarnings("PMD.UselessParentheses")
     @Override
     public boolean equals(Object o) {
@@ -499,16 +484,18 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Override
-    public int compareTo(Team team) {
-        long number = getNumberAsLong();
-        long otherTeamNumber = team.getNumberAsLong();
-        if (number > otherTeamNumber) {
-            return 1;
-        } else if (number == otherTeamNumber) {
-            return 0;
-        } else {
-            return -1;
-        }
+    public int hashCode() {
+        int result = mNumber.hashCode();
+        result = 31 * result + (mKey == null ? 0 : mKey.hashCode());
+        result = 31 * result + (mTemplateKey == null ? 0 : mTemplateKey.hashCode());
+        result = 31 * result + (mName == null ? 0 : mName.hashCode());
+        result = 31 * result + (mMedia == null ? 0 : mMedia.hashCode());
+        result = 31 * result + (mWebsite == null ? 0 : mWebsite.hashCode());
+        result = 31 * result + (mHasCustomName ? 1 : 0);
+        result = 31 * result + (mHasCustomMedia ? 1 : 0);
+        result = 31 * result + (mHasCustomWebsite ? 1 : 0);
+        result = 31 * result + (int) (mTimestamp ^ (mTimestamp >>> 32));
+        return result;
     }
 
     @Override
@@ -526,6 +513,19 @@ public class Team implements Parcelable, Comparable<Team> {
                 ", mHasCustomWebsite=" + mHasCustomWebsite +
                 ", mTimestamp=" + mTimestamp +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Team team) {
+        long number = getNumberAsLong();
+        long otherTeamNumber = team.getNumberAsLong();
+        if (number > otherTeamNumber) {
+            return 1;
+        } else if (number == otherTeamNumber) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     public static class Builder implements com.supercilex.robotscouter.data.util.Builder<Team> {
