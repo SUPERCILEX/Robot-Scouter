@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.data.model; // NOPMD
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -30,7 +29,6 @@ import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
-import com.supercilex.robotscouter.data.client.DownloadTeamDataJob21;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.AuthHelper;
@@ -397,13 +395,7 @@ public class Team implements Parcelable, Comparable<Team> {
 
     public void fetchLatestData(Context context) {
         long differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp);
-        if (differenceDays >= FRESHNESS_DAYS) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                DownloadTeamDataJob21.start(this, context);
-            } else {
-                DownloadTeamDataJob.start(this);
-            }
-        }
+        if (differenceDays >= FRESHNESS_DAYS) DownloadTeamDataJob.start(context, this);
     }
 
     public void visitTbaWebsite(Context context) {

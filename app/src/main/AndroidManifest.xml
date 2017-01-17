@@ -60,7 +60,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <service
-            android:name=".data.client.DownloadTeamDataJob"
+            android:name=".data.client.DownloadTeamDataJob14"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>"
