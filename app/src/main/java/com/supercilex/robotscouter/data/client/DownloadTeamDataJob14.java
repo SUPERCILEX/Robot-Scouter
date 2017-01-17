@@ -8,6 +8,7 @@ import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -38,6 +39,7 @@ public class DownloadTeamDataJob14 extends JobService {
         Job job = BaseHelper.getDispatcher().newJobBuilder()
                 .setService(DownloadTeamDataJob14.class)
                 .setTag(team.getNumber())
+                .setTrigger(Trigger.executionWindow(0, 0))
                 .setExtras(bundle)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
