@@ -39,5 +39,5 @@ public abstract class FirebaseTransformer implements ValueEventListener {
         mFromQuery.addListenerForSingleValueEvent(this);
     }
 
-    public abstract void transform(DataSnapshot transformSnapshot);
+    protected abstract void transform(DataSnapshot transformSnapshot);
 }

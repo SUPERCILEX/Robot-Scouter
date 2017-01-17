@@ -270,6 +270,7 @@ public class Team implements Parcelable, Comparable<Team> {
         mHasCustomWebsite = true;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @Keep
     @PropertyName(FIREBASE_TIMESTAMP)
     public Object getServerTimestamp() {
@@ -425,7 +426,7 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Exclude
-    public String getDeepLink() {
+    private String getDeepLink() {
         return TeamReceiver.APP_LINK_BASE + getLinkKeyNumberPair();
     }
 
@@ -523,7 +524,13 @@ public class Team implements Parcelable, Comparable<Team> {
         if (number > otherTeamNumber) {
             return 1;
         } else if (number == otherTeamNumber) {
-            return 0;
+            if (mTimestamp > team.getTimestamp()) {
+                return 1;
+            } else if (mTimestamp == team.getTimestamp()) {
+                return 0;
+            } else {
+                return -1;
+            }
         } else {
             return -1;
         }
