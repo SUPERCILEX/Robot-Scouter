@@ -366,7 +366,7 @@ public class Team implements Parcelable, Comparable<Team> {
 
     public void delete(Context context) {
         final Context appContext = context.getApplicationContext();
-        Scout.deleteAll(getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ScoutUtils.deleteAll(getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 getRef().removeValue();

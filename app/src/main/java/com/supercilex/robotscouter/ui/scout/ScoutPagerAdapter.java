@@ -10,7 +10,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.data.model.ScoutUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         super(fm);
         mTabLayout = tabLayout;
         mCurrentScoutKey = currentScoutKey;
-        mQuery = Scout.getIndicesRef(teamKey);
+        mQuery = ScoutUtils.getIndicesRef(teamKey);
         mQuery.addValueEventListener(this);
     }
 

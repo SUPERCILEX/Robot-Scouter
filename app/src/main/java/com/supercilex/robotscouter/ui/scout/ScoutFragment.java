@@ -16,8 +16,8 @@ import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
+import com.supercilex.robotscouter.data.model.ScoutUtils;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -31,7 +31,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
 
     public static ScoutFragment newInstance(String teamKey, String scoutKey) {
         ScoutFragment fragment = new ScoutFragment();
-        Bundle bundle = Scout.getScoutKeyBundle(scoutKey);
+        Bundle bundle = ScoutUtils.getScoutKeyBundle(scoutKey);
         bundle.putString(TEAM_KEY, teamKey);
         fragment.setArguments(bundle);
         return fragment;
@@ -41,7 +41,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mScoutKey = Scout.getScoutKey(getArguments());
+        mScoutKey = ScoutUtils.getScoutKey(getArguments());
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.action_delete) {
-            Scout.delete(getArguments().getString(TEAM_KEY), mScoutKey);
+            ScoutUtils.delete(getArguments().getString(TEAM_KEY), mScoutKey);
             return true;
         }
         return false;

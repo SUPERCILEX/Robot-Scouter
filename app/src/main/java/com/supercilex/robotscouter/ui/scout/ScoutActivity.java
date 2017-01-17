@@ -26,7 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.TeamIndices;
-import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.data.model.ScoutUtils;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.ui.TeamSender;
@@ -100,7 +100,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putAll(Scout.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
+        outState.putAll(ScoutUtils.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         super.onSaveInstanceState(outState);
     }
 
@@ -115,7 +115,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new_scout:
-                mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
+                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeam));
                 break;
             case R.id.action_share:
                 TeamSender.launchInvitationIntent(this, Collections.singletonList(mTeam));
@@ -187,7 +187,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
             ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
             String scoutKey = null;
             if (savedInstanceState != null) {
-                scoutKey = Scout.getScoutKey(savedInstanceState);
+                scoutKey = ScoutUtils.getScoutKey(savedInstanceState);
             }
             mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
                                                   tabLayout,
@@ -197,7 +197,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
             tabLayout.setupWithViewPager(viewPager);
 
             if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
-                mPagerAdapter.setCurrentScoutKey(Scout.add(mTeam));
+                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeam));
                 getIntent().removeExtra(INTENT_ADD_SCOUT);
             }
         }
