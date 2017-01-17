@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.data;
+package com.supercilex.robotscouter.data.util;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -7,7 +7,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.util.Builder;
 
 import java.util.ArrayList;
 import java.util.List;

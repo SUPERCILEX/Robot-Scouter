@@ -16,9 +16,9 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.TeamIndices;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.Builder;
+import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 

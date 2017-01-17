@@ -10,7 +10,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.ScoutUtils;
+import com.supercilex.robotscouter.data.util.ScoutUtils;
 
 import java.util.ArrayList;
 import java.util.List;

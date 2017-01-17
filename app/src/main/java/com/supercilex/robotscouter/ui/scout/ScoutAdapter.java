@@ -12,7 +12,7 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.ScoutUtils;
+import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;

@@ -17,7 +17,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.ScoutUtils;
+import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;

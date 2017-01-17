@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.data.model;
+package com.supercilex.robotscouter.data.util;
 
 import android.os.Bundle;
 
@@ -10,8 +10,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.util.FirebaseCopier;
-import com.supercilex.robotscouter.data.util.FirebaseTransformer;
+import com.supercilex.robotscouter.data.model.MetricType;
+import com.supercilex.robotscouter.data.model.ScoutMetric;
+import com.supercilex.robotscouter.data.model.ScoutSpinner;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
