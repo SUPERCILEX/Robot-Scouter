@@ -33,8 +33,6 @@ import com.supercilex.robotscouter.util.Constants;
 public class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
 
-    private static FirebaseAuth sAuth;
-
     private TeamReceiver mLinkReceiver;
 
     private FragmentActivity mActivity;
@@ -45,18 +43,9 @@ public class AuthHelper implements View.OnClickListener {
         mActivity = activity;
     }
 
-    public static FirebaseAuth getAuth() {
-        synchronized (BaseHelper.class) {
-            if (sAuth == null) {
-                sAuth = FirebaseAuth.getInstance();
-            }
-        }
-        return sAuth;
-    }
-
     @Nullable
     public static FirebaseUser getUser() {
-        return getAuth().getCurrentUser();
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Nullable
@@ -69,7 +58,7 @@ public class AuthHelper implements View.OnClickListener {
     }
 
     public static void onSignedIn(final OnSuccessListener<FirebaseAuth> listener) {
-        getAuth().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 if (auth.getCurrentUser() == null) {
@@ -82,7 +71,7 @@ public class AuthHelper implements View.OnClickListener {
                             });
                 } else {
                     listener.onSuccess(auth);
-                    getAuth().removeAuthStateListener(this);
+                    FirebaseAuth.getInstance().removeAuthStateListener(this);
                 }
             }
         });
@@ -128,7 +117,7 @@ public class AuthHelper implements View.OnClickListener {
     }
 
     private void signInAnonymously() {
-        getAuth().signInAnonymously()
+        FirebaseAuth.getInstance().signInAnonymously()
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult result) {

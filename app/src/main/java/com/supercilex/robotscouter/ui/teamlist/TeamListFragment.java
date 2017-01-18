@@ -18,7 +18,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.MenuManager;
 import com.supercilex.robotscouter.util.BaseHelper;
 
@@ -38,7 +37,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         setRetainInstance(true);
         setHasOptionsMenu(true);
         mMenuHelper = new TeamMenuHelper(this);
-        AuthHelper.getAuth().addAuthStateListener(this);
+        FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                 if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
                     // User scrolled down and the FAB is currently visible -> hide the FAB
                     fab.hide();
-                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE && !mMenuHelper.areItemsSelected()) {
+                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE && mMenuHelper.noItemsSelected()) {
                     fab.show();
                 }
             }
@@ -100,7 +99,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     public void onDestroy() {
         super.onDestroy();
         cleanup();
-        AuthHelper.getAuth().removeAuthStateListener(this);
+        FirebaseAuth.getInstance().removeAuthStateListener(this);
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 

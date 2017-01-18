@@ -74,16 +74,17 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
             return mAllTeamsTask.getTask();
         }
 
+        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
         @Override
         public void onSuccess(List<DataSnapshot> snapshots) {
             List<Task<Void>> teamTasks = new ArrayList<>();
 
             for (DataSnapshot teamIndexSnapshot : snapshots) {
-                final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>(); // NOPMD
+                final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>();
                 teamTasks.add(teamTask.getTask());
 
                 Constants.FIREBASE_TEAMS.child(teamIndexSnapshot.getKey())
-                        .addListenerForSingleValueEvent(new ValueEventListener() { // NOPMD
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 if (snapshot.getValue() == null) {

@@ -33,10 +33,12 @@ public final class BaseHelper {
     }
 
     public static DatabaseReference getDatabase() {
-        synchronized (BaseHelper.class) {
-            if (sDatabase == null) {
-                sDatabase = FirebaseDatabase.getInstance();
-                sDatabase.setPersistenceEnabled(true);
+        if (sDatabase == null) { // NOPMD
+            synchronized (BaseHelper.class) {
+                if (sDatabase == null) {
+                    sDatabase = FirebaseDatabase.getInstance();
+                    sDatabase.setPersistenceEnabled(true);
+                }
             }
         }
         return sDatabase.getReference();

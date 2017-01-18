@@ -5,7 +5,11 @@ import android.os.Build;
 
 import com.supercilex.robotscouter.data.model.Team;
 
-public class DownloadTeamDataJob {
+public final class DownloadTeamDataJob {
+    private DownloadTeamDataJob() {
+        // no instance
+    }
+
     public static void start(Context context, Team team) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             DownloadTeamDataJob21.start(context, team);

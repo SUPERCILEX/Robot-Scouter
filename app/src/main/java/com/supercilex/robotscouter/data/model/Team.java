@@ -338,7 +338,7 @@ public class Team implements Parcelable, Comparable<Team> {
                 .putString(SCOUT_TEMPLATE, key)
                 .apply();
         TeamIndices.getAll().addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
-            private final ValueEventListener TEAM_TEMPLATE_UPDATER = new ValueEventListener() {
+            private final ValueEventListener mTeamTemplateUpdater = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     DataSnapshot templateSnapshot = snapshot.child(FIREBASE_TEMPLATE_KEY);
@@ -358,7 +358,7 @@ public class Team implements Parcelable, Comparable<Team> {
                 for (DataSnapshot snapshot : snapshots) {
                     Constants.FIREBASE_TEAMS
                             .child(snapshot.getKey())
-                            .addListenerForSingleValueEvent(TEAM_TEMPLATE_UPDATER);
+                            .addListenerForSingleValueEvent(mTeamTemplateUpdater);
                 }
             }
         });
