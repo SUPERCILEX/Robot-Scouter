@@ -69,7 +69,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         itemView.setBackground(getRippleDrawable());
         if (mIsItemSelected) {
             mLogo.setImageDrawable(ContextCompat.getDrawable(mFragment.getContext(),
-                                                             R.drawable.ic_done_grey_144dp));
+                                                             R.drawable.ic_check_circle_grey_144dp));
             itemView.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
         } else {
             setTeamLogo();
