@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
@@ -23,6 +24,16 @@ import java.util.List;
 
 public class TeamMenuHelper implements TeamMenuManager {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
+
+    /**
+     * Do not use.
+     * <p>
+     * When TeamMenuHelper is initialized, {@link View#findViewById(int)} returns null because
+     * setContentView has not yet been called in the Fragment's activity.
+     *
+     * @see #getFab()
+     */
+    private FloatingActionButton mFab;
 
     private Fragment mFragment;
     private RecyclerView mRecyclerView;
@@ -43,12 +54,8 @@ public class TeamMenuHelper implements TeamMenuManager {
         mRecyclerView = recyclerView;
     }
 
-    private FloatingActionButton getFab() {
-        return (FloatingActionButton) mFragment.getActivity().findViewById(R.id.fab);
-    }
-
-    public boolean areItemsSelected() {
-        return !mSelectedTeams.isEmpty();
+    public boolean noItemsSelected() {
+        return mSelectedTeams.isEmpty();
     }
 
     @Override
@@ -88,8 +95,9 @@ public class TeamMenuHelper implements TeamMenuManager {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                if (TeamSender.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams))
+                if (TeamSender.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
+                }
                 break;
             case R.id.action_visit_tba_team_website:
                 mSelectedTeams.get(0).visitTbaWebsite(mFragment.getContext());
@@ -112,6 +120,42 @@ public class TeamMenuHelper implements TeamMenuManager {
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (mSelectedTeams.isEmpty()) {
+            return false;
+        } else {
+            resetMenu();
+            return true;
+        }
+    }
+
+    @Override
+    public void resetMenu() {
+        setContextMenuItemsVisible(false);
+        setNormalMenuItemsVisible(true);
+        mSelectedTeams.clear();
+        notifyItemsChanged();
+    }
+
+    @Override
+    public void saveState(Bundle outState) {
+        outState.putParcelableArray(SELECTED_TEAMS_KEY,
+                                    mSelectedTeams.toArray(new Team[mSelectedTeams.size()]));
+    }
+
+    @Override
+    public void restoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
+            final Parcelable[] parcelables =
+                    savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
+            for (Parcelable parcelable : parcelables) {
+                mSelectedTeams.add((Team) parcelable);
+            }
+            notifyItemsChanged();
+        }
     }
 
     @Override
@@ -159,42 +203,6 @@ public class TeamMenuHelper implements TeamMenuManager {
             resetMenu();
         } else {
             setToolbarTitle();
-        }
-    }
-
-    @Override
-    public void resetMenu() {
-        setContextMenuItemsVisible(false);
-        setNormalMenuItemsVisible(true);
-        mSelectedTeams.clear();
-        notifyItemsChanged();
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        if (mSelectedTeams.isEmpty()) {
-            return false;
-        } else {
-            resetMenu();
-            return true;
-        }
-    }
-
-    @Override
-    public void saveState(Bundle outState) {
-        outState.putParcelableArray(SELECTED_TEAMS_KEY,
-                                    mSelectedTeams.toArray(new Team[mSelectedTeams.size()]));
-    }
-
-    @Override
-    public void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
-            final Parcelable[] parcelables =
-                    savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
-            for (Parcelable parcelable : parcelables) {
-                mSelectedTeams.add((Team) parcelable);
-            }
-            notifyItemsChanged();
         }
     }
 
@@ -257,5 +265,12 @@ public class TeamMenuHelper implements TeamMenuManager {
             mAdapter.notifyItemChanged(i);
         }
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(true);
+    }
+
+    private FloatingActionButton getFab() {
+        if (mFab == null) {
+            mFab = (FloatingActionButton) mFragment.getActivity().findViewById(R.id.fab);
+        }
+        return mFab;
     }
 }
