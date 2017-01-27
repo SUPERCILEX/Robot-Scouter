@@ -26,7 +26,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.MetricType;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.ScoutSpinner;
+import com.supercilex.robotscouter.data.model.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
@@ -166,7 +166,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                 break;
             case R.id.add_spinner:
                 metricRef.setValue(
-                        new ScoutSpinner("", Collections.singletonList("item 1"), 0),
+                        new SpinnerMetric("", Collections.singletonList("item 1"), 0),
                         itemCount);
                 break;
             case R.id.add_note:

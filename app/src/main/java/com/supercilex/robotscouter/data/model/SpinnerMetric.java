@@ -10,15 +10,15 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.List;
 
-public class ScoutSpinner extends ScoutMetric<List<String>> {
+public class SpinnerMetric extends ScoutMetric<List<String>> {
     @Exclude private int mSelectedValue;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public ScoutSpinner() {
+    public SpinnerMetric() {
         super(); // Needed for Firebase
     }
 
-    public ScoutSpinner(String name, List<String> values, int selectedValue) {
+    public SpinnerMetric(String name, List<String> values, int selectedValue) {
         super(name, values, MetricType.SPINNER);
         mSelectedValue = selectedValue;
     }
@@ -45,7 +45,7 @@ public class ScoutSpinner extends ScoutMetric<List<String>> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        ScoutSpinner spinner = (ScoutSpinner) o;
+        SpinnerMetric spinner = (SpinnerMetric) o;
 
         return mSelectedValue == spinner.mSelectedValue;
     }

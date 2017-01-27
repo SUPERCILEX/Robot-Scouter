@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.ScoutSpinner;
+import com.supercilex.robotscouter.data.model.SpinnerMetric;
 
 import java.util.List;
 
@@ -28,21 +28,21 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
                      Query query,
                      SimpleItemAnimator animator) {
         super.bind(metric, query, animator);
-        ScoutSpinner scoutSpinner = (ScoutSpinner) mMetric;
+        SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
         ArrayAdapter<String> spinnerArrayAdapter =
                 new ArrayAdapter<>(mSpinner.getContext(),
                                    android.R.layout.simple_spinner_item,
-                                   scoutSpinner.getValue());
+                                   spinnerMetric.getValue());
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner.setAdapter(spinnerArrayAdapter);
-        mSpinner.setSelection(scoutSpinner.getSelectedValue());
+        mSpinner.setSelection(spinnerMetric.getSelectedValue());
         mSpinner.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
-        ((ScoutSpinner) mMetric).setSelectedValue(mQuery, itemPosition, mAnimator);
+        ((SpinnerMetric) mMetric).setSelectedValue(mQuery, itemPosition, mAnimator);
     }
 
     @Override
