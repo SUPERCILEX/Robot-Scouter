@@ -41,8 +41,6 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
                                int index,
                                int oldIndex) {
         switch (type) {
-            case ADDED:
-                break;
             case CHANGED:
             case MOVED:
                 for (Team oldTeam : mMenuManager.getSelectedTeams()) {
