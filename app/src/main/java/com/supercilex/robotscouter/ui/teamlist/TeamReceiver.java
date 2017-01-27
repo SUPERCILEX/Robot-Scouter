@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.appinvite.AppInvite;
@@ -10,8 +11,10 @@ import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -51,7 +54,13 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
                 long number = team.getNumberAsLong();
                 Team.getIndicesRef().child(team.getKey()).setValue(number, number);
             }
-            if (teams.size() == Constants.SINGLE_ITEM) launchTeam(teams.get(0));
+            if (teams.size() == Constants.SINGLE_ITEM) {
+                launchTeam(teams.get(0));
+            } else {
+                BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
+                                        R.string.teams_imported,
+                                        Snackbar.LENGTH_LONG);
+            }
         } else { // Received normal intent
             Uri deepLink = mActivity.getIntent().getData();
             if (deepLink == null
