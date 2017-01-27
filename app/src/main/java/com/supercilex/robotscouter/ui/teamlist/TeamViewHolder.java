@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
@@ -68,8 +67,11 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     private void updateItemStatus() {
         itemView.setBackground(getRippleDrawable());
         if (mIsItemSelected) {
-            mLogo.setImageDrawable(ContextCompat.getDrawable(mFragment.getContext(),
-                                                             R.drawable.ic_check_circle_grey_144dp));
+            Glide.with(mFragment)
+                    .load("")
+                    .placeholder(ContextCompat.getDrawable(mFragment.getContext(),
+                                                           R.drawable.ic_check_circle_grey_144dp))
+                    .into(mLogo);
             itemView.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
         } else {
             setTeamLogo();
@@ -100,13 +102,8 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     }
 
     private void setTeamLogo() {
-        RequestManager manager;
-        if (mCouldItemBeSelected) {
-            manager = Glide.with(mFragment.getContext().getApplicationContext());
-        } else {
-            manager = Glide.with(mFragment);
-        }
-        manager.load(mTeam.getMedia())
+        Glide.with(mFragment)
+                .load(mTeam.getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .error(R.drawable.ic_android_black_144dp)
                 .into(mLogo);
