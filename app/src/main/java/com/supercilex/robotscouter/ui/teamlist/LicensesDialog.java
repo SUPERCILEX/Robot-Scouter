@@ -41,9 +41,9 @@ public class LicensesDialog extends DialogFragment {
         licenses.add(Licenses.fromGitHub("firebase/firebase-jobdispatcher-android",
                                          Licenses.LICENSE_APACHE_V2));
         licenses.add(Licenses.fromGitHub("square/retrofit", Licenses.LICENSE_APACHE_V2));
-        licenses.add(Licenses.fromGitHub("bumptech/glide", "LICENSE"));
+        licenses.add(Licenses.fromGitHub("bumptech/glide", "Glide license", "LICENSE"));
         licenses.add(Licenses.fromGitHub("hdodenhof/CircleImageView", Licenses.LICENSE_APACHE_V2));
-        licenses.add(Licenses.fromGitHub("Triple-T/gradle-play-publisher", Licenses.NAME_MIT));
+        licenses.add(Licenses.fromGitHubMIT("Triple-T/gradle-play-publisher"));
         licenses.add(Licenses.fromGitHub("square/leakcanary", Licenses.LICENSE_APACHE_V2));
         licenses.add(Licenses.fromGitHub("yshrsmz/LicenseAdapter", Licenses.LICENSE_APACHE_V2));
 

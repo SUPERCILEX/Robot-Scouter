@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
+import android.support.multidex.MultiDexApplication;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
@@ -10,10 +10,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.supercilex.robotscouter.util.BaseHelper;
 
-/**
- * A simple class for LeakCanary integration.
- */
-public class RobotScouter extends Application {
+public class RobotScouter extends MultiDexApplication {
     private RefWatcher mRefWatcher;
 
     public static RefWatcher getRefWatcher(Context context) {

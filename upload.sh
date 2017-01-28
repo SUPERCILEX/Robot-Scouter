@@ -20,9 +20,9 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   cd ..
   cd Robot-Scouter
 
-  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-138.0.0-linux-x86_64.tar.gz
-  tar xf google-cloud-sdk-138.0.0-linux-x86_64.tar.gz
+  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-141.0.0-linux-x86_64.tar.gz
+  tar xf google-cloud-sdk-141.0.0-linux-x86_64.tar.gz
   echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
-  ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --max-depth 100 --project robot-scouter-app
+  ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --max-depth 100 --robo-directives team_number=2521 --project robot-scouter-app
 fi
