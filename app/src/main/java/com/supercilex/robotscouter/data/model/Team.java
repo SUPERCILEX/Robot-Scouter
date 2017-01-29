@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.data.model; // NOPMD
+package com.supercilex.robotscouter.data.model;
 
 import android.content.Context;
 import android.content.Intent;

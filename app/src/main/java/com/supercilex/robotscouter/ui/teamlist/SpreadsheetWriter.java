@@ -246,8 +246,7 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
         List<Integer> numOfSelections = null;
         if (metricToFind.getType() == MetricType.SPINNER) {
             List<String> spinnerValues = ((SpinnerMetric) metricToFind).getValue();
-            numOfSelections = new ArrayList<>(spinnerValues.size());
-            for (String ignored : spinnerValues) numOfSelections.add(0);
+            numOfSelections = Collections.nCopies(spinnerValues.size(), 0);
         }
 
         for (List<ScoutMetric> scout : scouts) {
@@ -268,6 +267,8 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
                             int index = spinnerMetric.getSelectedValueIndex();
                             numOfSelections.set(index, numOfSelections.get(index) + 1);
                             break;
+                        case MetricType.NOTE:
+                            return null;
                     }
                 }
             }
@@ -287,12 +288,13 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
                 for (int i = 0; i < numOfSelections.size(); i++) {
                     Integer count = numOfSelections.get(i);
                     if (count > max.first) {
-                        max = new Pair<>(count, i);
+                        max = new Pair<>(count, i); // NOPMD
                     }
                 }
                 return new SpinnerMetric(metricToFind.getName(),
                                          ((SpinnerMetric) metricToFind).getValue(),
                                          max.second);
+            case MetricType.NOTE:
             default:
                 return null;
         }
@@ -407,11 +409,11 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
     }
 
     private void setColumnWidths(Iterator<Sheet> sheetIterator) {
+        Paint paint = new Paint();
         while (sheetIterator.hasNext()) {
             Sheet sheet = sheetIterator.next();
             Row row = sheet.getRow(0);
 
-            Paint paint = new Paint();
             int numColumns = row.getLastCellNum();
             for (int i = 0; i < numColumns; i++) {
                 int maxWidth = 2560;

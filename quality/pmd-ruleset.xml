@@ -21,6 +21,8 @@
 
         <exclude name="WhileLoopsMustUseBraces"/>
 
+        <exclude name="ForLoopsMustUseBraces"/>
+
     </rule>
 
     <rule ref="rulesets/java/clone.xml"/>
@@ -58,6 +60,8 @@
         <exclude name="AccessorClassGeneration"/>
 
         <exclude name="SwitchStmtsShouldHaveDefault"/>
+
+        <exclude name="GodClass"/>
 
     </rule>
 
