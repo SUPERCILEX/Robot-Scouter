@@ -47,7 +47,7 @@ import java.util.concurrent.Callable;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<Team, List<List<ScoutMetric>>>> {
-    private static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter team exports/";
     private static final String FILE_EXTENSION = ".xlsx";

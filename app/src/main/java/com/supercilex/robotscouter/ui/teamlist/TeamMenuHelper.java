@@ -307,7 +307,11 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) exportTeams();
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE
+                && EasyPermissions.hasPermissions(mFragment.getContext(),
+                                                  SpreadsheetWriter.PERMS)) {
+            exportTeams();
+        }
     }
 
     private void exportTeams() {
