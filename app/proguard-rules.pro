@@ -10,5 +10,7 @@
 # Apache POI
 -dontwarn org.apache.**
 -dontwarn org.openxmlformats.schemas.**
+-dontwarn org.etsi.**
+-dontwarn org.w3.**
 -dontwarn com.microsoft.schemas.**
 -dontwarn com.graphbuilder.**
