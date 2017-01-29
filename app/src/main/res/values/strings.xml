@@ -19,6 +19,12 @@
     <string name="share_title">Share team %s</string>
     <string name="share_message">Edit team %s with me!</string>
     <string name="share_call_to_action">Import team %s into Robot Scouter</string>
+    <string name="export_as_xlsx">Export to spreadsheet</string>
+    <plurals name="share_xlsx_title">
+        <item quantity="one">Export team %s and its scouting data to a spreadsheet</item>
+        <item quantity="other">Export teams %s and their scouting data to a spreadsheet</item>
+    </plurals>
+    <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
 
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>

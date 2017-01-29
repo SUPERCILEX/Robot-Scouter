@@ -6,3 +6,9 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 -keepattributes Exceptions
+
+# Apache POI
+-dontwarn org.apache.**
+-dontwarn org.openxmlformats.schemas.**
+-dontwarn com.microsoft.schemas.**
+-dontwarn com.graphbuilder.**

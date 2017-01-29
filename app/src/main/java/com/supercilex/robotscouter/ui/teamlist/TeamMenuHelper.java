@@ -1,7 +1,9 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +24,10 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamMenuHelper implements TeamMenuManager {
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.PermissionCallbacks {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
     /**
@@ -78,6 +83,10 @@ public class TeamMenuHelper implements TeamMenuManager {
                 .setVisible(false)
                 .setIcon(R.drawable.ic_mode_edit_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        mMenu.add(Menu.NONE, R.id.action_export_xlsx, Menu.NONE, R.string.export_as_xlsx)
+                .setVisible(false)
+                .setIcon(R.drawable.ic_import_export_white_24dp)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE, R.id.action_delete, Menu.NONE, R.string.delete)
                 .setVisible(false)
                 .setIcon(R.drawable.ic_delete_forever_white_24dp)
@@ -109,6 +118,9 @@ public class TeamMenuHelper implements TeamMenuManager {
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mSelectedTeams.get(0), mFragment.getChildFragmentManager());
+                break;
+            case R.id.action_export_xlsx:
+                exportTeams();
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
@@ -221,6 +233,7 @@ public class TeamMenuHelper implements TeamMenuManager {
 
     private void setContextMenuItemsVisible(boolean visible) {
         mMenu.findItem(R.id.action_share).setVisible(visible);
+        mMenu.findItem(R.id.action_export_xlsx).setVisible(visible);
         mMenu.findItem(R.id.action_delete).setVisible(visible);
         ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(visible);
@@ -272,5 +285,32 @@ public class TeamMenuHelper implements TeamMenuManager {
             mFab = (FloatingActionButton) mFragment.getActivity().findViewById(R.id.fab);
         }
         return mFab;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        exportTeams();
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(mFragment, perms)) {
+            new AppSettingsDialog.Builder(mFragment).build().show();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) exportTeams();
+    }
+
+    private void exportTeams() {
+        if (SpreadsheetWriter.writeAndShareTeams(mFragment, mSelectedTeams)) resetMenu();
     }
 }

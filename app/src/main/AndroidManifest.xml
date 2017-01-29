@@ -8,12 +8,14 @@
         android:name="android.hardware.touchscreen"
         android:required="false"/>
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:name=".RobotScouter"
+        android:label="${appName}"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
-        android:label="${appName}"
         android:theme="@style/RobotScouter">
 
         <activity

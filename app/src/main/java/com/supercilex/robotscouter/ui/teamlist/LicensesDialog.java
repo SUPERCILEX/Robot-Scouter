@@ -32,6 +32,7 @@ public class LicensesDialog extends DialogFragment {
         View rootView = View.inflate(getContext(), R.layout.recycler_view, null);
 
         List<LicenseEntry> licenses = new ArrayList<>(); // TODO check that I have them all
+        // TODO fix licenses once new repo version comes out
 
         licenses.add(Licenses.noContent("Firebase",
                                         "Google Inc.",

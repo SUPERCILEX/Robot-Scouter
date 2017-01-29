@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,7 +23,11 @@ import com.supercilex.robotscouter.ui.MenuManager;
 import com.supercilex.robotscouter.util.BaseHelper;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
+/**
+ * Created in {@link R.layout#activity_team_list}
+ */
 public class TeamListFragment extends Fragment implements FirebaseAuth.AuthStateListener {
     private Bundle mSavedInstanceState;
 
@@ -138,5 +143,24 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
      */
     public void resetMenu() {
         mMenuHelper.resetMenu();
+    }
+
+    /**
+     * Used in {@link SpreadsheetWriter#writeAndShareTeams(Fragment, List)}
+     * <p>
+     * {@inheritDoc}
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mMenuHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mMenuHelper.onActivityResult(requestCode, resultCode, data);
     }
 }
