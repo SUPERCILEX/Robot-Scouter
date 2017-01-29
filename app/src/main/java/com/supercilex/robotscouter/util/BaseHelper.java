@@ -25,7 +25,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.R;
 
 public final class BaseHelper {
-    private static FirebaseDatabase sDatabase;
     private static FirebaseJobDispatcher sDispatcher;
 
     private BaseHelper() {
@@ -33,15 +32,7 @@ public final class BaseHelper {
     }
 
     public static DatabaseReference getDatabase() {
-        if (sDatabase == null) { // NOPMD
-            synchronized (BaseHelper.class) {
-                if (sDatabase == null) {
-                    sDatabase = FirebaseDatabase.getInstance();
-                    sDatabase.setPersistenceEnabled(true);
-                }
-            }
-        }
-        return sDatabase.getReference();
+        return DatabaseHolder.INSTANCE.getReference();
     }
 
     public static FirebaseJobDispatcher getDispatcher() {
@@ -61,7 +52,7 @@ public final class BaseHelper {
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         long cacheExpiration = config.getInfo()
                 .getConfigSettings()
-                .isDeveloperModeEnabled() ? 0L : defaultCacheExpiration;
+                .isDeveloperModeEnabled() ? 0 : defaultCacheExpiration;
         return config.fetch(cacheExpiration);
     }
 
@@ -154,5 +145,13 @@ public final class BaseHelper {
         }
 
         return customTabsIntent;
+    }
+
+    private static final class DatabaseHolder {
+        public static final FirebaseDatabase INSTANCE = FirebaseDatabase.getInstance();
+
+        static {
+            INSTANCE.setPersistenceEnabled(true);
+        }
     }
 }
