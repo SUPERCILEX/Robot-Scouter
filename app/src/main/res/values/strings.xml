@@ -6,6 +6,9 @@
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
 
+    <!-- Tutorials -->
+    <string name="create_first_team">Create your first team</string>
+
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
     <string name="invalid_team_number">Oops! Make sure your team number is greater than 0 and smaller than 100000</string>

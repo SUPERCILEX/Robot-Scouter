@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,7 +14,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.AuthHelper;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-public class TeamListActivity extends AppCompatActivity implements View.OnClickListener {
+public class TeamListActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
     private AuthHelper mAuthHelper;
 
     @Override
@@ -25,17 +26,25 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
 
         findViewById(R.id.fab).setOnClickListener(this);
         mAuthHelper = AuthHelper.init(this);
+
+        TutorialHelper.showCreateFirstTeamPrompt(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.team_list, menu);
         mAuthHelper.initMenu(menu);
+        new Handler().post(this);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
+    public void run() {
+        TutorialHelper.showSignInPrompt(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sign_in:
                 mAuthHelper.signIn();

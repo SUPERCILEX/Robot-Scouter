@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_sign_in"
-        android:title="@string/sign_in"/>
+        android:icon="@drawable/ic_sign_in_white_24dp"
+        android:title="@string/sign_in"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_sign_out"
-        android:title="@string/sign_out"/>
+        android:icon="@drawable/ic_sign_out_white_24dp"
+        android:title="@string/sign_out"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_licenses"
@@ -16,6 +21,8 @@
 
     <item
         android:id="@+id/action_about"
-        android:title="@string/about"/>
+        android:icon="@drawable/ic_info_white_24dp"
+        android:title="@string/about"
+        app:showAsAction="ifRoom"/>
 
 </menu>

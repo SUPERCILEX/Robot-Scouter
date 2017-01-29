@@ -31,4 +31,12 @@
         <item name="android:textColor">@color/errorColor</item>
     </style>
 
+    <style name="RobotScouter.Tutorial">
+        <item name="backgroundColour">@color/colorPrimary</item>
+    </style>
+
+    <style name="RobotScouter.Tutorial.Menu" parent="RobotScouter.Tutorial">
+        <item name="focalColour">@color/colorAccent</item>
+    </style>
+
 </resources>

@@ -20,21 +20,25 @@
     <item
         android:id="@+id/action_visit_tba_team_website"
         android:icon="@drawable/ic_launch_white_24dp"
+        app:showAsAction="ifRoom"
         tools:ignore="MenuTitle"/>
 
     <item
         android:id="@+id/action_visit_team_website"
         android:icon="@drawable/ic_launch_white_24dp"
-        android:visible="false"/>
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_edit_scout_templates"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/edit_scout_template"/>
+        android:title="@string/edit_scout_template"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_edit_team_details"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/edit_team_details"/>
+        android:title="@string/edit_team_details"
+        app:showAsAction="ifRoom"/>
 
 </menu>
