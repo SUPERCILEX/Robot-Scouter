@@ -24,6 +24,7 @@ public final class TutorialHelper {
             new MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
                     .setTarget(R.id.fab)
                     .setPrimaryText(R.string.create_first_team)
+                    .setAutoDismiss(false)
                     .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                         @Override
                         public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
