@@ -83,7 +83,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 .setVisible(false)
                 .setIcon(R.drawable.ic_mode_edit_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_export_xlsx, Menu.NONE, R.string.export_as_xlsx)
+        mMenu.add(Menu.NONE, R.id.action_export_spreadsheet, Menu.NONE, R.string.export_spreadsheet)
                 .setVisible(false)
                 .setIcon(R.drawable.ic_import_export_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -119,7 +119,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mSelectedTeams.get(0), mFragment.getChildFragmentManager());
                 break;
-            case R.id.action_export_xlsx:
+            case R.id.action_export_spreadsheet:
                 exportTeams();
                 break;
             case R.id.action_delete:
@@ -233,7 +233,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
 
     private void setContextMenuItemsVisible(boolean visible) {
         mMenu.findItem(R.id.action_share).setVisible(visible);
-        mMenu.findItem(R.id.action_export_xlsx).setVisible(visible);
+        mMenu.findItem(R.id.action_export_spreadsheet).setVisible(visible);
         mMenu.findItem(R.id.action_delete).setVisible(visible);
         ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(visible);

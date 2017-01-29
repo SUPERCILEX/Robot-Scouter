@@ -5,5 +5,5 @@
     <item name="action_visit_team_website" type="id"/>
     <item name="action_edit_team_details" type="id"/>
     <item name="action_delete" type="id"/>
-    <item name="action_export_xlsx" type="id"/>
+    <item name="action_export_spreadsheet" type="id"/>
 </resources>

@@ -17,8 +17,8 @@ pmd {
 task checkstyle(type: Checkstyle) {
     configFile file("$configDir/checkstyle.xml")
     source 'src'
-    include '**/*.java'
-    exclude '**/gen/**'
+    include '**/*.*'
+    exclude '**/gen/**', '**/*.png'
     classpath = files()
 }
 

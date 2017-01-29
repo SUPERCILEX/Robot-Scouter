@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter;
 
 import android.content.Context;
-import android.os.StrictMode;
 import android.support.multidex.MultiDexApplication;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -28,14 +27,13 @@ public class RobotScouter extends MultiDexApplication {
         mRefWatcher = LeakCanary.install(this);
 
         // TODO see https://github.com/firebase/quickstart-android/issues/176#issuecomment-268841466
-        if (/*BuildConfig.DEBUG*/false) { // TODO NOPMD
-            // Enable StrictMode
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                                           .detectAll()
-                                           .penaltyLog()
-                                           .penaltyDeath()
-                                           .build());
-        }
+//        if (BuildConfig.DEBUG) {
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                                           .detectAll()
+//                                           .penaltyLog()
+//                                           .penaltyDeath()
+//                                           .build());
+//        }
         // END QUALITY CHECKS
 
         BaseHelper.resetJobDispatcher(this);

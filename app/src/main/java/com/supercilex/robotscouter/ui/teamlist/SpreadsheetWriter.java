@@ -97,12 +97,12 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
     public void onSuccess(Map<Team, List<List<ScoutMetric>>> scouts) {
         mScouts = scouts;
 
-        Uri xlsxUri = getFileUri();
-        if (xlsxUri == null) return;
+        Uri spreadsheetUri = getFileUri();
+        if (spreadsheetUri == null) return;
 
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("application/vnd.ms-excel");
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, xlsxUri);
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
         mContext.startActivity(Intent.createChooser(sharingIntent, getShareTitle())
                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                        .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
@@ -110,7 +110,9 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
 
     private String getShareTitle() {
         return mContext.getResources()
-                .getQuantityString(R.plurals.share_xlsx_title, mTeams.size(), getTeamNames());
+                .getQuantityString(R.plurals.share_spreadsheet_title,
+                                   mTeams.size(),
+                                   getTeamNames());
     }
 
     private Uri getFileUri() {
