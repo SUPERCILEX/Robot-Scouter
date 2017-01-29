@@ -10,6 +10,10 @@ checkstyle {
     toolVersion = '7.4'
 }
 
+pmd {
+    toolVersion = '5.5.3'
+}
+
 task checkstyle(type: Checkstyle) {
     configFile file("$configDir/checkstyle.xml")
     source 'src'

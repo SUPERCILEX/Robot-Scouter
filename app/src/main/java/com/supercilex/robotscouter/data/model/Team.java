@@ -457,7 +457,6 @@ public class Team implements Parcelable, Comparable<Team> {
         return value ? 1 : 0;
     }
 
-    @SuppressWarnings("PMD.UselessParentheses")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

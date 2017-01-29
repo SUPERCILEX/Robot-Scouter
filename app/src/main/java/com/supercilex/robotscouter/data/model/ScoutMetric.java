@@ -69,7 +69,6 @@ public class ScoutMetric<T> {
         mType = type;
     }
 
-    @SuppressWarnings("PMD.UselessParentheses")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
