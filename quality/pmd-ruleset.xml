@@ -19,6 +19,8 @@
 
         <exclude name="IfElseStmtsMustUseBraces"/>
 
+        <exclude name="WhileLoopsMustUseBraces"/>
+
     </rule>
 
     <rule ref="rulesets/java/clone.xml"/>
@@ -44,6 +46,8 @@
         <exclude name="DataflowAnomalyAnalysis"/>
 
         <exclude name="UseConcurrentHashMap"/>
+
+        <exclude name="OneDeclarationPerLine"/>
 
     </rule>
 

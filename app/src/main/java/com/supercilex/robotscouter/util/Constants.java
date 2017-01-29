@@ -43,7 +43,7 @@ public final class Constants {
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
     public static final String FIREBASE_NAME = "name";
-    public static final String FIREBASE_SELECTED_VALUE = "selectedValue";
+    public static final String FIREBASE_SELECTED_VALUE = "selectedValueIndex";
 
     // Scout template
     public static final DatabaseReference FIREBASE_DEFAULT_TEMPLATE =

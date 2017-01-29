@@ -36,7 +36,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner.setAdapter(spinnerArrayAdapter);
-        mSpinner.setSelection(spinnerMetric.getSelectedValue());
+        mSpinner.setSelection(spinnerMetric.getSelectedValueIndex());
         mSpinner.setOnItemSelectedListener(this);
     }
 

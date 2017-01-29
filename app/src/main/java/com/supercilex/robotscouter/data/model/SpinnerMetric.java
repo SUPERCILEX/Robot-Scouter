@@ -11,32 +11,32 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.List;
 
 public class SpinnerMetric extends ScoutMetric<List<String>> {
-    @Exclude private int mSelectedValue;
+    @Exclude private int mSelectedValueIndex;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
     public SpinnerMetric() {
         super(); // Needed for Firebase
     }
 
-    public SpinnerMetric(String name, List<String> values, int selectedValue) {
+    public SpinnerMetric(String name, List<String> values, int selectedValueIndex) {
         super(name, values, MetricType.SPINNER);
-        mSelectedValue = selectedValue;
+        mSelectedValueIndex = selectedValueIndex;
     }
 
     @Keep
-    public int getSelectedValue() {
-        return mSelectedValue;
+    public int getSelectedValueIndex() {
+        return mSelectedValueIndex;
     }
 
     @Keep
-    public void setSelectedValue(int selectedValue) {
-        mSelectedValue = selectedValue;
+    public void setSelectedValueIndex(int selectedValueIndex) {
+        mSelectedValueIndex = selectedValueIndex;
     }
 
     public void setSelectedValue(Query query, int selectedValue, SimpleItemAnimator animator) {
         animator.setSupportsChangeAnimations(false);
         query.getRef().child(Constants.FIREBASE_SELECTED_VALUE).setValue(selectedValue);
-        mSelectedValue = selectedValue;
+        mSelectedValueIndex = selectedValue;
     }
 
     @Override
@@ -47,18 +47,18 @@ public class SpinnerMetric extends ScoutMetric<List<String>> {
 
         SpinnerMetric spinner = (SpinnerMetric) o;
 
-        return mSelectedValue == spinner.mSelectedValue;
+        return mSelectedValueIndex == spinner.mSelectedValueIndex;
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + mSelectedValue;
+        result = 31 * result + mSelectedValueIndex;
         return result;
     }
 
     @Override
     public String toString() {
-        return super.toString() + "\nSelected value = " + mSelectedValue;
+        return super.toString() + "\nSelected value = " + mSelectedValueIndex;
     }
 }
