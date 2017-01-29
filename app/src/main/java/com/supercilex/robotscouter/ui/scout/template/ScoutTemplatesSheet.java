@@ -30,8 +30,8 @@ import com.supercilex.robotscouter.data.model.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
-import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
 
 import java.util.Collections;
 
@@ -121,7 +121,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                 mRootView,
                 this);
         mRecyclerView.setAdapter(mAdapter);
-        BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        FirebaseRecyclerViewHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
         mItemTouchHelper = new ItemTouchHelper(new ScoutTemplateItemTouchCallback(mAdapter));
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
@@ -179,7 +179,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseRecyclerViewHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 

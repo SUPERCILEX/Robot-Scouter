@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.MenuManager;
-import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -51,7 +51,9 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         if (auth.getCurrentUser() != null) {
             initAdapter();
             if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
-            BaseHelper.restoreRecyclerViewState(mSavedInstanceState, mAdapter, mManager.get());
+            FirebaseRecyclerViewHelper.restoreRecyclerViewState(mSavedInstanceState,
+                                                                mAdapter,
+                                                                mManager.get());
             mMenuHelper.restoreState(mSavedInstanceState);
             mSavedInstanceState = null; // NOPMD
         }
@@ -88,7 +90,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
+        FirebaseRecyclerViewHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
         mMenuHelper.saveState(outState);
         super.onSaveInstanceState(outState);
     }

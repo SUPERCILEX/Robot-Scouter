@@ -27,7 +27,6 @@ import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
-import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class AuthHelper implements View.OnClickListener {
@@ -39,7 +38,7 @@ public class AuthHelper implements View.OnClickListener {
     private MenuItem mActionSignIn;
     private MenuItem mActionSignOut;
 
-    private AuthHelper(FragmentActivity activity) {
+    protected AuthHelper(FragmentActivity activity) {
         mActivity = activity;
     }
 
@@ -133,11 +132,11 @@ public class AuthHelper implements View.OnClickListener {
                 .addOnFailureListener(mActivity, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
-                                                R.string.anonymous_sign_in_failed,
-                                                Snackbar.LENGTH_LONG,
-                                                R.string.sign_in,
-                                                AuthHelper.this);
+                        Snackbar.make(mActivity.findViewById(R.id.root),
+                                      R.string.anonymous_sign_in_failed,
+                                      Snackbar.LENGTH_LONG)
+                                .setAction(R.string.sign_in, AuthHelper.this)
+                                .show();
                     }
                 });
     }
@@ -161,11 +160,11 @@ public class AuthHelper implements View.OnClickListener {
     }
 
     public void showSignInResolution() {
-        BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
-                                R.string.sign_in_required,
-                                Snackbar.LENGTH_LONG,
-                                R.string.sign_in,
-                                this);
+        Snackbar.make(mActivity.findViewById(R.id.root),
+                      R.string.sign_in_required,
+                      Snackbar.LENGTH_LONG)
+                .setAction(R.string.sign_in, this)
+                .show();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,9 +172,10 @@ public class AuthHelper implements View.OnClickListener {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == ResultCodes.OK) {
-                BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
-                                        R.string.signed_in,
-                                        Snackbar.LENGTH_LONG);
+                Snackbar.make(mActivity.findViewById(R.id.root),
+                              R.string.signed_in,
+                              Snackbar.LENGTH_LONG)
+                        .show();
                 toggleMenuSignIn(true);
 
                 initDeepLinkReceiver();
@@ -191,19 +191,19 @@ public class AuthHelper implements View.OnClickListener {
                 if (response == null) return; // User cancelled sign in
 
                 if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
-                                            R.string.no_connection,
-                                            Snackbar.LENGTH_LONG,
-                                            R.string.try_again,
-                                            this);
+                    Snackbar.make(mActivity.findViewById(R.id.root),
+                                  R.string.no_connection,
+                                  Snackbar.LENGTH_LONG)
+                            .setAction(R.string.try_again, this)
+                            .show();
                     return;
                 }
 
-                BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
-                                        R.string.sign_in_failed,
-                                        Snackbar.LENGTH_LONG,
-                                        R.string.try_again,
-                                        this);
+                Snackbar.make(mActivity.findViewById(R.id.root),
+                              R.string.sign_in_failed,
+                              Snackbar.LENGTH_LONG)
+                        .setAction(R.string.try_again, this)
+                        .show();
             }
         }
     }

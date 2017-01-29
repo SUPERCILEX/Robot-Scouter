@@ -9,10 +9,14 @@ import com.supercilex.robotscouter.R;
 
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
-public class TutorialHelper {
+public final class TutorialHelper {
     private static final String HAS_SHOWN_TUTORIAL = "has_shown_tutorial";
     private static final String HAS_SHOWN_TUTORIAL_FAB = HAS_SHOWN_TUTORIAL + "_fab";
     private static final String HAS_SHOWN_TUTORIAL_SIGN_IN = HAS_SHOWN_TUTORIAL + "_sign_in";
+
+    private TutorialHelper() {
+        // no instance
+    }
 
     public static void showCreateFirstTeamPrompt(Activity activity) {
         final SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);

@@ -25,18 +25,20 @@ public final class Constants {
 
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]
-    public static final DatabaseReference FIREBASE_USERS = BaseHelper.getDatabase().child("users");
+    public static final DatabaseReference FIREBASE_USERS = DatabaseHelper.getReference()
+            .child("users");
 
     // Team
-    public static final DatabaseReference FIREBASE_TEAMS = BaseHelper.getDatabase().child("teams");
+    public static final DatabaseReference FIREBASE_TEAMS =
+            DatabaseHelper.getReference().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
-            BaseHelper.getDatabase().child("team-indices");
+            DatabaseHelper.getReference().child("team-indices");
 
     // Scout
     public static final DatabaseReference FIREBASE_SCOUTS =
-            BaseHelper.getDatabase().child("scouts");
+            DatabaseHelper.getReference().child("scouts");
     public static final DatabaseReference FIREBASE_SCOUT_INDICES =
-            BaseHelper.getDatabase().child("scout-indices");
+            DatabaseHelper.getReference().child("scout-indices");
 
     // Scout views
     public static final String FIREBASE_VIEWS = "views";
@@ -47,9 +49,9 @@ public final class Constants {
 
     // Scout template
     public static final DatabaseReference FIREBASE_DEFAULT_TEMPLATE =
-            BaseHelper.getDatabase().child("default-template");
+            DatabaseHelper.getReference().child("default-template");
     public static final DatabaseReference FIREBASE_SCOUT_TEMPLATES =
-            BaseHelper.getDatabase().child("scout-templates");
+            DatabaseHelper.getReference().child("scout-templates");
     // [END FIREBASE CHILD NAMES]
 
     public static final String HTML_IMPORT_TEAM;

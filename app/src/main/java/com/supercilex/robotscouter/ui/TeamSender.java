@@ -9,16 +9,16 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
-import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.List;
 
-public final class TeamSender {
+public class TeamSender {
     private FragmentActivity mActivity;
     private List<Team> mTeams;
 
-    private TeamSender(FragmentActivity activity, List<Team> teams) {
+    protected TeamSender(FragmentActivity activity, List<Team> teams) {
         mActivity = activity;
         mTeams = teams;
 
@@ -34,10 +34,11 @@ public final class TeamSender {
      * @return true if a share intent was launched, false otherwise
      */
     public static boolean launchInvitationIntent(FragmentActivity activity, List<Team> teams) {
-        if (BaseHelper.isOffline(activity)) {
-            BaseHelper.showSnackbar(activity.findViewById(R.id.root),
-                                    R.string.no_connection,
-                                    Snackbar.LENGTH_LONG);
+        if (MiscellaneousHelper.isOffline(activity)) {
+            Snackbar.make(activity.findViewById(R.id.root),
+                          R.string.no_connection,
+                          Snackbar.LENGTH_LONG)
+                    .show();
             return false;
         }
         if (teams.isEmpty()) return false;

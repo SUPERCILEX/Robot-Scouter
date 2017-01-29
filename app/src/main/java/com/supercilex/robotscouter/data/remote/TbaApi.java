@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.remote;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
@@ -14,7 +15,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.util.RemoteConfigHelper;
 import com.supercilex.robotscouter.util.TaskExecutor;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public final class TbaApi implements Callable<Team> {
 
     @Override
     public Team call() throws Exception {
-        Task<Void> teamMediaYearFetchTask = BaseHelper
+        Task<Void> teamMediaYearFetchTask = RemoteConfigHelper
                 .fetchRemoteConfigValues(TimeUnit.HOURS.toSeconds(12))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -137,7 +138,7 @@ public final class TbaApi implements Callable<Team> {
 
     private void setAndCacheMedia(final String url) {
         mTeam.setMedia(url);
-        BaseHelper.runOnMainThread(mContext, new Runnable() {
+        new Handler(mContext.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 Glide.with(mContext)

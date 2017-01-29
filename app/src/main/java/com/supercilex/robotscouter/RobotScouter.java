@@ -7,7 +7,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.supercilex.robotscouter.util.BaseHelper;
 
 public class RobotScouter extends MultiDexApplication {
     private RefWatcher mRefWatcher;
@@ -35,8 +34,6 @@ public class RobotScouter extends MultiDexApplication {
 //                                           .build());
 //        }
         // END QUALITY CHECKS
-
-        BaseHelper.resetJobDispatcher(this);
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         config.setDefaults(R.xml.remote_config_defaults);

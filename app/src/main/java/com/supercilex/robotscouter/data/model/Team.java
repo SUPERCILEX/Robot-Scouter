@@ -33,8 +33,8 @@ import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
-import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.CustomTabsHelper;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -400,11 +400,11 @@ public class Team implements Parcelable, Comparable<Team> {
 
     public void visitTbaWebsite(Context context) {
         Uri tbaUrl = Uri.parse("https://www.thebluealliance.com/team/" + getNumber());
-        BaseHelper.launchUrl(context, tbaUrl);
+        CustomTabsHelper.launchUrl(context, tbaUrl);
     }
 
     public void visitTeamWebsite(Context context) {
-        BaseHelper.launchUrl(context, Uri.parse(getWebsite()));
+        CustomTabsHelper.launchUrl(context, Uri.parse(getWebsite()));
     }
 
     @Exclude

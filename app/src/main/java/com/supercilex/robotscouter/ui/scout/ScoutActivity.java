@@ -33,7 +33,7 @@ import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
-import com.supercilex.robotscouter.util.BaseHelper;
+import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,10 +72,11 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         mHolder.bind(mTeam);
         addTeamAndScoutListeners(savedInstanceState);
 
-        if (savedInstanceState == null && BaseHelper.isOffline(this)) {
-            BaseHelper.showSnackbar(findViewById(R.id.root),
-                                    R.string.offline_reassurance,
-                                    Snackbar.LENGTH_LONG);
+        if (savedInstanceState == null && MiscellaneousHelper.isOffline(this)) {
+            Snackbar.make(findViewById(R.id.root),
+                          R.string.offline_reassurance,
+                          Snackbar.LENGTH_LONG)
+                    .show();
         }
     }
 
@@ -171,8 +172,6 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                                                 public void onComplete(@NonNull Task<Team> task) {
                                                     if (task.isSuccessful()) {
                                                         mTeam.update(task.getResult());
-                                                        BaseHelper.getDispatcher()
-                                                                .cancel(mTeam.getNumber());
                                                     } else {
                                                         mTeam.fetchLatestData(ScoutActivity.this);
                                                     }

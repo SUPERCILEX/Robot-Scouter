@@ -1,10 +1,12 @@
 package com.supercilex.robotscouter.data.client;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
@@ -14,10 +16,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
-import com.supercilex.robotscouter.util.BaseHelper;
 
 public class DownloadTeamDataJob14 extends JobService {
-    public static void start(Team team) {
+    public static void start(Context context, Team team) {
         Bundle bundle = new Bundle();
         bundle.putString("key", team.getKey());
         bundle.putString("template-key", team.getTemplateKey());
@@ -36,7 +37,10 @@ public class DownloadTeamDataJob14 extends JobService {
         }
         bundle.putLong("timestamp", team.getTimestamp());
 
-        Job job = BaseHelper.getDispatcher().newJobBuilder()
+        FirebaseJobDispatcher dispatcher =
+                new FirebaseJobDispatcher(new GooglePlayDriver(context.getApplicationContext()));
+
+        Job job = dispatcher.newJobBuilder()
                 .setService(DownloadTeamDataJob14.class)
                 .setTag(team.getNumber())
                 .setTrigger(Trigger.executionWindow(0, 0))
@@ -44,7 +48,7 @@ public class DownloadTeamDataJob14 extends JobService {
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
 
-        int result = BaseHelper.getDispatcher().schedule(job);
+        int result = dispatcher.schedule(job);
         if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
             FirebaseCrash.report(new RuntimeException("DownloadTeamDataJob14 failed with code: "
                                                               + result));

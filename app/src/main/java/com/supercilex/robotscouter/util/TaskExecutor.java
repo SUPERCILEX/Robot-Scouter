@@ -11,12 +11,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
-public final class TaskExecutor<TResult> implements Executor, OnCompleteListener<TResult> {
+public class TaskExecutor<TResult> implements Executor, OnCompleteListener<TResult> {
     private static Map<Callable, TaskExecutor> sInstances = new ConcurrentHashMap<>();
 
     private Callable<TResult> mCallable;
 
-    private TaskExecutor(Callable<TResult> callable) {
+    protected TaskExecutor(Callable<TResult> callable) {
         mCallable = callable;
     }
 

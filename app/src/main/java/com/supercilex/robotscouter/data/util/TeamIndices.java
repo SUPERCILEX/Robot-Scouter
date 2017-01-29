@@ -11,11 +11,11 @@ import com.supercilex.robotscouter.data.model.Team;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TeamIndices implements Builder<Task<List<DataSnapshot>>>, ValueEventListener {
+public class TeamIndices implements Builder<Task<List<DataSnapshot>>>, ValueEventListener {
     private TaskCompletionSource<List<DataSnapshot>> mTeamIndicesTask = new TaskCompletionSource<>();
     private List<DataSnapshot> mTeamIndicesSnapshots = new ArrayList<>();
 
-    private TeamIndices() {
+    protected TeamIndices() {
         Team.getIndicesRef().addListenerForSingleValueEvent(this);
     }
 

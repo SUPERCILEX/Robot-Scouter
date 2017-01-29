@@ -19,8 +19,8 @@ import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
-import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
 
 public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickListener {
     private static final String TEAM_KEY = "team_key";
@@ -63,14 +63,14 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
                         .child(Constants.FIREBASE_VIEWS),
                 (SimpleItemAnimator) recyclerView.getItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        BaseHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        FirebaseRecyclerViewHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        BaseHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseRecyclerViewHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 

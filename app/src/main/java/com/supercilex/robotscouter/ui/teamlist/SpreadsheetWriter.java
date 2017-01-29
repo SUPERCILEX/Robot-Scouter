@@ -46,7 +46,7 @@ import java.util.concurrent.Callable;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<Team, List<List<ScoutMetric>>>> {
+public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<Team, List<List<ScoutMetric>>>> {
     private static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter team exports/";
@@ -59,7 +59,7 @@ public final class SpreadsheetWriter implements Callable<Void>, OnSuccessListene
 
     private Map<Team, List<List<ScoutMetric>>> mScouts;
 
-    private SpreadsheetWriter(Context context, List<Team> teams) {
+    protected SpreadsheetWriter(Context context, List<Team> teams) {
         mContext = context;
         mTeams = teams;
 

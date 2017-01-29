@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateV
 import com.supercilex.robotscouter.ui.scout.viewholder.template.EditTextTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder;
-import com.supercilex.robotscouter.util.BaseHelper;
 
 import java.util.List;
 
@@ -141,17 +140,14 @@ public class ScoutTemplateAdapter extends ScoutAdapter implements ItemTouchCallb
         viewHolder.itemView.clearFocus(); // Needed to prevent the item from being re-added
         deletedRef.removeValue();
 
-        BaseHelper.showSnackbar(
-                mRootView,
-                R.string.deleted,
-                Snackbar.LENGTH_LONG,
-                R.string.undo,
-                new View.OnClickListener() {
+        Snackbar.make(mRootView, R.string.deleted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         deletedRef.setValue(deletedMetric, position);
                     }
-                });
+                })
+                .show();
     }
 
     @Override

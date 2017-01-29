@@ -14,13 +14,12 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.BaseHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
+public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     public static final String TEAM_QUERY_KEY = "team";
     private static final String UTM_SOURCE = "utm_source";
     private static final String UTM_SOURCE_VALUE = "robotscouter";
@@ -28,7 +27,7 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
 
     private FragmentActivity mActivity;
 
-    private TeamReceiver(FragmentActivity activity) {
+    protected TeamReceiver(FragmentActivity activity) {
         mActivity = activity;
 
         // Check for deep links
@@ -57,9 +56,10 @@ public final class TeamReceiver implements ResultCallback<AppInviteInvitationRes
             if (teams.size() == Constants.SINGLE_ITEM) {
                 launchTeam(teams.get(0));
             } else {
-                BaseHelper.showSnackbar(mActivity.findViewById(R.id.root),
-                                        R.string.teams_imported,
-                                        Snackbar.LENGTH_LONG);
+                Snackbar.make(mActivity.findViewById(R.id.root),
+                              R.string.teams_imported,
+                              Snackbar.LENGTH_LONG)
+                        .show();
             }
         } else { // Received normal intent
             Uri deepLink = mActivity.getIntent().getData();
