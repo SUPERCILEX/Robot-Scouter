@@ -1,4 +1,4 @@
-# Want to contribute? Awesome! First, read this page
+# Want to contribute? Awesome!
 
 ## Before you contribute
 Before we can use your code, you must sign the [SUPERCILEX Individual Contributor License Agreement]()
