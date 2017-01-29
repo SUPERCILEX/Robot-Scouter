@@ -248,7 +248,7 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
         List<Integer> numOfSelections = null;
         if (metricToFind.getType() == MetricType.SPINNER) {
             List<String> spinnerValues = ((SpinnerMetric) metricToFind).getValue();
-            numOfSelections = Collections.nCopies(spinnerValues.size(), 0);
+            numOfSelections = new ArrayList<>(Collections.nCopies(spinnerValues.size(), 0));
         }
 
         for (List<ScoutMetric> scout : scouts) {
