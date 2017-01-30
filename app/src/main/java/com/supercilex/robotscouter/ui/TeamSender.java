@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.MiscellaneousHelper;
@@ -16,15 +16,15 @@ import java.util.List;
 
 public class TeamSender {
     private FragmentActivity mActivity;
-    private List<Team> mTeams;
+    private List<TeamHelper> mTeamHelpers;
 
-    protected TeamSender(FragmentActivity activity, List<Team> teams) {
+    protected TeamSender(FragmentActivity activity, List<TeamHelper> teamHelpers) {
         mActivity = activity;
-        mTeams = teams;
+        mTeamHelpers = teamHelpers;
 
         StringBuilder deepLinkBuilder = new StringBuilder(TeamReceiver.APP_LINK_BASE);
-        for (Team team : teams) {
-            deepLinkBuilder.append(team.getLinkKeyNumberPair());
+        for (TeamHelper teamHelper : teamHelpers) {
+            deepLinkBuilder.append(teamHelper.getLinkKeyNumberPair());
         }
 
         mActivity.startActivityForResult(getInvitationIntent(deepLinkBuilder.toString()), 9);
@@ -33,7 +33,8 @@ public class TeamSender {
     /**
      * @return true if a share intent was launched, false otherwise
      */
-    public static boolean launchInvitationIntent(FragmentActivity activity, List<Team> teams) {
+    public static boolean launchInvitationIntent(FragmentActivity activity,
+                                                 List<TeamHelper> teamHelpers) {
         if (MiscellaneousHelper.isOffline(activity)) {
             Snackbar.make(activity.findViewById(R.id.root),
                           R.string.no_connection,
@@ -41,9 +42,9 @@ public class TeamSender {
                     .show();
             return false;
         }
-        if (teams.isEmpty()) return false;
+        if (teamHelpers.isEmpty()) return false;
 
-        new TeamSender(activity, teams);
+        new TeamSender(activity, teamHelpers);
         return true;
     }
 
@@ -62,11 +63,11 @@ public class TeamSender {
         return String.format(Constants.HTML_IMPORT_TEAM,
                              getFormattedTeamName(),
                              getFormattedTeamName(),
-                             mTeams.get(0).getMedia());
+                             mTeamHelpers.get(0).getTeam().getMedia());
     }
 
     private String getFormattedTeamName() {
-        String formattedName = mTeams.get(0).getFormattedName();
-        return mTeams.size() == 1 ? formattedName : formattedName + " and more";
+        String formattedName = mTeamHelpers.get(0).getFormattedName();
+        return mTeamHelpers.size() == 1 ? formattedName : formattedName + " and more";
     }
 }

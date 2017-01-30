@@ -16,33 +16,34 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 
 public class DownloadTeamDataJob14 extends JobService {
-    public static void start(Context context, Team team) {
+    public static void start(Context context, TeamHelper teamHelper) {
         Bundle bundle = new Bundle();
-        bundle.putString("key", team.getKey());
-        bundle.putString("template-key", team.getTemplateKey());
-        bundle.putString("number", team.getNumber());
-        bundle.putString("name", team.getName());
-        bundle.putString("website", team.getWebsite());
-        bundle.putString("media", team.getMedia());
-        if (team.getHasCustomName() != null) {
-            bundle.putBoolean("custom-name", team.getHasCustomName());
+        bundle.putString("key", teamHelper.getTeam().getKey());
+        bundle.putString("template-key", teamHelper.getTeam().getTemplateKey());
+        bundle.putString("number", teamHelper.getTeam().getNumber());
+        bundle.putString("name", teamHelper.getTeam().getName());
+        bundle.putString("website", teamHelper.getTeam().getWebsite());
+        bundle.putString("media", teamHelper.getTeam().getMedia());
+        if (teamHelper.getTeam().getHasCustomName() != null) {
+            bundle.putBoolean("custom-name", teamHelper.getTeam().getHasCustomName());
         }
-        if (team.getHasCustomWebsite() != null) {
-            bundle.putBoolean("custom-website", team.getHasCustomWebsite());
+        if (teamHelper.getTeam().getHasCustomWebsite() != null) {
+            bundle.putBoolean("custom-website", teamHelper.getTeam().getHasCustomWebsite());
         }
-        if (team.getHasCustomMedia() != null) {
-            bundle.putBoolean("custom-media", team.getHasCustomMedia());
+        if (teamHelper.getTeam().getHasCustomMedia() != null) {
+            bundle.putBoolean("custom-media", teamHelper.getTeam().getHasCustomMedia());
         }
-        bundle.putLong("timestamp", team.getTimestamp());
+        bundle.putLong("timestamp", teamHelper.getTeam().getTimestamp());
 
         FirebaseJobDispatcher dispatcher =
                 new FirebaseJobDispatcher(new GooglePlayDriver(context.getApplicationContext()));
 
         Job job = dispatcher.newJobBuilder()
                 .setService(DownloadTeamDataJob14.class)
-                .setTag(team.getNumber())
+                .setTag(teamHelper.getTeam().getNumber())
                 .setTrigger(Trigger.executionWindow(0, 0))
                 .setExtras(bundle)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
@@ -58,7 +59,7 @@ public class DownloadTeamDataJob14 extends JobService {
     @Override
     public boolean onStartJob(final JobParameters params) {
         Bundle extras = params.getExtras();
-        final Team oldTeam = new Team.Builder(extras.getString("number"))
+        final TeamHelper oldTeamHelper = new Team.Builder(extras.getString("number"))
                 .setKey(extras.getString("key"))
                 .setTemplateKey(extras.getString("template-key"))
                 .setName(extras.getString("name"))
@@ -68,13 +69,14 @@ public class DownloadTeamDataJob14 extends JobService {
                 .setHasCustomWebsite(extras.getBoolean("custom-website"))
                 .setHasCustomMedia(extras.getBoolean("custom-media"))
                 .setTimestamp(extras.getLong("timestamp"))
-                .build();
+                .build()
+                .getHelper();
 
-        TbaApi.fetch(oldTeam, getApplicationContext())
+        TbaApi.fetch(oldTeamHelper.getTeam(), getApplicationContext())
                 .addOnSuccessListener(new OnSuccessListener<Team>() {
                     @Override
                     public void onSuccess(Team newTeam) {
-                        oldTeam.update(newTeam);
+                        oldTeamHelper.updateTeam(newTeam);
                         jobFinished(params, false);
                     }
                 })

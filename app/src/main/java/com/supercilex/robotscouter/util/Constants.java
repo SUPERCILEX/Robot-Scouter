@@ -33,6 +33,7 @@ public final class Constants {
             DatabaseHelper.getReference().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
             DatabaseHelper.getReference().child("team-indices");
+    public static final String FIREBASE_TIMESTAMP = "timestamp";
 
     // Scout
     public static final DatabaseReference FIREBASE_SCOUTS =
@@ -52,6 +53,7 @@ public final class Constants {
             DatabaseHelper.getReference().child("default-template");
     public static final DatabaseReference FIREBASE_SCOUT_TEMPLATES =
             DatabaseHelper.getReference().child("scout-templates");
+    public static final String FIREBASE_TEMPLATE_KEY = "templateKey";
     // [END FIREBASE CHILD NAMES]
 
     public static final String HTML_IMPORT_TEAM;

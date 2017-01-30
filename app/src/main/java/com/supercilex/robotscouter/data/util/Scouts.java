@@ -13,7 +13,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -22,29 +21,29 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-public final class Scouts implements Builder<Task<Map<Team, List<List<ScoutMetric>>>>>, OnFailureListener, OnSuccessListener<Pair<Team, List<String>>> {
-    private TaskCompletionSource<Map<Team, List<List<ScoutMetric>>>> mScoutsTask = new TaskCompletionSource<>();
-    private Map<Team, List<List<ScoutMetric>>> mScouts = new ConcurrentHashMap<>();
+public final class Scouts implements Builder<Task<Map<TeamHelper, List<List<ScoutMetric>>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
+    private TaskCompletionSource<Map<TeamHelper, List<List<ScoutMetric>>>> mScoutsTask = new TaskCompletionSource<>();
+    private Map<TeamHelper, List<List<ScoutMetric>>> mScouts = new ConcurrentHashMap<>();
     private ArrayList<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
 
-    private List<Team> mTeams;
+    private List<TeamHelper> mTeamHelpers;
 
-    private Scouts(List<Team> teams) {
-        mTeams = teams;
+    private Scouts(List<TeamHelper> helpers) {
+        mTeamHelpers = helpers;
     }
 
-    public static Task<Map<Team, List<List<ScoutMetric>>>> getAll(List<Team> teams) {
-        return new Scouts(teams).build();
+    public static Task<Map<TeamHelper, List<List<ScoutMetric>>>> getAll(List<TeamHelper> teamHelpers) {
+        return new Scouts(teamHelpers).build();
     }
 
     @Override
-    public Task<Map<Team, List<List<ScoutMetric>>>> build() {
-        List<Task<Pair<Team, List<String>>>> scoutIndicesTasks = new ArrayList<>();
-        for (final Team team : mTeams) {
-            final TaskCompletionSource<Pair<Team, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
+    public Task<Map<TeamHelper, List<List<ScoutMetric>>>> build() {
+        List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
+        for (final TeamHelper helper : mTeamHelpers) {
+            final TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
             scoutIndicesTasks.add(scoutIndicesTask.getTask());
 
-            ScoutUtils.getIndicesRef(team.getKey())
+            ScoutUtils.getIndicesRef(helper.getTeam().getKey())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
@@ -52,7 +51,7 @@ public final class Scouts implements Builder<Task<Map<Team, List<List<ScoutMetri
                             for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
                                 scoutKeys.add(scoutKeyTemplate.getKey());
                             }
-                            scoutIndicesTask.setResult(new Pair<>(team, scoutKeys));
+                            scoutIndicesTask.setResult(new Pair<>(helper, scoutKeys));
                         }
 
                         @Override
@@ -64,7 +63,7 @@ public final class Scouts implements Builder<Task<Map<Team, List<List<ScoutMetri
         }
 
 
-        for (Task<Pair<Team, List<String>>> scoutKeysTask : scoutIndicesTasks) {
+        for (Task<Pair<TeamHelper, List<String>>> scoutKeysTask : scoutIndicesTasks) {
             scoutKeysTask.addOnSuccessListener(this).addOnFailureListener(this);
         }
 
@@ -87,7 +86,7 @@ public final class Scouts implements Builder<Task<Map<Team, List<List<ScoutMetri
     }
 
     @Override
-    public void onSuccess(final Pair<Team, List<String>> pair) {
+    public void onSuccess(final Pair<TeamHelper, List<String>> pair) {
         for (String scoutKey : pair.second) {
             final TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
             mScoutMetricsTasks.add(scoutMetricsTask.getTask());

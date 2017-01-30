@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.Builder;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -25,7 +26,7 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppIndexingService extends IntentService implements OnSuccessListener<List<Team>> {
+public class AppIndexingService extends IntentService implements OnSuccessListener<List<TeamHelper>> {
     public AppIndexingService() {
         super("AppIndexingService");
     }
@@ -36,11 +37,11 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
     }
 
     @Override
-    public void onSuccess(List<Team> teams) {
+    public void onSuccess(List<TeamHelper> teams) {
         ArrayList<Indexable> indexableTeams = new ArrayList<>();
 
-        for (Team team : teams) {
-            indexableTeams.add(team.getIndexable());
+        for (TeamHelper teamHelper : teams) {
+            indexableTeams.add(teamHelper.getIndexable());
         }
 
         if (!indexableTeams.isEmpty()) {
@@ -50,9 +51,9 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
     }
 
     private static class TeamRetriever
-            implements Builder<Task<List<Team>>>, OnSuccessListener<List<DataSnapshot>>, OnFailureListener {
-        private TaskCompletionSource<List<Team>> mAllTeamsTask = new TaskCompletionSource<>();
-        private List<Team> mTeams = new ArrayList<>();
+            implements Builder<Task<List<TeamHelper>>>, OnSuccessListener<List<DataSnapshot>>, OnFailureListener {
+        private TaskCompletionSource<List<TeamHelper>> mAllTeamsTask = new TaskCompletionSource<>();
+        private List<TeamHelper> mTeamHelpers = new ArrayList<>();
 
         private TeamRetriever() {
             AuthHelper.onSignedIn(new OnSuccessListener<FirebaseAuth>() {
@@ -65,12 +66,12 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
             });
         }
 
-        public static Task<List<Team>> getAll() {
+        public static Task<List<TeamHelper>> getAll() {
             return new TeamRetriever().build();
         }
 
         @Override
-        public Task<List<Team>> build() {
+        public Task<List<TeamHelper>> build() {
             return mAllTeamsTask.getTask();
         }
 
@@ -91,9 +92,10 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                                     teamTask.setException(
                                             new IllegalArgumentException("Team was null: " + snapshot));
                                 } else {
-                                    mTeams.add(new Team.Builder(snapshot.getValue(Team.class))
-                                                       .setKey(snapshot.getKey())
-                                                       .build());
+                                    mTeamHelpers.add(new Team.Builder(snapshot.getValue(Team.class))
+                                                             .setKey(snapshot.getKey())
+                                                             .build()
+                                                             .getHelper());
                                     teamTask.setResult(null);
                                 }
                             }
@@ -109,7 +111,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
             Tasks.whenAll(teamTasks).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    mAllTeamsTask.setResult(mTeams);
+                    mAllTeamsTask.setResult(mTeamHelpers);
                 }
             }).addOnFailureListener(this);
         }

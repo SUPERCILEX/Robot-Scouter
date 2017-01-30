@@ -13,13 +13,13 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
 
 public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocusChangeListener {
     private static final String TAG = "TeamDetailsDialog";
 
-    private Team mTeam;
+    private TeamHelper mTeamHelper;
 
     private TextInputLayout mMediaInputLayout;
     private TextInputLayout mWebsiteInputLayout;
@@ -27,16 +27,16 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     private EditText mMediaEditText;
     private EditText mWebsiteEditText;
 
-    public static void show(Team team, FragmentManager manager) {
+    public static void show(FragmentManager manager, TeamHelper teamHelper) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
-        dialog.setArguments(team.getBundle());
+        dialog.setArguments(teamHelper.getBundle());
         dialog.show(manager, TAG);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mTeam = Team.getTeam(getArguments());
+        mTeamHelper = TeamHelper.get(getArguments());
 
         View rootView = View.inflate(getContext(), R.layout.dialog_edit_details, null);
         mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
@@ -45,9 +45,9 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         mMediaEditText = (EditText) rootView.findViewById(R.id.media);
         mWebsiteEditText = (EditText) rootView.findViewById(R.id.website);
 
-        mNameEditText.setText(mTeam.getName());
-        mMediaEditText.setText(mTeam.getMedia());
-        mWebsiteEditText.setText(mTeam.getWebsite());
+        mNameEditText.setText(mTeamHelper.getTeam().getName());
+        mMediaEditText.setText(mTeamHelper.getTeam().getMedia());
+        mWebsiteEditText.setText(mTeamHelper.getTeam().getWebsite());
         mNameEditText.setOnFocusChangeListener(this);
         mMediaEditText.setOnFocusChangeListener(this);
         mWebsiteEditText.setOnFocusChangeListener(this);
@@ -66,27 +66,28 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
         if (isWebsiteValid && isMediaValid) {
             String name = mNameEditText.getText().toString();
-            if (mTeam.getName() == null ? !TextUtils.isEmpty(name) : !mTeam.getName()
-                    .equals(name)) {
-                mTeam.setHasCustomName();
-                mTeam.setName(name);
+            if (mTeamHelper.getTeam().getName() == null
+                    ? !TextUtils.isEmpty(name) : !mTeamHelper.getTeam().getName().equals(name)) {
+                mTeamHelper.getTeam().setHasCustomName(true);
+                mTeamHelper.getTeam().setName(name);
             }
 
             String media = formatUrl(mMediaEditText.getText());
-            if (mTeam.getMedia() == null ? !TextUtils.isEmpty(media) : !mTeam.getMedia()
-                    .equals(media)) {
-                mTeam.setHasCustomMedia();
-                mTeam.setMedia(media);
+            if (mTeamHelper.getTeam().getMedia() == null
+                    ? !TextUtils.isEmpty(media) : !mTeamHelper.getTeam().getMedia().equals(media)) {
+                mTeamHelper.getTeam().setHasCustomMedia(true);
+                mTeamHelper.getTeam().setMedia(media);
             }
 
             String website = formatUrl(mWebsiteEditText.getText());
-            if (mTeam.getWebsite() == null
-                    ? !TextUtils.isEmpty(website) : !mTeam.getWebsite().equals(website)) {
-                mTeam.setHasCustomWebsite();
-                mTeam.setWebsite(website);
+            if (mTeamHelper.getTeam().getWebsite() == null
+                    ? !TextUtils.isEmpty(website) : !mTeamHelper.getTeam().getWebsite()
+                    .equals(website)) {
+                mTeamHelper.getTeam().setHasCustomWebsite(true);
+                mTeamHelper.getTeam().setWebsite(website);
             }
 
-            mTeam.forceUpdate();
+            mTeamHelper.forceUpdateTeam();
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             Fragment fragment = getParentFragment();

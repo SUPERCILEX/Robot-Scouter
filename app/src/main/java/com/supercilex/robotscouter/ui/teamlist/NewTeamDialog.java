@@ -42,7 +42,9 @@ public class NewTeamDialog extends KeyboardDialogBase {
         String teamNumber = mTeamNumberEditText.getText().toString();
         if (isValid(teamNumber)) {
             teamNumber = String.valueOf(Long.parseLong(teamNumber));
-            ScoutActivity.start(getContext(), new Team.Builder(teamNumber).build(), true);
+            ScoutActivity.start(getContext(),
+                                new Team.Builder(teamNumber).build().getHelper(),
+                                true);
             return true;
         } else {
             mInputLayout.setError(getString(R.string.invalid_team_number));

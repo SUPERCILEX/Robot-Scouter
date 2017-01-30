@@ -114,7 +114,9 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         if (v.getId() == R.id.logo || mIsItemSelected || mCouldItemBeSelected) {
             onTeamContextMenuRequested();
         } else {
-            ScoutActivity.start(mFragment.getContext(), mTeam, v.getId() == R.id.new_scout);
+            ScoutActivity.start(mFragment.getContext(),
+                                mTeam.getHelper(),
+                                v.getId() == R.id.new_scout);
         }
     }
 
@@ -127,7 +129,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     private void onTeamContextMenuRequested() {
         mIsItemSelected = !mIsItemSelected;
         updateItemStatus();
-        mMenuManager.onTeamContextMenuRequested(mTeam);
+        mMenuManager.onTeamContextMenuRequested(mTeam.getHelper());
     }
 
     @Override

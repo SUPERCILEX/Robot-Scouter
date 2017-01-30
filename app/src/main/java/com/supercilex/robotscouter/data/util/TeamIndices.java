@@ -6,7 +6,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ public class TeamIndices implements Builder<Task<List<DataSnapshot>>>, ValueEven
     private List<DataSnapshot> mTeamIndicesSnapshots = new ArrayList<>();
 
     protected TeamIndices() {
-        Team.getIndicesRef().addListenerForSingleValueEvent(this);
+        TeamHelper.getIndicesRef().addListenerForSingleValueEvent(this);
     }
 
     public static Task<List<DataSnapshot>> getAll() {

@@ -27,8 +27,8 @@ import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.MetricType;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.SpinnerMetric;
-import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
@@ -47,9 +47,9 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
     private FloatingActionMenu mFam;
     private ItemTouchHelper mItemTouchHelper;
 
-    public static void show(FragmentManager manager, Team team) {
+    public static void show(FragmentManager manager, TeamHelper teamHelper) {
         ScoutTemplatesSheet sheet = new ScoutTemplatesSheet();
-        sheet.setArguments(team.getBundle());
+        sheet.setArguments(teamHelper.getBundle());
         sheet.show(manager, TAG);
     }
 
@@ -91,8 +91,8 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
     }
 
     private void getTemplateKey() {
-        final Team team = Team.getTeam(getArguments());
-        mTemplateKey = team.getTemplateKey();
+        final TeamHelper teamHelper = TeamHelper.get(getArguments());
+        mTemplateKey = teamHelper.getTeam().getTemplateKey();
         if (TextUtils.isEmpty(mTemplateKey)) {
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             mTemplateKey = newTemplateRef.getKey();
@@ -100,7 +100,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     super.onDataChange(snapshot);
-                    team.updateTemplateKey(mTemplateKey, getContext());
+                    teamHelper.updateTemplateKey(mTemplateKey, getContext());
                 }
             }.performTransformation();
         }

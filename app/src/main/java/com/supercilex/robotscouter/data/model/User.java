@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class User {
@@ -61,7 +62,7 @@ public class User {
         if (TextUtils.isEmpty(prevUid)) return;
 
         final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
-        new FirebaseCopier(prevTeamRef, Team.getIndicesRef()) {
+        new FirebaseCopier(prevTeamRef, TeamHelper.getIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 super.onDataChange(snapshot);

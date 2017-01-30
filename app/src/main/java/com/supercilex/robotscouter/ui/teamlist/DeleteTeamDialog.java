@@ -11,7 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -22,12 +22,12 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
     private static final String TAG = "DeleteTeamDialog";
     private static final String TEAMS_KEY = "teams_key";
 
-    private List<Team> mTeams = new ArrayList<>();
+    private List<TeamHelper> mTeamHelpers = new ArrayList<>();
 
-    public static void show(FragmentManager manager, List<Team> teams) {
+    public static void show(FragmentManager manager, List<TeamHelper> teams) {
         DeleteTeamDialog dialog = new DeleteTeamDialog();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArray(TEAMS_KEY, teams.toArray(new Team[teams.size()]));
+        bundle.putParcelableArray(TEAMS_KEY, teams.toArray(new TeamHelper[teams.size()]));
         dialog.setArguments(bundle);
         dialog.show(manager, TAG);
     }
@@ -36,25 +36,25 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         for (Parcelable parcelable : getArguments().getParcelableArray(TEAMS_KEY)) {
-            mTeams.add((Team) parcelable);
+            mTeamHelpers.add((TeamHelper) parcelable);
         }
-        Collections.sort(mTeams);
+        Collections.sort(mTeamHelpers);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         StringBuilder deletedTeams = new StringBuilder();
-        for (int i = 0; i < mTeams.size(); i++) {
+        for (int i = 0; i < mTeamHelpers.size(); i++) {
             deletedTeams.append(i + 1)
                     .append(". ")
-                    .append(mTeams.get(i).getFormattedName())
+                    .append(mTeamHelpers.get(i).getFormattedName())
                     .append('\n');
         }
 
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.confirm_deletion)
-                .setMessage(mTeams.size() == Constants.SINGLE_ITEM
+                .setMessage(mTeamHelpers.size() == Constants.SINGLE_ITEM
                                     ? null : getString(R.string.caution_delete, deletedTeams))
                 .setPositiveButton(R.string.delete, this)
                 .setNegativeButton(android.R.string.no, null)
@@ -63,8 +63,8 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        for (Team team : mTeams) {
-            team.delete(getContext());
+        for (TeamHelper teamHelper : mTeamHelpers) {
+            teamHelper.deleteTeam(getContext());
         }
     }
 }

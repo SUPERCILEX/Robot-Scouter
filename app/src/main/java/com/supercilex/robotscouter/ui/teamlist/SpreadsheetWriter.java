@@ -16,8 +16,8 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.SpinnerMetric;
-import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.Scouts;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.TaskExecutor;
 
@@ -46,7 +46,7 @@ import java.util.concurrent.Callable;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<Team, List<List<ScoutMetric>>>> {
+public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<TeamHelper, List<List<ScoutMetric>>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter team exports/";
@@ -55,22 +55,22 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
     private static final int CELL_WIDTH_CEILING = 7500;
 
     private Context mContext;
-    private List<Team> mTeams;
+    private List<TeamHelper> mTeamHelpers;
 
-    private Map<Team, List<List<ScoutMetric>>> mScouts;
+    private Map<TeamHelper, List<List<ScoutMetric>>> mScouts;
 
-    protected SpreadsheetWriter(Context context, List<Team> teams) {
+    protected SpreadsheetWriter(Context context, List<TeamHelper> teamHelpers) {
         mContext = context;
-        mTeams = teams;
+        mTeamHelpers = teamHelpers;
 
-        Collections.sort(mTeams);
+        Collections.sort(mTeamHelpers);
     }
 
     /**
      * @return true if an export was attempted, false otherwise
      */
-    public static boolean writeAndShareTeams(Fragment fragment, List<Team> teams) {
-        if (teams.isEmpty()) return false;
+    public static boolean writeAndShareTeams(Fragment fragment, List<TeamHelper> teamHelpers) {
+        if (teamHelpers.isEmpty()) return false;
 
         if (!EasyPermissions.hasPermissions(fragment.getContext(), PERMS)) {
             EasyPermissions.requestPermissions(
@@ -82,19 +82,20 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
         }
 
         TaskExecutor.execute(new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
-                                                   new ArrayList<>(teams)));
+                                                   new ArrayList<>(teamHelpers)));
 
         return true;
     }
 
     @Override
     public Void call() throws Exception {
-        Scouts.getAll(mTeams).addOnSuccessListener(TaskExecutor.getCurrentExecutor(this), this);
+        Scouts.getAll(mTeamHelpers)
+                .addOnSuccessListener(TaskExecutor.getCurrentExecutor(this), this);
         return null;
     }
 
     @Override
-    public void onSuccess(Map<Team, List<List<ScoutMetric>>> scouts) {
+    public void onSuccess(Map<TeamHelper, List<List<ScoutMetric>>> scouts) {
         mScouts = scouts;
 
         Uri spreadsheetUri = getFileUri();
@@ -111,7 +112,7 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
     private String getShareTitle() {
         return mContext.getResources()
                 .getQuantityString(R.plurals.share_spreadsheet_title,
-                                   mTeams.size(),
+                                   mTeamHelpers.size(),
                                    getTeamNames());
     }
 
@@ -163,13 +164,13 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
 
     private String getTeamNames() {
         String teamName;
-        if (mTeams.size() == Constants.SINGLE_ITEM) {
-            teamName = mTeams.get(0).getFormattedName();
+        if (mTeamHelpers.size() == Constants.SINGLE_ITEM) {
+            teamName = mTeamHelpers.get(0).getFormattedName();
         } else {
-            StringBuilder names = new StringBuilder(4 * mTeams.size());
+            StringBuilder names = new StringBuilder(4 * mTeamHelpers.size());
             for (int i = 0,
-                 size = mTeams.size(); i < size; i++) {
-                names.append(mTeams.get(i).getNumber());
+                 size = mTeamHelpers.size(); i < size; i++) {
+                names.append(mTeamHelpers.get(i).getTeam().getNumber());
                 if (i < size - 1) names.append(", ");
             }
             teamName = names.toString();
@@ -184,10 +185,10 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
 
         buildTeamAveragesSheet(workbook.createSheet("Team averages"));
 
-        for (Team team : mTeams) {
-            Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(team.getFormattedName()));
+        for (TeamHelper teamHelper : mTeamHelpers) {
+            Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.getFormattedName()));
             teamSheet.createFreezePane(1, 1);
-            buildTeamSheet(team, teamSheet);
+            buildTeamSheet(teamHelper, teamSheet);
         }
 
         setColumnWidths(workbook.sheetIterator());
@@ -199,13 +200,13 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
         Row header = allTeamsSheet.createRow(0);
         CellStyle rowHeaderStyle = getRowHeaderStyle(allTeamsSheet.getWorkbook());
 
-        for (int i = 0, rowNum = 1; i < mTeams.size(); i++, rowNum++) {
-            Team team = mTeams.get(i);
+        for (int i = 0, rowNum = 1; i < mTeamHelpers.size(); i++, rowNum++) {
+            TeamHelper helper = mTeamHelpers.get(i);
 
             Row row = allTeamsSheet.createRow(rowNum);
-            row.createCell(0).setCellValue(team.getFormattedName());
+            row.createCell(0).setCellValue(helper.getFormattedName());
 
-            List<List<ScoutMetric>> scouts = mScouts.get(team);
+            List<List<ScoutMetric>> scouts = mScouts.get(helper);
             for (List<ScoutMetric> scout : scouts) {
                 for (int j = 0, column = 1; j < scout.size(); j++, column = j + 1) {
                     ScoutMetric metric = scout.get(j);
@@ -302,8 +303,8 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
         }
     }
 
-    private void buildTeamSheet(Team team, Sheet teamSheet) {
-        List<List<ScoutMetric>> scouts = mScouts.get(team);
+    private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
+        List<List<ScoutMetric>> scouts = mScouts.get(teamHelper);
 
         Workbook workbook = teamSheet.getWorkbook();
         CellStyle headerStyle = createHeaderStyle(workbook);

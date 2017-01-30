@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -51,7 +52,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
             List<Team> teams = getTeam(Uri.parse(AppInviteReferral.getDeepLink(result.getInvitationIntent())));
             for (Team team : teams) {
                 long number = team.getNumberAsLong();
-                Team.getIndicesRef().child(team.getKey()).setValue(number, number);
+                TeamHelper.getIndicesRef().child(team.getKey()).setValue(number, number);
             }
             if (teams.size() == Constants.SINGLE_ITEM) {
                 launchTeam(teams.get(0));
@@ -87,7 +88,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     }
 
     private void launchTeam(Team team) {
-        ScoutActivity.start(mActivity, team, false);
+        ScoutActivity.start(mActivity, team.getHelper(), false);
 
         // Consume intent
         mActivity.setIntent(new Intent());

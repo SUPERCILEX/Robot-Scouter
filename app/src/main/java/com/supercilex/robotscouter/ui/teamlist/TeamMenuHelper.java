@@ -16,6 +16,7 @@ import android.view.View;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
@@ -44,7 +45,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     private RecyclerView mRecyclerView;
     private Menu mMenu;
 
-    private List<Team> mSelectedTeams = new ArrayList<>();
+    private List<TeamHelper> mSelectedTeams = new ArrayList<>();
     private FirebaseRecyclerAdapter mAdapter;
 
     public TeamMenuHelper(Fragment fragment) {
@@ -117,7 +118,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 resetMenu();
                 break;
             case R.id.action_edit_team_details:
-                TeamDetailsDialog.show(mSelectedTeams.get(0), mFragment.getChildFragmentManager());
+                TeamDetailsDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams.get(0));
                 break;
             case R.id.action_export_spreadsheet:
                 exportTeams();
@@ -155,7 +156,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     @Override
     public void saveState(Bundle outState) {
         outState.putParcelableArray(SELECTED_TEAMS_KEY,
-                                    mSelectedTeams.toArray(new Team[mSelectedTeams.size()]));
+                                    mSelectedTeams.toArray(new TeamHelper[mSelectedTeams.size()]));
     }
 
     @Override
@@ -164,20 +165,20 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
             final Parcelable[] parcelables =
                     savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
             for (Parcelable parcelable : parcelables) {
-                mSelectedTeams.add((Team) parcelable);
+                mSelectedTeams.add((TeamHelper) parcelable);
             }
             notifyItemsChanged();
         }
     }
 
     @Override
-    public void onTeamContextMenuRequested(Team team) {
+    public void onTeamContextMenuRequested(TeamHelper teamHelper) {
         boolean hadNormalMenu = mSelectedTeams.isEmpty();
 
-        if (mSelectedTeams.contains(team)) { // Team already selected
-            mSelectedTeams.remove(team);
+        if (mSelectedTeams.contains(teamHelper)) { // Team already selected
+            mSelectedTeams.remove(teamHelper);
         } else {
-            mSelectedTeams.add(team);
+            mSelectedTeams.add(teamHelper);
         }
         setToolbarTitle();
 
@@ -198,19 +199,19 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     @Override
-    public List<Team> getSelectedTeams() {
+    public List<TeamHelper> getSelectedTeams() {
         return mSelectedTeams;
     }
 
     @Override
-    public void onSelectedTeamMoved(Team oldTeam, Team team) {
-        mSelectedTeams.remove(oldTeam);
-        mSelectedTeams.add(team);
+    public void onSelectedTeamMoved(TeamHelper oldTeamHelper, TeamHelper teamHelper) {
+        mSelectedTeams.remove(oldTeamHelper);
+        mSelectedTeams.add(teamHelper);
     }
 
     @Override
-    public void onSelectedTeamChanged(Team oldTeam) {
-        mSelectedTeams.remove(oldTeam);
+    public void onSelectedTeamChanged(TeamHelper oldTeamHelper) {
+        mSelectedTeams.remove(oldTeamHelper);
         if (mSelectedTeams.isEmpty()) {
             resetMenu();
         } else {
@@ -219,7 +220,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void showTeamSpecificItems() {
-        Team team = mSelectedTeams.get(0);
+        Team team = mSelectedTeams.get(0).getTeam();
 
         mMenu.findItem(R.id.action_visit_tba_team_website)
                 .setVisible(true)

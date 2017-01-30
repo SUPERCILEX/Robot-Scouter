@@ -20,10 +20,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 
 public class AppBarViewHolder {
-    private Team mTeam;
+    private TeamHelper mTeamHelper;
 
     private AppCompatActivity mActivity;
     private CollapsingToolbarLayout mHeader;
@@ -37,10 +37,10 @@ public class AppBarViewHolder {
         mBackdrop = (ImageView) activity.findViewById(R.id.backdrop);
     }
 
-    public void bind(@NonNull Team team) {
-        if (mTeam != null && mTeam.equals(team)) return;
-        mTeam = team;
-        mActivity.getSupportActionBar().setTitle(mTeam.getFormattedName());
+    public void bind(@NonNull TeamHelper teamHelper) {
+        if (mTeamHelper != null && mTeamHelper.equals(teamHelper)) return;
+        mTeamHelper = teamHelper;
+        mActivity.getSupportActionBar().setTitle(mTeamHelper.getFormattedName());
         setTaskDescription(null, ContextCompat.getColor(mActivity, R.color.colorPrimary));
         loadImages();
         bindMenu();
@@ -48,13 +48,13 @@ public class AppBarViewHolder {
 
     private void loadImages() {
         Glide.with(mActivity)
-                .load(mTeam.getMedia())
+                .load(mTeamHelper.getTeam().getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .error(R.drawable.ic_android_black_144dp)
                 .into(mBackdrop);
 
         Glide.with(mActivity)
-                .load(mTeam.getMedia())
+                .load(mTeamHelper.getTeam().getMedia())
                 .asBitmap()
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
@@ -81,7 +81,7 @@ public class AppBarViewHolder {
     private void setTaskDescription(Bitmap icon, @ColorInt int colorPrimary) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mActivity.setTaskDescription(
-                    new ActivityManager.TaskDescription(mTeam.getFormattedName(),
+                    new ActivityManager.TaskDescription(mTeamHelper.getFormattedName(),
                                                         icon,
                                                         colorPrimary));
         }
@@ -90,17 +90,18 @@ public class AppBarViewHolder {
     public void initMenu(Menu menu) {
         menu.findItem(R.id.action_visit_tba_team_website)
                 .setTitle(mActivity.getString(R.string.visit_team_website_on_tba,
-                                              mTeam.getNumber()));
+                                              mTeamHelper.getTeam().getNumber()));
 
         mActionVisitTeamWebsite = menu.findItem(R.id.action_visit_team_website);
         mActionVisitTeamWebsite.setTitle(mActivity.getString(R.string.visit_team_website,
-                                                             mTeam.getNumber()));
+                                                             mTeamHelper.getTeam().getNumber()));
         bindMenu();
     }
 
     private void bindMenu() {
         if (mActionVisitTeamWebsite != null) {
-            mActionVisitTeamWebsite.setVisible(!TextUtils.isEmpty(mTeam.getWebsite()));
+            mActionVisitTeamWebsite.setVisible(
+                    !TextUtils.isEmpty(mTeamHelper.getTeam().getWebsite()));
         }
     }
 

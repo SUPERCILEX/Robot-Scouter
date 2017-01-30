@@ -16,29 +16,30 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class DownloadTeamDataJob21 extends JobService {
-    public static void start(Context context, Team team) {
+    public static void start(Context context, TeamHelper teamHelper) {
         PersistableBundle bundle = new PersistableBundle();
-        bundle.putString("key", team.getKey());
-        bundle.putString("template-key", team.getTemplateKey());
-        bundle.putString("number", team.getNumber());
-        bundle.putString("name", team.getName());
-        bundle.putString("website", team.getWebsite());
-        bundle.putString("media", team.getMedia());
-        if (team.getHasCustomName() != null) {
-            bundle.putInt("custom-name", team.getHasCustomName() ? 1 : 0);
+        bundle.putString("key", teamHelper.getTeam().getKey());
+        bundle.putString("template-key", teamHelper.getTeam().getTemplateKey());
+        bundle.putString("number", teamHelper.getTeam().getNumber());
+        bundle.putString("name", teamHelper.getTeam().getName());
+        bundle.putString("website", teamHelper.getTeam().getWebsite());
+        bundle.putString("media", teamHelper.getTeam().getMedia());
+        if (teamHelper.getTeam().getHasCustomName() != null) {
+            bundle.putInt("custom-name", teamHelper.getTeam().getHasCustomName() ? 1 : 0);
         }
-        if (team.getHasCustomWebsite() != null) {
-            bundle.putInt("custom-website", team.getHasCustomWebsite() ? 1 : 0);
+        if (teamHelper.getTeam().getHasCustomWebsite() != null) {
+            bundle.putInt("custom-website", teamHelper.getTeam().getHasCustomWebsite() ? 1 : 0);
         }
-        if (team.getHasCustomMedia() != null) {
-            bundle.putInt("custom-media", team.getHasCustomMedia() ? 1 : 0);
+        if (teamHelper.getTeam().getHasCustomMedia() != null) {
+            bundle.putInt("custom-media", teamHelper.getTeam().getHasCustomMedia() ? 1 : 0);
         }
-        bundle.putLong("timestamp", team.getTimestamp());
+        bundle.putLong("timestamp", teamHelper.getTeam().getTimestamp());
 
-        JobInfo jobInfo = new JobInfo.Builder(Integer.parseInt(team.getNumber()),
+        JobInfo jobInfo = new JobInfo.Builder(Integer.parseInt(teamHelper.getTeam().getNumber()),
                                               new ComponentName(context.getPackageName(),
                                                                 DownloadTeamDataJob21.class.getName()))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -55,7 +56,7 @@ public class DownloadTeamDataJob21 extends JobService {
     @Override
     public boolean onStartJob(final JobParameters params) {
         PersistableBundle extras = params.getExtras();
-        final Team oldTeam = new Team.Builder(extras.getString("number"))
+        final TeamHelper oldTeamHelper = new Team.Builder(extras.getString("number"))
                 .setKey(extras.getString("key"))
                 .setTemplateKey(extras.getString("template-key"))
                 .setName(extras.getString("name"))
@@ -65,13 +66,15 @@ public class DownloadTeamDataJob21 extends JobService {
                 .setHasCustomWebsite(extras.getInt("custom-website") == 1)
                 .setHasCustomMedia(extras.getInt("custom-media") == 1)
                 .setTimestamp(extras.getLong("timestamp"))
-                .build();
+                .build()
+                .getHelper();
 
-        TbaApi.fetch(oldTeam, getApplicationContext())
+
+        TbaApi.fetch(oldTeamHelper.getTeam(), getApplicationContext())
                 .addOnSuccessListener(new OnSuccessListener<Team>() {
                     @Override
                     public void onSuccess(Team newTeam) {
-                        oldTeam.update(newTeam);
+                        oldTeamHelper.updateTeam(newTeam);
                         jobFinished(params, false);
                     }
                 })

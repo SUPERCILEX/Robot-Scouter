@@ -8,6 +8,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
         super(Team.class,
               R.layout.team_list_row_layout,
               TeamViewHolder.class,
-              Team.getIndicesRef(),
+              TeamHelper.getIndicesRef(),
               Constants.FIREBASE_TEAMS);
         mFragment = fragment;
         mMenuManager = menuManager;
@@ -28,11 +29,11 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
 
     @Override
     public void populateViewHolder(TeamViewHolder teamHolder, Team team, int position) {
-        team.fetchLatestData(mFragment.getContext());
+        team.getHelper().fetchLatestData(mFragment.getContext());
         teamHolder.bind(team,
                         mFragment,
                         mMenuManager,
-                        mMenuManager.getSelectedTeams().contains(team),
+                        mMenuManager.getSelectedTeams().contains(team.getHelper()),
                         !mMenuManager.getSelectedTeams().isEmpty());
     }
 
@@ -43,10 +44,10 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
         switch (type) {
             case CHANGED:
             case MOVED:
-                for (Team oldTeam : mMenuManager.getSelectedTeams()) {
+                for (TeamHelper oldTeam : mMenuManager.getSelectedTeams()) {
                     Team team = getItem(index);
-                    if (oldTeam.getKey().equals(team.getKey())) {
-                        mMenuManager.onSelectedTeamMoved(oldTeam, team);
+                    if (oldTeam.getTeam().getKey().equals(team.getKey())) {
+                        mMenuManager.onSelectedTeamMoved(oldTeam, team.getHelper());
                         break;
                     }
                 }
@@ -54,9 +55,9 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
             case REMOVED:
                 if (!mMenuManager.getSelectedTeams().isEmpty()) {
                     List<Team> tmpTeams = getItems();
-                    for (Team oldTeam : mMenuManager.getSelectedTeams()) {
-                        if (!tmpTeams.contains(oldTeam)) { // We found the deleted item
-                            mMenuManager.onSelectedTeamChanged(oldTeam);
+                    for (TeamHelper oldTeamHelper : mMenuManager.getSelectedTeams()) {
+                        if (!tmpTeams.contains(oldTeamHelper.getTeam())) { // We found the deleted item
+                            mMenuManager.onSelectedTeamChanged(oldTeamHelper);
                             break;
                         }
                     }

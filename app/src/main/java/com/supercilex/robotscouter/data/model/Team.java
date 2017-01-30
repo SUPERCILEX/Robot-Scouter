@@ -1,42 +1,19 @@
 package com.supercilex.robotscouter.data.model;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
-import android.text.TextUtils;
 
 import com.firebase.ui.auth.util.Preconditions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.appindexing.Action;
-import com.google.firebase.appindexing.FirebaseAppIndex;
-import com.google.firebase.appindexing.FirebaseUserActions;
-import com.google.firebase.appindexing.Indexable;
-import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
-import com.google.firebase.appindexing.builders.Indexables;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
-import com.supercilex.robotscouter.data.util.ScoutUtils;
-import com.supercilex.robotscouter.data.util.TeamIndices;
-import com.supercilex.robotscouter.ui.AuthHelper;
-import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.CustomTabsHelper;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Team implements Parcelable, Comparable<Team> {
@@ -65,14 +42,6 @@ public class Team implements Parcelable, Comparable<Team> {
             return value == 1;
         }
     };
-
-    @Exclude private static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
-
-    @Exclude private static final String FIREBASE_TIMESTAMP = "timestamp";
-    @Exclude private static final String FIREBASE_TEMPLATE_KEY = "templateKey";
-    @Exclude private static final String SCOUT_TEMPLATE = "com.supercilex.robotscouter.scout_template";
-
-    @Exclude private static final int FRESHNESS_DAYS = 4;
 
     @Exclude private String mNumber;
     @Exclude private String mKey;
@@ -113,37 +82,8 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Exclude
-    public static DatabaseReference getIndicesRef() {
-        return Constants.FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
-    }
-
-    @Exclude
-    public static Team getTeam(Intent intent) {
-        return (Team) Preconditions.checkNotNull(intent.getParcelableExtra(INTENT_TEAM),
-                                                 "Team cannot be null");
-    }
-
-    @Exclude
-    public static Team getTeam(Bundle arguments) {
-        return (Team) Preconditions.checkNotNull(arguments.getParcelable(INTENT_TEAM),
-                                                 "Team cannot be null");
-    }
-
-    @Exclude
-    public Intent getIntent() {
-        return new Intent().putExtra(INTENT_TEAM, this);
-    }
-
-    @Exclude
-    public Bundle getBundle() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(INTENT_TEAM, this);
-        return bundle;
-    }
-
-    @Exclude
-    public DatabaseReference getRef() {
-        return Constants.FIREBASE_TEAMS.child(mKey);
+    public TeamHelper getHelper() {
+        return new TeamHelper(this);
     }
 
     @Keep
@@ -179,7 +119,6 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
-    @RestrictTo(RestrictTo.Scope.TESTS)
     public void setTemplateKey(String templateKey) {
         mTemplateKey = templateKey;
     }
@@ -192,12 +131,6 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     public void setName(String name) {
         mName = name;
-    }
-
-    @Exclude
-    @NonNull
-    public String getFormattedName() {
-        return TextUtils.isEmpty(getName()) ? getNumber() : getNumber() + " - " + getName();
     }
 
     @Keep
@@ -234,8 +167,8 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
-    public void setHasCustomName() {
-        mHasCustomName = true;
+    public void setHasCustomName(boolean hasCustomName) {
+        mHasCustomName = hasCustomName;
     }
 
     @Keep
@@ -249,8 +182,8 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
-    public void setHasCustomMedia() {
-        mHasCustomMedia = true;
+    public void setHasCustomMedia(boolean hasCustomMedia) {
+        mHasCustomMedia = hasCustomMedia;
     }
 
     @Keep
@@ -264,13 +197,13 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
-    public void setHasCustomWebsite() {
-        mHasCustomWebsite = true;
+    public void setHasCustomWebsite(boolean hasCustomWebsite) {
+        mHasCustomWebsite = hasCustomWebsite;
     }
 
-    @SuppressWarnings("SameReturnValue")
     @Keep
-    @PropertyName(FIREBASE_TIMESTAMP)
+    @SuppressWarnings("SameReturnValue")
+    @PropertyName(Constants.FIREBASE_TIMESTAMP)
     public Object getServerTimestamp() {
         return ServerValue.TIMESTAMP;
     }
@@ -284,154 +217,6 @@ public class Team implements Parcelable, Comparable<Team> {
     @RestrictTo(RestrictTo.Scope.TESTS)
     public void setTimestamp(long time) {
         mTimestamp = time;
-    }
-
-    public void add(Context context) {
-        DatabaseReference index = getIndicesRef().push();
-        mKey = index.getKey();
-        Long number = getNumberAsLong();
-        index.setValue(number, number);
-        mTemplateKey = context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
-                .getString(SCOUT_TEMPLATE, null);
-        forceUpdate();
-        FirebaseUserActions.getInstance()
-                .end(new Action.Builder(Action.Builder.ADD_ACTION)
-                             .setObject(getFormattedName(), getDeepLink())
-                             .build());
-    }
-
-    public void update(Team newTeam) {
-        if (equals(newTeam)) {
-            getRef().child(FIREBASE_TIMESTAMP).setValue(getServerTimestamp());
-            return;
-        }
-
-        checkForMatchingDetails(newTeam);
-        if (!mHasCustomName) mName = newTeam.getName();
-        if (!mHasCustomMedia) mMedia = newTeam.getMedia();
-        if (!mHasCustomWebsite) mWebsite = newTeam.getWebsite();
-        forceUpdate();
-    }
-
-    public void forceUpdate() {
-        getRef().setValue(this);
-        FirebaseAppIndex.getInstance().update(getIndexable());
-    }
-
-    private void checkForMatchingDetails(Team newTeam) {
-        if (mHasCustomName && getName().equals(newTeam.getName())) {
-            mHasCustomName = false;
-        }
-        if (mHasCustomMedia && getMedia().equals(newTeam.getMedia())) {
-            mHasCustomMedia = false;
-        }
-        if (mHasCustomWebsite && getWebsite().equals(newTeam.getWebsite())) {
-            mHasCustomWebsite = false;
-        }
-    }
-
-    public void updateTemplateKey(final String key, Context context) {
-        mTemplateKey = key;
-        getRef().child(FIREBASE_TEMPLATE_KEY).setValue(mTemplateKey);
-        context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
-                .edit()
-                .putString(SCOUT_TEMPLATE, key)
-                .apply();
-        TeamIndices.getAll().addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
-            private final ValueEventListener mTeamTemplateUpdater = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    DataSnapshot templateSnapshot = snapshot.child(FIREBASE_TEMPLATE_KEY);
-                    if (templateSnapshot.getValue() == null) {
-                        templateSnapshot.getRef().setValue(key);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    FirebaseCrash.report(error.toException());
-                }
-            };
-
-            @Override
-            public void onSuccess(List<DataSnapshot> snapshots) {
-                for (DataSnapshot snapshot : snapshots) {
-                    Constants.FIREBASE_TEAMS
-                            .child(snapshot.getKey())
-                            .addListenerForSingleValueEvent(mTeamTemplateUpdater);
-                }
-            }
-        });
-    }
-
-    public void delete(Context context) {
-        final Context appContext = context.getApplicationContext();
-        ScoutUtils.deleteAll(getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                getRef().removeValue();
-                getIndicesRef().child(getKey()).removeValue();
-                if (getTemplateKey() != null) {
-                    TeamIndices.getAll()
-                            .addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
-                                @Override
-                                public void onSuccess(List<DataSnapshot> snapshots) {
-                                    if (snapshots.isEmpty()) {
-                                        Constants.FIREBASE_SCOUT_TEMPLATES.child(getTemplateKey())
-                                                .removeValue();
-                                        appContext.getSharedPreferences(SCOUT_TEMPLATE,
-                                                                        Context.MODE_PRIVATE)
-                                                .edit()
-                                                .clear()
-                                                .apply();
-                                    }
-                                }
-                            });
-                }
-                FirebaseAppIndex.getInstance().remove(getDeepLink());
-            }
-        });
-    }
-
-    public void fetchLatestData(Context context) {
-        long differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp);
-        if (differenceDays >= FRESHNESS_DAYS) DownloadTeamDataJob.start(context, this);
-    }
-
-    public void visitTbaWebsite(Context context) {
-        Uri tbaUrl = Uri.parse("https://www.thebluealliance.com/team/" + getNumber());
-        CustomTabsHelper.launchUrl(context, tbaUrl);
-    }
-
-    public void visitTeamWebsite(Context context) {
-        CustomTabsHelper.launchUrl(context, Uri.parse(getWebsite()));
-    }
-
-    @Exclude
-    public Indexable getIndexable() {
-        DigitalDocumentBuilder builder = Indexables.digitalDocumentBuilder()
-                .setUrl(getDeepLink())
-                .setName(getFormattedName())
-                .setMetadata(new Indexable.Metadata.Builder().setWorksOffline(true));
-        if (getMedia() != null) builder.setImage(getMedia());
-        return builder.build();
-    }
-
-    @Exclude
-    private String getDeepLink() {
-        return TeamReceiver.APP_LINK_BASE + getLinkKeyNumberPair();
-    }
-
-    @Exclude
-    public String getLinkKeyNumberPair() {
-        return "&" + TeamReceiver.TEAM_QUERY_KEY + "=" + getKey() + ":" + getNumber();
-    }
-
-    @Exclude
-    public Action getViewAction() {
-        return new Action.Builder(Action.Builder.VIEW_ACTION)
-                .setObject(getFormattedName(), getDeepLink())
-                .build();
     }
 
     @Override
