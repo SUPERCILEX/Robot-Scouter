@@ -51,6 +51,8 @@
 
         <exclude name="OneDeclarationPerLine"/>
 
+        <exclude name="NullAssignment"/>
+
     </rule>
 
     <rule ref="rulesets/java/design.xml">

@@ -52,6 +52,9 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
             case R.id.action_sign_out:
                 mAuthHelper.signOut();
                 break;
+            case R.id.action_donate:
+                DonateDialog.show(getSupportFragmentManager());
+                break;
             case R.id.action_licenses:
                 LicensesDialog.show(getSupportFragmentManager());
                 break;

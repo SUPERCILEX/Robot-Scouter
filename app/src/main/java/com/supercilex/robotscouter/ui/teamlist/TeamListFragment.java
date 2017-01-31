@@ -55,7 +55,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                                                                 mAdapter,
                                                                 mManager.get());
             mMenuHelper.restoreState(mSavedInstanceState);
-            mSavedInstanceState = null; // NOPMD
+            mSavedInstanceState = null;
         }
     }
 

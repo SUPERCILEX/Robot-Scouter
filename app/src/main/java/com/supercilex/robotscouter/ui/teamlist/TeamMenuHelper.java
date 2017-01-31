@@ -242,6 +242,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
+        mMenu.findItem(R.id.action_donate).setVisible(visible);
         mMenu.findItem(R.id.action_licenses).setVisible(visible);
         mMenu.findItem(R.id.action_about).setVisible(visible);
         if (visible) {
