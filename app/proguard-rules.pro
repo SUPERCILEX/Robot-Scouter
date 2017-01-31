@@ -2,6 +2,9 @@
 -mergeinterfacesaggressively
 -repackageclasses com.supercilex.robotscouter
 
+# In-app billing
+-keep class com.android.vending.billing.**
+
 # Retrofit
 -dontwarn okio.**
 -dontnote retrofit2.Platform
