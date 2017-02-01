@@ -159,11 +159,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     @Nullable
     public Boolean getHasCustomName() {
-        if (mHasCustomName) {
-            return true;
-        } else {
-            return null;
-        }
+        return mHasCustomName ? true : null;
     }
 
     @Keep
@@ -174,11 +170,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     @Nullable
     public Boolean getHasCustomMedia() {
-        if (mHasCustomMedia) {
-            return true;
-        } else {
-            return null;
-        }
+        return mHasCustomMedia ? true : null;
     }
 
     @Keep
@@ -189,11 +181,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     @Nullable
     public Boolean getHasCustomWebsite() {
-        if (mHasCustomWebsite) {
-            return true;
-        } else {
-            return null;
-        }
+        return mHasCustomWebsite ? true : null;
     }
 
     @Keep
