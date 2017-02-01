@@ -15,8 +15,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
-import com.supercilex.robotscouter.util.TaskExecutor;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -45,7 +45,7 @@ public final class TbaApi implements Callable<Team> {
     }
 
     public static Task<Team> fetch(Team team, Context context) {
-        return TaskExecutor.execute(new TbaApi(team, context));
+        return AsyncTaskExecutor.execute(new TbaApi(team, context));
     }
 
     @Override

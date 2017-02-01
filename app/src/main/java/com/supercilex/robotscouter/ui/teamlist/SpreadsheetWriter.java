@@ -18,8 +18,8 @@ import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.SpinnerMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.TaskExecutor;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -81,8 +81,9 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
             return false;
         }
 
-        TaskExecutor.execute(new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
-                                                   new ArrayList<>(teamHelpers)));
+        AsyncTaskExecutor.execute(
+                new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
+                                      new ArrayList<>(teamHelpers)));
 
         return true;
     }
@@ -90,7 +91,7 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
     @Override
     public Void call() throws Exception {
         Scouts.getAll(mTeamHelpers)
-                .addOnSuccessListener(TaskExecutor.getCurrentExecutor(this), this);
+                .addOnSuccessListener(AsyncTaskExecutor.getCurrentExecutor(this), this);
         return null;
     }
 

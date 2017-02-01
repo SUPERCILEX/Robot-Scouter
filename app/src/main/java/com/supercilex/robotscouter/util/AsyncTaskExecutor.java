@@ -11,17 +11,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
-public class TaskExecutor<TResult> implements Executor, OnCompleteListener<TResult> {
-    private static Map<Callable, TaskExecutor> sInstances = new ConcurrentHashMap<>();
+public class AsyncTaskExecutor<TResult> implements Executor, OnCompleteListener<TResult> {
+    private static Map<Callable, AsyncTaskExecutor> sInstances = new ConcurrentHashMap<>();
 
     private Callable<TResult> mCallable;
 
-    protected TaskExecutor(Callable<TResult> callable) {
+    protected AsyncTaskExecutor(Callable<TResult> callable) {
         mCallable = callable;
     }
 
     public static <TResult> Task<TResult> execute(Callable<TResult> callable) {
-        TaskExecutor<TResult> executor = new TaskExecutor<>(callable);
+        AsyncTaskExecutor<TResult> executor = new AsyncTaskExecutor<>(callable);
         sInstances.put(callable, executor);
         return Tasks.call(executor, callable).addOnCompleteListener(executor, executor);
     }
@@ -31,7 +31,7 @@ public class TaskExecutor<TResult> implements Executor, OnCompleteListener<TResu
     }
 
     @Override
-    public void onComplete(@NonNull Task<TResult> task) {
+    public void onComplete(@NonNull Task task) {
         sInstances.remove(mCallable);
     }
 

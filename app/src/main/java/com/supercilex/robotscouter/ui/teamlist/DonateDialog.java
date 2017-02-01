@@ -22,7 +22,7 @@ import android.widget.AdapterView;
 import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.util.TaskExecutor;
+import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,10 +85,10 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
                 String sku = purchaseData.getString("productId");
                 if (sku.contains("donate_single")) {
                     String purchaseToken = purchaseData.getString("purchaseToken");
-                    TaskExecutor.execute(new PurchaseConsumer(mService,
-                                                              getDialog(),
-                                                              getContext().getPackageName(),
-                                                              purchaseToken));
+                    AsyncTaskExecutor.execute(new PurchaseConsumer(mService,
+                                                                   getDialog(),
+                                                                   getContext().getPackageName(),
+                                                                   purchaseToken));
                 }
             } catch (JSONException e) {
                 FirebaseCrash.report(e);
