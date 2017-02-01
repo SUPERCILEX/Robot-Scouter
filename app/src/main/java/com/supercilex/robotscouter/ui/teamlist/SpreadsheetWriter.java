@@ -42,11 +42,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<TeamHelper, List<List<ScoutMetric>>>> {
+public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<List<ScoutMetric>>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter team exports/";
@@ -64,6 +63,7 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
         mTeamHelpers = teamHelpers;
 
         Collections.sort(mTeamHelpers);
+        Scouts.getAll(mTeamHelpers).addOnSuccessListener(new AsyncTaskExecutor(), this);
     }
 
     /**
@@ -81,18 +81,10 @@ public class SpreadsheetWriter implements Callable<Void>, OnSuccessListener<Map<
             return false;
         }
 
-        AsyncTaskExecutor.execute(
-                new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
-                                      new ArrayList<>(teamHelpers)));
+        new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
+                              new ArrayList<>(teamHelpers));
 
         return true;
-    }
-
-    @Override
-    public Void call() throws Exception {
-        Scouts.getAll(mTeamHelpers)
-                .addOnSuccessListener(AsyncTaskExecutor.getCurrentExecutor(this), this);
-        return null;
     }
 
     @Override
