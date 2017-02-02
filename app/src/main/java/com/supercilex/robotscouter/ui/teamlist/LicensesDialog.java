@@ -37,6 +37,10 @@ public class LicensesDialog extends DialogFragment {
         licenses.add(Licenses.noContent("Firebase",
                                         "Google Inc.",
                                         "https://firebase.google.com/terms/"));
+//        licenses.add(Licenses.noContent("Google Play Services",
+//                                        "Google Inc.",
+//                                        GoogleApiAvailability.getInstance()
+//                                                .getOpenSourceSoftwareLicenseInfo(getContext())));
         licenses.add(Licenses.fromGitHub("firebase/FirebaseUI-Android",
                                          Licenses.LICENSE_APACHE_V2));
         licenses.add(Licenses.fromGitHub("firebase/firebase-jobdispatcher-android",

@@ -1,6 +1,7 @@
 *.iml
 .gradle
 .idea
+!.idea/codeStyleSettings.xml
 build
 /*.properties
 app/*.json
