@@ -159,7 +159,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     @Nullable
     public Boolean getHasCustomName() {
-        return mHasCustomName ? true : null;
+        return mHasCustomName ? true : null; // NOPMD TODO https://github.com/pmd/pmd/issues/232
     }
 
     @Keep
@@ -170,7 +170,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     @Nullable
     public Boolean getHasCustomMedia() {
-        return mHasCustomMedia ? true : null;
+        return mHasCustomMedia ? true : null; // NOPMD TODO https://github.com/pmd/pmd/issues/232
     }
 
     @Keep
@@ -181,7 +181,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Keep
     @Nullable
     public Boolean getHasCustomWebsite() {
-        return mHasCustomWebsite ? true : null;
+        return mHasCustomWebsite ? true : null; // NOPMD TODO https://github.com/pmd/pmd/issues/232
     }
 
     @Keep
