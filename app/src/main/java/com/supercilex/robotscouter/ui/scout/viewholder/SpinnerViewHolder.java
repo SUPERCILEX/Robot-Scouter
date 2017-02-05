@@ -24,9 +24,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
     }
 
     @Override
-    public void bind(ScoutMetric<List<String>> metric,
-                     Query query,
-                     SimpleItemAnimator animator) {
+    public void bind(ScoutMetric<List<String>> metric, Query query, SimpleItemAnimator animator) {
         super.bind(metric, query, animator);
         SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
         ArrayAdapter<String> spinnerArrayAdapter =

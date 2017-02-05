@@ -16,9 +16,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     }
 
     @Override
-    public void bind(ScoutMetric<List<String>> metric,
-                     Query query,
-                     SimpleItemAnimator animator) {
+    public void bind(ScoutMetric<List<String>> metric, Query query, SimpleItemAnimator animator) {
         super.bind(metric, query, animator);
         mName.setOnFocusChangeListener(this);
     }
