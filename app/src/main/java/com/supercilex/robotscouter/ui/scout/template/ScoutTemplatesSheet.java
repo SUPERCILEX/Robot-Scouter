@@ -114,9 +114,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
         mAdapter = new ScoutTemplateAdapter(
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
-                Constants.FIREBASE_SCOUT_TEMPLATES
-                        .child(mTemplateKey)
-                        .child(Constants.FIREBASE_VIEWS),
+                Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator(),
                 mRootView,
                 this);
@@ -152,10 +150,7 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
 
     @Override
     public void onClick(View v) {
-        DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES
-                .child(mTemplateKey)
-                .child(Constants.FIREBASE_VIEWS)
-                .push();
+        DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey).push();
         int itemCount = mAdapter.getItemCount();
         switch (v.getId()) {
             case R.id.add_checkbox:

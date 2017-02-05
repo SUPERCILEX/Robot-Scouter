@@ -42,7 +42,6 @@ public final class Constants {
             DatabaseHelper.getReference().child("scout-indices");
 
     // Scout views
-    public static final String FIREBASE_VIEWS = "views";
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
     public static final String FIREBASE_NAME = "name";

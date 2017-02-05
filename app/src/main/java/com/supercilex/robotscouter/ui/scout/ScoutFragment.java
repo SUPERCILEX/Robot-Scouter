@@ -58,9 +58,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
         mAdapter = new ScoutAdapter(
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
-                Constants.FIREBASE_SCOUTS
-                        .child(mScoutKey)
-                        .child(Constants.FIREBASE_VIEWS),
+                Constants.FIREBASE_SCOUTS.child(mScoutKey),
                 (SimpleItemAnimator) recyclerView.getItemAnimator());
         recyclerView.setAdapter(mAdapter);
         FirebaseRecyclerViewHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);

@@ -97,8 +97,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<List<Scou
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
                             List<ScoutMetric> scoutMetrics = new ArrayList<>();
-                            for (DataSnapshot scoutMetricSnapshot :
-                                    snapshot.child(Constants.FIREBASE_VIEWS).getChildren()) {
+                            for (DataSnapshot scoutMetricSnapshot : snapshot.getChildren()) {
                                 scoutMetrics.add(ScoutUtils.getMetric(scoutMetricSnapshot));
                             }
 
