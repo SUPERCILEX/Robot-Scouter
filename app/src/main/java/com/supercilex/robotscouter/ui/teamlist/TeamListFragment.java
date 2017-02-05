@@ -15,12 +15,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.adapter.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.MenuManager;
-import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -34,7 +34,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     private TeamMenuHelper mMenuHelper;
     private RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter mAdapter;
-    private WeakReference<LinearLayoutManager> mManager;
+    private WeakReference<RecyclerView.LayoutManager> mManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,9 +51,9 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         if (auth.getCurrentUser() != null) {
             initAdapter();
             if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
-            FirebaseRecyclerViewHelper.restoreRecyclerViewState(mSavedInstanceState,
-                                                                mAdapter,
-                                                                mManager.get());
+            FirebaseAdapterHelper.restoreRecyclerViewState(mSavedInstanceState,
+                                                           mAdapter,
+                                                           mManager.get());
             mMenuHelper.restoreState(mSavedInstanceState);
             mSavedInstanceState = null;
         }
@@ -68,7 +68,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
         mMenuHelper.setRecyclerView(mRecyclerView);
         mRecyclerView.setHasFixedSize(true);
-        mManager = new WeakReference<>(new LinearLayoutManager(getContext()));
+        mManager = new WeakReference<RecyclerView.LayoutManager>(new LinearLayoutManager(getContext()));
         mRecyclerView.setLayoutManager(mManager.get());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -90,7 +90,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseRecyclerViewHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
+        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
         mMenuHelper.saveState(outState);
         super.onSaveInstanceState(outState);
     }

@@ -4,9 +4,31 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 
-public final class FirebaseRecyclerViewHelper {
-    private FirebaseRecyclerViewHelper() {
+import com.firebase.ui.database.adapter.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public final class FirebaseAdapterHelper {
+    private FirebaseAdapterHelper() {
         // no instance
+    }
+
+    public static List<DatabaseReference> getRefs(FirebaseRecyclerAdapter adapter) {
+        List<DatabaseReference> refs = new ArrayList<>(adapter.getItemCount());
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            refs.add(adapter.getRef(i));
+        }
+        return refs;
+    }
+
+    public static <T> List<T> getItems(FirebaseRecyclerAdapter<T, ?> adapter) {
+        List<T> items = new ArrayList<>(adapter.getItemCount());
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            items.add(adapter.getItem(i));
+        }
+        return items;
     }
 
     public static void restoreRecyclerViewState(Bundle savedInstanceState,

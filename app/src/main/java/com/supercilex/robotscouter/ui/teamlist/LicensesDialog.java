@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.supercilex.robotscouter.R;
 
 import net.yslibrary.licenseadapter.LicenseAdapter;
@@ -32,24 +33,23 @@ public class LicensesDialog extends DialogFragment {
         View rootView = View.inflate(getContext(), R.layout.recycler_view, null);
 
         List<LicenseEntry> licenses = new ArrayList<>();
-        // TODO fix licenses once new repo version comes out
 
         licenses.add(Licenses.noContent("Firebase",
                                         "Google Inc.",
                                         "https://firebase.google.com/terms/"));
-//        licenses.add(Licenses.noLink("Google Play Services",
-//                                     "Google Inc.",
-//                                     GoogleApiAvailability.getInstance()
-//                                             .getOpenSourceSoftwareLicenseInfo(getContext())));
+        licenses.add(Licenses.noLink("Google Play Services",
+                                     "Google Inc.",
+                                     GoogleApiAvailability.getInstance()
+                                             .getOpenSourceSoftwareLicenseInfo(getContext())));
         licenses.add(Licenses.fromGitHubApacheV2("firebase/FirebaseUI-Android"));
         licenses.add(Licenses.fromGitHubApacheV2("firebase/firebase-jobdispatcher-android"));
-        licenses.add(Licenses.fromGitHubApacheV2("googlesamples/easypermissions"));
-//        licenses.add(Licenses.fromGitHub("bumptech/glide", "Glide license", Licenses.FILE_AUTO));
+        licenses.add(Licenses.fromGitHubApacheV2("googlesamples/Easypermissions"));
+        licenses.add(Licenses.fromGitHub("bumptech/Glide", "Glide license", Licenses.FILE_AUTO));
         licenses.add(Licenses.fromGitHubApacheV2("hdodenhof/CircleImageView"));
         licenses.add(Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"));
         licenses.add(Licenses.fromGitHubApacheV2("sjwall/MaterialTapTargetPrompt"));
-        licenses.add(Licenses.fromGitHubApacheV2("square/retrofit"));
-        licenses.add(Licenses.fromGitHubApacheV2("square/leakcanary"));
+        licenses.add(Licenses.fromGitHubApacheV2("square/Retrofit"));
+        licenses.add(Licenses.fromGitHubApacheV2("square/Leakcanary"));
         licenses.add(Licenses.fromGitHubMIT("Triple-T/gradle-play-publisher"));
         licenses.add(Licenses.fromGitHubApacheV2("yshrsmz/LicenseAdapter"));
 

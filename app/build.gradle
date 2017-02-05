@@ -94,14 +94,14 @@ dependencies {
 
     // Firebase UI
     // Auth
-//    compile 'com.firebaseui:firebase-ui-auth:1.1.0'
-    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:3eda2a4680b8dd1fa99b6ddc1b1232e671a696c8'
+//    compile 'com.firebaseui:firebase-ui-auth:1.2.0'
+    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:02e9d4f39d01768408b5feae96536607608fc3b9'
     compile "com.google.firebase:firebase-auth:$playServicesVersion"
     compile "com.google.android.gms:play-services-auth:$playServicesVersion"
     compile "com.android.support:cardview-v7:$supportLibVersion"
     // Database
-//    compile 'com.firebaseui:firebase-ui-database:1.1.0'
-    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:3eda2a4680b8dd1fa99b6ddc1b1232e671a696c8'
+//    compile 'com.firebaseui:firebase-ui-database:1.2.0'
+    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:02e9d4f39d01768408b5feae96536607608fc3b9'
     compile "com.google.firebase:firebase-database:$playServicesVersion"
 
     compile 'com.firebase:firebase-jobdispatcher:0.5.2'
@@ -120,7 +120,7 @@ dependencies {
 
     // Third party
     compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'net.yslibrary.licenseadapter:licenseadapter:1.3.0'
+    compile 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
     compile 'com.github.clans:fab:1.6.4'
     compile 'uk.co.samuelwall:material-tap-target-prompt:1.8.3'
 

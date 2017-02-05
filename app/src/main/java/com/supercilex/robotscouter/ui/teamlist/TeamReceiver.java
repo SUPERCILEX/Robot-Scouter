@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 
+import com.firebase.ui.auth.util.GoogleApiHelper;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitationResult;
 import com.google.android.gms.appinvite.AppInviteReferral;
@@ -34,7 +35,9 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
         // Check for deep links
         AppInvite.AppInviteApi
                 .getInvitation(new GoogleApiClient.Builder(mActivity)
-                                       .enableAutoManage(mActivity, null)
+                                       .enableAutoManage(mActivity,
+                                                         GoogleApiHelper.getSafeAutoManageId(),
+                                                         null /* listener */)
                                        .addApi(AppInvite.API)
                                        .build(),
                                mActivity,

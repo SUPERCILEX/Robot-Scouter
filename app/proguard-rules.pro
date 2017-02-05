@@ -5,15 +5,6 @@
 # In-app billing
 -keep class com.android.vending.billing.**
 
-# Retrofit
--dontwarn okio.**
--dontnote retrofit2.Platform
--dontnote retrofit2.Platform$IOS$MainThreadExecutor
--dontwarn retrofit2.Platform$Java8
--keepattributes Signature
--keepattributes *Annotation*
--keepattributes Exceptions
-
 # Apache POI
 -dontwarn org.apache.**
 -dontwarn org.openxmlformats.schemas.**
@@ -39,11 +30,15 @@
 
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.** { *; } # TODO
 
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontName { *; }
@@ -51,6 +46,8 @@
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIntProperty { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension { *; }
@@ -67,11 +64,15 @@
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument { *; }
 #
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTBooleanPropertyImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTBookViewImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTBookViewsImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTBorderImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTBorderPrImpl { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTCellImpl { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTCellAlignmentImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTColorImpl { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTColsImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFillImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontNameImpl { *; }
@@ -79,6 +80,8 @@
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontSizeImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTIntPropertyImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTPatternFillImpl { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTPageMarginsImpl { *; }
+#-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTRowImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTSheetImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTSheetDataImpl { *; }
 #-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTSheetDimensionImpl { *; }
