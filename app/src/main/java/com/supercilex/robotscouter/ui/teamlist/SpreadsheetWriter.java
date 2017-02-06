@@ -236,8 +236,9 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                     } catch (Exception e) { // NOPMD
                         row.createCell(column)
                                 .setCellValue("Data anomaly: couldn't compute average");
-                        if (!(e instanceof IndexOutOfBoundsException))
-                            FirebaseCrash.report(e); // NOPMD
+                        if (!(e instanceof IndexOutOfBoundsException)) { // NOPMD
+                            FirebaseCrash.report(e);
+                        }
                         continue;
                     }
                     setRowValue(column, averageScoutMetric, row);
