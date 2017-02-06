@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
@@ -175,7 +176,8 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                                                     if (task.isSuccessful()) {
                                                         mTeamHelper.updateTeam(task.getResult());
                                                     } else {
-                                                        mTeamHelper.fetchLatestData(ScoutActivity.this);
+                                                        DownloadTeamDataJob.start(ScoutActivity.this,
+                                                                                  mTeamHelper);
                                                     }
                                                 }
                                             });
