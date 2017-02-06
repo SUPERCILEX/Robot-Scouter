@@ -229,7 +229,17 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                         }
                     }
 
-                    setRowValue(column, getAverageScoutMetric(scouts, metric), row);
+
+                    ScoutMetric averageScoutMetric;
+                    try {
+                        averageScoutMetric = getAverageScoutMetric(scouts, metric);
+                    } catch (Exception e) {
+                        row.createCell(column)
+                                .setCellValue("Data anomaly: couldn't compute average");
+                        if (!(e instanceof IndexOutOfBoundsException)) FirebaseCrash.report(e);
+                        continue;
+                    }
+                    setRowValue(column, averageScoutMetric, row);
                 }
             }
         }
