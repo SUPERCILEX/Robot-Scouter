@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.annotation.SuppressLint;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
@@ -14,6 +15,7 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
     protected VView mName;
     protected ScoutMetric<TMetric> mMetric;
     protected Query mQuery;
+    protected FragmentManager mManager;
     protected SimpleItemAnimator mAnimator;
 
     @SuppressLint("WrongViewCast")
@@ -23,11 +25,20 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
         mName = (VView) itemView.findViewById(R.id.name);
     }
 
-    public void bind(ScoutMetric<TMetric> metric, Query query, SimpleItemAnimator animator) {
+    public void bind(ScoutMetric<TMetric> metric,
+                     Query query,
+                     FragmentManager manager,
+                     SimpleItemAnimator animator) {
         mMetric = metric;
-        mName.setText(mMetric.getName());
         mQuery = query;
+        mManager = manager;
         mAnimator = animator;
+
+        bind();
+    }
+
+    protected void bind() {
+        mName.setText(mMetric.getName());
     }
 
     protected void updateMetricName(String name) {

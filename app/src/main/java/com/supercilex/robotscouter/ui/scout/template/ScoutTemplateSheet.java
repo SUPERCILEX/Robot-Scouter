@@ -31,24 +31,24 @@ import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 import java.util.Collections;
 
-public class ScoutTemplatesSheet extends BottomSheetDialogFragment
-        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener, OnStartDragListener {
-    private static final String TAG = "ScoutTemplatesSheet";
+public class ScoutTemplateSheet extends BottomSheetDialogFragment
+        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
+    private static final String TAG = "ScoutTemplateSheet";
 
     private RecyclerView mRecyclerView;
     private ScoutTemplateAdapter mAdapter;
-    private LinearLayoutManager mManager;
+    private RecyclerView.LayoutManager mManager;
     private String mTemplateKey;
     private View mRootView;
     private FloatingActionMenu mFam;
-    private ItemTouchHelper mItemTouchHelper;
+    private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mItemTouchCallback;
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
-        ScoutTemplatesSheet sheet = new ScoutTemplatesSheet();
+        ScoutTemplateSheet sheet = new ScoutTemplateSheet();
         sheet.setArguments(teamHelper.getBundle());
         sheet.show(manager, TAG);
     }
@@ -109,25 +109,23 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
     private void setupRecyclerView(Bundle savedInstanceState) {
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
         mManager = new LinearLayoutManager(getContext());
+
         mRecyclerView.setLayoutManager(mManager);
+        mItemTouchCallback = new ScoutTemplateItemTouchCallback<>(mRootView);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(mItemTouchCallback);
+        mItemTouchCallback.setItemTouchHelper(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         mAdapter = new ScoutTemplateAdapter(
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
                 Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
+                getChildFragmentManager(),
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator(),
-                mRootView,
-                this);
+                mItemTouchCallback);
         mRecyclerView.setAdapter(mAdapter);
-        FirebaseRecyclerViewHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
-
-        mItemTouchHelper = new ItemTouchHelper(new ScoutTemplateItemTouchCallback(mAdapter));
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-    }
-
-    @Override
-    public void startDrag(RecyclerView.ViewHolder holder) {
-        mItemTouchHelper.startDrag(holder);
+        mItemTouchCallback.setAdapter(mAdapter);
+        FirebaseAdapterHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
     }
 
     private void initFabMenu() {
@@ -168,13 +166,13 @@ public class ScoutTemplatesSheet extends BottomSheetDialogFragment
                 metricRef.setValue(new ScoutMetric<>("", "", MetricType.NOTE), itemCount);
                 break;
         }
-        mAdapter.addItemToScrollQueue(itemCount);
+        mItemTouchCallback.addItemToScrollQueue(itemCount);
         mFam.close(true);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseRecyclerViewHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 

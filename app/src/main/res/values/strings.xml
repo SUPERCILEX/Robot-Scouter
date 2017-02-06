@@ -74,6 +74,7 @@
     <string name="delete_scout">Delete scout</string>
 
     <string name="edit_scout_template">Edit scout template</string>
+    <string name="edit_spinner_items">Edit items</string>
     <string name="deleted">Deleted</string>
     <string name="undo">Undo</string>
     <string name="add_checkbox">Add checkbox</string>

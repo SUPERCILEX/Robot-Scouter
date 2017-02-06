@@ -13,20 +13,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.adapter.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseRecyclerViewHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickListener {
     private static final String TEAM_KEY = "team_key";
 
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
-    private LinearLayoutManager mManager;
+    private RecyclerView.LayoutManager mManager;
     private String mScoutKey;
 
     public static ScoutFragment newInstance(String teamKey, String scoutKey) {
@@ -59,16 +59,17 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
                 Constants.FIREBASE_SCOUTS.child(mScoutKey),
+                getChildFragmentManager(),
                 (SimpleItemAnimator) recyclerView.getItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        FirebaseRecyclerViewHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        FirebaseAdapterHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseRecyclerViewHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 

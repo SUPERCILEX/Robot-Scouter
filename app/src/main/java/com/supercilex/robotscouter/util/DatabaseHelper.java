@@ -9,18 +9,22 @@ public final class DatabaseHelper {
         // no instance
     }
 
+    public static FirebaseDatabase getDatabase() {
+        return DatabaseHolder.DATABASE;
+    }
+
     public static DatabaseReference getReference() {
         return DatabaseHolder.INSTANCE;
     }
 
     private static final class DatabaseHolder {
+        public static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
         public static final DatabaseReference INSTANCE;
         private static final String DATABASE_VERSION = "v" + BuildConfig.VERSION_NAME.split("\\.")[0];
 
         static {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            database.setPersistenceEnabled(true);
-            INSTANCE = database.getReference()
+            DATABASE.setPersistenceEnabled(true);
+            INSTANCE = DATABASE.getReference()
                     .child(BuildConfig.DEBUG ? "debug" : DATABASE_VERSION);
         }
     }

@@ -1,13 +1,12 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.crash.FirebaseCrash;
+import com.firebase.ui.database.adapter.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
@@ -20,13 +19,16 @@ import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 
 public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> {
+    private FragmentManager mManager;
     private SimpleItemAnimator mAnimator;
 
     public ScoutAdapter(Class<ScoutMetric> modelClass,
                         Class<ScoutViewHolderBase> viewHolderClass,
                         Query query,
+                        FragmentManager manager,
                         SimpleItemAnimator animator) {
         super(modelClass, 0, viewHolderClass, query);
+        mManager = manager;
         mAnimator = animator;
     }
 
@@ -35,7 +37,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
                                    ScoutMetric metric,
                                    int position) {
         //noinspection unchecked
-        viewHolder.bind(metric, getRef(position), mAnimator);
+        viewHolder.bind(metric, getRef(position), mManager, mAnimator);
         mAnimator.setSupportsChangeAnimations(true);
     }
 
@@ -45,34 +47,26 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
             case MetricType.CHECKBOX:
                 return new CheckboxViewHolder(
                         LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_checkbox,
-                                         parent,
-                                         false));
+                                .inflate(R.layout.scout_checkbox, parent, false));
             case MetricType.COUNTER:
                 return new CounterViewHolder(
                         LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_counter,
-                                         parent,
-                                         false));
+                                .inflate(R.layout.scout_counter, parent, false));
             case MetricType.NOTE:
                 return new EditTextViewHolder(
                         LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_notes,
-                                         parent,
-                                         false));
+                                .inflate(R.layout.scout_notes, parent, false));
             case MetricType.SPINNER:
                 return new SpinnerViewHolder(
                         LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_spinner,
-                                         parent,
-                                         false));
+                                .inflate(R.layout.scout_spinner, parent, false));
             default:
                 throw new IllegalStateException();
         }
     }
 
     @Override
-    protected ScoutMetric parseSnapshot(DataSnapshot snapshot) {
+    public ScoutMetric parseSnapshot(DataSnapshot snapshot) {
         return ScoutUtils.getMetric(snapshot);
     }
 
@@ -80,10 +74,5 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     @MetricType
     public int getItemViewType(int position) {
         return getItem(position).getType();
-    }
-
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
     }
 }

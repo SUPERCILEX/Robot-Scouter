@@ -33,7 +33,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
-import com.supercilex.robotscouter.ui.scout.template.ScoutTemplatesSheet;
+import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
@@ -130,7 +130,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                 mTeamHelper.visitTeamWebsite(this);
                 break;
             case R.id.action_edit_scout_templates:
-                ScoutTemplatesSheet.show(getSupportFragmentManager(), mTeamHelper);
+                ScoutTemplateSheet.show(getSupportFragmentManager(), mTeamHelper);
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(getSupportFragmentManager(), mTeamHelper);

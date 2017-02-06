@@ -1,13 +1,10 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.ScoutMetric;
 
 public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView>
         implements View.OnFocusChangeListener {
@@ -19,8 +16,8 @@ public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView>
     }
 
     @Override
-    public void bind(ScoutMetric<String> metric, Query query, SimpleItemAnimator animator) {
-        super.bind(metric, query, animator);
+    public void bind() {
+        super.bind();
         mNotes.setText(mMetric.getValue());
         mNotes.setOnFocusChangeListener(this);
     }

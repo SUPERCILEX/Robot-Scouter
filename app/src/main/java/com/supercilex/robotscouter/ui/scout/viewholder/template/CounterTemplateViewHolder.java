@@ -1,10 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 
-import com.google.firebase.database.Query;
-import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 
 public class CounterTemplateViewHolder extends CounterViewHolder implements ScoutTemplateViewHolder {
@@ -13,8 +10,8 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     }
 
     @Override
-    public void bind(ScoutMetric<Integer> metric, Query query, SimpleItemAnimator animator) {
-        super.bind(metric, query, animator);
+    public void bind() {
+        super.bind();
         mName.setOnFocusChangeListener(this);
     }
 
@@ -27,12 +24,12 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     }
 
     @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) updateMetricName(mName.getText().toString());
+    public void requestFocus() {
+        mName.requestFocus();
     }
 
     @Override
-    public void requestFocus() {
-        mName.requestFocus();
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus) updateMetricName(mName.getText().toString());
     }
 }

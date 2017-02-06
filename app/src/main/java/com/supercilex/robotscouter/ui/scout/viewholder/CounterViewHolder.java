@@ -1,13 +1,10 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.ScoutMetric;
 
 public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> implements View.OnClickListener {
     private ImageButton mIncrement;
@@ -22,8 +19,8 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     }
 
     @Override
-    public void bind(ScoutMetric<Integer> metric, Query query, SimpleItemAnimator animator) {
-        super.bind(metric, query, animator);
+    public void bind() {
+        super.bind();
         mCount.setText(String.valueOf(mMetric.getValue()));
         mIncrement.setOnClickListener(this);
         mDecrement.setOnClickListener(this);
