@@ -17,6 +17,7 @@
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@drawable/ic_launcher"
+        android:supportsRtl="true"
         android:theme="@style/RobotScouter">
 
         <activity

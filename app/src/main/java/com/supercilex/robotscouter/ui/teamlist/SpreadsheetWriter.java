@@ -233,10 +233,11 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                     ScoutMetric averageScoutMetric;
                     try {
                         averageScoutMetric = getAverageScoutMetric(scouts, metric);
-                    } catch (Exception e) {
+                    } catch (Exception e) { // NOPMD
                         row.createCell(column)
                                 .setCellValue("Data anomaly: couldn't compute average");
-                        if (!(e instanceof IndexOutOfBoundsException)) FirebaseCrash.report(e);
+                        if (!(e instanceof IndexOutOfBoundsException))
+                            FirebaseCrash.report(e); // NOPMD
                         continue;
                     }
                     setRowValue(column, averageScoutMetric, row);
