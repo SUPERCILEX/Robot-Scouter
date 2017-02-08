@@ -55,8 +55,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Exclude private long mTimestamp;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public Team() {
-        // Needed for Firebase
+    public Team() { // Needed for Firebase
     }
 
     private Team(String number,

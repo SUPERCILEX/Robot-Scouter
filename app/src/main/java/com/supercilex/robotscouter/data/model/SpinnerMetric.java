@@ -14,8 +14,8 @@ public class SpinnerMetric extends ScoutMetric<List<String>> {
     @Exclude private int mSelectedValueIndex;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public SpinnerMetric() {
-        super(); // Needed for Firebase
+    public SpinnerMetric() { // Needed for Firebase
+        super();
     }
 
     public SpinnerMetric(String name, List<String> values, int selectedValueIndex) {
@@ -33,11 +33,12 @@ public class SpinnerMetric extends ScoutMetric<List<String>> {
         mSelectedValueIndex = selectedValueIndex;
     }
 
-    public void setSelectedValue(Query query, int selectedValue, SimpleItemAnimator animator) {
+    public void setSelectedValueIndex(Query query, int selectedValue, SimpleItemAnimator animator) {
         if (mSelectedValueIndex == selectedValue) return;
-        animator.setSupportsChangeAnimations(false);
-        query.getRef().child(Constants.FIREBASE_SELECTED_VALUE).setValue(selectedValue);
         mSelectedValueIndex = selectedValue;
+
+        animator.setSupportsChangeAnimations(false);
+        query.getRef().child(Constants.FIREBASE_SELECTED_VALUE).setValue(mSelectedValueIndex);
     }
 
     @Override

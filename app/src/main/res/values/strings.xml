@@ -86,6 +86,7 @@
     <string name="counter_name">Counter name</string>
     <string name="spinner_name">Item selector name</string>
     <string name="note_name">Note name</string>
+    <string name="unit">Unit</string>
 
     <!-- Accessibility -->
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>

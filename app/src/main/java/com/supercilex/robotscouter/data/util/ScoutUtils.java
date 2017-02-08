@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.model.CounterMetric;
 import com.supercilex.robotscouter.data.model.MetricType;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.SpinnerMetric;
@@ -45,8 +46,12 @@ public final class ScoutUtils {
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
                 });
             case MetricType.COUNTER:
-                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Integer>>() {
-                });
+                return new CounterMetric(
+                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                        snapshot.child(Constants.FIREBASE_VALUE)
+                                .getValue(new GenericTypeIndicator<Integer>() {
+                                }),
+                        snapshot.child(Constants.FIREBASE_UNIT).getValue(String.class));
             case MetricType.NOTE:
                 return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
                 });
