@@ -18,6 +18,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.google.firebase.crash.FirebaseCrash;
@@ -98,6 +99,11 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (mService == null) {
+            Toast.makeText(getContext(), R.string.general_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             Bundle buyIntentBundle = mService.getBuyIntent(
                     3,
