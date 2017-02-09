@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Pair;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -176,7 +175,11 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
         Workbook workbook = new XSSFWorkbook();
 
-        buildTeamAveragesSheet(workbook.createSheet("Team averages"));
+        Sheet sheet = null;
+        if (mTeamHelpers.size() > Constants.SINGLE_ITEM) {
+            sheet = workbook.createSheet("Team Averages");
+            sheet.createFreezePane(1, 1);
+        }
 
         for (TeamHelper teamHelper : mTeamHelpers) {
             Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.getFormattedName()));
@@ -184,128 +187,12 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             buildTeamSheet(teamHelper, teamSheet);
         }
 
+        if (sheet != null) buildTeamAveragesSheet(sheet);
+
+
         setColumnWidths(workbook.sheetIterator());
 
         return workbook;
-    }
-
-    private void buildTeamAveragesSheet(Sheet allTeamsSheet) {
-        Row header = allTeamsSheet.createRow(0);
-        CellStyle rowHeaderStyle = getRowHeaderStyle(allTeamsSheet.getWorkbook());
-
-        for (int i = 0, rowNum = 1; i < mTeamHelpers.size(); i++, rowNum++) {
-            TeamHelper helper = mTeamHelpers.get(i);
-
-            Row row = allTeamsSheet.createRow(rowNum);
-            row.createCell(0).setCellValue(helper.getFormattedName());
-
-            List<List<ScoutMetric>> scouts = mScouts.get(helper);
-            for (List<ScoutMetric> scout : scouts) {
-                for (int j = 0, column = 1; j < scout.size(); j++, column = j + 1) {
-                    ScoutMetric metric = scout.get(j);
-
-                    if (metric.getType() == MetricType.NOTE) continue;
-
-                    Cell cell = header.getCell(column);
-                    if (cell == null) {
-                        cell = header.createCell(column);
-                        cell.setCellValue(metric.getName());
-                        cell.setCellStyle(rowHeaderStyle);
-                    } else {
-                        if (!cell.getStringCellValue().equals(metric.getName())) {
-                            Iterator<Cell> iterator = header.cellIterator();
-                            boolean exists = false;
-                            for (int k = 0; iterator.hasNext(); k++) {
-                                if (metric.getName().equals(iterator.next().getStringCellValue())) {
-                                    column = k;
-                                    exists = true;
-                                    break;
-                                }
-                            }
-                            if (!exists) {
-                                column = header.getLastCellNum();
-                                header.createCell(column).setCellValue(metric.getName());
-                            }
-                        }
-                    }
-
-
-                    ScoutMetric averageScoutMetric;
-                    try {
-                        averageScoutMetric = getAverageScoutMetric(scouts, metric);
-                    } catch (Exception e) { // NOPMD
-                        row.createCell(column)
-                                .setCellValue("Data anomaly: couldn't compute average");
-                        if (!(e instanceof IndexOutOfBoundsException)) { // NOPMD
-                            FirebaseCrash.report(e);
-                        }
-                        continue;
-                    }
-                    setRowValue(column, averageScoutMetric, row);
-                }
-            }
-        }
-    }
-
-    private ScoutMetric getAverageScoutMetric(List<List<ScoutMetric>> scouts,
-                                              ScoutMetric metricToFind) {
-        int totalNumMetrics = 0, booleanCounter = 0, numericalCounter = 0;
-
-        List<Integer> numOfSelections = null;
-        if (metricToFind.getType() == MetricType.SPINNER) {
-            List<String> spinnerValues = ((SpinnerMetric) metricToFind).getValue();
-            numOfSelections = new ArrayList<>(Collections.nCopies(spinnerValues.size(), 0));
-        }
-
-        for (List<ScoutMetric> scout : scouts) {
-            for (ScoutMetric metric : scout) {
-                if (metric.getType() == metricToFind.getType()
-                        && metric.getName().equals(metricToFind.getName())) {
-                    totalNumMetrics++;
-
-                    switch (metric.getType()) {
-                        case MetricType.CHECKBOX:
-                            if (metric.getValue().equals(true)) booleanCounter++;
-                            break;
-                        case MetricType.COUNTER:
-                            numericalCounter += (int) metric.getValue();
-                            break;
-                        case MetricType.SPINNER:
-                            SpinnerMetric spinnerMetric = (SpinnerMetric) metric;
-                            int index = spinnerMetric.getSelectedValueIndex();
-                            numOfSelections.set(index, numOfSelections.get(index) + 1);
-                            break;
-                        case MetricType.NOTE:
-                            return null;
-                    }
-                }
-            }
-        }
-
-        switch (metricToFind.getType()) {
-            case MetricType.CHECKBOX:
-                return new ScoutMetric<>(metricToFind.getName(),
-                                         booleanCounter >= totalNumMetrics / 2.0,
-                                         MetricType.CHECKBOX);
-            case MetricType.COUNTER:
-                return new ScoutMetric<>(metricToFind.getName(),
-                                         numericalCounter / totalNumMetrics,
-                                         MetricType.COUNTER);
-            case MetricType.SPINNER:
-                Pair<Integer, Integer> max = new Pair<>(0, 0);
-                for (int i = 0; i < numOfSelections.size(); i++) {
-                    Integer count = numOfSelections.get(i);
-                    if (count > max.first) {
-                        max = new Pair<>(count, i); // NOPMD
-                    }
-                }
-                return new SpinnerMetric(metricToFind.getName(),
-                                         ((SpinnerMetric) metricToFind).getValue(),
-                                         max.second);
-            case MetricType.NOTE:
-            default:
-                return null;
-        }
     }
 
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
@@ -327,6 +214,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             cell.setCellStyle(headerStyle);
         }
 
+        List<Integer> excludedAverageRow = new ArrayList<>();
 
         for (int i = 0, column = 1; i < scouts.size(); i++, column++) {
             List<ScoutMetric> scout = scouts.get(i);
@@ -341,6 +229,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                                          metric,
                                          column,
                                          rowHeaderStyle);
+                    if (metric.getType() == MetricType.NOTE) excludedAverageRow.add(rowNum);
                 } else {
                     List<Row> rows = copyIterator(teamSheet.rowIterator());
 
@@ -363,6 +252,65 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 }
             }
         }
+
+
+        if (scouts.size() <= Constants.SINGLE_ITEM) return;
+
+        int farthestColumn = 0;
+        Iterator<Row> rowIterator = teamSheet.rowIterator();
+        while (rowIterator.hasNext()) {
+            int last = rowIterator.next().getLastCellNum();
+            if (last > farthestColumn) farthestColumn = last;
+        }
+
+        rowIterator = teamSheet.rowIterator();
+        for (int i = 0; rowIterator.hasNext(); i++) {
+            Row row = rowIterator.next();
+            Cell cell = row.createCell(farthestColumn);
+            if (i == 0) {
+                cell.setCellValue("Average");
+                cell.setCellStyle(headerStyle);
+                continue;
+            }
+
+            Cell first = row.getCell(1);
+            String rangeAddress =
+                    getRangeAddress(first, row.getCell(cell.getColumnIndex() - 1,
+                                                       Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+            switch (first.getCellTypeEnum()) {
+                case NUMERIC:
+                    cell.setCellFormula(
+                            "SUM(" + rangeAddress + ")" +
+                                    " / " +
+                                    "COUNT(" + rangeAddress + ")");
+                    break;
+                case BOOLEAN:
+                    cell.setCellFormula(
+                            "IF(" +
+                                    "COUNTIF(" + rangeAddress + ", TRUE)" +
+                                    " >= " +
+                                    "COUNTIF(" + rangeAddress + ", FALSE)" +
+                                    ", TRUE, FALSE)");
+                    break;
+                case STRING:
+                    if (excludedAverageRow.contains(i)) return;
+
+                    cell.setCellFormula(
+                            "ARRAYFORMULA(" +
+                                    "INDEX(" + rangeAddress + ", " +
+                                    "MATCH(" +
+                                    "MAX(" +
+                                    "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
+                                    "), " +
+                                    "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
+                                    ", 0)))");
+                    break;
+            }
+        }
+    }
+
+    private String getRangeAddress(Cell first, Cell last) {
+        return first.getAddress().toString() + ":" + last.getAddress().toString();
     }
 
     private CellStyle getRowHeaderStyle(Workbook workbook) {
@@ -459,6 +407,60 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         List<T> copy = new ArrayList<>();
         while (iterator.hasNext()) copy.add(iterator.next());
         return copy;
+    }
+
+    private void buildTeamAveragesSheet(Sheet allTeamsSheet) {
+        Row header = allTeamsSheet.createRow(0);
+        CellStyle rowHeaderStyle = getRowHeaderStyle(allTeamsSheet.getWorkbook());
+
+        for (int i = 0, rowNum = 1; i < mTeamHelpers.size(); i++, rowNum++) {
+            TeamHelper helper = mTeamHelpers.get(i);
+
+            Row row = allTeamsSheet.createRow(rowNum);
+            row.createCell(0).setCellValue(helper.getFormattedName());
+
+            List<List<ScoutMetric>> scouts = mScouts.get(helper);
+            for (List<ScoutMetric> scout : scouts) {
+                for (int j = 0, column = 1; j < scout.size(); j++, column = j + 1) {
+                    ScoutMetric metric = scout.get(j);
+
+                    if (metric.getType() == MetricType.NOTE) continue;
+
+                    Cell cell = header.getCell(column);
+                    if (cell == null) {
+                        cell = header.createCell(column);
+                        cell.setCellValue(metric.getName());
+                        cell.setCellStyle(rowHeaderStyle);
+                    } else {
+                        if (!cell.getStringCellValue().equals(metric.getName())) {
+                            Iterator<Cell> iterator = header.cellIterator();
+                            boolean exists = false;
+                            for (int k = 0; iterator.hasNext(); k++) {
+                                if (metric.getName().equals(iterator.next().getStringCellValue())) {
+                                    column = k;
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                            if (!exists) {
+                                column = header.getLastCellNum();
+                                header.createCell(column).setCellValue(metric.getName());
+                            }
+                        }
+                    }
+
+
+                    Sheet sheet = allTeamsSheet.getWorkbook().getSheet(helper.getFormattedName());
+                    Row row1 = sheet.getRow(column);
+                    Cell averageCell = row1.getCell(row1.getLastCellNum() - 1,
+                                                    Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
+                    row.createCell(column).setCellFormula(
+                            "'" + helper.getFormattedName() + "'" +
+                                    "!" + averageCell.getAddress().toString());
+                }
+            }
+        }
     }
 
     private void setApacheProperties() {

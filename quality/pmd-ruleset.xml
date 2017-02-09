@@ -14,57 +14,35 @@
     <rule ref="rulesets/java/basic.xml"/>
 
     <rule ref="rulesets/java/braces.xml">
-
         <exclude name="IfStmtsMustUseBraces"/>
-
         <exclude name="IfElseStmtsMustUseBraces"/>
-
         <exclude name="WhileLoopsMustUseBraces"/>
-
         <exclude name="ForLoopsMustUseBraces"/>
-
     </rule>
 
     <rule ref="rulesets/java/clone.xml"/>
 
     <rule ref="rulesets/java/comments.xml">
-
         <exclude name="CommentRequired"/>
-
         <exclude name="CommentSize"/>
-
         <exclude name="CommentRequired"/>
-
     </rule>
 
     <rule ref="rulesets/java/controversial.xml">
-
         <exclude name="OnlyOneReturn"/>
-
         <exclude name="AvoidPrefixingMethodParameters"/>
-
         <exclude name="AtLeastOneConstructor"/>
-
         <exclude name="DataflowAnomalyAnalysis"/>
-
         <exclude name="UseConcurrentHashMap"/>
-
         <exclude name="OneDeclarationPerLine"/>
-
         <exclude name="NullAssignment"/>
-
     </rule>
 
     <rule ref="rulesets/java/design.xml">
-
         <exclude name="ImmutableField"/>
-
         <exclude name="AccessorClassGeneration"/>
-
         <exclude name="SwitchStmtsShouldHaveDefault"/>
-
         <exclude name="GodClass"/>
-
     </rule>
 
     <rule ref="rulesets/java/empty.xml"/>
@@ -74,9 +52,7 @@
     <rule ref="rulesets/java/imports.xml"/>
 
     <rule ref="rulesets/java/javabeans.xml">
-
         <exclude name="BeanMembersShouldSerialize"/>
-
     </rule>
 
     <rule ref="rulesets/java/logging-java.xml"/>
@@ -86,36 +62,27 @@
     <rule ref="rulesets/java/migrating.xml"/>
 
     <rule ref="rulesets/java/naming.xml">
-
         <exclude name="LongVariable"/>
-
         <exclude name="ShortClassName"/>
-
         <exclude name="ShortVariable"/>
-
         <exclude name="AbstractNaming"/>
-
         <exclude name="GenericsNaming"/>
-
     </rule>
 
     <rule ref="rulesets/java/optimizations.xml">
-
         <exclude name="LocalVariableCouldBeFinal"/>
-
         <exclude name="MethodArgumentCouldBeFinal"/>
-
     </rule>
 
     <rule ref="rulesets/java/sunsecure.xml"/>
 
     <rule ref="rulesets/java/strictexception.xml">
-
         <exclude name="SignatureDeclareThrowsException"/>
-
     </rule>
 
-    <rule ref="rulesets/java/strings.xml"/>
+    <rule ref="rulesets/java/strings.xml">
+        <exclude name="AvoidDuplicateLiterals"/>
+    </rule>
 
     <rule ref="rulesets/java/unnecessary.xml"/>
 

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public final class Constants {
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
