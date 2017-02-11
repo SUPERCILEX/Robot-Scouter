@@ -1,7 +1,8 @@
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
-check.dependsOn 'checkstyle', 'findbugs', 'pmd'
+check.dependsOn.remove("lint")
+check.dependsOn 'lintProdDebug', 'lintProdRelease', 'checkstyle', 'findbugs', 'pmd'
 
 def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"

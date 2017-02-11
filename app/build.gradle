@@ -34,7 +34,7 @@ android {
         dev {
             // Enable pre-dexing to produce an APK that can be tested on
             // Android 5.0+ without the time-consuming DEX build processes.
-            minSdkVersion 16
+            minSdkVersion 21
         }
 
         prod {
@@ -59,7 +59,7 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "4g"
+        javaMaxHeapSize "3g"
     }
 }
 
