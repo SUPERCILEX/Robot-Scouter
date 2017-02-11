@@ -16,7 +16,7 @@ android {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
         targetSdkVersion 25
-        versionCode 0 // The version code is updated on each Travis build
+        versionCode 1 // The version code is updated on each Travis build
         versionName "1.0.0"
         multiDexEnabled true
     }
