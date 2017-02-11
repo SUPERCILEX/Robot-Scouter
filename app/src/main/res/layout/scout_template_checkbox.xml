@@ -5,20 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
-    android:layout_marginStart="16dp">
+    android:layout_margin="8dp">
 
     <include layout="@layout/scout_template_base_reorder"/>
 
-    <CheckBox
-        android:id="@+id/name"
-        style="@style/RobotScouter.Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintLeft_toRightOf="@id/reorder"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Example"/>
+    <include layout="@layout/scout_base_checkbox"/>
 
     <EditText
         android:id="@+id/checkbox_name"

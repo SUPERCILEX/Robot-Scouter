@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.view.View;
 import android.widget.EditText;
 
@@ -12,6 +14,7 @@ public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements Sc
     public CheckboxTemplateViewHolder(View itemView) {
         super(itemView);
         mCheckBoxName = (EditText) itemView.findViewById(R.id.checkbox_name);
+        updateConstraints((ConstraintLayout) itemView);
     }
 
     @Override
@@ -36,5 +39,12 @@ public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements Sc
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) updateMetricName(mCheckBoxName.getText().toString());
+    }
+
+    private void updateConstraints(ConstraintLayout layout) {
+        ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
+        set.connect(R.id.name, ConstraintSet.LEFT, R.id.reorder, ConstraintSet.RIGHT, 0);
+        set.applyTo(layout);
     }
 }

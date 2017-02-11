@@ -6,22 +6,19 @@
 
     <ImageButton
         android:id="@+id/decrement_counter"
-        android:layout_width="58dp"
+        android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
         android:contentDescription="@string/accessibility_decrement_counter"
         android:src="@drawable/ic_remove_black_24dp"
-        app:layout_constraintRight_toLeftOf="@+id/count"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintRight_toLeftOf="@+id/count"/>
 
     <TextView
         android:id="@+id/count"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_margin="16dp"
         android:textIsSelectable="true"
         android:textSize="18sp"
         android:textStyle="normal|bold"
@@ -34,11 +31,10 @@
         android:id="@+id/increment_counter"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_marginTop="16dp"
         android:contentDescription="@string/accessibility_increment_counter"
         android:src="@drawable/ic_add_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_constraintRight_creator="1"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </merge>
