@@ -70,7 +70,7 @@ public final class ScoutUtils {
     public static String add(Team team) {
         DatabaseReference indexRef = getIndicesRef(team.getKey()).push();
         indexRef.setValue(team.getNumberAsLong());
-        DatabaseReference scoutRef = Constants.FIREBASE_SCOUTS.child(indexRef.getKey());
+        DatabaseReference scoutRef = Constants.getScoutMetrics(indexRef.getKey());
 
         FirebaseTransformer scoutCopier = new FirebaseCopier(scoutRef);
         if (team.getTemplateKey() == null) {
@@ -85,7 +85,7 @@ public final class ScoutUtils {
 
     public static void delete(String teamKey, String scoutKey) {
         getIndicesRef(teamKey).child(scoutKey).removeValue();
-        Constants.FIREBASE_SCOUTS.child(scoutKey).removeValue();
+        Constants.getScoutMetrics(scoutKey).removeValue();
     }
 
     public static Task<Void> deleteAll(String teamKey) {
@@ -94,7 +94,7 @@ public final class ScoutUtils {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot keySnapshot : snapshot.getChildren()) {
-                    Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
+                    Constants.getScoutMetrics(keySnapshot.getKey()).removeValue();
                     keySnapshot.getRef().removeValue();
                 }
                 deleteTask.setResult(null);

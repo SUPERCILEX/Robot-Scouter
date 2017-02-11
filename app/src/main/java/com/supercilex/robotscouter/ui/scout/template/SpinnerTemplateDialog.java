@@ -22,7 +22,6 @@ import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 public class SpinnerTemplateDialog extends DialogFragment implements View.OnClickListener {
     private static final String TAG = "SpinnerTemplateDialog";
-    private static final String QUERY_KEY = "SpinnerTemplateDialog";
 
     private View mRootView;
     private RecyclerView.LayoutManager mManager;
@@ -32,11 +31,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
 
     public static void show(FragmentManager manager, DatabaseReference ref) {
         SpinnerTemplateDialog dialog = new SpinnerTemplateDialog();
-
-        Bundle bundle = new Bundle();
-        bundle.putString(QUERY_KEY, ref.toString().split("firebaseio.com/")[1]);
-        dialog.setArguments(bundle);
-
+        dialog.setArguments(DatabaseHelper.getRefBundle(ref));
         dialog.show(manager, TAG);
     }
 
@@ -55,7 +50,6 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
                 .setTitle(R.string.edit_spinner_items)
                 .setView(mRootView)
                 .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
                 .create();
     }
 
@@ -89,7 +83,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
         mItemTouchCallback.setItemTouchHelper(touchHelper);
         touchHelper.attachToRecyclerView(recyclerView);
 
-        mRef = DatabaseHelper.getDatabase().getReference(getArguments().getString(QUERY_KEY));
+        mRef = DatabaseHelper.getRef(getArguments());
         mAdapter = new FirebaseRecyclerAdapter<String, SpinnerItemViewHolder>(
                 String.class,
                 R.layout.scout_template_spinner_item,

@@ -8,11 +8,13 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.MetricType;
+import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.ScoutMetric;
 import com.supercilex.robotscouter.data.model.SpinnerMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
@@ -44,7 +46,7 @@ import java.util.Map;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<List<ScoutMetric>>>> {
+public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter team exports/";
@@ -55,7 +57,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     private Context mContext;
     private List<TeamHelper> mTeamHelpers;
 
-    private Map<TeamHelper, List<List<ScoutMetric>>> mScouts;
+    private Map<TeamHelper, List<Scout>> mScouts;
 
     protected SpreadsheetWriter(Context context, List<TeamHelper> teamHelpers) {
         mContext = context;
@@ -87,7 +89,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     }
 
     @Override
-    public void onSuccess(Map<TeamHelper, List<List<ScoutMetric>>> scouts) {
+    public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
         mScouts = scouts;
 
         Uri spreadsheetUri = getFileUri();
@@ -196,32 +198,28 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     }
 
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
-        List<List<ScoutMetric>> scouts = mScouts.get(teamHelper);
+        List<Scout> scouts = mScouts.get(teamHelper);
 
         Workbook workbook = teamSheet.getWorkbook();
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle rowHeaderStyle = getRowHeaderStyle(workbook);
 
-        Row header = teamSheet.createRow(0);
-        for (int i = 0; i < scouts.size() + 1; i++) {
-            if (i == 0) {
-                header.createCell(0); // Create empty top left corner cell
-                continue;
-            }
-
-            Cell cell = header.createCell(i);
-            cell.setCellValue("Scout " + i);
-            cell.setCellStyle(headerStyle);
-        }
-
         List<Integer> excludedAverageRow = new ArrayList<>();
 
+        Row header = teamSheet.createRow(0);
+        header.createCell(0); // Create empty top left corner cell
         for (int i = 0, column = 1; i < scouts.size(); i++, column++) {
-            List<ScoutMetric> scout = scouts.get(i);
+            Scout scout = scouts.get(i);
+            List<ScoutMetric> metrics = scout.getMetrics();
+
+            Cell cell = header.createCell(column);
+            String name = scout.getName();
+            cell.setCellValue(TextUtils.isEmpty(name) ? "Scout " + column : name);
+            cell.setCellStyle(headerStyle);
 
             columnIterator:
-            for (int j = 0, rowNum = 1; j < scout.size(); j++, rowNum++) {
-                ScoutMetric metric = scout.get(j);
+            for (int j = 0, rowNum = 1; j < metrics.size(); j++, rowNum++) {
+                ScoutMetric metric = metrics.get(j);
 
                 Row row = teamSheet.getRow(rowNum);
                 if (row == null) {
@@ -238,7 +236,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
                         Row row1 = rows.get(k);
                         if (row1.getCell(0).getStringCellValue().equals(metric.getName())
-                                && row1.getRowNum() == scout.indexOf(metric) + 1) {
+                                && row1.getRowNum() == metrics.indexOf(metric) + 1) {
                             setRowValue(column, metric, row1);
                             continue columnIterator;
                         }
@@ -419,10 +417,11 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             Row row = allTeamsSheet.createRow(rowNum);
             row.createCell(0).setCellValue(helper.getFormattedName());
 
-            List<List<ScoutMetric>> scouts = mScouts.get(helper);
-            for (List<ScoutMetric> scout : scouts) {
-                for (int j = 0, column = 1; j < scout.size(); j++, column = j + 1) {
-                    ScoutMetric metric = scout.get(j);
+            List<Scout> scouts = mScouts.get(helper);
+            for (Scout scout : scouts) {
+                List<ScoutMetric> metrics = scout.getMetrics();
+                for (int j = 0, column = 1; j < metrics.size(); j++, column = j + 1) {
+                    ScoutMetric metric = metrics.get(j);
 
                     if (metric.getType() == MetricType.NOTE) continue;
 

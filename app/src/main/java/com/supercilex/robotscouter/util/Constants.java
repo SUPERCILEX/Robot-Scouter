@@ -24,21 +24,19 @@ public final class Constants {
 
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]
-    public static final DatabaseReference FIREBASE_USERS = DatabaseHelper.getReference()
-            .child("users");
+    public static final DatabaseReference FIREBASE_USERS = DatabaseHelper.getRef().child("users");
 
     // Team
-    public static final DatabaseReference FIREBASE_TEAMS =
-            DatabaseHelper.getReference().child("teams");
+    public static final DatabaseReference FIREBASE_TEAMS = DatabaseHelper.getRef().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
-            DatabaseHelper.getReference().child("team-indices");
+            DatabaseHelper.getRef().child("team-indices");
     public static final String FIREBASE_TIMESTAMP = "timestamp";
 
     // Scout
-    public static final DatabaseReference FIREBASE_SCOUTS =
-            DatabaseHelper.getReference().child("scouts");
+    public static final DatabaseReference FIREBASE_SCOUTS = DatabaseHelper.getRef().child("scouts");
     public static final DatabaseReference FIREBASE_SCOUT_INDICES =
-            DatabaseHelper.getReference().child("scout-indices");
+            DatabaseHelper.getRef().child("scout-indices");
+    public static final String FIREBASE_METRICS = "metrics";
 
     // Scout views
     public static final String FIREBASE_VALUE = "value";
@@ -49,9 +47,9 @@ public final class Constants {
 
     // Scout template
     public static final DatabaseReference FIREBASE_DEFAULT_TEMPLATE =
-            DatabaseHelper.getReference().child("default-template");
+            DatabaseHelper.getRef().child("default-template");
     public static final DatabaseReference FIREBASE_SCOUT_TEMPLATES =
-            DatabaseHelper.getReference().child("scout-templates");
+            DatabaseHelper.getRef().child("scout-templates");
     public static final String FIREBASE_TEMPLATE_KEY = "templateKey";
     // [END FIREBASE CHILD NAMES]
 
@@ -788,5 +786,9 @@ public final class Constants {
 
     private Constants() {
         // no instance
+    }
+
+    public static DatabaseReference getScoutMetrics(String key) {
+        return FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS);
     }
 }

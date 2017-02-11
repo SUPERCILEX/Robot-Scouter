@@ -38,7 +38,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mTeamHelper = TeamHelper.get(getArguments());
 
-        View rootView = View.inflate(getContext(), R.layout.dialog_edit_details, null);
+        View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
         mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
         mWebsiteInputLayout = (TextInputLayout) rootView.findViewById(R.id.website_layout);
         mNameEditText = (EditText) rootView.findViewById(R.id.name);

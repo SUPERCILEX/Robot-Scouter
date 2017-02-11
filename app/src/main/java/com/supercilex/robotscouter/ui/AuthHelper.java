@@ -89,11 +89,7 @@ public class AuthHelper implements View.OnClickListener {
     public void initMenu(Menu menu) {
         mActionSignIn = menu.findItem(R.id.action_sign_in);
         mActionSignOut = menu.findItem(R.id.action_sign_out);
-        if (isSignedIn() && !getUser().isAnonymous()) {
-            toggleMenuSignIn(true);
-        } else {
-            toggleMenuSignIn(false);
-        }
+        toggleMenuSignIn(isSignedIn() && !getUser().isAnonymous());
     }
 
     private void initDeepLinkReceiver() {

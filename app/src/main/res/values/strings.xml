@@ -71,6 +71,8 @@
     <string name="team_logo">Team logo url</string>
     <string name="malformed_url">Make sure you have a valid url.</string>
 
+    <string name="edit_scout_name">Edit scout name</string>
+    <string name="scout_name">Scout name</string>
     <string name="delete_scout">Delete scout</string>
 
     <string name="edit_scout_template">Edit scout template</string>

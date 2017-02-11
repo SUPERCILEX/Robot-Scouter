@@ -31,9 +31,11 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
 
     public static ScoutFragment newInstance(String teamKey, String scoutKey) {
         ScoutFragment fragment = new ScoutFragment();
+
         Bundle bundle = ScoutUtils.getScoutKeyBundle(scoutKey);
         bundle.putString(TEAM_KEY, teamKey);
         fragment.setArguments(bundle);
+
         return fragment;
     }
 
@@ -58,7 +60,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
         mAdapter = new ScoutAdapter(
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
-                Constants.FIREBASE_SCOUTS.child(mScoutKey),
+                Constants.getScoutMetrics(mScoutKey),
                 getChildFragmentManager(),
                 (SimpleItemAnimator) recyclerView.getItemAnimator());
         recyclerView.setAdapter(mAdapter);

@@ -12,7 +12,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.ScoutMetric;
+import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-public final class Scouts implements Builder<Task<Map<TeamHelper, List<List<ScoutMetric>>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
-    private TaskCompletionSource<Map<TeamHelper, List<List<ScoutMetric>>>> mScoutsTask = new TaskCompletionSource<>();
-    private Map<TeamHelper, List<List<ScoutMetric>>> mScouts = new ConcurrentHashMap<>();
+public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
+    private TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
+    private Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
     private ArrayList<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
 
     private List<TeamHelper> mTeamHelpers;
@@ -32,12 +32,12 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<List<Scou
         mTeamHelpers = helpers;
     }
 
-    public static Task<Map<TeamHelper, List<List<ScoutMetric>>>> getAll(List<TeamHelper> teamHelpers) {
+    public static Task<Map<TeamHelper, List<Scout>>> getAll(List<TeamHelper> teamHelpers) {
         return new Scouts(teamHelpers).build();
     }
 
     @Override
-    public Task<Map<TeamHelper, List<List<ScoutMetric>>>> build() {
+    public Task<Map<TeamHelper, List<Scout>>> build() {
         List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
         for (final TeamHelper helper : mTeamHelpers) {
             final TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
@@ -93,38 +93,51 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<List<Scou
 
             Constants.FIREBASE_SCOUTS
                     .child(scoutKey)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            List<ScoutMetric> scoutMetrics = new ArrayList<>();
-                            for (DataSnapshot scoutMetricSnapshot : snapshot.getChildren()) {
-                                scoutMetrics.add(ScoutUtils.getMetric(scoutMetricSnapshot));
-                            }
-
-                            List<List<ScoutMetric>> scouts = mScouts.get(pair.first);
-                            if (scouts == null) {
-                                ArrayList<List<ScoutMetric>> scoutList = new ArrayList<>();
-                                scoutList.add(scoutMetrics);
-                                mScouts.put(pair.first, scoutList);
-                            } else {
-                                scouts.add(scoutMetrics);
-                                mScouts.put(pair.first, scouts);
-                            }
-
-                            scoutMetricsTask.setResult(null);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            scoutMetricsTask.setException(error.toException());
-                            FirebaseCrash.report(error.toException());
-                        }
-                    });
+                    .addListenerForSingleValueEvent(new ScoutListener(pair, scoutMetricsTask));
         }
     }
 
     @Override
     public void onFailure(@NonNull Exception e) {
         mScoutsTask.setException(e);
+    }
+
+    private class ScoutListener implements ValueEventListener {
+        private Pair<TeamHelper, List<String>> mPair;
+        private TaskCompletionSource<Void> mScoutMetricsTask;
+
+        public ScoutListener(Pair<TeamHelper, List<String>> pair,
+                             TaskCompletionSource<Void> scoutMetricsTask) {
+            mPair = pair;
+            mScoutMetricsTask = scoutMetricsTask;
+        }
+
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            Scout scout = new Scout(snapshot.child(Constants.FIREBASE_NAME).getValue(String.class));
+            Iterable<DataSnapshot> metrics =
+                    snapshot.child(Constants.FIREBASE_METRICS).getChildren();
+            for (DataSnapshot scoutMetricSnapshot : metrics) {
+                scout.add(ScoutUtils.getMetric(scoutMetricSnapshot));
+            }
+
+            List<Scout> scouts = mScouts.get(mPair.first);
+            if (scouts == null) {
+                List<Scout> scoutList = new ArrayList<>();
+                scoutList.add(scout);
+                mScouts.put(mPair.first, scoutList);
+            } else {
+                scouts.add(scout);
+                mScouts.put(mPair.first, scouts);
+            }
+
+            mScoutMetricsTask.setResult(null);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            mScoutMetricsTask.setException(error.toException());
+            FirebaseCrash.report(error.toException());
+        }
     }
 }
