@@ -3,7 +3,8 @@
 .idea
 !.idea/codeStyleSettings.xml
 build
-/*.properties
+*.properties
+!gradle.properties
 app/*.json
 /app/keystore.jks
 /app/src/main/res/values/config.xml

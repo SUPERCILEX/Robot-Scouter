@@ -11,13 +11,12 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
-    def vCode = buildVersionCode()
 
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
         targetSdkVersion 25
-        versionCode vCode
+        versionCode 0 // The version code is updated on each Travis build
         versionName "1.0.0"
         multiDexEnabled true
     }
@@ -48,7 +47,7 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
-            manifestPlaceholders = [appName: "Robot Scouter DEBUG: $vCode"]
+            manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
         }
 
         release {
