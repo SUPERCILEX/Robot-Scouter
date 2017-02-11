@@ -276,9 +276,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
 
     private void notifyItemsChanged() {
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
-        for (int i = 0; i < mAdapter.getItemCount(); i++) {
-            mAdapter.notifyItemChanged(i);
-        }
+        mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount() + 1);
         ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(true);
     }
 

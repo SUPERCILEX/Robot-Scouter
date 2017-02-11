@@ -39,9 +39,7 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
     }
 
     @Override
-    public void onChildChanged(ChangeEventListener.EventType type,
-                               int index,
-                               int oldIndex) {
+    public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
         switch (type) {
             case CHANGED:
             case MOVED:
