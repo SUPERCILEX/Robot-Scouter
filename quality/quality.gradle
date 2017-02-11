@@ -69,7 +69,8 @@ task pmd(type: Pmd) {
 
 android {
     lintOptions {
-        disable 'InvalidPackage' // Needed because of Okio
+        disable 'InvalidPackage', // Needed because of Okio
+                'GradleDependency', 'NewerVersionAvailable'
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
