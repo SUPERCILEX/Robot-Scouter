@@ -5,10 +5,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0-beta2'
+        classpath 'com.android.tools.build:gradle:2.3.0-beta4'
         classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'com.google.firebase:firebase-plugins:1.0.4'
-        classpath 'com.github.SUPERCILEX:gradle-play-publisher:fcddc17433fdc1f9aeb574a0bcd31cb264100237'
+        classpath 'com.google.firebase:firebase-plugins:1.0.5'
+        classpath 'com.github.SUPERCILEX:gradle-play-publisher:3493103b7b7870ad42a8debd87066583bc17e057'
     }
 }
 

@@ -80,6 +80,10 @@ android.variantFilter { variant ->
     if (variant.name == 'devRelease') variant.setIgnore(true)
 }
 
+project.afterEvaluate {
+    publishApkProdRelease.dependsOn 'firebaseUploadProdReleaseProguardMapping'
+}
+
 dependencies {
     // To update Apache POI, use https://github.com/SUPERCILEX/poi-on-android/tree/full
     compile fileTree(dir: 'libs', include: ['*.jar'])
