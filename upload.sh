@@ -1,14 +1,14 @@
 #!/bin/bash
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
-  mv app/build/outputs/apk/app-prod-release.apk app-release.apk
+  cp app/build/outputs/apk/app-prod-release.apk app-release.apk
   cd ..
   git clone --branch=master "https://SUPERCILEX:${git_mapping_login}@github.com/SUPERCILEX/mapping.txt-files.git" uploads &> /dev/null
   git config --global user.email "saveau.alexandre@gmail.com"
   git config --global user.name "Alex Saveau"
 
   cp Robot-Scouter/app-release.apk uploads/app-release.apk
-  mv Robot-Scouter/app/build/outputs/mapping/prod/release/mapping.txt uploads/mapping.txt
+  cp Robot-Scouter/app/build/outputs/mapping/prod/release/mapping.txt uploads/mapping.txt
   cd uploads
 
   APK_DUMP=$(/usr/local/android-sdk/build-tools/25.0.2/aapt dump badging app-release.apk) &> /dev/null
