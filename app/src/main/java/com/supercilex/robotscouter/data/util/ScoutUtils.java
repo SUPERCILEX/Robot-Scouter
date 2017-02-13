@@ -84,8 +84,8 @@ public final class ScoutUtils {
     }
 
     public static void delete(String teamKey, String scoutKey) {
+        Constants.FIREBASE_SCOUTS.child(scoutKey).removeValue();
         getIndicesRef(teamKey).child(scoutKey).removeValue();
-        Constants.getScoutMetrics(scoutKey).removeValue();
     }
 
     public static Task<Void> deleteAll(String teamKey) {
@@ -94,7 +94,7 @@ public final class ScoutUtils {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot keySnapshot : snapshot.getChildren()) {
-                    Constants.getScoutMetrics(keySnapshot.getKey()).removeValue();
+                    Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
                     keySnapshot.getRef().removeValue();
                 }
                 deleteTask.setResult(null);
