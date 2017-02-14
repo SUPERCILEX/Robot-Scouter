@@ -2,8 +2,8 @@ package com.supercilex.robotscouter.ui.scout;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -21,23 +22,40 @@ import java.util.List;
 
 public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         implements ValueEventListener, TabLayout.OnTabSelectedListener, View.OnLongClickListener {
-    private final TabNameListener mTabNameListener = new TabNameListener();
-
     private List<String> mKeys = new ArrayList<>();
+    private AppCompatActivity mActivity;
+    private TeamHelper mTeamHelper;
     private String mCurrentScoutKey;
-    private FragmentManager mManager;
     private TabLayout mTabLayout;
+    private final ValueEventListener mTabNameListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            int tabIndex = mKeys.indexOf(snapshot.getRef().getParent().getKey());
+            TabLayout.Tab tab = mTabLayout.getTabAt(tabIndex);
+            tab.setText(snapshot.getValue() == null ?
+                                getPageTitle(tabIndex) : snapshot.getValue(String.class));
+            View tabView = ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(tabIndex);
+            tabView.setOnLongClickListener(ScoutPagerAdapter.this);
+            tabView.setId(tabIndex);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            ScoutPagerAdapter.this.onCancelled(error);
+        }
+    };
     private Query mQuery;
 
-    public ScoutPagerAdapter(FragmentManager manager,
+    public ScoutPagerAdapter(AppCompatActivity activity,
                              TabLayout tabLayout,
-                             String teamKey,
+                             TeamHelper helper,
                              String currentScoutKey) {
-        super(manager);
-        mManager = manager;
+        super(activity.getSupportFragmentManager());
+        mActivity = activity;
         mTabLayout = tabLayout;
+        mTeamHelper = helper;
         mCurrentScoutKey = currentScoutKey;
-        mQuery = ScoutUtils.getIndicesRef(teamKey);
+        mQuery = ScoutUtils.getIndicesRef(helper.getTeam().getKey());
         mQuery.addValueEventListener(this);
     }
 
@@ -77,23 +95,26 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public void onDataChange(DataSnapshot snapshot) {
         removeNameListeners();
+        boolean hadScouts = !mKeys.isEmpty();
         mKeys.clear();
         for (DataSnapshot scoutIndex : snapshot.getChildren()) {
             String key = scoutIndex.getKey();
             mKeys.add(0, key);
             getTabNameRef(key).addValueEventListener(mTabNameListener);
         }
+        if (hadScouts && mKeys.isEmpty()) mTeamHelper.deleteTeam(mActivity);
 
         mTabLayout.removeOnTabSelectedListener(this);
         notifyDataSetChanged();
         mTabLayout.addOnTabSelectedListener(this);
 
-        if (mKeys.isEmpty()) return;
-        if (mCurrentScoutKey == null) {
-            selectTab(0);
-            mCurrentScoutKey = mKeys.get(0);
-        } else {
-            selectTab(mKeys.indexOf(mCurrentScoutKey));
+        if (!mKeys.isEmpty()) {
+            if (mCurrentScoutKey == null) {
+                selectTab(0);
+                mCurrentScoutKey = mKeys.get(0);
+            } else {
+                selectTab(mKeys.indexOf(mCurrentScoutKey));
+            }
         }
     }
 
@@ -118,7 +139,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public boolean onLongClick(View v) {
         ScoutNameDialog.show(
-                mManager,
+                mActivity.getSupportFragmentManager(),
                 Constants.FIREBASE_SCOUTS.child(mKeys.get(v.getId())),
                 mTabLayout.getTabAt(v.getId()).getText().toString());
         return true;
@@ -137,23 +158,5 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
         // Not interesting
-    }
-
-    private class TabNameListener implements ValueEventListener {
-        @Override
-        public void onDataChange(DataSnapshot snapshot) {
-            int tabIndex = mKeys.indexOf(snapshot.getRef().getParent().getKey());
-            TabLayout.Tab tab = mTabLayout.getTabAt(tabIndex);
-            tab.setText(snapshot.getValue() == null ?
-                                getPageTitle(tabIndex) : snapshot.getValue(String.class));
-            View tabView = ((LinearLayout) mTabLayout.getChildAt(0)).getChildAt(tabIndex);
-            tabView.setOnLongClickListener(ScoutPagerAdapter.this);
-            tabView.setId(tabIndex);
-        }
-
-        @Override
-        public void onCancelled(DatabaseError error) {
-            ScoutPagerAdapter.this.onCancelled(error);
-        }
     }
 }

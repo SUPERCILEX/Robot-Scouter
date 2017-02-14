@@ -192,10 +192,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
             if (savedInstanceState != null) {
                 scoutKey = ScoutUtils.getScoutKey(savedInstanceState);
             }
-            mPagerAdapter = new ScoutPagerAdapter(getSupportFragmentManager(),
-                                                  tabLayout,
-                                                  mTeamHelper.getTeam().getKey(),
-                                                  scoutKey);
+            mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
             viewPager.setAdapter(mPagerAdapter);
             tabLayout.setupWithViewPager(viewPager);
 
