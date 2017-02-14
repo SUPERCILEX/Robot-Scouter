@@ -13,6 +13,8 @@
 -dontwarn com.microsoft.schemas.**
 -dontwarn com.graphbuilder.**
 
+-keeppackagenames org.apache.poi.ss.formula.function
+
 -keep class com.fasterxml.aalto.stax.InputFactoryImpl
 -keep class com.fasterxml.aalto.stax.OutputFactoryImpl
 -keep class com.fasterxml.aalto.stax.EventFactoryImpl

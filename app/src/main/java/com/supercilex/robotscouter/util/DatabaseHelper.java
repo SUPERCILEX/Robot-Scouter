@@ -9,8 +9,7 @@ import com.supercilex.robotscouter.BuildConfig;
 public final class DatabaseHelper {
     private static final String QUERY_KEY = "query_key";
 
-    private DatabaseHelper() {
-        // no instance
+    private DatabaseHelper() { // no instance
     }
 
     public static FirebaseDatabase getDatabase() {
