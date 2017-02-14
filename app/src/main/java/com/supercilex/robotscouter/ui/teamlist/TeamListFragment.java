@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.adapter.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.MenuManager;
@@ -49,6 +50,9 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
         cleanup();
         if (auth.getCurrentUser() != null) {
+            // Log uid to help debug db crashes
+            FirebaseCrash.log(auth.getCurrentUser().getUid());
+
             initAdapter();
             if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
             FirebaseAdapterHelper.restoreRecyclerViewState(mSavedInstanceState,
