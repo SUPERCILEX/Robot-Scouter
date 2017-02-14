@@ -83,10 +83,16 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
         mAdapter.cleanup();
+        mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
@@ -168,12 +174,6 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         }
         mItemTouchCallback.addItemToScrollQueue(itemCount);
         mFam.close(true);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
