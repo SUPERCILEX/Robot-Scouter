@@ -130,6 +130,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                 mTeamHelper.visitTeamWebsite(this);
                 break;
             case R.id.action_edit_scout_templates:
+                DownloadTeamDataJob.cancelAll(this);
                 ScoutTemplateSheet.show(getSupportFragmentManager(), mTeamHelper);
                 break;
             case R.id.action_edit_team_details:

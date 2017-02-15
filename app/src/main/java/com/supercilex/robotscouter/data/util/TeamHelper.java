@@ -98,6 +98,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         mTeam.setTemplateKey(context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
                                      .getString(SCOUT_TEMPLATE, null));
         forceUpdateTeam();
+        getRef().child(Constants.FIREBASE_TIMESTAMP).removeValue();
         FirebaseUserActions.getInstance()
                 .end(new Action.Builder(Action.Builder.ADD_ACTION)
                              .setObject(getFormattedName(), getDeepLink())
