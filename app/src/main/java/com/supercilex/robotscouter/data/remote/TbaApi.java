@@ -20,7 +20,6 @@ import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import retrofit2.Response;
 
@@ -51,7 +50,7 @@ public final class TbaApi implements Callable<Team> {
     @Override
     public Team call() throws Exception {
         Task<Void> teamMediaYearFetchTask = RemoteConfigHelper
-                .fetchRemoteConfigValues(TimeUnit.HOURS.toSeconds(12))
+                .fetchRemoteConfigValues()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
