@@ -98,23 +98,22 @@ public final class TbaApi implements Callable<Team> {
             JsonObject mediaObject = result.get(i).getAsJsonObject();
             String mediaType = mediaObject.get("type").getAsString();
 
-            if (!TextUtils.isEmpty(mediaType)) {
-                if (mediaType.equals(IMGUR)) {
-                    String url = "https://i.imgur.com/"
-                            + mediaObject.get("foreign_key").getAsString() + ".png";
+            if (TextUtils.equals(mediaType, IMGUR)) {
+                String url = "https://i.imgur.com/" +
+                        mediaObject.get("foreign_key").getAsString() +
+                        ".png";
 
-                    setAndCacheMedia(url);
-                    break;
-                } else if (mediaType.equals(CHIEF_DELPHI)) {
-                    String url = "https://www.chiefdelphi.com/media/img/"
-                            + mediaObject.get("details")
-                            .getAsJsonObject()
-                            .get("image_partial")
-                            .getAsString();
+                setAndCacheMedia(url);
+                break;
+            } else if (TextUtils.equals(mediaType, CHIEF_DELPHI)) {
+                String url = "https://www.chiefdelphi.com/media/img/" +
+                        mediaObject.get("details")
+                                .getAsJsonObject()
+                                .get("image_partial")
+                                .getAsString();
 
-                    setAndCacheMedia(url);
-                    break;
-                }
+                setAndCacheMedia(url);
+                break;
             }
         }
 

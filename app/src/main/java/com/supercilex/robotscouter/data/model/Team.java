@@ -6,6 +6,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
+import android.text.TextUtils;
 
 import com.firebase.ui.auth.util.Preconditions;
 import com.google.firebase.database.Exclude;
@@ -240,12 +241,12 @@ public class Team implements Parcelable, Comparable<Team> {
                 && mHasCustomMedia == team.mHasCustomMedia
                 && mHasCustomWebsite == team.mHasCustomWebsite
                 && mTimestamp == team.mTimestamp
-                && (mNumber == null ? team.mNumber == null : mNumber.equals(team.mNumber))
-                && (mKey == null ? team.mKey == null : mKey.equals(team.mKey))
-                && (mTemplateKey == null ? team.mTemplateKey == null : mTemplateKey.equals(team.mTemplateKey))
-                && (mName == null ? team.mName == null : mName.equals(team.mName))
-                && (mMedia == null ? team.mMedia == null : mMedia.equals(team.mMedia))
-                && (mWebsite == null ? team.mWebsite == null : mWebsite.equals(team.mWebsite));
+                && TextUtils.equals(mNumber, team.mNumber)
+                && TextUtils.equals(mKey, team.mKey)
+                && TextUtils.equals(mTemplateKey, team.mTemplateKey)
+                && TextUtils.equals(mName, team.mName)
+                && TextUtils.equals(mMedia, team.mMedia)
+                && TextUtils.equals(mWebsite, team.mWebsite);
     }
 
     @Override

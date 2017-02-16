@@ -4,6 +4,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
@@ -50,7 +51,7 @@ public class CounterMetric extends ScoutMetric<Integer> {
 
         CounterMetric metric = (CounterMetric) o;
 
-        return mUnit == null ? metric.mUnit == null : mUnit.equals(metric.mUnit);
+        return TextUtils.equals(mUnit, metric.mUnit);
     }
 
     @Override

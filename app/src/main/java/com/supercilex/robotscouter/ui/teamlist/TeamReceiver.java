@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 
 import com.firebase.ui.auth.util.GoogleApiHelper;
 import com.google.android.gms.appinvite.AppInvite;
@@ -68,7 +69,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
         } else { // Received normal intent
             Uri deepLink = mActivity.getIntent().getData();
             if (deepLink == null
-                    || !deepLink.getQueryParameter(UTM_SOURCE).equals(UTM_SOURCE_VALUE)
+                    || !TextUtils.equals(deepLink.getQueryParameter(UTM_SOURCE), UTM_SOURCE_VALUE)
                     || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
                 return; // Nothing to see here
             }

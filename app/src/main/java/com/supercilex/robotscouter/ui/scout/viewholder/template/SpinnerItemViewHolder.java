@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
 import android.support.annotation.Keep;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
@@ -36,6 +37,6 @@ public class SpinnerItemViewHolder extends RecyclerView.ViewHolder implements Sc
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         String text = mItemEditText.getText().toString();
-        if (!hasFocus && !text.equals(mPrevText)) mQuery.getRef().setValue(text);
+        if (!hasFocus && !TextUtils.equals(text, mPrevText)) mQuery.getRef().setValue(text);
     }
 }

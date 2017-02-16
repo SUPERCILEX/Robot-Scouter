@@ -204,7 +204,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle rowHeaderStyle = getRowHeaderStyle(workbook);
 
-        List<Integer> excludedAverageRow = new ArrayList<>();
+        List<Integer> excludedAverageRows = new ArrayList<>();
 
         Row header = teamSheet.createRow(0);
         header.createCell(0); // Create empty top left corner cell
@@ -227,7 +227,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                                          metric,
                                          column,
                                          rowHeaderStyle);
-                    if (metric.getType() == MetricType.NOTE) excludedAverageRow.add(rowNum);
+                    if (metric.getType() == MetricType.NOTE) excludedAverageRows.add(rowNum);
                 } else {
                     List<Row> rows = copyIterator(teamSheet.rowIterator());
 
@@ -235,7 +235,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                         if (k == 0) continue; // Skip header row
 
                         Row row1 = rows.get(k);
-                        if (row1.getCell(0).getStringCellValue().equals(metric.getName())
+                        if (TextUtils.equals(row1.getCell(0).getStringCellValue(), metric.getName())
                                 && row1.getRowNum() == metrics.indexOf(metric) + 1) {
                             setRowValue(column, metric, row1);
                             continue columnIterator;
@@ -252,16 +252,20 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         }
 
 
-        if (scouts.size() <= Constants.SINGLE_ITEM) return;
+        if (scouts.size() > Constants.SINGLE_ITEM) {
+            buildAverageCells(teamSheet, headerStyle, excludedAverageRows);
+        }
+    }
 
+    private void buildAverageCells(Sheet sheet, CellStyle headerStyle, List<Integer> excludedRows) {
         int farthestColumn = 0;
-        Iterator<Row> rowIterator = teamSheet.rowIterator();
+        Iterator<Row> rowIterator = sheet.rowIterator();
         while (rowIterator.hasNext()) {
             int last = rowIterator.next().getLastCellNum();
             if (last > farthestColumn) farthestColumn = last;
         }
 
-        rowIterator = teamSheet.rowIterator();
+        rowIterator = sheet.rowIterator();
         for (int i = 0; rowIterator.hasNext(); i++) {
             Row row = rowIterator.next();
             Cell cell = row.createCell(farthestColumn);
@@ -291,7 +295,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                                     ", TRUE, FALSE)");
                     break;
                 case STRING:
-                    if (excludedAverageRow.contains(i)) return;
+                    if (excludedRows.contains(i)) return;
 
                     cell.setCellFormula(
                             "ARRAYFORMULA(" +
@@ -431,11 +435,12 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                         cell.setCellValue(metric.getName());
                         cell.setCellStyle(rowHeaderStyle);
                     } else {
-                        if (!cell.getStringCellValue().equals(metric.getName())) {
+                        if (!TextUtils.equals(cell.getStringCellValue(), metric.getName())) {
                             Iterator<Cell> iterator = header.cellIterator();
                             boolean exists = false;
                             for (int k = 0; iterator.hasNext(); k++) {
-                                if (metric.getName().equals(iterator.next().getStringCellValue())) {
+                                if (TextUtils.equals(iterator.next().getStringCellValue(),
+                                                     metric.getName())) {
                                     column = k;
                                     exists = true;
                                     break;

@@ -78,9 +78,9 @@ public class User {
 
         User user = (User) o;
 
-        return mUid.equals(user.mUid)
-                && (mEmail == null ? user.mEmail == null : mEmail.equals(user.mEmail))
-                && (mName == null ? user.mName == null : mName.equals(user.mName))
+        return TextUtils.equals(mUid, user.mUid)
+                && TextUtils.equals(mEmail, user.mEmail)
+                && TextUtils.equals(mName, user.mName)
                 && (mPhotoUrl == null ? user.mPhotoUrl == null : mPhotoUrl.equals(user.mPhotoUrl));
     }
 

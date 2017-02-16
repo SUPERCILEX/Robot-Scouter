@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.data.model;
 import android.support.annotation.Keep;
 import android.support.annotation.RestrictTo;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
@@ -78,7 +79,7 @@ public class ScoutMetric<T> {
         ScoutMetric<?> metric = (ScoutMetric<?>) o;
 
         return mType == metric.mType
-                && (mName == null ? metric.mName == null : mName.equals(metric.mName))
+                && TextUtils.equals(mName, metric.mName)
                 && (mValue == null ? metric.mValue == null : mValue.equals(metric.mValue));
     }
 

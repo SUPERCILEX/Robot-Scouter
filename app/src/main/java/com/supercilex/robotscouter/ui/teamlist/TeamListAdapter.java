@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.adapter.FirebaseIndexRecyclerAdapter;
@@ -45,7 +46,7 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
             case MOVED:
                 for (TeamHelper oldTeam : mMenuManager.getSelectedTeams()) {
                     Team team = getItem(index);
-                    if (oldTeam.getTeam().getKey().equals(team.getKey())) {
+                    if (TextUtils.equals(oldTeam.getTeam().getKey(), team.getKey())) {
                         mMenuManager.onSelectedTeamMoved(oldTeam, team.getHelper());
                         break;
                     }

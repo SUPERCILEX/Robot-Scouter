@@ -124,14 +124,13 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     private void checkForMatchingTeamDetails(Team newTeam) {
-        if (mTeam.getHasCustomName() != null && mTeam.getName().equals(newTeam.getName())) {
+        if (TextUtils.equals(mTeam.getName(), newTeam.getName())) {
             mTeam.setHasCustomName(false);
         }
-        if (mTeam.getHasCustomMedia() != null && mTeam.getMedia().equals(newTeam.getMedia())) {
+        if (TextUtils.equals(mTeam.getMedia(), newTeam.getMedia())) {
             mTeam.setHasCustomMedia(false);
         }
-        if (mTeam.getHasCustomWebsite() != null
-                && mTeam.getWebsite().equals(newTeam.getWebsite())) {
+        if (TextUtils.equals(mTeam.getWebsite(), newTeam.getWebsite())) {
             mTeam.setHasCustomWebsite(false);
         }
     }
