@@ -106,12 +106,12 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void updateTeam(Team newTeam) {
+        checkForMatchingTeamDetails(newTeam);
         if (mTeam.equals(newTeam)) {
             getRef().child(Constants.FIREBASE_TIMESTAMP).setValue(mTeam.getServerTimestamp());
             return;
         }
 
-        checkForMatchingTeamDetails(newTeam);
         if (mTeam.getHasCustomName() == null) mTeam.setName(newTeam.getName());
         if (mTeam.getHasCustomMedia() == null) mTeam.setMedia(newTeam.getMedia());
         if (mTeam.getHasCustomWebsite() == null) mTeam.setWebsite(newTeam.getWebsite());
