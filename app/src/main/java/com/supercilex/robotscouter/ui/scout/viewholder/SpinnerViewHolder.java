@@ -41,7 +41,10 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
 
     @Override
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
-        ((SpinnerMetric) mMetric).setSelectedValueIndex(mQuery, itemPosition, mAnimator);
+        SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
+        if (spinnerMetric.getSelectedValueIndex() != itemPosition) {
+            spinnerMetric.setSelectedValueIndex(mQuery, itemPosition, mAnimator);
+        }
     }
 
     @Override

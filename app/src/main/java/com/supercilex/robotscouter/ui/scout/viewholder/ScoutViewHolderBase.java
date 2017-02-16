@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -42,10 +43,14 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
     }
 
     protected void updateMetricName(String name) {
-        mMetric.setName(mQuery, name, mAnimator);
+        if (!TextUtils.equals(mMetric.getName(), name)) {
+            mMetric.setName(mQuery, name, mAnimator);
+        }
     }
 
     protected void updateMetricValue(TMetric value) {
-        mMetric.setValue(mQuery, value, mAnimator);
+        if (!mMetric.getValue().equals(value)) {
+            mMetric.setValue(mQuery, value, mAnimator);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
@@ -43,7 +44,12 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) {
             updateMetricName(mName.getText().toString());
-            ((CounterMetric) mMetric).setUnit(mQuery, mUnit.getText().toString(), mAnimator);
+
+            CounterMetric counterMetric = (CounterMetric) mMetric;
+            String newUnit = mUnit.getText().toString();
+            if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
+                counterMetric.setUnit(mQuery, newUnit, mAnimator);
+            }
         }
     }
 

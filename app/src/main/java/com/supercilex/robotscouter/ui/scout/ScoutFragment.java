@@ -26,6 +26,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     private static final String TEAM_KEY = "team_key";
 
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
+    private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mManager;
     private String mScoutKey;
 
@@ -50,29 +51,34 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recycler_view, container, false);
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
         mManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mManager);
+        mRecyclerView.setLayoutManager(mManager);
 
         mAdapter = new ScoutAdapter(
                 ScoutMetric.class,
                 ScoutViewHolderBase.class,
                 Constants.getScoutMetrics(mScoutKey),
                 getChildFragmentManager(),
-                (SimpleItemAnimator) recyclerView.getItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+                (SimpleItemAnimator) mRecyclerView.getItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
         FirebaseAdapterHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
-        return rootView;
+        return mRecyclerView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRecyclerView.clearFocus();
     }
 
     @Override

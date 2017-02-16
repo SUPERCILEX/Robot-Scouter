@@ -36,9 +36,9 @@ public class ScoutMetric<T> {
     }
 
     public void setName(Query query, String name, SimpleItemAnimator animator) {
-        if (mName.equals(name)) return;
-        mName = name;
         animator.setSupportsChangeAnimations(false);
+
+        mName = name;
         query.getRef().child(Constants.FIREBASE_NAME).setValue(mName);
     }
 
@@ -53,8 +53,9 @@ public class ScoutMetric<T> {
     }
 
     public void setValue(Query query, T value, SimpleItemAnimator animator) {
-        mValue = value;
         animator.setSupportsChangeAnimations(false);
+
+        mValue = value;
         query.getRef().child(Constants.FIREBASE_VALUE).setValue(mValue);
     }
 

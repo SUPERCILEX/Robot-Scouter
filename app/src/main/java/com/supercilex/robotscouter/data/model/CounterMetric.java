@@ -36,10 +36,9 @@ public class CounterMetric extends ScoutMetric<Integer> {
     }
 
     public void setUnit(Query query, String unit, SimpleItemAnimator animator) {
-        if (mUnit != null && mUnit.equals(unit)) return;
-        mUnit = unit;
-
         animator.setSupportsChangeAnimations(false);
+
+        mUnit = unit;
         query.getRef().child(Constants.FIREBASE_UNIT).setValue(mUnit);
     }
 
