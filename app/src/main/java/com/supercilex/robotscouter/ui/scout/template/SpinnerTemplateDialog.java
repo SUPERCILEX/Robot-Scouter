@@ -63,6 +63,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
+        mRootView.findViewById(R.id.list).clearFocus();
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
