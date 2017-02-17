@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.CallSuper;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -26,10 +27,10 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
         mName = (VView) itemView.findViewById(R.id.name);
     }
 
-    public void bind(ScoutMetric<TMetric> metric,
-                     Query query,
-                     FragmentManager manager,
-                     SimpleItemAnimator animator) {
+    public final void bind(ScoutMetric<TMetric> metric,
+                           Query query,
+                           FragmentManager manager,
+                           SimpleItemAnimator animator) {
         mMetric = metric;
         mQuery = query;
         mManager = manager;
@@ -38,6 +39,7 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
         bind();
     }
 
+    @CallSuper
     protected void bind() {
         mName.setText(mMetric.getName());
     }

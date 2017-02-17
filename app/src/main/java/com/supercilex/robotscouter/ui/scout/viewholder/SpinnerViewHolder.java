@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.annotation.CallSuper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
     }
 
     @Override
+    @CallSuper
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
         if (spinnerMetric.getSelectedValueIndex() != itemPosition) {

@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Size;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 
@@ -18,7 +19,7 @@ public class TeamSender {
     private FragmentActivity mActivity;
     private List<TeamHelper> mTeamHelpers;
 
-    protected TeamSender(FragmentActivity activity, List<TeamHelper> teamHelpers) {
+    protected TeamSender(FragmentActivity activity, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mActivity = activity;
         mTeamHelpers = teamHelpers;
 
@@ -34,7 +35,7 @@ public class TeamSender {
      * @return true if a share intent was launched, false otherwise
      */
     public static boolean launchInvitationIntent(FragmentActivity activity,
-                                                 List<TeamHelper> teamHelpers) {
+                                                 @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (MiscellaneousHelper.isOffline(activity)) {
             Snackbar.make(activity.findViewById(R.id.root),
                           R.string.no_connection,

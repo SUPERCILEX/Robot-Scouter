@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
+import android.support.annotation.Size;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
@@ -59,7 +61,8 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
     private Map<TeamHelper, List<Scout>> mScouts;
 
-    protected SpreadsheetWriter(Context context, List<TeamHelper> teamHelpers) {
+    @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    protected SpreadsheetWriter(Context context, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mContext = context;
         mTeamHelpers = teamHelpers;
 
@@ -70,7 +73,8 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     /**
      * @return true if an export was attempted, false otherwise
      */
-    public static boolean writeAndShareTeams(Fragment fragment, List<TeamHelper> teamHelpers) {
+    public static boolean writeAndShareTeams(Fragment fragment,
+                                             @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
 
         if (!EasyPermissions.hasPermissions(fragment.getContext(), PERMS)) {
@@ -82,6 +86,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             return false;
         }
 
+        //noinspection MissingPermission
         new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
                               new ArrayList<>(teamHelpers));
 

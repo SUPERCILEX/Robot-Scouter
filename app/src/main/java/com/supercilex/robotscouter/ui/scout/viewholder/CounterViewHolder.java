@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.CallSuper;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     }
 
     @Override
+    @CallSuper
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.increment_counter) {

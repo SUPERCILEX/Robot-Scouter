@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.annotation.CallSuper;
 import android.view.View;
 import android.widget.CheckBox;
 
@@ -16,6 +17,7 @@ public class CheckboxViewHolder extends ScoutViewHolderBase<Boolean, CheckBox> i
     }
 
     @Override
+    @CallSuper
     public void onClick(View v) {
         updateMetricValue(mName.isChecked());
     }

@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.support.annotation.CallSuper;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView>
     }
 
     @Override
+    @CallSuper
     public void bind() {
         super.bind();
         mNotes.setText(mMetric.getValue());
@@ -23,6 +25,7 @@ public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView>
     }
 
     @Override
+    @CallSuper
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus && v.getId() == R.id.notes) {
             updateMetricValue(mNotes.getText().toString());

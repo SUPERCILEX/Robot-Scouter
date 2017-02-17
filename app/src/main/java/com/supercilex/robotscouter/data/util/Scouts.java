@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Size;
 import android.util.Pair;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,11 +29,11 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
 
     private List<TeamHelper> mTeamHelpers;
 
-    private Scouts(List<TeamHelper> helpers) {
+    private Scouts(@Size(min = 1) List<TeamHelper> helpers) {
         mTeamHelpers = helpers;
     }
 
-    public static Task<Map<TeamHelper, List<Scout>>> getAll(List<TeamHelper> teamHelpers) {
+    public static Task<Map<TeamHelper, List<Scout>>> getAll(@Size(min = 1) List<TeamHelper> teamHelpers) {
         return new Scouts(teamHelpers).build();
     }
 
