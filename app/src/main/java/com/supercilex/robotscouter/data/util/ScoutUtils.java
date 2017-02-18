@@ -41,30 +41,39 @@ public final class ScoutUtils {
     }
 
     public static ScoutMetric getMetric(DataSnapshot snapshot) {
+        ScoutMetric metric;
+
         switch (snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class)) {
             case MetricType.CHECKBOX:
-                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
+                metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
                 });
+                break;
             case MetricType.COUNTER:
-                return new CounterMetric(
+                metric = new CounterMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         snapshot.child(Constants.FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<Integer>() {
                                 }),
                         snapshot.child(Constants.FIREBASE_UNIT).getValue(String.class));
+                break;
             case MetricType.NOTE:
-                return snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
+                metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
                 });
+                break;
             case MetricType.SPINNER:
-                return new SpinnerMetric(
+                metric = new SpinnerMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         snapshot.child(Constants.FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<ArrayList<String>>() {
                                 }),
                         snapshot.child(Constants.FIREBASE_SELECTED_VALUE).getValue(Integer.class));
+                break;
             default:
                 throw new IllegalStateException();
         }
+
+        metric.setKey(snapshot.getKey());
+        return metric;
     }
 
     public static String add(Team team) {

@@ -10,6 +10,7 @@ import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutMetric<T> {
+    @Exclude private String mKey;
     @Exclude private String mName;
     @Exclude private T mValue;
     @Exclude
@@ -24,6 +25,16 @@ public class ScoutMetric<T> {
         mName = name;
         mValue = value;
         mType = type;
+    }
+
+    @Exclude
+    public String getKey() {
+        return mKey;
+    }
+
+    @Exclude
+    public void setKey(String key) {
+        mKey = key;
     }
 
     @Keep

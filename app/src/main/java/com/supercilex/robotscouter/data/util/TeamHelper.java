@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,7 +50,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     private final Team mTeam;
 
-    public TeamHelper(Team team) {
+    public TeamHelper(@NonNull Team team) {
         mTeam = team;
     }
 
@@ -258,9 +259,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     @Override
     public String toString() {
-        return "TeamHelper{" +
-                "mTeam=" + mTeam +
-                '}';
+        return mTeam.toString();
     }
 
     @Override

@@ -26,6 +26,9 @@ import com.supercilex.robotscouter.util.Constants;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -34,7 +37,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -60,6 +62,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     private List<TeamHelper> mTeamHelpers;
 
     private Map<TeamHelper, List<Scout>> mScouts;
+    private CreationHelper mCreationHelper;
 
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     protected SpreadsheetWriter(Context context, @Size(min = 1) List<TeamHelper> teamHelpers) {
@@ -181,12 +184,13 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         setApacheProperties();
 
         Workbook workbook = new XSSFWorkbook();
+        mCreationHelper = workbook.getCreationHelper();
 
-        Sheet sheet = null;
-        if (mTeamHelpers.size() > Constants.SINGLE_ITEM) {
-            sheet = workbook.createSheet("Team Averages");
-            sheet.createFreezePane(1, 1);
-        }
+//        Sheet averageSheet = null;
+//        if (mTeamHelpers.size() > Constants.SINGLE_ITEM) {
+//            averageSheet = workbook.createSheet("Team Averages");
+//            averageSheet.createFreezePane(1, 1);
+//        }
 
         for (TeamHelper teamHelper : mTeamHelpers) {
             Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.getFormattedName()));
@@ -194,12 +198,19 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             buildTeamSheet(teamHelper, teamSheet);
         }
 
-        if (sheet != null) buildTeamAveragesSheet(sheet);
+//        if (averageSheet != null) {
+//            buildTeamAveragesSheet(averageSheet);
+//        }
 
-
-        setColumnWidths(workbook.sheetIterator());
+        setColumnWidths(workbook);
 
         return workbook;
+    }
+
+    private void removeTemporaryComments(Sheet sheet) {
+        for (Row row : sheet) {
+            row.getCell(0).removeCellComment();
+        }
     }
 
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
@@ -240,8 +251,8 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                         if (k == 0) continue; // Skip header row
 
                         Row row1 = rows.get(k);
-                        if (TextUtils.equals(row1.getCell(0).getStringCellValue(), metric.getName())
-                                && row1.getRowNum() == metrics.indexOf(metric) + 1) {
+                        String rowKey = row1.getCell(0).getCellComment().getString().toString();
+                        if (TextUtils.equals(rowKey, metric.getKey())) {
                             setRowValue(column, metric, row1);
                             continue columnIterator;
                         }
@@ -260,17 +271,18 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         if (scouts.size() > Constants.SINGLE_ITEM) {
             buildAverageCells(teamSheet, headerStyle, excludedAverageRows);
         }
+
+        removeTemporaryComments(teamSheet);
     }
 
     private void buildAverageCells(Sheet sheet, CellStyle headerStyle, List<Integer> excludedRows) {
         int farthestColumn = 0;
-        Iterator<Row> rowIterator = sheet.rowIterator();
-        while (rowIterator.hasNext()) {
-            int last = rowIterator.next().getLastCellNum();
+        for (Row row : sheet) {
+            int last = row.getLastCellNum();
             if (last > farthestColumn) farthestColumn = last;
         }
 
-        rowIterator = sheet.rowIterator();
+        Iterator<Row> rowIterator = sheet.rowIterator();
         for (int i = 0; rowIterator.hasNext(); i++) {
             Row row = rowIterator.next();
             Cell cell = row.createCell(farthestColumn);
@@ -280,7 +292,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 continue;
             }
 
-            Cell first = row.getCell(1);
+            Cell first = row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
             String rangeAddress =
                     getRangeAddress(first, row.getCell(cell.getColumnIndex() - 1,
                                                        Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
@@ -344,9 +356,27 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                                       CellStyle headerStyle) {
         Cell headerCell = row.createCell(0);
         headerCell.setCellValue(metric.getName());
+
+        Comment comment = getComment(row, headerCell);
+        comment.setString(mCreationHelper.createRichTextString(metric.getKey()));
+
+        headerCell.setCellComment(comment);
         headerCell.setCellStyle(headerStyle);
 
         setRowValue(column, metric, row);
+    }
+
+    private Comment getComment(Row row, Cell cell) {
+        // When the comment box is visible, have it show in a 1x3 space
+        ClientAnchor anchor = mCreationHelper.createClientAnchor();
+        anchor.setCol1(cell.getColumnIndex());
+        anchor.setCol2(cell.getColumnIndex() + 1);
+        anchor.setRow1(row.getRowNum());
+        anchor.setRow2(row.getRowNum() + 3);
+
+        Comment comment = row.getSheet().createDrawingPatriarch().createCellComment(anchor);
+        comment.setAuthor(mContext.getString(R.string.app_name));
+        return comment;
     }
 
     private void setRowValue(int column, ScoutMetric metric, Row row) {
@@ -365,24 +395,22 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 valueCell.setCellValue(selectedItem);
                 break;
             case MetricType.NOTE:
-                RichTextString note = new XSSFRichTextString(String.valueOf(metric.getValue()));
+                RichTextString note = mCreationHelper.createRichTextString(String.valueOf(metric.getValue()));
                 valueCell.setCellValue(note);
                 break;
         }
     }
 
-    private void setColumnWidths(Iterator<Sheet> sheetIterator) {
+    private void setColumnWidths(Iterable<Sheet> sheetIterator) {
         Paint paint = new Paint();
-        while (sheetIterator.hasNext()) {
-            Sheet sheet = sheetIterator.next();
+        for (Sheet sheet : sheetIterator) {
             Row row = sheet.getRow(0);
 
             int numColumns = row.getLastCellNum();
             for (int i = 0; i < numColumns; i++) {
                 int maxWidth = 2560;
-                Iterator<Row> rowIterator = sheet.rowIterator();
-                while (rowIterator.hasNext()) {
-                    String value = getStringForCell(rowIterator.next().getCell(i));
+                for (Row row1 : sheet) {
+                    String value = getStringForCell(row1.getCell(i));
                     int width = (int) (paint.measureText(value) * COLUMN_WIDTH_SCALE_FACTOR);
                     if (width > maxWidth) maxWidth = width;
                 }
@@ -414,62 +442,6 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         List<T> copy = new ArrayList<>();
         while (iterator.hasNext()) copy.add(iterator.next());
         return copy;
-    }
-
-    private void buildTeamAveragesSheet(Sheet allTeamsSheet) {
-        Row header = allTeamsSheet.createRow(0);
-        CellStyle rowHeaderStyle = getRowHeaderStyle(allTeamsSheet.getWorkbook());
-
-        for (int i = 0, rowNum = 1; i < mTeamHelpers.size(); i++, rowNum++) {
-            TeamHelper helper = mTeamHelpers.get(i);
-
-            Row row = allTeamsSheet.createRow(rowNum);
-            row.createCell(0).setCellValue(helper.getFormattedName());
-
-            List<Scout> scouts = mScouts.get(helper);
-            for (Scout scout : scouts) {
-                List<ScoutMetric> metrics = scout.getMetrics();
-                for (int j = 0, column = 1; j < metrics.size(); j++, column = j + 1) {
-                    ScoutMetric metric = metrics.get(j);
-
-                    if (metric.getType() == MetricType.NOTE) continue;
-
-                    Cell cell = header.getCell(column);
-                    if (cell == null) {
-                        cell = header.createCell(column);
-                        cell.setCellValue(metric.getName());
-                        cell.setCellStyle(rowHeaderStyle);
-                    } else {
-                        if (!TextUtils.equals(cell.getStringCellValue(), metric.getName())) {
-                            Iterator<Cell> iterator = header.cellIterator();
-                            boolean exists = false;
-                            for (int k = 0; iterator.hasNext(); k++) {
-                                if (TextUtils.equals(iterator.next().getStringCellValue(),
-                                                     metric.getName())) {
-                                    column = k;
-                                    exists = true;
-                                    break;
-                                }
-                            }
-                            if (!exists) {
-                                column = header.getLastCellNum();
-                                header.createCell(column).setCellValue(metric.getName());
-                            }
-                        }
-                    }
-
-
-                    Sheet sheet = allTeamsSheet.getWorkbook().getSheet(helper.getFormattedName());
-                    Row row1 = sheet.getRow(column);
-                    Cell averageCell = row1.getCell(row1.getLastCellNum() - 1,
-                                                    Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-
-                    row.createCell(column).setCellFormula(
-                            "'" + helper.getFormattedName() + "'" +
-                                    "!" + averageCell.getAddress().toString());
-                }
-            }
-        }
     }
 
     private void setApacheProperties() {
