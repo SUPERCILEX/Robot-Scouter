@@ -46,6 +46,8 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     private TeamHelper mTeamHelper;
     private AppBarViewHolder mHolder;
     private ScoutPagerAdapter mPagerAdapter;
+    private boolean mInitScouting = true;
+    private Bundle mSavedState;
 
     public static void start(Context context, TeamHelper teamHelper, boolean addScout) {
         Intent starter = teamHelper.getIntent().setClass(context, ScoutActivity.class);
@@ -69,12 +71,13 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mHolder = new AppBarViewHolder(this);
+        mSavedState = savedInstanceState;
 
         mTeamHelper = TeamHelper.get(getIntent());
         mHolder.bind(mTeamHelper);
-        addTeamAndScoutListeners(savedInstanceState);
+        addTeamAndScoutListeners();
 
-        if (savedInstanceState == null && MiscellaneousHelper.isOffline(this)) {
+        if (mSavedState == null && MiscellaneousHelper.isOffline(this)) {
             Snackbar.make(findViewById(R.id.root),
                           R.string.offline_reassurance,
                           Snackbar.LENGTH_LONG)
@@ -151,7 +154,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         return true;
     }
 
-    private void addTeamAndScoutListeners(final Bundle savedInstanceState) {
+    private void addTeamAndScoutListeners() {
         if (TextUtils.isEmpty(mTeamHelper.getTeam().getKey())) {
             TeamIndices.getAll()
                     .addOnSuccessListener(this, new OnSuccessListener<List<DataSnapshot>>() {
@@ -161,13 +164,13 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                                 if (keySnapshot.getValue()
                                         .equals(mTeamHelper.getTeam().getNumberAsLong())) {
                                     mTeamHelper.getTeam().setKey(keySnapshot.getKey());
-                                    addTeamAndScoutListeners(savedInstanceState);
+                                    addTeamAndScoutListeners();
                                     return;
                                 }
                             }
 
                             mTeamHelper.addTeam(ScoutActivity.this);
-                            addTeamAndScoutListeners(savedInstanceState);
+                            addTeamAndScoutListeners();
                             TbaApi.fetch(mTeamHelper.getTeam(), ScoutActivity.this)
                                     .addOnCompleteListener(
                                             ScoutActivity.this,
@@ -186,21 +189,6 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
                     });
         } else {
             mTeamHelper.getRef().addValueEventListener(this);
-
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-            ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-            String scoutKey = null;
-            if (savedInstanceState != null) {
-                scoutKey = ScoutUtils.getScoutKey(savedInstanceState);
-            }
-            mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
-            viewPager.setAdapter(mPagerAdapter);
-            tabLayout.setupWithViewPager(viewPager);
-
-            if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
-                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
-                getIntent().removeExtra(INTENT_ADD_SCOUT);
-            }
         }
     }
 
@@ -215,6 +203,26 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         mTeamHelper = snapshot.getValue(Team.class).getHelper();
         mTeamHelper.getTeam().setKey(key);
         mHolder.bind(mTeamHelper);
+
+        if (mInitScouting) {
+            mInitScouting = false;
+
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+            ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+            String scoutKey = null;
+
+            if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
+            mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
+
+            viewPager.setAdapter(mPagerAdapter);
+            tabLayout.setupWithViewPager(viewPager);
+
+
+            if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
+                getIntent().removeExtra(INTENT_ADD_SCOUT);
+                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+            }
+        }
     }
 
     @Override
