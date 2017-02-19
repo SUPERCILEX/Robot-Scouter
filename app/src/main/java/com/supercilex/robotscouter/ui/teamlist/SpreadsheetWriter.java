@@ -208,9 +208,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     }
 
     private void removeTemporaryComments(Sheet sheet) {
-        for (Row row : sheet) {
-            row.getCell(0).removeCellComment();
-        }
+        for (Row row : sheet) row.getCell(0).removeCellComment();
     }
 
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
@@ -312,7 +310,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                                     ", TRUE, FALSE)");
                     break;
                 case STRING:
-                    if (excludedRows.contains(i)) return;
+                    if (excludedRows.contains(i)) break;
 
                     cell.setCellFormula(
                             "ARRAYFORMULA(" +
