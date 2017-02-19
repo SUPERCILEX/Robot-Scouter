@@ -14,7 +14,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/note_name"
-        android:inputType="text"
+        android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintBaseline_toBaselineOf="@+id/notes"
         app:layout_constraintLeft_toRightOf="@id/reorder"
         tools:ignore="UnknownIdInLayout"

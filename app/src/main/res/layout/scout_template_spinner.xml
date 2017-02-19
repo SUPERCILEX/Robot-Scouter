@@ -16,7 +16,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:hint="@string/spinner_name"
-        android:inputType="text"
+        android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintBaseline_toBaselineOf="@+id/spinner"
         app:layout_constraintLeft_toRightOf="@id/reorder"
         app:layout_constraintRight_toLeftOf="@id/spinner"

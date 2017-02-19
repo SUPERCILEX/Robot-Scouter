@@ -10,7 +10,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:hint="@string/hint_notes"
-        android:inputType="textMultiLine"
+        android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintLeft_toRightOf="@id/name"
         app:layout_constraintRight_toRightOf="parent"/>
 
