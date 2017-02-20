@@ -5,7 +5,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.SpinnerMetric;
+import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.ui.scout.template.SpinnerTemplateDialog;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.Constants;

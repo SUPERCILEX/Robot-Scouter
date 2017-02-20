@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.CounterMetric;
+import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 
 public class CounterTemplateViewHolder extends CounterViewHolder implements ScoutTemplateViewHolder {

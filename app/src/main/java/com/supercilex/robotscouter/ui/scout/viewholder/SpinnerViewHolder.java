@@ -8,7 +8,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.SpinnerMetric;
+import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 
 import java.util.List;
 

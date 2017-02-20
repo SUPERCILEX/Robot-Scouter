@@ -7,7 +7,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.CounterMetric;
+import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
 
 public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> implements View.OnClickListener {
     protected TextView mCount;

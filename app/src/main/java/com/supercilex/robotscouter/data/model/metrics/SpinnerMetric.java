@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.data.model;
+package com.supercilex.robotscouter.data.model.metrics;
 
 import android.support.annotation.Keep;
 import android.support.annotation.RestrictTo;

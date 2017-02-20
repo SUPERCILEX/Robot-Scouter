@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.data.model;
 import android.support.annotation.Keep;
 
 import com.google.firebase.database.Exclude;
+import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 
 import java.util.ArrayList;
 import java.util.List;

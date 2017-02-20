@@ -10,11 +10,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.CounterMetric;
-import com.supercilex.robotscouter.data.model.MetricType;
-import com.supercilex.robotscouter.data.model.ScoutMetric;
-import com.supercilex.robotscouter.data.model.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
+import com.supercilex.robotscouter.data.model.metrics.MetricType;
+import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
+import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
