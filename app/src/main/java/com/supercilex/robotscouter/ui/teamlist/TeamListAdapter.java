@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.firebase.ui.database.ChangeEventListener;
-import com.firebase.ui.database.adapter.FirebaseIndexRecyclerAdapter;
+import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;

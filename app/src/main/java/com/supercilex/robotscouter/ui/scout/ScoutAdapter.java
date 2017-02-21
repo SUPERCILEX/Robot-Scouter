@@ -5,7 +5,7 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.adapter.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
