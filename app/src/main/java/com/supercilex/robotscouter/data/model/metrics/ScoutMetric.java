@@ -19,7 +19,9 @@ public class ScoutMetric<T> {
     private int mType;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public ScoutMetric() {} // Needed for Firebase
+    public ScoutMetric() {
+        // Needed for Firebase
+    }
 
     public ScoutMetric(String name, T value, @MetricType int type) {
         mName = name;
