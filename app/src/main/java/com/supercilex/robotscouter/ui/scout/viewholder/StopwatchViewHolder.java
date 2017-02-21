@@ -21,6 +21,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
+import com.supercilex.robotscouter.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
     private static class Timer implements OnSuccessListener<Void>, OnFailureListener {
         private static final int GAME_TIME = 3;
         private static final String COLON = ":";
+        private static final String LEADING_ZERO = "0";
+
         private static final long START_NANO_TIME = System.nanoTime();
 
         private TaskCompletionSource<Void> mTimerTask;
@@ -111,7 +114,9 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             long minutes = TimeUnit.NANOSECONDS.toMinutes(nanos);
             String formattedTime = minutes + COLON + (seconds - (minutes * 60));
             String[] split = formattedTime.split(COLON);
-            if (split[1].length() <= 1) formattedTime = split[0] + COLON + "0" + split[1];
+            if (split[1].length() <= Constants.SINGLE_ITEM) {
+                formattedTime = split[0] + COLON + LEADING_ZERO + split[1];
+            }
 
             return formattedTime;
         }
