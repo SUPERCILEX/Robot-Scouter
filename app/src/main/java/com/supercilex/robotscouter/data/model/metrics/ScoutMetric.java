@@ -94,14 +94,14 @@ public class ScoutMetric<T> {
         return mType == metric.mType
                 && mRef.equals(metric.mRef)
                 && TextUtils.equals(mName, metric.mName)
-                && (mValue == null ? metric.mValue == null : mValue.equals(metric.mValue));
+                && (getValue() == null ? metric.getValue() == null : getValue().equals(metric.getValue()));
     }
 
     @Override
     public int hashCode() {
         int result = mRef.hashCode();
         result = 31 * result + (mName == null ? 0 : mName.hashCode());
-        result = 31 * result + (mValue == null ? 0 : mValue.hashCode());
+        result = 31 * result + (getValue() == null ? 0 : getValue().hashCode());
         result = 31 * result + mType;
         return result;
     }
@@ -113,8 +113,8 @@ public class ScoutMetric<T> {
         else if (getType() == MetricType.COUNTER) metricType = "Counter";
         else if (getType() == MetricType.NOTE) metricType = "Note";
         else if (getType() == MetricType.SPINNER) metricType = "Spinner";
-        else if (getType() == MetricType.STOPWATCH) metricType = "Spinner";
+        else if (getType() == MetricType.STOPWATCH) metricType = "Stopwatch";
 
-        return metricType + " (" + mRef.getKey() + ")" + " \"" + mName + "\": " + mValue;
+        return metricType + " (" + mRef.getKey() + ")" + " \"" + mName + "\": " + getValue();
     }
 }
