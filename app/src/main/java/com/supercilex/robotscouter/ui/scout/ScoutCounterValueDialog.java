@@ -4,17 +4,16 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.text.InputType;
-import android.text.TextUtils;
 
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 
-public class ScoutNameDialog extends ScoutValueDialogBase<String> {
-    private static final String TAG = "ScoutNameDialog";
+public class ScoutCounterValueDialog extends ScoutValueDialogBase<Integer> {
+    private static final String TAG = "ScoutCounterValueDialog";
 
     public static void show(FragmentManager manager, DatabaseReference ref, String currentValue) {
-        ScoutValueDialogBase dialog = new ScoutNameDialog();
+        ScoutValueDialogBase dialog = new ScoutCounterValueDialog();
 
         Bundle bundle = DatabaseHelper.getRefBundle(ref);
         bundle.putString(CURRENT_VALUE, currentValue);
@@ -26,22 +25,21 @@ public class ScoutNameDialog extends ScoutValueDialogBase<String> {
     @Override
     public void onShow(DialogInterface dialog) {
         super.onShow(dialog);
-        mValue.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        mValue.setInputType(InputType.TYPE_CLASS_NUMBER);
     }
 
     @Override
-    protected String getValue() {
-        String name = mValue.getText().toString();
-        return TextUtils.isEmpty(name) ? null : name;
+    protected Integer getValue() {
+        return Integer.valueOf(mValue.getText().toString());
     }
 
     @Override
     protected int getTitle() {
-        return R.string.edit_scout_name;
+        return R.string.edit_value;
     }
 
     @Override
     protected int getHint() {
-        return R.string.scout_name;
+        return R.string.value;
     }
 }

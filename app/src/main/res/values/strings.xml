@@ -74,6 +74,8 @@
     <string name="edit_scout_name">Edit scout name</string>
     <string name="scout_name">Scout name</string>
     <string name="delete_scout">Delete scout</string>
+    <string name="edit_value">Edit value</string>
+    <string name="value">Value</string>
 
     <string name="edit_scout_template">Edit next scout template</string>
     <string name="edit_spinner_items">Edit items</string>

@@ -140,7 +140,8 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     public boolean onLongClick(View v) {
         ScoutNameDialog.show(
                 mActivity.getSupportFragmentManager(),
-                Constants.FIREBASE_SCOUTS.child(mKeys.get(v.getId())),
+                Constants.FIREBASE_SCOUTS.child(mKeys.get(v.getId()))
+                        .child(Constants.FIREBASE_NAME),
                 mTabLayout.getTabAt(v.getId()).getText().toString());
         return true;
     }
