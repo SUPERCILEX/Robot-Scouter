@@ -17,6 +17,12 @@
 -dontwarn org.w3.**
 -dontwarn com.microsoft.schemas.**
 -dontwarn com.graphbuilder.**
+-dontnote org.apache.**
+-dontnote org.openxmlformats.schemas.**
+-dontnote org.etsi.**
+-dontnote org.w3.**
+-dontnote com.microsoft.schemas.**
+-dontnote com.graphbuilder.**
 
 -keeppackagenames org.apache.poi.ss.formula.function
 
