@@ -5,12 +5,13 @@ import android.support.annotation.RestrictTo;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutMetric<T> {
-    @Exclude private String mKey;
+    @Exclude private DatabaseReference mRef;
     @Exclude private String mName;
     @Exclude private T mValue;
     @Exclude
@@ -18,8 +19,7 @@ public class ScoutMetric<T> {
     private int mType;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public ScoutMetric() { // Needed for Firebase
-    }
+    public ScoutMetric() {} // Needed for Firebase
 
     public ScoutMetric(String name, T value, @MetricType int type) {
         mName = name;
@@ -28,13 +28,13 @@ public class ScoutMetric<T> {
     }
 
     @Exclude
-    public String getKey() {
-        return mKey;
+    public DatabaseReference getRef() {
+        return mRef;
     }
 
     @Exclude
-    public void setKey(String key) {
-        mKey = key;
+    public void setRef(DatabaseReference ref) {
+        mRef = ref;
     }
 
     @Keep
@@ -90,13 +90,15 @@ public class ScoutMetric<T> {
         ScoutMetric<?> metric = (ScoutMetric<?>) o;
 
         return mType == metric.mType
+                && mRef.equals(metric.mRef)
                 && TextUtils.equals(mName, metric.mName)
                 && (mValue == null ? metric.mValue == null : mValue.equals(metric.mValue));
     }
 
     @Override
     public int hashCode() {
-        int result = mName == null ? 0 : mName.hashCode();
+        int result = mRef.hashCode();
+        result = 31 * result + (mName == null ? 0 : mName.hashCode());
         result = 31 * result + (mValue == null ? 0 : mValue.hashCode());
         result = 31 * result + mType;
         return result;
@@ -104,12 +106,13 @@ public class ScoutMetric<T> {
 
     @Override
     public String toString() {
-        String metricType;
+        String metricType = null;
         if (getType() == MetricType.CHECKBOX) metricType = "Checkbox";
         else if (getType() == MetricType.COUNTER) metricType = "Counter";
         else if (getType() == MetricType.NOTE) metricType = "Note";
         else if (getType() == MetricType.SPINNER) metricType = "Spinner";
-        else throw new IllegalStateException();
-        return metricType + " \"" + mName + "\": " + mValue;
+        else if (getType() == MetricType.STOPWATCH) metricType = "Spinner";
+
+        return metricType + " (" + mRef.getKey() + ")" + " \"" + mName + "\": " + mValue;
     }
 }

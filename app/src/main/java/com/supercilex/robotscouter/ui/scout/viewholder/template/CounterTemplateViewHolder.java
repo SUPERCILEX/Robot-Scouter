@@ -48,7 +48,7 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
             CounterMetric counterMetric = (CounterMetric) mMetric;
             String newUnit = mUnit.getText().toString();
             if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
-                counterMetric.setUnit(mQuery, newUnit, mAnimator);
+                counterMetric.setUnit(mRef, newUnit, mAnimator);
             }
         }
     }

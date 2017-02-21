@@ -32,6 +32,28 @@
             app:fab_size="mini"/>
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/add_stopwatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_alarm_white_24dp"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimary"
+            app:fab_colorRipple="@color/colorPrimary"
+            app:fab_label="@string/add_stopwatch"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/add_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_note_white_24dp"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimary"
+            app:fab_colorRipple="@color/colorPrimary"
+            app:fab_label="@string/add_note"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_counter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,17 +73,6 @@
             app:fab_colorPressed="@color/colorPrimary"
             app:fab_colorRipple="@color/colorPrimary"
             app:fab_label="@string/add_spinner"
-            app:fab_size="mini"/>
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_note"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_note_white_24dp"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_colorRipple="@color/colorPrimary"
-            app:fab_label="@string/add_note"
             app:fab_size="mini"/>
 
     </com.github.clans.fab.FloatingActionMenu>

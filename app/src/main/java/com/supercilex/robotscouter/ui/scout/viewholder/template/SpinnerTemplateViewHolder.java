@@ -36,7 +36,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     @Override
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         if (itemPosition == 0) {
-            SpinnerTemplateDialog.show(mManager, mQuery.getRef().child(Constants.FIREBASE_VALUE));
+            SpinnerTemplateDialog.show(mManager, mRef.child(Constants.FIREBASE_VALUE));
             mSpinner.setSelection(getSelectedValueIndex());
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id);

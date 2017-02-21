@@ -141,6 +141,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mRootView.findViewById(R.id.add_counter).setOnClickListener(this);
         mRootView.findViewById(R.id.add_spinner).setOnClickListener(this);
         mRootView.findViewById(R.id.add_note).setOnClickListener(this);
+        mRootView.findViewById(R.id.add_stopwatch).setOnClickListener(this);
 
         // This lets us close the fam when the recyclerview it touched
         mRecyclerView.addOnItemTouchListener(this);
@@ -170,6 +171,11 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 break;
             case R.id.add_note:
                 metricRef.setValue(new ScoutMetric<>("", "", MetricType.NOTE), itemCount);
+                break;
+            case R.id.add_stopwatch:
+                metricRef.setValue(
+                        new ScoutMetric<>("", Collections.<Long>emptyList(), MetricType.STOPWATCH),
+                        itemCount);
                 break;
         }
         mItemTouchCallback.addItemToScrollQueue(itemCount);

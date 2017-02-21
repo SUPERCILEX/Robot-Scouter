@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <include layout="@layout/scout_template_base_reorder"/>
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/stopwatch_name"
+        android:inputType="textMultiLine|textCapSentences"
+        app:layout_constraintBaseline_toBaselineOf="@+id/stopwatch"
+        app:layout_constraintLeft_toRightOf="@id/reorder"
+        tools:ignore="UnknownIdInLayout"
+        tools:layout_constraintLeft_creator="1"
+        tools:text="Example"/>
+
+    <include layout="@layout/scout_base_stopwatch"/>
+
+</android.support.constraint.ConstraintLayout>

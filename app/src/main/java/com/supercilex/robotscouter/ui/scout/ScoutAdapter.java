@@ -17,6 +17,7 @@ import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
+import com.supercilex.robotscouter.ui.scout.viewholder.StopwatchViewHolder;
 
 public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> {
     private FragmentManager mManager;
@@ -43,23 +44,23 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
 
     @Override
     public ScoutViewHolderBase onCreateViewHolder(ViewGroup parent, @MetricType int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case MetricType.CHECKBOX:
                 return new CheckboxViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_checkbox, parent, false));
+                        inflater.inflate(R.layout.scout_checkbox, parent, false));
             case MetricType.COUNTER:
                 return new CounterViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_counter, parent, false));
+                        inflater.inflate(R.layout.scout_counter, parent, false));
             case MetricType.NOTE:
                 return new EditTextViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_notes, parent, false));
+                        inflater.inflate(R.layout.scout_notes, parent, false));
             case MetricType.SPINNER:
                 return new SpinnerViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_spinner, parent, false));
+                        inflater.inflate(R.layout.scout_spinner, parent, false));
+            case MetricType.STOPWATCH:
+                return new StopwatchViewHolder(
+                        inflater.inflate(R.layout.scout_stopwatch, parent, false));
             default:
                 throw new IllegalStateException();
         }

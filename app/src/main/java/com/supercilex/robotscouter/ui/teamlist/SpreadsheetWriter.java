@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
+import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
@@ -249,9 +250,15 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                         if (k == 0) continue; // Skip header row
 
                         Row row1 = rows.get(k);
-                        String rowKey = row1.getCell(0).getCellComment().getString().toString();
-                        if (TextUtils.equals(rowKey, metric.getKey())) {
+                        Cell cell1 = row1.getCell(0);
+                        String rowKey = cell1.getCellComment().getString().toString();
+                        if (TextUtils.equals(rowKey, metric.getRef().getKey())) {
                             setRowValue(column, metric, row1);
+
+                            if (TextUtils.isEmpty(cell1.getStringCellValue())) {
+                                cell1.setCellValue(metric.getName());
+                            }
+
                             continue columnIterator;
                         }
                     }
@@ -285,7 +292,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             Row row = rowIterator.next();
             Cell cell = row.createCell(farthestColumn);
             if (i == 0) {
-                cell.setCellValue("Average");
+                cell.setCellValue(mContext.getString(R.string.average));
                 cell.setCellStyle(headerStyle);
                 continue;
             }
@@ -356,7 +363,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         headerCell.setCellValue(metric.getName());
 
         Comment comment = getComment(row, headerCell);
-        comment.setString(mCreationHelper.createRichTextString(metric.getKey()));
+        comment.setString(mCreationHelper.createRichTextString(metric.getRef().getKey()));
 
         headerCell.setCellComment(comment);
         headerCell.setCellStyle(headerStyle);
@@ -395,6 +402,15 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             case MetricType.NOTE:
                 RichTextString note = mCreationHelper.createRichTextString(String.valueOf(metric.getValue()));
                 valueCell.setCellValue(note);
+                break;
+            case MetricType.STOPWATCH:
+                StopwatchMetric stopwatchMetric = (StopwatchMetric) metric;
+                long sum = 0;
+                List<Long> cycles = stopwatchMetric.getValue();
+                for (Long duration : cycles) {
+                    sum += duration;
+                }
+                valueCell.setCellValue(cycles.isEmpty() ? sum : sum / cycles.size());
                 break;
         }
     }

@@ -9,14 +9,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.database.Query;
+import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 
 public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> extends RecyclerView.ViewHolder {
     protected VView mName;
     protected ScoutMetric<TMetric> mMetric;
-    protected Query mQuery;
+    protected DatabaseReference mRef;
     protected FragmentManager mManager;
     protected SimpleItemAnimator mAnimator;
 
@@ -28,11 +28,11 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
     }
 
     public final void bind(ScoutMetric<TMetric> metric,
-                           Query query,
+                           DatabaseReference ref,
                            FragmentManager manager,
                            SimpleItemAnimator animator) {
         mMetric = metric;
-        mQuery = query;
+        mRef = ref;
         mManager = manager;
         mAnimator = animator;
 
@@ -46,13 +46,33 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
 
     protected void updateMetricName(String name) {
         if (!TextUtils.equals(mMetric.getName(), name)) {
-            mMetric.setName(mQuery, name, mAnimator);
+            mMetric.setName(mRef, name, mAnimator);
         }
     }
 
     protected void updateMetricValue(TMetric value) {
-        if (!mMetric.getValue().equals(value)) {
-            mMetric.setValue(mQuery, value, mAnimator);
+        if (!value.equals(mMetric.getValue())) {
+            mMetric.setValue(mRef, value, mAnimator);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ScoutViewHolderBase<?, ?> base = (ScoutViewHolderBase<?, ?>) o;
+
+        return mMetric.equals(base.mMetric);
+    }
+
+    @Override
+    public int hashCode() {
+        return mMetric.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return mMetric.toString();
     }
 }

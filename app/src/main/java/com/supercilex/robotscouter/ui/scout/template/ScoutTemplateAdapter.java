@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.CheckboxTemplate
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.EditTextTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder;
+import com.supercilex.robotscouter.ui.scout.viewholder.template.StopwatchTemplateViewHolder;
 
 public class ScoutTemplateAdapter extends ScoutAdapter {
     private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mCallback;
@@ -40,23 +41,23 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
 
     @Override
     public ScoutViewHolderBase onCreateViewHolder(ViewGroup parent, @MetricType int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case MetricType.CHECKBOX:
                 return new CheckboxTemplateViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_template_checkbox, parent, false));
+                        inflater.inflate(R.layout.scout_template_checkbox, parent, false));
             case MetricType.COUNTER:
                 return new CounterTemplateViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_template_counter, parent, false));
+                        inflater.inflate(R.layout.scout_template_counter, parent, false));
             case MetricType.NOTE:
                 return new EditTextTemplateViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_template_notes, parent, false));
+                        inflater.inflate(R.layout.scout_template_notes, parent, false));
             case MetricType.SPINNER:
                 return new SpinnerTemplateViewHolder(
-                        LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.scout_template_spinner, parent, false));
+                        inflater.inflate(R.layout.scout_template_spinner, parent, false));
+            case MetricType.STOPWATCH:
+                return new StopwatchTemplateViewHolder(
+                        inflater.inflate(R.layout.scout_template_stopwatch, parent, false));
             default:
                 throw new IllegalStateException();
         }

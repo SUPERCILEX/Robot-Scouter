@@ -15,9 +15,10 @@ import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
+import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.util.Constants;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public final class ScoutUtils {
     private static final String SCOUT_KEY = "scout_key";
@@ -43,7 +44,8 @@ public final class ScoutUtils {
     public static ScoutMetric getMetric(DataSnapshot snapshot) {
         ScoutMetric metric;
 
-        switch (snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class)) {
+        @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
+        switch (type) {
             case MetricType.CHECKBOX:
                 metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
                 });
@@ -64,15 +66,22 @@ public final class ScoutUtils {
                 metric = new SpinnerMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         snapshot.child(Constants.FIREBASE_VALUE)
-                                .getValue(new GenericTypeIndicator<ArrayList<String>>() {
+                                .getValue(new GenericTypeIndicator<List<String>>() {
                                 }),
                         snapshot.child(Constants.FIREBASE_SELECTED_VALUE).getValue(Integer.class));
+                break;
+            case MetricType.STOPWATCH:
+                metric = new StopwatchMetric(
+                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                        snapshot.child(Constants.FIREBASE_VALUE)
+                                .getValue(new GenericTypeIndicator<List<Long>>() {
+                                }));
                 break;
             default:
                 throw new IllegalStateException();
         }
 
-        metric.setKey(snapshot.getKey());
+        metric.setRef(snapshot.getRef());
         return metric;
     }
 
