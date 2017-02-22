@@ -1,7 +1,16 @@
 package com.supercilex.robotscouter.util;
 
+import android.support.annotation.NonNull;
+
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.ChangeEventListener;
+import com.firebase.ui.database.FirebaseIndexArray;
+import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.supercilex.robotscouter.data.model.Team;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,37 +32,76 @@ public final class Constants {
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]
     public static final DatabaseReference FIREBASE_USERS = DatabaseHelper.getRef().child("users");
-
-    // Team
-    public static final DatabaseReference FIREBASE_TEAMS = DatabaseHelper.getRef().child("teams");
+    public static final DatabaseReference FIREBASE_TEAMS_REF =
+            DatabaseHelper.getRef().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
             DatabaseHelper.getRef().child("team-indices");
     public static final String FIREBASE_TIMESTAMP = "timestamp";
-
+    public static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
+        @Override
+        public Team parseSnapshot(DataSnapshot snapshot) {
+            Team team = snapshot.getValue(Team.class);
+            team.setKey(snapshot.getKey());
+            return team;
+        }
+    };
     // Scout
     public static final DatabaseReference FIREBASE_SCOUTS = DatabaseHelper.getRef().child("scouts");
     public static final DatabaseReference FIREBASE_SCOUT_INDICES =
             DatabaseHelper.getRef().child("scout-indices");
     public static final String FIREBASE_METRICS = "metrics";
-
     // Scout views
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
     public static final String FIREBASE_NAME = "name";
     public static final String FIREBASE_UNIT = "unit";
     public static final String FIREBASE_SELECTED_VALUE = "selectedValueIndex";
-
     // Scout template
     public static final DatabaseReference FIREBASE_DEFAULT_TEMPLATE =
             DatabaseHelper.getRef().child("default-template");
     public static final DatabaseReference FIREBASE_SCOUT_TEMPLATES =
             DatabaseHelper.getRef().child("scout-templates");
     public static final String FIREBASE_TEMPLATE_KEY = "templateKey";
-    // [END FIREBASE CHILD NAMES]
-
     public static final String HTML_IMPORT_TEAM;
+    // [END FIREBASE CHILD NAMES]
+    // Team
+    public static FirebaseIndexArray FIREBASE_TEAMS;
 
     static {
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            private final ChangeEventListener mListener = new ChangeEventListener() {
+                @Override
+                public void onChildChanged(EventType type, int index, int oldIndex) {
+                    // Noop
+                }
+
+                @Override
+                public void onDataChanged() {
+                    // Noop
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Noop
+                }
+            };
+
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+                if (auth.getCurrentUser() == null) {
+                    if (FIREBASE_TEAMS != null) {
+                        FIREBASE_TEAMS.removeAllListeners();
+                        FIREBASE_TEAMS = null;
+                    }
+                } else {
+                    FIREBASE_TEAMS = new FirebaseIndexArray(
+                            FIREBASE_TEAM_INDICES.child(auth.getCurrentUser().getUid()),
+                            FIREBASE_TEAMS_REF);
+                    FIREBASE_TEAMS.addChangeEventListener(mListener);
+                }
+            }
+        });
+
         HTML_IMPORT_TEAM = "<!doctype html>\n" +
                 "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\">\n" +
                 "\t<head>\n" +
@@ -784,6 +832,10 @@ public final class Constants {
 
     private Constants() {
         // no instance
+    }
+
+    public static void init() {
+        // Needed for java to perform class initialization
     }
 
     public static DatabaseReference getScoutMetrics(String key) {

@@ -4,8 +4,9 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.firebase.ui.database.ChangeEventListener;
-import com.firebase.ui.database.FirebaseIndexRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
@@ -15,16 +16,15 @@ import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 import java.util.List;
 
-public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamViewHolder> {
+public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
     private Fragment mFragment;
     private TeamMenuManager mMenuManager;
 
     public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
-        super(Team.class,
+        super(Constants.FIREBASE_TEAMS,
+              Team.class,
               R.layout.team_list_row_layout,
-              TeamViewHolder.class,
-              TeamHelper.getIndicesRef(),
-              Constants.FIREBASE_TEAMS);
+              TeamViewHolder.class);
         mFragment = fragment;
         mMenuManager = menuManager;
     }
@@ -68,10 +68,8 @@ public class TeamListAdapter extends FirebaseIndexRecyclerAdapter<Team, TeamView
     }
 
     @Override
-    public Team getItem(int position) {
-        Team team = super.getItem(position);
-        team.setKey(getRef(position).getKey());
-        return team;
+    public Team parseSnapshot(DataSnapshot snapshot) {
+        return Constants.TEAM_PARSER.parseSnapshot(snapshot);
     }
 
     @Override

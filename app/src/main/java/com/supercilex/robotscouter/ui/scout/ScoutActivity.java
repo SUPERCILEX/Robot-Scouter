@@ -16,31 +16,29 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaApi;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
+import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.Collections;
 import java.util.List;
 
-public class ScoutActivity extends AppCompatActivity implements ValueEventListener {
+public class ScoutActivity extends AppCompatActivity implements ChangeEventListener, OnCompleteListener<Team> {
     private static final String INTENT_ADD_SCOUT = "add_scout";
 
     private TeamHelper mTeamHelper;
@@ -75,7 +73,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
 
         mTeamHelper = TeamHelper.get(getIntent());
         mHolder.bind(mTeamHelper);
-        addTeamAndScoutListeners();
+        addListeners();
 
         if (mSavedState == null && MiscellaneousHelper.isOffline(this)) {
             Snackbar.make(findViewById(R.id.root),
@@ -100,7 +98,7 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTeamHelper.getRef().removeEventListener(this);
+        Constants.FIREBASE_TEAMS.removeChangeEventListener(this);
         mPagerAdapter.cleanup();
     }
 
@@ -154,75 +152,75 @@ public class ScoutActivity extends AppCompatActivity implements ValueEventListen
         return true;
     }
 
-    private void addTeamAndScoutListeners() {
+    private void addListeners() {
         if (TextUtils.isEmpty(mTeamHelper.getTeam().getKey())) {
-            TeamIndices.getAll()
-                    .addOnSuccessListener(this, new OnSuccessListener<List<DataSnapshot>>() {
-                        @Override
-                        public void onSuccess(List<DataSnapshot> snapshots) {
-                            for (DataSnapshot keySnapshot : snapshots) {
-                                if (keySnapshot.getValue()
-                                        .equals(mTeamHelper.getTeam().getNumberAsLong())) {
-                                    mTeamHelper.getTeam().setKey(keySnapshot.getKey());
-                                    addTeamAndScoutListeners();
-                                    return;
-                                }
-                            }
+            List<Team> teams =
+                    Constants.FIREBASE_TEAMS.toObjectsList(Team.class, Constants.TEAM_PARSER);
+            for (Team team : teams) {
+                if (team.getNumberAsLong() == mTeamHelper.getTeam().getNumberAsLong()) {
+                    mTeamHelper.getTeam().setKey(team.getKey());
+                    addListeners();
+                    return;
+                }
+            }
 
-                            mTeamHelper.addTeam(ScoutActivity.this);
-                            addTeamAndScoutListeners();
-                            TbaApi.fetch(mTeamHelper.getTeam(), ScoutActivity.this)
-                                    .addOnCompleteListener(
-                                            ScoutActivity.this,
-                                            new OnCompleteListener<Team>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Team> task) {
-                                                    if (task.isSuccessful()) {
-                                                        mTeamHelper.updateTeam(task.getResult());
-                                                    } else {
-                                                        DownloadTeamDataJob.start(ScoutActivity.this,
-                                                                                  mTeamHelper);
-                                                    }
-                                                }
-                                            });
-                        }
-                    });
+            mTeamHelper.addTeam(ScoutActivity.this);
+            addListeners();
+            TbaApi.fetch(mTeamHelper.getTeam(), ScoutActivity.this)
+                    .addOnCompleteListener(this, this);
         } else {
-            mTeamHelper.getRef().addValueEventListener(this);
+            Constants.FIREBASE_TEAMS.addChangeEventListener(this);
         }
     }
 
     @Override
-    public void onDataChange(DataSnapshot snapshot) {
-        if (snapshot.getValue() == null) {
-            finish();
-            return;
+    public void onComplete(@NonNull Task<Team> task) {
+        if (task.isSuccessful()) {
+            mTeamHelper.updateTeam(task.getResult());
+        } else {
+            DownloadTeamDataJob.start(ScoutActivity.this,
+                                      mTeamHelper);
         }
+    }
 
-        String key = mTeamHelper.getTeam().getKey();
-        mTeamHelper = snapshot.getValue(Team.class).getHelper();
-        mTeamHelper.getTeam().setKey(key);
-        mHolder.bind(mTeamHelper);
+    @Override
+    public void onChildChanged(EventType type, int index, int oldIndex) {
+        Team team = Constants.FIREBASE_TEAMS.toObjectsList(Team.class, Constants.TEAM_PARSER)
+                .get(index);
 
-        if (mInitScouting) {
-            mInitScouting = false;
+        if (team.getKey().equals(mTeamHelper.getTeam().getKey())) {
+            if (type == EventType.REMOVED) {
+                finish();
+            } else if (type == EventType.ADDED || type == EventType.CHANGED) {
+                mTeamHelper = team.getHelper();
+                mHolder.bind(mTeamHelper);
 
-            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-            ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-            String scoutKey = null;
+                if (mInitScouting) {
+                    mInitScouting = false;
 
-            if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-            mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
+                    TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+                    ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+                    String scoutKey = null;
 
-            viewPager.setAdapter(mPagerAdapter);
-            tabLayout.setupWithViewPager(viewPager);
+                    if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
+                    mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
+
+                    viewPager.setAdapter(mPagerAdapter);
+                    tabLayout.setupWithViewPager(viewPager);
 
 
-            if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
-                getIntent().removeExtra(INTENT_ADD_SCOUT);
-                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+                    if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
+                        getIntent().removeExtra(INTENT_ADD_SCOUT);
+                        mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+                    }
+                }
             }
         }
+    }
+
+    @Override
+    public void onDataChanged() {
+        // This is completely broken
     }
 
     @Override

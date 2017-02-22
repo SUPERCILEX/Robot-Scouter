@@ -84,7 +84,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                 final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>();
                 teamTasks.add(teamTask.getTask());
 
-                Constants.FIREBASE_TEAMS.child(teamIndexSnapshot.getKey())
+                Constants.FIREBASE_TEAMS_REF.child(teamIndexSnapshot.getKey())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {

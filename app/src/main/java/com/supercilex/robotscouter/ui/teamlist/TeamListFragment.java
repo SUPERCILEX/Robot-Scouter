@@ -23,7 +23,6 @@ import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.MenuManager;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -35,15 +34,13 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     private TeamMenuHelper mMenuHelper;
     private RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter mAdapter;
-    private WeakReference<RecyclerView.LayoutManager> mManager;
+    private RecyclerView.LayoutManager mManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
         mMenuHelper = new TeamMenuHelper(this);
-        FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @Override
@@ -53,13 +50,11 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             // Log uid to help debug db crashes
             FirebaseCrash.log(auth.getCurrentUser().getUid());
 
-            initAdapter();
-            if (mRecyclerView != null) mRecyclerView.setAdapter(mAdapter);
-            FirebaseAdapterHelper.restoreRecyclerViewState(mSavedInstanceState,
-                                                           mAdapter,
-                                                           mManager.get());
+            mAdapter = new TeamListAdapter(this, mMenuHelper);
+            mMenuHelper.setAdapter(mAdapter);
+            mRecyclerView.setAdapter(mAdapter);
+            FirebaseAdapterHelper.restoreRecyclerViewState(mSavedInstanceState, mAdapter, mManager);
             mMenuHelper.restoreState(mSavedInstanceState);
-            mSavedInstanceState = null;
         }
     }
 
@@ -70,11 +65,11 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                              @Nullable Bundle savedInstanceState) {
         mSavedInstanceState = savedInstanceState;
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+
         mMenuHelper.setRecyclerView(mRecyclerView);
         mRecyclerView.setHasFixedSize(true);
-        mManager = new WeakReference<RecyclerView.LayoutManager>(new LinearLayoutManager(getContext()));
-        mRecyclerView.setLayoutManager(mManager.get());
-        mRecyclerView.setAdapter(mAdapter);
+        mManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mManager);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -89,12 +84,14 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             }
         });
 
+        FirebaseAuth.getInstance().addAuthStateListener(this);
+
         return mRecyclerView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager.get());
+        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
         mMenuHelper.saveState(outState);
         super.onSaveInstanceState(outState);
     }
@@ -102,15 +99,13 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRecyclerView.setAdapter(null);
-        mRecyclerView.setLayoutManager(null);
+        FirebaseAuth.getInstance().removeAuthStateListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         cleanup();
-        FirebaseAuth.getInstance().removeAuthStateListener(this);
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
@@ -123,11 +118,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mMenuHelper.onOptionsItemSelected(item);
-    }
-
-    private void initAdapter() {
-        mAdapter = new TeamListAdapter(this, mMenuHelper);
-        mMenuHelper.setAdapter(mAdapter);
     }
 
     private void cleanup() {

@@ -79,7 +79,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public DatabaseReference getRef() {
-        return Constants.FIREBASE_TEAMS.child(mTeam.getKey());
+        return Constants.FIREBASE_TEAMS_REF.child(mTeam.getKey());
     }
 
     public Team getTeam() {
@@ -162,7 +162,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
             @Override
             public void onSuccess(List<DataSnapshot> snapshots) {
                 for (DataSnapshot snapshot : snapshots) {
-                    Constants.FIREBASE_TEAMS
+                    Constants.FIREBASE_TEAMS_REF
                             .child(snapshot.getKey())
                             .addListenerForSingleValueEvent(mTeamTemplateUpdater);
                 }
