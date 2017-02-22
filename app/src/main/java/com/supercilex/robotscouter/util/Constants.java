@@ -32,11 +32,14 @@ public final class Constants {
     // *** CAUTION--DO NOT TOUCH! ***
     // [START FIREBASE CHILD NAMES]
     public static final DatabaseReference FIREBASE_USERS = DatabaseHelper.getRef().child("users");
+
+    // Team
     public static final DatabaseReference FIREBASE_TEAMS_REF =
             DatabaseHelper.getRef().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
             DatabaseHelper.getRef().child("team-indices");
     public static final String FIREBASE_TIMESTAMP = "timestamp";
+
     public static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
         @Override
         public Team parseSnapshot(DataSnapshot snapshot) {
@@ -45,27 +48,31 @@ public final class Constants {
             return team;
         }
     };
+
     // Scout
     public static final DatabaseReference FIREBASE_SCOUTS = DatabaseHelper.getRef().child("scouts");
     public static final DatabaseReference FIREBASE_SCOUT_INDICES =
             DatabaseHelper.getRef().child("scout-indices");
     public static final String FIREBASE_METRICS = "metrics";
+
     // Scout views
     public static final String FIREBASE_VALUE = "value";
     public static final String FIREBASE_TYPE = "type";
     public static final String FIREBASE_NAME = "name";
     public static final String FIREBASE_UNIT = "unit";
     public static final String FIREBASE_SELECTED_VALUE = "selectedValueIndex";
+
     // Scout template
     public static final DatabaseReference FIREBASE_DEFAULT_TEMPLATE =
             DatabaseHelper.getRef().child("default-template");
     public static final DatabaseReference FIREBASE_SCOUT_TEMPLATES =
             DatabaseHelper.getRef().child("scout-templates");
     public static final String FIREBASE_TEMPLATE_KEY = "templateKey";
-    public static final String HTML_IMPORT_TEAM;
     // [END FIREBASE CHILD NAMES]
-    // Team
-    public static FirebaseIndexArray FIREBASE_TEAMS;
+
+    public static final String HTML_IMPORT_TEAM;
+
+    public static FirebaseIndexArray sFirebaseTeams;
 
     static {
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -89,15 +96,15 @@ public final class Constants {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 if (auth.getCurrentUser() == null) {
-                    if (FIREBASE_TEAMS != null) {
-                        FIREBASE_TEAMS.removeAllListeners();
-                        FIREBASE_TEAMS = null;
+                    if (sFirebaseTeams != null) {
+                        sFirebaseTeams.removeAllListeners();
+                        sFirebaseTeams = null;
                     }
                 } else {
-                    FIREBASE_TEAMS = new FirebaseIndexArray(
+                    sFirebaseTeams = new FirebaseIndexArray(
                             FIREBASE_TEAM_INDICES.child(auth.getCurrentUser().getUid()),
                             FIREBASE_TEAMS_REF);
-                    FIREBASE_TEAMS.addChangeEventListener(mListener);
+                    sFirebaseTeams.addChangeEventListener(mListener);
                 }
             }
         });

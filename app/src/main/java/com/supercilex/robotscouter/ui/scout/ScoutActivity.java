@@ -98,7 +98,7 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Constants.FIREBASE_TEAMS.removeChangeEventListener(this);
+        Constants.sFirebaseTeams.removeChangeEventListener(this);
         mPagerAdapter.cleanup();
     }
 
@@ -155,7 +155,7 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
     private void addListeners() {
         if (TextUtils.isEmpty(mTeamHelper.getTeam().getKey())) {
             List<Team> teams =
-                    Constants.FIREBASE_TEAMS.toObjectsList(Team.class, Constants.TEAM_PARSER);
+                    Constants.sFirebaseTeams.toObjectsList(Team.class, Constants.TEAM_PARSER);
             for (Team team : teams) {
                 if (team.getNumberAsLong() == mTeamHelper.getTeam().getNumberAsLong()) {
                     mTeamHelper.getTeam().setKey(team.getKey());
@@ -164,12 +164,11 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
                 }
             }
 
-            mTeamHelper.addTeam(ScoutActivity.this);
+            mTeamHelper.addTeam(this);
             addListeners();
-            TbaApi.fetch(mTeamHelper.getTeam(), ScoutActivity.this)
-                    .addOnCompleteListener(this, this);
+            TbaApi.fetch(mTeamHelper.getTeam(), this).addOnCompleteListener(this, this);
         } else {
-            Constants.FIREBASE_TEAMS.addChangeEventListener(this);
+            Constants.sFirebaseTeams.addChangeEventListener(this);
         }
     }
 
@@ -178,14 +177,13 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
         if (task.isSuccessful()) {
             mTeamHelper.updateTeam(task.getResult());
         } else {
-            DownloadTeamDataJob.start(ScoutActivity.this,
-                                      mTeamHelper);
+            DownloadTeamDataJob.start(this, mTeamHelper);
         }
     }
 
     @Override
     public void onChildChanged(EventType type, int index, int oldIndex) {
-        Team team = Constants.FIREBASE_TEAMS.toObjectsList(Team.class, Constants.TEAM_PARSER)
+        Team team = Constants.sFirebaseTeams.toObjectsList(Team.class, Constants.TEAM_PARSER)
                 .get(index);
 
         if (team.getKey().equals(mTeamHelper.getTeam().getKey())) {
