@@ -128,8 +128,8 @@ dependencies {
     compile 'uk.co.samuelwall:material-tap-target-prompt:1.9.2'
 
     // Leak canary
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    prodReleaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    prodReleaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
