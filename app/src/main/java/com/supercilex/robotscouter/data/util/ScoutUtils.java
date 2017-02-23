@@ -79,7 +79,7 @@ public final class ScoutUtils {
                                 }));
                 break;
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("Unknown metric type: " + type);
         }
 
         metric.setRef(snapshot.getRef());
