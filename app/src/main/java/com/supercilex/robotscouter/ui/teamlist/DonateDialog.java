@@ -100,7 +100,7 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mService == null) {
-            Toast.makeText(getContext(), R.string.general_error, Toast.LENGTH_SHORT).show();
+            showError();
             return;
         }
 
@@ -111,7 +111,13 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
                     ITEM_SKUS[position],
                     ITEM_SKUS[position].contains("subscription") ? "subs" : "inapp",
                     null);
+
             PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+            if (pendingIntent == null) {
+                showError();
+                return;
+            }
+
             startIntentSenderForResult(
                     pendingIntent.getIntentSender(),
                     RC_PURCHASE,
@@ -123,6 +129,10 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
         } catch (RemoteException | IntentSender.SendIntentException e) {
             FirebaseCrash.report(e);
         }
+    }
+
+    private void showError() {
+        Toast.makeText(getContext(), R.string.general_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
