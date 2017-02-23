@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
@@ -87,7 +88,7 @@ public final class ScoutUtils {
 
     public static String add(Team team) {
         DatabaseReference indexRef = getIndicesRef(team.getKey()).push();
-        indexRef.setValue(team.getNumberAsLong());
+        indexRef.setValue(ServerValue.TIMESTAMP);
         DatabaseReference scoutRef = Constants.getScoutMetrics(indexRef.getKey());
 
         FirebaseTransformer scoutCopier = new FirebaseCopier(scoutRef);

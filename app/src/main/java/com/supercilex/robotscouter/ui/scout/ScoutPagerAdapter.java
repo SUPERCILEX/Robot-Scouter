@@ -22,11 +22,6 @@ import java.util.List;
 
 public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         implements ValueEventListener, TabLayout.OnTabSelectedListener, View.OnLongClickListener {
-    private List<String> mKeys = new ArrayList<>();
-    private AppCompatActivity mActivity;
-    private TeamHelper mTeamHelper;
-    private String mCurrentScoutKey;
-    private TabLayout mTabLayout;
     private final ValueEventListener mTabNameListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot snapshot) {
@@ -44,7 +39,14 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
             ScoutPagerAdapter.this.onCancelled(error);
         }
     };
+
+    private List<String> mKeys = new ArrayList<>();
+    private String mCurrentScoutKey;
     private Query mQuery;
+
+    private AppCompatActivity mActivity;
+    private TeamHelper mTeamHelper;
+    private TabLayout mTabLayout;
 
     public ScoutPagerAdapter(AppCompatActivity activity,
                              TabLayout tabLayout,
