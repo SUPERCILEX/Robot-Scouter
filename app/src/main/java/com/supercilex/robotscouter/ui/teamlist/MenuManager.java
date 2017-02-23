@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui;
+package com.supercilex.robotscouter.ui.teamlist;
 
 import android.os.Bundle;
 import android.view.Menu;

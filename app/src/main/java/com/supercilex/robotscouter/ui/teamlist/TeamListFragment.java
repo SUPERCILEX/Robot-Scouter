@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.ui.MenuManager;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 import java.util.List;
