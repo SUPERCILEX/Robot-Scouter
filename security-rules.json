@@ -1,0 +1,44 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": false,
+    "scout-indices": {
+      "$key": {
+        ".write": "auth != null && data.parent().parent().child('team-indices').child(auth.uid).child($key).exists()"
+      }
+    },
+    "scout-templates": {
+      ".write": "auth != null"
+    },
+    "scouts": {
+      "$key": {
+        ".write": "auth != null",
+        "views": {
+          "$metricKey": {
+            "value": {
+              ".validate": "(newData.parent().child('type').val() === 0 && newData.isBoolean()) || (newData.parent().child('type').val() === 1 && newData.isNumber()) || (newData.parent().child('type').val() === 2) || (newData.parent().child('type').val() === 3 && newData.isString())"
+            }
+          }
+        }
+      }
+    },
+    "team-indices": {
+      "$uid": {
+        "$key": {
+          ".write": "auth != null && $uid === auth.uid",
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "teams": {
+      "$key": {
+        ".write": "auth != null && data.parent().parent().child('team-indices').child(auth.uid).child($key).exists()"
+      }
+    },
+    "users": {
+      "$uid": {
+        ".write": "auth != null && $uid === auth.uid"
+      }
+    }
+  }
+}
