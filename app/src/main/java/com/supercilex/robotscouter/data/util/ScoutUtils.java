@@ -78,6 +78,10 @@ public final class ScoutUtils {
                                 .getValue(new GenericTypeIndicator<List<Long>>() {
                                 }));
                 break;
+            case MetricType.HEADER:
+                metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Void>>() {
+                });
+                break;
             default:
                 throw new IllegalStateException("Unknown metric type: " + type);
         }

@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CheckboxTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.EditTextTemplateViewHolder;
+import com.supercilex.robotscouter.ui.scout.viewholder.template.HeaderTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.StopwatchTemplateViewHolder;
 
@@ -58,6 +59,9 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
             case MetricType.STOPWATCH:
                 return new StopwatchTemplateViewHolder(
                         inflater.inflate(R.layout.scout_template_stopwatch, parent, false));
+            case MetricType.HEADER:
+                return new HeaderTemplateViewHolder(
+                        inflater.inflate(R.layout.scout_template_header, parent, false));
             default:
                 throw new IllegalStateException();
         }

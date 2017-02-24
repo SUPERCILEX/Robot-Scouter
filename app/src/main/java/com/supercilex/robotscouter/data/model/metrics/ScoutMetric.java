@@ -114,6 +114,7 @@ public class ScoutMetric<T> {
         else if (getType() == MetricType.NOTE) metricType = "Note";
         else if (getType() == MetricType.SPINNER) metricType = "Spinner";
         else if (getType() == MetricType.STOPWATCH) metricType = "Stopwatch";
+        else if (getType() == MetricType.HEADER) metricType = "Header";
 
         return metricType + " (" + mRef.getKey() + ")" + " \"" + mName + "\": " + getValue();
     }

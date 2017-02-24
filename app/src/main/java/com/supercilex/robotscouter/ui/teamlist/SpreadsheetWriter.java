@@ -236,6 +236,8 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             for (int j = 0, rowNum = 1; j < metrics.size(); j++, rowNum++) {
                 ScoutMetric metric = metrics.get(j);
 
+                if (metric.getType() == MetricType.HEADER) continue; // No data here
+
                 Row row = teamSheet.getRow(rowNum);
                 if (row == null) {
                     createRowAndSetValue(teamSheet.createRow(rowNum),
@@ -411,6 +413,9 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                     sum += duration;
                 }
                 valueCell.setCellValue(cycles.isEmpty() ? sum : sum / cycles.size());
+                break;
+            case MetricType.HEADER:
+                // Headers are skipped because they don't contain any data
                 break;
         }
     }

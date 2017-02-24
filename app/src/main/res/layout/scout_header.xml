@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/name"
     style="@style/RobotScouter.Metric"
-    android:orientation="vertical">
-
-    <include layout="@layout/scout_base_checkbox"/>
-
-</LinearLayout>
+    android:textStyle="bold"
+    android:textSize="18sp"/>

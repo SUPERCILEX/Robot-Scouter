@@ -87,12 +87,14 @@
     <string name="add_spinner">Add selector</string>
     <string name="add_note">Add note</string>
     <string name="add_stopwatch">Add stopwatch</string>
+    <string name="add_header">Add header</string>
     <string name="hint_notes">Notes</string>
     <string name="checkbox_name">Checkbox name</string>
     <string name="counter_name">Counter name</string>
     <string name="spinner_name">Item selector name</string>
     <string name="note_name">Note name</string>
     <string name="stopwatch_name">Stopwatch name</string>
+    <string name="header_name">Header name</string>
 
     <string name="unit">Unit</string>
     <string name="start_stopwatch">Start (0:00)</string>

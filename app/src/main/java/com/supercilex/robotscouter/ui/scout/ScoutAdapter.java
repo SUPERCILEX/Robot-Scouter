@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -61,6 +62,9 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
             case MetricType.STOPWATCH:
                 return new StopwatchViewHolder(
                         inflater.inflate(R.layout.scout_stopwatch, parent, false));
+            case MetricType.HEADER:
+                return new ScoutViewHolderBase<Void, TextView>(
+                        inflater.inflate(R.layout.scout_header, parent, false)) {};
             default:
                 throw new IllegalStateException();
         }

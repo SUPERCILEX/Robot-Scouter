@@ -21,59 +21,40 @@
         app:menu_colorRipple="@color/colorAccent">
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/add_header"
+            style="@style/RobotScouter.Metric.Fab"
+            android:src="@drawable/ic_title_white_24dp"
+            app:fab_label="@string/add_header"/>
+
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/RobotScouter.Metric.Fab"
             android:src="@drawable/ic_check_circle_white_24dp"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_colorRipple="@color/colorPrimary"
-            app:fab_label="@string/add_checkbox"
-            app:fab_size="mini"/>
+            app:fab_label="@string/add_checkbox"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_stopwatch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/RobotScouter.Metric.Fab"
             android:src="@drawable/ic_add_alarm_white_24dp"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_colorRipple="@color/colorPrimary"
-            app:fab_label="@string/add_stopwatch"
-            app:fab_size="mini"/>
+            app:fab_label="@string/add_stopwatch"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_note"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/RobotScouter.Metric.Fab"
             android:src="@drawable/ic_note_white_24dp"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_colorRipple="@color/colorPrimary"
-            app:fab_label="@string/add_note"
-            app:fab_size="mini"/>
+            app:fab_label="@string/add_note"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_counter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/RobotScouter.Metric.Fab"
             android:src="@drawable/ic_count_white_24dp"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_colorRipple="@color/colorPrimary"
-            app:fab_label="@string/add_counter"
-            app:fab_size="mini"/>
+            app:fab_label="@string/add_counter"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/RobotScouter.Metric.Fab"
             android:src="@drawable/ic_list_white_24dp"
-            app:fab_colorNormal="@color/colorPrimary"
-            app:fab_colorPressed="@color/colorPrimary"
-            app:fab_colorRipple="@color/colorPrimary"
-            app:fab_label="@string/add_spinner"
-            app:fab_size="mini"/>
+            app:fab_label="@string/add_spinner"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
