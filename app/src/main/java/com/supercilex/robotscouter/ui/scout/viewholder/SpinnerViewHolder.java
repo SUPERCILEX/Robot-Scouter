@@ -30,8 +30,12 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner.setAdapter(spinnerArrayAdapter);
-        mSpinner.setSelection(spinnerMetric.getSelectedValueIndex());
         mSpinner.setOnItemSelectedListener(this);
+        mSpinner.setSelection(getSelectedValueIndex());
+    }
+
+    protected int getSelectedValueIndex() {
+        return ((SpinnerMetric) mMetric).getSelectedValueIndex();
     }
 
     protected ArrayAdapter<String> getAdapter(SpinnerMetric spinnerMetric) {
@@ -43,10 +47,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<List<String>, TextVie
     @Override
     @CallSuper
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
-        SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
-        if (spinnerMetric.getSelectedValueIndex() != itemPosition) {
-            spinnerMetric.setSelectedValueIndex(mRef, itemPosition, mAnimator);
-        }
+        ((SpinnerMetric) mMetric).setSelectedValueIndex(mRef, itemPosition, mAnimator);
     }
 
     @Override

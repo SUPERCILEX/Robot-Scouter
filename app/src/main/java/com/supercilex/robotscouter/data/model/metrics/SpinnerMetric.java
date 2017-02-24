@@ -34,9 +34,10 @@ public class SpinnerMetric extends ScoutMetric<List<String>> {
     }
 
     public void setSelectedValueIndex(Query query, int selectedValue, SimpleItemAnimator animator) {
-        animator.setSupportsChangeAnimations(false);
-
+        if (selectedValue == mSelectedValueIndex) return;
         mSelectedValueIndex = selectedValue;
+
+        animator.setSupportsChangeAnimations(false);
         query.getRef().child(Constants.FIREBASE_SELECTED_VALUE).setValue(mSelectedValueIndex);
     }
 

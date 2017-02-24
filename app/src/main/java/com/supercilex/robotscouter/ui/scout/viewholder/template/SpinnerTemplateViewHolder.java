@@ -10,9 +10,12 @@ import com.supercilex.robotscouter.ui.scout.template.SpinnerTemplateDialog;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements ScoutTemplateViewHolder {
+    private boolean mIsFakeSelectedValue;
+
     public SpinnerTemplateViewHolder(View itemView) {
         super(itemView);
     }
@@ -20,13 +23,13 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     @Override
     public void bind() {
         super.bind();
-        mSpinner.setSelection(getSelectedValueIndex());
         mName.setOnFocusChangeListener(this);
     }
 
     @Override
     protected ArrayAdapter<String> getAdapter(SpinnerMetric spinnerMetric) {
-        List<String> values = spinnerMetric.getValue();
+        List<String> value = spinnerMetric.getValue();
+        List<String> values = value == null ? new ArrayList<String>() : value;
         values.add(0, itemView.getContext().getString(R.string.edit_spinner_items));
         return new ArrayAdapter<>(itemView.getContext(),
                                   android.R.layout.simple_spinner_item,
@@ -36,6 +39,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     @Override
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         if (itemPosition == 0) {
+            if (mIsFakeSelectedValue) return;
             SpinnerTemplateDialog.show(mManager, mRef.child(Constants.FIREBASE_VALUE));
             mSpinner.setSelection(getSelectedValueIndex());
         } else {
@@ -43,8 +47,15 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
         }
     }
 
-    private int getSelectedValueIndex() {
-        return ((SpinnerMetric) mMetric).getSelectedValueIndex() + 1;
+    @Override
+    protected int getSelectedValueIndex() {
+        int index = super.getSelectedValueIndex() + 1;
+        mIsFakeSelectedValue = false;
+        if (index >= mSpinner.getAdapter().getCount()) {
+            index = 0;
+            mIsFakeSelectedValue = true;
+        }
+        return index;
     }
 
     @Override

@@ -102,6 +102,12 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
             public void onChildChanged(EventType type,
                                        int index,
                                        int oldIndex) {
+                if (getItemCount() == 0) {
+                    dismiss();
+                    mRef.getParent().removeValue();
+                    return;
+                }
+
                 if (mItemTouchCallback.onChildChanged(type, index)) {
                     super.onChildChanged(type, index, oldIndex);
                 }
