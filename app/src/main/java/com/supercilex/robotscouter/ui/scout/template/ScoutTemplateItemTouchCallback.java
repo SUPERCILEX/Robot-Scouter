@@ -10,7 +10,11 @@ import android.view.View;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
@@ -21,6 +25,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
     private View mRootView;
     private FirebaseRecyclerAdapter<T, VH> mAdapter;
     private ItemTouchHelper mItemTouchHelper;
+
     private int mScrollToPosition;
     private boolean mIsItemMoving;
 
@@ -74,9 +79,9 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
     public boolean onMove(RecyclerView recyclerView,
                           RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
-        mIsItemMoving = true;
         int fromPos = viewHolder.getAdapterPosition();
         int toPos = target.getAdapterPosition();
+        mIsItemMoving = true;
 
         mAdapter.notifyItemMoved(fromPos, toPos);
 
@@ -92,20 +97,29 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         final int position = viewHolder.getAdapterPosition();
-        final T deletedObject = mAdapter.getItem(position);
         final DatabaseReference deletedRef = mAdapter.getRef(position);
 
         viewHolder.itemView.clearFocus(); // Needed to prevent the item from being re-added
-        deletedRef.removeValue();
+        deletedRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot snapshot) {
+                deletedRef.removeValue();
 
-        Snackbar.make(mRootView, R.string.deleted, Snackbar.LENGTH_LONG)
-                .setAction(R.string.undo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        deletedRef.setValue(deletedObject, position);
-                    }
-                })
-                .show();
+                Snackbar.make(mRootView, R.string.deleted, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.undo, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                deletedRef.setValue(snapshot.getValue(), position);
+                            }
+                        })
+                        .show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                FirebaseCrash.report(error.toException());
+            }
+        });
     }
 
     @Override
