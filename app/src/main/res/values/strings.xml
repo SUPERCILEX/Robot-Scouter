@@ -8,6 +8,7 @@
 
     <!-- Tutorials -->
     <string name="create_first_team">Create your first team</string>
+    <string name="no_teams">Teams you add appear here</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
@@ -110,4 +111,5 @@
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
     <string name="accessibility_reorder">The reorder icon. It can be used to change the order of scout metrics.</string>
+    <string name="accessibility_no_teams">A robot icon displayed when no teams have been added.</string>
 </resources>

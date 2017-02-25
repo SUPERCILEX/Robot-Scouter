@@ -30,8 +30,10 @@ import java.util.List;
 public class TeamListFragment extends Fragment implements FirebaseAuth.AuthStateListener {
     private Bundle mSavedInstanceState;
 
-    private TeamMenuHelper mMenuHelper;
     private RecyclerView mRecyclerView;
+    private View mRootView;
+    private TeamMenuHelper mMenuHelper;
+
     private FirebaseRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mManager;
 
@@ -63,7 +65,8 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mSavedInstanceState = savedInstanceState;
-        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_team_list, container, false);
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
 
         mMenuHelper.setRecyclerView(mRecyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -85,7 +88,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
         FirebaseAuth.getInstance().addAuthStateListener(this);
 
-        return mRecyclerView;
+        return mRootView;
     }
 
     @Override

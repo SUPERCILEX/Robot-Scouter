@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -41,6 +42,8 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
 
     @Override
     public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+        showNoTeamsHint(getItemCount() == 0);
+
         switch (type) {
             case CHANGED:
             case MOVED:
@@ -75,5 +78,11 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     @Override
     public void onCancelled(DatabaseError error) {
         FirebaseCrash.report(error.toException());
+    }
+
+    private void showNoTeamsHint(boolean isVisible) {
+        View view = mFragment.getView();
+        view.findViewById(R.id.no_teams_icon).setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        view.findViewById(R.id.no_teams_text).setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 }
