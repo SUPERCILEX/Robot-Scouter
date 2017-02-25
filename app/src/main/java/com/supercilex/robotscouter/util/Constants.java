@@ -19,6 +19,7 @@ import java.util.List;
 public final class Constants {
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
+    public static final String SCOUT_TEMPLATE = "com.supercilex.robotscouter.scout_template";
     public static final int SINGLE_ITEM = 1;
 
     /** The list of all supported authentication providers in Firebase Auth UI. */

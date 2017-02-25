@@ -43,6 +43,7 @@
         <exclude name="AccessorClassGeneration"/>
         <exclude name="SwitchStmtsShouldHaveDefault"/>
         <exclude name="GodClass"/>
+        <exclude name="UncommentedEmptyMethodBody"/>
     </rule>
 
     <rule ref="rulesets/java/empty.xml"/>

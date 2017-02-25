@@ -527,27 +527,22 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
         @Override
         public void onActivityStarted(Activity activity) {
-            // Don't care
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
-            // Don't care
         }
 
         @Override
         public void onActivityPaused(Activity activity) {
-            // Don't care
         }
 
         @Override
         public void onActivityStopped(Activity activity) {
-            // Don't care
         }
 
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-            // Don't care
         }
     }
 }

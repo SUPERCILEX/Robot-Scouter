@@ -16,11 +16,8 @@ import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.Indexable;
 import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
 import com.google.firebase.appindexing.builders.Indexables;
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
@@ -45,7 +42,6 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     };
 
     private static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
-    private static final String SCOUT_TEMPLATE = "com.supercilex.robotscouter.scout_template";
     private static final int FRESHNESS_DAYS = 4;
 
     private final Team mTeam;
@@ -96,8 +92,9 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         mTeam.setKey(index.getKey());
         Long number = mTeam.getNumberAsLong();
         index.setValue(number, number);
-        mTeam.setTemplateKey(context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
-                                     .getString(SCOUT_TEMPLATE, null));
+        mTeam.setTemplateKey(context.getSharedPreferences(Constants.SCOUT_TEMPLATE,
+                                                          Context.MODE_PRIVATE)
+                                     .getString(Constants.SCOUT_TEMPLATE, null));
         forceUpdateTeam();
         getRef().child(Constants.FIREBASE_TIMESTAMP).removeValue();
         FirebaseUserActions.getInstance()
@@ -136,38 +133,20 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         }
     }
 
-    public void updateTemplateKey(final String key, Context context) {
+    public void updateTemplateKey(String key, Context context) {
         mTeam.setTemplateKey(key);
         getRef().child(Constants.FIREBASE_TEMPLATE_KEY).setValue(mTeam.getTemplateKey());
-        context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
+        context.getSharedPreferences(Constants.SCOUT_TEMPLATE, Context.MODE_PRIVATE)
                 .edit()
-                .putString(SCOUT_TEMPLATE, key)
+                .putString(Constants.SCOUT_TEMPLATE, key)
                 .apply();
-        TeamIndices.getAll().addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
-            private final ValueEventListener mTeamTemplateUpdater = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    DataSnapshot templateSnapshot = snapshot.child(Constants.FIREBASE_TEMPLATE_KEY);
-                    if (templateSnapshot.getValue() == null) {
-                        templateSnapshot.getRef().setValue(key);
-                    }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    FirebaseCrash.report(error.toException());
-                }
-            };
-
-            @Override
-            public void onSuccess(List<DataSnapshot> snapshots) {
-                for (DataSnapshot snapshot : snapshots) {
-                    Constants.FIREBASE_TEAMS_REF
-                            .child(snapshot.getKey())
-                            .addListenerForSingleValueEvent(mTeamTemplateUpdater);
-                }
+        for (DataSnapshot snapshot : Constants.sFirebaseTeams) {
+            DataSnapshot templateSnapshot = snapshot.child(Constants.FIREBASE_TEMPLATE_KEY);
+            if (templateSnapshot.getValue() == null) {
+                templateSnapshot.getRef().setValue(key);
             }
-        });
+        }
     }
 
     public void deleteTeam(Context context) {
@@ -186,7 +165,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
                                         Constants.FIREBASE_SCOUT_TEMPLATES
                                                 .child(mTeam.getTemplateKey())
                                                 .removeValue();
-                                        appContext.getSharedPreferences(SCOUT_TEMPLATE,
+                                        appContext.getSharedPreferences(Constants.SCOUT_TEMPLATE,
                                                                         Context.MODE_PRIVATE)
                                                 .edit()
                                                 .clear()

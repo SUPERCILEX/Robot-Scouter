@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -78,6 +79,8 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         getTemplateKey();
         setupRecyclerView(savedInstanceState);
         initFabMenu();
+        mRootView.findViewById(R.id.reset_template_all).setOnClickListener(this);
+        mRootView.findViewById(R.id.reset_template_team).setOnClickListener(this);
 
         return mRootView;
     }
@@ -109,6 +112,16 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                     teamHelper.updateTemplateKey(mTemplateKey, getContext());
                 }
             }.performTransformation();
+        } else {
+            String storedTemplateKey = getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE,
+                                                                         Context.MODE_PRIVATE)
+                    .getString(Constants.SCOUT_TEMPLATE, null);
+            if (TextUtils.isEmpty(storedTemplateKey)) {
+                getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString(Constants.SCOUT_TEMPLATE, mTemplateKey)
+                        .apply();
+            }
         }
     }
 
@@ -156,9 +169,17 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
     @Override
     public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
+            ResetTemplateSheet.show(getChildFragmentManager(),
+                                    TeamHelper.get(getArguments()),
+                                    id == R.id.reset_template_all);
+            return;
+        }
+
         DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey).push();
         int itemCount = mAdapter.getItemCount();
-        switch (v.getId()) {
+        switch (id) {
             case R.id.add_checkbox:
                 metricRef.setValue(new ScoutMetric<>("", false, MetricType.CHECKBOX), itemCount);
                 break;

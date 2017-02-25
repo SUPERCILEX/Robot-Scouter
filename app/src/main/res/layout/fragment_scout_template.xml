@@ -6,7 +6,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/recycler_view"/>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/reset_template_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/reset_template_all"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/reset_template_team"/>
+
+        <Button
+            android:id="@+id/reset_template_team"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/reset_template_team"
+            app:layout_constraintLeft_toRightOf="@+id/reset_template_all"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:scrollbars="vertical"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reset_template_team"/>
+
+    </android.support.constraint.ConstraintLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu"

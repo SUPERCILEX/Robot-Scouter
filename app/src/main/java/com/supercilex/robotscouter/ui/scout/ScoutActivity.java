@@ -233,7 +233,6 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
 
     @Override
     public void onDataChanged() {
-        // Don't care
     }
 
     @Override

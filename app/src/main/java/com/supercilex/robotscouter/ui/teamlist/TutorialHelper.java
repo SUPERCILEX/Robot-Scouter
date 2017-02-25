@@ -35,7 +35,6 @@ public final class TutorialHelper {
 
                         @Override
                         public void onHidePromptComplete() {
-                            // We don't care
                         }
                     })
                     .show();
@@ -59,7 +58,6 @@ public final class TutorialHelper {
 
                         @Override
                         public void onHidePromptComplete() {
-                            // We don't care
                         }
                     })
                     .show();
