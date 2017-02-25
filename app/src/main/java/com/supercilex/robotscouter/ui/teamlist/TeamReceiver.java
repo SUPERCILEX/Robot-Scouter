@@ -41,7 +41,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
                                                          null /* listener */)
                                        .addApi(AppInvite.API)
                                        .build(),
-                               mActivity,
+                               null,
                                false)
                 .setResultCallback(this);
     }
