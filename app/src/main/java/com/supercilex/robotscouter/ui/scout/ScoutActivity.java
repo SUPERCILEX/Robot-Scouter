@@ -21,7 +21,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
@@ -183,34 +185,47 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
 
     @Override
     public void onChildChanged(EventType type, int index, int oldIndex) {
+        if (type == EventType.REMOVED) {
+            mTeamHelper.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() == null) {
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    FirebaseCrash.report(error.toException());
+                }
+            });
+            return;
+        }
+
         Team team = Constants.sFirebaseTeams.toObjectsList(Team.class, Constants.TEAM_PARSER)
                 .get(index);
+        if (team.getKey().equals(mTeamHelper.getTeam().getKey())
+                && (type == EventType.ADDED || type == EventType.CHANGED)) {
+            mTeamHelper = team.getHelper();
+            mHolder.bind(mTeamHelper);
 
-        if (team.getKey().equals(mTeamHelper.getTeam().getKey())) {
-            if (type == EventType.REMOVED) {
-                finish();
-            } else if (type == EventType.ADDED || type == EventType.CHANGED) {
-                mTeamHelper = team.getHelper();
-                mHolder.bind(mTeamHelper);
+            if (mInitScouting) {
+                mInitScouting = false;
 
-                if (mInitScouting) {
-                    mInitScouting = false;
+                TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+                ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+                String scoutKey = null;
 
-                    TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-                    ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-                    String scoutKey = null;
+                if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
+                mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
 
-                    if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-                    mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
-
-                    viewPager.setAdapter(mPagerAdapter);
-                    tabLayout.setupWithViewPager(viewPager);
+                viewPager.setAdapter(mPagerAdapter);
+                tabLayout.setupWithViewPager(viewPager);
 
 
-                    if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
-                        getIntent().removeExtra(INTENT_ADD_SCOUT);
-                        mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
-                    }
+                if (getIntent().getBooleanExtra(INTENT_ADD_SCOUT, false)) {
+                    getIntent().removeExtra(INTENT_ADD_SCOUT);
+                    mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
                 }
             }
         }
@@ -218,7 +233,7 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
 
     @Override
     public void onDataChanged() {
-        // This is completely broken
+        // Don't care
     }
 
     @Override
