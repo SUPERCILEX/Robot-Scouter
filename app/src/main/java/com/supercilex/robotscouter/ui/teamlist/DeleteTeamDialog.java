@@ -27,9 +27,9 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
     public static void show(FragmentManager manager, List<TeamHelper> teams) {
         DeleteTeamDialog dialog = new DeleteTeamDialog();
 
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArray(TEAMS_KEY, teams.toArray(new TeamHelper[teams.size()]));
-        dialog.setArguments(bundle);
+        Bundle args = new Bundle();
+        args.putParcelableArray(TEAMS_KEY, teams.toArray(new TeamHelper[teams.size()]));
+        dialog.setArguments(args);
 
         dialog.show(manager, TAG);
     }

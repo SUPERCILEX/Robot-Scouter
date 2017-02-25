@@ -69,9 +69,9 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
 
     public Bundle getBundle() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(INTENT_TEAM, this);
-        return bundle;
+        Bundle args = new Bundle();
+        args.putParcelable(INTENT_TEAM, this);
+        return args;
     }
 
     public DatabaseReference getRef() {

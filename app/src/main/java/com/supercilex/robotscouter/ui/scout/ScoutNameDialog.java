@@ -16,9 +16,9 @@ public class ScoutNameDialog extends ScoutValueDialogBase<String> {
     public static void show(FragmentManager manager, DatabaseReference ref, String currentValue) {
         ScoutValueDialogBase dialog = new ScoutNameDialog();
 
-        Bundle bundle = DatabaseHelper.getRefBundle(ref);
-        bundle.putString(CURRENT_VALUE, currentValue);
-        dialog.setArguments(bundle);
+        Bundle args = DatabaseHelper.getRefBundle(ref);
+        args.putString(CURRENT_VALUE, currentValue);
+        dialog.setArguments(args);
 
         dialog.show(manager, TAG);
     }

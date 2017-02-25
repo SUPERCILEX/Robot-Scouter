@@ -20,9 +20,9 @@ public final class DatabaseHelper {
     }
 
     public static Bundle getRefBundle(DatabaseReference ref) {
-        Bundle bundle = new Bundle();
-        bundle.putString(QUERY_KEY, ref.toString().split("firebaseio.com/")[1]);
-        return bundle;
+        Bundle args = new Bundle();
+        args.putString(QUERY_KEY, ref.toString().split("firebaseio.com/")[1]);
+        return args;
     }
 
     public static DatabaseReference getRef(Bundle bundle) {

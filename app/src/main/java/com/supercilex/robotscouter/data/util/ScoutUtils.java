@@ -29,9 +29,9 @@ public final class ScoutUtils {
     }
 
     public static Bundle getScoutKeyBundle(String key) {
-        Bundle bundle = new Bundle();
-        bundle.putString(SCOUT_KEY, key);
-        return bundle;
+        Bundle args = new Bundle();
+        args.putString(SCOUT_KEY, key);
+        return args;
     }
 
     public static String getScoutKey(Bundle bundle) {

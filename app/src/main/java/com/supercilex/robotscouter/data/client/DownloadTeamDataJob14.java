@@ -20,23 +20,23 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 
 public class DownloadTeamDataJob14 extends JobService {
     public static void start(Context context, TeamHelper teamHelper) {
-        Bundle bundle = new Bundle();
-        bundle.putString("key", teamHelper.getTeam().getKey());
-        bundle.putString("template-key", teamHelper.getTeam().getTemplateKey());
-        bundle.putString("number", teamHelper.getTeam().getNumber());
-        bundle.putString("name", teamHelper.getTeam().getName());
-        bundle.putString("website", teamHelper.getTeam().getWebsite());
-        bundle.putString("media", teamHelper.getTeam().getMedia());
+        Bundle args = new Bundle();
+        args.putString("key", teamHelper.getTeam().getKey());
+        args.putString("template-key", teamHelper.getTeam().getTemplateKey());
+        args.putString("number", teamHelper.getTeam().getNumber());
+        args.putString("name", teamHelper.getTeam().getName());
+        args.putString("website", teamHelper.getTeam().getWebsite());
+        args.putString("media", teamHelper.getTeam().getMedia());
         if (teamHelper.getTeam().getHasCustomName() != null) {
-            bundle.putBoolean("custom-name", teamHelper.getTeam().getHasCustomName());
+            args.putBoolean("custom-name", teamHelper.getTeam().getHasCustomName());
         }
         if (teamHelper.getTeam().getHasCustomWebsite() != null) {
-            bundle.putBoolean("custom-website", teamHelper.getTeam().getHasCustomWebsite());
+            args.putBoolean("custom-website", teamHelper.getTeam().getHasCustomWebsite());
         }
         if (teamHelper.getTeam().getHasCustomMedia() != null) {
-            bundle.putBoolean("custom-media", teamHelper.getTeam().getHasCustomMedia());
+            args.putBoolean("custom-media", teamHelper.getTeam().getHasCustomMedia());
         }
-        bundle.putLong("timestamp", teamHelper.getTeam().getTimestamp());
+        args.putLong("timestamp", teamHelper.getTeam().getTimestamp());
 
         FirebaseJobDispatcher dispatcher =
                 new FirebaseJobDispatcher(new GooglePlayDriver(context.getApplicationContext()));
@@ -45,7 +45,7 @@ public class DownloadTeamDataJob14 extends JobService {
                 .setService(DownloadTeamDataJob14.class)
                 .setTag(teamHelper.getTeam().getNumber())
                 .setTrigger(Trigger.executionWindow(0, 0))
-                .setExtras(bundle)
+                .setExtras(args)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
 

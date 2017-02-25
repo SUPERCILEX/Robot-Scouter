@@ -21,29 +21,29 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class DownloadTeamDataJob21 extends JobService {
     public static void start(Context context, TeamHelper teamHelper) {
-        PersistableBundle bundle = new PersistableBundle();
-        bundle.putString("key", teamHelper.getTeam().getKey());
-        bundle.putString("template-key", teamHelper.getTeam().getTemplateKey());
-        bundle.putString("number", teamHelper.getTeam().getNumber());
-        bundle.putString("name", teamHelper.getTeam().getName());
-        bundle.putString("website", teamHelper.getTeam().getWebsite());
-        bundle.putString("media", teamHelper.getTeam().getMedia());
+        PersistableBundle args = new PersistableBundle();
+        args.putString("key", teamHelper.getTeam().getKey());
+        args.putString("template-key", teamHelper.getTeam().getTemplateKey());
+        args.putString("number", teamHelper.getTeam().getNumber());
+        args.putString("name", teamHelper.getTeam().getName());
+        args.putString("website", teamHelper.getTeam().getWebsite());
+        args.putString("media", teamHelper.getTeam().getMedia());
         if (teamHelper.getTeam().getHasCustomName() != null) {
-            bundle.putInt("custom-name", teamHelper.getTeam().getHasCustomName() ? 1 : 0);
+            args.putInt("custom-name", teamHelper.getTeam().getHasCustomName() ? 1 : 0);
         }
         if (teamHelper.getTeam().getHasCustomWebsite() != null) {
-            bundle.putInt("custom-website", teamHelper.getTeam().getHasCustomWebsite() ? 1 : 0);
+            args.putInt("custom-website", teamHelper.getTeam().getHasCustomWebsite() ? 1 : 0);
         }
         if (teamHelper.getTeam().getHasCustomMedia() != null) {
-            bundle.putInt("custom-media", teamHelper.getTeam().getHasCustomMedia() ? 1 : 0);
+            args.putInt("custom-media", teamHelper.getTeam().getHasCustomMedia() ? 1 : 0);
         }
-        bundle.putLong("timestamp", teamHelper.getTeam().getTimestamp());
+        args.putLong("timestamp", teamHelper.getTeam().getTimestamp());
 
         JobInfo jobInfo = new JobInfo.Builder(Integer.parseInt(teamHelper.getTeam().getNumber()),
                                               new ComponentName(context.getPackageName(),
                                                                 DownloadTeamDataJob21.class.getName()))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setExtras(bundle)
+                .setExtras(args)
                 .build();
 
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);

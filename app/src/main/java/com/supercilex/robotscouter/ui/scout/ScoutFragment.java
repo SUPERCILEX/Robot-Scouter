@@ -33,9 +33,9 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
     public static ScoutFragment newInstance(String teamKey, String scoutKey) {
         ScoutFragment fragment = new ScoutFragment();
 
-        Bundle bundle = ScoutUtils.getScoutKeyBundle(scoutKey);
-        bundle.putString(TEAM_KEY, teamKey);
-        fragment.setArguments(bundle);
+        Bundle args = ScoutUtils.getScoutKeyBundle(scoutKey);
+        args.putString(TEAM_KEY, teamKey);
+        fragment.setArguments(args);
 
         return fragment;
     }
