@@ -38,7 +38,7 @@ public class SpinnerMetric extends ScoutMetric<List<String>> {
         mSelectedValueIndex = selectedValue;
 
         animator.setSupportsChangeAnimations(false);
-        query.getRef().child(Constants.FIREBASE_SELECTED_VALUE).setValue(mSelectedValueIndex);
+        query.getRef().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(mSelectedValueIndex);
     }
 
     @Override

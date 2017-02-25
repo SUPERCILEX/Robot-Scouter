@@ -69,7 +69,8 @@ public final class ScoutUtils {
                         snapshot.child(Constants.FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<List<String>>() {
                                 }),
-                        snapshot.child(Constants.FIREBASE_SELECTED_VALUE).getValue(Integer.class));
+                        snapshot.child(Constants.FIREBASE_SELECTED_VALUE_INDEX)
+                                .getValue(Integer.class));
                 break;
             case MetricType.STOPWATCH:
                 metric = new StopwatchMetric(

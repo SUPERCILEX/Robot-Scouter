@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder;
+import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
@@ -24,15 +25,24 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
     private static final String TAG = "SpinnerTemplateDialog";
 
     private View mRootView;
+    private int mSelectedValueIndex;
+
     private RecyclerView.LayoutManager mManager;
     private FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> mAdapter;
     private ScoutTemplateItemTouchCallback<String, SpinnerItemViewHolder> mItemTouchCallback;
     private DatabaseReference mRef;
 
-    public static void show(FragmentManager manager, DatabaseReference ref) {
+    public static void show(FragmentManager manager,
+                            DatabaseReference ref,
+                            int selectedValueIndex) {
         SpinnerTemplateDialog dialog = new SpinnerTemplateDialog();
-        dialog.setArguments(DatabaseHelper.getRefBundle(ref));
+
+        Bundle args = DatabaseHelper.getRefBundle(ref);
+        args.putInt(Constants.FIREBASE_SELECTED_VALUE_INDEX, selectedValueIndex);
+        dialog.setArguments(args);
+
         dialog.show(manager, TAG);
+
     }
 
     @Override
@@ -41,6 +51,8 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
         mRootView = View.inflate(getContext(), R.layout.scout_template_edit_spinner_items, null);
         mRootView.findViewById(R.id.fab).setOnClickListener(this);
         setupRecyclerView(savedInstanceState);
+
+        mSelectedValueIndex = getArguments().getInt(Constants.FIREBASE_SELECTED_VALUE_INDEX);
     }
 
     @NonNull
@@ -106,6 +118,10 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
                     dismiss();
                     mRef.getParent().removeValue();
                     return;
+                }
+
+                if (type == EventType.REMOVED && mSelectedValueIndex >= getItemCount()) {
+                    mRef.getParent().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(0);
                 }
 
                 if (mItemTouchCallback.onChildChanged(type, index)) {
