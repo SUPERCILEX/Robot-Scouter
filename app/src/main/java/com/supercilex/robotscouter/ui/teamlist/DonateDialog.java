@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
@@ -30,8 +33,11 @@ import org.json.JSONObject;
 
 import java.util.concurrent.Callable;
 
-public class DonateDialog extends DialogFragment implements ServiceConnection, DialogInterface.OnShowListener, AdapterView.OnItemClickListener {
+public class DonateDialog extends DialogFragment
+        implements ServiceConnection, DialogInterface.OnShowListener, AdapterView.OnItemClickListener, OnCompleteListener<Void> {
     private static final String TAG = "DonateDialog";
+    private static final String IS_PROGRESS_SHOWING_KEY = "is_progress_showing_key";
+
     private static final int RC_PURCHASE = 1001;
     private static final String[] ITEM_SKUS = {
             "1.00_donate_single", "1.00_donate_subscription",
@@ -40,9 +46,15 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
             "10.00_donate_single", "10.00_donate_subscription"};
 
     private IInAppBillingService mService;
+    private ProgressDialog mProgressDialog;
 
     public static void show(FragmentManager manager) {
         DonateDialog dialog = new DonateDialog();
+
+        Bundle args = new Bundle();
+        args.putBoolean(IS_PROGRESS_SHOWING_KEY, false);
+        dialog.setArguments(args);
+
         dialog.show(manager, TAG);
     }
 
@@ -69,12 +81,31 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
     @Override
     public void onShow(DialogInterface dialog) {
         ((AlertDialog) dialog).getListView().setOnItemClickListener(this);
+        if (getArguments().getBoolean(IS_PROGRESS_SHOWING_KEY)) initProgressDialog();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (mService != null) getContext().unbindService(this);
+        destroyProgressDialog();
+    }
+
+    private void initProgressDialog() {
+        mProgressDialog = ProgressDialog.show(
+                getContext(),
+                "",
+                getString(R.string.progress_dialog_loading),
+                true);
+
+        getArguments().putBoolean(IS_PROGRESS_SHOWING_KEY, true);
+    }
+
+    private void destroyProgressDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
     }
 
     @Override
@@ -85,11 +116,14 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
                 JSONObject purchaseData = new JSONObject(data.getStringExtra("INAPP_PURCHASE_DATA"));
                 String sku = purchaseData.getString("productId");
                 if (sku.contains("donate_single")) {
+                    initProgressDialog();
+
                     String purchaseToken = purchaseData.getString("purchaseToken");
                     AsyncTaskExecutor.execute(new PurchaseConsumer(mService,
                                                                    getDialog(),
                                                                    getContext().getPackageName(),
-                                                                   purchaseToken));
+                                                                   purchaseToken))
+                            .addOnCompleteListener(this);
                 }
             } catch (JSONException e) {
                 FirebaseCrash.report(e);
@@ -143,6 +177,11 @@ public class DonateDialog extends DialogFragment implements ServiceConnection, D
     @Override
     public void onServiceDisconnected(ComponentName name) {
         mService = null;
+    }
+
+    @Override
+    public void onComplete(@NonNull Task<Void> task) {
+        destroyProgressDialog();
     }
 
     private static final class PurchaseConsumer implements Callable<Void> {

@@ -1,10 +1,14 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
@@ -43,6 +47,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -60,15 +65,17 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     private static final int CELL_WIDTH_CEILING = 7500;
 
     private Context mContext;
+    private ProgressDialogManager mProgressDialog;
     private List<TeamHelper> mTeamHelpers;
 
     private Map<TeamHelper, List<Scout>> mScouts;
     private CreationHelper mCreationHelper;
 
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    protected SpreadsheetWriter(Context context, @Size(min = 1) List<TeamHelper> teamHelpers) {
-        mContext = context;
+    protected SpreadsheetWriter(Fragment fragment, @Size(min = 1) List<TeamHelper> teamHelpers) {
+        mContext = fragment.getContext().getApplicationContext();
         mTeamHelpers = teamHelpers;
+        mProgressDialog = ProgressDialogManager.show(fragment.getActivity());
 
         Collections.sort(mTeamHelpers);
         Scouts.getAll(mTeamHelpers).addOnSuccessListener(new AsyncTaskExecutor(), this);
@@ -91,8 +98,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         }
 
         //noinspection MissingPermission
-        new SpreadsheetWriter(fragment.getContext().getApplicationContext(),
-                              new ArrayList<>(teamHelpers));
+        new SpreadsheetWriter(fragment, new ArrayList<>(teamHelpers));
 
         return true;
     }
@@ -102,6 +108,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         mScouts = scouts;
 
         Uri spreadsheetUri = getFileUri();
+        mProgressDialog.dismiss();
         if (spreadsheetUri == null) return;
 
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
@@ -470,5 +477,77 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                            "com.fasterxml.aalto.stax.OutputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
                            "com.fasterxml.aalto.stax.EventFactoryImpl");
+    }
+
+    private static class ProgressDialogManager implements Application.ActivityLifecycleCallbacks {
+        private Application mApplication;
+        private WeakReference<ProgressDialog> mProgressDialog;
+
+        public ProgressDialogManager(Activity activity) {
+            mApplication = activity.getApplication();
+
+            mApplication.registerActivityLifecycleCallbacks(this);
+            initProgressDialog(activity);
+        }
+
+        private static ProgressDialogManager show(Activity activity) {
+            return new ProgressDialogManager(activity);
+        }
+
+        private void initProgressDialog(Activity activity) {
+            mProgressDialog = new WeakReference<>(ProgressDialog.show(
+                    activity,
+                    "",
+                    activity.getString(R.string.progress_dialog_loading),
+                    true));
+        }
+
+        public void dismiss() {
+            internalDismiss();
+            mApplication.unregisterActivityLifecycleCallbacks(this);
+        }
+
+        private void internalDismiss() {
+            ProgressDialog dialog = mProgressDialog.get();
+            if (dialog != null) {
+                dialog.dismiss();
+                mProgressDialog = new WeakReference<>(null);
+            }
+        }
+
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            if (mProgressDialog.get() == null) initProgressDialog(activity);
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+            internalDismiss();
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+            // Don't care
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            // Don't care
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+            // Don't care
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            // Don't care
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+            // Don't care
+        }
     }
 }
