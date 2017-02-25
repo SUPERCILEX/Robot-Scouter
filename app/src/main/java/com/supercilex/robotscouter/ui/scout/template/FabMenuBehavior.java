@@ -37,11 +37,4 @@ public class FabMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionMe
         ViewCompat.setTranslationY(child, translationY);
         return true;
     }
-
-    @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent,
-                                       FloatingActionMenu child,
-                                       View dependency) {
-        ViewCompat.animate(child).translationY(0).start();
-    }
 }
