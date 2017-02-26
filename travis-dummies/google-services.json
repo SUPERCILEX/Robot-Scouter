@@ -67,6 +67,37 @@
           "status": 2
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529266483286:android:6791875b480065a1",
+        "android_client_info": {
+          "package_name": "com.supercilex.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529266483286-43pcoiq9hfu81rakcpa3o8pung09o52a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWZh_3qAXEn9zzyRMZ0Yp2wCCkXkWbyc4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
     }
   ],
   "configuration_version": "1"
