@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.common.KeyboardDialogBase;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 
-public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase {
+public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase implements Runnable {
     protected static final String CURRENT_VALUE = "current_value";
 
     protected EditText mValue;
@@ -33,8 +33,14 @@ public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase {
         layout.setHint(getString(getHint()));
         mValue = (EditText) layout.findViewById(R.id.value);
         mValue.setText(getArguments().getString(CURRENT_VALUE));
+        mValue.post(this);
 
         return createDialog(layout, getTitle());
+    }
+
+    @Override
+    public void run() {
+        mValue.selectAll();
     }
 
     @Override

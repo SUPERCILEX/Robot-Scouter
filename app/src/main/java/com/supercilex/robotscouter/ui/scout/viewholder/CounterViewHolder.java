@@ -58,7 +58,9 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     }
 
     private String getStringWithoutUnit() {
-        return mCount.getText().toString().replace(((CounterMetric) mMetric).getUnit(), "");
+        String unit = ((CounterMetric) mMetric).getUnit();
+        String count = mCount.getText().toString();
+        return unit == null ? count : count.replace(unit, "");
     }
 
     @SuppressLint("SetTextI18n")
