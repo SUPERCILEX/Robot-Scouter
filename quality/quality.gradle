@@ -8,11 +8,11 @@ def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
 
 checkstyle {
-    toolVersion = '7.5'
+    toolVersion = '7.5.1'
 }
 
 pmd {
-    toolVersion = '5.5.3'
+    toolVersion = '5.5.4'
 }
 
 task checkstyle(type: Checkstyle) {
