@@ -19,6 +19,9 @@ import java.util.List;
 
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
     private Fragment mFragment;
+    private View mNoTeamsImage;
+    private View mNoTeamsText;
+
     private TeamMenuManager mMenuManager;
 
     public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
@@ -28,6 +31,10 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
               TeamViewHolder.class);
         mFragment = fragment;
         mMenuManager = menuManager;
+
+        View view = mFragment.getView();
+        mNoTeamsImage = view.findViewById(R.id.no_teams_icon);
+        mNoTeamsText = view.findViewById(R.id.no_teams_text);
     }
 
     @Override
@@ -44,6 +51,8 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
 
     @Override
     public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+        showNoTeamsHint(getItemCount() == 0);
+
         switch (type) {
             case CHANGED:
             case MOVED:
@@ -81,8 +90,8 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     }
 
     private void showNoTeamsHint(boolean isVisible) {
-        View view = mFragment.getView();
-        view.findViewById(R.id.no_teams_icon).setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        view.findViewById(R.id.no_teams_text).setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        if (mNoTeamsImage == null || mNoTeamsText == null) return;
+        mNoTeamsImage.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        mNoTeamsText.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 }
