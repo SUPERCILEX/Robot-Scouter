@@ -91,7 +91,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         private static final String COLON = ":";
         private static final String LEADING_ZERO = "0";
 
-        private static final long START_NANO_TIME = System.nanoTime();
+        private final long mStartNanoTime = System.nanoTime();
 
         private TaskCompletionSource<Void> mTimerTask;
         private boolean mIsRunning;
@@ -181,7 +181,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         }
 
         private long getElapsedTime() {
-            return System.nanoTime() - START_NANO_TIME;
+            return System.nanoTime() - mStartNanoTime;
         }
 
         private void setText(@StringRes int id, Object... formatArgs) {
