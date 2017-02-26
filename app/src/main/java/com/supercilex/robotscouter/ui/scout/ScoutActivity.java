@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
@@ -119,12 +120,14 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        String teamNumber = mTeamHelper.getTeam().getNumber();
         switch (item.getItemId()) {
             case R.id.action_new_scout:
                 mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
                 break;
             case R.id.action_share:
                 TeamSender.launchInvitationIntent(this, Collections.singletonList(mTeamHelper));
+                AnalyticsHelper.shareTeam(teamNumber);
                 break;
             case R.id.action_visit_tba_team_website:
                 mTeamHelper.visitTbaWebsite(this);
@@ -135,9 +138,11 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
             case R.id.action_edit_scout_templates:
                 DownloadTeamDataJob.cancelAll(this);
                 ScoutTemplateSheet.show(getSupportFragmentManager(), mTeamHelper);
+                AnalyticsHelper.editTemplate(teamNumber);
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(getSupportFragmentManager(), mTeamHelper);
+                AnalyticsHelper.editTeamDetails(teamNumber);
                 break;
             case android.R.id.home:
                 if (NavUtils.shouldUpRecreateTask(

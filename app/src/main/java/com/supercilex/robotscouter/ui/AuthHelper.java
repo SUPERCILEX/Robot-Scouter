@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 public class AuthHelper implements View.OnClickListener {
@@ -183,6 +184,8 @@ public class AuthHelper implements View.OnClickListener {
                         .build();
                 user.add();
                 if (response != null) user.transferData(response.getPrevUid());
+
+                AnalyticsHelper.login();
             } else {
                 if (response == null) return; // User cancelled sign in
 

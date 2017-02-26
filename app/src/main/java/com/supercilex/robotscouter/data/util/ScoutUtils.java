@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -110,6 +111,8 @@ public final class ScoutUtils {
             scoutCopier.setFromQuery(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()));
         }
         scoutCopier.performTransformation();
+
+        AnalyticsHelper.addScout(team.getNumber());
 
         return indexRef.getKey();
     }

@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.common.TeamDetailsDialog;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -103,22 +104,25 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        TeamHelper teamHelper = mSelectedTeams.get(0);
         switch (item.getItemId()) {
             case R.id.action_share:
                 if (TeamSender.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
+                AnalyticsHelper.shareTeam(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_visit_tba_team_website:
-                mSelectedTeams.get(0).visitTbaWebsite(mFragment.getContext());
+                teamHelper.visitTbaWebsite(mFragment.getContext());
                 resetMenu();
                 break;
             case R.id.action_visit_team_website:
-                mSelectedTeams.get(0).visitTeamWebsite(mFragment.getContext());
+                teamHelper.visitTeamWebsite(mFragment.getContext());
                 resetMenu();
                 break;
             case R.id.action_edit_team_details:
-                TeamDetailsDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams.get(0));
+                TeamDetailsDialog.show(mFragment.getChildFragmentManager(), teamHelper);
+                AnalyticsHelper.editTeamDetails(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_export_spreadsheet:
                 exportTeams();

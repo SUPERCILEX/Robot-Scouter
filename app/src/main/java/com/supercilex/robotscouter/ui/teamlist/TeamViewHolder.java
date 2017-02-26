@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -117,6 +118,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
             ScoutActivity.start(mFragment.getContext(),
                                 mTeam.getHelper(),
                                 v.getId() == R.id.new_scout);
+            AnalyticsHelper.selectTeam(mTeam.getNumber());
         }
     }
 

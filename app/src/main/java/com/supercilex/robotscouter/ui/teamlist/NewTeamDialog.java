@@ -13,6 +13,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.common.KeyboardDialogBase;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 
 public class NewTeamDialog extends KeyboardDialogBase {
     private static final String TAG = "NewTeamDialog";
@@ -45,6 +46,7 @@ public class NewTeamDialog extends KeyboardDialogBase {
             ScoutActivity.start(getContext(),
                                 new Team.Builder(teamNumber).build().getHelper(),
                                 true);
+            AnalyticsHelper.selectTeam(teamNumber);
             return true;
         } else {
             mInputLayout.setError(getString(R.string.invalid_team_number));
