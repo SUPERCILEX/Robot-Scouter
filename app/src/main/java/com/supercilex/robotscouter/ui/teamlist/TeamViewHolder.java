@@ -4,7 +4,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -24,7 +23,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TeamViewHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
     private Team mTeam;
-    private Fragment mFragment;
     private TeamMenuManager mMenuManager;
     private boolean mIsItemSelected;
     private boolean mCouldItemBeSelected;
@@ -44,12 +42,10 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     }
 
     public void bind(Team team,
-                     Fragment fragment,
                      TeamMenuManager menuManager,
                      boolean isItemSelected,
                      boolean couldItemBeSelected) {
         mTeam = team;
-        mFragment = fragment;
         mMenuManager = menuManager;
         mIsItemSelected = isItemSelected;
         mCouldItemBeSelected = couldItemBeSelected;
@@ -68,9 +64,9 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     private void updateItemStatus() {
         itemView.setBackground(getRippleDrawable());
         if (mIsItemSelected) {
-            Glide.with(mFragment)
+            Glide.with(itemView.getContext())
                     .load("")
-                    .placeholder(ContextCompat.getDrawable(mFragment.getContext(),
+                    .placeholder(ContextCompat.getDrawable(itemView.getContext(),
                                                            R.drawable.ic_check_circle_grey_144dp))
                     .into(mLogo);
             itemView.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
@@ -82,7 +78,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
 
     private Drawable getRippleDrawable() {
         int[] attrs = new int[]{android.R.attr.selectableItemBackground};
-        TypedArray typedArray = mFragment.getContext().obtainStyledAttributes(attrs);
+        TypedArray typedArray = itemView.getContext().obtainStyledAttributes(attrs);
         try {
             return typedArray.getDrawable(0);
         } finally {
@@ -96,14 +92,14 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
 
     private void setTeamName() {
         if (TextUtils.isEmpty(mTeam.getName())) {
-            mName.setText(mFragment.getString(R.string.unknown_team));
+            mName.setText(itemView.getContext().getString(R.string.unknown_team));
         } else {
             mName.setText(mTeam.getName());
         }
     }
 
     private void setTeamLogo() {
-        Glide.with(mFragment)
+        Glide.with(itemView.getContext())
                 .load(mTeam.getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .error(R.drawable.ic_android_black_144dp)
@@ -115,7 +111,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         if (v.getId() == R.id.logo || mIsItemSelected || mCouldItemBeSelected) {
             onTeamContextMenuRequested();
         } else {
-            ScoutActivity.start(mFragment.getContext(),
+            ScoutActivity.start(itemView.getContext(),
                                 mTeam.getHelper(),
                                 v.getId() == R.id.new_scout);
             AnalyticsHelper.selectTeam(mTeam.getNumber());
@@ -136,16 +132,6 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
 
     @Override
     public String toString() {
-        return "TeamViewHolder{" +
-                "mTeam=" + mTeam +
-                ", mFragment=" + mFragment +
-                ", mMenuManager=" + mMenuManager +
-                ", mIsItemSelected=" + mIsItemSelected +
-                ", mCouldItemBeSelected=" + mCouldItemBeSelected +
-                ", mLogo=" + mLogo +
-                ", mNumber=" + mNumber +
-                ", mName=" + mName +
-                ", mNewScout=" + mNewScout +
-                '}';
+        return mTeam.toString();
     }
 }

@@ -41,7 +41,6 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     public void populateViewHolder(TeamViewHolder teamHolder, Team team, int position) {
         team.getHelper().fetchLatestData(mFragment.getContext());
         teamHolder.bind(team,
-                        mFragment,
                         mMenuManager,
                         mMenuManager.getSelectedTeams().contains(team.getHelper()),
                         !mMenuManager.getSelectedTeams().isEmpty());
