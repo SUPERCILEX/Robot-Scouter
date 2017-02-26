@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.template;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +23,7 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
-public class SpinnerTemplateDialog extends DialogFragment implements View.OnClickListener {
+public class SpinnerTemplateDialog extends DialogFragment implements View.OnClickListener, DialogInterface.OnShowListener {
     private static final String TAG = "SpinnerTemplateDialog";
 
     private View mRootView;
@@ -58,11 +60,18 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getContext())
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.edit_spinner_items)
                 .setView(mRootView)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();
+        dialog.setOnShowListener(this);
+        return dialog;
+    }
+
+    @Override
+    public void onShow(DialogInterface dialog) {
+        ((Dialog) dialog).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
     @Override
@@ -106,7 +115,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
             protected void populateViewHolder(SpinnerItemViewHolder viewHolder,
                                               String itemText,
                                               int position) {
-                viewHolder.bind(itemText, getRef(position));
+                viewHolder.bind(itemText, mSnapshots.get(position));
                 mItemTouchCallback.updateDragStatus(viewHolder, position);
             }
 
@@ -114,14 +123,16 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
             public void onChildChanged(EventType type,
                                        int index,
                                        int oldIndex) {
-                if (getItemCount() == 0) {
-                    dismiss();
-                    mRef.getParent().removeValue();
-                    return;
-                }
+                if (type == EventType.REMOVED) {
+                    if (getItemCount() == 0) {
+                        dismiss();
+                        mRef.getParent().removeValue();
+                        return;
+                    }
 
-                if (type == EventType.REMOVED && mSelectedValueIndex >= getItemCount()) {
-                    mRef.getParent().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(0);
+                    if (mSelectedValueIndex >= getItemCount()) {
+                        mRef.getParent().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(0);
+                    }
                 }
 
                 if (mItemTouchCallback.onChildChanged(type, index)) {

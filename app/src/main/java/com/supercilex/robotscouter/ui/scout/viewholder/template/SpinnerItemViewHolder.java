@@ -6,14 +6,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
-import com.google.firebase.database.Query;
+import com.google.firebase.database.DataSnapshot;
 import com.supercilex.robotscouter.R;
 
 public class SpinnerItemViewHolder extends RecyclerView.ViewHolder implements ScoutTemplateViewHolder {
     private String mPrevText;
 
     private EditText mItemEditText;
-    private Query mQuery;
+    private DataSnapshot mSnapshot;
 
     @Keep
     public SpinnerItemViewHolder(View itemView) {
@@ -21,9 +21,9 @@ public class SpinnerItemViewHolder extends RecyclerView.ViewHolder implements Sc
         mItemEditText = (EditText) itemView.findViewById(R.id.name);
     }
 
-    public void bind(String text, Query query) {
+    public void bind(String text, DataSnapshot snapshot) {
         mPrevText = text;
-        mQuery = query;
+        mSnapshot = snapshot;
 
         mItemEditText.setText(text);
         mItemEditText.setOnFocusChangeListener(this);
@@ -37,6 +37,8 @@ public class SpinnerItemViewHolder extends RecyclerView.ViewHolder implements Sc
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         String text = mItemEditText.getText().toString();
-        if (!hasFocus && !TextUtils.equals(text, mPrevText)) mQuery.getRef().setValue(text);
+        if (!hasFocus && !TextUtils.equals(text, mPrevText)) {
+            mSnapshot.getRef().setValue(text, mSnapshot.getPriority());
+        }
     }
 }

@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ScoutUtils {
@@ -64,11 +65,16 @@ public final class ScoutUtils {
                 });
                 break;
             case MetricType.SPINNER:
+                List<String> values = new ArrayList<>();
+                Iterable<DataSnapshot> children =
+                        snapshot.child(Constants.FIREBASE_VALUE).getChildren();
+                for (DataSnapshot snapshot1 : children) {
+                    values.add(snapshot1.getValue(String.class));
+                }
+
                 metric = new SpinnerMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        snapshot.child(Constants.FIREBASE_VALUE)
-                                .getValue(new GenericTypeIndicator<List<String>>() {
-                                }),
+                        values,
                         snapshot.child(Constants.FIREBASE_SELECTED_VALUE_INDEX)
                                 .getValue(Integer.class));
                 break;
