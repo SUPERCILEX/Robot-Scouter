@@ -92,7 +92,7 @@
     <string name="add_note">Add note</string>
     <string name="add_stopwatch">Add stopwatch</string>
     <string name="add_header">Add header</string>
-    <string name="hint_notes">Notes</string>
+    <string name="hint_notes">Text</string>
     <string name="checkbox_name">Checkbox name</string>
     <string name="counter_name">Counter name</string>
     <string name="spinner_name">Item selector name</string>
