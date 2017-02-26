@@ -38,12 +38,12 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                         mMenuManager,
                         mMenuManager.getSelectedTeams().contains(team.getHelper()),
                         !mMenuManager.getSelectedTeams().isEmpty());
+
+        showNoTeamsHint(getItemCount() == 0);
     }
 
     @Override
     public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
-        showNoTeamsHint(getItemCount() == 0);
-
         switch (type) {
             case CHANGED:
             case MOVED:
