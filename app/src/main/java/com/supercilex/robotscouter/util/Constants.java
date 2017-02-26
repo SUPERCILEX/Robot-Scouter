@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
 
 import java.util.Arrays;
@@ -107,6 +108,17 @@ public final class Constants {
                             FIREBASE_TEAMS_REF);
                     sFirebaseTeams.addChangeEventListener(mListener);
                 }
+            }
+        });
+
+        Constants.FIREBASE_DEFAULT_TEMPLATE.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                // There's a bug in Firebase where the cache is not updated with an addListenerForSingleValueEvent
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
             }
         });
 

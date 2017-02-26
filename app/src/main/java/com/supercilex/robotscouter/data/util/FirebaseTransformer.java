@@ -19,16 +19,13 @@ public abstract class FirebaseTransformer implements ValueEventListener {
         mToQuery = to;
     }
 
+    protected abstract void transform(DataSnapshot transformSnapshot);
+
     @Override
     public void onDataChange(DataSnapshot snapshot) {
         for (DataSnapshot snapshotToTransform : snapshot.getChildren()) {
             transform(snapshotToTransform);
         }
-    }
-
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
     }
 
     public void setFromQuery(Query from) {
@@ -39,5 +36,8 @@ public abstract class FirebaseTransformer implements ValueEventListener {
         mFromQuery.addListenerForSingleValueEvent(this);
     }
 
-    protected abstract void transform(DataSnapshot transformSnapshot);
+    @Override
+    public void onCancelled(DatabaseError error) {
+        FirebaseCrash.report(error.toException());
+    }
 }
