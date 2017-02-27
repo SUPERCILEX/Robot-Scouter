@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
+import com.supercilex.robotscouter.ui.common.OnBackPressedListener;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * Created in {@link R.layout#activity_team_list}
  */
-public class TeamListFragment extends Fragment implements FirebaseAuth.AuthStateListener {
+public class TeamListFragment extends Fragment implements FirebaseAuth.AuthStateListener, OnBackPressedListener {
     private Bundle mSavedInstanceState;
 
     private RecyclerView mRecyclerView;
@@ -129,6 +130,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     /**
      * @see MenuManager#onBackPressed()
      */
+    @Override
     public boolean onBackPressed() {
         return mMenuHelper.onBackPressed();
     }

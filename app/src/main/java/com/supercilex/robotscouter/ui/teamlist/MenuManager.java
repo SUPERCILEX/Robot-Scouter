@@ -4,18 +4,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public interface MenuManager {
+import com.supercilex.robotscouter.ui.common.OnBackPressedListener;
+
+public interface MenuManager extends OnBackPressedListener {
     void onCreateOptionsMenu(Menu menu);
 
     /**
      * @see android.app.Activity#onOptionsItemSelected(MenuItem)
      */
     boolean onOptionsItemSelected(MenuItem item);
-
-    /**
-     * @return true if the back press was consumed, false otherwise.
-     */
-    boolean onBackPressed();
 
     void resetMenu();
 

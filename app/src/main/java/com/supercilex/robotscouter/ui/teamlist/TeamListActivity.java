@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.AuthHelper;
+import com.supercilex.robotscouter.ui.common.OnBackPressedListener;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
@@ -75,9 +76,9 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
 
     @Override
     public void onBackPressed() {
-        TeamListFragment teamListFragment = (TeamListFragment)
+        OnBackPressedListener listener = (OnBackPressedListener)
                 getSupportFragmentManager().findFragmentByTag("team_list_fragment");
-        if (!teamListFragment.onBackPressed()) super.onBackPressed();
+        if (!listener.onBackPressed()) super.onBackPressed();
     }
 
     @Override

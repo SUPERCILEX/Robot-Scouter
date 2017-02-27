@@ -57,7 +57,16 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        Dialog dialog = new BottomSheetDialog(getContext(), getTheme()) {
+            @Override
+            public void onBackPressed() {
+                if (mFam.isOpened()) {
+                    mFam.close(true);
+                } else {
+                    super.onBackPressed();
+                }
+            }
+        };
         dialog.setOnShowListener(this);
         return dialog;
     }
