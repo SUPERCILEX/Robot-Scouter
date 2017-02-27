@@ -40,13 +40,15 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
     private static final String TAG = "ScoutTemplateSheet";
 
-    private RecyclerView mRecyclerView;
-    private ScoutTemplateAdapter mAdapter;
-    private RecyclerView.LayoutManager mManager;
-    private String mTemplateKey;
     private View mRootView;
     private FloatingActionMenu mFam;
     private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mItemTouchCallback;
+
+    private RecyclerView mRecyclerView;
+    private ScoutTemplateAdapter mAdapter;
+    private RecyclerView.LayoutManager mManager;
+
+    private String mTemplateKey;
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
         ScoutTemplateSheet sheet = new ScoutTemplateSheet();
