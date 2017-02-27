@@ -47,6 +47,8 @@ public class AppBarViewHolder {
     }
 
     private void loadImages() {
+        if (mActivity.isDestroyed()) return;
+
         Glide.with(mActivity)
                 .load(mTeamHelper.getTeam().getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
