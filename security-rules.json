@@ -13,10 +13,10 @@
     "scouts": {
       "$key": {
         ".write": "auth != null",
-        "views": {
+        "metrics": {
           "$metricKey": {
             "value": {
-              ".validate": "(newData.parent().child('type').val() === 0 && newData.isBoolean()) || (newData.parent().child('type').val() === 1 && newData.isNumber()) || (newData.parent().child('type').val() === 2) || (newData.parent().child('type').val() === 3 && newData.isString())"
+              ".validate": "(newData.parent().child('type').val() === 0 && newData.isBoolean()) || (newData.parent().child('type').val() === 1 && newData.isNumber()) || (newData.parent().child('type').val() === 2) || (newData.parent().child('type').val() === 3 && newData.isString()) || (newData.parent().child('type').val() === 4) || (newData.parent().child('type').val() === 5 && newData.isString())"
             }
           }
         }
@@ -39,6 +39,10 @@
       "$uid": {
         ".write": "auth != null && $uid === auth.uid"
       }
+    },
+    "debug": {
+      ".read": true,
+      ".write": true
     }
   }
 }
