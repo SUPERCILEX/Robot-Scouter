@@ -3,6 +3,8 @@ package com.supercilex.robotscouter.ui.scout.viewholder;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -17,6 +19,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
@@ -32,7 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextView> implements View.OnClickListener {
+public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextView>
+        implements View.OnClickListener, OnSuccessListener<Void> {
     private static final Map<StopwatchMetric, Timer> TIMERS = new ConcurrentHashMap<>();
 
     private Button mToggleStopwatch;
@@ -51,6 +55,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         super.bind();
         mToggleStopwatch.setOnClickListener(this);
         setText(R.string.start_stopwatch);
+        Tasks.whenAll(getOnViewReadyTask(mName), getOnViewReadyTask(mToggleStopwatch))
+                .addOnSuccessListener(this);
 
         LinearLayoutManager manager =
                 new LinearLayoutManager(itemView.getContext(),
@@ -84,6 +90,32 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
     private void setText(@StringRes int id, Object... formatArgs) {
         mToggleStopwatch.setText(itemView.getResources().getString(id, formatArgs));
+    }
+
+    private Task<Void> getOnViewReadyTask(View view) {
+        final TaskCompletionSource<Void> onReadTask = new TaskCompletionSource<>();
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                onReadTask.setResult(null);
+            }
+        });
+        return onReadTask.getTask();
+    }
+
+    @Override
+    public void onSuccess(Void aVoid) {
+        ConstraintLayout layout = (ConstraintLayout) itemView;
+        ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
+
+        set.connect(R.id.list,
+                    ConstraintSet.TOP,
+                    mToggleStopwatch.getBottom() < mName.getBottom() ? R.id.name : R.id.stopwatch,
+                    ConstraintSet.BOTTOM,
+                    0);
+
+        set.applyTo(layout);
     }
 
     private static class Timer implements OnSuccessListener<Void>, OnFailureListener {
@@ -192,63 +224,71 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         }
     }
 
-    private class Adapter extends RecyclerView.Adapter<Holder> {
+    private class Adapter extends RecyclerView.Adapter<DataHolder> {
+        private static final int DATA_ITEM = 0;
+        private static final int AVERAGE_ITEM = 1;
+
         @Override
-        public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+        public DataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.scout_stopwatch_cycle_item, parent, false);
+
             ViewGroup.LayoutParams params = view.getLayoutParams();
             params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
             view.setLayoutParams(params);
-            return new Holder(view);
+
+            return viewType == DATA_ITEM ? new DataHolder(view) : new AverageHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(Holder holder, int position) {
-            holder.bind();
+        public void onBindViewHolder(DataHolder holder, int position) {
+            List<Long> cycles = mMetric.getValue();
+            if (holder instanceof AverageHolder) {
+                ((AverageHolder) holder).bind(cycles);
+            } else {
+                if (containsAverageItems()) {
+                    int realIndex = position - 1;
+                    holder.bind(cycles.get(realIndex), realIndex);
+                } else {
+                    holder.bind(cycles.get(position), position);
+                }
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mMetric.getValue().size() + 1;
+            int size = mMetric.getValue().size();
+            return containsAverageItems() ? size + 1 : size;
         }
 
         @Override
         public int getItemViewType(int position) {
-            return R.layout.scout_stopwatch_cycle_item;
+            return containsAverageItems() && position == 0 ? AVERAGE_ITEM : DATA_ITEM;
+        }
+
+        private boolean containsAverageItems() {
+            return mMetric.getValue().size() > 1;
         }
     }
 
-    private class Holder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
-        private final TextView mText1;
-        private final TextView mText2;
+    private class DataHolder extends RecyclerView.ViewHolder
+            implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
+        protected TextView mTitle;
+        protected TextView mValue;
+        private int mIndex;
 
-        public Holder(View itemView) {
+        public DataHolder(View itemView) {
             super(itemView);
-            mText1 = (TextView) itemView.findViewById(android.R.id.text1);
-            mText2 = (TextView) itemView.findViewById(android.R.id.text2);
+            mTitle = (TextView) itemView.findViewById(android.R.id.text1);
+            mValue = (TextView) itemView.findViewById(android.R.id.text2);
         }
 
-        private void bind() {
-            List<Long> cycles = mMetric.getValue();
-            if (getAdapterPosition() == 0) {
-                mText1.setText(itemView.getContext().getString(R.string.average));
+        public void bind(long nanoTime, int index) {
+            mIndex = index;
 
-                long sum = 0;
-                for (Long duration : cycles) {
-                    sum += duration;
-                }
-                long nanos = cycles.isEmpty() ? sum : sum / cycles.size();
-                mText2.setText(Timer.getFormattedTime(nanos));
-            } else {
-                int realPosition = getAdapterPosition() - 1;
-
-                mText1.setText(itemView.getContext()
-                                       .getString(R.string.cycle_item, realPosition + 1));
-                long duration = cycles.get(realPosition);
-                mText2.setText(Timer.getFormattedTime(duration));
-
-                itemView.setOnCreateContextMenuListener(this);
-            }
+            itemView.setOnCreateContextMenuListener(this);
+            mTitle.setText(itemView.getContext().getString(R.string.cycle_item, mIndex + 1));
+            mValue.setText(Timer.getFormattedTime(nanoTime));
         }
 
         @Override
@@ -261,9 +301,26 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             ArrayList<Long> newCycles = new ArrayList<>(mMetric.getValue());
-            newCycles.remove(getAdapterPosition() - 1);
+            newCycles.remove(mIndex);
             updateMetricValue(newCycles);
             return true;
+        }
+    }
+
+    private class AverageHolder extends DataHolder {
+        public AverageHolder(View itemView) {
+            super(itemView);
+        }
+
+        public void bind(List<Long> cycles) {
+            mTitle.setText(R.string.average);
+
+            long sum = 0;
+            for (Long duration : cycles) {
+                sum += duration;
+            }
+            long nanos = cycles.isEmpty() ? sum : sum / cycles.size();
+            mValue.setText(Timer.getFormattedTime(nanos));
         }
     }
 }

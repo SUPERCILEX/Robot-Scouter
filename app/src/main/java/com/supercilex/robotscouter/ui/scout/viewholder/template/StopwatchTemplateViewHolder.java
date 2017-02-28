@@ -20,7 +20,7 @@ public class StopwatchTemplateViewHolder extends StopwatchViewHolder implements 
         ConstraintLayout layout = (ConstraintLayout) itemView;
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
-        set.connect(R.id.list, ConstraintSet.TOP, R.id.name, ConstraintSet.BOTTOM, 0);
+        set.connect(R.id.list, ConstraintSet.LEFT, R.id.reorder, ConstraintSet.RIGHT, 0);
         set.applyTo(layout);
     }
 

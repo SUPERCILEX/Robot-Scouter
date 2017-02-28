@@ -88,7 +88,7 @@
 
     <string name="add_checkbox">Add checkbox</string>
     <string name="add_counter">Add counter</string>
-    <string name="add_spinner">Add selector</string>
+    <string name="add_spinner">Add item selector</string>
     <string name="add_note">Add note</string>
     <string name="add_stopwatch">Add stopwatch</string>
     <string name="add_header">Add header</string>
