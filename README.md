@@ -4,7 +4,8 @@
     <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="270" height="100"/>
 </a>
 
-Robot Scouter is an open-source Android app that makes FIRST robot scouting simple and collaborative.
+Robot Scouter is an open-source Android app that makes FRC and other FIRST competition robot
+scouting simple and collaborative.
 
 ## Features:
 
@@ -13,7 +14,9 @@ Robot Scouter is an open-source Android app that makes FIRST robot scouting simp
   - Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
  Android N and use split screen mode to scout several teams at once.
   - Customizable scouting templates with several different metrics to choose from:
+    - header/title
     - true/false (checkbox)
+    - stopwatch (for keeping track of cycle time)
     - number (counter)
     - list (selector)
     - text (notes)
