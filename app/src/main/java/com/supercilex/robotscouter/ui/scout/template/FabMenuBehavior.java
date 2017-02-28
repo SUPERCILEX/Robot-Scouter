@@ -46,4 +46,30 @@ public class FabMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionMe
                 Math.max(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
         ViewCompat.setTranslationY(child, translationY);
     }
+
+    @Override
+    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout,
+                                       FloatingActionMenu child,
+                                       View directTargetChild,
+                                       View target,
+                                       int nestedScrollAxes) {
+        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
+    }
+
+    @Override
+    public void onNestedScroll(CoordinatorLayout coordinatorLayout,
+                               FloatingActionMenu child,
+                               View target,
+                               int dxConsumed,
+                               int dyConsumed,
+                               int dxUnconsumed,
+                               int dyUnconsumed) {
+        if (dyConsumed > 0) {
+            // User scrolled down -> hide the FAB
+            child.hideMenuButton(true);
+        } else if (dyConsumed < 0) {
+            // User scrolled up -> show the FAB
+            child.showMenuButton(true);
+        }
+    }
 }
