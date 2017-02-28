@@ -2,29 +2,36 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/reset_template_all"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/reset_template_all"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/reset_template_team"/>
+            tools:ignore="ButtonStyle">
 
-        <Button
-            android:id="@+id/reset_template_team"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/reset_template_team"
-            app:layout_constraintLeft_toRightOf="@+id/reset_template_all"
-            app:layout_constraintRight_toRightOf="parent"/>
+            <Button
+                android:id="@+id/reset_template_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reset_template_all"/>
+
+            <Button
+                android:id="@+id/reset_template_team"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reset_template_team"/>
+
+        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
@@ -33,11 +40,9 @@
             android:clipToPadding="false"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
-            android:scrollbars="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reset_template_team"/>
+            android:scrollbars="vertical"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu"
