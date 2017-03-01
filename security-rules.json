@@ -4,7 +4,7 @@
     ".write": false,
     "scout-indices": {
       "$key": {
-        ".write": "auth != null && data.parent().parent().child('team-indices').child(auth.uid).child($key).exists()"
+        ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()"
       }
     },
     "scout-templates": {
@@ -32,7 +32,7 @@
     },
     "teams": {
       "$key": {
-        ".write": "auth != null && data.parent().parent().child('team-indices').child(auth.uid).child($key).exists()"
+        ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()"
       }
     },
     "users": {

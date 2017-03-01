@@ -44,8 +44,6 @@ public final class ScoutUtils {
     }
 
     public static ScoutMetric getMetric(DataSnapshot snapshot) {
-        FirebaseCrash.log(snapshot.toString());
-
         ScoutMetric metric;
 
         @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
