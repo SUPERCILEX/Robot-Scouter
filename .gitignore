@@ -1,6 +1,6 @@
 *.iml
 .gradle
-.idea
+.idea/**
 !.idea/codeStyleSettings.xml
 build
 /keystore.properties
