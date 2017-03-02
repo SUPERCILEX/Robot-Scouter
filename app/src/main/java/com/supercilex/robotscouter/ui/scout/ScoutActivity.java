@@ -23,7 +23,6 @@ import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
@@ -39,7 +38,6 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.Collections;
-import java.util.List;
 
 public class ScoutActivity extends AppCompatActivity implements ChangeEventListener, OnCompleteListener<Team> {
     private static final String INTENT_ADD_SCOUT = "add_scout";
@@ -161,9 +159,8 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
 
     private void addListeners() {
         if (TextUtils.isEmpty(mTeamHelper.getTeam().getKey())) {
-            List<Team> teams =
-                    Constants.sFirebaseTeams.toObjectsList(Team.class, Constants.TEAM_PARSER);
-            for (Team team : teams) {
+            for (int i = 0; i < Constants.sFirebaseTeams.size(); i++) {
+                Team team = Constants.sFirebaseTeams.getObject(i);
                 if (team.getNumberAsLong() == mTeamHelper.getTeam().getNumberAsLong()) {
                     mTeamHelper.getTeam().setKey(team.getKey());
                     addListeners();
@@ -189,26 +186,14 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
     }
 
     @Override
-    public void onChildChanged(EventType type, int index, int oldIndex) {
-        if (type == EventType.REMOVED) {
-            mTeamHelper.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() == null) {
-                        finish();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    FirebaseCrash.report(error.toException());
-                }
-            });
+    public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+        if (type == EventType.REMOVED
+                && TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) {
+            finish();
             return;
         }
 
-        Team team = Constants.sFirebaseTeams.toObjectsList(Team.class, Constants.TEAM_PARSER)
-                .get(index);
+        Team team = Constants.sFirebaseTeams.getObject(index);
         if (team.getKey().equals(mTeamHelper.getTeam().getKey())
                 && (type == EventType.ADDED || type == EventType.CHANGED)) {
             mTeamHelper = team.getHelper();

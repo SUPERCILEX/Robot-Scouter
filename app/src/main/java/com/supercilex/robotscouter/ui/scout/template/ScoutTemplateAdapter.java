@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.ChangeEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
@@ -68,9 +69,12 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
     }
 
     @Override
-    public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+    public void onChildChanged(ChangeEventListener.EventType type,
+                               DataSnapshot snapshot,
+                               int index,
+                               int oldIndex) {
         if (mCallback.onChildChanged(type, index)) {
-            super.onChildChanged(type, index, oldIndex);
+            super.onChildChanged(type, snapshot, index, oldIndex);
         }
     }
 }

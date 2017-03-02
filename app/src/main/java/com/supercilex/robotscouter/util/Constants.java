@@ -42,15 +42,6 @@ public final class Constants {
             DatabaseHelper.getRef().child("team-indices");
     public static final String FIREBASE_TIMESTAMP = "timestamp";
 
-    public static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
-        @Override
-        public Team parseSnapshot(DataSnapshot snapshot) {
-            Team team = snapshot.getValue(Team.class);
-            team.setKey(snapshot.getKey());
-            return team;
-        }
-    };
-
     // Scout
     public static final DatabaseReference FIREBASE_SCOUTS = DatabaseHelper.getRef().child("scouts");
     public static final DatabaseReference FIREBASE_SCOUT_INDICES =
@@ -74,13 +65,16 @@ public final class Constants {
 
     public static final String HTML_IMPORT_TEAM;
 
-    public static FirebaseIndexArray sFirebaseTeams;
+    public static FirebaseIndexArray<Team> sFirebaseTeams;
 
     static {
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             private final ChangeEventListener mListener = new ChangeEventListener() {
                 @Override
-                public void onChildChanged(EventType type, int index, int oldIndex) {
+                public void onChildChanged(EventType type,
+                                           DataSnapshot snapshot,
+                                           int index,
+                                           int oldIndex) {
                     // Noop
                 }
 
@@ -95,6 +89,15 @@ public final class Constants {
                 }
             };
 
+            private final SnapshotParser<Team> mTeamParser = new SnapshotParser<Team>() {
+                @Override
+                public Team parseSnapshot(DataSnapshot snapshot) {
+                    Team team = snapshot.getValue(Team.class);
+                    team.setKey(snapshot.getKey());
+                    return team;
+                }
+            };
+
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 if (auth.getCurrentUser() == null) {
@@ -103,9 +106,10 @@ public final class Constants {
                         sFirebaseTeams = null;
                     }
                 } else {
-                    sFirebaseTeams = new FirebaseIndexArray(
+                    sFirebaseTeams = new FirebaseIndexArray<>(
                             FIREBASE_TEAM_INDICES.child(auth.getCurrentUser().getUid()),
-                            FIREBASE_TEAMS_REF);
+                            FIREBASE_TEAMS_REF,
+                            mTeamParser);
                     sFirebaseTeams.addChangeEventListener(mListener);
                 }
             }

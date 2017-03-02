@@ -59,7 +59,7 @@ public class ResetTemplateSheet extends DialogFragment implements DialogInterfac
     @Override
     public void onClick(View v) {
         Bundle args = getArguments();
-        Team team = TeamHelper.get(getArguments()).getTeam();
+        final Team team = TeamHelper.get(getArguments()).getTeam();
         final String templateKey = team.getTemplateKey();
 
         if (args.getBoolean(RESET_ALL_KEY)) {
@@ -75,14 +75,17 @@ public class ResetTemplateSheet extends DialogFragment implements DialogInterfac
         } else {
             Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListener() {
                 @Override
-                public void onChildChanged(EventType type, int index, int oldIndex) {
+                public void onChildChanged(EventType type,
+                                           DataSnapshot snapshot,
+                                           int index,
+                                           int oldIndex) {
                     DataSnapshot team1 = Constants.sFirebaseTeams.get(index);
-                    if (TextUtils.equals(team1.getKey(), team1.getKey())
+                    if (TextUtils.equals(team.getKey(), team1.getKey())
                             && team1.child(Constants.FIREBASE_TEMPLATE_KEY).getValue() == null) {
                         boolean isTemplateInUse = false;
-                        for (DataSnapshot snapshot : Constants.sFirebaseTeams) {
+                        for (DataSnapshot snapshot1 : Constants.sFirebaseTeams) {
                             String templateKey1 =
-                                    snapshot.child(Constants.FIREBASE_TEMPLATE_KEY)
+                                    snapshot1.child(Constants.FIREBASE_TEMPLATE_KEY)
                                             .getValue(String.class);
                             if (TextUtils.equals(templateKey, templateKey1)) {
                                 isTemplateInUse = true;

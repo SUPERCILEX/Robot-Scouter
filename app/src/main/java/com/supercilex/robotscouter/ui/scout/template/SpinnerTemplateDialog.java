@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
@@ -121,6 +122,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
 
             @Override
             public void onChildChanged(EventType type,
+                                       DataSnapshot snapshot,
                                        int index,
                                        int oldIndex) {
                 if (type == EventType.REMOVED) {
@@ -136,7 +138,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
                 }
 
                 if (mItemTouchCallback.onChildChanged(type, index)) {
-                    super.onChildChanged(type, index, oldIndex);
+                    super.onChildChanged(type, snapshot, index, oldIndex);
                 }
             }
         };

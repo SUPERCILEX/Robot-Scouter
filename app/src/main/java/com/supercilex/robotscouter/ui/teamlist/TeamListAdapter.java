@@ -49,7 +49,10 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     }
 
     @Override
-    public void onChildChanged(ChangeEventListener.EventType type, int index, int oldIndex) {
+    public void onChildChanged(ChangeEventListener.EventType type,
+                               DataSnapshot snapshot,
+                               int index,
+                               int oldIndex) {
         showNoTeamsHint(getItemCount() == 0);
 
         switch (type) {
@@ -75,12 +78,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                 }
                 break;
         }
-        super.onChildChanged(type, index, oldIndex);
-    }
-
-    @Override
-    public Team parseSnapshot(DataSnapshot snapshot) {
-        return Constants.TEAM_PARSER.parseSnapshot(snapshot);
+        super.onChildChanged(type, snapshot, index, oldIndex);
     }
 
     @Override
