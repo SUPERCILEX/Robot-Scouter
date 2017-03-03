@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -413,13 +414,13 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 valueCell.setCellValue(note);
                 break;
             case MetricType.STOPWATCH:
-                StopwatchMetric stopwatchMetric = (StopwatchMetric) metric;
+                List<Long> cycles = ((StopwatchMetric) metric).getValue();
+
                 long sum = 0;
-                List<Long> cycles = stopwatchMetric.getValue();
-                for (Long duration : cycles) {
-                    sum += duration;
-                }
-                valueCell.setCellValue(cycles.isEmpty() ? sum : sum / cycles.size());
+                for (Long duration : cycles) sum += duration;
+                long nanoAverage = cycles.isEmpty() ? sum : sum / cycles.size();
+
+                valueCell.setCellValue(TimeUnit.NANOSECONDS.toSeconds(nanoAverage));
                 break;
             case MetricType.HEADER:
                 // Headers are skipped because they don't contain any data

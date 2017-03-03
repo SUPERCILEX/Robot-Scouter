@@ -316,9 +316,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             mTitle.setText(R.string.average);
 
             long sum = 0;
-            for (Long duration : cycles) {
-                sum += duration;
-            }
+            for (Long duration : cycles) sum += duration;
             long nanos = cycles.isEmpty() ? sum : sum / cycles.size();
             mValue.setText(Timer.getFormattedTime(nanos));
         }
