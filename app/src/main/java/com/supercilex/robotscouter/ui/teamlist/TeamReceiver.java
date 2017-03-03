@@ -70,7 +70,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
                 return; // Nothing to see here
             }
 
-            if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) {
+            if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD
                 launchTeam(getTeam(deepLink).get(0));
             } else if (deepLink.toString().equals(ADD_SCOUT_INTENT)) {
                 NewTeamDialog.show(mActivity.getSupportFragmentManager());
