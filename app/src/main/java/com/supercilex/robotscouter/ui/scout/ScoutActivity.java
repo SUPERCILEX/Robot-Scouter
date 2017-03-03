@@ -100,7 +100,7 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
     protected void onDestroy() {
         super.onDestroy();
         Constants.sFirebaseTeams.removeChangeEventListener(this);
-        mPagerAdapter.cleanup();
+        if (mPagerAdapter != null) mPagerAdapter.cleanup();
     }
 
     @Override

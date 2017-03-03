@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/RobotScouter">
 
+        <meta-data
+            android:name="asset_statements"
+            android:resource="@string/asset_statements"/>
+
         <activity
             android:name=".ui.teamlist.TeamListActivity"
             android:label="${appName}"
