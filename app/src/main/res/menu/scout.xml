@@ -8,7 +8,7 @@
     <item
         android:id="@+id/action_new_scout"
         android:icon="@drawable/ic_add_white_24dp"
-        android:title="@string/new_scout"
+        android:title="@string/add_scout"
         app:showAsAction="ifRoom"/>
 
     <item

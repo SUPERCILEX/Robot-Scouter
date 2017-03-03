@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 
 import com.firebase.ui.auth.util.GoogleApiHelper;
 import com.google.android.gms.appinvite.AppInvite;
@@ -24,9 +23,8 @@ import java.util.List;
 
 public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
     public static final String TEAM_QUERY_KEY = "team";
-    private static final String UTM_SOURCE = "utm_source";
-    private static final String UTM_SOURCE_VALUE = "robotscouter";
-    public static final String APP_LINK_BASE = "https://supercilex.github.io/?" + TeamReceiver.UTM_SOURCE + "=" + TeamReceiver.UTM_SOURCE_VALUE;
+    public static final String APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/?";
+    private static final String ADD_SCOUT_INTENT = "add_scout";
 
     private FragmentActivity mActivity;
 
@@ -68,13 +66,15 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
             }
         } else { // Received normal intent
             Uri deepLink = mActivity.getIntent().getData();
-            if (deepLink == null
-                    || !TextUtils.equals(deepLink.getQueryParameter(UTM_SOURCE), UTM_SOURCE_VALUE)
-                    || deepLink.getQueryParameter(TEAM_QUERY_KEY) == null) {
+            if (deepLink == null) {
                 return; // Nothing to see here
             }
 
-            launchTeam(getTeam(deepLink).get(0));
+            if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) {
+                launchTeam(getTeam(deepLink).get(0));
+            } else if (deepLink.toString().equals(ADD_SCOUT_INTENT)) {
+                NewTeamDialog.show(mActivity.getSupportFragmentManager());
+            }
         }
     }
 

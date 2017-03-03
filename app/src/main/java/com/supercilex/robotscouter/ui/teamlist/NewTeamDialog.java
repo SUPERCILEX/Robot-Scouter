@@ -30,7 +30,7 @@ public class NewTeamDialog extends KeyboardDialogBase {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mInputLayout = (TextInputLayout) View.inflate(getContext(), R.layout.dialog_new_team, null);
         mTeamNumberEditText = (EditText) mInputLayout.findViewById(R.id.team_number);
-        return createDialog(mInputLayout, R.string.new_scout);
+        return createDialog(mInputLayout, R.string.add_scout);
     }
 
     @Override

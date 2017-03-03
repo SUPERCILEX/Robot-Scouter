@@ -30,6 +30,10 @@
             android:label="${appName}"
             android:theme="@style/RobotScouter.Launcher">
 
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

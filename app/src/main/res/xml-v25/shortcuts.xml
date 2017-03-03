@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_add_scout"
+        android:shortcutId="add_scout"
+        android:shortcutLongLabel="@string/add_scout_long"
+        android:shortcutShortLabel="@string/add_scout">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="add_scout"
+            android:targetClass="com.supercilex.robotscouter.ui.teamlist.TeamListActivity"
+            android:targetPackage="com.supercilex.robotscouter"/>
+        <categories android:name="android.shortcut.new_scout"/>
+    </shortcut>
+</shortcuts>

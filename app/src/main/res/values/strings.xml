@@ -60,7 +60,8 @@
     <string name="title_activity_scout">Scout</string>
     <string name="offline_reassurance">Offline. Data will be saved</string>
 
-    <string name="new_scout">New scout</string>
+    <string name="add_scout">Add scout/team</string>
+    <string name="add_scout_long">Add a new scout or team</string>
 
     <string name="visit_team_website">Visit team %s\'s website</string>
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
