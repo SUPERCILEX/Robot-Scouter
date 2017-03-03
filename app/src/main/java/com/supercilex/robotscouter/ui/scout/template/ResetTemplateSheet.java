@@ -15,6 +15,7 @@ import com.firebase.ui.database.ChangeEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -54,6 +55,12 @@ public class ResetTemplateSheet extends DialogFragment implements DialogInterfac
     public void dismiss() {
         super.dismiss();
         ((DialogFragment) getParentFragment()).dismiss();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

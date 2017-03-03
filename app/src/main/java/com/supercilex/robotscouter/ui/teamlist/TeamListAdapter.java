@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,7 +19,7 @@ import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 import java.util.List;
 
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
-    private Fragment mFragment;
+    private Context mContext;
     private View mNoTeamsImage;
     private View mNoTeamsText;
 
@@ -29,17 +30,17 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
               Team.class,
               R.layout.team_list_row_layout,
               TeamViewHolder.class);
-        mFragment = fragment;
+        mContext = fragment.getContext();
         mMenuManager = menuManager;
 
-        View view = mFragment.getView();
+        View view = fragment.getView();
         mNoTeamsImage = view.findViewById(R.id.no_teams_icon);
         mNoTeamsText = view.findViewById(R.id.no_teams_text);
     }
 
     @Override
     public void populateViewHolder(TeamViewHolder teamHolder, Team team, int position) {
-        team.getHelper().fetchLatestData(mFragment.getContext());
+        team.getHelper().fetchLatestData(mContext);
         teamHolder.bind(team,
                         mMenuManager,
                         mMenuManager.getSelectedTeams().contains(team.getHelper()),

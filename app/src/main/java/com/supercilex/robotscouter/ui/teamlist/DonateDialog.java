@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import org.json.JSONException;
@@ -89,6 +90,7 @@ public class DonateDialog extends DialogFragment
         super.onDestroy();
         if (mService != null) getContext().unbindService(this);
         destroyProgressDialog();
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     private void initProgressDialog() {

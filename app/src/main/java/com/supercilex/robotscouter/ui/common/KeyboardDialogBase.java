@@ -15,6 +15,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.supercilex.robotscouter.RobotScouter;
+
 public abstract class KeyboardDialogBase extends DialogFragment
         implements DialogInterface.OnShowListener, View.OnClickListener, TextView.OnEditorActionListener {
     protected abstract EditText getLastEditText();
@@ -52,6 +54,12 @@ public abstract class KeyboardDialogBase extends DialogFragment
     @Override
     public void onShow(DialogInterface dialog) {
         ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

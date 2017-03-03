@@ -123,8 +123,8 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     private void cleanup() {
-        if (mAdapter != null) mAdapter.cleanup();
         mRecyclerView.setAdapter(null);
+        if (mAdapter != null) mAdapter.cleanup();
     }
 
     /**

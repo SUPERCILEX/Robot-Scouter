@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.common.KeyboardDialogBase;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 
@@ -36,6 +37,12 @@ public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase impleme
         mValue.post(this);
 
         return createDialog(layout, getTitle());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

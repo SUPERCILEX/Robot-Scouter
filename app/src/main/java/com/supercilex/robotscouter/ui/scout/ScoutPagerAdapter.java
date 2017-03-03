@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -132,6 +133,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     public void cleanup() {
         mQuery.removeEventListener(this);
         removeNameListeners();
+        RobotScouter.getRefWatcher(mActivity).watch(this);
     }
 
     private void removeNameListeners() {
