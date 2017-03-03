@@ -23,7 +23,7 @@
             style="@style/RobotScouter.Text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textPersonName"/>
+            android:inputType="textCapWords"/>
 
     </android.support.design.widget.TextInputLayout>
 
