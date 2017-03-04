@@ -219,7 +219,7 @@ public class AuthHelper implements View.OnClickListener {
 
     private static final class DatabaseInitializer implements ValueEventListener {
         private DatabaseInitializer() {
-            Constants.FIREBASE_SCOUTS.addValueEventListener(this);
+            Constants.FIREBASE_SCOUTS.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(this);
             Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
