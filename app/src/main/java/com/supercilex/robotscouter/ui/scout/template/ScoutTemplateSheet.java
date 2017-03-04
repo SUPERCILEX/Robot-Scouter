@@ -116,11 +116,12 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         if (TextUtils.isEmpty(mTemplateKey)) {
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             mTemplateKey = newTemplateRef.getKey();
+            final Context appContext = getContext().getApplicationContext();
             new FirebaseCopier(Constants.FIREBASE_DEFAULT_TEMPLATE, newTemplateRef) {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     super.onDataChange(snapshot);
-                    teamHelper.updateTemplateKey(mTemplateKey, getContext());
+                    teamHelper.updateTemplateKey(mTemplateKey, appContext);
                 }
             }.performTransformation();
         } else {
