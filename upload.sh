@@ -13,8 +13,9 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
 
   APK_DUMP=$(/usr/local/android-sdk/build-tools/25.0.2/aapt dump badging app-release.apk) &> /dev/null
   VERSION_CODE="$(echo ${APK_DUMP} | grep -o -P "(?<=versionCode=\047).*(?=\047 versionName)")"
+  DIFF="https://github.com/SUPERCILEX/Robot-Scouter/compare/${TRAVIS_COMMIT_RANGE}"
   git add mapping.txt app-release.apk
-  git commit -a -m "$(printf "${VERSION_CODE}\nFull apk dump:\n${APK_DUMP}")"
+  git commit -a -m "$(printf "${VERSION_CODE}\n${DIFF}\nFull apk dump:\n${APK_DUMP}")"
   git push -u origin master &> /dev/null
 
   cd ..
