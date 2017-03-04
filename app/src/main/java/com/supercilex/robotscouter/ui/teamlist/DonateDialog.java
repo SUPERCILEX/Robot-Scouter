@@ -140,20 +140,21 @@ public class DonateDialog extends DialogFragment
             return;
         }
 
+        Bundle buyIntentBundle;
         try {
-            Bundle buyIntentBundle = mService.getBuyIntent(
+            buyIntentBundle = mService.getBuyIntent(
                     3,
                     getContext().getPackageName(),
                     ITEM_SKUS[position],
                     ITEM_SKUS[position].contains("subscription") ? "subs" : "inapp",
                     null);
+        } catch (RemoteException e) {
+            showError();
+            return;
+        }
 
-            PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
-            if (pendingIntent == null) {
-                showError();
-                return;
-            }
-
+        PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+        try {
             startIntentSenderForResult(
                     pendingIntent.getIntentSender(),
                     RC_PURCHASE,
@@ -162,7 +163,7 @@ public class DonateDialog extends DialogFragment
                     0,
                     0,
                     null);
-        } catch (RemoteException | IntentSender.SendIntentException e) {
+        } catch (IntentSender.SendIntentException e) {
             FirebaseCrash.report(e);
         }
     }
