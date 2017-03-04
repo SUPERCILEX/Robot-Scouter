@@ -67,19 +67,18 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
     private Context mContext;
     private ProgressDialogManager mProgressDialog;
-    private List<TeamHelper> mTeamHelpers;
 
     private Map<TeamHelper, List<Scout>> mScouts;
+    private List<Cell> mTemporaryCommentCells = new ArrayList<>();
     private CreationHelper mCreationHelper;
 
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     protected SpreadsheetWriter(Fragment fragment, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mContext = fragment.getContext().getApplicationContext();
-        mTeamHelpers = teamHelpers;
         mProgressDialog = ProgressDialogManager.show(fragment.getActivity());
 
-        Collections.sort(mTeamHelpers);
-        Scouts.getAll(mTeamHelpers).addOnSuccessListener(new AsyncTaskExecutor(), this);
+        Collections.sort(teamHelpers);
+        Scouts.getAll(teamHelpers).addOnSuccessListener(new AsyncTaskExecutor(), this);
     }
 
     /**
@@ -123,7 +122,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     private String getShareTitle() {
         return mContext.getResources()
                 .getQuantityString(R.plurals.share_spreadsheet_title,
-                                   mTeamHelpers.size(),
+                                   mScouts.size(),
                                    getTeamNames());
     }
 
@@ -175,17 +174,20 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
     private String getTeamNames() {
         String teamName;
-        if (mTeamHelpers.size() == Constants.SINGLE_ITEM) {
-            teamName = mTeamHelpers.get(0).getFormattedName();
+        int size = mScouts.size();
+        ArrayList<TeamHelper> teamHelpers = new ArrayList<>(mScouts.keySet());
+
+        if (size == Constants.SINGLE_ITEM) {
+            teamName = teamHelpers.get(0).toString();
         } else {
-            StringBuilder names = new StringBuilder(4 * mTeamHelpers.size());
-            for (int i = 0,
-                 size = mTeamHelpers.size(); i < size; i++) {
-                names.append(mTeamHelpers.get(i).getTeam().getNumber());
+            StringBuilder names = new StringBuilder(4 * size);
+            for (int i = 0; i < size; i++) {
+                names.append(teamHelpers.get(i).getTeam().getNumber());
                 if (i < size - 1) names.append(", ");
             }
             teamName = names.toString();
         }
+
         return teamName;
     }
 
@@ -195,32 +197,28 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         Workbook workbook = new XSSFWorkbook();
         mCreationHelper = workbook.getCreationHelper();
 
-//        Sheet averageSheet = null;
-//        if (mTeamHelpers.size() > Constants.SINGLE_ITEM) {
-//            averageSheet = workbook.createSheet("Team Averages");
-//            averageSheet.createFreezePane(1, 1);
-//        }
+        Sheet averageSheet = null;
+        if (mScouts.size() > Constants.SINGLE_ITEM) {
+            averageSheet = workbook.createSheet("Team Averages");
+            averageSheet.createFreezePane(1, 1);
+        }
 
-        for (TeamHelper teamHelper : mTeamHelpers) {
-            Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.getFormattedName()));
+        for (TeamHelper teamHelper : mScouts.keySet()) {
+            Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.toString()));
             teamSheet.createFreezePane(1, 1);
             buildTeamSheet(teamHelper, teamSheet);
         }
 
-//        if (averageSheet != null) {
-//            buildTeamAveragesSheet(averageSheet);
-//        }
+        if (averageSheet != null) buildTeamAveragesSheet(averageSheet);
 
         setColumnWidths(workbook);
+
+        for (Cell cell : mTemporaryCommentCells) cell.removeCellComment();
 
         return workbook;
     }
 
-    private void removeTemporaryComments(Sheet sheet) {
-        for (Row row : sheet) row.getCell(0).removeCellComment();
-    }
-
-    private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
+    private void buildTeamSheet(TeamHelper teamHelper, final Sheet teamSheet) {
         List<Scout> scouts = mScouts.get(teamHelper);
 
         Workbook workbook = teamSheet.getWorkbook();
@@ -244,22 +242,22 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             for (int j = 0, rowNum = 1; j < metrics.size(); j++, rowNum++) {
                 ScoutMetric metric = metrics.get(j);
 
-                if (metric.getType() == MetricType.HEADER) continue; // No data here
+                if (metric.getType() == MetricType.HEADER) { // No data here
+                    rowNum--;
+                    continue;
+                }
 
                 Row row = teamSheet.getRow(rowNum);
                 if (row == null) {
-                    createRowAndSetValue(teamSheet.createRow(rowNum),
-                                         metric,
-                                         column,
-                                         rowHeaderStyle);
+                    setupRowAndSetValue(teamSheet.createRow(rowNum),
+                                        metric,
+                                        column,
+                                        rowHeaderStyle);
                     if (metric.getType() == MetricType.NOTE) excludedAverageRows.add(rowNum);
                 } else {
-                    List<Row> rows = copyIterator(teamSheet.rowIterator());
+                    List<Row> rows = getAdjustedList(teamSheet);
 
-                    for (int k = 0; k < rows.size(); k++) {
-                        if (k == 0) continue; // Skip header row
-
-                        Row row1 = rows.get(k);
+                    for (Row row1 : rows) {
                         Cell cell1 = row1.getCell(0);
                         String rowKey = cell1.getCellComment().getString().toString();
                         if (TextUtils.equals(rowKey, metric.getRef().getKey())) {
@@ -273,11 +271,10 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                         }
                     }
 
-                    teamSheet.shiftRows(rowNum, teamSheet.getLastRowNum(), 1);
-                    createRowAndSetValue(teamSheet.createRow(rowNum),
-                                         metric,
-                                         column,
-                                         rowHeaderStyle);
+                    setupRowAndSetValue(teamSheet.createRow(teamSheet.getLastRowNum() + 1),
+                                        metric,
+                                        column,
+                                        rowHeaderStyle);
                 }
             }
         }
@@ -286,8 +283,6 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         if (scouts.size() > Constants.SINGLE_ITEM) {
             buildAverageCells(teamSheet, headerStyle, excludedAverageRows);
         }
-
-        removeTemporaryComments(teamSheet);
     }
 
     private void buildAverageCells(Sheet sheet, CellStyle headerStyle, List<Integer> excludedRows) {
@@ -307,38 +302,42 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 continue;
             }
 
-            Cell first = row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-            String rangeAddress =
-                    getRangeAddress(first, row.getCell(cell.getColumnIndex() - 1,
-                                                       Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
-            switch (first.getCellTypeEnum()) {
-                case NUMERIC:
-                    cell.setCellFormula(
-                            "SUM(" + rangeAddress + ")" +
-                                    " / " +
-                                    "COUNT(" + rangeAddress + ")");
-                    break;
-                case BOOLEAN:
-                    cell.setCellFormula(
-                            "IF(" +
-                                    "COUNTIF(" + rangeAddress + ", TRUE)" +
-                                    " >= " +
-                                    "COUNTIF(" + rangeAddress + ", FALSE)" +
-                                    ", TRUE, FALSE)");
-                    break;
-                case STRING:
-                    if (excludedRows.contains(i)) break;
+            typeFinder:
+            for (Cell typeCell : getAdjustedList(row)) {
+                String rangeAddress = getRangeAddress(
+                        row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK),
+                        row.getCell(cell.getColumnIndex() - 1,
+                                    Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
 
-                    cell.setCellFormula(
-                            "ARRAYFORMULA(" +
-                                    "INDEX(" + rangeAddress + ", " +
-                                    "MATCH(" +
-                                    "MAX(" +
-                                    "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
-                                    "), " +
-                                    "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
-                                    ", 0)))");
-                    break;
+                switch (typeCell.getCellTypeEnum()) {
+                    case NUMERIC:
+                        cell.setCellFormula(
+                                "SUM(" + rangeAddress + ")" +
+                                        " / " +
+                                        "COUNT(" + rangeAddress + ")");
+                        break typeFinder;
+                    case BOOLEAN:
+                        cell.setCellFormula(
+                                "IF(" +
+                                        "COUNTIF(" + rangeAddress + ", TRUE)" +
+                                        " >= " +
+                                        "COUNTIF(" + rangeAddress + ", FALSE)" +
+                                        ", TRUE, FALSE)");
+                        break typeFinder;
+                    case STRING:
+                        if (excludedRows.contains(i)) break typeFinder;
+
+                        cell.setCellFormula(
+                                "ARRAYFORMULA(" +
+                                        "INDEX(" + rangeAddress + ", " +
+                                        "MATCH(" +
+                                        "MAX(" +
+                                        "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
+                                        "), " +
+                                        "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
+                                        ", 0)))");
+                        break typeFinder;
+                }
             }
         }
     }
@@ -365,15 +364,16 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         return headerStyle;
     }
 
-    private void createRowAndSetValue(Row row,
-                                      ScoutMetric metric,
-                                      int column,
-                                      CellStyle headerStyle) {
+    private void setupRowAndSetValue(Row row,
+                                     ScoutMetric metric,
+                                     int column,
+                                     CellStyle headerStyle) {
         Cell headerCell = row.createCell(0);
         headerCell.setCellValue(metric.getName());
 
         Comment comment = getComment(row, headerCell);
         comment.setString(mCreationHelper.createRichTextString(metric.getRef().getKey()));
+        mTemporaryCommentCells.add(headerCell);
 
         headerCell.setCellComment(comment);
         headerCell.setCellStyle(headerStyle);
@@ -418,7 +418,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
                 long sum = 0;
                 for (Long duration : cycles) sum += duration;
-                long nanoAverage = cycles.isEmpty() ? sum : sum / cycles.size();
+                long nanoAverage = cycles.isEmpty() ? 0 : sum / cycles.size();
 
                 valueCell.setCellValue(TimeUnit.NANOSECONDS.toSeconds(nanoAverage));
                 break;
@@ -465,9 +465,70 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         }
     }
 
-    private <T> List<T> copyIterator(Iterator<T> iterator) {
+    private void buildTeamAveragesSheet(Sheet averageSheet) {
+        Workbook workbook = averageSheet.getWorkbook();
+        List<TeamHelper> teamHelpers = new ArrayList<>(mScouts.keySet());
+        Row headerRow = averageSheet.createRow(0);
+        headerRow.createCell(0);
+
+        CellStyle headerStyle = createHeaderStyle(workbook);
+        CellStyle rowHeaderStyle = getRowHeaderStyle(workbook);
+
+        List<Sheet> scoutSheets = getAdjustedList(workbook);
+        for (int i = 0; i < scoutSheets.size(); i++) {
+            Sheet scoutSheet = scoutSheets.get(i);
+            TeamHelper teamHelper = teamHelpers.get(i);
+            Row row = averageSheet.createRow(i + 1);
+            Cell rowHeaderCell = row.createCell(0);
+            rowHeaderCell.setCellValue(teamHelper.toString());
+            rowHeaderCell.setCellStyle(rowHeaderStyle);
+
+            List<Row> metricsRows = getAdjustedList(scoutSheet);
+            rowIterator:
+            for (int j = 0, adjustedColumn = 1; j < metricsRows.size(); j++, adjustedColumn++) {
+                Row averageRow = metricsRows.get(j);
+                Cell averageCell = averageRow.getCell(averageRow.getLastCellNum() - 1);
+
+                if (TextUtils.isEmpty(getStringForCell(averageCell))) {
+                    adjustedColumn--;
+                    continue;
+                }
+
+                Cell valueCell = row.createCell(adjustedColumn);
+                Cell metricCell = averageRow.getCell(0);
+                String metricKey = metricCell.getCellComment().getString().toString();
+
+                for (Cell keyCell : getAdjustedList(headerRow)) {
+                    Comment keyComment = keyCell.getCellComment();
+                    String key = keyComment == null ? null : keyComment.getString().toString();
+
+                    if (metricKey.equals(key)) {
+                        setAverageFormula(scoutSheet, valueCell, averageCell);
+                        continue rowIterator;
+                    }
+                }
+
+                Cell keyCell = headerRow.createCell(headerRow.getLastCellNum());
+                keyCell.setCellValue(metricCell.getStringCellValue());
+                keyCell.setCellStyle(headerStyle);
+                Comment keyComment = getComment(headerRow, keyCell);
+                mTemporaryCommentCells.add(keyCell);
+                keyComment.setString(mCreationHelper.createRichTextString(metricKey));
+                keyCell.setCellComment(keyComment);
+
+                setAverageFormula(scoutSheet, valueCell, averageCell);
+            }
+        }
+    }
+
+    private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
+        valueCell.setCellFormula("'" + scoutSheet.getSheetName() + "'!" + averageCell.getAddress());
+    }
+
+    private <T> List<T> getAdjustedList(Iterable<T> iterator) {
         List<T> copy = new ArrayList<>();
-        while (iterator.hasNext()) copy.add(iterator.next());
+        for (T t : iterator) copy.add(t);
+        copy.remove(0);
         return copy;
     }
 

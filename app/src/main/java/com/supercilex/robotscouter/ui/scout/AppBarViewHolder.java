@@ -40,7 +40,7 @@ public class AppBarViewHolder {
     public void bind(@NonNull TeamHelper teamHelper) {
         if (mTeamHelper != null && mTeamHelper.equals(teamHelper)) return;
         mTeamHelper = teamHelper;
-        mActivity.getSupportActionBar().setTitle(mTeamHelper.getFormattedName());
+        mActivity.getSupportActionBar().setTitle(mTeamHelper.toString());
         setTaskDescription(null, ContextCompat.getColor(mActivity, R.color.colorPrimary));
         loadImages();
         bindMenu();
@@ -85,7 +85,7 @@ public class AppBarViewHolder {
     private void setTaskDescription(Bitmap icon, @ColorInt int colorPrimary) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mActivity.setTaskDescription(
-                    new ActivityManager.TaskDescription(mTeamHelper.getFormattedName(),
+                    new ActivityManager.TaskDescription(mTeamHelper.toString(),
                                                         icon,
                                                         colorPrimary));
         }

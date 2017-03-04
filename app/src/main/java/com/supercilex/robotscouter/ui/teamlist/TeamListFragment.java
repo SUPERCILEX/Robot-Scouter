@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.common.OnBackPressedListener;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
@@ -34,7 +35,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     private RecyclerView mRecyclerView;
     private TeamMenuHelper mMenuHelper;
 
-    private FirebaseRecyclerAdapter mAdapter;
+    private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
     private RecyclerView.LayoutManager mManager;
 
     @Override
@@ -51,9 +52,14 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             // Log uid to help debug db crashes
             FirebaseCrash.log(auth.getCurrentUser().getUid());
 
+
+            mManager = new LinearLayoutManager(getContext());
             mAdapter = new TeamListAdapter(this, mMenuHelper);
+
             mMenuHelper.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(mManager);
             mRecyclerView.setAdapter(mAdapter);
+
             FirebaseAdapterHelper.restoreRecyclerViewState(mSavedInstanceState, mAdapter, mManager);
             mMenuHelper.restoreState(mSavedInstanceState);
         }
@@ -69,10 +75,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
 
         mMenuHelper.setRecyclerView(mRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mManager);
-
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

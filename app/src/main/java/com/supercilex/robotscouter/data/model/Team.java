@@ -15,8 +15,6 @@ import com.google.firebase.database.ServerValue;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-import java.util.concurrent.TimeUnit;
-
 public class Team implements Parcelable, Comparable<Team> {
     @Exclude
     public static final Creator<Team> CREATOR = new Creator<Team>() {
@@ -266,19 +264,7 @@ public class Team implements Parcelable, Comparable<Team> {
 
     @Override
     public String toString() {
-        return "Team " + mNumber + " last updated " +
-                TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTimestamp) +
-                " day(s) ago{" +
-                ", mKey='" + mKey + '\'' +
-                ", mTemplateKey='" + mTemplateKey + '\'' +
-                ", mName='" + mName + '\'' +
-                ", mMedia='" + mMedia + '\'' +
-                ", mWebsite='" + mWebsite + '\'' +
-                ", mHasCustomName=" + mHasCustomName +
-                ", mHasCustomMedia=" + mHasCustomMedia +
-                ", mHasCustomWebsite=" + mHasCustomWebsite +
-                ", mTimestamp=" + mTimestamp +
-                '}';
+        return TextUtils.isEmpty(getName()) ? getNumber() : getNumber() + " - " + getName();
     }
 
     @Override

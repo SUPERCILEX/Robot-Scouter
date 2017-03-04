@@ -68,7 +68,7 @@ public class TeamSender {
     }
 
     private String getFormattedTeamName() {
-        String formattedName = mTeamHelpers.get(0).getFormattedName();
+        String formattedName = mTeamHelpers.get(0).toString();
         return mTeamHelpers.size() == 1 ? formattedName : formattedName + " and more";
     }
 }

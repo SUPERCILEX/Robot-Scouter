@@ -27,16 +27,6 @@ public class RobotScouter extends MultiDexApplication {
         }
         mRefWatcher = LeakCanary.install(this);
 
-        // TODO see https://github.com/firebase/quickstart-android/issues/176#issuecomment-268841466
-//        if (BuildConfig.DEBUG) {
-//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                                           .detectAll()
-//                                           .penaltyLog()
-//                                           .penaltyDeath()
-//                                           .build());
-//        }
-        // END QUALITY CHECKS
-
         Constants.init();
         AnalyticsHelper.init(this);
 

@@ -53,7 +53,6 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
                              Bundle savedInstanceState) {
         mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
 
-        mRecyclerView.setHasFixedSize(true);
         mManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mManager);
 

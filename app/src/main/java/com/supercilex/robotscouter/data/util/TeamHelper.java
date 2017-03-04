@@ -82,11 +82,6 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         return mTeam;
     }
 
-    public String getFormattedName() {
-        return TextUtils.isEmpty(mTeam.getName())
-                ? mTeam.getNumber() : mTeam.getNumber() + " - " + mTeam.getName();
-    }
-
     public void addTeam(Context context) {
         DatabaseReference index = getIndicesRef().push();
         mTeam.setKey(index.getKey());
@@ -99,7 +94,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         getRef().child(Constants.FIREBASE_TIMESTAMP).removeValue();
         FirebaseUserActions.getInstance()
                 .end(new Action.Builder(Action.Builder.ADD_ACTION)
-                             .setObject(getFormattedName(), getDeepLink())
+                             .setObject(toString(), getDeepLink())
                              .build());
     }
 
@@ -196,7 +191,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     public Indexable getIndexable() {
         DigitalDocumentBuilder builder = Indexables.digitalDocumentBuilder()
                 .setUrl(getDeepLink())
-                .setName(getFormattedName())
+                .setName(toString())
                 .setMetadata(new Indexable.Metadata.Builder().setWorksOffline(true));
         if (mTeam.getMedia() != null) builder.setImage(mTeam.getMedia());
         return builder.build();
@@ -212,7 +207,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public Action getViewAction() {
         return new Action.Builder(Action.Builder.VIEW_ACTION)
-                .setObject(getFormattedName(), getDeepLink())
+                .setObject(toString(), getDeepLink())
                 .build();
     }
 

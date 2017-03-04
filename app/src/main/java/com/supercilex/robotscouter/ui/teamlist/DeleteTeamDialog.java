@@ -50,7 +50,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
         for (int i = 0; i < mTeamHelpers.size(); i++) {
             deletedTeams.append(i + 1)
                     .append(". ")
-                    .append(mTeamHelpers.get(i).getFormattedName())
+                    .append(mTeamHelpers.get(i).toString())
                     .append('\n');
         }
 
