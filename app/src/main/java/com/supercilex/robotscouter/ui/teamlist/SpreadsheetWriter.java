@@ -60,7 +60,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-    private static final String EXPORT_FOLDER_NAME = "Robot Scouter team exports/";
+    private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
     private static final String FILE_EXTENSION = ".xlsx";
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
