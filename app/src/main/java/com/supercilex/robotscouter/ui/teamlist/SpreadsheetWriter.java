@@ -283,11 +283,11 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
 
         if (scouts.size() > Constants.SINGLE_ITEM) {
-            buildAverageCells(teamSheet, headerStyle, excludedAverageRows);
+            buildAverageCells(teamSheet, headerStyle, teamHelper);
         }
     }
 
-    private void buildAverageCells(Sheet sheet, CellStyle headerStyle, List<Integer> excludedRows) {
+    private void buildAverageCells(Sheet sheet, CellStyle headerStyle, TeamHelper teamHelper) {
         int farthestColumn = 0;
         for (Row row : sheet) {
             int last = row.getLastCellNum();
@@ -304,44 +304,59 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 continue;
             }
 
-            typeFinder:
-            for (Cell typeCell : getAdjustedList(row)) {
-                String rangeAddress = getRangeAddress(
-                        row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK),
-                        row.getCell(cell.getColumnIndex() - 1,
-                                    Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+            String key = row.getCell(0).getCellComment().getString().toString();
+            @MetricType int type = getMetricType(teamHelper, key);
 
-                switch (typeCell.getCellTypeEnum()) {
-                    case NUMERIC:
-                        cell.setCellFormula(
-                                "SUM(" + rangeAddress + ")" +
-                                        " / " +
-                                        "COUNT(" + rangeAddress + ")");
-                        break typeFinder;
-                    case BOOLEAN:
-                        cell.setCellFormula(
-                                "IF(" +
-                                        "COUNTIF(" + rangeAddress + ", TRUE)" +
-                                        " >= " +
-                                        "COUNTIF(" + rangeAddress + ", FALSE)" +
-                                        ", TRUE, FALSE)");
-                        break typeFinder;
-                    case STRING:
-                        if (excludedRows.contains(i)) break typeFinder;
+            String rangeAddress = getRangeAddress(
+                    row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK),
+                    row.getCell(cell.getColumnIndex() - 1,
+                                Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+            switch (type) {
+                case MetricType.CHECKBOX:
+                    cell.setCellFormula(
+                            "IF(" +
+                                    "COUNTIF(" + rangeAddress + ", TRUE)" +
+                                    " >= " +
+                                    "COUNTIF(" + rangeAddress + ", FALSE)" +
+                                    ", TRUE, FALSE)");
+                    break;
+                case MetricType.COUNTER:
+                case MetricType.STOPWATCH:
+                    cell.setCellFormula(
+                            "SUM(" + rangeAddress + ")" +
+                                    " / " +
+                                    "COUNT(" + rangeAddress + ")");
+                    break;
+                case MetricType.SPINNER:
+                    cell.setCellFormula(
+                            "ARRAYFORMULA(" +
+                                    "INDEX(" + rangeAddress + ", " +
+                                    "MATCH(" +
+                                    "MAX(" +
+                                    "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
+                                    "), " +
+                                    "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
+                                    ", 0)))");
+                    break;
+                case MetricType.HEADER:
+                case MetricType.NOTE:
+                    // Nothing to average
+                    break;
+            }
+        }
+    }
 
-                        cell.setCellFormula(
-                                "ARRAYFORMULA(" +
-                                        "INDEX(" + rangeAddress + ", " +
-                                        "MATCH(" +
-                                        "MAX(" +
-                                        "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
-                                        "), " +
-                                        "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
-                                        ", 0)))");
-                        break typeFinder;
+    @MetricType
+    private int getMetricType(TeamHelper teamHelper, String key) {
+        for (Scout scout : mScouts.get(teamHelper)) {
+            for (ScoutMetric metric : scout.getMetrics()) {
+                if (key.equals(metric.getRef().getKey())) {
+                    return metric.getType();
                 }
             }
         }
+
+        throw new IllegalStateException("Key not found: " + key);
     }
 
     private String getRangeAddress(Cell first, Cell last) {
@@ -485,16 +500,11 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
             List<Row> metricsRows = getAdjustedList(scoutSheet);
             rowIterator:
-            for (int j = 0, adjustedColumn = 1; j < metricsRows.size(); j++, adjustedColumn++) {
-                Row averageRow = metricsRows.get(j);
+            for (Row averageRow : metricsRows) {
                 Cell averageCell = averageRow.getCell(averageRow.getLastCellNum() - 1);
 
-                if (TextUtils.isEmpty(getStringForCell(averageCell))) {
-                    adjustedColumn--;
-                    continue;
-                }
+                if (TextUtils.isEmpty(getStringForCell(averageCell))) continue;
 
-                Cell valueCell = row.createCell(adjustedColumn);
                 Cell metricCell = averageRow.getCell(0);
                 String metricKey = metricCell.getCellComment().getString().toString();
 
@@ -503,7 +513,9 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                     String key = keyComment == null ? null : keyComment.getString().toString();
 
                     if (metricKey.equals(key)) {
-                        setAverageFormula(scoutSheet, valueCell, averageCell);
+                        setAverageFormula(scoutSheet,
+                                          row.createCell(keyCell.getColumnIndex()),
+                                          averageCell);
                         continue rowIterator;
                     }
                 }
@@ -516,7 +528,9 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 keyComment.setString(mCreationHelper.createRichTextString(metricKey));
                 keyCell.setCellComment(keyComment);
 
-                setAverageFormula(scoutSheet, valueCell, averageCell);
+                setAverageFormula(scoutSheet,
+                                  row.createCell(keyCell.getColumnIndex()),
+                                  averageCell);
             }
         }
     }

@@ -20,7 +20,7 @@ scouting simple and collaborative.
     - true/false (checkbox)
     - stopwatch (for keeping track of cycle time)
     - number (counter)
-    - list (selector)
+    - list (item selector)
     - text (notes)
   - Integration with [The Blue Alliance](https://www.thebluealliance.com) to automatically populate relevant team info
   - Export scouting data to a spreadsheet with pre-computed averages and statistics
