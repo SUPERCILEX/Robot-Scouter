@@ -118,7 +118,8 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
 
         @Override
         public void onFailure(@NonNull Exception e) {
-            mAllTeamsTask.setException(e);
+            FirebaseCrash.report(e);
+            mAllTeamsTask.trySetException(e);
         }
     }
 }
