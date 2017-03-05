@@ -8,4 +8,8 @@
         <key>should_cache_db</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>team_freshness</key>
+        <value>4</value>
+    </entry>
 </defaultsMap>

@@ -224,7 +224,7 @@ public class AuthHelper implements View.OnClickListener {
             String email = getUser().getEmail();
             if (email != null && email.contains("@cloudtestlabaccounts.com")) return;
 
-            RemoteConfigHelper.fetchRemoteConfigValues().addOnSuccessListener(this);
+            RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this);
             Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
         }
 
@@ -234,7 +234,6 @@ public class AuthHelper implements View.OnClickListener {
 
         @Override
         public void onSuccess(Void aVoid) {
-            FirebaseRemoteConfig.getInstance().activateFetched();
             if (FirebaseRemoteConfig.getInstance().getBoolean(SHOULD_CACHE_DB)) {
                 Constants.FIREBASE_SCOUTS.addListenerForSingleValueEvent(this);
                 Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);

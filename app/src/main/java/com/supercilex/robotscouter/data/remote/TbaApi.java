@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
@@ -49,14 +48,7 @@ public final class TbaApi implements Callable<Team> {
 
     @Override
     public Team call() throws Exception {
-        Tasks.await(RemoteConfigHelper
-                            .fetchRemoteConfigValues()
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    FirebaseRemoteConfig.getInstance().activateFetched();
-                                }
-                            }));
+        Tasks.await(RemoteConfigHelper.fetchAndActivate());
 
         getTeamInfo();
         getTeamMedia();

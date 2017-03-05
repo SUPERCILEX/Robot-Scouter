@@ -18,12 +18,14 @@ import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
 import com.google.firebase.appindexing.builders.Indexables;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.CustomTabsHelper;
+import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +44,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     };
 
     private static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
-    private static final int FRESHNESS_DAYS = 4;
+    private static final String FRESHNESS_DAYS = "team_freshness";
 
     private final Team mTeam;
 
@@ -175,8 +177,21 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void fetchLatestData(Context context) {
-        long differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
-        if (differenceDays >= FRESHNESS_DAYS) DownloadTeamDataJob.start(context, this);
+        final Context appContext = context.getApplicationContext();
+        RemoteConfigHelper.fetchAndActivate()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        long differenceDays =
+                                TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
+                        double freshness =
+                                FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);
+
+                        if (differenceDays >= freshness) {
+                            DownloadTeamDataJob.start(appContext, TeamHelper.this);
+                        }
+                    }
+                });
     }
 
     public void visitTbaWebsite(Context context) {
