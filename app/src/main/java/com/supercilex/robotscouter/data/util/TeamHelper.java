@@ -151,8 +151,8 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         ScoutUtils.deleteAll(mTeam.getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                getRef().removeValue();
                 getIndicesRef().child(mTeam.getKey()).removeValue();
+                getRef().removeValue();
                 if (mTeam.getTemplateKey() != null) {
                     TeamIndices.getAll()
                             .addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
