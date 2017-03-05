@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.supercilex.robotscouter.ui.common.OnBackPressedListener;
-
 public interface MenuManager extends OnBackPressedListener {
     void onCreateOptionsMenu(Menu menu);
 

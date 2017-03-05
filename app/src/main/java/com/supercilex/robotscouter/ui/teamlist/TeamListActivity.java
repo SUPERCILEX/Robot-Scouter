@@ -12,7 +12,6 @@ import android.view.View;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.AuthHelper;
-import com.supercilex.robotscouter.ui.common.OnBackPressedListener;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
