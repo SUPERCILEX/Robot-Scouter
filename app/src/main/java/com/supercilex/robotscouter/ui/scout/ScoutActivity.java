@@ -20,6 +20,7 @@ import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.appindexing.FirebaseUserActions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,7 +40,8 @@ import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.Collections;
 
-public class ScoutActivity extends AppCompatActivity implements ChangeEventListener, OnCompleteListener<Team> {
+public class ScoutActivity extends AppCompatActivity
+        implements ChangeEventListener, OnCompleteListener<Team>, FirebaseAuth.AuthStateListener {
     private static final String INTENT_ADD_SCOUT = "add_scout";
 
     private TeamHelper mTeamHelper;
@@ -75,6 +77,7 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
         mTeamHelper = TeamHelper.get(getIntent());
         mHolder.bind(mTeamHelper);
         addListeners();
+        FirebaseAuth.getInstance().addAuthStateListener(this);
 
         if (mSavedState == null && MiscellaneousHelper.isOffline(this)) {
             Snackbar.make(findViewById(R.id.root),
@@ -99,6 +102,7 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        FirebaseAuth.getInstance().removeAuthStateListener(this);
         Constants.sFirebaseTeams.removeChangeEventListener(this);
         if (mPagerAdapter != null) mPagerAdapter.cleanup();
     }
@@ -222,11 +226,16 @@ public class ScoutActivity extends AppCompatActivity implements ChangeEventListe
     }
 
     @Override
-    public void onDataChanged() {
+    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+        if (auth.getCurrentUser() == null) finish();
     }
 
     @Override
     public void onCancelled(DatabaseError error) {
         FirebaseCrash.report(error.toException());
+    }
+
+    @Override
+    public void onDataChanged() {
     }
 }

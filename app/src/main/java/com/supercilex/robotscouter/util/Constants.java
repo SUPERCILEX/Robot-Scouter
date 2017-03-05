@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseIndexArray;
+import com.firebase.ui.database.ObservableSnapshotArray;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -13,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -65,11 +67,33 @@ public final class Constants {
 
     public static final String HTML_IMPORT_TEAM;
 
-    public static FirebaseIndexArray<Team> sFirebaseTeams;
+    private static final List<ChangeEventListener> TMP_LISTENERS = new ArrayList<>();
+    private static final ObservableSnapshotArray<Team> NOOP_ARRAY =
+            new ObservableSnapshotArray<Team>(Team.class) {
+                @Override
+                public ChangeEventListener addChangeEventListener(@NonNull ChangeEventListener listener) {
+                    ChangeEventListener tmpListener = super.addChangeEventListener(listener);
+                    TMP_LISTENERS.add(tmpListener);
+                    return tmpListener;
+                }
+
+                @Override
+                public void removeChangeEventListener(@NonNull ChangeEventListener listener) {
+                    super.removeChangeEventListener(listener);
+                    TMP_LISTENERS.remove(listener);
+                }
+
+                @Override
+                protected List<DataSnapshot> getSnapshots() {
+                    return new ArrayList<>();
+                }
+            };
+
+    public static ObservableSnapshotArray<Team> sFirebaseTeams = NOOP_ARRAY;
 
     static {
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            private final ChangeEventListener mListener = new ChangeEventListener() {
+            private final ChangeEventListener mNoopListener = new ChangeEventListener() {
                 @Override
                 public void onChildChanged(EventType type,
                                            DataSnapshot snapshot,
@@ -101,16 +125,21 @@ public final class Constants {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 if (auth.getCurrentUser() == null) {
-                    if (sFirebaseTeams != null) {
+                    if (sFirebaseTeams != NOOP_ARRAY) {
                         sFirebaseTeams.removeAllListeners();
-                        sFirebaseTeams = null;
+                        sFirebaseTeams = NOOP_ARRAY;
                     }
                 } else {
                     sFirebaseTeams = new FirebaseIndexArray<>(
                             FIREBASE_TEAM_INDICES.child(auth.getCurrentUser().getUid()),
                             FIREBASE_TEAMS_REF,
                             mTeamParser);
-                    sFirebaseTeams.addChangeEventListener(mListener);
+                    sFirebaseTeams.addChangeEventListener(mNoopListener);
+
+                    for (ChangeEventListener listener : TMP_LISTENERS) {
+                        sFirebaseTeams.addChangeEventListener(listener);
+                    }
+                    NOOP_ARRAY.removeAllListeners();
                 }
             }
         });
