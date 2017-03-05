@@ -12,7 +12,7 @@
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
-    <string name="invalid_team_number">Oops! Make sure your team number is greater than 0 and smaller than 100000</string>
+    <string name="invalid_team_number">Please enter a number between 0 and 100000</string>
 
     <string name="unknown_team">Unknown</string>
     <string name="delete">Delete</string>

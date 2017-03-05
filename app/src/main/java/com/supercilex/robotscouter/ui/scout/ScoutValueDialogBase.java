@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.util.DatabaseHelper;
 public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase implements Runnable {
     protected static final String CURRENT_VALUE = "current_value";
 
+    protected TextInputLayout mInputLayout;
     protected EditText mValue;
 
     protected abstract T getValue();
@@ -29,14 +30,14 @@ public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase impleme
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        TextInputLayout layout =
+        mInputLayout =
                 (TextInputLayout) View.inflate(getContext(), R.layout.dialog_scout_value, null);
-        layout.setHint(getString(getHint()));
-        mValue = (EditText) layout.findViewById(R.id.value);
+        mInputLayout.setHint(getString(getHint()));
+        mValue = (EditText) mInputLayout.findViewById(R.id.value);
         mValue.setText(getArguments().getString(CURRENT_VALUE));
         mValue.post(this);
 
-        return createDialog(layout, getTitle());
+        return createDialog(mInputLayout, getTitle());
     }
 
     @Override

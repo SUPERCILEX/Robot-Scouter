@@ -9,6 +9,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 
+import java.math.BigDecimal;
+
 public class ScoutCounterValueDialog extends ScoutValueDialogBase<Integer> {
     private static final String TAG = "ScoutCounterValueDialog";
 
@@ -26,6 +28,17 @@ public class ScoutCounterValueDialog extends ScoutValueDialogBase<Integer> {
     public void onShow(DialogInterface dialog) {
         super.onShow(dialog);
         mValue.setInputType(InputType.TYPE_CLASS_NUMBER);
+    }
+
+    @Override
+    protected boolean onClick() {
+        try {
+            new BigDecimal(mValue.getText().toString()).intValueExact();
+            return super.onClick();
+        } catch (NumberFormatException | ArithmeticException e) {
+            mInputLayout.setError(getString(R.string.invalid_team_number));
+            return false;
+        }
     }
 
     @Override
