@@ -109,7 +109,9 @@ public class ScoutActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putAll(ScoutUtils.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
+        if (mPagerAdapter != null) {
+            outState.putAll(ScoutUtils.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
+        }
         super.onSaveInstanceState(outState);
     }
 
