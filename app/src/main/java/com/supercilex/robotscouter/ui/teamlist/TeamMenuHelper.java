@@ -279,9 +279,17 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void notifyItemsChanged() {
-        ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        final SimpleItemAnimator animator = (SimpleItemAnimator) mRecyclerView.getItemAnimator();
+
+        animator.setSupportsChangeAnimations(false);
         mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount() + 1);
-        ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(true);
+
+        mRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                animator.setSupportsChangeAnimations(true);
+            }
+        });
     }
 
     private FloatingActionButton getFab() {
