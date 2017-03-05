@@ -119,7 +119,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             Iterable<DataSnapshot> metrics =
                     snapshot.child(Constants.FIREBASE_METRICS).getChildren();
             for (DataSnapshot scoutMetricSnapshot : metrics) {
-                scout.add(ScoutUtils.getMetric(scoutMetricSnapshot));
+                scout.add(ScoutUtils.METRIC_PARSER.parseSnapshot(scoutMetricSnapshot));
             }
 
             List<Scout> scouts = mScouts.get(mPair.first);

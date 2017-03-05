@@ -57,8 +57,6 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
         mRecyclerView.setLayoutManager(mManager);
 
         mAdapter = new ScoutAdapter(
-                ScoutMetric.class,
-                ScoutViewHolderBase.class,
                 Constants.getScoutMetrics(mScoutKey),
                 getChildFragmentManager(),
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator());

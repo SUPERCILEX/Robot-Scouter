@@ -148,8 +148,6 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         mAdapter = new ScoutTemplateAdapter(
-                ScoutMetric.class,
-                ScoutViewHolderBase.class,
                 Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
                 getChildFragmentManager(),
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator(),

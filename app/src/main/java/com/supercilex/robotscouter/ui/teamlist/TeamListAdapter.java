@@ -26,10 +26,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     private TeamMenuManager mMenuManager;
 
     public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
-        super(Constants.sFirebaseTeams,
-              Team.class,
-              R.layout.team_list_row_layout,
-              TeamViewHolder.class);
+        super(Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder.class);
         mContext = fragment.getContext();
         mMenuManager = menuManager;
 

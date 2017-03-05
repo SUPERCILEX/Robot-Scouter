@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.data.util;
 
 import android.os.Bundle;
 
+import com.firebase.ui.database.SnapshotParser;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.crash.FirebaseCrash;
@@ -23,6 +24,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ScoutUtils {
+    public static final SnapshotParser<ScoutMetric> METRIC_PARSER = new SnapshotParser<ScoutMetric>() {
+        @Override
+        public ScoutMetric parseSnapshot(DataSnapshot snapshot) {
+            ScoutMetric metric;
+
+            @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
+            switch (type) {
+                case MetricType.CHECKBOX:
+                    metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
+                    });
+                    break;
+                case MetricType.COUNTER:
+                    metric = new CounterMetric(
+                            snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                            snapshot.child(Constants.FIREBASE_VALUE)
+                                    .getValue(new GenericTypeIndicator<Integer>() {
+                                    }),
+                            snapshot.child(Constants.FIREBASE_UNIT).getValue(String.class));
+                    break;
+                case MetricType.NOTE:
+                    metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
+                    });
+                    break;
+                case MetricType.SPINNER:
+                    List<String> values = new ArrayList<>();
+                    Iterable<DataSnapshot> children =
+                            snapshot.child(Constants.FIREBASE_VALUE).getChildren();
+                    for (DataSnapshot snapshot1 : children) {
+                        values.add(snapshot1.getValue(String.class));
+                    }
+
+                    metric = new SpinnerMetric(
+                            snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                            values,
+                            snapshot.child(Constants.FIREBASE_SELECTED_VALUE_INDEX)
+                                    .getValue(Integer.class));
+                    break;
+                case MetricType.STOPWATCH:
+                    metric = new StopwatchMetric(
+                            snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                            snapshot.child(Constants.FIREBASE_VALUE)
+                                    .getValue(new GenericTypeIndicator<List<Long>>() {
+                                    }));
+                    break;
+                case MetricType.HEADER:
+                    metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Void>>() {
+                    });
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown metric type: " + type);
+            }
+
+            metric.setRef(snapshot.getRef());
+            return metric;
+        }
+    };
+
     private static final String SCOUT_KEY = "scout_key";
 
     private ScoutUtils() {
@@ -41,60 +99,6 @@ public final class ScoutUtils {
 
     public static DatabaseReference getIndicesRef(String teamKey) {
         return Constants.FIREBASE_SCOUT_INDICES.child(teamKey);
-    }
-
-    public static ScoutMetric getMetric(DataSnapshot snapshot) {
-        ScoutMetric metric;
-
-        @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
-        switch (type) {
-            case MetricType.CHECKBOX:
-                metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
-                });
-                break;
-            case MetricType.COUNTER:
-                metric = new CounterMetric(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        snapshot.child(Constants.FIREBASE_VALUE)
-                                .getValue(new GenericTypeIndicator<Integer>() {
-                                }),
-                        snapshot.child(Constants.FIREBASE_UNIT).getValue(String.class));
-                break;
-            case MetricType.NOTE:
-                metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {
-                });
-                break;
-            case MetricType.SPINNER:
-                List<String> values = new ArrayList<>();
-                Iterable<DataSnapshot> children =
-                        snapshot.child(Constants.FIREBASE_VALUE).getChildren();
-                for (DataSnapshot snapshot1 : children) {
-                    values.add(snapshot1.getValue(String.class));
-                }
-
-                metric = new SpinnerMetric(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        values,
-                        snapshot.child(Constants.FIREBASE_SELECTED_VALUE_INDEX)
-                                .getValue(Integer.class));
-                break;
-            case MetricType.STOPWATCH:
-                metric = new StopwatchMetric(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        snapshot.child(Constants.FIREBASE_VALUE)
-                                .getValue(new GenericTypeIndicator<List<Long>>() {
-                                }));
-                break;
-            case MetricType.HEADER:
-                metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Void>>() {
-                });
-                break;
-            default:
-                throw new IllegalStateException("Unknown metric type: " + type);
-        }
-
-        metric.setRef(snapshot.getRef());
-        return metric;
     }
 
     public static String add(Team team) {

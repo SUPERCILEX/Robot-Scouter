@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
@@ -24,12 +23,8 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     private FragmentManager mManager;
     private SimpleItemAnimator mAnimator;
 
-    public ScoutAdapter(Class<ScoutMetric> modelClass,
-                        Class<ScoutViewHolderBase> viewHolderClass,
-                        Query query,
-                        FragmentManager manager,
-                        SimpleItemAnimator animator) {
-        super(modelClass, 0, viewHolderClass, query);
+    public ScoutAdapter(Query query, FragmentManager manager, SimpleItemAnimator animator) {
+        super(ScoutUtils.METRIC_PARSER, 0, ScoutViewHolderBase.class, query);
         mManager = manager;
         mAnimator = animator;
     }
@@ -68,11 +63,6 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
             default:
                 throw new IllegalStateException();
         }
-    }
-
-    @Override
-    public ScoutMetric parseSnapshot(DataSnapshot snapshot) {
-        return ScoutUtils.getMetric(snapshot);
     }
 
     @Override
