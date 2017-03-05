@@ -203,7 +203,9 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
             averageSheet.createFreezePane(1, 1);
         }
 
-        for (TeamHelper teamHelper : mScouts.keySet()) {
+        List<TeamHelper> teamHelpers = new ArrayList<>(mScouts.keySet());
+        Collections.sort(teamHelpers);
+        for (TeamHelper teamHelper : teamHelpers) {
             Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.toString()));
             teamSheet.createFreezePane(1, 1);
             buildTeamSheet(teamHelper, teamSheet);
@@ -467,7 +469,6 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
 
     private void buildTeamAveragesSheet(Sheet averageSheet) {
         Workbook workbook = averageSheet.getWorkbook();
-        List<TeamHelper> teamHelpers = new ArrayList<>(mScouts.keySet());
         Row headerRow = averageSheet.createRow(0);
         headerRow.createCell(0);
 
@@ -477,10 +478,9 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         List<Sheet> scoutSheets = getAdjustedList(workbook);
         for (int i = 0; i < scoutSheets.size(); i++) {
             Sheet scoutSheet = scoutSheets.get(i);
-            TeamHelper teamHelper = teamHelpers.get(i);
             Row row = averageSheet.createRow(i + 1);
             Cell rowHeaderCell = row.createCell(0);
-            rowHeaderCell.setCellValue(teamHelper.toString());
+            rowHeaderCell.setCellValue(scoutSheet.getSheetName());
             rowHeaderCell.setCellStyle(rowHeaderStyle);
 
             List<Row> metricsRows = getAdjustedList(scoutSheet);
