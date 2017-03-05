@@ -10,11 +10,13 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -57,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
+public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
@@ -73,7 +75,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
     private CreationHelper mCreationHelper;
 
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    protected SpreadsheetWriter(Fragment fragment, @Size(min = 1) List<TeamHelper> teamHelpers) {
+    private SpreadsheetWriter(Fragment fragment, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mContext = fragment.getContext().getApplicationContext();
         mProgressDialog = ProgressDialogManager.show(fragment.getActivity());
 
@@ -141,6 +143,7 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
+    @Nullable
     private File writeFile(File robotScouterFolder) {
         FileOutputStream stream = null;
         try {
@@ -154,7 +157,23 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                 }
             }
             stream = new FileOutputStream(absoluteFile);
-            getWorkbook().write(stream);
+
+            Workbook workbook;
+            try {
+                workbook = getWorkbook();
+            } catch (Throwable e) { // NOPMD
+                FirebaseCrash.log(mScouts.toString());
+                FirebaseCrash.report(e);
+                new Handler(mContext.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return null;
+            }
+            workbook.write(stream);
+
             return absoluteFile;
         } catch (IOException e) {
             FirebaseCrash.report(e);
@@ -227,8 +246,6 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle rowHeaderStyle = getRowHeaderStyle(workbook);
 
-        List<Integer> excludedAverageRows = new ArrayList<>();
-
         Row header = teamSheet.createRow(0);
         header.createCell(0); // Create empty top left corner cell
         for (int i = 0, column = 1; i < scouts.size(); i++, column++) {
@@ -255,7 +272,6 @@ public class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List
                                         metric,
                                         column,
                                         rowHeaderStyle);
-                    if (metric.getType() == MetricType.NOTE) excludedAverageRows.add(rowNum);
                 } else {
                     List<Row> rows = getAdjustedList(teamSheet);
 
