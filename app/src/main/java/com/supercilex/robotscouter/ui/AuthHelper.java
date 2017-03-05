@@ -23,11 +23,13 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 public class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
@@ -215,16 +217,28 @@ public class AuthHelper implements View.OnClickListener {
         signIn();
     }
 
-    private static final class DatabaseInitializer implements ValueEventListener {
+    private static final class DatabaseInitializer implements ValueEventListener, OnSuccessListener<Void> {
+        private static final String SHOULD_CACHE_DB = "should_cache_db";
+
         private DatabaseInitializer() {
-            Constants.FIREBASE_SCOUTS.addListenerForSingleValueEvent(this);
+            String email = getUser().getEmail();
+            if (email != null && email.contains("@cloudtestlabaccounts.com")) return;
+
+            RemoteConfigHelper.fetchRemoteConfigValues().addOnSuccessListener(this);
             Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
-            Constants.FIREBASE_DEFAULT_TEMPLATE.addListenerForSingleValueEvent(this);
-            Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
         }
 
         public static void init() {
             new DatabaseInitializer();
+        }
+
+        @Override
+        public void onSuccess(Void aVoid) {
+            FirebaseRemoteConfig.getInstance().activateFetched();
+            if (FirebaseRemoteConfig.getInstance().getBoolean(SHOULD_CACHE_DB)) {
+                Constants.FIREBASE_SCOUTS.addListenerForSingleValueEvent(this);
+                Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
+            }
         }
 
         @Override

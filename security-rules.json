@@ -2,6 +2,9 @@
   "rules": {
     ".read": "auth != null",
     ".write": false,
+    "default-template": {
+      ".read": true
+    },
     "scout-indices": {
       "$key": {
         ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()"

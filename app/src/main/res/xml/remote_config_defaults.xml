@@ -4,4 +4,8 @@
         <key>team_media_year</key>
         <value>2016</value>
     </entry>
+    <entry>
+        <key>should_cache_db</key>
+        <value>true</value>
+    </entry>
 </defaultsMap>

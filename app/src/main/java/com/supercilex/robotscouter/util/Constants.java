@@ -8,6 +8,7 @@ import com.firebase.ui.database.FirebaseIndexArray;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -150,6 +151,7 @@ public final class Constants {
 
             @Override
             public void onCancelled(DatabaseError error) {
+                FirebaseCrash.report(error.toException());
             }
         });
     }

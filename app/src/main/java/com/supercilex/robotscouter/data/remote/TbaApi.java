@@ -49,15 +49,14 @@ public final class TbaApi implements Callable<Team> {
 
     @Override
     public Team call() throws Exception {
-        Task<Void> teamMediaYearFetchTask = RemoteConfigHelper
-                .fetchRemoteConfigValues()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        FirebaseRemoteConfig.getInstance().activateFetched();
-                    }
-                });
-        Tasks.await(teamMediaYearFetchTask);
+        Tasks.await(RemoteConfigHelper
+                            .fetchRemoteConfigValues()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    FirebaseRemoteConfig.getInstance().activateFetched();
+                                }
+                            }));
 
         getTeamInfo();
         getTeamMedia();
