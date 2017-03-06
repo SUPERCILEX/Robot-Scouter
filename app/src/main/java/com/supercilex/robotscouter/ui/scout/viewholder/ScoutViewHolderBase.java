@@ -9,16 +9,15 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 
 public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> extends RecyclerView.ViewHolder {
     protected VView mName;
     protected ScoutMetric<TMetric> mMetric;
-    protected DatabaseReference mRef;
     protected FragmentManager mManager;
-    protected SimpleItemAnimator mAnimator;
+
+    private SimpleItemAnimator mAnimator;
 
     @SuppressLint("WrongViewCast")
     public ScoutViewHolderBase(View itemView) {
@@ -28,11 +27,9 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
     }
 
     public final void bind(ScoutMetric<TMetric> metric,
-                           DatabaseReference ref,
                            FragmentManager manager,
                            SimpleItemAnimator animator) {
         mMetric = metric;
-        mRef = ref;
         mManager = manager;
         mAnimator = animator;
 
@@ -46,14 +43,20 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
 
     protected void updateMetricName(String name) {
         if (!TextUtils.equals(mMetric.getName(), name)) {
-            mMetric.setName(mRef, name, mAnimator);
+            disableAnimations();
+            mMetric.updateName(name);
         }
     }
 
     protected void updateMetricValue(TMetric value) {
         if (!value.equals(mMetric.getValue())) {
-            mMetric.setValue(mRef, value, mAnimator);
+            disableAnimations();
+            mMetric.updateValue(value);
         }
+    }
+
+    protected void disableAnimations() {
+        mAnimator.setSupportsChangeAnimations(false);
     }
 
     @Override

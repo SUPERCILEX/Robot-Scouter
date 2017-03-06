@@ -52,7 +52,7 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     @Override
     public boolean onLongClick(View v) {
         ScoutCounterValueDialog.show(mManager,
-                                     mRef.child(Constants.FIREBASE_VALUE),
+                                     mMetric.getRef().child(Constants.FIREBASE_VALUE),
                                      getStringWithoutUnit());
         return true;
     }

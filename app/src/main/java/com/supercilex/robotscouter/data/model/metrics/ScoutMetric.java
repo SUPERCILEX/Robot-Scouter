@@ -2,16 +2,15 @@ package com.supercilex.robotscouter.data.model.metrics;
 
 import android.support.annotation.Keep;
 import android.support.annotation.RestrictTo;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
 public class ScoutMetric<T> {
-    @Exclude private DatabaseReference mRef;
+    @Exclude protected DatabaseReference mRef;
+
     @Exclude private String mName;
     @Exclude private T mValue;
     @Exclude
@@ -49,11 +48,9 @@ public class ScoutMetric<T> {
         mName = name;
     }
 
-    public void setName(Query query, String name, SimpleItemAnimator animator) {
-        animator.setSupportsChangeAnimations(false);
-
-        mName = name;
-        query.getRef().child(Constants.FIREBASE_NAME).setValue(mName);
+    public void updateName(String name) {
+        setName(name);
+        mRef.child(Constants.FIREBASE_NAME).setValue(mName);
     }
 
     @Keep
@@ -66,11 +63,9 @@ public class ScoutMetric<T> {
         mValue = value;
     }
 
-    public void setValue(Query query, T value, SimpleItemAnimator animator) {
-        animator.setSupportsChangeAnimations(false);
-
-        mValue = value;
-        query.getRef().child(Constants.FIREBASE_VALUE).setValue(mValue);
+    public void updateValue(T value) {
+        setValue(value);
+        mRef.child(Constants.FIREBASE_VALUE).setValue(mValue);
     }
 
     @Keep

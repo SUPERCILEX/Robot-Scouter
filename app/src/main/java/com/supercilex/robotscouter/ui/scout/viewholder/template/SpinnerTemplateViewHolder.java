@@ -41,7 +41,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
         if (itemPosition == 0) {
             if (mIsFakeSelectedValue) return;
             SpinnerTemplateDialog.show(mManager,
-                                       mRef.child(Constants.FIREBASE_VALUE),
+                                       mMetric.getRef().child(Constants.FIREBASE_VALUE),
                                        ((SpinnerMetric) mMetric).getSelectedValueIndex());
             mSpinner.setSelection(getSelectedValueIndex());
         } else {

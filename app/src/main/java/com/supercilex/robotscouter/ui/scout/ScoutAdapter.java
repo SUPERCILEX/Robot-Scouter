@@ -34,7 +34,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
                                    ScoutMetric metric,
                                    int position) {
         //noinspection unchecked
-        viewHolder.bind(metric, getRef(position), mManager, mAnimator);
+        viewHolder.bind(metric, mManager, mAnimator);
         mAnimator.setSupportsChangeAnimations(true);
     }
 

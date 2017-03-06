@@ -3,11 +3,9 @@ package com.supercilex.robotscouter.data.model.metrics;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
 public class CounterMetric extends ScoutMetric<Integer> {
@@ -36,11 +34,9 @@ public class CounterMetric extends ScoutMetric<Integer> {
         mUnit = unit;
     }
 
-    public void setUnit(Query query, String unit, SimpleItemAnimator animator) {
-        animator.setSupportsChangeAnimations(false);
-
-        mUnit = unit;
-        query.getRef().child(Constants.FIREBASE_UNIT).setValue(mUnit);
+    public void updateUnit(String unit) {
+        setUnit(unit);
+        mRef.child(Constants.FIREBASE_UNIT).setValue(mUnit);
     }
 
     @Override

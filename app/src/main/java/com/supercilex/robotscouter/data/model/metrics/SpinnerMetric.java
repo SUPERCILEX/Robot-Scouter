@@ -2,10 +2,8 @@ package com.supercilex.robotscouter.data.model.metrics;
 
 import android.support.annotation.Keep;
 import android.support.annotation.RestrictTo;
-import android.support.v7.widget.SimpleItemAnimator;
 
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.List;
@@ -29,16 +27,13 @@ public class SpinnerMetric extends ScoutMetric<List<String>> {
     }
 
     @Keep
-    public void setSelectedValueIndex(int selectedValueIndex) {
-        mSelectedValueIndex = selectedValueIndex;
+    public void setSelectedValueIndex(int i) {
+        mSelectedValueIndex = i;
     }
 
-    public void setSelectedValueIndex(Query query, int selectedValue, SimpleItemAnimator animator) {
-        if (selectedValue == mSelectedValueIndex) return;
-        mSelectedValueIndex = selectedValue;
-
-        animator.setSupportsChangeAnimations(false);
-        query.getRef().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(mSelectedValueIndex);
+    public void updateSelectedValueIndex(int i) {
+        setSelectedValueIndex(i);
+        mRef.child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(mSelectedValueIndex);
     }
 
     @Override
