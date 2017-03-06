@@ -36,7 +36,7 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
                                    ScoutMetric metric,
                                    int position) {
         super.populateViewHolder(viewHolder, metric, position);
-        mCallback.updateDragStatus(viewHolder, position);
+        mCallback.onBind(viewHolder, position);
     }
 
     @Override

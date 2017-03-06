@@ -17,9 +17,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
-import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
-
-import java.util.List;
 
 public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolder> extends ItemTouchHelper.SimpleCallback {
     private View mRootView;
@@ -42,7 +39,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
         mAdapter = adapter;
     }
 
-    public void updateDragStatus(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBind(final RecyclerView.ViewHolder viewHolder, int position) {
         viewHolder.itemView.findViewById(R.id.reorder)
                 .setOnTouchListener(new View.OnTouchListener() {
                     @SuppressLint("ClickableViewAccessibility")
@@ -68,7 +65,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
 
     public boolean onChildChanged(ChangeEventListener.EventType type, int index) {
         if (mIsItemMoving) {
-            return false;
+            return type == ChangeEventListener.EventType.MOVED;
         } else if (type == ChangeEventListener.EventType.ADDED && index == mScrollToPosition) {
             ((RecyclerView) mRootView.findViewById(R.id.list)).scrollToPosition(mScrollToPosition);
         }
@@ -83,13 +80,8 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
         int toPos = target.getAdapterPosition();
         mIsItemMoving = true;
 
-        mAdapter.notifyItemMoved(fromPos, toPos);
-
-        List<DatabaseReference> refs = FirebaseAdapterHelper.getRefs(mAdapter);
-        refs.add(toPos, refs.remove(fromPos));
-        for (int i = 0; i < refs.size(); i++) {
-            refs.get(i).getRef().setPriority(i);
-        }
+        mAdapter.getRef(fromPos).setPriority(toPos);
+        mAdapter.getRef(toPos).setPriority(fromPos);
 
         return true;
     }

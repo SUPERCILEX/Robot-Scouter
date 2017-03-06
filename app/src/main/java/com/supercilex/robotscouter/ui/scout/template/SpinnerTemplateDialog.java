@@ -91,9 +91,9 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        mRef.child(String.valueOf(mAdapter.getItemCount()))
-                .setValue("item " + (mAdapter.getItemCount() + 1), mAdapter.getItemCount());
-        mItemTouchCallback.addItemToScrollQueue(mAdapter.getItemCount());
+        int itemCount = mAdapter.getItemCount();
+        mRef.child(String.valueOf(itemCount)).setValue("item " + (itemCount + 1), itemCount);
+        mItemTouchCallback.addItemToScrollQueue(itemCount);
     }
 
     private void setupRecyclerView(@Nullable Bundle savedInstanceState) {
@@ -117,7 +117,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
                                               String itemText,
                                               int position) {
                 viewHolder.bind(itemText, mSnapshots.get(position));
-                mItemTouchCallback.updateDragStatus(viewHolder, position);
+                mItemTouchCallback.onBind(viewHolder, position);
             }
 
             @Override
@@ -135,6 +135,10 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
                     if (mSelectedValueIndex >= getItemCount()) {
                         mRef.getParent().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(0);
                     }
+                }
+
+                if (type == EventType.ADDED && snapshot.getPriority() == null) {
+                    snapshot.getRef().setPriority(index);
                 }
 
                 if (mItemTouchCallback.onChildChanged(type, index)) {
