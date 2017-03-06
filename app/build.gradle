@@ -15,6 +15,7 @@ android {
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
         applicationId "com.supercilex.robotscouter"
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1 // The version code is updated on each Travis build
         versionName "1.0.0"
@@ -31,16 +32,8 @@ android {
     }
 
     productFlavors {
-        dev {
-            // Enable pre-dexing to produce an APK that can be tested on
-            // Android 5.0+ without the time-consuming DEX build processes.
-            minSdkVersion 21
-        }
-
-        prod {
-            // The actual minSdkVersion for the production version.
-            minSdkVersion 16
-        }
+        dev
+        prod
     }
 
     buildTypes {
@@ -85,7 +78,7 @@ project.afterEvaluate {
 }
 
 dependencies {
-    // To update Apache POI, use https://github.com/SUPERCILEX/poi-on-android/tree/full
+    // To update Apache POI, use https://github.com/SUPERCILEX/poi-on-android
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Support libraries
