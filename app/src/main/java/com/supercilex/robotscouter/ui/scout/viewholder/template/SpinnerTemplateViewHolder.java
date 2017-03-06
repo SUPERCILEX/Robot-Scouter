@@ -27,15 +27,8 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
         mName.setOnFocusChangeListener(this);
 
         // See https://code.google.com/p/android/issues/detail?id=236586
-        List<Fragment> fragments = mManager.getFragments();
-        if (fragments != null) {
-            for (Fragment fragment : fragments) {
-                if (fragment != null && fragment.getTag().equals(SpinnerTemplateDialog.TAG)) {
-                    disableAnimations();
-                    break;
-                }
-            }
-        }
+        Fragment fragment = mManager.findFragmentByTag(SpinnerTemplateDialog.TAG);
+        if (fragment != null) disableAnimations();
     }
 
     @Override
