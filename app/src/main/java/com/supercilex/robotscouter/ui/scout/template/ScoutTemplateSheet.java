@@ -188,8 +188,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         }
 
         int itemCount = mAdapter.getItemCount();
-        DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey)
-                .child(String.valueOf(itemCount));
+        DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey).push();
         switch (id) {
             case R.id.add_checkbox:
                 metricRef.setValue(new ScoutMetric<>("", false, MetricType.CHECKBOX), itemCount);
