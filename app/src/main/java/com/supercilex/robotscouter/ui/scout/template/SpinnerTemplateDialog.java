@@ -25,7 +25,7 @@ import com.supercilex.robotscouter.util.DatabaseHelper;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
 public class SpinnerTemplateDialog extends DialogFragment implements View.OnClickListener, DialogInterface.OnShowListener {
-    private static final String TAG = "SpinnerTemplateDialog";
+    public static final String TAG = "SpinnerTemplateDialog";
 
     private View mRootView;
     private int mSelectedValueIndex;

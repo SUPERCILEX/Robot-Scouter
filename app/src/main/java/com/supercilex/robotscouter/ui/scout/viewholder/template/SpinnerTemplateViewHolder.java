@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,17 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     public void bind() {
         super.bind();
         mName.setOnFocusChangeListener(this);
+
+        // See https://code.google.com/p/android/issues/detail?id=236586
+        List<Fragment> fragments = mManager.getFragments();
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.getTag().equals(SpinnerTemplateDialog.TAG)) {
+                    disableAnimations();
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -40,6 +52,8 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         if (itemPosition == 0) {
             if (mIsFakeSelectedValue) return;
+
+            disableAnimations();
             SpinnerTemplateDialog.show(mManager,
                                        mMetric.getRef().child(Constants.FIREBASE_VALUE),
                                        ((SpinnerMetric) mMetric).getSelectedValueIndex());

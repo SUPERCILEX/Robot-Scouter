@@ -12,7 +12,7 @@ scouting simple and collaborative.
 ## Features:
 
   - No setup required
-  - Easy sharing
+  - Easy sharing between users
   - Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
  Android N and use split screen mode to scout several teams at once.
   - Customizable scouting templates with several different metrics to choose from:
