@@ -1,0 +1,8 @@
+Fixed a massive amount of bugs and crashes:
+- Made selecting a team in main activity much more responsive
+- Dragging metrics in the main template editor should no longer crash
+- Editing item selector items should no longer crash
+- Fixed crash when entering weird numbers into counter
+- Fixed random crashes when exiting various screens
+- Fixed crash when exporting spreadsheet on unsupported device
+- And more!
