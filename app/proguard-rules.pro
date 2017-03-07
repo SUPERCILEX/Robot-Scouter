@@ -1,5 +1,5 @@
 # Optimize
--optimizations !field/*,!class/merging/*,*
+-optimizations !field/propagation/value,!class/merging/*,*
 -repackageclasses com.supercilex.robotscouter
 -mergeinterfacesaggressively
 

@@ -3,6 +3,7 @@ apply plugin: 'com.google.firebase.firebase-crash'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'project-report'
 apply from: '../quality/quality.gradle'
+build.dependsOn 'updateProdReleasePlayVersion'
 
 def keystorePropertiesFile = file("../keystore.properties")
 def keystoreProperties = new Properties()
@@ -70,7 +71,13 @@ configurations {
 }
 
 android.variantFilter { variant ->
-    if (variant.name == 'devRelease') variant.setIgnore(true)
+    if (variant.name == 'devRelease' || variant.name == 'prodDebug') variant.setIgnore(true)
+}
+
+android.applicationVariants.all { variant ->
+    variant.preBuild.doLast {
+        variant.mergedFlavor.versionName = "${android.defaultConfig.versionName}.$variant.versionCode"
+    }
 }
 
 project.afterEvaluate {
