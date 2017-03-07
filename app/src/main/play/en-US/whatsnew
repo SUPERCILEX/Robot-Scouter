@@ -1,1 +1,3 @@
-Notify user when they are using outdated play services version.
+Bug fixes:
+- Spreadsheet exporting now works on pre-lollipop devices albeit using an older excel file format
+- Notify user when they are using an outdated play services version

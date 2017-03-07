@@ -4,19 +4,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -31,6 +31,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 import com.supercilex.robotscouter.util.Constants;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -66,6 +67,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private static final String FILE_EXTENSION = ".xlsx";
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
+    private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
 
     private Context mContext;
     private ProgressDialogManager mProgressDialog;
@@ -113,12 +115,24 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         mProgressDialog.dismiss();
         if (spreadsheetUri == null) return;
 
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("application/vnd.ms-excel");
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
-        mContext.startActivity(Intent.createChooser(sharingIntent, getShareTitle())
-                                       .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                       .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+        Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            sharingIntent.setAction(Intent.ACTION_VIEW)
+                    .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL);
+            try {
+                mContext.startActivity(sharingIntent);
+            } catch (ActivityNotFoundException e) {
+                sharingIntent.setDataAndType(spreadsheetUri, "*/*");
+                mContext.startActivity(sharingIntent);
+            }
+        } else {
+            sharingIntent.setAction(Intent.ACTION_SEND)
+                    .setType(MIME_TYPE_MS_EXCEL)
+                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
+            mContext.startActivity(Intent.createChooser(sharingIntent, getShareTitle())
+                                           .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+        }
     }
 
     private String getShareTitle() {
@@ -156,23 +170,9 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                             getFullyQualifiedFileName(" (" + i + ")"));
                 }
             }
-            stream = new FileOutputStream(absoluteFile);
 
-            Workbook workbook;
-            try {
-                workbook = getWorkbook();
-            } catch (Throwable e) { // NOPMD
-                FirebaseCrash.log(mScouts.toString());
-                FirebaseCrash.report(e);
-                new Handler(mContext.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                return null;
-            }
-            workbook.write(stream);
+            stream = new FileOutputStream(absoluteFile);
+            getWorkbook().write(stream);
 
             return absoluteFile;
         } catch (IOException e) {
@@ -194,7 +194,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private String getTeamNames() {
         String teamName;
         int size = mScouts.size();
-        ArrayList<TeamHelper> teamHelpers = new ArrayList<>(mScouts.keySet());
+        List<TeamHelper> teamHelpers = getTeamHelpers();
 
         if (size == Constants.SINGLE_ITEM) {
             teamName = teamHelpers.get(0).toString();
@@ -210,10 +210,16 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         return teamName;
     }
 
+    private List<TeamHelper> getTeamHelpers() {
+        ArrayList<TeamHelper> helpers = new ArrayList<>(mScouts.keySet());
+        Collections.sort(helpers);
+        return helpers;
+    }
+
     private Workbook getWorkbook() {
         setApacheProperties();
 
-        Workbook workbook = new XSSFWorkbook();
+        Workbook workbook = isUnsupportedDevice() ? new HSSFWorkbook() : new XSSFWorkbook();
         mCreationHelper = workbook.getCreationHelper();
 
         Sheet averageSheet = null;
@@ -222,8 +228,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             averageSheet.createFreezePane(1, 1);
         }
 
-        List<TeamHelper> teamHelpers = new ArrayList<>(mScouts.keySet());
-        Collections.sort(teamHelpers);
+        List<TeamHelper> teamHelpers = getTeamHelpers();
         for (TeamHelper teamHelper : teamHelpers) {
             Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.toString()));
             teamSheet.createFreezePane(1, 1);
@@ -379,13 +384,17 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         return first.getAddress().toString() + ":" + last.getAddress().toString();
     }
 
+    @Nullable
     private CellStyle getRowHeaderStyle(Workbook workbook) {
         CellStyle rowHeaderStyle = createHeaderStyle(workbook);
-        rowHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
+        if (rowHeaderStyle != null) rowHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
         return rowHeaderStyle;
     }
 
+    @Nullable
     private CellStyle createHeaderStyle(Workbook workbook) {
+        if (isUnsupportedDevice()) return null;
+
         Font font = workbook.createFont();
         font.setBold(true);
 
@@ -560,6 +569,10 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         for (T t : iterator) copy.add(t);
         copy.remove(0);
         return copy;
+    }
+
+    private boolean isUnsupportedDevice() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
     }
 
     private void setApacheProperties() {
