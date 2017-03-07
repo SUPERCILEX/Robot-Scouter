@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,7 +35,14 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        TeamRetriever.getAll().addOnSuccessListener(this);
+        int result = GoogleApiAvailability.getInstance()
+                .isGooglePlayServicesAvailable(getApplicationContext());
+
+        if (result == ConnectionResult.SUCCESS) {
+            TeamRetriever.getAll().addOnSuccessListener(this);
+        } else {
+            GoogleApiAvailability.getInstance().showErrorNotification(this, result);
+        }
     }
 
     @Override

@@ -83,7 +83,7 @@ public class AppBarViewHolder {
     }
 
     private void setTaskDescription(Bitmap icon, @ColorInt int colorPrimary) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !icon.isRecycled()) {
             mActivity.setTaskDescription(
                     new ActivityManager.TaskDescription(mTeamHelper.toString(),
                                                         icon,
