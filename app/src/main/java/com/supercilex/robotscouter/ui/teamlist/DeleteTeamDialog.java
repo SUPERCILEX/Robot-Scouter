@@ -66,7 +66,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
     @Override
     public void onClick(DialogInterface dialog, int which) {
         for (TeamHelper teamHelper : mTeamHelpers) {
-            teamHelper.deleteTeam(getContext());
+            teamHelper.deleteTeam();
         }
     }
 }

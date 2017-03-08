@@ -105,7 +105,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
             mKeys.add(0, key);
             getTabNameRef(key).addValueEventListener(mTabNameListener);
         }
-        if (hadScouts && mKeys.isEmpty()) mTeamHelper.deleteTeam(mActivity);
+        if (hadScouts && mKeys.isEmpty()) mTeamHelper.deleteTeam();
 
         mTabLayout.removeOnTabSelectedListener(this);
         notifyDataSetChanged();

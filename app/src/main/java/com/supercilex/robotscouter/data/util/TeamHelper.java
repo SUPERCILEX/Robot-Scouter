@@ -27,7 +27,6 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.CustomTabsHelper;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
@@ -146,31 +145,12 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         }
     }
 
-    public void deleteTeam(Context context) {
-        final Context appContext = context.getApplicationContext();
+    public void deleteTeam() {
         ScoutUtils.deleteAll(mTeam.getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 getIndicesRef().child(mTeam.getKey()).removeValue();
                 getRef().removeValue();
-                if (mTeam.getTemplateKey() != null) {
-                    TeamIndices.getAll()
-                            .addOnSuccessListener(new OnSuccessListener<List<DataSnapshot>>() {
-                                @Override
-                                public void onSuccess(List<DataSnapshot> snapshots) {
-                                    if (snapshots.isEmpty()) {
-                                        Constants.FIREBASE_SCOUT_TEMPLATES
-                                                .child(mTeam.getTemplateKey())
-                                                .removeValue();
-                                        appContext.getSharedPreferences(Constants.SCOUT_TEMPLATE,
-                                                                        Context.MODE_PRIVATE)
-                                                .edit()
-                                                .clear()
-                                                .apply();
-                                    }
-                                }
-                            });
-                }
                 FirebaseAppIndex.getInstance().remove(getDeepLink());
             }
         });

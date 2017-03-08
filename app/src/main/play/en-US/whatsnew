@@ -1,3 +1,6 @@
-Bug fixes:
-- Spreadsheet exporting now works on pre-lollipop devices albeit using an older excel file format
+- Spreadsheet exporting bug fixes and enhancements:
+    - Include header metrics with added formatting to make the spreadsheet clearer
+    - The order and name of metrics in the spreadsheet is now based off of the latest scout instead of the first one
+    - Exporting now works on pre-lollipop devices albeit using an older excel file format
+- Fix various crashes
 - Notify user when they are using an outdated play services version
