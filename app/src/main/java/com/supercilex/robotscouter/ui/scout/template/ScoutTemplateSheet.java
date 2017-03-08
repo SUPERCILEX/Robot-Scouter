@@ -41,12 +41,14 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     private static final String TAG = "ScoutTemplateSheet";
 
     private View mRootView;
+    private View mResetAllButton;
+    private View mResetTeamButton;
     private FloatingActionMenu mFam;
-    private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mItemTouchCallback;
 
     private RecyclerView mRecyclerView;
     private ScoutTemplateAdapter mAdapter;
     private RecyclerView.LayoutManager mManager;
+    private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mItemTouchCallback;
 
     private String mTemplateKey;
 
@@ -86,12 +88,14 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                              ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_scout_template, container, false);
+        mResetAllButton = mRootView.findViewById(R.id.reset_template_all);
+        mResetTeamButton = mRootView.findViewById(R.id.reset_template_team);
 
         getTemplateKey();
         setupRecyclerView(savedInstanceState);
         initFabMenu();
-        mRootView.findViewById(R.id.reset_template_all).setOnClickListener(this);
-        mRootView.findViewById(R.id.reset_template_team).setOnClickListener(this);
+        mResetAllButton.setOnClickListener(this);
+        mResetTeamButton.setOnClickListener(this);
 
         return mRootView;
     }
@@ -122,9 +126,11 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 public void onDataChange(DataSnapshot snapshot) {
                     super.onDataChange(snapshot);
                     teamHelper.updateTemplateKey(mTemplateKey, appContext);
+                    showResetButtons();
                 }
             }.performTransformation();
         } else {
+            showResetButtons();
             String storedTemplateKey = getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE,
                                                                          Context.MODE_PRIVATE)
                     .getString(Constants.SCOUT_TEMPLATE, null);
@@ -135,6 +141,11 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                         .apply();
             }
         }
+    }
+
+    private void showResetButtons() {
+        mResetAllButton.setVisibility(View.VISIBLE);
+        mResetTeamButton.setVisibility(View.VISIBLE);
     }
 
     private void setupRecyclerView(Bundle savedInstanceState) {

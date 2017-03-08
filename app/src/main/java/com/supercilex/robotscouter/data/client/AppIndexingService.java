@@ -97,10 +97,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
-                                if (snapshot.getValue() == null) {
-                                    teamTask.setException(
-                                            new IllegalArgumentException("Team was null: " + snapshot));
-                                } else {
+                                if (snapshot.getValue() != null) {
                                     mTeamHelpers.add(new Team.Builder(snapshot.getValue(Team.class))
                                                              .setKey(snapshot.getKey())
                                                              .build()

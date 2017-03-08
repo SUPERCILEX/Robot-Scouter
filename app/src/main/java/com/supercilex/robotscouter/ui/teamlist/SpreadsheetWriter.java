@@ -167,8 +167,8 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     @Nullable
     private File writeFile(File robotScouterFolder) {
         FileOutputStream stream = null;
+        File absoluteFile = new File(robotScouterFolder, getFullyQualifiedFileName(null));
         try {
-            File absoluteFile = new File(robotScouterFolder, getFullyQualifiedFileName(null));
             for (int i = 1; true; i++) {
                 if (absoluteFile.createNewFile()) {
                     break;
@@ -190,6 +190,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                     Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
                 }
             });
+            absoluteFile.delete();
         } finally {
             if (stream != null) try {
                 stream.close();

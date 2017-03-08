@@ -95,7 +95,9 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
+        if (mManager != null) {
+            outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
+        }
         mMenuHelper.saveState(outState);
         super.onSaveInstanceState(outState);
     }

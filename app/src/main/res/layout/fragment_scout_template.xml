@@ -22,14 +22,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reset_template_all"/>
+                android:text="@string/reset_template_all"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/reset_template_team"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reset_template_team"/>
+                android:text="@string/reset_template_team"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
