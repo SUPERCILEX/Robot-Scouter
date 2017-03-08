@@ -12,11 +12,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -44,6 +47,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -60,11 +64,14 @@ import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+
 public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
     private static final String FILE_EXTENSION = ".xlsx";
+    private static final String UNSUPPORTED_FILE_EXTENSION = ".xls";
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
@@ -188,7 +195,8 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     }
 
     private String getFullyQualifiedFileName(@Nullable String middleMan) {
-        return middleMan == null ? getTeamNames() + FILE_EXTENSION : getTeamNames() + middleMan + FILE_EXTENSION;
+        String extension = isUnsupportedDevice() ? UNSUPPORTED_FILE_EXTENSION : FILE_EXTENSION;
+        return middleMan == null ? getTeamNames() + extension : getTeamNames() + middleMan + extension;
     }
 
     private String getTeamNames() {
@@ -219,7 +227,19 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private Workbook getWorkbook() {
         setApacheProperties();
 
-        Workbook workbook = isUnsupportedDevice() ? new HSSFWorkbook() : new XSSFWorkbook();
+        Workbook workbook;
+        if (isUnsupportedDevice()) {
+            workbook = new HSSFWorkbook();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, R.string.unsupported_device, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
+        } else {
+            workbook = new XSSFWorkbook();
+        }
         mCreationHelper = workbook.getCreationHelper();
 
         Sheet averageSheet = null;
@@ -244,46 +264,44 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         return workbook;
     }
 
-    private void buildTeamSheet(TeamHelper teamHelper, final Sheet teamSheet) {
+    private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
         List<Scout> scouts = mScouts.get(teamHelper);
 
         Workbook workbook = teamSheet.getWorkbook();
-        CellStyle headerStyle = createHeaderStyle(workbook);
-        CellStyle rowHeaderStyle = getRowHeaderStyle(workbook);
 
         Row header = teamSheet.createRow(0);
         header.createCell(0); // Create empty top left corner cell
+        List<ScoutMetric> orderedMetrics = scouts.get(scouts.size() - 1).getMetrics();
+        for (int i = 0; i < orderedMetrics.size(); i++) {
+            ScoutMetric metric = orderedMetrics.get(i);
+            Row row = teamSheet.createRow(i + 1);
+
+            setupRow(row, teamHelper, metric);
+        }
+
         for (int i = 0, column = 1; i < scouts.size(); i++, column++) {
             Scout scout = scouts.get(i);
             List<ScoutMetric> metrics = scout.getMetrics();
 
-            Cell cell = header.createCell(column);
+            Cell cell = header.getCell(column, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             String name = scout.getName();
             cell.setCellValue(TextUtils.isEmpty(name) ? "Scout " + column : name);
-            cell.setCellStyle(headerStyle);
+            cell.setCellStyle(createHeaderStyle(workbook));
 
             columnIterator:
             for (int j = 0, rowNum = 1; j < metrics.size(); j++, rowNum++) {
                 ScoutMetric metric = metrics.get(j);
 
-                if (metric.getType() == MetricType.HEADER) { // No data here
-                    rowNum--;
-                    continue;
-                }
-
                 Row row = teamSheet.getRow(rowNum);
                 if (row == null) {
-                    setupRowAndSetValue(teamSheet.createRow(rowNum),
-                                        metric,
-                                        column,
-                                        rowHeaderStyle);
+                    setupRowAndSetValue(teamSheet.createRow(rowNum), teamHelper, metric, column);
                 } else {
                     List<Row> rows = getAdjustedList(teamSheet);
 
                     for (Row row1 : rows) {
                         Cell cell1 = row1.getCell(0);
                         String rowKey = cell1.getCellComment().getString().toString();
-                        if (TextUtils.equals(rowKey, metric.getRef().getKey())) {
+                        if (TextUtils.equals(rowKey, metric.getKey())) {
                             setRowValue(column, metric, row1);
 
                             if (TextUtils.isEmpty(cell1.getStringCellValue())) {
@@ -295,20 +313,25 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                     }
 
                     setupRowAndSetValue(teamSheet.createRow(teamSheet.getLastRowNum() + 1),
+                                        teamHelper,
                                         metric,
-                                        column,
-                                        rowHeaderStyle);
+                                        column);
                 }
             }
         }
 
 
         if (scouts.size() > Constants.SINGLE_ITEM) {
-            buildAverageCells(teamSheet, headerStyle, teamHelper);
+            buildAverageCells(teamSheet, teamHelper);
         }
     }
 
-    private void buildAverageCells(Sheet sheet, CellStyle headerStyle, TeamHelper teamHelper) {
+    private void setupRowAndSetValue(Row row, TeamHelper helper, ScoutMetric metric, int column) {
+        setupRow(row, helper, metric);
+        setRowValue(column, metric, row);
+    }
+
+    private void buildAverageCells(Sheet sheet, TeamHelper teamHelper) {
         int farthestColumn = 0;
         for (Row row : sheet) {
             int last = row.getLastCellNum();
@@ -321,7 +344,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             Cell cell = row.createCell(farthestColumn);
             if (i == 0) {
                 cell.setCellValue(mContext.getString(R.string.average));
-                cell.setCellStyle(headerStyle);
+                cell.setCellStyle(createHeaderStyle(sheet.getWorkbook()));
                 continue;
             }
 
@@ -329,9 +352,9 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             @MetricType int type = getMetricType(teamHelper, key);
 
             String rangeAddress = getRangeAddress(
-                    row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK),
+                    row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK),
                     row.getCell(cell.getColumnIndex() - 1,
-                                Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+                                MissingCellPolicy.CREATE_NULL_AS_BLANK));
             switch (type) {
                 case MetricType.CHECKBOX:
                     cell.setCellFormula(
@@ -371,7 +394,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private int getMetricType(TeamHelper teamHelper, String key) {
         for (Scout scout : mScouts.get(teamHelper)) {
             for (ScoutMetric metric : scout.getMetrics()) {
-                if (key.equals(metric.getRef().getKey())) {
+                if (key.equals(metric.getKey())) {
                     return metric.getType();
                 }
             }
@@ -385,7 +408,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     }
 
     @Nullable
-    private CellStyle getRowHeaderStyle(Workbook workbook) {
+    private CellStyle createRowHeaderStyle(Workbook workbook) {
         CellStyle rowHeaderStyle = createHeaderStyle(workbook);
         if (rowHeaderStyle != null) rowHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
         return rowHeaderStyle;
@@ -395,8 +418,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private CellStyle createHeaderStyle(Workbook workbook) {
         if (isUnsupportedDevice()) return null;
 
-        Font font = workbook.createFont();
-        font.setBold(true);
+        Font font = createBaseHeaderFont(workbook);
 
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFont(font);
@@ -406,21 +428,41 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         return headerStyle;
     }
 
-    private void setupRowAndSetValue(Row row,
-                                     ScoutMetric metric,
-                                     int column,
-                                     CellStyle headerStyle) {
-        Cell headerCell = row.createCell(0);
-        headerCell.setCellValue(metric.getName());
+    @Nullable
+    private Font createBaseHeaderFont(Workbook workbook) {
+        if (isUnsupportedDevice()) return null;
+
+        Font font = workbook.createFont();
+        font.setBold(true);
+        return font;
+    }
+
+    private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
+        Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
         Comment comment = getComment(row, headerCell);
-        comment.setString(mCreationHelper.createRichTextString(metric.getRef().getKey()));
+        comment.setString(mCreationHelper.createRichTextString(metric.getKey()));
+        headerCell.setCellComment(comment);
         mTemporaryCommentCells.add(headerCell);
 
-        headerCell.setCellComment(comment);
-        headerCell.setCellStyle(headerStyle);
+        Sheet sheet = row.getSheet();
+        Workbook workbook = sheet.getWorkbook();
+        CellStyle headerStyle = createRowHeaderStyle(workbook);
+        if (headerStyle != null && metric.getType() == MetricType.HEADER) {
+            Font font = createBaseHeaderFont(workbook);
+            if (font != null) {
+                font.setItalic(true);
+                font.setFontHeightInPoints((short) 14);
+                headerStyle.setFont(font);
+            }
 
-        setRowValue(column, metric, row);
+            int rowNum = row.getRowNum();
+            int numOfScouts = mScouts.get(teamHelper).size();
+            if (numOfScouts > 1) {
+                sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 1, numOfScouts));
+            }
+        }
+        headerCell.setCellStyle(headerStyle);
     }
 
     private Comment getComment(Row row, Cell cell) {
@@ -437,7 +479,9 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     }
 
     private void setRowValue(int column, ScoutMetric metric, Row row) {
-        Cell valueCell = row.createCell(column);
+        row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellValue(metric.getName());
+
+        Cell valueCell = row.getCell(column, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         switch (metric.getType()) {
             case MetricType.CHECKBOX:
                 valueCell.setCellValue((boolean) metric.getValue());
@@ -513,7 +557,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         headerRow.createCell(0);
 
         CellStyle headerStyle = createHeaderStyle(workbook);
-        CellStyle rowHeaderStyle = getRowHeaderStyle(workbook);
+        CellStyle rowHeaderStyle = createRowHeaderStyle(workbook);
 
         List<Sheet> scoutSheets = getAdjustedList(workbook);
         for (int i = 0; i < scoutSheets.size(); i++) {

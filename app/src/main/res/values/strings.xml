@@ -106,6 +106,7 @@
     <string name="stop_stopwatch">Stop (%s)</string>
     <string name="cycle_item">Cycle %d</string>
     <string name="average">Average</string>
+    <string name="unsupported_device">You are using an unsupported device</string>
 
     <!-- Accessibility -->
     <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>

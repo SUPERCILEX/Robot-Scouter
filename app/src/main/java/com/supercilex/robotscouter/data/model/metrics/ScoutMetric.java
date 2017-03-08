@@ -34,6 +34,11 @@ public class ScoutMetric<T> {
     }
 
     @Exclude
+    public String getKey() {
+        return mRef.getKey();
+    }
+
+    @Exclude
     public void setRef(DatabaseReference ref) {
         mRef = ref;
     }

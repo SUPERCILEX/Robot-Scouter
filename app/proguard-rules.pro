@@ -71,6 +71,8 @@
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIntProperty { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts { *; }
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell { *; }
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane { *; }
@@ -126,6 +128,8 @@
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTIntPropertyImpl { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTLegacyDrawingImpl { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTNumFmtsImpl { *; }
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTMergeCellImpl { *; }
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTMergeCellsImpl { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTPatternFillImpl { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTPageMarginsImpl { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTPaneImpl { *; }
