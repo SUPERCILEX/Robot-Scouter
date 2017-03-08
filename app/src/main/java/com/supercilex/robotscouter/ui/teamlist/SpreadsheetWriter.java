@@ -184,6 +184,12 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             return absoluteFile;
         } catch (IOException e) {
             FirebaseCrash.report(e);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
+                }
+            });
         } finally {
             if (stream != null) try {
                 stream.close();
@@ -458,7 +464,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
             int rowNum = row.getRowNum();
             int numOfScouts = mScouts.get(teamHelper).size();
-            if (numOfScouts > 1) {
+            if (numOfScouts > Constants.SINGLE_ITEM) {
                 sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 1, numOfScouts));
             }
         }
