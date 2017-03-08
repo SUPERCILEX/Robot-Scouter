@@ -144,7 +144,7 @@ public class AuthHelper implements View.OnClickListener {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        signInAnonymously();
+                        FirebaseAuth.getInstance().signInAnonymously();
                         FirebaseAppIndex.getInstance().removeAll();
                     }
                 })
