@@ -9,26 +9,25 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
-import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.concurrent.Callable;
 
 import retrofit2.Response;
 
 public final class TbaApi implements Callable<Team> {
-    private static final String TEAM_MEDIA_YEAR = "team_media_year";
     private static final String TEAM_NICKNAME = "nickname";
     private static final String TEAM_WEBSITE = "website";
     private static final String IMGUR = "imgur";
     private static final String CHIEF_DELPHI = "cdphotothread";
     private static final int ERROR_404 = 404;
+    private static final int MAX_HISTORY = 2000;
 
     private Team mTeam;
     private Context mContext;
@@ -48,10 +47,8 @@ public final class TbaApi implements Callable<Team> {
 
     @Override
     public Team call() throws Exception {
-        Tasks.await(RemoteConfigHelper.fetchAndActivate());
-
         getTeamInfo();
-        getTeamMedia();
+        getTeamMedia(Calendar.getInstance().get(Calendar.YEAR));
         Tasks.await(Tasks.whenAll(mInfoTask.getTask(), mMediaTask.getTask()));
         return mTeam;
     }
@@ -75,12 +72,9 @@ public final class TbaApi implements Callable<Team> {
         mInfoTask.setResult(null);
     }
 
-    private void getTeamMedia() throws IOException {
+    private void getTeamMedia(int year) throws IOException {
         Response<JsonArray> response =
-                mTbaService.getTeamMedia(mTeam.getNumber(),
-                                         FirebaseRemoteConfig.getInstance()
-                                                 .getString(TEAM_MEDIA_YEAR))
-                        .execute();
+                mTbaService.getTeamMedia(mTeam.getNumber(), String.valueOf(year)).execute();
 
         if (cannotContinue(mMediaTask, response)) return;
 
@@ -106,6 +100,11 @@ public final class TbaApi implements Callable<Team> {
                 setAndCacheMedia(url);
                 break;
             }
+        }
+
+        if (mTeam.getMedia() == null && year > MAX_HISTORY) {
+            getTeamMedia(year - 1);
+            return;
         }
 
         mMediaTask.setResult(null);
