@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
@@ -47,11 +46,10 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
         cleanup();
-        if (auth.getCurrentUser() != null) {
-            // Log uid to help debug db crashes
-            FirebaseCrash.log(auth.getCurrentUser().getUid());
-
-
+        if (auth.getCurrentUser() == null) {
+            View view = getView();
+            if (view != null) view.findViewById(R.id.empty_list_hint).setVisibility(View.VISIBLE);
+        } else {
             mManager = new LinearLayoutManager(getContext());
             mAdapter = new TeamListAdapter(this, mMenuHelper);
 
@@ -106,12 +104,12 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     public void onDestroyView() {
         super.onDestroyView();
         FirebaseAuth.getInstance().removeAuthStateListener(this);
+        cleanup();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cleanup();
         RobotScouter.getRefWatcher(getActivity()).watch(this);
     }
 

@@ -86,7 +86,7 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
             String teamKey = teamPairSplit[0];
             String teamNumber = teamPairSplit[1];
 
-            teams.add(new Team.Builder(teamNumber).setKey(teamKey).build()); // NOPMD
+            teams.add(new Team.Builder(teamNumber).setKey(teamKey).build());
         }
         return teams;
     }

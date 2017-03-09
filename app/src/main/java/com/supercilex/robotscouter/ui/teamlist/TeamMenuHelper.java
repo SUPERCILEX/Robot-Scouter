@@ -89,6 +89,10 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 .setVisible(false)
                 .setIcon(R.drawable.ic_import_export_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        mMenu.add(Menu.NONE, R.id.action_merge_teams, Menu.NONE, R.string.merge_teams)
+                .setVisible(false)
+                .setIcon(R.drawable.ic_merge_white_24dp)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE, R.id.action_delete, Menu.NONE, R.string.delete)
                 .setVisible(false)
                 .setIcon(R.drawable.ic_delete_forever_white_24dp)
@@ -97,7 +101,9 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         if (!mSelectedTeams.isEmpty()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            if (mSelectedTeams.size() == Constants.SINGLE_ITEM) showTeamSpecificItems();
+            int size = mSelectedTeams.size();
+            if (size == Constants.SINGLE_ITEM) showTeamSpecificItems();
+            else setMultiTeamItemsVisible(true);
             setToolbarTitle();
         }
     }
@@ -126,6 +132,9 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 break;
             case R.id.action_export_spreadsheet:
                 exportTeams();
+                break;
+            case R.id.action_merge_teams:
+                TeamMergerDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
@@ -166,8 +175,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     @Override
     public void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
-            final Parcelable[] parcelables =
-                    savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
+            Parcelable[] parcelables = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
             for (Parcelable parcelable : parcelables) {
                 mSelectedTeams.add((TeamHelper) parcelable);
             }
@@ -196,8 +204,10 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 resetMenu();
             } else if (mSelectedTeams.size() == Constants.SINGLE_ITEM) {
                 showTeamSpecificItems();
+                setMultiTeamItemsVisible(false);
             } else {
                 hideTeamSpecificMenuItems();
+                setMultiTeamItemsVisible(true);
             }
         }
     }
@@ -271,6 +281,23 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         mMenu.findItem(R.id.action_visit_tba_team_website).setVisible(false);
         mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
         mMenu.findItem(R.id.action_edit_team_details).setVisible(false);
+    }
+
+    private void setMultiTeamItemsVisible(boolean visible) {
+        MenuItem mergeItem = mMenu.findItem(R.id.action_merge_teams);
+        if (visible) {
+            List<Team> rawTeams = new ArrayList<>();
+            for (TeamHelper teamHelper : mSelectedTeams) {
+                Team rawTeam = new Team.Builder(teamHelper.getTeam()).setKey(null)
+                        .setTimestamp(0)
+                        .build();
+                if (!rawTeams.contains(rawTeam)) rawTeams.add(rawTeam);
+            }
+
+            mergeItem.setVisible(rawTeams.size() == Constants.SINGLE_ITEM);
+        } else {
+            mergeItem.setVisible(false);
+        }
     }
 
     private void setToolbarTitle() {

@@ -20,7 +20,6 @@ import java.util.List;
 
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
     private Context mContext;
-    private View mNoTeamsImage;
     private View mNoTeamsText;
 
     private TeamMenuManager mMenuManager;
@@ -31,10 +30,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         mMenuManager = menuManager;
 
         View view = fragment.getView();
-        if (view != null) {
-            mNoTeamsImage = view.findViewById(R.id.no_teams_icon);
-            mNoTeamsText = view.findViewById(R.id.no_teams_text);
-        }
+        if (view != null) mNoTeamsText = view.findViewById(R.id.empty_list_hint);
     }
 
     @Override
@@ -45,7 +41,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                         mMenuManager.getSelectedTeams().contains(team.getHelper()),
                         !mMenuManager.getSelectedTeams().isEmpty());
 
-        showNoTeamsHint(getItemCount() == 0);
+        showNoTeamsHint();
     }
 
     @Override
@@ -53,7 +49,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                                DataSnapshot snapshot,
                                int index,
                                int oldIndex) {
-        showNoTeamsHint(getItemCount() == 0);
+        showNoTeamsHint();
 
         switch (type) {
             case CHANGED:
@@ -86,10 +82,9 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         FirebaseCrash.report(error.toException());
     }
 
-    private void showNoTeamsHint(boolean isVisible) {
-        if (mNoTeamsImage != null && mNoTeamsText != null) {
-            mNoTeamsImage.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-            mNoTeamsText.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    private void showNoTeamsHint() {
+        if (mNoTeamsText != null) {
+            mNoTeamsText.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
         }
     }
 }

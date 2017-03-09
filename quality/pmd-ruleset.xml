@@ -74,6 +74,7 @@
     <rule ref="rulesets/java/optimizations.xml">
         <exclude name="LocalVariableCouldBeFinal"/>
         <exclude name="MethodArgumentCouldBeFinal"/>
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
     </rule>
 
     <rule ref="rulesets/java/sunsecure.xml"/>

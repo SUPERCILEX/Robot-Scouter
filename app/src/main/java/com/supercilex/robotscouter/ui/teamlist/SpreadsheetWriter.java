@@ -173,7 +173,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 if (absoluteFile.createNewFile()) {
                     break;
                 } else { // File already exists
-                    absoluteFile = new File(robotScouterFolder, // NOPMD
+                    absoluteFile = new File(robotScouterFolder,
                                             getFullyQualifiedFileName(" (" + i + ")"));
                 }
             }

@@ -78,7 +78,6 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
             return mAllTeamsTask.getTask();
         }
 
-        @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
         @Override
         public void onSuccess(List<DataSnapshot> snapshots) {
             List<Task<Void>> teamTasks = new ArrayList<>();

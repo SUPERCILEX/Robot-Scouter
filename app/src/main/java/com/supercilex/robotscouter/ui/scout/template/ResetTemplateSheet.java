@@ -38,7 +38,7 @@ public class ResetTemplateSheet extends DialogFragment implements DialogInterfac
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.confirm_deletion)
+                .setTitle(R.string.confirm_action)
                 .setPositiveButton(R.string.reset, null)
                 .setNegativeButton(android.R.string.no, null)
                 .create();

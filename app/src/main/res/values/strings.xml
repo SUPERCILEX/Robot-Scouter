@@ -17,7 +17,7 @@
     <string name="unknown_team">Unknown</string>
     <string name="delete">Delete</string>
     <string name="caution_delete">The following teams will be deleted for you and your teammates:\n\n%s</string>
-    <string name="confirm_deletion">Are you sure?</string>
+    <string name="confirm_action">Are you sure?</string>
 
     <string name="share">Share</string>
     <string name="share_title">Share team %s</string>
@@ -29,6 +29,8 @@
         <item quantity="other">Export teams %s and their scouting data to a spreadsheet</item>
     </plurals>
     <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
+    <string name="merge_teams">Merge teams</string>
+    <string name="merge_teams_warning">WARNING: this is a dangerous operation.\nPlease ensure all devices who have changed data for team %s have connected to the internet at least once since the last edit.</string>
 
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
@@ -113,7 +115,6 @@
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
     <string name="accessibility_reorder">The reorder icon. It can be used to change the order of scout metrics.</string>
-    <string name="accessibility_no_teams">A robot icon displayed when no teams have been added.</string>
 
     <!-- Other -->
     <string name="asset_statements" translatable="false">[{\n  \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n  \"target\": {\n    \"namespace\": \"web\",\n    \"site\": \"https://supercilex.github.io\",\n  }\n}]</string>

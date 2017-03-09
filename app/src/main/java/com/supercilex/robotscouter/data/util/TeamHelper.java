@@ -149,8 +149,8 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         ScoutUtils.deleteAll(mTeam.getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                getIndicesRef().child(mTeam.getKey()).removeValue();
                 getRef().removeValue();
+                getIndicesRef().child(mTeam.getKey()).removeValue();
                 FirebaseAppIndex.getInstance().remove(getDeepLink());
             }
         });

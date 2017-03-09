@@ -55,7 +55,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
         }
 
         return new AlertDialog.Builder(getContext())
-                .setTitle(R.string.confirm_deletion)
+                .setTitle(R.string.confirm_action)
                 .setMessage(mTeamHelpers.size() == Constants.SINGLE_ITEM
                                     ? null : getString(R.string.caution_delete, deletedTeams))
                 .setPositiveButton(R.string.delete, this)
