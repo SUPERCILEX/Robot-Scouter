@@ -257,7 +257,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
         List<TeamHelper> teamHelpers = getTeamHelpers();
         for (TeamHelper teamHelper : teamHelpers) {
-            Sheet teamSheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(teamHelper.toString()));
+            Sheet teamSheet = workbook.createSheet(getSafeName(workbook, teamHelper));
             teamSheet.createFreezePane(1, 1);
             buildTeamSheet(teamHelper, teamSheet);
         }
@@ -269,6 +269,20 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         for (Cell cell : mTemporaryCommentCells) cell.removeCellComment();
 
         return workbook;
+    }
+
+    private String getSafeName(Workbook workbook, TeamHelper teamHelper) {
+        String originalName = WorkbookUtil.createSafeSheetName(teamHelper.toString());
+        String safeName = originalName;
+        for (int i = 1; true; i++) {
+            if (workbook.getSheet(safeName) == null) {
+                break;
+            } else {
+                safeName = originalName + " (" + i + ")";
+            }
+        }
+
+        return safeName;
     }
 
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
