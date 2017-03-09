@@ -48,15 +48,9 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
     @Override
     public void onSuccess(List<TeamHelper> teams) {
         ArrayList<Indexable> indexableTeams = new ArrayList<>();
-
-        for (TeamHelper teamHelper : teams) {
-            indexableTeams.add(teamHelper.getIndexable());
-        }
-
-        if (!indexableTeams.isEmpty()) {
-            FirebaseAppIndex.getInstance()
-                    .update(indexableTeams.toArray(new Indexable[indexableTeams.size()]));
-        }
+        for (TeamHelper teamHelper : teams) indexableTeams.add(teamHelper.getIndexable());
+        FirebaseAppIndex.getInstance()
+                .update(indexableTeams.toArray(new Indexable[indexableTeams.size()]));
     }
 
     private static class TeamRetriever
@@ -65,7 +59,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
         private List<TeamHelper> mTeamHelpers = new ArrayList<>();
 
         private TeamRetriever() {
-            AuthHelper.onSignedIn(new OnSuccessListener<FirebaseAuth>() {
+            AuthHelper.onSignedIn().addOnSuccessListener(new OnSuccessListener<FirebaseAuth>() {
                 @Override
                 public void onSuccess(FirebaseAuth result) {
                     TeamIndices.getAll()
@@ -102,8 +96,8 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                                                              .setKey(snapshot.getKey())
                                                              .build()
                                                              .getHelper());
-                                    teamTask.setResult(null);
                                 }
+                                teamTask.setResult(null);
                             }
 
                             @Override
@@ -124,7 +118,6 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
 
         @Override
         public void onFailure(@NonNull Exception e) {
-            FirebaseCrash.report(e);
             mAllTeamsTask.trySetException(e);
         }
     }

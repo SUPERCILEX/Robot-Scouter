@@ -15,6 +15,8 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,7 +60,8 @@ public class AuthHelper implements View.OnClickListener {
         return getUser() != null;
     }
 
-    public static void onSignedIn(final OnSuccessListener<FirebaseAuth> listener) {
+    public static Task<FirebaseAuth> onSignedIn() {
+        final TaskCompletionSource<FirebaseAuth> signInTask = new TaskCompletionSource<>();
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
@@ -71,11 +74,12 @@ public class AuthHelper implements View.OnClickListener {
                                 }
                             });
                 } else {
-                    listener.onSuccess(auth);
+                    signInTask.trySetResult(auth);
                     FirebaseAuth.getInstance().removeAuthStateListener(this);
                 }
             }
         });
+        return signInTask.getTask();
     }
 
     public static AuthHelper init(FragmentActivity activity) {
