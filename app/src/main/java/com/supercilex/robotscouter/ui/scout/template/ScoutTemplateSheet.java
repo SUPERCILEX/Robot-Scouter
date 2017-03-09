@@ -198,33 +198,33 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             return;
         }
 
-        int itemCount = mAdapter.getItemCount();
+        int priority = mAdapter.getItemCount() + 1;
         DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey).push();
         switch (id) {
             case R.id.add_checkbox:
-                metricRef.setValue(new ScoutMetric<>("", false, MetricType.CHECKBOX), itemCount);
+                metricRef.setValue(new ScoutMetric<>("", false, MetricType.CHECKBOX), priority);
                 break;
             case R.id.add_counter:
-                metricRef.setValue(new ScoutMetric<>("", 0, MetricType.COUNTER), itemCount);
+                metricRef.setValue(new ScoutMetric<>("", 0, MetricType.COUNTER), priority);
                 break;
             case R.id.add_spinner:
                 metricRef.setValue(
                         new SpinnerMetric("", Collections.singletonList("item 1"), 0),
-                        itemCount);
+                        priority);
                 break;
             case R.id.add_note:
-                metricRef.setValue(new ScoutMetric<>("", "", MetricType.NOTE), itemCount);
+                metricRef.setValue(new ScoutMetric<>("", "", MetricType.NOTE), priority);
                 break;
             case R.id.add_stopwatch:
                 metricRef.setValue(
                         new ScoutMetric<>("", Collections.<Long>emptyList(), MetricType.STOPWATCH),
-                        itemCount);
+                        priority);
                 break;
             case R.id.add_header:
-                metricRef.setValue(new ScoutMetric<Void>("", null, MetricType.HEADER), itemCount);
+                metricRef.setValue(new ScoutMetric<Void>("", null, MetricType.HEADER), priority);
                 break;
         }
-        mItemTouchCallback.addItemToScrollQueue(itemCount);
+        mItemTouchCallback.addItemToScrollQueue(mAdapter.getItemCount());
         mFam.close(true);
     }
 

@@ -1,6 +1,6 @@
-- Spreadsheet exporting bug fixes and enhancements:
-    - Include header metrics with added formatting to make the spreadsheet clearer
-    - The order and name of metrics in the spreadsheet is now based off of the latest scout instead of the first one
+- Spreadsheet exporting:
     - Exporting now works on pre-lollipop devices albeit using an older excel file format
-- Fix various crashes
-- Notify user when they are using an outdated play services version
+    - Fix a crash when an export contains two teams with the same name
+- Team icon now finds the latest uploaded picture from the last few years instead of relying on one static year
+- If the same team is created while two devices are offline, a duplicate copy will be made and this option fixes that. To fix this, a new menu option enables merging those two teams back into one.
+
