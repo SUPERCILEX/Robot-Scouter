@@ -22,6 +22,7 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -284,20 +285,29 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void setMultiTeamItemsVisible(boolean visible) {
-        MenuItem mergeItem = mMenu.findItem(R.id.action_merge_teams);
         if (visible) {
-            List<Team> rawTeams = new ArrayList<>();
-            for (TeamHelper teamHelper : mSelectedTeams) {
-                Team rawTeam = new Team.Builder(teamHelper.getTeam()).setKey(null)
-                        .setTimestamp(0)
-                        .build();
-                if (!rawTeams.contains(rawTeam)) rawTeams.add(rawTeam);
-            }
-
-            mergeItem.setVisible(rawTeams.size() == Constants.SINGLE_ITEM);
+            showMergeTeamsItem();
         } else {
-            mergeItem.setVisible(false);
+            mMenu.findItem(R.id.action_merge_teams).setVisible(false);
         }
+    }
+
+    private void showMergeTeamsItem() {
+        if (MiscellaneousHelper.isOffline(mFragment.getContext())) {
+            mMenu.findItem(R.id.action_merge_teams).setVisible(false);
+            return;
+        }
+
+        List<Team> rawTeams = new ArrayList<>();
+        for (TeamHelper teamHelper : mSelectedTeams) {
+            Team rawTeam = new Team.Builder(teamHelper.getTeam()).setKey(null)
+                    .setTimestamp(0)
+                    .build();
+            if (!rawTeams.contains(rawTeam)) rawTeams.add(rawTeam);
+        }
+
+        mMenu.findItem(R.id.action_merge_teams)
+                .setVisible(rawTeams.size() == Constants.SINGLE_ITEM);
     }
 
     private void setToolbarTitle() {
