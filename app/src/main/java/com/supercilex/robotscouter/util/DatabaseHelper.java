@@ -22,6 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class DatabaseHelper {
+    public static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
+        @Override
+        public Team parseSnapshot(DataSnapshot snapshot) {
+            Team team = snapshot.getValue(Team.class);
+            team.setKey(snapshot.getKey());
+            return team;
+        }
+    };
+
     private static final String QUERY_KEY = "query_key";
 
     private static final ObservableSnapshotArray<Team> NOOP_ARRAY =
@@ -73,15 +82,6 @@ public final class DatabaseHelper {
         Constants.sFirebaseTeams = NOOP_ARRAY;
 
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            private final SnapshotParser<Team> mTeamParser = new SnapshotParser<Team>() {
-                @Override
-                public Team parseSnapshot(DataSnapshot snapshot) {
-                    Team team = snapshot.getValue(Team.class);
-                    team.setKey(snapshot.getKey());
-                    return team;
-                }
-            };
-
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 FirebaseUser user = auth.getCurrentUser();
@@ -98,7 +98,7 @@ public final class DatabaseHelper {
                     Constants.sFirebaseTeams = new FirebaseIndexArray<>(
                             TeamHelper.getIndicesRef(),
                             Constants.FIREBASE_TEAMS_REF,
-                            mTeamParser);
+                            TEAM_PARSER);
                     Constants.sFirebaseTeams.addChangeEventListener(NOOP_LISTENER);
                 }
             }
