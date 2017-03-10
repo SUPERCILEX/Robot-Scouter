@@ -138,6 +138,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                     .setType(MIME_TYPE_MS_EXCEL)
                     .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
             mContext.startActivity(Intent.createChooser(sharingIntent, getShareTitle())
+                                           .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                            .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
         }
     }
