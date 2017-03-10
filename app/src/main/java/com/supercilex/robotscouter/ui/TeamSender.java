@@ -10,7 +10,7 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
-import com.supercilex.robotscouter.util.MiscellaneousHelper;
+import com.supercilex.robotscouter.util.ConnectivityHelper;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class TeamSender {
      */
     public static boolean launchInvitationIntent(FragmentActivity activity,
                                                  @Size(min = 1) List<TeamHelper> teamHelpers) {
-        if (MiscellaneousHelper.isOffline(activity)) {
+        if (ConnectivityHelper.isOffline(activity)) {
             Snackbar.make(activity.findViewById(R.id.root),
                           R.string.no_connection,
                           Snackbar.LENGTH_LONG)

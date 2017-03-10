@@ -4,8 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public final class MiscellaneousHelper {
-    private MiscellaneousHelper() {
+public final class ConnectivityHelper {
+    private ConnectivityHelper() {
         // no instance
     }
 

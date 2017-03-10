@@ -29,7 +29,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
-        dialog.setArguments(teamHelper.getBundle());
+        dialog.setArguments(teamHelper.toBundle());
         dialog.show(manager, TAG);
     }
 

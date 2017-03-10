@@ -13,9 +13,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -105,7 +107,11 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
             mKeys.add(0, key);
             getTabNameRef(key).addValueEventListener(mTabNameListener);
         }
-        if (hadScouts && mKeys.isEmpty()) mTeamHelper.deleteTeam();
+        if (hadScouts && mKeys.isEmpty() && !ConnectivityHelper.isOffline(mActivity)) {
+            ShouldDeleteTeamDialog.show(mActivity.getSupportFragmentManager(), mTeamHelper);
+        }
+        mActivity.findViewById(R.id.empty_list_hint)
+                .setVisibility(mKeys.isEmpty() ? View.VISIBLE : View.GONE);
 
         mTabLayout.removeOnTabSelectedListener(this);
         notifyDataSetChanged();

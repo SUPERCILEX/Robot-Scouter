@@ -54,7 +54,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
         ScoutTemplateSheet sheet = new ScoutTemplateSheet();
-        sheet.setArguments(teamHelper.getBundle());
+        sheet.setArguments(teamHelper.toBundle());
         sheet.show(manager, TAG);
     }
 

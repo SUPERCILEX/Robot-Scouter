@@ -27,7 +27,7 @@ public class ResetTemplateSheet extends DialogFragment implements DialogInterfac
     public static void show(FragmentManager manager, TeamHelper helper, boolean shouldResetAll) {
         ResetTemplateSheet dialog = new ResetTemplateSheet();
 
-        Bundle bundle = helper.getBundle();
+        Bundle bundle = helper.toBundle();
         bundle.putBoolean(RESET_ALL_KEY, shouldResetAll);
         dialog.setArguments(bundle);
 

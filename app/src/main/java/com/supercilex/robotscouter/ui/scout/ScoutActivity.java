@@ -35,8 +35,8 @@ import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.Collections;
 
@@ -51,7 +51,7 @@ public class ScoutActivity extends AppCompatActivity
     private Bundle mSavedState;
 
     public static void start(Context context, TeamHelper teamHelper, boolean addScout) {
-        Intent starter = teamHelper.getIntent().setClass(context, ScoutActivity.class);
+        Intent starter = teamHelper.toIntent().setClass(context, ScoutActivity.class);
         starter.putExtra(INTENT_ADD_SCOUT, addScout);
 
         starter.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -79,7 +79,7 @@ public class ScoutActivity extends AppCompatActivity
         addListeners();
         FirebaseAuth.getInstance().addAuthStateListener(this);
 
-        if (mSavedState == null && MiscellaneousHelper.isOffline(this)) {
+        if (mSavedState == null && ConnectivityHelper.isOffline(this)) {
             Snackbar.make(findViewById(R.id.root),
                           R.string.offline_reassurance,
                           Snackbar.LENGTH_LONG)

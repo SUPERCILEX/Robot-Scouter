@@ -9,6 +9,7 @@
     <!-- Tutorials -->
     <string name="create_first_team">Create your first team</string>
     <string name="no_teams">Teams you add appear here</string>
+    <string name="no_scouts">Scouts you add appear here</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
@@ -61,6 +62,8 @@
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
     <string name="offline_reassurance">Offline. Data will be saved</string>
+    <string name="should_delete_team">Delete team?</string>
+    <string name="should_delete_team_message">You have deleted the last scout for team %s.</string>
 
     <string name="add_scout">Add scout/team</string>
     <string name="add_scout_long">Add a new scout or team</string>

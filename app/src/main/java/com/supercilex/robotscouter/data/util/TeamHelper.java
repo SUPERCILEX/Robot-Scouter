@@ -64,12 +64,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         return (TeamHelper) arguments.getParcelable(INTENT_TEAM);
     }
 
-    public Intent getIntent() {
+    public Intent toIntent() {
         return new Intent().putExtra(INTENT_TEAM, this);
     }
 
-
-    public Bundle getBundle() {
+    public Bundle toBundle() {
         Bundle args = new Bundle();
         args.putParcelable(INTENT_TEAM, this);
         return args;

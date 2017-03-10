@@ -21,8 +21,8 @@ import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.MiscellaneousHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -293,7 +293,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void showMergeTeamsItem() {
-        if (MiscellaneousHelper.isOffline(mFragment.getContext())) {
+        if (ConnectivityHelper.isOffline(mFragment.getContext())) {
             mMenu.findItem(R.id.action_merge_teams).setVisible(false);
             return;
         }
