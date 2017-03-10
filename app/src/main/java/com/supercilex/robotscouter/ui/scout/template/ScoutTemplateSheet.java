@@ -192,6 +192,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
+            mRecyclerView.clearFocus();
             ResetTemplateSheet.show(getChildFragmentManager(),
                                     TeamHelper.get(getArguments()),
                                     id == R.id.reset_template_all);
