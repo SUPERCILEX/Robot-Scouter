@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,10 +24,6 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     public void bind() {
         super.bind();
         mName.setOnFocusChangeListener(this);
-
-        // See https://code.google.com/p/android/issues/detail?id=236586
-        Fragment fragment = mManager.findFragmentByTag(SpinnerTemplateDialog.TAG);
-        if (fragment != null) disableAnimations();
     }
 
     @Override

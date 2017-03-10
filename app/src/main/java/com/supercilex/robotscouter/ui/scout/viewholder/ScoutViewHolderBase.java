@@ -60,21 +60,6 @@ public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> exten
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ScoutViewHolderBase<?, ?> base = (ScoutViewHolderBase<?, ?>) o;
-
-        return mMetric.equals(base.mMetric);
-    }
-
-    @Override
-    public int hashCode() {
-        return mMetric.hashCode();
-    }
-
-    @Override
     public String toString() {
         return mMetric.toString();
     }
