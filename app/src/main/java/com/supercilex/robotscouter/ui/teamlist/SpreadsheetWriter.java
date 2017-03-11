@@ -209,17 +209,22 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     private String getTeamNames() {
         String teamName;
-        int size = mScouts.size();
         List<TeamHelper> teamHelpers = getTeamHelpers();
 
-        if (size == Constants.SINGLE_ITEM) {
+        if (mScouts.size() == Constants.SINGLE_ITEM) {
             teamName = teamHelpers.get(0).toString();
         } else {
+            boolean teamsMaxedOut = mScouts.size() > 10;
+            int size = teamsMaxedOut ? 10 : mScouts.size();
+
             StringBuilder names = new StringBuilder(4 * size);
             for (int i = 0; i < size; i++) {
                 names.append(teamHelpers.get(i).getTeam().getNumber());
                 if (i < size - 1) names.append(", ");
             }
+
+            if (teamsMaxedOut) names.append(" and more");
+
             teamName = names.toString();
         }
 
