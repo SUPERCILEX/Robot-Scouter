@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
@@ -21,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
@@ -89,7 +91,15 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         mProgressDialog = ProgressDialogManager.show(fragment.getActivity());
 
         Collections.sort(teamHelpers);
-        Scouts.getAll(teamHelpers).addOnSuccessListener(new AsyncTaskExecutor(), this);
+        Scouts.getAll(teamHelpers)
+                .addOnSuccessListener(new AsyncTaskExecutor(), this)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
+                        mProgressDialog.dismiss();
+                    }
+                });
     }
 
     /**

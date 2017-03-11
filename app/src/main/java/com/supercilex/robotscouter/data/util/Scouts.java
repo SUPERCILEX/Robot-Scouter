@@ -67,7 +67,8 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
                                 }
                             });
                         }
-                    });
+                    })
+                    .addOnFailureListener(this);
         }
 
 
@@ -106,7 +107,8 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
                             query.addListenerForSingleValueEvent(
                                     new ScoutListener(pair, scoutMetricsTask));
                         }
-                    });
+                    })
+                    .addOnFailureListener(this);
         }
     }
 
