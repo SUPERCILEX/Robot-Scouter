@@ -1,4 +1,4 @@
+- Spreadsheet exporting: fixed issue where scouts from other devices weren't included in the export
 - Team icon now finds the latest uploaded picture from the last few years instead of relying on one static year
-- If the same team is created while two devices are offline, a duplicate copy will be made and this option fixes that. To fix this, a new menu option enables merging those two teams back into one.
 - Fixed random crashes when editing scout template
 - Added confirmation dialog before deleting team if last scout is deleted

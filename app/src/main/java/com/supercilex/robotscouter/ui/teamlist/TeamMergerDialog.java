@@ -11,20 +11,17 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.firebase.ui.database.ChangeEventListener;
-import com.firebase.ui.database.FirebaseArray;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.util.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,48 +90,33 @@ public class TeamMergerDialog extends DialogFragment implements AlertDialog.OnCl
         for (TeamHelper teamHelper : mTeamHelpers) {
             final Team oldTeam = teamHelper.getTeam();
 
-            final FirebaseArray updater = // Needed because Firebase won't return the up to date value, only the cached one
-                    new FirebaseArray<>(ScoutUtils.getIndicesRef(oldTeam.getKey()), Long.class);
-            updater.addChangeEventListener(new ChangeEventListener() {
-                @Override
-                public void onChildChanged(EventType type,
-                                           DataSnapshot snapshot,
-                                           int i,
-                                           int i1) {
-                    updater.removeChangeEventListener(this);
-
-                    Task<List<Task<DatabaseReference>>> copyTask =
-                            new FirebaseCopier(ScoutUtils.getIndicesRef(oldTeam.getKey()),
-                                               ScoutUtils.getIndicesRef(newTeam.getKey()))
-                                    .performTransformation();
-                    copyTask.addOnSuccessListener(new OnSuccessListener<List<Task<DatabaseReference>>>() {
+            DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(oldTeam.getKey()))
+                    .addOnSuccessListener(new OnSuccessListener<Query>() {
                         @Override
-                        public void onSuccess(List<Task<DatabaseReference>> tasks) {
-                            for (Task<DatabaseReference> task : tasks) {
-                                task.addOnSuccessListener(TeamMergerDialog.this);
-                            }
+                        public void onSuccess(Query query) {
+                            Task<List<Task<DatabaseReference>>> copyTask =
+                                    new FirebaseCopier(query,
+                                                       ScoutUtils.getIndicesRef(newTeam.getKey()))
+                                            .performTransformation();
+                            copyTask.addOnSuccessListener(new OnSuccessListener<List<Task<DatabaseReference>>>() {
+                                @Override
+                                public void onSuccess(List<Task<DatabaseReference>> tasks) {
+                                    for (Task<DatabaseReference> task : tasks) {
+                                        task.addOnSuccessListener(TeamMergerDialog.this);
+                                    }
 
-                            deletionTasks.add(
-                                    Tasks.whenAll(tasks)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    oldTeam.getHelper().deleteTeam();
-                                                }
-                                            }));
+                                    deletionTasks.add(
+                                            Tasks.whenAll(tasks)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            oldTeam.getHelper().deleteTeam();
+                                                        }
+                                                    }));
+                                }
+                            });
                         }
                     });
-                }
-
-                @Override
-                public void onDataChanged() {
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    FirebaseCrash.report(error.toException());
-                }
-            });
         }
     }
 

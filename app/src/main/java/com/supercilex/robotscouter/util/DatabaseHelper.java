@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.firebase.ui.database.ChangeEventListener;
+import com.firebase.ui.database.FirebaseArray;
 import com.firebase.ui.database.FirebaseIndexArray;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
@@ -14,6 +17,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
@@ -76,6 +80,34 @@ public final class DatabaseHelper {
 
     public static DatabaseReference getRef(Bundle bundle) {
         return DatabaseHelper.getDatabase().getReference(bundle.getString(QUERY_KEY));
+    }
+
+    public static Task<Query> forceUpdate(final Query query) {
+        final TaskCompletionSource<Query> updateTask = new TaskCompletionSource<>();
+
+        final FirebaseArray updater = new FirebaseArray<>(query, Object.class);
+        updater.addChangeEventListener(new ChangeEventListener() {
+            @Override
+            public void onChildChanged(EventType type,
+                                       DataSnapshot snapshot,
+                                       int i,
+                                       int i1) {
+                updater.removeChangeEventListener(this);
+                updateTask.setResult(query);
+            }
+
+            @Override
+            public void onDataChanged() {
+                // Noop
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                updateTask.setException(error.toException());
+            }
+        });
+
+        return updateTask.getTask();
     }
 
     public static void init() {
