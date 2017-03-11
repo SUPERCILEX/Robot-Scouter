@@ -11,5 +11,5 @@ public interface TeamMenuManager extends MenuManager {
 
     void onSelectedTeamMoved(TeamHelper oldTeamHelper, TeamHelper teamHelper);
 
-    void onSelectedTeamChanged(TeamHelper oldTeamHelper);
+    void onSelectedTeamRemoved(TeamHelper oldTeamHelper);
 }

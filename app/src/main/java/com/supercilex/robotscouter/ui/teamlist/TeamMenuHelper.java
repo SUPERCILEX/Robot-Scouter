@@ -225,7 +225,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     @Override
-    public void onSelectedTeamChanged(TeamHelper oldTeamHelper) {
+    public void onSelectedTeamRemoved(TeamHelper oldTeamHelper) {
         mSelectedTeams.remove(oldTeamHelper);
         if (mSelectedTeams.isEmpty()) {
             resetMenu();

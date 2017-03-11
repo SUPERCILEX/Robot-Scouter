@@ -67,7 +67,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                     List<Team> tmpTeams = FirebaseAdapterHelper.getItems(this);
                     for (TeamHelper oldTeamHelper : mMenuManager.getSelectedTeams()) {
                         if (!tmpTeams.contains(oldTeamHelper.getTeam())) { // We found the deleted item
-                            mMenuManager.onSelectedTeamChanged(oldTeamHelper);
+                            mMenuManager.onSelectedTeamRemoved(oldTeamHelper);
                             break;
                         }
                     }

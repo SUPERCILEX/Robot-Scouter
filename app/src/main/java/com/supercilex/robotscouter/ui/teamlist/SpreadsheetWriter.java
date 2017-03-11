@@ -375,16 +375,11 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
             String rangeAddress = getRangeAddress(
                     row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK),
-                    row.getCell(cell.getColumnIndex() - 1,
-                                MissingCellPolicy.CREATE_NULL_AS_BLANK));
+                    row.getCell(cell.getColumnIndex() - 1, MissingCellPolicy.CREATE_NULL_AS_BLANK));
             switch (type) {
                 case MetricType.CHECKBOX:
-                    cell.setCellFormula(
-                            "IF(" +
-                                    "COUNTIF(" + rangeAddress + ", TRUE)" +
-                                    " >= " +
-                                    "COUNTIF(" + rangeAddress + ", FALSE)" +
-                                    ", TRUE, FALSE)");
+                    cell.setCellFormula("COUNTIF(" + rangeAddress + ", TRUE) / COUNTA(" + rangeAddress + ")");
+                    cell.setCellStyle(getPercentCellStyle(cell));
                     break;
                 case MetricType.COUNTER:
                     cell.setCellFormula(
@@ -415,6 +410,16 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                     break;
             }
         }
+    }
+
+    @Nullable
+    private CellStyle getPercentCellStyle(Cell cell) {
+        if (isUnsupportedDevice()) return null;
+
+        Workbook workbook = cell.getSheet().getWorkbook();
+        CellStyle style = workbook.createCellStyle();
+        style.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
+        return style;
     }
 
     @MetricType
@@ -633,6 +638,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
         valueCell.setCellFormula("'" + scoutSheet.getSheetName() + "'!" + averageCell.getAddress());
+        valueCell.setCellStyle(averageCell.getCellStyle());
     }
 
     private <T> List<T> getAdjustedList(Iterable<T> iterator) {
