@@ -387,11 +387,16 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                     ", TRUE, FALSE)");
                     break;
                 case MetricType.COUNTER:
-                case MetricType.STOPWATCH:
                     cell.setCellFormula(
                             "SUM(" + rangeAddress + ")" +
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
+                    break;
+                case MetricType.STOPWATCH:
+                    String excludeZeros = "\"<>0\"";
+                    cell.setCellFormula(
+                            "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
+                                    ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
                     break;
                 case MetricType.SPINNER:
                     cell.setCellFormula(
