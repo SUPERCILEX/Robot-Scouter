@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.supercilex.robotscouter.data.model.Team"/>
+        <Method name="compareTo"/>
+        <Bug pattern="DM_BOXED_PRIMITIVE_FOR_COMPARE"/>
+    </Match>
+</FindBugsFilter>

@@ -31,6 +31,7 @@ task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
     source 'src'
     include '**/*.java'
     exclude '**/gen/**'
+    excludeFilter = file("$configDir/findbugs-filter.xml")
 
     reports {
         xml.enabled = false

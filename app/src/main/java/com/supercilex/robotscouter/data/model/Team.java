@@ -269,21 +269,9 @@ public class Team implements Parcelable, Comparable<Team> {
 
     @Override
     public int compareTo(Team team) {
-        long number = getNumberAsLong();
-        long otherTeamNumber = team.getNumberAsLong();
-        if (number > otherTeamNumber) {
-            return 1;
-        } else if (number == otherTeamNumber) {
-            if (mTimestamp > team.getTimestamp()) {
-                return 1;
-            } else if (mTimestamp == team.getTimestamp()) {
-                return 0;
-            } else {
-                return -1;
-            }
-        } else {
-            return -1;
-        }
+        int comparison = Long.valueOf(getNumberAsLong()).compareTo(team.getNumberAsLong());
+        return comparison == 0 ?
+                Long.valueOf(mTimestamp).compareTo(team.getTimestamp()) : comparison;
     }
 
     public static class Builder implements com.supercilex.robotscouter.data.util.Builder<Team> {
