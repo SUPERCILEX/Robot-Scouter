@@ -98,13 +98,13 @@ dependencies {
     // Firebase UI
     // Auth
 //    compile 'com.firebaseui:firebase-ui-auth:2.0.0'
-    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:c69e1202d749a6247f6618b712345d264179de02'
+    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:6c15f678c769004361ffcbb6de01c3cb0393b253'
     compile "com.google.firebase:firebase-auth:$playServicesVersion"
     compile "com.google.android.gms:play-services-auth:$playServicesVersion"
     compile "com.android.support:cardview-v7:$supportLibVersion"
     // Database
 //    compile 'com.firebaseui:firebase-ui-database:2.0.0'
-    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:c69e1202d749a6247f6618b712345d264179de02'
+    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:6c15f678c769004361ffcbb6de01c3cb0393b253'
     compile "com.google.firebase:firebase-database:$playServicesVersion"
 
     compile 'com.firebase:firebase-jobdispatcher:0.5.2'

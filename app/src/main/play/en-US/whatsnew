@@ -1,7 +1,8 @@
 - Spreadsheet exporting:
-    - Fixed issue where scouts from other devices weren't included in the export
-    - Zeros are now excluded from stopwatch metric export
-    - true/false averages now show a percentage
+  - Fixed issue where scouts from other devices weren't included in the export
+  - Zeros are now excluded from stopwatch metric export
+  - true/false averages now show a percentage
 - Team icon now finds the latest uploaded picture from the last few years instead of relying on one static year
 - Fixed random crashes when editing scout template
+- Fixed crash on slow devices when adding new scout
 - Added confirmation dialog before deleting team if last scout is deleted

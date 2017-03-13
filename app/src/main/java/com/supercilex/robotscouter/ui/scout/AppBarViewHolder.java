@@ -20,22 +20,30 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
-public class AppBarViewHolder {
+public class AppBarViewHolder implements OnSuccessListener<Void> {
     private TeamHelper mTeamHelper;
 
     private AppCompatActivity mActivity;
     private CollapsingToolbarLayout mHeader;
     private ImageView mBackdrop;
 
-    private MenuItem mActionVisitTeamWebsite;
+    private MenuItem mVisitTeamWebsiteItem;
+    private MenuItem mNewScoutItem;
+    private TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
+    private Task mOnScoutingReadyTask;
 
-    public AppBarViewHolder(AppCompatActivity activity) {
+    public AppBarViewHolder(AppCompatActivity activity, Task onScoutingReadyTask) {
         mActivity = activity;
         mHeader = (CollapsingToolbarLayout) activity.findViewById(R.id.header);
         mBackdrop = (ImageView) activity.findViewById(R.id.backdrop);
+        mOnScoutingReadyTask = onScoutingReadyTask;
     }
 
     public void bind(@NonNull TeamHelper teamHelper) {
@@ -93,21 +101,31 @@ public class AppBarViewHolder {
     }
 
     public void initMenu(Menu menu) {
+        mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
+        mNewScoutItem = menu.findItem(R.id.action_new_scout);
+
         menu.findItem(R.id.action_visit_tba_team_website)
                 .setTitle(mActivity.getString(R.string.visit_team_website_on_tba,
                                               mTeamHelper.getTeam().getNumber()));
+        mVisitTeamWebsiteItem.setTitle(mActivity.getString(R.string.visit_team_website,
+                                                           mTeamHelper.getTeam().getNumber()));
+        if (!mOnScoutingReadyTask.isComplete()) mNewScoutItem.setVisible(false);
 
-        mActionVisitTeamWebsite = menu.findItem(R.id.action_visit_team_website);
-        mActionVisitTeamWebsite.setTitle(mActivity.getString(R.string.visit_team_website,
-                                                             mTeamHelper.getTeam().getNumber()));
+        mOnMenuReadyTask.trySetResult(null);
         bindMenu();
     }
 
     private void bindMenu() {
-        if (mActionVisitTeamWebsite != null) {
-            mActionVisitTeamWebsite.setVisible(
+        if (mVisitTeamWebsiteItem != null) {
+            mVisitTeamWebsiteItem.setVisible(
                     !TextUtils.isEmpty(mTeamHelper.getTeam().getWebsite()));
         }
+        Tasks.whenAll(mOnMenuReadyTask.getTask(), mOnScoutingReadyTask).addOnSuccessListener(this);
+    }
+
+    @Override
+    public void onSuccess(Void aVoid) {
+        mNewScoutItem.setVisible(true);
     }
 
     private int getTransparentColor(@ColorInt int opaque) {

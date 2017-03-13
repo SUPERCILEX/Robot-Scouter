@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
@@ -48,7 +49,8 @@ public class ScoutActivity extends AppCompatActivity
     private TeamHelper mTeamHelper;
     private AppBarViewHolder mHolder;
     private ScoutPagerAdapter mPagerAdapter;
-    private boolean mInitScouting = true;
+
+    private TaskCompletionSource<Void> mOnScoutingReadyTask = new TaskCompletionSource<>();
     private Bundle mSavedState;
 
     public static void start(Context context, TeamHelper teamHelper, boolean addScout) {
@@ -72,7 +74,7 @@ public class ScoutActivity extends AppCompatActivity
         setContentView(R.layout.activity_scout);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mHolder = new AppBarViewHolder(this);
+        mHolder = new AppBarViewHolder(this, mOnScoutingReadyTask.getTask());
         mSavedState = savedInstanceState;
 
         mTeamHelper = TeamHelper.get(getIntent());
@@ -206,9 +208,7 @@ public class ScoutActivity extends AppCompatActivity
             mTeamHelper = team.getHelper();
             mHolder.bind(mTeamHelper);
 
-            if (mInitScouting) {
-                mInitScouting = false;
-
+            if (!mOnScoutingReadyTask.getTask().isComplete()) {
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
                 ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
                 String scoutKey = null;
@@ -224,6 +224,8 @@ public class ScoutActivity extends AppCompatActivity
                     getIntent().removeExtra(INTENT_ADD_SCOUT);
                     mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
                 }
+
+                mOnScoutingReadyTask.setResult(null);
             }
         }
     }
