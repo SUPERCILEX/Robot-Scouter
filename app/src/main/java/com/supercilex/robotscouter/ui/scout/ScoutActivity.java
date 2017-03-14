@@ -97,6 +97,18 @@ public class ScoutActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPagerAdapter != null) mPagerAdapter.setIsActive(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPagerAdapter != null) mPagerAdapter.setIsActive(false);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         FirebaseUserActions.getInstance().end(mTeamHelper.getViewAction());

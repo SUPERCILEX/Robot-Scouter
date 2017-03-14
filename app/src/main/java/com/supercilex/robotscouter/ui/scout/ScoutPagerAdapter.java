@@ -50,6 +50,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     private AppCompatActivity mActivity;
     private TeamHelper mTeamHelper;
     private TabLayout mTabLayout;
+    private boolean mIsActive;
 
     public ScoutPagerAdapter(AppCompatActivity activity,
                              TabLayout tabLayout,
@@ -88,6 +89,10 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         return mCurrentScoutKey;
     }
 
+    public void setIsActive(boolean isActive) {
+        mIsActive = isActive;
+    }
+
     public void setCurrentScoutKey(String currentScoutKey) {
         mCurrentScoutKey = currentScoutKey;
     }
@@ -107,7 +112,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
             mKeys.add(0, key);
             getTabNameRef(key).addValueEventListener(mTabNameListener);
         }
-        if (hadScouts && mKeys.isEmpty() && !ConnectivityHelper.isOffline(mActivity)) {
+        if (hadScouts && mKeys.isEmpty() && !ConnectivityHelper.isOffline(mActivity) && mIsActive) {
             ShouldDeleteTeamDialog.show(mActivity.getSupportFragmentManager(), mTeamHelper);
         }
         mActivity.findViewById(R.id.empty_list_hint)
