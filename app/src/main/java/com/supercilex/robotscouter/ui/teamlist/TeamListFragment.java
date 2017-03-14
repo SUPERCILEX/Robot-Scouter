@@ -50,14 +50,12 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             View view = getView();
             if (view != null) view.findViewById(R.id.empty_list_hint).setVisibility(View.VISIBLE);
         } else {
-            mManager = new LinearLayoutManager(getContext());
             mAdapter = new TeamListAdapter(this, mMenuHelper);
 
             if (mSavedInstanceState != null) {
                 mManager.onRestoreInstanceState(mSavedInstanceState.getParcelable(Constants.MANAGER_STATE));
             }
             mMenuHelper.setAdapter(mAdapter);
-            mRecyclerView.setLayoutManager(mManager);
             mRecyclerView.setAdapter(mAdapter);
             mMenuHelper.restoreState(mSavedInstanceState);
         }
@@ -71,8 +69,12 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         mSavedInstanceState = savedInstanceState;
         View rootView = inflater.inflate(R.layout.fragment_team_list, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        mManager = new LinearLayoutManager(getContext());
 
         mMenuHelper.setRecyclerView(mRecyclerView);
+
+        mRecyclerView.setLayoutManager(mManager);
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

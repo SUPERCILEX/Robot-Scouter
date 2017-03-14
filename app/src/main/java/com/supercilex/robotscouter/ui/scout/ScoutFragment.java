@@ -55,6 +55,7 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
 
         mManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mManager);
+        mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new ScoutAdapter(
                 Constants.getScoutMetrics(mScoutKey),
