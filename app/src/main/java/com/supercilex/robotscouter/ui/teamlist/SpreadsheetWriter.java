@@ -96,8 +96,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
-                        mProgressDialog.dismiss();
+                        showError(e);
                     }
                 });
     }
@@ -160,6 +159,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                    getTeamNames());
     }
 
+    @Nullable
     private Uri getFileUri() {
         if (!isExternalStorageWritable()) return null;
         String pathname =
@@ -193,12 +193,11 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             getWorkbook().write(stream);
 
             return absoluteFile;
-        } catch (IOException e) {
-            FirebaseCrash.report(e);
+        } catch (final IOException e) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(mContext, R.string.general_error, Toast.LENGTH_SHORT).show();
+                    showError(e);
                 }
             });
             absoluteFile.delete();
@@ -665,6 +664,14 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     private boolean isUnsupportedDevice() {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    private void showError(Exception e) {
+        FirebaseCrash.report(e);
+        mProgressDialog.dismiss();
+
+        String message = mContext.getString(R.string.general_error) + "\n\n" + e.getMessage();
+        Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
     }
 
     private void setApacheProperties() {
