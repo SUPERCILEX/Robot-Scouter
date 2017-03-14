@@ -384,6 +384,8 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 continue;
             }
 
+            cell.setCellStyle(row.getCell(1).getCellStyle());
+
             String key = row.getCell(0).getCellComment().getString().toString();
             @MetricType int type = getMetricType(teamHelper, key);
 
@@ -393,7 +395,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             switch (type) {
                 case MetricType.CHECKBOX:
                     cell.setCellFormula("COUNTIF(" + rangeAddress + ", TRUE) / COUNTA(" + rangeAddress + ")");
-                    cell.setCellStyle(getPercentCellStyle(cell));
+                    setCellFormat(cell, "0.00%");
                     break;
                 case MetricType.COUNTER:
                     cell.setCellFormula(
@@ -426,16 +428,6 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         }
     }
 
-    @Nullable
-    private CellStyle getPercentCellStyle(Cell cell) {
-        if (isUnsupportedDevice()) return null;
-
-        Workbook workbook = cell.getSheet().getWorkbook();
-        CellStyle style = workbook.createCellStyle();
-        style.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
-        return style;
-    }
-
     @MetricType
     private int getMetricType(TeamHelper teamHelper, String key) {
         for (Scout scout : mScouts.get(teamHelper)) {
@@ -451,6 +443,16 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     private String getRangeAddress(Cell first, Cell last) {
         return first.getAddress().toString() + ":" + last.getAddress().toString();
+    }
+
+    private void setCellFormat(Cell cell, String format) {
+        if (isUnsupportedDevice()) return;
+
+        Workbook workbook = cell.getSheet().getWorkbook();
+        CellStyle style = workbook.createCellStyle();
+        style.setDataFormat(workbook.createDataFormat().getFormat(format));
+
+        cell.setCellStyle(style);
     }
 
     @Nullable
@@ -553,6 +555,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 long nanoAverage = cycles.isEmpty() ? 0 : sum / cycles.size();
 
                 valueCell.setCellValue(TimeUnit.NANOSECONDS.toSeconds(nanoAverage));
+                setCellFormat(valueCell, "#0\"s\"");
                 break;
             case MetricType.HEADER:
                 // Headers are skipped because they don't contain any data
