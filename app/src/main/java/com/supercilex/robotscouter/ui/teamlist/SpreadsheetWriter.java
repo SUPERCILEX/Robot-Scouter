@@ -126,10 +126,13 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     @Override
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
-        mScouts = scouts;
+        mProgressDialog.setMessage(mContext.getString(R.string.exporting_spreadsheet));
 
+        mScouts = scouts;
         Uri spreadsheetUri = getFileUri();
+
         mProgressDialog.dismiss();
+
         if (spreadsheetUri == null) return;
 
         Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -691,32 +694,44 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                            "com.fasterxml.aalto.stax.EventFactoryImpl");
     }
 
-    private static class ProgressDialogManager implements Application.ActivityLifecycleCallbacks {
+    private static final class ProgressDialogManager implements Application.ActivityLifecycleCallbacks {
+        private String mMessage;
+
         private Application mApplication;
         private WeakReference<ProgressDialog> mProgressDialog;
 
-        public ProgressDialogManager(Activity activity) {
+        private ProgressDialogManager(Activity activity) {
             mApplication = activity.getApplication();
+            mMessage = activity.getString(R.string.loading_teams);
 
             mApplication.registerActivityLifecycleCallbacks(this);
             initProgressDialog(activity);
         }
 
-        private static ProgressDialogManager show(Activity activity) {
+        public static ProgressDialogManager show(Activity activity) {
             return new ProgressDialogManager(activity);
         }
 
-        private void initProgressDialog(Activity activity) {
-            mProgressDialog = new WeakReference<>(ProgressDialog.show(
-                    activity,
-                    "",
-                    activity.getString(R.string.progress_dialog_loading),
-                    true));
+        public void setMessage(String message) {
+            mMessage = message;
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    ProgressDialog dialog = mProgressDialog.get();
+                    if (dialog != null) dialog.setMessage(mMessage);
+                }
+            });
         }
 
         public void dismiss() {
             internalDismiss();
             mApplication.unregisterActivityLifecycleCallbacks(this);
+        }
+
+        private void initProgressDialog(Activity activity) {
+            mProgressDialog = new WeakReference<>(
+                    ProgressDialog.show(activity, "", mMessage, true));
         }
 
         private void internalDismiss() {

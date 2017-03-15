@@ -30,6 +30,8 @@
         <item quantity="other">Export teams %s and their scouting data to a spreadsheet</item>
     </plurals>
     <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
+    <string name="loading_teams">Loading teams…</string>
+    <string name="exporting_spreadsheet">Exporting spreadsheet…</string>
 
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
