@@ -167,11 +167,10 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                     mFam.hideMenuButton(true);
                 } else if (dy < 0) {
                     mFam.showMenuButton(true);
-                } else if (mHasAddedItem) {
-                    if (mManager.findFirstCompletelyVisibleItemPosition() != 0
-                            || mManager.findLastCompletelyVisibleItemPosition() != mAdapter.getItemCount() - 1) {
-                        mFam.hideMenuButton(true);
-                    }
+                } else if (mHasAddedItem
+                        && (mManager.findFirstCompletelyVisibleItemPosition() != 0
+                        || mManager.findLastCompletelyVisibleItemPosition() != mAdapter.getItemCount() - 1)) {
+                    mFam.hideMenuButton(true);
                 }
 
                 mHasAddedItem = false;
