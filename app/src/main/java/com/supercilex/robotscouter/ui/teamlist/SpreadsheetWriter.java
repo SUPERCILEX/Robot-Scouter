@@ -294,6 +294,10 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 break;
             } else {
                 safeName = originalName + " (" + i + ")";
+                if (safeName.length() > 31) { // Sheet names can't be longer than this
+                    originalName = teamHelper.getTeam().getNumber();
+                    safeName = originalName;
+                }
             }
         }
 
