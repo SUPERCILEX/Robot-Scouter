@@ -35,6 +35,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
     private RecyclerView.LayoutManager mManager;
+    private FloatingActionButton mFab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
         cleanup();
+        if (mFab != null) mFab.show();
         if (auth.getCurrentUser() == null) {
             View view = getView();
             if (view != null) view.findViewById(R.id.empty_list_hint).setVisibility(View.VISIBLE);
@@ -78,12 +80,11 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-                if (dy > 0 && fab.getVisibility() == View.VISIBLE) {
-                    // User scrolled down and the FAB is currently visible -> hide the FAB
-                    fab.hide();
-                } else if (dy < 0 && fab.getVisibility() != View.VISIBLE && mMenuHelper.noItemsSelected()) {
-                    fab.show();
+                if (dy > 0) {
+                    // User scrolled down -> hide the FAB
+                    mFab.hide();
+                } else if (dy < 0 && mMenuHelper.noItemsSelected()) {
+                    mFab.show();
                 }
             }
         });
@@ -91,6 +92,12 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         FirebaseAuth.getInstance().addAuthStateListener(this);
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
     }
 
     @Override
