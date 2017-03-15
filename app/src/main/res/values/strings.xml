@@ -43,6 +43,9 @@
     <string name="donate">Donate</string>
     <string name="about">About</string>
     <string name="licenses">Licenses</string>
+    <string name="copy_debug_info">Copy debug info</string>
+    <string name="debug_info_name">Robot Scouter debug info</string>
+    <string name="debug_info_copied">Debug info copied to clipboard</string>
 
     <string-array name="donate_items">
         <item>$1.00 - One time donation</item>

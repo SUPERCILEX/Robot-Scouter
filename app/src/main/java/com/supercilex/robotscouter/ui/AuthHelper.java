@@ -188,7 +188,7 @@ public class AuthHelper implements View.OnClickListener {
 
                 initDeepLinkReceiver();
 
-                User user = new User.Builder(getUser().getUid())
+                User user = new User.Builder(getUid())
                         .setEmail(getUser().getEmail())
                         .setName(getUser().getDisplayName())
                         .setPhotoUrl(getUser().getPhotoUrl())

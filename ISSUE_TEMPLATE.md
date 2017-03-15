@@ -5,8 +5,7 @@ Please take a look at [open issues](https://github.com/SUPERCILEX/Robot-Scouter/
 If not, please feel free to fill in the following info so we can help you faster!
 
 ### Step 1: Describe your environment
-  * Robot Scouter version: _____
-  * Android OS version: _____
+Please go to the "About" dialog in Robot Scouter (found in the main menu) and copy the debug info here:
   * Android device: _____
 
 ### Step 2: Describe the problem:

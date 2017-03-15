@@ -1,15 +1,24 @@
 package com.supercilex.robotscouter.util;
 
+import android.os.Build;
+
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.google.firebase.database.DatabaseReference;
+import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.AuthHelper;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public final class Constants {
+    public static final String DEBUG_INFO =
+            "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
+                    "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
+                    "* User id: " + AuthHelper.getUid();
+
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
     public static final String SCOUT_TEMPLATE = "com.supercilex.robotscouter.scout_template";
