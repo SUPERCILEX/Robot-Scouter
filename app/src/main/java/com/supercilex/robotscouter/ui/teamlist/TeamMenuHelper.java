@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -21,7 +20,6 @@ import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -90,10 +88,6 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 .setVisible(false)
                 .setIcon(R.drawable.ic_import_export_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_merge_teams, Menu.NONE, R.string.merge_teams)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_merge_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE, R.id.action_delete, Menu.NONE, R.string.delete)
                 .setVisible(false)
                 .setIcon(R.drawable.ic_delete_forever_white_24dp)
@@ -104,7 +98,6 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
             setContextMenuItemsVisible(true);
             int size = mSelectedTeams.size();
             if (size == Constants.SINGLE_ITEM) showTeamSpecificItems();
-            else setMultiTeamItemsVisible(true);
             setToolbarTitle();
         }
     }
@@ -133,9 +126,6 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 break;
             case R.id.action_export_spreadsheet:
                 exportTeams();
-                break;
-            case R.id.action_merge_teams:
-                TeamMergerDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
@@ -205,10 +195,8 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 resetMenu();
             } else if (mSelectedTeams.size() == Constants.SINGLE_ITEM) {
                 showTeamSpecificItems();
-                setMultiTeamItemsVisible(false);
             } else {
                 hideTeamSpecificMenuItems();
-                setMultiTeamItemsVisible(true);
             }
         }
     }
@@ -284,32 +272,6 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         mMenu.findItem(R.id.action_edit_team_details).setVisible(false);
     }
 
-    private void setMultiTeamItemsVisible(boolean visible) {
-        if (visible) {
-            showMergeTeamsItem();
-        } else {
-            mMenu.findItem(R.id.action_merge_teams).setVisible(false);
-        }
-    }
-
-    private void showMergeTeamsItem() {
-        if (ConnectivityHelper.isOffline(mFragment.getContext())) {
-            mMenu.findItem(R.id.action_merge_teams).setVisible(false);
-            return;
-        }
-
-        List<Team> rawTeams = new ArrayList<>();
-        for (TeamHelper teamHelper : mSelectedTeams) {
-            Team rawTeam = new Team.Builder(teamHelper.getTeam()).setKey(null)
-                    .setTimestamp(0)
-                    .build();
-            if (!rawTeams.contains(rawTeam)) rawTeams.add(rawTeam);
-        }
-
-        mMenu.findItem(R.id.action_merge_teams)
-                .setVisible(rawTeams.size() == Constants.SINGLE_ITEM);
-    }
-
     private void setToolbarTitle() {
         ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                 .setTitle(String.valueOf(mSelectedTeams.size()));
@@ -355,7 +317,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode) {
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE
                 && EasyPermissions.hasPermissions(mFragment.getContext(),
                                                   SpreadsheetWriter.PERMS)) {

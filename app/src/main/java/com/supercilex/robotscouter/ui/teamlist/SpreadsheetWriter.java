@@ -72,11 +72,12 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
+    private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
     private static final String FILE_EXTENSION = ".xlsx";
     private static final String UNSUPPORTED_FILE_EXTENSION = ".xls";
+    private static final int MAX_SHEET_LENGTH = 31;
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
-    private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
 
     private Context mContext;
     private ProgressDialogManager mProgressDialog;
@@ -92,7 +93,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
         Collections.sort(teamHelpers);
         Scouts.getAll(teamHelpers)
-                .addOnSuccessListener(new AsyncTaskExecutor(), this)
+                .addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
@@ -294,7 +295,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 break;
             } else {
                 safeName = originalName + " (" + i + ")";
-                if (safeName.length() > 31) { // Sheet names can't be longer than this
+                if (safeName.length() > MAX_SHEET_LENGTH) {
                     originalName = teamHelper.getTeam().getNumber();
                     safeName = originalName;
                 }

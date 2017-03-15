@@ -136,7 +136,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             TIMERS.put((StopwatchMetric) holder.mMetric, this);
 
             TaskCompletionSource<Void> start = new TaskCompletionSource<>();
-            start.getTask().addOnSuccessListener(new AsyncTaskExecutor(), this);
+            start.getTask().addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
             start.setResult(null);
         }
 
@@ -179,7 +179,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         public void onSuccess(Void aVoid) {
             mTimerTask = new TaskCompletionSource<>();
             Task<Void> task = mTimerTask.getTask();
-            task.addOnSuccessListener(new AsyncTaskExecutor(), this);
+            task.addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
             task.addOnFailureListener(this);
             try {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(1));

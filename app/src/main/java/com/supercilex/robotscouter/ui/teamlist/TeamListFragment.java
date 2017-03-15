@@ -172,6 +172,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mMenuHelper.onActivityResult(requestCode, resultCode, data);
+        mMenuHelper.onActivityResult(requestCode);
     }
 }

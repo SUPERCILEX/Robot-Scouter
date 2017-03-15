@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.util;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -8,8 +9,10 @@ import com.firebase.ui.database.FirebaseArray;
 import com.firebase.ui.database.FirebaseIndexArray;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
@@ -20,9 +23,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.FirebaseCopier;
+import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class DatabaseHelper {
@@ -44,22 +51,6 @@ public final class DatabaseHelper {
                     return new ArrayList<>();
                 }
             };
-    private static final ChangeEventListener NOOP_LISTENER = new ChangeEventListener() {
-        @Override
-        public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-            // Noop
-        }
-
-        @Override
-        public void onDataChanged() {
-            // Noop
-        }
-
-        @Override
-        public void onCancelled(DatabaseError error) {
-            // Noop
-        }
-    };
 
     private DatabaseHelper() { // no instance
     }
@@ -110,7 +101,7 @@ public final class DatabaseHelper {
         return updateTask.getTask();
     }
 
-    public static void init() {
+    public static void init(final Context appContext) {
         Constants.sFirebaseTeams = NOOP_ARRAY;
 
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -131,7 +122,8 @@ public final class DatabaseHelper {
                             TeamHelper.getIndicesRef(),
                             Constants.FIREBASE_TEAMS_REF,
                             TEAM_PARSER);
-                    Constants.sFirebaseTeams.addChangeEventListener(NOOP_LISTENER);
+                    Constants.sFirebaseTeams.addChangeEventListener(
+                            new TeamMergerListener(appContext));
                 }
             }
         });
@@ -156,6 +148,94 @@ public final class DatabaseHelper {
         static {
             DATABASE.setPersistenceEnabled(true);
             INSTANCE = DATABASE.getReference();
+        }
+    }
+
+    private static class TeamMergerListener implements ChangeEventListener, OnSuccessListener<DatabaseReference> {
+        private Context mAppContext;
+
+        public TeamMergerListener(Context appContext) {
+            mAppContext = appContext;
+        }
+
+        @Override
+        public void onChildChanged(EventType type,
+                                   DataSnapshot snapshot,
+                                   int i,
+                                   int i1) {
+            if (ConnectivityHelper.isOffline(mAppContext)) return;
+
+            List<TeamHelper> rawTeams = new ArrayList<>();
+            for (int j = 0; j < Constants.sFirebaseTeams.size(); j++) {
+                Team team = Constants.sFirebaseTeams.getObject(j);
+                TeamHelper rawTeam = new Team.Builder(team)
+                        .setTimestamp(0)
+                        .setKey(null)
+                        .build()
+                        .getHelper();
+
+                if (rawTeams.contains(rawTeam)) {
+                    List<TeamHelper> teams = Arrays.asList(
+                            Constants.sFirebaseTeams.getObject(rawTeams.indexOf(rawTeam))
+                                    .getHelper(),
+                            team.getHelper());
+                    mergeTeams(new ArrayList<>(teams));
+                    break;
+                }
+
+                rawTeams.add(rawTeam);
+            }
+        }
+
+        private void mergeTeams(final List<TeamHelper> teams) {
+            Collections.sort(teams);
+            final Team oldTeam = teams.remove(0).getTeam();
+
+            for (TeamHelper teamHelper : teams) {
+                final Team newTeam = teamHelper.getTeam();
+
+                DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(newTeam.getKey()))
+                        .addOnSuccessListener(new OnSuccessListener<Query>() {
+                            @Override
+                            public void onSuccess(Query query) {
+                                Task<List<Task<DatabaseReference>>> copyTask =
+                                        new FirebaseCopier(query,
+                                                           ScoutUtils.getIndicesRef(oldTeam.getKey()))
+                                                .performTransformation();
+                                copyTask.addOnSuccessListener(new OnSuccessListener<List<Task<DatabaseReference>>>() {
+                                    @Override
+                                    public void onSuccess(List<Task<DatabaseReference>> tasks) {
+                                        for (Task<DatabaseReference> task : tasks) {
+                                            task.addOnSuccessListener(TeamMergerListener.this);
+                                        }
+
+                                        Tasks.whenAll(tasks)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        newTeam.getHelper().deleteTeam();
+                                                    }
+                                                });
+                                    }
+                                });
+                            }
+                        });
+            }
+        }
+
+        @Override
+        public void onSuccess(DatabaseReference ref) {
+            ref.removeValue();
+        }
+
+        @Override
+        public void onDataChanged() {
+            // No-op
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            FirebaseCrash.report(error.toException());
         }
     }
 }

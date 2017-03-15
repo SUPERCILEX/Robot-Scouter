@@ -27,7 +27,7 @@ public class RobotScouter extends MultiDexApplication {
         }
         mRefWatcher = LeakCanary.install(this);
 
-        DatabaseHelper.init();
+        DatabaseHelper.init(this);
         AnalyticsHelper.init(this);
 
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();

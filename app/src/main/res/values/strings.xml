@@ -30,8 +30,6 @@
         <item quantity="other">Export teams %s and their scouting data to a spreadsheet</item>
     </plurals>
     <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
-    <string name="merge_teams">Merge teams</string>
-    <string name="merge_teams_warning">WARNING: this is a dangerous operation.\nPlease ensure all devices who have changed data for team %s have connected to the internet at least once since the last edit.</string>
 
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
