@@ -392,13 +392,14 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 continue;
             }
 
-            cell.setCellStyle(row.getCell(1).getCellStyle());
+            Cell first = row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            cell.setCellStyle(first.getCellStyle());
 
             String key = row.getCell(0).getCellComment().getString().toString();
             @MetricType int type = getMetricType(teamHelper, key);
 
             String rangeAddress = getRangeAddress(
-                    row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK),
+                    first,
                     row.getCell(cell.getColumnIndex() - 1, MissingCellPolicy.CREATE_NULL_AS_BLANK));
             switch (type) {
                 case MetricType.CHECKBOX:
