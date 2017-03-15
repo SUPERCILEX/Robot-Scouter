@@ -116,6 +116,7 @@ public final class DatabaseHelper {
                 } else {
                     // Log uid to help debug db crashes
                     FirebaseCrash.log(user.getUid());
+                    AnalyticsHelper.updateUserId();
 
                     Constants.sFirebaseTeams.removeAllListeners();
                     Constants.sFirebaseTeams = new FirebaseIndexArray<>(

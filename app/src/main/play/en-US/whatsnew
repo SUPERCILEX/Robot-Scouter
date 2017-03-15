@@ -1,7 +1,6 @@
+- Duplicate teams are now automatically merged where possible
 - Spreadsheet exporting:
     - Fixed crash when exporting spreadsheet
     - Fixed issue where scouts from other devices weren't included in the export
     - Zeros are now excluded from stopwatch metric export and other formatting enhancements
-- Team icon now finds the latest uploaded picture from the last few years instead of relying on one static year
-- Fixed crash on slow devices when adding new scout
-- Added confirmation dialog before deleting team if last scout is deleted
+- Bug fixes and performance improvements

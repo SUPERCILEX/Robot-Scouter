@@ -66,13 +66,7 @@ public class AuthHelper implements View.OnClickListener {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
                 if (auth.getCurrentUser() == null) {
-                    auth.signInAnonymously()
-                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult result) {
-                                    DatabaseInitializer.init();
-                                }
-                            });
+                    signInAnonymouslyDbInit();
                 } else {
                     signInTask.trySetResult(auth);
                     FirebaseAuth.getInstance().removeAuthStateListener(this);
@@ -90,6 +84,25 @@ public class AuthHelper implements View.OnClickListener {
             helper.signInAnonymously();
         }
         return helper;
+    }
+
+    private static Task<AuthResult> signInAnonymouslyInitBasic() {
+        return FirebaseAuth.getInstance().signInAnonymously()
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult result) {
+                        AnalyticsHelper.updateUserId();
+                    }
+                });
+    }
+
+    private static Task<AuthResult> signInAnonymouslyDbInit() {
+        return signInAnonymouslyInitBasic().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult result) {
+                DatabaseInitializer.init();
+            }
+        });
     }
 
     public void initMenu(Menu menu) {
@@ -117,13 +130,7 @@ public class AuthHelper implements View.OnClickListener {
     }
 
     private void signInAnonymously() {
-        FirebaseAuth.getInstance().signInAnonymously()
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult result) {
-                        DatabaseInitializer.init();
-                    }
-                })
+        signInAnonymouslyDbInit()
                 .addOnSuccessListener(mActivity, new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult result) {
@@ -148,7 +155,7 @@ public class AuthHelper implements View.OnClickListener {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        FirebaseAuth.getInstance().signInAnonymously();
+                        signInAnonymouslyInitBasic();
                         FirebaseAppIndex.getInstance().removeAll();
                     }
                 })

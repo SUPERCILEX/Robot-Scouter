@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.supercilex.robotscouter.ui.AuthHelper;
 
 import static com.google.firebase.analytics.FirebaseAnalytics.Event;
 import static com.google.firebase.analytics.FirebaseAnalytics.Param;
@@ -59,5 +60,12 @@ public class AnalyticsHelper {
 
     public static void login() {
         INSTANCE.mAnalytics.logEvent(Event.LOGIN, new Bundle());
+        updateUserId();
+    }
+
+    public static void updateUserId() {
+        String uid = AuthHelper.getUid();
+        INSTANCE.mAnalytics.setUserId(uid);
+        INSTANCE.mAnalytics.setUserProperty("user_id", uid);
     }
 }
