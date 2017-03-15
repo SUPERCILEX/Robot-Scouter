@@ -199,7 +199,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             return;
         }
 
-        int priority = mAdapter.getItemCount() + 1;
+        int priority = FirebaseAdapterHelper.getHighestIntPriority(mAdapter.getSnapshots()) + 1;
         DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey).push();
         switch (id) {
             case R.id.add_checkbox:

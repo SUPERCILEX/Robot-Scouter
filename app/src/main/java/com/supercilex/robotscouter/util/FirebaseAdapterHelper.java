@@ -5,7 +5,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +15,21 @@ public final class FirebaseAdapterHelper {
         // no instance
     }
 
-    public static List<DatabaseReference> getRefs(FirebaseRecyclerAdapter adapter) {
-        List<DatabaseReference> refs = new ArrayList<>(adapter.getItemCount());
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            refs.add(adapter.getRef(i));
-        }
-        return refs;
-    }
-
     public static <T> List<T> getItems(FirebaseRecyclerAdapter<T, ?> adapter) {
         List<T> items = new ArrayList<>(adapter.getItemCount());
         for (int i = 0; i < adapter.getItemCount(); i++) {
             items.add(adapter.getItem(i));
         }
         return items;
+    }
+
+    public static int getHighestIntPriority(List<DataSnapshot> snapshots) {
+        int highest = 0;
+        for (DataSnapshot snapshot : snapshots) {
+            int priority = (int) ((double) snapshot.getPriority());
+            if (priority > highest) highest = priority;
+        }
+        return highest;
     }
 
     public static void restoreRecyclerViewState(Bundle savedInstanceState,

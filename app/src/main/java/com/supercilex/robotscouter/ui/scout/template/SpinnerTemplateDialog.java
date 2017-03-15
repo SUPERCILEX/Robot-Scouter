@@ -92,7 +92,8 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
     @Override
     public void onClick(View v) {
         int itemCount = mAdapter.getItemCount();
-        mRef.push().setValue("item " + (itemCount + 1), itemCount);
+        mRef.push().setValue("item " + (itemCount + 1),
+                             FirebaseAdapterHelper.getHighestIntPriority(mAdapter.getSnapshots()));
         mItemTouchCallback.addItemToScrollQueue(itemCount);
     }
 
