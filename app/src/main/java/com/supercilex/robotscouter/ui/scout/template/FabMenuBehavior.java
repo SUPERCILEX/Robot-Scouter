@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.template;
 
 import android.content.Context;
 import android.support.annotation.Keep;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
@@ -10,7 +11,7 @@ import android.view.View;
 
 import com.github.clans.fab.FloatingActionMenu;
 
-public class FabMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionMenu> {
+public class FabMenuBehavior extends AppBarLayout.ScrollingViewBehavior {
     @Keep
     public FabMenuBehavior() {
         super();
@@ -22,54 +23,31 @@ public class FabMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionMe
     }
 
     @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent,
-                                   FloatingActionMenu child,
-                                   View dependency) {
-        return dependency instanceof Snackbar.SnackbarLayout;
+    public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
+        return super.layoutDependsOn(parent, child, dependency)
+                || dependency instanceof Snackbar.SnackbarLayout;
     }
 
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent,
-                                          FloatingActionMenu child,
-                                          View dependency) {
-        float translationY =
-                Math.min(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
-        ViewCompat.setTranslationY(child, translationY);
-        return true;
+    public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
+        if (dependency instanceof Snackbar.SnackbarLayout && child instanceof FloatingActionMenu) {
+            float translationY =
+                    Math.min(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
+            ViewCompat.setTranslationY(child, translationY);
+            return true;
+        } else {
+            return super.onDependentViewChanged(parent, child, dependency);
+        }
     }
 
     @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent,
-                                       FloatingActionMenu child,
-                                       View dependency) {
-        float translationY =
-                Math.max(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
-        ViewCompat.setTranslationY(child, translationY);
-    }
-
-    @Override
-    public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout,
-                                       FloatingActionMenu child,
-                                       View directTargetChild,
-                                       View target,
-                                       int nestedScrollAxes) {
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
-    }
-
-    @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout,
-                               FloatingActionMenu child,
-                               View target,
-                               int dxConsumed,
-                               int dyConsumed,
-                               int dxUnconsumed,
-                               int dyUnconsumed) {
-        if (dyConsumed > 0) {
-            // User scrolled down -> hide the FAB
-            child.hideMenuButton(true);
-        } else if (dyConsumed < 0) {
-            // User scrolled up -> show the FAB
-            child.showMenuButton(true);
+    public void onDependentViewRemoved(CoordinatorLayout parent, View child, View dependency) {
+        if (dependency instanceof Snackbar.SnackbarLayout && child instanceof FloatingActionMenu) {
+            float translationY =
+                    Math.max(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
+            ViewCompat.setTranslationY(child, translationY);
+        } else {
+            super.onDependentViewRemoved(parent, child, dependency);
         }
     }
 }

@@ -20,12 +20,12 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-public class ResetTemplateSheet extends DialogFragment implements DialogInterface.OnShowListener, View.OnClickListener {
-    private static final String TAG = "ResetTemplateSheet";
+public class ResetTemplateDialog extends DialogFragment implements DialogInterface.OnShowListener, View.OnClickListener {
+    private static final String TAG = "ResetTemplateDialog";
     private static final String RESET_ALL_KEY = "reset_all_key";
 
     public static void show(FragmentManager manager, TeamHelper helper, boolean shouldResetAll) {
-        ResetTemplateSheet dialog = new ResetTemplateSheet();
+        DialogFragment dialog = new ResetTemplateDialog();
 
         Bundle bundle = helper.toBundle();
         bundle.putBoolean(RESET_ALL_KEY, shouldResetAll);

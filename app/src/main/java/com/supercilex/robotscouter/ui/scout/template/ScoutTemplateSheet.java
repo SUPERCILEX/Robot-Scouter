@@ -47,8 +47,9 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
     private RecyclerView mRecyclerView;
     private ScoutTemplateAdapter mAdapter;
-    private RecyclerView.LayoutManager mManager;
+    private LinearLayoutManager mManager;
     private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mItemTouchCallback;
+    private boolean mHasAddedItem;
 
     private String mTemplateKey;
 
@@ -158,6 +159,25 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mItemTouchCallback.setItemTouchHelper(itemTouchHelper);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    // User scrolled down -> hide the FAB
+                    mFam.hideMenuButton(true);
+                } else if (dy < 0) {
+                    mFam.showMenuButton(true);
+                } else if (mHasAddedItem) {
+                    if (mManager.findFirstCompletelyVisibleItemPosition() != 0
+                            || mManager.findLastCompletelyVisibleItemPosition() != mAdapter.getItemCount() - 1) {
+                        mFam.hideMenuButton(true);
+                    }
+                }
+
+                mHasAddedItem = false;
+            }
+        });
+
         mAdapter = new ScoutTemplateAdapter(
                 Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
                 getChildFragmentManager(),
@@ -193,9 +213,9 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         int id = v.getId();
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
             mRecyclerView.clearFocus();
-            ResetTemplateSheet.show(getChildFragmentManager(),
-                                    TeamHelper.get(getArguments()),
-                                    id == R.id.reset_template_all);
+            ResetTemplateDialog.show(getChildFragmentManager(),
+                                     TeamHelper.get(getArguments()),
+                                     id == R.id.reset_template_all);
             return;
         }
 
@@ -225,8 +245,10 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 metricRef.setValue(new ScoutMetric<Void>("", null, MetricType.HEADER), priority);
                 break;
         }
+
         mItemTouchCallback.addItemToScrollQueue(mAdapter.getItemCount());
         mFam.close(true);
+        mHasAddedItem = true;
     }
 
     @Override

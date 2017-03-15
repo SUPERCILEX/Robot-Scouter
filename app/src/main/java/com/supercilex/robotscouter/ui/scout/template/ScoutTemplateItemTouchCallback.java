@@ -55,7 +55,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
 
         if (position == mScrollToPosition) {
             ((ScoutTemplateViewHolder) viewHolder).requestFocus();
-            mScrollToPosition = -1;
+            mScrollToPosition = RecyclerView.NO_POSITION;
         }
     }
 
