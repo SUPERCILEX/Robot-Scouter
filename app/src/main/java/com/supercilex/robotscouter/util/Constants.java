@@ -14,11 +14,6 @@ import java.util.Collections;
 import java.util.List;
 
 public final class Constants {
-    public static final String DEBUG_INFO =
-            "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
-                    "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
-                    "* User id: " + AuthHelper.getUid();
-
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
     public static final String SCOUT_TEMPLATE = "com.supercilex.robotscouter.scout_template";
@@ -72,5 +67,11 @@ public final class Constants {
 
     public static DatabaseReference getScoutMetrics(String key) {
         return FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS);
+    }
+
+    public static String getDebugInfo() {
+        return "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
+                "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
+                "* User id: " + AuthHelper.getUid();
     }
 }
