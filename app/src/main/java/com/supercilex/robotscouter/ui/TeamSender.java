@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
+import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class TeamSender {
         mActivity = activity;
         mTeamHelpers = teamHelpers;
 
-        StringBuilder deepLinkBuilder = new StringBuilder(TeamReceiver.APP_LINK_BASE);
+        StringBuilder deepLinkBuilder = new StringBuilder(IntentReceiver.APP_LINK_BASE);
         for (TeamHelper teamHelper : teamHelpers) {
             deepLinkBuilder.append(teamHelper.getLinkKeyNumberPair());
         }

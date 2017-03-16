@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
@@ -21,17 +22,20 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
+public final class IntentReceiver implements ResultCallback<AppInviteInvitationResult> {
     public static final String TEAM_QUERY_KEY = "team";
     public static final String APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/?";
     private static final String ADD_SCOUT_INTENT = "add_scout";
 
+    private static final String DONATE = "donate";
+    private static final String UPDATE = "update";
+    private static final String STORE_LISTING = "market://details?id=" + "com.supercilex.robotscouter";
+
     private FragmentActivity mActivity;
 
-    protected TeamReceiver(FragmentActivity activity) {
+    private IntentReceiver(FragmentActivity activity) {
         mActivity = activity;
 
-        // Check for deep links
         AppInvite.AppInviteApi
                 .getInvitation(new GoogleApiClient.Builder(mActivity)
                                        .enableAutoManage(mActivity,
@@ -44,8 +48,8 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
                 .setResultCallback(this);
     }
 
-    public static TeamReceiver init(FragmentActivity activity) {
-        return new TeamReceiver(activity);
+    public static IntentReceiver init(FragmentActivity activity) {
+        return new IntentReceiver(activity);
     }
 
     @Override
@@ -65,17 +69,30 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
                         .show();
             }
         } else { // Received normal intent
-            Uri deepLink = mActivity.getIntent().getData();
-            if (deepLink == null) {
-                return; // Nothing to see here
+            Intent intent = mActivity.getIntent();
+
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                if (extras.containsKey(DONATE)) {
+                    DonateDialog.show(mActivity.getSupportFragmentManager());
+                } else if (extras.containsKey(UPDATE)) {
+                    mActivity.startActivity(
+                            new Intent(Intent.ACTION_VIEW).setData(Uri.parse(STORE_LISTING)));
+                }
             }
 
-            if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD
-                launchTeam(getTeam(deepLink).get(0));
-            } else if (deepLink.toString().equals(ADD_SCOUT_INTENT)) {
-                NewTeamDialog.show(mActivity.getSupportFragmentManager());
+            Uri deepLink = intent.getData();
+            if (deepLink != null) {
+                if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD
+                    launchTeam(getTeam(deepLink).get(0));
+                } else if (deepLink.toString().equals(ADD_SCOUT_INTENT)) {
+                    NewTeamDialog.show(mActivity.getSupportFragmentManager());
+                }
             }
         }
+
+        // Consume intent
+        mActivity.setIntent(new Intent());
     }
 
     private List<Team> getTeam(Uri deepLink) {
@@ -93,8 +110,5 @@ public class TeamReceiver implements ResultCallback<AppInviteInvitationResult> {
 
     private void launchTeam(Team team) {
         ScoutActivity.start(mActivity, team.getHelper(), false);
-
-        // Consume intent
-        mActivity.setIntent(new Intent());
     }
 }

@@ -22,7 +22,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
-import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
+import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.CustomTabsHelper;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
@@ -192,11 +192,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     private String getDeepLink() {
-        return TeamReceiver.APP_LINK_BASE + getLinkKeyNumberPair();
+        return IntentReceiver.APP_LINK_BASE + getLinkKeyNumberPair();
     }
 
     public String getLinkKeyNumberPair() {
-        return "&" + TeamReceiver.TEAM_QUERY_KEY + "=" + mTeam.getKey() + ":" + mTeam.getNumber();
+        return "&" + IntentReceiver.TEAM_QUERY_KEY + "=" + mTeam.getKey() + ":" + mTeam.getNumber();
     }
 
     public Action getViewAction() {

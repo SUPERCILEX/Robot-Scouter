@@ -28,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
-import com.supercilex.robotscouter.ui.teamlist.TeamReceiver;
+import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
@@ -36,7 +36,7 @@ import com.supercilex.robotscouter.util.RemoteConfigHelper;
 public class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
 
-    private TeamReceiver mLinkReceiver;
+    private IntentReceiver mLinkReceiver;
 
     private FragmentActivity mActivity;
     private MenuItem mActionSignIn;
@@ -113,7 +113,7 @@ public class AuthHelper implements View.OnClickListener {
 
     private void initDeepLinkReceiver() {
         if (mLinkReceiver == null) {
-            mLinkReceiver = TeamReceiver.init(mActivity);
+            mLinkReceiver = IntentReceiver.init(mActivity);
         }
     }
 
