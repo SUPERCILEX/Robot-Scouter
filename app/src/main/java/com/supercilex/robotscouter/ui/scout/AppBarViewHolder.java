@@ -60,14 +60,15 @@ public class AppBarViewHolder implements OnSuccessListener<Void> {
             return;
         }
 
+        String media = mTeamHelper.getTeam().getMedia();
         Glide.with(mActivity)
-                .load(mTeamHelper.getTeam().getMedia())
+                .load(media)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .error(R.drawable.ic_android_black_144dp)
                 .into(mBackdrop);
 
         Glide.with(mActivity)
-                .load(mTeamHelper.getTeam().getMedia())
+                .load(media)
                 .asBitmap()
                 .into(new SimpleTarget<Bitmap>() {
                     @Override

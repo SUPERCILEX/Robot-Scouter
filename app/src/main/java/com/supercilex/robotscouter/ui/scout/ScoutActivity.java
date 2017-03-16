@@ -214,8 +214,7 @@ public class ScoutActivity extends AppCompatActivity
         } else if (type == EventType.MOVED) return;
 
         Team team = Constants.sFirebaseTeams.getObject(index);
-        if (team.getKey().equals(mTeamHelper.getTeam().getKey())
-                && (type == EventType.ADDED || type == EventType.CHANGED)) {
+        if (team.getKey().equals(mTeamHelper.getTeam().getKey())) {
             mTeamHelper = team.getHelper();
             mHolder.bind(mTeamHelper);
 
