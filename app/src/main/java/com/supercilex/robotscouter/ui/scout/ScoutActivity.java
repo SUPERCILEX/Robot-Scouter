@@ -38,7 +38,6 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.DatabaseHelper;
 
 import java.util.Collections;
 
@@ -212,9 +211,9 @@ public class ScoutActivity extends AppCompatActivity
                 && TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) {
             finish();
             return;
-        }
+        } else if (type == EventType.MOVED) return;
 
-        Team team = DatabaseHelper.TEAM_PARSER.parseSnapshot(snapshot);
+        Team team = Constants.sFirebaseTeams.getObject(index);
         if (team.getKey().equals(mTeamHelper.getTeam().getKey())
                 && (type == EventType.ADDED || type == EventType.CHANGED)) {
             mTeamHelper = team.getHelper();

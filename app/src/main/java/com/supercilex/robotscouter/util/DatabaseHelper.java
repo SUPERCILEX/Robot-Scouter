@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class DatabaseHelper {
-    public static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
+    private static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
         @Override
         public Team parseSnapshot(DataSnapshot snapshot) {
             Team team = snapshot.getValue(Team.class);
