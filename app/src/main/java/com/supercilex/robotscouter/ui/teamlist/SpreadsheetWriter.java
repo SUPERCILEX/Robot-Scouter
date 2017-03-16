@@ -663,7 +663,8 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     }
 
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
-        valueCell.setCellFormula("'" + scoutSheet.getSheetName() + "'!" + averageCell.getAddress());
+        String safeSheetName = scoutSheet.getSheetName().replace("'", "''");
+        valueCell.setCellFormula("'" + safeSheetName + "'!" + averageCell.getAddress());
         valueCell.setCellStyle(averageCell.getCellStyle());
     }
 

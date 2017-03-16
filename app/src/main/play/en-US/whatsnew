@@ -1,6 +1,6 @@
 - Duplicate teams are now automatically merged where possible
 - Spreadsheet exporting:
-    - Fixed crash when exporting spreadsheet
+    - Fixed crashes when exporting spreadsheet
     - Fixed issue where scouts from other devices weren't included in the export
     - Zeros are now excluded from stopwatch metric export and other formatting enhancements
 - Bug fixes and performance improvements
