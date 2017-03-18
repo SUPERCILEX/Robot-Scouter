@@ -232,9 +232,6 @@ public class AuthHelper implements View.OnClickListener {
         private static final String SHOULD_CACHE_DB = "should_cache_db";
 
         private DatabaseInitializer() {
-            String email = getUser().getEmail();
-            if (email != null && email.contains("@cloudtestlabaccounts.com")) return;
-
             RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this);
             Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
         }
