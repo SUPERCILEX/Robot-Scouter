@@ -473,16 +473,14 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     @Nullable
     private CellStyle createHeaderStyle(Workbook workbook) {
-        if (isUnsupportedDevice()) return null;
+        CellStyle style = createBaseStyle(workbook);
+        if (style == null) return null;
 
-        Font font = createBaseHeaderFont(workbook);
+        style.setFont(createBaseHeaderFont(workbook));
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
 
-        CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFont(font);
-        headerStyle.setAlignment(HorizontalAlignment.CENTER);
-        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        return headerStyle;
+        return style;
     }
 
     @Nullable
@@ -492,6 +490,15 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         Font font = workbook.createFont();
         font.setBold(true);
         return font;
+    }
+
+    @Nullable
+    private CellStyle createBaseStyle(Workbook workbook) {
+        if (isUnsupportedDevice()) return null;
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+        return style;
     }
 
     private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
