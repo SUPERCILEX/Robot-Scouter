@@ -80,8 +80,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="36dp"/>
+        app:layout_constraintGuide_percent="0.5"/>
 
 </android.support.constraint.ConstraintLayout>

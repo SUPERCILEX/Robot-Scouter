@@ -32,8 +32,7 @@ public final class Constants {
     public static final DatabaseReference FIREBASE_USERS = DatabaseHelper.getRef().child("users");
 
     // Team
-    public static final DatabaseReference FIREBASE_TEAMS_REF =
-            DatabaseHelper.getRef().child("teams");
+    public static final DatabaseReference FIREBASE_TEAMS = DatabaseHelper.getRef().child("teams");
     public static final DatabaseReference FIREBASE_TEAM_INDICES =
             DatabaseHelper.getRef().child("team-indices");
     public static final String FIREBASE_TIMESTAMP = "timestamp";

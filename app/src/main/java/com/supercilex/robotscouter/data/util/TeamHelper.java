@@ -75,7 +75,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public DatabaseReference getRef() {
-        return Constants.FIREBASE_TEAMS_REF.child(mTeam.getKey());
+        return Constants.FIREBASE_TEAMS.child(mTeam.getKey());
     }
 
     public Team getTeam() {

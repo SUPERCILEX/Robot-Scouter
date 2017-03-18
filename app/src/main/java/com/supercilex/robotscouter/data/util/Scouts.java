@@ -57,7 +57,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
                                     for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
                                         scoutKeys.add(scoutKeyTemplate.getKey());
                                     }
-                                    scoutIndicesTask.setResult(new Pair<>(helper, scoutKeys));
+                                    scoutIndicesTask.setResult(Pair.create(helper, scoutKeys));
                                 }
 
                                 @Override

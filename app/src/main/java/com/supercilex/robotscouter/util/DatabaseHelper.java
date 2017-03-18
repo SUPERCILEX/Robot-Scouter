@@ -121,7 +121,7 @@ public final class DatabaseHelper {
                     Constants.sFirebaseTeams.removeAllListeners();
                     Constants.sFirebaseTeams = new FirebaseIndexArray<>(
                             TeamHelper.getIndicesRef(),
-                            Constants.FIREBASE_TEAMS_REF,
+                            Constants.FIREBASE_TEAMS,
                             TEAM_PARSER);
                     Constants.sFirebaseTeams.addChangeEventListener(
                             new TeamMergerListener(appContext));

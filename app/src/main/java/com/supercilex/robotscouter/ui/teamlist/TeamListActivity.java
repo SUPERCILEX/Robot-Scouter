@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,6 +22,7 @@ public class TeamListActivity extends AppCompatActivity
         implements View.OnClickListener, Runnable, DialogInterface.OnCancelListener {
     private static final int API_AVAILABILITY_RC = 65;
 
+    private Fragment mTeamListFragment;
     private AuthHelper mAuthHelper;
 
     @Override
@@ -29,6 +31,7 @@ public class TeamListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        mTeamListFragment = getSupportFragmentManager().findFragmentByTag("team_list_fragment");
         findViewById(R.id.fab).setOnClickListener(this);
 
         mAuthHelper = AuthHelper.init(this);
@@ -93,8 +96,7 @@ public class TeamListActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        OnBackPressedListener listener = (OnBackPressedListener)
-                getSupportFragmentManager().findFragmentByTag("team_list_fragment");
+        OnBackPressedListener listener = (OnBackPressedListener) mTeamListFragment;
         if (!listener.onBackPressed()) super.onBackPressed();
     }
 
