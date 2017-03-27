@@ -6,4 +6,5 @@
     <item name="action_edit_team_details" type="id"/>
     <item name="action_delete" type="id"/>
     <item name="action_export_spreadsheet" type="id"/>
+    <item name="no_content_hint" type="id"/>
 </resources>

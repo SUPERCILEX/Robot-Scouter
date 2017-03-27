@@ -12,8 +12,6 @@ import android.widget.EditText;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.KeyboardDialogBase;
-import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
 
 public class NewTeamDialog extends KeyboardDialogBase {
     private static final String TAG = "NewTeamDialog";
@@ -43,10 +41,8 @@ public class NewTeamDialog extends KeyboardDialogBase {
         String teamNumber = mTeamNumberEditText.getText().toString();
         if (isValid(teamNumber)) {
             teamNumber = String.valueOf(Long.parseLong(teamNumber));
-            ScoutActivity.start(getContext(),
-                                new Team.Builder(teamNumber).build().getHelper(),
-                                true);
-            AnalyticsHelper.selectTeam(teamNumber);
+            ((TeamSelectionListener) getActivity())
+                    .onTeamSelected(new Team.Builder(teamNumber).build(), true);
             return true;
         } else {
             mInputLayout.setError(getString(R.string.invalid_team_number));

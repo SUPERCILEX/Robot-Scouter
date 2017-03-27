@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -18,16 +19,42 @@ import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 import java.util.List;
 
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
+    private Fragment mFragment;
     private View mNoTeamsText;
 
     private TeamMenuManager mMenuManager;
+    private String mSelectedTeamKey;
 
     public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
         super(Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder.class);
+        mFragment = fragment;
         mMenuManager = menuManager;
 
-        View view = fragment.getView();
-        if (view != null) mNoTeamsText = view.findViewById(R.id.empty_list_hint);
+        View view = mFragment.getView();
+        if (view != null) mNoTeamsText = view.findViewById(R.id.no_content_hint);
+    }
+
+    public void updateSelection(String teamKey) {
+        mSelectedTeamKey = teamKey;
+
+        if (mSelectedTeamKey == null) {
+            RecyclerView recyclerView = (RecyclerView) mFragment.getView().findViewById(R.id.list);
+            for (int i = 0; i < getItemCount(); i++) {
+                TeamViewHolder viewHolder =
+                        (TeamViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
+                if (viewHolder != null && viewHolder.isScouting()) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < getItemCount(); i++) {
+                if (TextUtils.equals(mSelectedTeamKey, getItem(i).getKey())) {
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -35,7 +62,8 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         teamHolder.bind(team,
                         mMenuManager,
                         mMenuManager.getSelectedTeams().contains(team.getHelper()),
-                        !mMenuManager.getSelectedTeams().isEmpty());
+                        !mMenuManager.getSelectedTeams().isEmpty(),
+                        TextUtils.equals(mSelectedTeamKey, team.getKey()));
 
         showNoTeamsHint();
     }

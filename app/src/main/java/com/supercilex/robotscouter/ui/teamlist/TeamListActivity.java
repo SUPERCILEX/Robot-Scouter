@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,14 +14,21 @@ import android.view.View;
 import com.firebase.ui.auth.util.PlayServicesHelper;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
+import com.supercilex.robotscouter.ui.scout.ScoutActivity;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.ViewHelper;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity
-        implements View.OnClickListener, Runnable, DialogInterface.OnCancelListener {
+        implements View.OnClickListener, Runnable, DialogInterface.OnCancelListener, TeamSelectionListener {
     private static final int API_AVAILABILITY_RC = 65;
+    private static final String SELECTED_TEAM_KEY = "selected_team_key";
 
-    private Fragment mTeamListFragment;
+    private TeamListFragment mTeamListFragment;
+    private String mSelectedTeamKey;
     private AuthHelper mAuthHelper;
 
     @Override
@@ -31,7 +37,12 @@ public class TeamListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        mTeamListFragment = getSupportFragmentManager().findFragmentByTag("team_list_fragment");
+        mTeamListFragment =
+                (TeamListFragment) getSupportFragmentManager().findFragmentByTag(TeamListFragment.TAG);
+        if (savedInstanceState != null && ViewHelper.isTabletMode(this)) {
+            mSelectedTeamKey = savedInstanceState.getString(SELECTED_TEAM_KEY);
+            mTeamListFragment.selectTeam(mSelectedTeamKey);
+        }
         findViewById(R.id.fab).setOnClickListener(this);
 
         mAuthHelper = AuthHelper.init(this);
@@ -95,9 +106,14 @@ public class TeamListActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(SELECTED_TEAM_KEY, mSelectedTeamKey);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onBackPressed() {
-        OnBackPressedListener listener = (OnBackPressedListener) mTeamListFragment;
-        if (!listener.onBackPressed()) super.onBackPressed();
+        if (!mTeamListFragment.onBackPressed()) super.onBackPressed();
     }
 
     @Override
@@ -109,5 +125,24 @@ public class TeamListActivity extends AppCompatActivity
                 mAuthHelper.showSignInResolution();
             }
         }
+    }
+
+    @Override
+    public void onTeamSelected(Team team, boolean addScout) {
+        TeamHelper helper = team.getHelper();
+        if (ViewHelper.isTabletMode(this)) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.scouts, TabletScoutListFragment.newInstance(helper, addScout))
+                    .commit();
+        } else {
+            ScoutActivity.start(this, helper, addScout);
+        }
+        AnalyticsHelper.selectTeam(team.getNumber());
+    }
+
+    @Override
+    public void saveSelection(Team team) {
+        mSelectedTeamKey = team == null ? null : team.getKey();
+        mTeamListFragment.selectTeam(mSelectedTeamKey);
     }
 }

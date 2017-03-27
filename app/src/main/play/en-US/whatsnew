@@ -1,6 +1,8 @@
-- Duplicate teams are now automatically merged where possible
-- Spreadsheet exporting:
-    - Fixed crashes when exporting spreadsheet
-    - Fixed issue where scouts from other devices weren't included in the export
-    - Zeros are now excluded from stopwatch metric export and other formatting enhancements
-- Bug fixes and performance improvements
+Robot Scouter 1.0.0 is out of beta!!!
+
+New features:
+    - Tablet layout: the screen is split in two for faster scouting
+    - Robot Scouter is officially open source! Go to the "About" section to view the GitHub or click the link below
+    - All crashes have been fixed
+
+https://github.com/SUPERCILEX/Robot-Scouter

@@ -8,6 +8,7 @@
 
     <!-- Tutorials -->
     <string name="create_first_team">Create your first team</string>
+    <string name="no_team_selected">Select a team to start scouting</string>
     <string name="no_teams">Teams you add appear here</string>
     <string name="no_scouts">Scouts you add appear here</string>
 

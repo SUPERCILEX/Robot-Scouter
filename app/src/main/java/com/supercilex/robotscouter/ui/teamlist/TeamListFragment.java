@@ -15,11 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.List;
@@ -28,12 +28,15 @@ import java.util.List;
  * Created in {@link R.layout#activity_team_list}
  */
 public class TeamListFragment extends Fragment implements FirebaseAuth.AuthStateListener, OnBackPressedListener {
+    public static final String TAG = "TeamListFragment";
+
     private Bundle mSavedInstanceState;
 
     private RecyclerView mRecyclerView;
     private TeamMenuHelper mMenuHelper;
 
-    private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
+    private TeamListAdapter mAdapter;
+    private TaskCompletionSource<TeamListAdapter> mOnAdapterReadyTask = new TaskCompletionSource<>();
     private RecyclerView.LayoutManager mManager;
     private FloatingActionButton mFab;
 
@@ -50,9 +53,11 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         if (mFab != null) mFab.show();
         if (auth.getCurrentUser() == null) {
             View view = getView();
-            if (view != null) view.findViewById(R.id.empty_list_hint).setVisibility(View.VISIBLE);
+            if (view != null) view.findViewById(R.id.no_content_hint).setVisibility(View.VISIBLE);
         } else {
             mAdapter = new TeamListAdapter(this, mMenuHelper);
+            mOnAdapterReadyTask.setResult(mAdapter);
+            mOnAdapterReadyTask = new TaskCompletionSource<>();
 
             if (mSavedInstanceState != null) {
                 mManager.onRestoreInstanceState(mSavedInstanceState.getParcelable(Constants.MANAGER_STATE));
@@ -131,6 +136,20 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mMenuHelper.onOptionsItemSelected(item);
+    }
+
+    public void selectTeam(final String teamKey) {
+        if (mAdapter == null) {
+            mOnAdapterReadyTask.getTask()
+                    .addOnSuccessListener(new OnSuccessListener<TeamListAdapter>() {
+                        @Override
+                        public void onSuccess(TeamListAdapter adapter) {
+                            adapter.updateSelection(teamKey);
+                        }
+                    });
+        } else {
+            mAdapter.updateSelection(teamKey);
+        }
     }
 
     private void cleanup() {

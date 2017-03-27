@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.scout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -47,17 +46,16 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     private String mCurrentScoutKey;
     private Query mQuery;
 
-    private AppCompatActivity mActivity;
+    private Fragment mFragment;
     private TeamHelper mTeamHelper;
     private TabLayout mTabLayout;
-    private boolean mIsActive;
 
-    public ScoutPagerAdapter(AppCompatActivity activity,
+    public ScoutPagerAdapter(Fragment fragment,
                              TabLayout tabLayout,
                              TeamHelper helper,
                              String currentScoutKey) {
-        super(activity.getSupportFragmentManager());
-        mActivity = activity;
+        super(fragment.getChildFragmentManager());
+        mFragment = fragment;
         mTabLayout = tabLayout;
         mTeamHelper = helper;
         mCurrentScoutKey = currentScoutKey;
@@ -89,10 +87,6 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         return mCurrentScoutKey;
     }
 
-    public void setIsActive(boolean isActive) {
-        mIsActive = isActive;
-    }
-
     public void setCurrentScoutKey(String currentScoutKey) {
         mCurrentScoutKey = currentScoutKey;
     }
@@ -112,10 +106,13 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
             mKeys.add(0, key);
             getTabNameRef(key).addValueEventListener(mTabNameListener);
         }
-        if (hadScouts && mKeys.isEmpty() && !ConnectivityHelper.isOffline(mActivity) && mIsActive) {
-            ShouldDeleteTeamDialog.show(mActivity.getSupportFragmentManager(), mTeamHelper);
+        if (hadScouts
+                && mKeys.isEmpty()
+                && !ConnectivityHelper.isOffline(mFragment.getContext())
+                && mFragment.isResumed()) {
+            ShouldDeleteTeamDialog.show(mFragment.getChildFragmentManager(), mTeamHelper);
         }
-        mActivity.findViewById(R.id.empty_list_hint)
+        mFragment.getView().findViewById(R.id.no_content_hint)
                 .setVisibility(mKeys.isEmpty() ? View.VISIBLE : View.GONE);
 
         mTabLayout.removeOnTabSelectedListener(this);
@@ -144,7 +141,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     public void cleanup() {
         mQuery.removeEventListener(this);
         removeNameListeners();
-        RobotScouter.getRefWatcher(mActivity).watch(this);
+        RobotScouter.getRefWatcher(mFragment.getActivity()).watch(this);
     }
 
     private void removeNameListeners() {
@@ -154,7 +151,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     @Override
     public boolean onLongClick(View v) {
         ScoutNameDialog.show(
-                mActivity.getSupportFragmentManager(),
+                mFragment.getChildFragmentManager(),
                 Constants.FIREBASE_SCOUTS.child(mKeys.get(v.getId()))
                         .child(Constants.FIREBASE_NAME),
                 mTabLayout.getTabAt(v.getId()).getText().toString());

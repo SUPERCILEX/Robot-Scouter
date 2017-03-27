@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
 import android.support.v4.content.ContextCompat;
@@ -15,8 +14,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,6 +23,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     private TeamMenuManager mMenuManager;
     private boolean mIsItemSelected;
     private boolean mCouldItemBeSelected;
+    private boolean mIsScouting;
 
     private CircleImageView mLogo;
     private TextView mNumber;
@@ -41,14 +39,20 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         mNewScout = (ImageButton) itemView.findViewById(R.id.new_scout);
     }
 
+    public boolean isScouting() {
+        return mIsScouting;
+    }
+
     public void bind(Team team,
                      TeamMenuManager menuManager,
                      boolean isItemSelected,
-                     boolean couldItemBeSelected) {
+                     boolean couldItemBeSelected,
+                     boolean isScouting) {
         mTeam = team;
         mMenuManager = menuManager;
         mIsItemSelected = isItemSelected;
         mCouldItemBeSelected = couldItemBeSelected;
+        mIsScouting = isScouting;
 
         mNewScout.setBackground(getRippleDrawable());
         setTeamNumber();
@@ -69,11 +73,17 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
                     .placeholder(ContextCompat.getDrawable(itemView.getContext(),
                                                            R.drawable.ic_check_circle_grey_144dp))
                     .into(mLogo);
-            itemView.setBackgroundColor(Color.parseColor("#462a56c6")); // Tinted blue
+            itemView.setBackgroundColor(
+                    ContextCompat.getColor(itemView.getContext(), R.color.selected_item));
         } else {
             setTeamLogo();
         }
         mNewScout.setVisibility(mCouldItemBeSelected ? View.GONE : View.VISIBLE);
+
+        if (!mIsItemSelected && !mCouldItemBeSelected && mIsScouting) {
+            itemView.setBackgroundColor(
+                    ContextCompat.getColor(itemView.getContext(), R.color.grey));
+        }
     }
 
     private Drawable getRippleDrawable() {
@@ -111,10 +121,8 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         if (v.getId() == R.id.logo || mIsItemSelected || mCouldItemBeSelected) {
             onTeamContextMenuRequested();
         } else {
-            ScoutActivity.start(itemView.getContext(),
-                                mTeam.getHelper(),
-                                v.getId() == R.id.new_scout);
-            AnalyticsHelper.selectTeam(mTeam.getNumber());
+            ((TeamSelectionListener) itemView.getContext())
+                    .onTeamSelected(mTeam, v.getId() == R.id.new_scout);
         }
     }
 
