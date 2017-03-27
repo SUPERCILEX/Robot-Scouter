@@ -84,13 +84,17 @@ public final class DatabaseHelper {
                                        DataSnapshot snapshot,
                                        int i,
                                        int i1) {
-                updater.removeChangeEventListener(this);
-                updateTask.setResult(query);
+                setResult();
             }
 
             @Override
             public void onDataChanged() {
-                // Noop
+                setResult();
+            }
+
+            private void setResult() {
+                updater.removeChangeEventListener(this);
+                updateTask.setResult(query);
             }
 
             @Override
