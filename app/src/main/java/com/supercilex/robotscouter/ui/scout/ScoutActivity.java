@@ -207,9 +207,8 @@ public class ScoutActivity extends AppCompatActivity
 
     @Override
     public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-        if (type == EventType.REMOVED
-                && TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) {
-            finish();
+        if (type == EventType.REMOVED) {
+            if (TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) finish();
             return;
         } else if (type == EventType.MOVED) return;
 
