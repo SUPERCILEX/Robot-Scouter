@@ -128,6 +128,30 @@ public final class DatabaseHelper {
                             TeamHelper.getIndicesRef(),
                             Constants.FIREBASE_TEAMS,
                             TEAM_PARSER);
+
+                    Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListener() {
+                        @Override
+                        public void onChildChanged(EventType type,
+                                                   DataSnapshot snapshot,
+                                                   int index,
+                                                   int oldIndex) {
+                            if (type == EventType.ADDED) {
+                                Constants.sFirebaseTeams.getObject(index)
+                                        .getHelper()
+                                        .fetchLatestData(appContext);
+                            }
+                        }
+
+                        @Override
+                        public void onDataChanged() {
+                            // Noop
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            FirebaseCrash.report(error.toException());
+                        }
+                    });
                     Constants.sFirebaseTeams.addChangeEventListener(
                             new TeamMergerListener(appContext));
                 }
