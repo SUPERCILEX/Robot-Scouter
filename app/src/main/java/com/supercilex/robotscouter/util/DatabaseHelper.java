@@ -52,7 +52,8 @@ public final class DatabaseHelper {
                 }
             };
 
-    private DatabaseHelper() { // no instance
+    private DatabaseHelper() {
+        throw new AssertionError("No instance for you!");
     }
 
     public static FirebaseDatabase getDatabase() {

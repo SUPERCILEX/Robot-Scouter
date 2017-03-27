@@ -84,7 +84,7 @@ public final class ScoutUtils {
     private static final String SCOUT_KEY = "scout_key";
 
     private ScoutUtils() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static Bundle getScoutKeyBundle(String key) {

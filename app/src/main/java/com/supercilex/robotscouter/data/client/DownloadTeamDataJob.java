@@ -10,7 +10,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 
 public final class DownloadTeamDataJob {
     private DownloadTeamDataJob() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static void start(Context context, TeamHelper teamHelper) {

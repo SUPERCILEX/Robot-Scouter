@@ -6,7 +6,7 @@ import android.net.NetworkInfo;
 
 public final class ConnectivityHelper {
     private ConnectivityHelper() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static boolean isOffline(Context context) {

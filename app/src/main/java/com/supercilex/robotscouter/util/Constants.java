@@ -61,7 +61,7 @@ public final class Constants {
     public static ObservableSnapshotArray<Team> sFirebaseTeams;
 
     private Constants() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static DatabaseReference getScoutMetrics(String key) {

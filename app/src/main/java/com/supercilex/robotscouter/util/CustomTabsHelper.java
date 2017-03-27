@@ -11,7 +11,7 @@ import com.supercilex.robotscouter.R;
 
 public final class CustomTabsHelper {
     private CustomTabsHelper() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static void launchUrl(Context context, Uri url) {

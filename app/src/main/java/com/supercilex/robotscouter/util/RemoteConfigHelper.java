@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class RemoteConfigHelper {
     private RemoteConfigHelper() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static Task<Void> fetchAndActivate() {

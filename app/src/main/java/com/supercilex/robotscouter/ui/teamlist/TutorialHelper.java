@@ -15,7 +15,7 @@ public final class TutorialHelper {
     private static final String HAS_SHOWN_TUTORIAL_SIGN_IN = HAS_SHOWN_TUTORIAL + "_sign_in";
 
     private TutorialHelper() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static void showCreateFirstTeamPrompt(Activity activity) {

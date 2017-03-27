@@ -12,7 +12,7 @@ import java.util.List;
 
 public final class FirebaseAdapterHelper {
     private FirebaseAdapterHelper() {
-        // no instance
+        throw new AssertionError("No instance for you!");
     }
 
     public static <T> List<T> getItems(FirebaseRecyclerAdapter<T, ?> adapter) {
