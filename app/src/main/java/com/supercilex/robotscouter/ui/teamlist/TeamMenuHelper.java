@@ -1,13 +1,18 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -253,10 +258,13 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         mMenu.findItem(R.id.action_donate).setVisible(visible);
         mMenu.findItem(R.id.action_licenses).setVisible(visible);
         mMenu.findItem(R.id.action_about).setVisible(visible);
+
+        FragmentActivity activity = mFragment.getActivity();
         if (visible) {
             getFab().show();
-            ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
+            ((AppCompatActivity) activity).getSupportActionBar()
                     .setTitle(R.string.app_name);
+
             if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {
                 mMenu.findItem(R.id.action_sign_in).setVisible(false);
                 mMenu.findItem(R.id.action_sign_out).setVisible(true);
@@ -268,6 +276,16 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         } else {
             mMenu.findItem(R.id.action_sign_in).setVisible(false);
             mMenu.findItem(R.id.action_sign_out).setVisible(false);
+        }
+
+        @ColorRes int colorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        toolbar.setBackgroundColor(ContextCompat.getColor(mFragment.getContext(), colorPrimary));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            @ColorRes int colorPrimaryDark = visible ? R.color.colorPrimaryDark : R.color.selected_status_bar;
+            activity.getWindow()
+                    .setStatusBarColor(ContextCompat.getColor(activity, colorPrimaryDark));
         }
     }
 
