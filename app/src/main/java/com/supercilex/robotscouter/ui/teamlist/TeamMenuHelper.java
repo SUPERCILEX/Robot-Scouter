@@ -187,7 +187,8 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
             }
             notifyItemsChanged();
         }
-        updateState();
+
+        if (mMenu != null) updateState();
     }
 
     @Override
