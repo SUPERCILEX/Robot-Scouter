@@ -93,6 +93,10 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 .setIcon(R.drawable.ic_delete_forever_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
+        updateState();
+    }
+
+    private void updateState() {
         if (!mSelectedTeams.isEmpty()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
@@ -172,6 +176,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
             }
             notifyItemsChanged();
         }
+        updateState();
     }
 
     @Override
