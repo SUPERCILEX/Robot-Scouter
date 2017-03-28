@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <fragment
+        android:id="@+id/root"
         android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
