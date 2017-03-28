@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
+import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -92,7 +93,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         mProgressDialog = ProgressDialogManager.show(fragment.getActivity());
 
         Collections.sort(teamHelpers);
-        Scouts.getAll(teamHelpers)
+        Scouts.getAll(teamHelpers, mContext)
                 .addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -100,6 +101,10 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                         showError(e);
                     }
                 });
+
+        if (ConnectivityHelper.isOffline(mContext)) {
+            Toast.makeText(mContext, R.string.exporting_offline, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**

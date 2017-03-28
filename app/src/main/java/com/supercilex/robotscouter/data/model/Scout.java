@@ -14,10 +14,6 @@ public class Scout {
 
     @Exclude private List<ScoutMetric> mMetrics = new ArrayList<>();
 
-    public Scout(String name) {
-        mName = name;
-    }
-
     @Keep
     public String getName() {
         return mName;

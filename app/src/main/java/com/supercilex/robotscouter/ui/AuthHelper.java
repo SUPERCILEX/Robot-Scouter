@@ -243,7 +243,6 @@ public final class AuthHelper implements View.OnClickListener {
         @Override
         public void onSuccess(Void aVoid) {
             if (FirebaseRemoteConfig.getInstance().getBoolean(SHOULD_CACHE_DB)) {
-                Constants.FIREBASE_SCOUTS.addListenerForSingleValueEvent(this);
                 Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
             }
         }
