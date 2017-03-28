@@ -21,6 +21,9 @@
     <string name="caution_delete">The following teams will be deleted for you and your teammates:\n\n%s</string>
     <string name="confirm_action">Are you sure?</string>
 
+    <string name="select_all">Select all</string>
+    <string name="multiple_teams_selected">Multiple teams selected</string>
+
     <string name="share">Share</string>
     <string name="share_title">Share team %s</string>
     <string name="share_message">Edit team %s with me!</string>

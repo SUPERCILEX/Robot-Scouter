@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -35,6 +36,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.PermissionCallbacks {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
+    private static final int SELECT_ALL_THRESHOLD = 3;
 
     /**
      * Do not use.
@@ -51,13 +53,13 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     private Menu mMenu;
 
     private List<TeamHelper> mSelectedTeams = new ArrayList<>();
-    private FirebaseRecyclerAdapter mAdapter;
+    private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
     }
 
-    public void setAdapter(FirebaseRecyclerAdapter adapter) {
+    public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
         mAdapter = adapter;
     }
 
@@ -188,6 +190,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     public void onTeamContextMenuRequested(TeamHelper teamHelper) {
         boolean hadNormalMenu = mSelectedTeams.isEmpty();
 
+        int oldSize = mSelectedTeams.size();
         if (mSelectedTeams.contains(teamHelper)) { // Team already selected
             mSelectedTeams.remove(teamHelper);
         } else {
@@ -195,6 +198,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         }
         setToolbarTitle();
 
+        int newSize = mSelectedTeams.size();
         if (hadNormalMenu) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
@@ -203,10 +207,28 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         } else {
             if (mSelectedTeams.isEmpty()) {
                 resetMenu();
-            } else if (mSelectedTeams.size() == Constants.SINGLE_ITEM) {
+            } else if (newSize == Constants.SINGLE_ITEM) {
                 showTeamSpecificItems();
             } else {
                 hideTeamSpecificMenuItems();
+            }
+
+            if (newSize > oldSize && newSize >= SELECT_ALL_THRESHOLD) {
+                Snackbar.make(mFragment.getView(),
+                              R.string.multiple_teams_selected,
+                              Snackbar.LENGTH_LONG)
+                        .setAction(R.string.select_all, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mSelectedTeams.clear();
+                                for (int i = 0; i < mAdapter.getItemCount(); i++) {
+                                    mSelectedTeams.add(mAdapter.getItem(i).getHelper());
+                                }
+                                updateState();
+                                notifyItemsChanged();
+                            }
+                        })
+                        .show();
             }
         }
     }
