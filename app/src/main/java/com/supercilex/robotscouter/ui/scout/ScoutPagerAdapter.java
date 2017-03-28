@@ -47,15 +47,18 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     private Query mQuery;
 
     private Fragment mFragment;
-    private TeamHelper mTeamHelper;
+    private AppBarViewHolder mAppBarViewHolder;
     private TabLayout mTabLayout;
+    private TeamHelper mTeamHelper;
 
     public ScoutPagerAdapter(Fragment fragment,
+                             AppBarViewHolder appBarViewHolder,
                              TabLayout tabLayout,
                              TeamHelper helper,
                              String currentScoutKey) {
         super(fragment.getChildFragmentManager());
         mFragment = fragment;
+        mAppBarViewHolder = appBarViewHolder;
         mTabLayout = tabLayout;
         mTeamHelper = helper;
         mCurrentScoutKey = currentScoutKey;
@@ -65,7 +68,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
 
     @Override
     public Fragment getItem(int position) {
-        return ScoutFragment.newInstance(mQuery.getRef().getKey(), mKeys.get(position));
+        return ScoutFragment.newInstance(mKeys.get(position));
     }
 
     @Override
@@ -91,6 +94,16 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         mCurrentScoutKey = currentScoutKey;
     }
 
+    public void onScoutDeleted() {
+        int index = mKeys.indexOf(mCurrentScoutKey);
+        String newKey = null;
+        if (mKeys.size() > Constants.SINGLE_ITEM) {
+            newKey = mKeys.size() - 1 > index ? mKeys.get(index + 1) : mKeys.get(index - 1);
+        }
+        ScoutUtils.delete(mQuery.getRef().getKey(), mCurrentScoutKey);
+        mCurrentScoutKey = newKey;
+    }
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         mCurrentScoutKey = mKeys.get(tab.getPosition());
@@ -114,6 +127,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         }
         mFragment.getView().findViewById(R.id.no_content_hint)
                 .setVisibility(mKeys.isEmpty() ? View.VISIBLE : View.GONE);
+        mAppBarViewHolder.setDeleteScoutMenuItemVisible(!mKeys.isEmpty());
 
         mTabLayout.removeOnTabSelectedListener(this);
         notifyDataSetChanged();

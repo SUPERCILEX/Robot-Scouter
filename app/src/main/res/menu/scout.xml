@@ -41,4 +41,11 @@
         android:title="@string/edit_team_details"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_delete_forever_white_24dp"
+        android:title="@string/delete_scout"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
 </menu>

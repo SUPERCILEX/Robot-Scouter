@@ -7,9 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,28 +19,21 @@ import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 
-public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickListener {
-    private static final String TEAM_KEY = "team_key";
-
+public class ScoutFragment extends Fragment {
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mManager;
     private String mScoutKey;
 
-    public static ScoutFragment newInstance(String teamKey, String scoutKey) {
+    public static ScoutFragment newInstance(String scoutKey) {
         ScoutFragment fragment = new ScoutFragment();
-
-        Bundle args = ScoutUtils.getScoutKeyBundle(scoutKey);
-        args.putString(TEAM_KEY, teamKey);
-        fragment.setArguments(args);
-
+        fragment.setArguments(ScoutUtils.getScoutKeyBundle(scoutKey));
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         mScoutKey = ScoutUtils.getScoutKey(getArguments());
     }
 
@@ -84,20 +74,5 @@ public class ScoutFragment extends Fragment implements MenuItem.OnMenuItemClickL
         super.onDestroy();
         mAdapter.cleanup();
         RobotScouter.getRefWatcher(getActivity()).watch(this);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(Menu.NONE, R.id.action_delete, 100, R.string.delete_scout)
-                .setOnMenuItemClickListener(this);
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.action_delete) {
-            ScoutUtils.delete(getArguments().getString(TEAM_KEY), mScoutKey);
-            return true;
-        }
-        return false;
     }
 }

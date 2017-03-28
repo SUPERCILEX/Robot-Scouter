@@ -36,8 +36,10 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
 
     private MenuItem mVisitTeamWebsiteItem;
     private MenuItem mNewScoutItem;
+    private MenuItem mDeleteScoutItem;
     private TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
     private Task mOnScoutingReadyTask;
+    private boolean mIsDeleteScoutItemVisible;
 
     protected AppBarViewHolder(TeamHelper teamHelper, Fragment fragment, Task onScoutingReadyTask) {
         mTeamHelper = teamHelper;
@@ -103,6 +105,7 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
     public final void initMenu(Menu menu) {
         mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
         mNewScoutItem = menu.findItem(R.id.action_new_scout);
+        mDeleteScoutItem = menu.findItem(R.id.action_delete);
 
         menu.findItem(R.id.action_visit_tba_team_website)
                 .setTitle(mFragment.getString(R.string.visit_team_website_on_tba,
@@ -112,6 +115,11 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
         if (!mOnScoutingReadyTask.isComplete()) mNewScoutItem.setVisible(false);
 
         mOnMenuReadyTask.trySetResult(null);
+        bindMenu();
+    }
+
+    public void setDeleteScoutMenuItemVisible(boolean visible) {
+        mIsDeleteScoutItemVisible = visible;
         bindMenu();
     }
 
@@ -126,6 +134,7 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
     @Override
     public final void onSuccess(Void aVoid) {
         mNewScoutItem.setVisible(true);
+        mDeleteScoutItem.setVisible(mIsDeleteScoutItemVisible);
     }
 
     private int getTransparentColor(@ColorInt int opaque) {

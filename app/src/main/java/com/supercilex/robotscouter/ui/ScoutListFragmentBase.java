@@ -158,6 +158,9 @@ public abstract class ScoutListFragmentBase extends Fragment
                 TeamDetailsDialog.show(getChildFragmentManager(), mTeamHelper);
                 AnalyticsHelper.editTeamDetails(teamNumber);
                 break;
+            case R.id.action_delete:
+                mPagerAdapter.onScoutDeleted();
+                break;
             default:
                 return false;
         }
@@ -213,7 +216,8 @@ public abstract class ScoutListFragmentBase extends Fragment
                 String scoutKey = null;
 
                 if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-                mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mTeamHelper, scoutKey);
+                mPagerAdapter = new ScoutPagerAdapter(
+                        this, mHolder, tabLayout, mTeamHelper, scoutKey);
 
                 viewPager.setAdapter(mPagerAdapter);
                 tabLayout.setupWithViewPager(viewPager);
