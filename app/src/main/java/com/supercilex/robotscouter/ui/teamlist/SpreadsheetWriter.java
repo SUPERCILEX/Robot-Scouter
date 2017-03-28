@@ -561,7 +561,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             case MetricType.SPINNER:
                 SpinnerMetric spinnerMetric = (SpinnerMetric) metric;
                 String selectedItem =
-                        spinnerMetric.getValue().get(spinnerMetric.getSelectedValueIndex());
+                        spinnerMetric.getValue().get(spinnerMetric.getSelectedValueKey());
                 valueCell.setCellValue(selectedItem);
                 break;
             case MetricType.NOTE:

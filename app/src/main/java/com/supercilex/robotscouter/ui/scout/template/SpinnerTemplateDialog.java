@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -28,7 +29,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
     private static final String TAG = "SpinnerTemplateDialog";
 
     private View mRootView;
-    private int mSelectedValueIndex;
+    private String mSelectedValueKey;
 
     private RecyclerView.LayoutManager mManager;
     private FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> mAdapter;
@@ -37,11 +38,11 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
 
     public static void show(FragmentManager manager,
                             DatabaseReference ref,
-                            int selectedValueIndex) {
+                            String selectedValueIndex) {
         SpinnerTemplateDialog dialog = new SpinnerTemplateDialog();
 
         Bundle args = DatabaseHelper.getRefBundle(ref);
-        args.putInt(Constants.FIREBASE_SELECTED_VALUE_INDEX, selectedValueIndex);
+        args.putString(Constants.FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex);
         dialog.setArguments(args);
 
         dialog.show(manager, TAG);
@@ -55,7 +56,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
         mRootView.findViewById(R.id.fab).setOnClickListener(this);
         setupRecyclerView(savedInstanceState);
 
-        mSelectedValueIndex = getArguments().getInt(Constants.FIREBASE_SELECTED_VALUE_INDEX);
+        mSelectedValueKey = getArguments().getString(Constants.FIREBASE_SELECTED_VALUE_KEY);
     }
 
     @NonNull
@@ -133,8 +134,8 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
                         return;
                     }
 
-                    if (mSelectedValueIndex >= getItemCount()) {
-                        mRef.getParent().child(Constants.FIREBASE_SELECTED_VALUE_INDEX).setValue(0);
+                    if (TextUtils.equals(mSelectedValueKey, snapshot.getKey())) {
+                        mRef.getParent().child(Constants.FIREBASE_SELECTED_VALUE_KEY).removeValue();
                     }
                 }
 

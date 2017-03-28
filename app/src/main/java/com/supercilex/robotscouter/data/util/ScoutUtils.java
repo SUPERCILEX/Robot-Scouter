@@ -20,8 +20,9 @@ import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ScoutUtils {
     public static final SnapshotParser<ScoutMetric> METRIC_PARSER = new SnapshotParser<ScoutMetric>() {
@@ -48,18 +49,18 @@ public final class ScoutUtils {
                     });
                     break;
                 case MetricType.SPINNER:
-                    List<String> values = new ArrayList<>();
+                    Map<String, String> values = new LinkedHashMap<>();
                     Iterable<DataSnapshot> children =
                             snapshot.child(Constants.FIREBASE_VALUE).getChildren();
                     for (DataSnapshot snapshot1 : children) {
-                        values.add(snapshot1.getValue(String.class));
+                        values.put(snapshot1.getKey(), snapshot1.getValue(String.class));
                     }
 
                     metric = new SpinnerMetric(
                             snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                             values,
-                            snapshot.child(Constants.FIREBASE_SELECTED_VALUE_INDEX)
-                                    .getValue(Integer.class));
+                            snapshot.child(Constants.FIREBASE_SELECTED_VALUE_KEY)
+                                    .getValue(String.class));
                     break;
                 case MetricType.STOPWATCH:
                     metric = new StopwatchMetric(

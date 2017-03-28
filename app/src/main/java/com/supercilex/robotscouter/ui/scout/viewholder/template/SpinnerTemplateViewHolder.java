@@ -11,11 +11,10 @@ import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements ScoutTemplateViewHolder {
-    private boolean mIsFakeSelectedValue;
-
     public SpinnerTemplateViewHolder(View itemView) {
         super(itemView);
     }
@@ -28,38 +27,33 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
 
     @Override
     protected ArrayAdapter<String> getAdapter(SpinnerMetric spinnerMetric) {
-        List<String> value = spinnerMetric.getValue();
-        List<String> values = value == null ? new ArrayList<String>() : value;
-        values.add(0, itemView.getContext().getString(R.string.edit_spinner_items));
+        Map<String, String> items = new LinkedHashMap<>();
+        items.put(mMetric.getRef().push().getKey(),
+                  itemView.getContext().getString(R.string.edit_spinner_items));
+        items.putAll(spinnerMetric.getValue());
         return new ArrayAdapter<>(itemView.getContext(),
                                   android.R.layout.simple_spinner_item,
-                                  values);
+                                  new ArrayList<>(items.values()));
     }
 
     @Override
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         if (itemPosition == 0) {
-            if (mIsFakeSelectedValue) return;
-
             disableAnimations();
+
+            SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
             SpinnerTemplateDialog.show(mManager,
                                        mMetric.getRef().child(Constants.FIREBASE_VALUE),
-                                       ((SpinnerMetric) mMetric).getSelectedValueIndex());
-            mSpinner.setSelection(getSelectedValueIndex());
+                                       spinnerMetric.getSelectedValueKey());
+            mSpinner.setSelection(indexOfKey(spinnerMetric.getSelectedValueKey()));
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id);
         }
     }
 
     @Override
-    protected int getSelectedValueIndex() {
-        int index = super.getSelectedValueIndex() + 1;
-        mIsFakeSelectedValue = false;
-        if (index >= mSpinner.getAdapter().getCount()) {
-            index = 0;
-            mIsFakeSelectedValue = true;
-        }
-        return index;
+    protected int indexOfKey(String key) {
+        return super.indexOfKey(key) + 1;
     }
 
     @Override
