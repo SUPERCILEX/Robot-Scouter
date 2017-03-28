@@ -151,8 +151,8 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
         }
 
         private void addListeners() {
-            mMetricsQuery.addChildEventListener(ScoutListener.this);
-            mQuery.addValueEventListener(ScoutListener.this);
+            mMetricsQuery.addChildEventListener(this);
+            mQuery.addValueEventListener(this);
         }
 
         @Override
@@ -185,8 +185,8 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
 
         private void finish() {
             mTimer.cancel();
-            mMetricsQuery.removeEventListener((ChildEventListener) ScoutListener.this);
-            mQuery.removeEventListener((ValueEventListener) ScoutListener.this);
+            mMetricsQuery.removeEventListener((ChildEventListener) this);
+            mQuery.removeEventListener((ValueEventListener) this);
             if (!mScout.getMetrics().isEmpty()) {
                 List<Scout> scouts = mScouts.get(mPair.first);
                 if (scouts == null) {
