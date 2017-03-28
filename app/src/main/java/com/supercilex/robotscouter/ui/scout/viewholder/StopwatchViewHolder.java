@@ -158,7 +158,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         }
 
         public void updateButtonTime() {
-            setText(getFormattedTime(getElapsedTime()));
+            setText(R.string.stop_stopwatch, getFormattedTime(getElapsedTime()));
         }
 
         public long cancel() {
@@ -170,7 +170,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             }
 
             mTimerTask.trySetException(new CancellationException());
-            setText();
+            setText(R.string.start_stopwatch);
 
             return getElapsedTime();
         }
@@ -216,10 +216,10 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             return System.nanoTime() - mStartNanoTime;
         }
 
-        private void setText(Object... formatArgs) {
+        private void setText(@StringRes int id, Object... formatArgs) {
             StopwatchViewHolder holder = mHolder.get();
             if (holder != null) {
-                holder.setText(R.string.stop_stopwatch, formatArgs);
+                holder.setText(id, formatArgs);
             }
         }
     }
