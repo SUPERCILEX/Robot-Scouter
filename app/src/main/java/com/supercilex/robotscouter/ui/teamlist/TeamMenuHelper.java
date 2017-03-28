@@ -1,10 +1,13 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -37,6 +40,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.PermissionCallbacks {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
     private static final int SELECT_ALL_THRESHOLD = 3;
+    private static final int ANIMATION_DURATION = 250;
 
     /**
      * Do not use.
@@ -281,10 +285,9 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         mMenu.findItem(R.id.action_licenses).setVisible(visible);
         mMenu.findItem(R.id.action_about).setVisible(visible);
 
-        FragmentActivity activity = mFragment.getActivity();
         if (visible) {
             getFab().show();
-            ((AppCompatActivity) activity).getSupportActionBar()
+            ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                     .setTitle(R.string.app_name);
 
             if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {
@@ -300,14 +303,46 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
             mMenu.findItem(R.id.action_sign_out).setVisible(false);
         }
 
-        @ColorRes int colorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(ContextCompat.getColor(mFragment.getContext(), colorPrimary));
+        updateToolbarColor(visible);
+    }
+
+    private void updateToolbarColor(boolean visible) {
+        final FragmentActivity activity = mFragment.getActivity();
+
+        @ColorRes int oldColorPrimary = visible ? R.color.selected_toolbar : R.color.colorPrimary;
+        @ColorRes int newColorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
+
+        final Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        ValueAnimator toolbarAnimator = ValueAnimator.ofObject(
+                new ArgbEvaluator(),
+                ContextCompat.getColor(mFragment.getContext(), oldColorPrimary),
+                ContextCompat.getColor(mFragment.getContext(), newColorPrimary));
+        toolbarAnimator.setDuration(ANIMATION_DURATION);
+        toolbarAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                toolbar.setBackgroundColor((int) animator.getAnimatedValue());
+            }
+        });
+        toolbarAnimator.start();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            @ColorRes int colorPrimaryDark = visible ? R.color.colorPrimaryDark : R.color.selected_status_bar;
-            activity.getWindow()
-                    .setStatusBarColor(ContextCompat.getColor(activity, colorPrimaryDark));
+            @ColorRes int oldColorPrimaryDark = visible ? R.color.selected_status_bar : R.color.colorPrimaryDark;
+            @ColorRes int newColorPrimaryDark = visible ? R.color.colorPrimaryDark : R.color.selected_status_bar;
+
+            ValueAnimator statusBarAnimator = ValueAnimator.ofObject(
+                    new ArgbEvaluator(),
+                    ContextCompat.getColor(mFragment.getContext(), oldColorPrimaryDark),
+                    ContextCompat.getColor(mFragment.getContext(), newColorPrimaryDark));
+            statusBarAnimator.setDuration(ANIMATION_DURATION);
+            statusBarAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    activity.getWindow().setStatusBarColor((int) animator.getAnimatedValue());
+                }
+            });
+            statusBarAnimator.start();
         }
     }
 
