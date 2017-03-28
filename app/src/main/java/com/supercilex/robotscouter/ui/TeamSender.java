@@ -14,11 +14,11 @@ import com.supercilex.robotscouter.util.ConnectivityHelper;
 
 import java.util.List;
 
-public class TeamSender {
+public final class TeamSender {
     private FragmentActivity mActivity;
     private List<TeamHelper> mTeamHelpers;
 
-    protected TeamSender(FragmentActivity activity, @Size(min = 1) List<TeamHelper> teamHelpers) {
+    private TeamSender(FragmentActivity activity, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mActivity = activity;
         mTeamHelpers = teamHelpers;
 

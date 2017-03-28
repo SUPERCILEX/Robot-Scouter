@@ -33,7 +33,7 @@ import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
-public class AuthHelper implements View.OnClickListener {
+public final class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
 
     private IntentReceiver mLinkReceiver;
@@ -42,7 +42,7 @@ public class AuthHelper implements View.OnClickListener {
     private MenuItem mActionSignIn;
     private MenuItem mActionSignOut;
 
-    protected AuthHelper(FragmentActivity activity) {
+    private AuthHelper(FragmentActivity activity) {
         mActivity = activity;
     }
 

@@ -83,7 +83,7 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
 
             Uri deepLink = intent.getData();
             if (deepLink != null) {
-                if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD
+                if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD https://github.com/pmd/pmd/issues/278
                     launchTeam(getTeam(deepLink).get(0));
                 } else if (deepLink.toString().equals(ADD_SCOUT_INTENT)) {
                     NewTeamDialog.show(mActivity.getSupportFragmentManager());

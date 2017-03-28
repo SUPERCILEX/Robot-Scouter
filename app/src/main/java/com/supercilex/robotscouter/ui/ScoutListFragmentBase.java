@@ -86,6 +86,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
         super.onActivityCreated(savedInstanceState);
         mSavedState = savedInstanceState;
         mHolder = newAppBarViewHolder(mTeamHelper, mOnScoutingReadyTask.getTask());
+        mHolder.bind(mTeamHelper);
         addListeners();
     }
 
@@ -231,7 +232,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     }
 
     @Override
-    public void onDataChanged() {
+    public void onDataChanged() { // NOPMD
         // Noop
     }
 }

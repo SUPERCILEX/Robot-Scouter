@@ -56,10 +56,6 @@ public final class DatabaseHelper {
         throw new AssertionError("No instance for you!");
     }
 
-    public static FirebaseDatabase getDatabase() {
-        return DatabaseHolder.DATABASE;
-    }
-
     public static DatabaseReference getRef() {
         return DatabaseHolder.INSTANCE;
     }
@@ -71,7 +67,7 @@ public final class DatabaseHelper {
     }
 
     public static DatabaseReference getRef(Bundle bundle) {
-        return DatabaseHelper.getDatabase().getReference(bundle.getString(QUERY_KEY));
+        return DatabaseHolder.DATABASE.getReference(bundle.getString(QUERY_KEY));
     }
 
     public static Task<Query> forceUpdate(final Query query) {

@@ -48,7 +48,7 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
         mBackdrop = (ImageView) rootView.findViewById(R.id.backdrop);
         mOnScoutingReadyTask = onScoutingReadyTask;
 
-        bind();
+        bind(); // NOPMD
     }
 
     public final void bind(@NonNull TeamHelper teamHelper) {

@@ -33,7 +33,7 @@ public class ScoutCounterValueDialog extends ScoutValueDialogBase<Integer> {
     @Override
     protected boolean onClick() {
         try {
-            new BigDecimal(mValue.getText().toString()).intValueExact();
+            new BigDecimal(mValue.getText().toString()).intValueExact(); // Checking for failure
             return super.onClick();
         } catch (NumberFormatException | ArithmeticException e) {
             mInputLayout.setError(getString(R.string.invalid_team_number));
