@@ -217,7 +217,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 hideTeamSpecificMenuItems();
             }
 
-            if (newSize > oldSize && newSize >= SELECT_ALL_THRESHOLD) {
+            if (newSize > oldSize && newSize >= SELECT_ALL_THRESHOLD && mAdapter.getItemCount() > newSize) {
                 Snackbar.make(mFragment.getView(),
                               R.string.multiple_teams_selected,
                               Snackbar.LENGTH_LONG)
