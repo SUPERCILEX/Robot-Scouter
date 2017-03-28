@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseUserActions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +39,8 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
-public abstract class ScoutListFragmentBase extends Fragment implements ChangeEventListener, OnCompleteListener<Team> {
+public abstract class ScoutListFragmentBase extends Fragment
+        implements ChangeEventListener, OnCompleteListener<Team>, FirebaseAuth.AuthStateListener {
     public static final String ADD_SCOUT_KEY = "add_scout_key";
 
     private TeamHelper mTeamHelper;
@@ -62,6 +64,8 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTeamHelper = TeamHelper.get(getArguments());
+
+        FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @Nullable
@@ -110,6 +114,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
         super.onDestroy();
         Constants.sFirebaseTeams.removeChangeEventListener(this);
         if (mPagerAdapter != null) mPagerAdapter.cleanup();
+        FirebaseAuth.getInstance().removeAuthStateListener(this);
     }
 
     @Override
@@ -225,6 +230,11 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     }
 
     protected abstract void onTeamDeleted();
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+        if (auth.getCurrentUser() == null) onTeamDeleted();
+    }
 
     @Override
     public void onCancelled(DatabaseError error) {

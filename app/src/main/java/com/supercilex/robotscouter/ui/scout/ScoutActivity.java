@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.ScoutListFragmentBase;
 
-public class ScoutActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
+public class ScoutActivity extends AppCompatActivity {
     public static void start(Context context, TeamHelper teamHelper, boolean addScout) {
         Intent starter = teamHelper.toIntent().setClass(context, ScoutActivity.class);
         starter.putExtra(ScoutListFragmentBase.ADD_SCOUT_KEY, addScout);
@@ -40,18 +38,5 @@ public class ScoutActivity extends AppCompatActivity implements FirebaseAuth.Aut
                             intent.getBooleanExtra(ScoutListFragmentBase.ADD_SCOUT_KEY, false)))
                     .commit();
         }
-
-        FirebaseAuth.getInstance().addAuthStateListener(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FirebaseAuth.getInstance().removeAuthStateListener(this);
-    }
-
-    @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (auth.getCurrentUser() == null) finish();
     }
 }
