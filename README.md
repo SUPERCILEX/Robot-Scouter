@@ -50,4 +50,4 @@ with the one created in your Firebase project
 
 If you want to get the latest build from master, you can join the
 [alpha testers community](https://plus.google.com/communities/111840458526472018249)
-and then join the [beta](https://play.google.com/apps/testing/com.supercilex.robotscouter).
+and the [beta](https://play.google.com/apps/testing/com.supercilex.robotscouter).
