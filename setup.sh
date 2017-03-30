@@ -5,6 +5,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   tar xvf secrets.tar
 else
   mv travis-dummies/google-services.json app/google-services.json
+  mv travis-dummies/google-play-auto-publisher.json app/google-play-auto-publisher.json
   mv travis-dummies/keystore.properties keystore.properties
   mv travis-dummies/keystore.jks app/keystore.jks
 fi
