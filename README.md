@@ -1,5 +1,5 @@
 # Robot Scouter — FIRST Robot Scouting made simple and collaborative [![Build Status](https://travis-ci.org/SUPERCILEX/Robot-Scouter.svg?branch=master)](https://travis-ci.org/SUPERCILEX/Robot-Scouter)
- 
+
 <a href='https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/'>
     <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="270" height="100"/>
 </a>
@@ -49,4 +49,5 @@ with the one created in your Firebase project
 ## Psst...
 
 If you want to get the latest build from master, you can join the
-[alpha testers community](https://plus.google.com/communities/111840458526472018249).
+[alpha testers community](https://plus.google.com/communities/111840458526472018249)
+and then join the [beta](https://play.google.com/apps/testing/com.supercilex.robotscouter).
