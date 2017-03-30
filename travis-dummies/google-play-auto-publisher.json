@@ -1,1 +1,12 @@
-{}
+{
+  "type": "service_account",
+  "project_id": "dummy-robot-scouter-for-travis",
+  "private_key_id": "2bd5e5fbca2eab68b9c38d8d186f51da0b533a1f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDNFhiP1cWjSvIB\nrrwzLi5n5JOit+M9Qdjuzr9h1UESyn6qcK8OUagGvTxoUqX0UkhT7e4OO/7RyncR\nbbtKY/19YZBuuWGXgsY/YE/e7QQdcxL32vnrfCLxrhXdQHeAn0Zcr6j1FTCHZghV\npqI7xaZ1/8pRQ8eSbjQZnL9EeDb8I1DD9QOaFBx6+Q34TceGqm9PYd1hy5bVYzNO\nY3qkaMEYb9B4EaKQKApERniIZdFAlV4F6vbPXSeiETplITCAIsZpkTeff+mKG4ys\nHcDTkJigFt4MWDz4RXJUWDSOtT8lw6CGO3/KBdZOi16KY5ibFwXJPlIlfwcqY+yy\nCGvf4mK7AgMBAAECggEAGnCL0BdOOIQT+RWO28ZLY0d7pRGx8RbJIdhzoeg9UG/c\nrpqCZwUt9Vh2LjjhfkMRYgidlSY07tT8Trnn2GpVptFqLmwl4cORTWBcS7AgxK8u\nNdf8OlixpJi95t1FysY96vsWfCo0LHCCCJDH/462rCXC7oEffIhKnTaxDeG1rQGh\ncVeQ8WYTn1GUZFp+/RxuHB3LPXXpuakc+u3YnX2G4UBKzVL52jSoPi/VGDzsp9VM\nExukRmin7cEjUZpriTUxK3iRNsE5oS2p4W6Dzew3pFkz/epngpW3HT3PpAxtVuOf\n2Yf8WNspf3oNCEyr+WeW623dODrv5aUIcN0A5ICrUQKBgQDrG6xYq8Y72UvGW3Cu\nHGgBwxl1JYreTRDD9AT7LydDXqXN7B/H56zjX0gqkt7sue3kDh5zAvQBny70LSTQ\nSkWxbbklR1gIHKwBxaDWH96Htl/vbhQPseLJk+ouyZmx+aX92hr0JTIoINzLTdfF\n81U60H5r5ES3HZ7KZDFKlcBOqQKBgQDfT3nVxn16LVnniQVbW8tA5ny5N9MPv0pD\n13sVhV7uU0AlV5BQm71nOZZO7TGp36Ula5TnXGVSDeFsduU5C2Rbh/TlXscu85e/\nhxAieE7ZPFiJ/XxHTXA2T96ebDy/dbbWW8cqcrI4FQgnuTUBtUDjooYhCGldJuPq\nZ5yZUhW4wwKBgCHiEhuRXfdgIKiMoxekpmSinnegmnvhNWpYL6OXrxvpdxHPVuEz\nhVobcEYadqA9R4iXdFH0+f+F1nmATA7stVCV1JoHxyscHrn+pmhVnXeHlBnojmGY\nrGuKsrRdf5YDuaV1Gm9XMPxRiCCQrmkr4XuhcqbP9gtB7JGUkPoDzPxJAoGBAMtC\nB99xH90JUn/Q1DNnxgV4xaXBDjeTIgHGLJ5WGyZKWGSk4xK77xX58Lo+Y6n/is4Y\nshw0mXSqdbjIL7RQjjRR97KfJiWySzllsmXto7dPmjdfprMv5SdKY5NHabPLbXSH\nbS1R4K3zVszxYzH+zOVllTiT83N6ZpGBZaSYdnUJAoGAC4mPBwLQt+12H/H0ly+U\n8bMcVUeXcPinGiooOWkPXKPZeULn2aKaxZaacHWCTRlcq91nk0Nxq/VuLgKPTWSS\nOiS1gwGwIUAhxsnubpUeM0428EHJQVhIBLgJyL5Db/gpQgdpC9tAc4UqNGteGHg0\nFFAb1KpWh7V2GrOufaTTtLg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "play-publisher-dummy@dummy-robot-scouter-for-travis.iam.gserviceaccount.com",
+  "client_id": "109622579542095789497",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/play-publisher-dummy%40dummy-robot-scouter-for-travis.iam.gserviceaccount.com"
+}
