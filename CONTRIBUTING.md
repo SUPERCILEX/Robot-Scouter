@@ -1,8 +1,8 @@
 # Want to contribute? Awesome!
 
 ## Before you contribute
-Before we can use your code, you must sign the [SUPERCILEX Individual Contributor License Agreement]()
-(CLA), which you can do online. The CLA is necessary mainly because you own the
+Before we can use your code, you must sign the [SUPERCILEX Individual Contributor License Agreement](https://cla-assistant.io/SUPERCILEX/Robot-Scouter),
+which you can do online. The CLA is necessary mainly because you own the
 copyright to your changes, even after your contribution becomes part of our
 codebase, so we need your permission to use and distribute your code. We also
 need to be sure of various other things—for instance that you'll tell us if you
