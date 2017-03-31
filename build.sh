@@ -6,4 +6,8 @@ else
   ./gradlew clean assembleDebug check
 fi
 
+  cd firebase
+  firebase deploy
+  cd ..
+
 set +xe
