@@ -1,0 +1,170 @@
+{
+  "a": {
+    ".priority": 0.0,
+    "name": "Scout info",
+    "type": 5
+  },
+  "b": {
+    ".priority": 1.0,
+    "name": "Person scouting",
+    "type": 3,
+    "value": ""
+  },
+  "c": {
+    ".priority": 2.0,
+    "name": "Match #",
+    "type": 3,
+    "value": ""
+  },
+  "d": {
+    ".priority": 3.0,
+    "name": "Pre-game",
+    "type": 5
+  },
+  "e": {
+    ".priority": 4.0,
+    "name": "Shooter",
+    "selectedValueIndex": 0,
+    "selectedValueKey": "a",
+    "type": 2,
+    "value": {
+      "a": {
+        ".value": "None",
+        ".priority": 0.0
+      },
+      "b": {
+        ".value": "Low goal",
+        ".priority": 1.0
+      },
+      "c": {
+        ".value": "High goal",
+        ".priority": 2.0
+      },
+      "d": {
+        ".value": "Both",
+        ".priority": 3.0
+      }
+    }
+  },
+  "f": {
+    ".priority": 5.0,
+    "name": "Handles gears?",
+    "type": 0,
+    "value": false
+  },
+  "g": {
+    ".priority": 6.0,
+    "name": "Has climber?",
+    "type": 0,
+    "value": false
+  },
+  "h": {
+    ".priority": 7.0,
+    "name": "Has ground intake?",
+    "type": 0,
+    "value": false
+  },
+  "i": {
+    ".priority": 8.0,
+    "name": "Auto",
+    "type": 5
+  },
+  "j": {
+    ".priority": 9.0,
+    "name": "Crossed baseline?",
+    "type": 0,
+    "value": false
+  },
+  "k": {
+    ".priority": 10.0,
+    "name": "Attempted shooting?",
+    "type": 0,
+    "value": false
+  },
+  "l": {
+    ".priority": 11.0,
+    "name": "If so, # of balls scored",
+    "type": 1,
+    "value": 0
+  },
+  "m": {
+    ".priority": 12.0,
+    "name": "Attempted gear delivery?",
+    "type": 0,
+    "value": false
+  },
+  "n": {
+    ".priority": 14.0,
+    "name": "Teleop",
+    "type": 5
+  },
+  "o": {
+    ".priority": 15.0,
+    "name": "Cycle time for gear + shoot (pick up -> pick up)",
+    "type": 4
+  },
+  "p": {
+    ".priority": 16.0,
+    "name": "Cycle time for gear (pick up -> pick up)",
+    "type": 4
+  },
+  "q": {
+    ".priority": 17.0,
+    "name": "Cycle time for shooting (pick up -> pick up)",
+    "type": 4
+  },
+  "r": {
+    ".priority": 18.0,
+    "name": "# of gears delivered",
+    "type": 1,
+    "value": 0
+  },
+  "s": {
+    ".priority": 19.0,
+    "name": "# of gears dropped",
+    "type": 1,
+    "value": 0
+  },
+  "t": {
+    ".priority": 20.0,
+    "name": "Post-game",
+    "type": 5
+  },
+  "u": {
+    ".priority": 21.0,
+    "name": "Climbed?",
+    "type": 0,
+    "value": false
+  },
+  "v": {
+    ".priority": 22.0,
+    "name": "~% of balls scored",
+    "type": 1,
+    "unit": "%",
+    "value": 0
+  },
+  "w": {
+    ".priority": 23.0,
+    "name": "Defense notes",
+    "type": 3,
+    "value": ""
+  },
+  "x": {
+    ".priority": 24.0,
+    "name": "Shooting notes",
+    "type": 3,
+    "value": ""
+  },
+  "y": {
+    ".priority": 26.0,
+    "name": "General notes",
+    "type": 3,
+    "value": ""
+  },
+  "z": {
+    ".priority": 13.0,
+    "name": "Rotor turning?",
+    "type": 0,
+    "value": false
+  }
+}
