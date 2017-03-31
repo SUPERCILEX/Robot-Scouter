@@ -22,7 +22,9 @@ public class FirebaseCopier extends FirebaseTransformer {
 
     @Override
     public Task<Void> transform(DataSnapshot copySnapshot) {
-        deepCopy(copySnapshot, mToQuery.getRef().child(copySnapshot.getKey()));
+        DatabaseReference to = mToQuery.getRef().child(copySnapshot.getKey());
+        to.setValue(copySnapshot.getValue(), copySnapshot.getPriority());
+        deepCopy(copySnapshot, to);
         return Tasks.whenAll(mWriteTasks);
     }
 
