@@ -8,6 +8,7 @@ fi
 
   cd firebase
   firebase deploy
+  firebase database:set --confirm /default-template default-template.json
   cd ..
 
 set +xe
