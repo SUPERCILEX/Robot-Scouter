@@ -11,11 +11,11 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         manifestPlaceholders = [appName: "@string/app_name"]
-        applicationId "com.supercilex.robotscouter"
+        applicationId 'com.supercilex.robotscouter'
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1 // The version code is updated on each Travis build
@@ -41,7 +41,7 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
-            manifestPlaceholders = [appName: "Robot Scouter DEBUG"]
+            manifestPlaceholders = [appName: 'Robot Scouter DEBUG']
         }
 
         release {
@@ -53,7 +53,7 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "3g"
+        javaMaxHeapSize '3g'
     }
 }
 
