@@ -42,7 +42,7 @@ public class AboutDialog extends DialogFragment implements DialogInterface.OnCli
     public void onClick(DialogInterface dialog, int which) {
         ((ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE))
                 .setPrimaryClip(ClipData.newPlainText(getString(R.string.debug_info_name),
-                                                      Constants.getDebugInfo()));
+                                                      Constants.getDebugInfo(getContext())));
         Toast.makeText(getContext(), R.string.debug_info_copied, Toast.LENGTH_SHORT).show();
     }
 }

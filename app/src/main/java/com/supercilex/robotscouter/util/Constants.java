@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.util;
 
+import android.content.Context;
 import android.os.Build;
 
 import com.firebase.ui.auth.AuthUI;
@@ -68,9 +69,10 @@ public final class Constants {
         return FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS);
     }
 
-    public static String getDebugInfo() {
+    public static String getDebugInfo(Context context) {
         return "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
                 "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
-                "* User id: " + AuthHelper.getUid();
+                "* User id: " + AuthHelper.getUid() + "\n" +
+                "* Current scout template key: " + context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE).getString(SCOUT_TEMPLATE, null);
     }
 }
