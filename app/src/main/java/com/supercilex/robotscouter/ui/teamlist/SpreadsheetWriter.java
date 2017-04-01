@@ -424,15 +424,18 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
                     break;
                 case MetricType.SPINNER:
-                    cell.setCellFormula(
-                            "ARRAYFORMULA(" +
-                                    "INDEX(" + rangeAddress + ", " +
+                    sheet.setArrayFormula(
+                            "INDEX(" + rangeAddress + ", " +
                                     "MATCH(" +
                                     "MAX(" +
                                     "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
                                     "), " +
                                     "COUNTIF(" + rangeAddress + ", " + rangeAddress + ")" +
-                                    ", 0)))");
+                                    ", 0))",
+                            new CellRangeAddress(cell.getRowIndex(),
+                                                 cell.getRowIndex(),
+                                                 cell.getColumnIndex(),
+                                                 cell.getColumnIndex()));
                     break;
                 case MetricType.HEADER:
                 case MetricType.NOTE:
