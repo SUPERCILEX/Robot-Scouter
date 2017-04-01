@@ -38,7 +38,7 @@ the [contribution guidelines](CONTRIBUTING.md) before getting in too deep.
 
 ## Environment setup
 
-1. [Move the dummy files](setup.sh#L7) into position
+1. [Move the dummy files](setup.sh#L11-L14) into position
 1. If you are working with the database or need access to other Firebase technologies,
 [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
 and replace the dummy [google-services.json](travis-dummies/google-services.json)

@@ -5,7 +5,7 @@ apply plugin: 'project-report'
 apply from: '../quality/quality.gradle'
 build.dependsOn 'updateProdReleasePlayVersion'
 
-def keystorePropertiesFile = file("../keystore.properties")
+def keystorePropertiesFile = file('keystore.properties')
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -14,17 +14,17 @@ android {
     buildToolsVersion '25.0.2'
 
     defaultConfig {
-        manifestPlaceholders = [appName: "@string/app_name"]
+        manifestPlaceholders = [appName: '@string/app_name']
         applicationId 'com.supercilex.robotscouter'
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1 // The version code is updated on each Travis build
-        versionName "1.0.2"
+        versionName '1.0.2'
         multiDexEnabled true
     }
 
     signingConfigs {
-        config {
+        release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile file(keystoreProperties['storeFile'])
@@ -48,7 +48,7 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles 'proguard-rules.pro', getDefaultProguardFile('proguard-android-optimize.txt')
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.release
         }
     }
 
