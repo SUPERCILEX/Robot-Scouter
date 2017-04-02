@@ -10,15 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FirebaseCopier extends FirebaseTransformer {
-    public FirebaseCopier(DatabaseReference to) {
-        super(to);
-    }
-
     public FirebaseCopier(Query from, DatabaseReference to) {
         super(from, to);
     }
 
-    private static Task<Void> copyTo(DataSnapshot copySnapshot, DatabaseReference to) {
+    public static Task<Void> copyTo(DataSnapshot copySnapshot, DatabaseReference to) {
         Map<String, Object> values = new HashMap<>();
         deepCopy(values, copySnapshot);
         return to.updateChildren(values);
@@ -42,6 +38,6 @@ public class FirebaseCopier extends FirebaseTransformer {
     @Override
     public Task<Void> transform(DataSnapshot copySnapshot) {
         if (copySnapshot.getValue() == null) return Tasks.forResult(null);
-        else return copyTo(copySnapshot, mToRef);
+        else return copyTo(copySnapshot, getToRef());
     }
 }

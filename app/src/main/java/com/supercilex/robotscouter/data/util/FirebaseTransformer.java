@@ -14,18 +14,18 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public abstract class FirebaseTransformer implements ValueEventListener {
-    protected final DatabaseReference mToRef;
-    private Query mFromQuery;
+    private final Query mFromQuery;
+    private final DatabaseReference mToRef;
 
     private TaskCompletionSource<DataSnapshot> mCompleteTask = new TaskCompletionSource<>();
-
-    public FirebaseTransformer(DatabaseReference to) {
-        mToRef = to;
-    }
 
     public FirebaseTransformer(Query from, DatabaseReference to) {
         mFromQuery = from;
         mToRef = to;
+    }
+
+    protected DatabaseReference getToRef() {
+        return mToRef;
     }
 
     protected abstract Task<Void> transform(DataSnapshot transformSnapshot);
@@ -40,10 +40,6 @@ public abstract class FirebaseTransformer implements ValueEventListener {
                 else mCompleteTask.setException(task.getException());
             }
         });
-    }
-
-    public void setFromQuery(Query from) {
-        mFromQuery = from;
     }
 
     public Task<DataSnapshot> performTransformation() {

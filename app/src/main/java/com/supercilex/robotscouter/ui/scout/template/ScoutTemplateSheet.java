@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,15 +20,16 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
@@ -41,8 +41,6 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     private static final String TAG = "ScoutTemplateSheet";
 
     private View mRootView;
-    private View mResetAllButton;
-    private View mResetTeamButton;
     private FloatingActionMenu mFam;
 
     private RecyclerView mRecyclerView;
@@ -89,14 +87,12 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                              ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_scout_template, container, false);
-        mResetAllButton = mRootView.findViewById(R.id.reset_template_all);
-        mResetTeamButton = mRootView.findViewById(R.id.reset_template_team);
 
         getTemplateKey();
         setupRecyclerView(savedInstanceState);
         initFabMenu();
-        mResetAllButton.setOnClickListener(this);
-        mResetTeamButton.setOnClickListener(this);
+        mRootView.findViewById(R.id.reset_template_all).setOnClickListener(this);
+        mRootView.findViewById(R.id.reset_template_team).setOnClickListener(this);
 
         return mRootView;
     }
@@ -118,44 +114,30 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     private void getTemplateKey() {
         final TeamHelper teamHelper = TeamHelper.get(getArguments());
         mTemplateKey = teamHelper.getTeam().getTemplateKey();
-        String storedTemplateKey = getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE,
-                                                                     Context.MODE_PRIVATE)
-                .getString(Constants.SCOUT_TEMPLATE, null);
 
         if (TextUtils.isEmpty(mTemplateKey)) {
-            if (!TextUtils.isEmpty(storedTemplateKey)) {
-                mTemplateKey = storedTemplateKey;
-                teamHelper.updateTemplateKey(mTemplateKey, getContext());
-                showResetButtons();
+            if (!Constants.sFirebaseScoutTemplates.isEmpty()) {
+                mTemplateKey = Constants.sFirebaseScoutTemplates.get(0).getKey();
+                teamHelper.updateTemplateKey(mTemplateKey);
                 return;
             }
 
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             mTemplateKey = newTemplateRef.getKey();
-            final Context appContext = getContext().getApplicationContext();
 
-            new FirebaseCopier(Constants.FIREBASE_DEFAULT_TEMPLATE, newTemplateRef) {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    super.onDataChange(snapshot);
-                    teamHelper.updateTemplateKey(mTemplateKey, appContext);
-                    showResetButtons();
+            FirebaseCopier.copyTo(Constants.sDefaultTemplate, newTemplateRef);
+            teamHelper.updateTemplateKey(mTemplateKey);
+            UserHelper.getScoutTemplateIndicesRef().child(mTemplateKey).setValue(true);
+
+            for (int i = 0; i < Constants.sFirebaseTeams.size(); i++) {
+                Team team = Constants.sFirebaseTeams.getObject(i);
+                String templateKey = team.getTemplateKey();
+
+                if (TextUtils.isEmpty(templateKey)) {
+                    team.getHelper().updateTemplateKey(mTemplateKey);
                 }
-            }.performTransformation();
-        } else {
-            showResetButtons();
-            if (TextUtils.isEmpty(storedTemplateKey)) {
-                getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE, Context.MODE_PRIVATE)
-                        .edit()
-                        .putString(Constants.SCOUT_TEMPLATE, mTemplateKey)
-                        .apply();
             }
         }
-    }
-
-    private void showResetButtons() {
-        mResetAllButton.setVisibility(View.VISIBLE);
-        mResetTeamButton.setVisibility(View.VISIBLE);
     }
 
     private void setupRecyclerView(Bundle savedInstanceState) {

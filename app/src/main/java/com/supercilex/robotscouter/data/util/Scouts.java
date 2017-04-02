@@ -187,6 +187,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             mTimer.cancel();
             mMetricsQuery.removeEventListener((ChildEventListener) this);
             mQuery.removeEventListener((ValueEventListener) this);
+
             if (!mScout.getMetrics().isEmpty()) {
                 List<Scout> scouts = mScouts.get(mPair.first);
                 if (scouts == null) {
