@@ -1,3 +1,4 @@
 - Fixed crash and improved performance when creating new scout
+- Fixed possible mistake where scouts were deleted when merging teams
 
 https://github.com/SUPERCILEX/Robot-Scouter/releases
