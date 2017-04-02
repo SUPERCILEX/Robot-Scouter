@@ -1,4 +1,8 @@
-- Fixed crash and improved performance when creating new scout
-- Fixed possible mistake where scouts were deleted when merging teams
+Fix a bunch of scout template bugs:
+    - Scout templates are no longer deleted when all teams are deleted
+    - Fix bug where creating a new team on a device that didn't create the template wouldn't use it
+    - Fix crash when editing a deleted template on another device
+    - Fix crash when creating new template
+    - Fix bug where tapping the reset template buttons would also tap the list of metrics behind them
 
 https://github.com/SUPERCILEX/Robot-Scouter/releases
