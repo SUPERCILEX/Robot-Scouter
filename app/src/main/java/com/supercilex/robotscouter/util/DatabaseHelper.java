@@ -12,7 +12,6 @@ import com.firebase.ui.database.SnapshotParser;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
@@ -177,7 +176,7 @@ public final class DatabaseHelper {
         }
     }
 
-    private static class TeamMergerListener implements ChangeEventListener, OnSuccessListener<DatabaseReference> {
+    private static final class TeamMergerListener implements ChangeEventListener {
         private Context mAppContext;
 
         public TeamMergerListener(Context appContext) {
@@ -224,34 +223,19 @@ public final class DatabaseHelper {
                         .addOnSuccessListener(new OnSuccessListener<Query>() {
                             @Override
                             public void onSuccess(Query query) {
-                                Task<List<Task<DatabaseReference>>> copyTask =
-                                        new FirebaseCopier(query,
-                                                           ScoutUtils.getIndicesRef(oldTeam.getKey()))
-                                                .performTransformation();
-                                copyTask.addOnSuccessListener(new OnSuccessListener<List<Task<DatabaseReference>>>() {
-                                    @Override
-                                    public void onSuccess(List<Task<DatabaseReference>> tasks) {
-                                        for (Task<DatabaseReference> task : tasks) {
-                                            task.addOnSuccessListener(TeamMergerListener.this);
-                                        }
-
-                                        Tasks.whenAll(tasks)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        newTeam.getHelper().deleteTeam();
-                                                    }
-                                                });
-                                    }
-                                });
+                                new FirebaseCopier(query,
+                                                   ScoutUtils.getIndicesRef(oldTeam.getKey()))
+                                        .performTransformation()
+                                        .addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DataSnapshot snapshot) {
+                                                snapshot.getRef().removeValue();
+                                                newTeam.getHelper().deleteTeam();
+                                            }
+                                        });
                             }
                         });
             }
-        }
-
-        @Override
-        public void onSuccess(DatabaseReference ref) {
-            ref.removeValue();
         }
 
         @Override
