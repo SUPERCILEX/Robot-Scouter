@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
+import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
@@ -188,13 +189,14 @@ public final class AuthHelper implements View.OnClickListener {
 
                 initDeepLinkReceiver();
 
-                User user = new User.Builder(getUid())
+                UserHelper userHelper = new User.Builder(getUid())
                         .setEmail(getUser().getEmail())
                         .setName(getUser().getDisplayName())
                         .setPhotoUrl(getUser().getPhotoUrl())
-                        .build();
-                user.add();
-                if (response != null) user.transferData(response.getPrevUid());
+                        .build()
+                        .getHelper();
+                userHelper.add();
+                if (response != null) userHelper.transferData(response.getPrevUid());
 
                 AnalyticsHelper.login();
             } else {

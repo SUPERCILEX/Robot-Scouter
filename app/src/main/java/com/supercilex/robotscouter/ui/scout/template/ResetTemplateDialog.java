@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scout.template;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,14 +10,15 @@ import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.firebase.ui.database.ChangeEventListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.util.Constants;
+
+import static com.supercilex.robotscouter.util.DatabaseHelper.ChangeEventListenerBase;
 
 public class ResetTemplateDialog extends DialogFragment implements DialogInterface.OnShowListener, View.OnClickListener {
     private static final String TAG = "ResetTemplateDialog";
@@ -76,11 +76,11 @@ public class ResetTemplateDialog extends DialogFragment implements DialogInterfa
                     keySnapshot.getRef().removeValue();
                 }
             }
-            Constants.FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue();
-            clearStoredTemplateKey();
+            deleteTemplateKey(templateKey);
+
             dismiss();
         } else {
-            Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListener() {
+            Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListenerBase() {
                 @Override
                 public void onChildChanged(EventType type,
                                            DataSnapshot snapshot,
@@ -99,29 +99,11 @@ public class ResetTemplateDialog extends DialogFragment implements DialogInterfa
                                 break;
                             }
                         }
-                        if (!isTemplateInUse) {
-                            Constants.FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue();
-
-                            String storedTemplateKey =
-                                    getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE,
-                                                                      Context.MODE_PRIVATE)
-                                            .getString(Constants.SCOUT_TEMPLATE, null);
-                            if (TextUtils.equals(templateKey, storedTemplateKey)) { // NOPMD
-                                clearStoredTemplateKey();
-                            }
-                        }
+                        if (!isTemplateInUse) deleteTemplateKey(templateKey);
 
                         Constants.sFirebaseTeams.removeChangeEventListener(this);
                         dismiss();
                     }
-                }
-
-                @Override
-                public void onDataChanged() {
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
                 }
             });
 
@@ -129,10 +111,8 @@ public class ResetTemplateDialog extends DialogFragment implements DialogInterfa
         }
     }
 
-    private void clearStoredTemplateKey() {
-        getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE, Context.MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
+    private void deleteTemplateKey(String key) {
+        UserHelper.getScoutTemplateIndicesRef().child(key).removeValue();
+        Constants.FIREBASE_SCOUT_TEMPLATES.child(key).removeValue();
     }
 }

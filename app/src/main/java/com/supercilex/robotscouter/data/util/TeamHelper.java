@@ -16,7 +16,6 @@ import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.Indexable;
 import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
 import com.google.firebase.appindexing.builders.Indexables;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
@@ -82,16 +81,18 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         return mTeam;
     }
 
-    public void addTeam(Context context) {
+    public void addTeam() {
         DatabaseReference index = getIndicesRef().push();
         mTeam.setKey(index.getKey());
         Long number = mTeam.getNumberAsLong();
         index.setValue(number, number);
-        mTeam.setTemplateKey(context.getSharedPreferences(Constants.SCOUT_TEMPLATE,
-                                                          Context.MODE_PRIVATE)
-                                     .getString(Constants.SCOUT_TEMPLATE, null));
+
+        if (!Constants.sFirebaseScoutTemplates.isEmpty()) {
+            mTeam.setTemplateKey(Constants.sFirebaseScoutTemplates.get(0).getKey());
+        }
         forceUpdateTeam();
         getRef().child(Constants.FIREBASE_TIMESTAMP).removeValue();
+
         FirebaseUserActions.getInstance()
                 .end(new Action.Builder(Action.Builder.ADD_ACTION)
                              .setObject(toString(), getDeepLink())
@@ -128,20 +129,9 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         }
     }
 
-    public void updateTemplateKey(String key, Context context) {
+    public void updateTemplateKey(String key) {
         mTeam.setTemplateKey(key);
         getRef().child(Constants.FIREBASE_TEMPLATE_KEY).setValue(mTeam.getTemplateKey());
-        context.getSharedPreferences(Constants.SCOUT_TEMPLATE, Context.MODE_PRIVATE)
-                .edit()
-                .putString(Constants.SCOUT_TEMPLATE, key)
-                .apply();
-
-        for (DataSnapshot snapshot : Constants.sFirebaseTeams) {
-            DataSnapshot templateSnapshot = snapshot.child(Constants.FIREBASE_TEMPLATE_KEY);
-            if (templateSnapshot.getValue() == null) {
-                templateSnapshot.getRef().setValue(key);
-            }
-        }
     }
 
     public void deleteTeam() {

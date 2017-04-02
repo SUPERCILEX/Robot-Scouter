@@ -4,12 +4,8 @@ import android.net.Uri;
 import android.support.annotation.Keep;
 import android.text.TextUtils;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.supercilex.robotscouter.data.util.FirebaseCopier;
-import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.data.util.UserHelper;
 
 public class User {
     @Exclude private final String mUid;
@@ -22,6 +18,16 @@ public class User {
         mEmail = email;
         mName = name;
         mPhotoUrl = photoUrl;
+    }
+
+    @Exclude
+    public UserHelper getHelper() {
+        return new UserHelper(this);
+    }
+
+    @Exclude
+    public String getUid() {
+        return mUid;
     }
 
     @Keep
@@ -52,23 +58,6 @@ public class User {
     @Keep
     public void setPhotoUrl(Uri photoUrl) {
         mPhotoUrl = photoUrl;
-    }
-
-    public void add() {
-        Constants.FIREBASE_USERS.child(mUid).setValue(this);
-    }
-
-    public void transferData(String prevUid) {
-        if (TextUtils.isEmpty(prevUid)) return;
-
-        final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
-        new FirebaseCopier(prevTeamRef, TeamHelper.getIndicesRef()) {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                super.onDataChange(snapshot);
-                prevTeamRef.removeValue();
-            }
-        }.performTransformation();
     }
 
     @Override

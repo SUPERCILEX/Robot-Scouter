@@ -178,7 +178,7 @@ public abstract class ScoutListFragmentBase extends Fragment
                 }
             }
 
-            mTeamHelper.addTeam(getContext());
+            mTeamHelper.addTeam();
             addListeners();
             TbaApi.fetch(mTeamHelper.getTeam(), getContext())
                     .addOnCompleteListener(getActivity(), this);

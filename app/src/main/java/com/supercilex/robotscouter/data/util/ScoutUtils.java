@@ -28,18 +28,9 @@ public final class ScoutUtils {
     public static final SnapshotParser<ScoutMetric> METRIC_PARSER = new SnapshotParser<ScoutMetric>() {
         @Override
         public ScoutMetric parseSnapshot(DataSnapshot snapshot) {
-            Integer value = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
-
-            if (value == null) { // This should never happen TODO remove if the crash doesn't show up after a while
-                FirebaseCrash.log("Snapshot: " + snapshot.toString());
-                FirebaseCrash.log("Ref: " + snapshot.getRef().toString());
-                FirebaseCrash.report(new NullPointerException()); // NOPMD
-
-                return new ScoutMetric<Void>("", null, MetricType.HEADER);
-            }
-
             ScoutMetric metric;
-            @MetricType int type = value;
+
+            @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
             switch (type) {
                 case MetricType.CHECKBOX:
                     metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
@@ -116,13 +107,13 @@ public final class ScoutUtils {
         indexRef.setValue(System.currentTimeMillis());
         DatabaseReference scoutRef = Constants.getScoutMetrics(indexRef.getKey());
 
-        FirebaseTransformer scoutCopier = new FirebaseCopier(scoutRef);
         if (team.getTemplateKey() == null) {
-            scoutCopier.setFromQuery(Constants.FIREBASE_DEFAULT_TEMPLATE);
+            FirebaseCopier.copyTo(Constants.sDefaultTemplate, scoutRef);
         } else {
-            scoutCopier.setFromQuery(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()));
+            new FirebaseCopier(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()),
+                               scoutRef)
+                    .performTransformation();
         }
-        scoutCopier.performTransformation();
 
         AnalyticsHelper.addScout(team.getNumber());
 
