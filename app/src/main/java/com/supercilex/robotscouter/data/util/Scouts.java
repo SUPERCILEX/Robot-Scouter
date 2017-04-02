@@ -118,7 +118,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
         mScoutsTask.setException(e);
     }
 
-    private class ScoutListener implements ChildEventListener, ValueEventListener, OnSuccessListener<Void> {
+    private class ScoutListener implements ChildEventListener, ValueEventListener, OnSuccessListener<Query> {
         private static final int TIMEOUT = 1;
 
         private Query mQuery;
@@ -141,12 +141,12 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             if (ConnectivityHelper.isOffline(mContext)) {
                 addListeners();
             } else {
-                Tasks.whenAll(DatabaseHelper.forceUpdate(mQuery)).addOnSuccessListener(this);
+                DatabaseHelper.forceUpdate(mQuery).addOnSuccessListener(this);
             }
         }
 
         @Override
-        public void onSuccess(Void aVoid) {
+        public void onSuccess(Query query) {
             addListeners();
         }
 
