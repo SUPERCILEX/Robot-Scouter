@@ -73,6 +73,8 @@ public final class Constants {
         return "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
                 "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
                 "* User id: " + AuthHelper.getUid() + "\n" +
-                "* Current scout template key: " + context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE).getString(SCOUT_TEMPLATE, null);
+                "* Current scout template key: " +
+                context.getSharedPreferences(SCOUT_TEMPLATE, Context.MODE_PRIVATE)
+                        .getString(SCOUT_TEMPLATE, null);
     }
 }
