@@ -2,15 +2,10 @@ package com.supercilex.robotscouter.data.client;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.appindexing.Indexable;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,19 +13,21 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.util.Builder;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.data.util.TeamIndices;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.DatabaseHelper.ChangeEventListenerBase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppIndexingService extends IntentService implements OnSuccessListener<List<TeamHelper>> {
+public class AppIndexingService extends IntentService implements OnSuccessListener<FirebaseAuth>, ValueEventListener {
+    private static final String TAG = "AppIndexingService";
+
+    private List<Indexable> mIndexables = new ArrayList<>();
+
     public AppIndexingService() {
-        super("AppIndexingService");
+        super(TAG);
     }
 
     @Override
@@ -39,85 +36,48 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                 .isGooglePlayServicesAvailable(getApplicationContext());
 
         if (result == ConnectionResult.SUCCESS) {
-            TeamRetriever.getAll().addOnSuccessListener(this);
+            AuthHelper.onSignedIn().addOnSuccessListener(this);
         } else {
             GoogleApiAvailability.getInstance().showErrorNotification(this, result);
         }
     }
 
     @Override
-    public void onSuccess(List<TeamHelper> teams) {
-        ArrayList<Indexable> indexableTeams = new ArrayList<>();
-        for (TeamHelper teamHelper : teams) indexableTeams.add(teamHelper.getIndexable());
-        FirebaseAppIndex.getInstance()
-                .update(indexableTeams.toArray(new Indexable[indexableTeams.size()]));
+    public void onSuccess(FirebaseAuth result) {
+        TeamHelper.getIndicesRef().addListenerForSingleValueEvent(this);
     }
 
-    private static class TeamRetriever
-            implements Builder<Task<List<TeamHelper>>>, OnSuccessListener<List<DataSnapshot>>, OnFailureListener {
-        private TaskCompletionSource<List<TeamHelper>> mAllTeamsTask = new TaskCompletionSource<>();
-        private List<TeamHelper> mTeamHelpers = new ArrayList<>();
+    @Override
+    public void onDataChange(DataSnapshot snapshot) {
+        final long numOfExpectedTeams = snapshot.getChildrenCount();
+        if (numOfExpectedTeams == 0) {
+            FirebaseAppIndex.getInstance().update();
+            return;
+        }
 
-        private TeamRetriever() {
-            AuthHelper.onSignedIn().addOnSuccessListener(new OnSuccessListener<FirebaseAuth>() {
-                @Override
-                public void onSuccess(FirebaseAuth result) {
-                    TeamIndices.getAll()
-                            .addOnSuccessListener(TeamRetriever.this)
-                            .addOnFailureListener(TeamRetriever.this);
+        Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListenerBase() {
+            @Override
+            public void onChildChanged(EventType type,
+                                       DataSnapshot snapshot,
+                                       int index,
+                                       int oldIndex) {
+                if (type == EventType.ADDED) {
+                    mIndexables.add(Constants.sFirebaseTeams.getObject(index)
+                                            .getHelper()
+                                            .getIndexable());
                 }
-            });
-        }
 
-        public static Task<List<TeamHelper>> getAll() {
-            return new TeamRetriever().build();
-        }
-
-        @Override
-        public Task<List<TeamHelper>> build() {
-            return mAllTeamsTask.getTask();
-        }
-
-        @Override
-        public void onSuccess(List<DataSnapshot> snapshots) {
-            List<Task<Void>> teamTasks = new ArrayList<>();
-
-            for (DataSnapshot teamIndexSnapshot : snapshots) {
-                final TaskCompletionSource<Void> teamTask = new TaskCompletionSource<>();
-                teamTasks.add(teamTask.getTask());
-
-                Constants.FIREBASE_TEAMS.child(teamIndexSnapshot.getKey())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot snapshot) {
-                                if (snapshot.getValue() != null) {
-                                    mTeamHelpers.add(new Team.Builder(snapshot.getValue(Team.class))
-                                                             .setKey(snapshot.getKey())
-                                                             .build()
-                                                             .getHelper());
-                                }
-                                teamTask.setResult(null);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError error) {
-                                teamTask.setException(error.toException());
-                                FirebaseCrash.report(error.toException());
-                            }
-                        });
+                if (mIndexables.size() >= numOfExpectedTeams) {
+                    FirebaseAppIndex.getInstance()
+                            .update(mIndexables.toArray(new Indexable[mIndexables.size()]));
+                    Constants.sFirebaseTeams.removeChangeEventListener(this);
+                }
             }
+        });
+    }
 
-            Tasks.whenAll(teamTasks).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    mAllTeamsTask.setResult(mTeamHelpers);
-                }
-            }).addOnFailureListener(this);
-        }
-
-        @Override
-        public void onFailure(@NonNull Exception e) {
-            mAllTeamsTask.trySetException(e);
-        }
+    @Override
+    public void onCancelled(DatabaseError error) {
+        FirebaseCrash.report(error.toException());
     }
 }
