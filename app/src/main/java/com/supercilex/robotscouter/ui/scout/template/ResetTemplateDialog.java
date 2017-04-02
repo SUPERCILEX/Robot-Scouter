@@ -18,8 +18,6 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.util.Constants;
 
-import static com.supercilex.robotscouter.util.DatabaseHelper.ChangeEventListenerBase;
-
 public class ResetTemplateDialog extends DialogFragment implements DialogInterface.OnShowListener, View.OnClickListener {
     private static final String TAG = "ResetTemplateDialog";
     private static final String RESET_ALL_KEY = "reset_all_key";
@@ -76,42 +74,15 @@ public class ResetTemplateDialog extends DialogFragment implements DialogInterfa
                     keySnapshot.getRef().removeValue();
                 }
             }
-            deleteTemplateKey(templateKey);
-
-            dismiss();
+            deleteTemplate(templateKey);
         } else {
-            Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListenerBase() {
-                @Override
-                public void onChildChanged(EventType type,
-                                           DataSnapshot snapshot,
-                                           int index,
-                                           int oldIndex) {
-                    DataSnapshot team1 = Constants.sFirebaseTeams.get(index);
-                    if (TextUtils.equals(team.getKey(), team1.getKey())
-                            && team1.child(Constants.FIREBASE_TEMPLATE_KEY).getValue() == null) {
-                        boolean isTemplateInUse = false;
-                        for (DataSnapshot snapshot1 : Constants.sFirebaseTeams) {
-                            String templateKey1 =
-                                    snapshot1.child(Constants.FIREBASE_TEMPLATE_KEY)
-                                            .getValue(String.class);
-                            if (TextUtils.equals(templateKey, templateKey1)) {
-                                isTemplateInUse = true;
-                                break;
-                            }
-                        }
-                        if (!isTemplateInUse) deleteTemplateKey(templateKey);
-
-                        Constants.sFirebaseTeams.removeChangeEventListener(this);
-                        dismiss();
-                    }
-                }
-            });
-
             team.getHelper().getRef().child(Constants.FIREBASE_TEMPLATE_KEY).removeValue();
         }
+
+        dismiss();
     }
 
-    private void deleteTemplateKey(String key) {
+    private void deleteTemplate(String key) {
         UserHelper.getScoutTemplateIndicesRef().child(key).removeValue();
         Constants.FIREBASE_SCOUT_TEMPLATES.child(key).removeValue();
     }
