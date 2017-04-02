@@ -1,8 +1,3 @@
-Robot Scouter 1.0 is out of beta!!!
-
-New features:
-    - Tablet layout! The screen is split for faster scouting
-    - Robot Scouter is officially open source! Go to the "About" section to view the GitHub or click the link below
-    - All known crashes have been fixed
+- Fixed crash and improved performance when creating new scout
 
 https://github.com/SUPERCILEX/Robot-Scouter/releases
