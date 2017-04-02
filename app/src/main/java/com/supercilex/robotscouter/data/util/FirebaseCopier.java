@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.util;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
@@ -40,6 +41,7 @@ public class FirebaseCopier extends FirebaseTransformer {
 
     @Override
     public Task<Void> transform(DataSnapshot copySnapshot) {
-        return copyTo(copySnapshot, mToRef);
+        if (copySnapshot.getValue() == null) return Tasks.forResult(null);
+        else return copyTo(copySnapshot, mToRef);
     }
 }
