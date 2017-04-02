@@ -28,9 +28,18 @@ public final class ScoutUtils {
     public static final SnapshotParser<ScoutMetric> METRIC_PARSER = new SnapshotParser<ScoutMetric>() {
         @Override
         public ScoutMetric parseSnapshot(DataSnapshot snapshot) {
-            ScoutMetric metric;
+            Integer value = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
 
-            @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
+            if (value == null) { // This should never happen TODO remove if the crash doesn't show up after a while
+                FirebaseCrash.log("Snapshot: " + snapshot.toString());
+                FirebaseCrash.log("Ref: " + snapshot.getRef().toString());
+                FirebaseCrash.report(new NullPointerException()); // NOPMD
+
+                return new ScoutMetric<Void>("", null, MetricType.HEADER);
+            }
+
+            ScoutMetric metric;
+            @MetricType int type = value;
             switch (type) {
                 case MetricType.CHECKBOX:
                     metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {
