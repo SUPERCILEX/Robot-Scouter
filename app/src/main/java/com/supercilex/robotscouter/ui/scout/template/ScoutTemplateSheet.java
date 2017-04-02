@@ -118,10 +118,22 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     private void getTemplateKey() {
         final TeamHelper teamHelper = TeamHelper.get(getArguments());
         mTemplateKey = teamHelper.getTeam().getTemplateKey();
+        String storedTemplateKey = getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE,
+                                                                     Context.MODE_PRIVATE)
+                .getString(Constants.SCOUT_TEMPLATE, null);
+
         if (TextUtils.isEmpty(mTemplateKey)) {
+            if (!TextUtils.isEmpty(storedTemplateKey)) {
+                mTemplateKey = storedTemplateKey;
+                teamHelper.updateTemplateKey(mTemplateKey, getContext());
+                showResetButtons();
+                return;
+            }
+
             DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
             mTemplateKey = newTemplateRef.getKey();
             final Context appContext = getContext().getApplicationContext();
+
             new FirebaseCopier(Constants.FIREBASE_DEFAULT_TEMPLATE, newTemplateRef) {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -132,9 +144,6 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             }.performTransformation();
         } else {
             showResetButtons();
-            String storedTemplateKey = getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE,
-                                                                         Context.MODE_PRIVATE)
-                    .getString(Constants.SCOUT_TEMPLATE, null);
             if (TextUtils.isEmpty(storedTemplateKey)) {
                 getContext().getSharedPreferences(Constants.SCOUT_TEMPLATE, Context.MODE_PRIVATE)
                         .edit()
