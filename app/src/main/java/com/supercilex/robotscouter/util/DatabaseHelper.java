@@ -9,6 +9,7 @@ import com.firebase.ui.database.FirebaseArray;
 import com.firebase.ui.database.FirebaseIndexArray;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -226,10 +227,15 @@ public final class DatabaseHelper {
                                 new FirebaseCopier(query,
                                                    ScoutUtils.getIndicesRef(oldTeam.getKey()))
                                         .performTransformation()
-                                        .addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+                                        .continueWithTask(new Continuation<DataSnapshot, Task<Void>>() {
                                             @Override
-                                            public void onSuccess(DataSnapshot snapshot) {
-                                                snapshot.getRef().removeValue();
+                                            public Task<Void> then(@NonNull Task<DataSnapshot> task) throws Exception {
+                                                return task.getResult().getRef().removeValue();
+                                            }
+                                        })
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
                                                 newTeam.getHelper().deleteTeam();
                                             }
                                         });
