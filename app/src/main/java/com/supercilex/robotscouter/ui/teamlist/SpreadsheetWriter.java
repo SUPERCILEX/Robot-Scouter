@@ -59,9 +59,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +73,9 @@ import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    private static final List<String> UNSUPPORTED_DEVICES =
+            Collections.unmodifiableList(Arrays.asList("SAMSUNG-SM-N900A"));
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
@@ -691,7 +696,13 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     }
 
     private boolean isUnsupportedDevice() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+                || UNSUPPORTED_DEVICES.contains(getDeviceModel());
+    }
+
+    private String getDeviceModel() {
+        return (Build.MANUFACTURER.toUpperCase(Locale.ROOT) + "-" + Build.MODEL.toUpperCase(Locale.ROOT))
+                .replace(' ', '-');
     }
 
     private void showError(Exception e) {
