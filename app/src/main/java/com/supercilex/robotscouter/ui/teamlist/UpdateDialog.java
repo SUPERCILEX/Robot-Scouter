@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,13 +19,22 @@ public class UpdateDialog extends DialogFragment implements AlertDialog.OnClickL
     private static final String TAG = "UpdateDialog";
     private static final Uri STORE_LISTING_URI =
             Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID);
+    private static final Uri LATEST_APK_URI =
+            Uri.parse("https://github.com/SUPERCILEX/app-version-history/blob/master/"
+                              + "Robot-Scouter/app-release.apk");
 
     public static void show(FragmentManager manager) {
-        if (manager.findFragmentByTag(TAG) == null) new UpdateDialog().show(manager, TAG);
+        if (manager.findFragmentByTag(TAG) == null) {
+            manager.beginTransaction().add(new UpdateDialog(), TAG).commitAllowingStateLoss();
+        }
     }
 
     public static void showStoreListing(Activity activity) {
-        activity.startActivity(new Intent(Intent.ACTION_VIEW).setData(STORE_LISTING_URI));
+        try {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW).setData(STORE_LISTING_URI));
+        } catch (ActivityNotFoundException e) {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW).setData(LATEST_APK_URI));
+        }
     }
 
     @NonNull
