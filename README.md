@@ -11,6 +11,7 @@ scouting simple and collaborative.
 
 ## Features:
 
+  - Full offline support
   - No setup required
   - Easy sharing between users
   - Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
