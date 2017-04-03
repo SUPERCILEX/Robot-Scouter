@@ -57,7 +57,7 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this);
+        RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this, this);
     }
 
     @Override
