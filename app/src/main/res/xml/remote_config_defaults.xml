@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
     <entry>
+        <key>minimum_app_version</key>
+        <value>-1</value>
+    </entry>
+    <entry>
         <key>should_cache_db</key>
         <value>true</value>
     </entry>

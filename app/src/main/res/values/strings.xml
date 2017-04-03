@@ -67,6 +67,10 @@
 
     <string name="teams_imported">Teams successfully imported</string>
 
+    <string name="update">Update</string>
+    <string name="update_required_title">Update Robot Scouter</string>
+    <string name="update_required_message">An update is required for Robot Scouter to work correctly.</string>
+
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
     <string name="offline_reassurance">Offline. Data will be saved</string>

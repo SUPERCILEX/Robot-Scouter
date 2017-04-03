@@ -13,19 +13,24 @@ import android.view.View;
 
 import com.firebase.ui.auth.util.PlayServicesHelper;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.RemoteConfigHelper;
 import com.supercilex.robotscouter.util.ViewHelper;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity
-        implements View.OnClickListener, Runnable, DialogInterface.OnCancelListener, TeamSelectionListener {
+        implements View.OnClickListener, Runnable, DialogInterface.OnCancelListener, TeamSelectionListener, OnSuccessListener<Void> {
     private static final int API_AVAILABILITY_RC = 65;
     private static final String SELECTED_TEAM_KEY = "selected_team_key";
+    private static final String MINIMUM_APP_VERSION_KEY = "minimum_app_version";
 
     private TeamListFragment mTeamListFragment;
     private String mSelectedTeamKey;
@@ -52,9 +57,17 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this);
+    }
+
+    @Override
+    public void onSuccess(Void aVoid) {
         PlayServicesHelper.makePlayServicesAvailable(this, API_AVAILABILITY_RC, this);
         int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         GoogleApiAvailability.getInstance().showErrorNotification(this, result);
+
+        double minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY);
+        if (BuildConfig.VERSION_CODE < minimum) UpdateDialog.show(getSupportFragmentManager());
     }
 
     @Override

@@ -29,7 +29,6 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
 
     private static final String DONATE = "donate";
     private static final String UPDATE = "update";
-    private static final String STORE_LISTING = "market://details?id=" + "com.supercilex.robotscouter";
 
     private FragmentActivity mActivity;
 
@@ -76,8 +75,7 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
                 if (extras.containsKey(DONATE)) {
                     DonateDialog.show(mActivity.getSupportFragmentManager());
                 } else if (extras.containsKey(UPDATE)) {
-                    mActivity.startActivity(
-                            new Intent(Intent.ACTION_VIEW).setData(Uri.parse(STORE_LISTING)));
+                    UpdateDialog.showStoreListing(mActivity);
                 }
             }
 
