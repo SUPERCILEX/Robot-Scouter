@@ -125,7 +125,7 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
     compile 'com.github.clans:fab:1.6.4'
-    compile 'uk.co.samuelwall:material-tap-target-prompt:1.9.4'
+    compile 'uk.co.samuelwall:material-tap-target-prompt:1.9.5'
 
     // Leak canary
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
