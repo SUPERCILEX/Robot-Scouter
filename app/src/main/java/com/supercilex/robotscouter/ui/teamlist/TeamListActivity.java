@@ -57,15 +57,15 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        PlayServicesHelper.makePlayServicesAvailable(this, API_AVAILABILITY_RC, this);
+        int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        GoogleApiAvailability.getInstance().showErrorNotification(this, result);
+
         RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this, this);
     }
 
     @Override
     public void onSuccess(Void aVoid) {
-        PlayServicesHelper.makePlayServicesAvailable(this, API_AVAILABILITY_RC, this);
-        int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        GoogleApiAvailability.getInstance().showErrorNotification(this, result);
-
         double minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY);
         if (BuildConfig.VERSION_CODE < minimum) UpdateDialog.show(getSupportFragmentManager());
     }
