@@ -242,11 +242,10 @@ public final class DatabaseHelper {
         }
 
         @Override
-        public void onChildChanged(EventType type,
-                                   DataSnapshot snapshot,
-                                   int i,
-                                   int i1) {
-            if (ConnectivityHelper.isOffline(mAppContext)) return;
+        public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+            if (ConnectivityHelper.isOffline(mAppContext) && !(type == EventType.ADDED || type == EventType.CHANGED)) {
+                return;
+            }
 
             List<TeamHelper> rawTeams = new ArrayList<>();
             for (int j = 0; j < Constants.sFirebaseTeams.size(); j++) {
@@ -270,7 +269,7 @@ public final class DatabaseHelper {
             }
         }
 
-        private void mergeTeams(final List<TeamHelper> teams) {
+        private void mergeTeams(List<TeamHelper> teams) {
             Collections.sort(teams);
             final Team oldTeam = teams.remove(0).getTeam();
 
