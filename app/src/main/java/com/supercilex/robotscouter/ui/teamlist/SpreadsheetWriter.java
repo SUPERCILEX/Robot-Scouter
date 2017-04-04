@@ -40,9 +40,11 @@ import com.supercilex.robotscouter.util.Constants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -50,6 +52,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.ChartDataSource;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.ss.usermodel.charts.DataSources;
+import org.apache.poi.ss.usermodel.charts.LegendPosition;
+import org.apache.poi.ss.usermodel.charts.LineChartData;
+import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -421,12 +432,16 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                             "SUM(" + rangeAddress + ")" +
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
+
+                    buildLinePlot(row);
                     break;
                 case MetricType.STOPWATCH:
                     String excludeZeros = "\"<>0\"";
                     cell.setCellFormula(
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
+
+                    buildLinePlot(row);
                     break;
                 case MetricType.SPINNER:
                     sheet.setArrayFormula(
@@ -454,7 +469,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private int getMetricType(TeamHelper teamHelper, String key) {
         for (Scout scout : mScouts.get(teamHelper)) {
             for (ScoutMetric metric : scout.getMetrics()) {
-                if (key.equals(metric.getKey())) {
+                if (TextUtils.equals(key, metric.getKey())) {
                     return metric.getType();
                 }
             }
@@ -465,6 +480,49 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     private String getRangeAddress(Cell first, Cell last) {
         return first.getAddress().toString() + ":" + last.getAddress().toString();
+    }
+
+    private void buildLinePlot(Row row) {
+        Sheet sheet = row.getSheet();
+        int rowNum = row.getRowNum();
+        int lastDataCellNum = row.getLastCellNum() - 2;
+
+        Drawing drawing = sheet.createDrawingPatriarch();
+        ClientAnchor anchor = drawing.createAnchor(0,
+                                                   0,
+                                                   0,
+                                                   0,
+                                                   lastDataCellNum,
+                                                   rowNum,
+                                                   lastDataCellNum + 15,
+                                                   rowNum);
+
+        Chart chart = drawing.createChart(anchor);
+        ChartLegend legend = chart.getOrCreateLegend();
+        legend.setPosition(LegendPosition.RIGHT);
+
+        LineChartData data = chart.getChartDataFactory().createLineChartData();
+
+        ChartAxis bottomAxis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
+        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+        leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+
+        ChartDataSource<Number> categorySource = DataSources.fromArray(new Number[]{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100});
+        ChartDataSource<Number> dataSource = DataSources.fromNumericCellRange(
+                sheet, new CellRangeAddress(rowNum, rowNum, 1, lastDataCellNum));
+
+        data.addSeries(categorySource, dataSource).setTitle("one");
+        chart.plot(data, bottomAxis, leftAxis);
+
+//        XSSFChart xssfChart = (XSSFChart) chart;
+//        CTPlotArea plotArea = xssfChart.getCTChart().getPlotArea();
+//        plotArea.getLineChartArray()[0].getSmooth();
+//        CTBoolean ctBool = CTBoolean.Factory.newInstance();
+//        ctBool.setVal(false);
+//        plotArea.getLineChartArray()[0].setSmooth(ctBool);
+//        for (CTLineSer ser : plotArea.getLineChartArray()[0].getSerArray()) {
+//            ser.setSmooth(ctBool);
+//        }
     }
 
     private void setCellFormat(Cell cell, String format) {
