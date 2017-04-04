@@ -1,9 +1,7 @@
 package com.supercilex.robotscouter.data.util;
 
 import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.crash.FirebaseCrash;
@@ -33,12 +31,9 @@ public abstract class FirebaseTransformer implements ValueEventListener {
     @CallSuper
     @Override
     public void onDataChange(final DataSnapshot snapshot) {
-        transform(snapshot).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) mCompleteTask.setResult(snapshot);
-                else mCompleteTask.setException(task.getException());
-            }
+        transform(snapshot).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) mCompleteTask.setResult(snapshot);
+            else mCompleteTask.setException(task.getException());
         });
     }
 
