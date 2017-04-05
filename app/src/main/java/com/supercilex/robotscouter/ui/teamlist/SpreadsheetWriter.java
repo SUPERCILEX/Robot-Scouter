@@ -63,7 +63,15 @@ import org.apache.poi.ss.usermodel.charts.LineChartData;
 import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,6 +80,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -365,8 +374,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
                     for (Row row1 : rows) {
                         Cell cell1 = row1.getCell(0);
-                        String rowKey = cell1.getCellComment().getString().toString();
-                        if (TextUtils.equals(rowKey, metric.getKey())) {
+                        if (TextUtils.equals(getMetricKey(row1), metric.getKey())) {
                             setRowValue(column, metric, row1);
 
                             if (TextUtils.isEmpty(cell1.getStringCellValue())) {
@@ -403,6 +411,8 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             if (last > farthestColumn) farthestColumn = last;
         }
 
+        Map<ScoutMetric<Void>, Chart> chartPool = new HashMap<>();
+
         Iterator<Row> rowIterator = sheet.rowIterator();
         for (int i = 0; rowIterator.hasNext(); i++) {
             Row row = rowIterator.next();
@@ -416,8 +426,8 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             Cell first = row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             cell.setCellStyle(first.getCellStyle());
 
-            String key = row.getCell(0).getCellComment().getString().toString();
-            @MetricType int type = getMetricType(teamHelper, key);
+            String key = getMetricKey(row);
+            @MetricType int type = getMetric(teamHelper, key).getType();
 
             String rangeAddress = getRangeAddress(
                     first,
@@ -433,7 +443,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
 
-                    buildLinePlot(row);
+                    buildTeamChart(row, teamHelper, chartPool);
                     break;
                 case MetricType.STOPWATCH:
                     String excludeZeros = "\"<>0\"";
@@ -441,7 +451,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
 
-                    buildLinePlot(row);
+                    buildTeamChart(row, teamHelper, chartPool);
                     break;
                 case MetricType.SPINNER:
                     sheet.setArrayFormula(
@@ -465,12 +475,11 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         }
     }
 
-    @MetricType
-    private int getMetricType(TeamHelper teamHelper, String key) {
+    private ScoutMetric getMetric(TeamHelper teamHelper, String key) {
         for (Scout scout : mScouts.get(teamHelper)) {
             for (ScoutMetric metric : scout.getMetrics()) {
                 if (TextUtils.equals(key, metric.getKey())) {
-                    return metric.getType();
+                    return metric;
                 }
             }
         }
@@ -482,40 +491,79 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         return first.getAddress().toString() + ":" + last.getAddress().toString();
     }
 
-    private void buildLinePlot(Row row) {
+    private void buildTeamChart(Row row,
+                                TeamHelper teamHelper,
+                                Map<ScoutMetric<Void>, Chart> chartPool) {
         Sheet sheet = row.getSheet();
         int rowNum = row.getRowNum();
         int lastDataCellNum = row.getLastCellNum() - 2;
 
-        Drawing drawing = sheet.createDrawingPatriarch();
-        ClientAnchor anchor = drawing.createAnchor(0,
-                                                   0,
-                                                   0,
-                                                   0,
-                                                   lastDataCellNum,
-                                                   rowNum,
-                                                   lastDataCellNum + 15,
-                                                   rowNum);
+        Chart chart = null;
+        ScoutMetric<Void> nearestHeader = null;
 
-        Chart chart = drawing.createChart(anchor);
-        ChartLegend legend = chart.getOrCreateLegend();
-        legend.setPosition(LegendPosition.RIGHT);
+        List<Row> rows = getAdjustedList(row.getSheet());
+        for (int i = row.getRowNum(); i >= 0; i--) {
+            ScoutMetric metric = getMetric(teamHelper, getMetricKey(rows.get(i)));
+
+            if (metric.getType() == MetricType.HEADER) {
+                nearestHeader = metric;
+
+                Chart cachedChart = chartPool.get(metric);
+                if (cachedChart != null) chart = cachedChart;
+                break;
+            }
+        }
+
+        if (chart == null) {
+            Drawing drawing = sheet.createDrawingPatriarch();
+            chart = drawing.createChart(drawing.createAnchor(0,
+                                                             0,
+                                                             0,
+                                                             0,
+                                                             lastDataCellNum,
+                                                             rowNum,
+                                                             lastDataCellNum + 15,
+                                                             rowNum));
+            if (nearestHeader != null) chartPool.put(nearestHeader, chart);
+
+            ChartLegend legend = chart.getOrCreateLegend();
+            legend.setPosition(LegendPosition.RIGHT);
+        }
 
         LineChartData data = chart.getChartDataFactory().createLineChartData();
+
+        ChartDataSource<Number> categorySource = DataSources.fromNumericCellRange(
+                sheet, new CellRangeAddress(0, 0, 1, lastDataCellNum));
+        data.addSeries(
+                categorySource,
+                DataSources.fromNumericCellRange(
+                        sheet,
+                        new CellRangeAddress(rowNum, rowNum, 1, lastDataCellNum)))
+                .setTitle(row.getCell(0).getStringCellValue());
 
         ChartAxis bottomAxis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
         ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-
-        ChartDataSource<Number> categorySource = DataSources.fromArray(new Number[]{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100});
-        ChartDataSource<Number> dataSource = DataSources.fromNumericCellRange(
-                sheet, new CellRangeAddress(rowNum, rowNum, 1, lastDataCellNum));
-
-        data.addSeries(categorySource, dataSource).setTitle("one");
         chart.plot(data, bottomAxis, leftAxis);
 
-//        XSSFChart xssfChart = (XSSFChart) chart;
-//        CTPlotArea plotArea = xssfChart.getCTChart().getPlotArea();
+        if (chart instanceof XSSFChart) {
+            CTChart ctChart = ((XSSFChart) chart).getCTChart();
+
+            CTPlotArea plotArea = ctChart.getPlotArea();
+            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Value");
+            setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
+
+
+            for (int i = row.getRowNum(); i >= 0; i--) {
+                ScoutMetric metric = getMetric(teamHelper, getMetricKey(rows.get(i)));
+
+                if (metric.getType() == MetricType.HEADER) {
+                    setChartTitle(ctChart, metric.getName());
+                    break;
+                }
+            }
+        }
+
 //        plotArea.getLineChartArray()[0].getSmooth();
 //        CTBoolean ctBool = CTBoolean.Factory.newInstance();
 //        ctBool.setVal(false);
@@ -523,6 +571,30 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 //        for (CTLineSer ser : plotArea.getLineChartArray()[0].getSerArray()) {
 //            ser.setSmooth(ctBool);
 //        }
+    }
+
+    private void setChartTitle(CTChart ctChart, String text) {
+        CTTitle title = ctChart.addNewTitle();
+        CTTx tx = title.addNewTx();
+        CTTextBody rich = tx.addNewRich();
+        rich.addNewBodyPr();
+        CTTextParagraph paragraph = rich.addNewP();
+        CTRegularTextRun textRun = paragraph.addNewR();
+        textRun.setT(text);
+    }
+
+    private void setAxisTitle(CTTitle title, String text) {
+        title.addNewLayout();
+        title.addNewOverlay().setVal(false);
+
+        CTTextBody textBody = title.addNewTx().addNewRich();
+        textBody.addNewBodyPr();
+        textBody.addNewLstStyle();
+
+        CTTextParagraph paragraph = textBody.addNewP();
+        paragraph.addNewPPr().addNewDefRPr();
+        paragraph.addNewR().setT(text);
+        paragraph.addNewEndParaRPr();
     }
 
     private void setCellFormat(Cell cell, String format) {
@@ -710,14 +782,12 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
                 if (TextUtils.isEmpty(getStringForCell(averageCell))) continue;
 
-                Cell metricCell = averageRow.getCell(0);
-                String metricKey = metricCell.getCellComment().getString().toString();
-
+                String metricKey = getMetricKey(averageRow);
                 for (Cell keyCell : getAdjustedList(headerRow)) {
                     Comment keyComment = keyCell.getCellComment();
                     String key = keyComment == null ? null : keyComment.getString().toString();
 
-                    if (metricKey.equals(key)) {
+                    if (TextUtils.equals(metricKey, key)) {
                         setAverageFormula(scoutSheet,
                                           row.createCell(keyCell.getColumnIndex()),
                                           averageCell);
@@ -726,7 +796,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                 }
 
                 Cell keyCell = headerRow.createCell(headerRow.getLastCellNum());
-                keyCell.setCellValue(metricCell.getStringCellValue());
+                keyCell.setCellValue(averageRow.getCell(0).getStringCellValue());
                 keyCell.setCellStyle(headerStyle);
                 Comment keyComment = getComment(headerRow, keyCell);
                 mTemporaryCommentCells.add(keyCell);
@@ -744,6 +814,10 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         String safeSheetName = scoutSheet.getSheetName().replace("'", "''");
         valueCell.setCellFormula("'" + safeSheetName + "'!" + averageCell.getAddress());
         valueCell.setCellStyle(averageCell.getCellStyle());
+    }
+
+    private String getMetricKey(Row row) {
+        return row.getCell(0).getCellComment().getString().toString();
     }
 
     private <T> List<T> getAdjustedList(Iterable<T> iterator) {
