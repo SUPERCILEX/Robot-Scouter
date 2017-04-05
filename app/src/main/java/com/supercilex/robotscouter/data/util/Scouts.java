@@ -56,27 +56,22 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             scoutIndicesTasks.add(scoutIndicesTask.getTask());
 
             DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(helper.getTeam().getKey()))
-                    .addOnSuccessListener(new OnSuccessListener<Query>() {
+                    .addOnSuccessListener(query -> query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onSuccess(Query query) {
-                            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    List<String> scoutKeys = new ArrayList<>();
-                                    for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
-                                        scoutKeys.add(scoutKeyTemplate.getKey());
-                                    }
-                                    scoutIndicesTask.setResult(Pair.create(helper, scoutKeys));
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                    scoutIndicesTask.setException(error.toException());
-                                    FirebaseCrash.report(error.toException());
-                                }
-                            });
+                        public void onDataChange(DataSnapshot snapshot) {
+                            List<String> scoutKeys = new ArrayList<>();
+                            for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
+                                scoutKeys.add(scoutKeyTemplate.getKey());
+                            }
+                            scoutIndicesTask.setResult(Pair.create(helper, scoutKeys));
                         }
-                    })
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            scoutIndicesTask.setException(error.toException());
+                            FirebaseCrash.report(error.toException());
+                        }
+                    }))
                     .addOnFailureListener(this);
         }
 
@@ -85,19 +80,11 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             scoutKeysTask.addOnSuccessListener(this).addOnFailureListener(this);
         }
 
-        Tasks.whenAll(scoutIndicesTasks).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Tasks.whenAll(mScoutMetricsTasks)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                mScoutsTask.setResult(mScouts);
-                            }
-                        })
-                        .addOnFailureListener(Scouts.this);
-            }
-        }).addOnFailureListener(this);
+        Tasks.whenAll(scoutIndicesTasks)
+                .addOnSuccessListener(aVoid -> Tasks.whenAll(mScoutMetricsTasks)
+                        .addOnSuccessListener(aVoid1 -> mScoutsTask.setResult(mScouts))
+                        .addOnFailureListener(this))
+                .addOnFailureListener(this);
 
 
         return mScoutsTask.getTask();

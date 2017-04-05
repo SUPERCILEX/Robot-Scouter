@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
@@ -141,12 +140,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     public void selectTeam(final String teamKey) {
         if (mAdapter == null) {
             mOnAdapterReadyTask.getTask()
-                    .addOnSuccessListener(new OnSuccessListener<TeamListAdapter>() {
-                        @Override
-                        public void onSuccess(TeamListAdapter adapter) {
-                            adapter.updateSelection(teamKey);
-                        }
-                    });
+                    .addOnSuccessListener(adapter -> adapter.updateSelection(teamKey));
         } else {
             mAdapter.updateSelection(teamKey);
         }

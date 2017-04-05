@@ -94,12 +94,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
     private Task<Void> getOnViewReadyTask(View view) {
         final TaskCompletionSource<Void> onReadTask = new TaskCompletionSource<>();
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                onReadTask.setResult(null);
-            }
-        });
+        view.post(() -> onReadTask.setResult(null));
         return onReadTask.getTask();
     }
 
@@ -193,12 +188,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
                 StopwatchViewHolder holder = mHolder.get();
                 if (holder != null) {
-                    new Handler(holder.itemView.getContext().getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateButtonTime();
-                        }
-                    });
+                    new Handler(holder.itemView.getContext()
+                                        .getMainLooper()).post(this::updateButtonTime);
                 }
             } catch (InterruptedException e) {
                 FirebaseCrash.report(e);

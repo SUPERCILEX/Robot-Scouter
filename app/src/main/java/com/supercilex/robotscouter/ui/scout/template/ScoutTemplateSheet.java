@@ -219,9 +219,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 metricRef.setValue(new ScoutMetric<>("", 0, MetricType.COUNTER), priority);
                 break;
             case R.id.add_spinner:
-                metricRef.setValue(
-                        new SpinnerMetric("", Collections.singletonMap("0", "item 1")),
-                        priority);
+                metricRef.setValue(SpinnerMetric.init(), priority);
                 break;
             case R.id.add_note:
                 metricRef.setValue(new ScoutMetric<>("", "", MetricType.NOTE), priority);

@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
-import android.annotation.SuppressLint;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
@@ -41,16 +40,14 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
 
     public void onBind(final RecyclerView.ViewHolder viewHolder, int position) {
         viewHolder.itemView.findViewById(R.id.reorder)
-                .setOnTouchListener(new View.OnTouchListener() {
-                    @SuppressLint("ClickableViewAccessibility")
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                            viewHolder.itemView.clearFocus(); // Saves data
-                            mItemTouchHelper.startDrag(viewHolder);
-                        }
-                        return false;
+                .setOnTouchListener((v, event) -> {
+                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        viewHolder.itemView.clearFocus(); // Saves data
+                        mItemTouchHelper.startDrag(viewHolder);
+                        v.performClick();
+                        return true;
                     }
+                    return false;
                 });
 
         if (position == mScrollToPosition) {
@@ -98,12 +95,8 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
                 deletedRef.removeValue();
 
                 Snackbar.make(mRootView, R.string.deleted, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.undo, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                deletedRef.setValue(snapshot.getValue(), position);
-                            }
-                        })
+                        .setAction(R.string.undo,
+                                   v -> deletedRef.setValue(snapshot.getValue(), position))
                         .show();
             }
 
