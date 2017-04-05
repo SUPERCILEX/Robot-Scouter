@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    tools:ignore="UnusedResources">
+    <!-- TODO remove ignore once the Gradle plugin is fixed -->
 
     <include layout="@layout/scout_template_base_reorder"/>
 
