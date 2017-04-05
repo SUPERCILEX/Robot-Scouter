@@ -496,7 +496,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                 Map<ScoutMetric<Void>, Chart> chartPool) {
         Sheet sheet = row.getSheet();
         int rowNum = row.getRowNum();
-        int lastDataCellNum = row.getLastCellNum() - 2;
+        int lastDataCellNum = row.getSheet().getRow(0).getLastCellNum() - 2;
 
         Chart chart = null;
         ScoutMetric<Void> nearestHeader = null;
@@ -520,9 +520,9 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                                              0,
                                                              0,
                                                              0,
-                                                             lastDataCellNum,
+                                                             lastDataCellNum + 3,
                                                              rowNum,
-                                                             lastDataCellNum + 15,
+                                                             lastDataCellNum + 18,
                                                              rowNum));
             if (nearestHeader != null) chartPool.put(nearestHeader, chart);
 
