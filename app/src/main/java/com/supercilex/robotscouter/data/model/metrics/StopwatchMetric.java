@@ -10,7 +10,7 @@ public class StopwatchMetric extends ScoutMetric<List<Long>> {
 
     @Override
     public List<Long> getValue() {
-        if (super.getValue() == null) setValue(new ArrayList<Long>());
+        if (super.getValue() == null) setValue(new ArrayList<>());
         return super.getValue();
     }
 }

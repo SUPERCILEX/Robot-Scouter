@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -222,16 +221,13 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 Snackbar.make(mFragment.getView(),
                               R.string.multiple_teams_selected,
                               Snackbar.LENGTH_LONG)
-                        .setAction(R.string.select_all, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mSelectedTeams.clear();
-                                for (int i = 0; i < mAdapter.getItemCount(); i++) {
-                                    mSelectedTeams.add(mAdapter.getItem(i).getHelper());
-                                }
-                                updateState();
-                                notifyItemsChanged();
+                        .setAction(R.string.select_all, v -> {
+                            mSelectedTeams.clear();
+                            for (int i = 0; i < mAdapter.getItemCount(); i++) {
+                                mSelectedTeams.add(mAdapter.getItem(i).getHelper());
                             }
+                            updateState();
+                            notifyItemsChanged();
                         })
                         .show();
             }
@@ -319,12 +315,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 ContextCompat.getColor(mFragment.getContext(), oldColorPrimary),
                 ContextCompat.getColor(mFragment.getContext(), newColorPrimary));
         toolbarAnimator.setDuration(ANIMATION_DURATION);
-        toolbarAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                toolbar.setBackgroundColor((int) animator.getAnimatedValue());
-            }
-        });
+        toolbarAnimator.addUpdateListener(animator -> toolbar.setBackgroundColor((int) animator.getAnimatedValue()));
         toolbarAnimator.start();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -336,13 +327,8 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                     ContextCompat.getColor(mFragment.getContext(), oldColorPrimaryDark),
                     ContextCompat.getColor(mFragment.getContext(), newColorPrimaryDark));
             statusBarAnimator.setDuration(ANIMATION_DURATION);
-            statusBarAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void onAnimationUpdate(ValueAnimator animator) {
-                    activity.getWindow().setStatusBarColor((int) animator.getAnimatedValue());
-                }
-            });
+            statusBarAnimator.addUpdateListener(animator -> activity.getWindow()
+                    .setStatusBarColor((int) animator.getAnimatedValue()));
             statusBarAnimator.start();
         }
     }
@@ -364,12 +350,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
         animator.setSupportsChangeAnimations(false);
         mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount() + 1);
 
-        mRecyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                animator.setSupportsChangeAnimations(true);
-            }
-        });
+        mRecyclerView.post(() -> animator.setSupportsChangeAnimations(true));
     }
 
     private FloatingActionButton getFab() {

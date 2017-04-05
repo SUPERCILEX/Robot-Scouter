@@ -9,8 +9,6 @@ import com.firebase.ui.database.FirebaseArray;
 import com.firebase.ui.database.FirebaseIndexArray;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.firebase.ui.database.SnapshotParser;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,25 +35,19 @@ import java.util.List;
 public final class DatabaseHelper {
     private static final String QUERY_KEY = "query_key";
 
-    private static final SnapshotParser<Team> TEAM_PARSER = new SnapshotParser<Team>() {
-        @Override
-        public Team parseSnapshot(DataSnapshot snapshot) {
-            Team team = snapshot.getValue(Team.class);
-            team.setKey(snapshot.getKey());
-            return team;
-        }
+    private static final SnapshotParser<Team> TEAM_PARSER = snapshot -> {
+        Team team = snapshot.getValue(Team.class);
+        team.setKey(snapshot.getKey());
+        return team;
     };
-    private static final SnapshotParser<Scout> SCOUT_PARSER = new SnapshotParser<Scout>() {
-        @Override
-        public Scout parseSnapshot(DataSnapshot snapshot) {
-            Scout scout = new Scout(snapshot.child(Constants.FIREBASE_NAME).getValue(String.class));
+    private static final SnapshotParser<Scout> SCOUT_PARSER = snapshot -> {
+        Scout scout = new Scout(snapshot.child(Constants.FIREBASE_NAME).getValue(String.class));
 
-            for (DataSnapshot metric : snapshot.child(Constants.FIREBASE_METRICS).getChildren()) {
-                scout.add(ScoutUtils.METRIC_PARSER.parseSnapshot(metric));
-            }
-
-            return scout;
+        for (DataSnapshot metric : snapshot.child(Constants.FIREBASE_METRICS).getChildren()) {
+            scout.add(ScoutUtils.METRIC_PARSER.parseSnapshot(metric));
         }
+
+        return scout;
     };
 
     private static final ObservableSnapshotArray<Team> TEAM_NOOP_ARRAY =
@@ -117,21 +109,18 @@ public final class DatabaseHelper {
         Constants.sFirebaseTeams = TEAM_NOOP_ARRAY;
         Constants.sFirebaseScoutTemplates = SCOUT_TEMPLATES_NOOP_ARRAY;
 
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-                FirebaseUser user = auth.getCurrentUser();
-                if (user == null) {
-                    removeTeamsListener();
-                    removeScoutTemplatesListener();
-                } else {
-                    // Log uid to help debug db crashes
-                    FirebaseCrash.log(user.getUid());
-                    AnalyticsHelper.updateUserId();
+        FirebaseAuth.getInstance().addAuthStateListener(auth -> {
+            FirebaseUser user = auth.getCurrentUser();
+            if (user == null) {
+                removeTeamsListener();
+                removeScoutTemplatesListener();
+            } else {
+                // Log uid to help debug db crashes
+                FirebaseCrash.log(user.getUid());
+                AnalyticsHelper.updateUserId();
 
-                    addTeamsListener(appContext);
-                    addScoutTemplatesListener();
-                }
+                addTeamsListener(appContext);
+                addScoutTemplatesListener();
             }
         });
 
@@ -277,26 +266,12 @@ public final class DatabaseHelper {
                 final Team newTeam = teamHelper.getTeam();
 
                 DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(newTeam.getKey()))
-                        .addOnSuccessListener(new OnSuccessListener<Query>() {
-                            @Override
-                            public void onSuccess(Query query) {
-                                new FirebaseCopier(query,
-                                                   ScoutUtils.getIndicesRef(oldTeam.getKey()))
-                                        .performTransformation()
-                                        .continueWithTask(new Continuation<DataSnapshot, Task<Void>>() {
-                                            @Override
-                                            public Task<Void> then(@NonNull Task<DataSnapshot> task) throws Exception {
-                                                return task.getResult().getRef().removeValue();
-                                            }
-                                        })
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                newTeam.getHelper().deleteTeam();
-                                            }
-                                        });
-                            }
-                        });
+                        .addOnSuccessListener(query -> new FirebaseCopier(query,
+                                                                          ScoutUtils.getIndicesRef(
+                                                                                  oldTeam.getKey()))
+                                .performTransformation()
+                                .continueWithTask(task -> task.getResult().getRef().removeValue())
+                                .addOnSuccessListener(aVoid -> newTeam.getHelper().deleteTeam()));
             }
         }
     }

@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseAppIndex;
 import com.google.firebase.appindexing.FirebaseUserActions;
@@ -32,7 +31,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     public static final Parcelable.Creator<TeamHelper> CREATOR = new Parcelable.Creator<TeamHelper>() {
         @Override
         public TeamHelper createFromParcel(Parcel source) {
-            return new TeamHelper((Team) source.readParcelable(Team.class.getClassLoader()));
+            return new TeamHelper(source.readParcelable(Team.class.getClassLoader()));
         }
 
         @Override
@@ -135,30 +134,23 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void deleteTeam() {
-        ScoutUtils.deleteAll(mTeam.getKey()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                getRef().removeValue();
-                getIndicesRef().child(mTeam.getKey()).removeValue();
-                FirebaseAppIndex.getInstance().remove(getDeepLink());
-            }
+        ScoutUtils.deleteAll(mTeam.getKey()).addOnSuccessListener(aVoid -> {
+            getRef().removeValue();
+            getIndicesRef().child(mTeam.getKey()).removeValue();
+            FirebaseAppIndex.getInstance().remove(getDeepLink());
         });
     }
 
     public void fetchLatestData(Context context) {
         final Context appContext = context.getApplicationContext();
         RemoteConfigHelper.fetchAndActivate()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        long differenceDays =
-                                TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
-                        double freshness =
-                                FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);
+                .addOnSuccessListener(aVoid -> {
+                    long differenceDays =
+                            TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
+                    double freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);
 
-                        if (differenceDays >= freshness) {
-                            DownloadTeamDataJob.start(appContext, TeamHelper.this);
-                        }
+                    if (differenceDays >= freshness) {
+                        DownloadTeamDataJob.start(appContext, this);
                     }
                 });
     }

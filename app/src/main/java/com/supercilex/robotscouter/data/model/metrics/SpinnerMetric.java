@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.util.Constants;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class SpinnerMetric extends ScoutMetric<Map<String, String>> {
@@ -22,8 +23,8 @@ public class SpinnerMetric extends ScoutMetric<Map<String, String>> {
         mSelectedValueKey = selectedValueKey;
     }
 
-    public SpinnerMetric(String name, Map<String, String> values) {
-        this(name, values, null);
+    public static SpinnerMetric init() {
+        return new SpinnerMetric("", Collections.singletonMap("0", "item 1"), null);
     }
 
     @Keep
