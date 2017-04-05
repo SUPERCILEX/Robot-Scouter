@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scout.template;
 
 import android.content.Context;
 import android.support.annotation.Keep;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
@@ -11,7 +10,7 @@ import android.view.View;
 
 import com.github.clans.fab.FloatingActionMenu;
 
-public class FabMenuBehavior extends AppBarLayout.ScrollingViewBehavior {
+public class FabMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionMenu> {
     @Keep
     public FabMenuBehavior() {
         super();
@@ -23,14 +22,17 @@ public class FabMenuBehavior extends AppBarLayout.ScrollingViewBehavior {
     }
 
     @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
-        return super.layoutDependsOn(parent, child, dependency)
-                || dependency instanceof Snackbar.SnackbarLayout;
+    public boolean layoutDependsOn(CoordinatorLayout parent,
+                                   FloatingActionMenu child,
+                                   View dependency) {
+        return dependency instanceof Snackbar.SnackbarLayout;
     }
 
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, View child, View dependency) {
-        if (dependency instanceof Snackbar.SnackbarLayout && child instanceof FloatingActionMenu) {
+    public boolean onDependentViewChanged(CoordinatorLayout parent,
+                                          FloatingActionMenu child,
+                                          View dependency) {
+        if (dependency instanceof Snackbar.SnackbarLayout) {
             float translationY =
                     Math.min(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
             ViewCompat.setTranslationY(child, translationY);
@@ -41,13 +43,13 @@ public class FabMenuBehavior extends AppBarLayout.ScrollingViewBehavior {
     }
 
     @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent, View child, View dependency) {
-        if (dependency instanceof Snackbar.SnackbarLayout && child instanceof FloatingActionMenu) {
+    public void onDependentViewRemoved(CoordinatorLayout parent,
+                                       FloatingActionMenu child,
+                                       View dependency) {
+        if (dependency instanceof Snackbar.SnackbarLayout) {
             float translationY =
                     Math.max(0, ViewCompat.getTranslationY(dependency) - dependency.getHeight());
             ViewCompat.setTranslationY(child, translationY);
-        } else {
-            super.onDependentViewRemoved(parent, child, dependency);
         }
     }
 }
