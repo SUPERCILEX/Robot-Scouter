@@ -126,7 +126,7 @@ public final class AuthHelper implements View.OnClickListener {
                         Snackbar.make(mActivity.findViewById(R.id.root),
                                       R.string.anonymous_sign_in_failed,
                                       Snackbar.LENGTH_LONG)
-                                .setAction(R.string.sign_in, AuthHelper.this)
+                                .setAction(R.string.sign_in, this)
                                 .show());
     }
 

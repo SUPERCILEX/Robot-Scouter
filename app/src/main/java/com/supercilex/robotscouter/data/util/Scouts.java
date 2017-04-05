@@ -83,7 +83,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
         Tasks.whenAll(scoutIndicesTasks)
                 .addOnSuccessListener(aVoid -> Tasks.whenAll(mScoutMetricsTasks)
                         .addOnSuccessListener(aVoid1 -> mScoutsTask.setResult(mScouts))
-                        .addOnFailureListener(Scouts.this))
+                        .addOnFailureListener(this))
                 .addOnFailureListener(this);
 
 

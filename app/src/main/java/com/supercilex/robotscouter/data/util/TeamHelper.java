@@ -150,7 +150,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
                     double freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);
 
                     if (differenceDays >= freshness) {
-                        DownloadTeamDataJob.start(appContext, TeamHelper.this);
+                        DownloadTeamDataJob.start(appContext, this);
                     }
                 });
     }
