@@ -550,20 +550,13 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             CTChart ctChart = ((XSSFChart) chart).getCTChart();
 
             CTPlotArea plotArea = ctChart.getPlotArea();
-            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Value");
+            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
             setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
 
-
-            for (int i = row.getRowNum(); i >= 0; i--) {
-                ScoutMetric metric = getMetric(teamHelper, getMetricKey(rows.get(i)));
-
-                if (metric.getType() == MetricType.HEADER) {
-                    setChartTitle(ctChart, metric.getName());
-                    break;
-                }
-            }
+            if (nearestHeader != null) setChartTitle(ctChart, nearestHeader.getName());
         }
 
+// TODO figure out what this does
 //        plotArea.getLineChartArray()[0].getSmooth();
 //        CTBoolean ctBool = CTBoolean.Factory.newInstance();
 //        ctBool.setVal(false);
