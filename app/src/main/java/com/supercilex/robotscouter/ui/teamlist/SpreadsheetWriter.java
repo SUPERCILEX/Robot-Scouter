@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
@@ -22,7 +21,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
@@ -120,12 +118,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         Collections.sort(teamHelpers);
         Scouts.getAll(teamHelpers, mContext)
                 .addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this)
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        showError(e);
-                    }
-                });
+                .addOnFailureListener(this::showError);
 
         if (ConnectivityHelper.isOffline(mContext)) {
             Toast.makeText(mContext, R.string.exporting_offline, Toast.LENGTH_LONG).show();
@@ -135,6 +128,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     /**
      * @return true if an export was attempted, false otherwise
      */
+    @SuppressWarnings("MissingPermission")
     public static boolean writeAndShareTeams(Fragment fragment,
                                              @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
@@ -148,7 +142,6 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             return false;
         }
 
-        //noinspection MissingPermission
         new SpreadsheetWriter(fragment, new ArrayList<>(teamHelpers));
 
         return true;
@@ -228,12 +221,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
             return absoluteFile;
         } catch (final IOException e) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    showError(e);
-                }
-            });
+            new Handler(Looper.getMainLooper()).post(() -> showError(e));
             absoluteFile.delete();
         } finally {
             if (stream != null) try {
@@ -286,13 +274,10 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         Workbook workbook;
         if (isUnsupportedDevice()) {
             workbook = new HSSFWorkbook();
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(mContext, R.string.unsupported_device, Toast.LENGTH_SHORT)
-                            .show();
-                }
-            });
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(mContext,
+                                                                          R.string.unsupported_device,
+                                                                          Toast.LENGTH_SHORT)
+                    .show());
         } else {
             workbook = new XSSFWorkbook();
         }
@@ -868,12 +853,9 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         public void setMessage(String message) {
             mMessage = message;
 
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    ProgressDialog dialog = mProgressDialog.get();
-                    if (dialog != null) dialog.setMessage(mMessage);
-                }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                ProgressDialog dialog = mProgressDialog.get();
+                if (dialog != null) dialog.setMessage(mMessage);
             });
         }
 

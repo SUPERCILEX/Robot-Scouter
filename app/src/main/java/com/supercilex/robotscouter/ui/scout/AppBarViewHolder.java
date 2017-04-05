@@ -83,13 +83,10 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
                     public void onResourceReady(final Bitmap bitmap,
                                                 GlideAnimation glideAnimation) {
                         if (bitmap != null && !bitmap.isRecycled()) {
-                            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                                @Override
-                                public void onGenerated(Palette palette) {
-                                    Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
-                                    if (vibrantSwatch != null) {
-                                        updateScrim(vibrantSwatch.getRgb(), bitmap);
-                                    }
+                            Palette.from(bitmap).generate(palette -> {
+                                Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+                                if (vibrantSwatch != null) {
+                                    updateScrim(vibrantSwatch.getRgb(), bitmap);
                                 }
                             });
                         }
