@@ -629,14 +629,9 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         if (chart == null) {
             Drawing drawing = sheet.createDrawingPatriarch();
             Integer headerIndex = nearestHeader.first + 1;
-            chart = drawing.createChart(drawing.createAnchor(0,
-                                                             0,
-                                                             0,
-                                                             0,
-                                                             lastDataCellNum + 3,
-                                                             headerIndex,
-                                                             lastDataCellNum + 18,
-                                                             headerIndex));
+            int startChartIndex = lastDataCellNum + 3;
+            chart = drawing.createChart(drawing.createAnchor(
+                    0, 0, 0, 0, startChartIndex, headerIndex, startChartIndex, headerIndex));
             chartPool.put(nearestHeader.second, chart);
 
             ChartLegend legend = chart.getOrCreateLegend();
