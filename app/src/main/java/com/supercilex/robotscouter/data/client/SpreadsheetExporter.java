@@ -69,6 +69,9 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarkerStyle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
@@ -621,6 +624,12 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
             String name = nearestHeader.second.getName();
             if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
+
+            CTMarker ctMarker = CTMarker.Factory.newInstance();
+            ctMarker.setSymbol(CTMarkerStyle.Factory.newInstance());
+            for (CTLineSer ser : plotArea.getLineChartArray()[0].getSerArray()) {
+                ser.setMarker(ctMarker);
+            }
         }
     }
 
