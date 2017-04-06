@@ -30,7 +30,7 @@ public abstract class FirebaseTransformer implements ValueEventListener {
 
     @CallSuper
     @Override
-    public void onDataChange(final DataSnapshot snapshot) {
+    public void onDataChange(DataSnapshot snapshot) {
         transform(snapshot).addOnCompleteListener(task -> {
             if (task.isSuccessful()) mCompleteTask.setResult(snapshot);
             else mCompleteTask.setException(task.getException());

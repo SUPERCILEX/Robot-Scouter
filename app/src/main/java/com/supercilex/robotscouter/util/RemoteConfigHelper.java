@@ -16,7 +16,7 @@ public final class RemoteConfigHelper {
         long cacheExpiration = config.getInfo()
                 .getConfigSettings()
                 .isDeveloperModeEnabled() ? 0 : TimeUnit.HOURS.toSeconds(12);
-        final TaskCompletionSource<Void> activate = new TaskCompletionSource<>();
+        TaskCompletionSource<Void> activate = new TaskCompletionSource<>();
 
         config.fetch(cacheExpiration).addOnCompleteListener(task -> {
             FirebaseRemoteConfig.getInstance().activateFetched();

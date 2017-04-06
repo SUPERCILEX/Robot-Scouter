@@ -38,7 +38,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
         mAdapter = adapter;
     }
 
-    public void onBind(final RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBind(RecyclerView.ViewHolder viewHolder, int position) {
         viewHolder.itemView.findViewById(R.id.reorder)
                 .setOnTouchListener((v, event) -> {
                     if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
@@ -91,7 +91,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
         viewHolder.itemView.clearFocus(); // Needed to prevent the item from being re-added
         deletedRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(final DataSnapshot snapshot) {
+            public void onDataChange(DataSnapshot snapshot) {
                 deletedRef.removeValue();
 
                 Snackbar.make(mRootView, R.string.deleted, Snackbar.LENGTH_LONG)
