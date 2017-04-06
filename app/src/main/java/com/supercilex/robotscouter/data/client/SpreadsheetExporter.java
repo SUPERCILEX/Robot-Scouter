@@ -71,8 +71,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
@@ -614,25 +612,16 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         chart.plot(data, bottomAxis, leftAxis);
 
         if (chart instanceof XSSFChart) {
-            CTChart ctChart = ((XSSFChart) chart).getCTChart();
+            XSSFChart xChart = (XSSFChart) chart;
+            CTChart ctChart = xChart.getCTChart();
 
             CTPlotArea plotArea = ctChart.getPlotArea();
             setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
             setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
 
             String name = nearestHeader.second.getName();
-            if (!TextUtils.isEmpty(name)) setChartTitle(ctChart, name);
+            if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
         }
-    }
-
-    private void setChartTitle(CTChart ctChart, String text) {
-        CTTitle title = ctChart.addNewTitle();
-        CTTx tx = title.addNewTx();
-        CTTextBody rich = tx.addNewRich();
-        rich.addNewBodyPr();
-        CTTextParagraph paragraph = rich.addNewP();
-        CTRegularTextRun textRun = paragraph.addNewR();
-        textRun.setT(text);
     }
 
     private void setAxisTitle(CTTitle title, String text) {
