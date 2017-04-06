@@ -87,7 +87,7 @@ android.applicationVariants.all { variant ->
 }
 
 project.afterEvaluate {
-    publishApkProdRelease.dependsOn 'firebaseUploadProdReleaseProguardMapping'
+//    publishApkProdRelease.dependsOn 'firebaseUploadProdReleaseProguardMapping' TODO add back when Android fixes their plugin
 }
 
 dependencies {
