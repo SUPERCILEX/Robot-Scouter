@@ -138,7 +138,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         return mMenuHelper.onOptionsItemSelected(item);
     }
 
-    public void selectTeam(final String teamKey) {
+    public void selectTeam(String teamKey) {
         if (mAdapter == null) {
             mOnAdapterReadyTask.getTask()
                     .addOnSuccessListener(adapter -> adapter.updateSelection(teamKey));

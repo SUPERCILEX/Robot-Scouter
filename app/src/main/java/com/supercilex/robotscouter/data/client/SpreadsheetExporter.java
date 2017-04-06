@@ -51,6 +51,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Sumif;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
@@ -230,16 +231,12 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         return builder.build();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        startForeground(R.string.exporting_spreadsheet_title,
-                        getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
-    }
-
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onHandleIntent(Intent intent) {
+        startForeground(R.string.exporting_spreadsheet_title,
+                        getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
+
         if (ConnectivityHelper.isOffline(this)) {
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
                                                                           R.string.exporting_offline,
@@ -309,7 +306,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         }
 
         updateNotification(new Random().nextInt(Integer.MAX_VALUE - 1) + 1, builder.build());
-        stopSelf();
+        stopForeground(true);
     }
 
     private String getPluralTeams(@PluralsRes int id) {
@@ -350,7 +347,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             getWorkbook().write(stream);
 
             return absoluteFile;
-        } catch (final IOException e) {
+        } catch (IOException e) {
             new Handler(Looper.getMainLooper()).post(() -> showError(e));
             absoluteFile.delete();
         } finally {
@@ -952,8 +949,17 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
         String safeSheetName = scoutSheet.getSheetName().replace("'", "''");
-        valueCell.setCellFormula("'" + safeSheetName + "'!" + averageCell.getAddress());
+        String rangeAddress = "'" + safeSheetName + "'!" + averageCell.getAddress();
+
+        valueCell.setCellFormula("IF(" +
+                                         "OR(" + rangeAddress + " = TRUE, " + rangeAddress + " = FALSE), " +
+                                         "IF(" + rangeAddress + " = TRUE, 100, 0), " +
+                                         rangeAddress + ")");
         valueCell.setCellStyle(averageCell.getCellStyle());
+
+        if (averageCell.getCellTypeEnum() == CellType.BOOLEAN) {
+            setCellFormat(valueCell, "0.00%");
+        }
     }
 
     private String getMetricKey(Row row) {
