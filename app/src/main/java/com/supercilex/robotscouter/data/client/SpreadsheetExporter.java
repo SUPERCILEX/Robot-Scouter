@@ -41,6 +41,14 @@ import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.Countif;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.Sumif;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Chart;
@@ -112,6 +120,42 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     private static final int MAX_SHEET_LENGTH = 31;
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
+
+    private FreeRefFunction AVERAGEIF = new FreeRefFunction() {
+        @Override
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext context) {
+            if (args.length >= 2 && args.length % 2 == 0) {
+                double result = 0;
+
+                for (int i = 0; i < args.length; i += 2) {
+                    ValueEval firstArg = args[i];
+                    ValueEval secondArg = args[i + 1];
+                    NumberEval evaluate = evaluate(context.getRowIndex(),
+                                                   context.getColumnIndex(),
+                                                   firstArg,
+                                                   secondArg);
+
+                    result = evaluate.getNumberValue();
+                }
+
+                return new NumberEval(result);
+            } else {
+                return ErrorEval.VALUE_INVALID;
+            }
+        }
+
+        private NumberEval evaluate(int srcRowIndex,
+                                    int srcColumnIndex,
+                                    ValueEval arg0,
+                                    ValueEval arg1) {
+            NumberEval totalEval =
+                    (NumberEval) new Sumif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);
+            NumberEval countEval =
+                    (NumberEval) new Countif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);
+
+            return new NumberEval(totalEval.getNumberValue() / countEval.getNumberValue());
+        }
+    };
 
     private Map<TeamHelper, List<Scout>> mScouts;
     private List<Cell> mTemporaryCommentCells = new ArrayList<>();
@@ -945,5 +989,6 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                            "com.fasterxml.aalto.stax.OutputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
                            "com.fasterxml.aalto.stax.EventFactoryImpl");
+        WorkbookEvaluator.registerFunction("AVERAGEIF", AVERAGEIF);
     }
 }
