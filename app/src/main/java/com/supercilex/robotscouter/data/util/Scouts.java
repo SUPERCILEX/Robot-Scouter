@@ -20,7 +20,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +54,8 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             final TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
             scoutIndicesTasks.add(scoutIndicesTask.getTask());
 
-            DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(helper.getTeam().getKey()))
-                    .addOnSuccessListener(query -> query.addListenerForSingleValueEvent(new ValueEventListener() {
+            ScoutUtils.getIndicesRef(helper.getTeam().getKey())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
                             List<String> scoutKeys = new ArrayList<>();
@@ -71,8 +70,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
                             scoutIndicesTask.setException(error.toException());
                             FirebaseCrash.report(error.toException());
                         }
-                    }))
-                    .addOnFailureListener(this);
+                    });
         }
 
 
@@ -105,7 +103,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
         mScoutsTask.setException(e);
     }
 
-    private class ScoutListener implements ChildEventListener, ValueEventListener, OnSuccessListener<Query> {
+    private class ScoutListener implements ChildEventListener, ValueEventListener {
         private static final int TIMEOUT = 1;
 
         private Query mQuery;
@@ -125,15 +123,6 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
             mScoutMetricsTask = scoutMetricsTask;
 
             resetTimeout();
-            if (ConnectivityHelper.isOffline(mContext)) {
-                addListeners();
-            } else {
-                DatabaseHelper.forceUpdate(mQuery).addOnSuccessListener(this);
-            }
-        }
-
-        @Override
-        public void onSuccess(Query query) {
             addListeners();
         }
 
