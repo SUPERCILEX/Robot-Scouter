@@ -54,9 +54,9 @@ public class DownloadTeamDataJob14 extends JobService {
     }
 
     @Override
-    public boolean onStartJob(final JobParameters params) {
+    public boolean onStartJob(JobParameters params) {
         Bundle extras = params.getExtras();
-        final TeamHelper oldTeamHelper = new Team.Builder(extras.getString("number"))
+        TeamHelper oldTeamHelper = new Team.Builder(extras.getString("number"))
                 .setKey(extras.getString("key"))
                 .setTemplateKey(extras.getString("template-key"))
                 .setName(extras.getString("name"))

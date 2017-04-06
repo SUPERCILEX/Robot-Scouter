@@ -105,7 +105,7 @@ public final class DatabaseHelper {
         return updateTask.getTask();
     }
 
-    public static void init(final Context appContext) {
+    public static void init(Context appContext) {
         Constants.sFirebaseTeams = TEAM_NOOP_ARRAY;
         Constants.sFirebaseScoutTemplates = SCOUT_TEMPLATES_NOOP_ARRAY;
 
@@ -260,10 +260,10 @@ public final class DatabaseHelper {
 
         private void mergeTeams(List<TeamHelper> teams) {
             Collections.sort(teams);
-            final Team oldTeam = teams.remove(0).getTeam();
+            Team oldTeam = teams.remove(0).getTeam();
 
             for (TeamHelper teamHelper : teams) {
-                final Team newTeam = teamHelper.getTeam();
+                Team newTeam = teamHelper.getTeam();
 
                 DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(newTeam.getKey()))
                         .addOnSuccessListener(query -> new FirebaseCopier(query,

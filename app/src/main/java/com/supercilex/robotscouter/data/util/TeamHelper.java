@@ -162,7 +162,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void fetchLatestData(Context context) {
-        final Context appContext = context.getApplicationContext();
+        Context appContext = context.getApplicationContext();
         RemoteConfigHelper.fetchAndActivate()
                 .addOnSuccessListener(aVoid -> {
                     long differenceDays =

@@ -50,7 +50,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
     @Override
     public Task<Map<TeamHelper, List<Scout>>> build() {
         List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
-        for (final TeamHelper helper : mTeamHelpers) {
+        for (TeamHelper helper : mTeamHelpers) {
             final TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
             scoutIndicesTasks.add(scoutIndicesTask.getTask());
 
@@ -89,7 +89,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
     }
 
     @Override
-    public void onSuccess(final Pair<TeamHelper, List<String>> pair) {
+    public void onSuccess(Pair<TeamHelper, List<String>> pair) {
         for (String scoutKey : pair.second) {
             final TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
             mScoutMetricsTasks.add(scoutMetricsTask.getTask());

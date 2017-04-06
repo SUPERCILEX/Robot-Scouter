@@ -269,7 +269,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             getWorkbook().write(stream);
 
             return absoluteFile;
-        } catch (final IOException e) {
+        } catch (IOException e) {
             new Handler(Looper.getMainLooper()).post(() -> showError(e));
             absoluteFile.delete();
         } finally {

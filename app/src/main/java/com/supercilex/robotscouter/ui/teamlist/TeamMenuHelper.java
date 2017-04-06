@@ -307,12 +307,12 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void updateToolbarColor(boolean visible) {
-        final FragmentActivity activity = mFragment.getActivity();
+        FragmentActivity activity = mFragment.getActivity();
 
         @ColorRes int oldColorPrimary = visible ? R.color.selected_toolbar : R.color.colorPrimary;
         @ColorRes int newColorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
 
-        final Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
         ValueAnimator toolbarAnimator = ValueAnimator.ofObject(
                 new ArgbEvaluator(),
                 ContextCompat.getColor(mFragment.getContext(), oldColorPrimary),
@@ -348,7 +348,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     private void notifyItemsChanged() {
-        final SimpleItemAnimator animator = (SimpleItemAnimator) mRecyclerView.getItemAnimator();
+        SimpleItemAnimator animator = (SimpleItemAnimator) mRecyclerView.getItemAnimator();
 
         animator.setSupportsChangeAnimations(false);
         mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount() + 1);
