@@ -86,10 +86,6 @@ android.applicationVariants.all { variant ->
     }
 }
 
-project.afterEvaluate {
-//    publishApkProdRelease.dependsOn 'firebaseUploadProdReleaseProguardMapping' TODO add back when Android fixes their plugin
-}
-
 dependencies {
     // To update Apache POI, use https://github.com/SUPERCILEX/poi-on-android
     compile fileTree(dir: 'libs', include: ['*.jar'])
