@@ -30,13 +30,20 @@
     <string name="share_call_to_action">Import team %s into Robot Scouter</string>
     <string name="export_spreadsheet">Export to spreadsheet</string>
     <plurals name="share_spreadsheet_title">
-        <item quantity="one">Export team %s and its scouting data to a spreadsheet</item>
-        <item quantity="other">Export teams %s and their scouting data to a spreadsheet</item>
+        <item quantity="one">Share team %s’s scouting data as a spreadsheet</item>
+        <item quantity="other">Share teams %s’s scouting data as a spreadsheet</item>
     </plurals>
     <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
-    <string name="loading_teams">Loading teams… (This may take several minutes)</string>
-    <string name="exporting_spreadsheet">Exporting spreadsheet…</string>
-    <string name="exporting_offline">Exporting spreadsheet while offline will yield incomplete results.</string>
+    <string name="exporting_spreadsheet_start">Spreadsheet exporting started; view progress in the notification drawer.</string>
+    <plurals name="exporting_spreadsheet_complete_title">
+        <item quantity="one">Spreadsheet exporting complete for team %s</item>
+        <item quantity="other">Spreadsheet exporting complete for teams %s</item>
+    </plurals>
+    <string name="exporting_spreadsheet_title">Exporting spreadsheet</string>
+    <string name="exporting_spreadsheet_loading">Loading teams</string>
+    <string name="exporting_spreadsheet_team">Exporting team %s’s sheet</string>
+    <string name="exporting_spreadsheet_average">Exporting average sheet</string>
+    <string name="exporting_offline">Exporting spreadsheet while offline may yield incomplete results.</string>
 
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>

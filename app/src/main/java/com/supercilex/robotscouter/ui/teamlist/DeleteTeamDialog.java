@@ -20,24 +20,19 @@ import java.util.List;
 
 public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnClickListener {
     private static final String TAG = "DeleteTeamDialog";
-    private static final String TEAMS_KEY = "teams_key";
 
     private List<TeamHelper> mTeamHelpers = new ArrayList<>();
 
-    public static void show(FragmentManager manager, List<TeamHelper> teams) {
+    public static void show(FragmentManager manager, List<TeamHelper> teamHelpers) {
         DialogFragment dialog = new DeleteTeamDialog();
-
-        Bundle args = new Bundle();
-        args.putParcelableArray(TEAMS_KEY, teams.toArray(new TeamHelper[teams.size()]));
-        dialog.setArguments(args);
-
+        dialog.setArguments(TeamHelper.toBundle(teamHelpers));
         dialog.show(manager, TAG);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (Parcelable parcelable : getArguments().getParcelableArray(TEAMS_KEY)) {
+        for (Parcelable parcelable : TeamHelper.getList(getArguments())) {
             mTeamHelpers.add((TeamHelper) parcelable);
         }
         Collections.sort(mTeamHelpers);

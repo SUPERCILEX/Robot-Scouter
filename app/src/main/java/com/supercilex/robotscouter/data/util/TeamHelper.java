@@ -25,6 +25,8 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.CustomTabsHelper;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
@@ -40,7 +42,8 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         }
     };
 
-    private static final String INTENT_TEAM = "com.supercilex.robotscouter.Team";
+    private static final String TEAM_HELPER_KEY = "com.supercilex.robotscouter.data.util.TeamHelper";
+    private static final String TEAM_HELPERS_KEY = "com.supercilex.robotscouter.data.util.TeamHelpers";
     private static final String FRESHNESS_DAYS = "team_freshness";
 
     private final Team mTeam;
@@ -54,21 +57,38 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public static TeamHelper get(Intent intent) {
-        return (TeamHelper) intent.getParcelableExtra(INTENT_TEAM);
+        return intent.getParcelableExtra(TEAM_HELPER_KEY);
     }
 
+    public static TeamHelper get(Bundle args) {
+        return args.getParcelable(TEAM_HELPER_KEY);
+    }
 
-    public static TeamHelper get(Bundle arguments) {
-        return (TeamHelper) arguments.getParcelable(INTENT_TEAM);
+    public static List<TeamHelper> getList(Intent intent) {
+        return intent.getParcelableArrayListExtra(TEAM_HELPERS_KEY);
+    }
+
+    public static List<TeamHelper> getList(Bundle args) {
+        return args.getParcelableArrayList(TEAM_HELPERS_KEY);
+    }
+
+    public static Intent toIntent(List<TeamHelper> teamHelpers) {
+        return new Intent().putExtra(TEAM_HELPERS_KEY, new ArrayList<>(teamHelpers));
+    }
+
+    public static Bundle toBundle(List<TeamHelper> teamHelpers) {
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(TEAM_HELPERS_KEY, new ArrayList<>(teamHelpers));
+        return args;
     }
 
     public Intent toIntent() {
-        return new Intent().putExtra(INTENT_TEAM, this);
+        return new Intent().putExtra(TEAM_HELPER_KEY, this);
     }
 
     public Bundle toBundle() {
         Bundle args = new Bundle();
-        args.putParcelable(INTENT_TEAM, this);
+        args.putParcelable(TEAM_HELPER_KEY, this);
         return args;
     }
 
