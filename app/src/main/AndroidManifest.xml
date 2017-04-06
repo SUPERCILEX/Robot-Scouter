@@ -80,6 +80,8 @@
 
         </activity>
 
+        <service android:name=".data.client.SpreadsheetExporter"/>
+
         <service
             android:name=".data.client.DownloadTeamDataJob21"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
