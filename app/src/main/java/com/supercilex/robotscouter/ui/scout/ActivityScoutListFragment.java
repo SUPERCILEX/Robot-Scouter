@@ -89,7 +89,9 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
         }
 
         private void setTaskDescription(@Nullable Bitmap icon, @ColorInt int colorPrimary) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && (icon == null || !icon.isRecycled())) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                    && (icon == null || !icon.isRecycled())
+                    && getActivity() != null) {
                 getActivity().setTaskDescription(
                         new ActivityManager.TaskDescription(mTeamHelper.toString(),
                                                             icon,
