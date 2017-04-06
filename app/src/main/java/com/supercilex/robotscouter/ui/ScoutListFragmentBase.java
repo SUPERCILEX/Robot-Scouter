@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.ChangeEventListener;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseUserActions;
@@ -39,8 +38,7 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
-public abstract class ScoutListFragmentBase extends Fragment
-        implements ChangeEventListener, OnCompleteListener<Team>, FirebaseAuth.AuthStateListener {
+public abstract class ScoutListFragmentBase extends Fragment implements ChangeEventListener, FirebaseAuth.AuthStateListener {
     public static final String ADD_SCOUT_KEY = "add_scout_key";
 
     private TeamHelper mTeamHelper;
@@ -180,18 +178,12 @@ public abstract class ScoutListFragmentBase extends Fragment
             mTeamHelper.addTeam();
             addListeners();
             TbaApi.fetch(mTeamHelper.getTeam(), getContext())
-                    .addOnCompleteListener(getActivity(), this);
+                    .addOnSuccessListener(team -> mTeamHelper.updateTeam(team))
+                    .addOnFailureListener(getActivity(),
+                                          e -> DownloadTeamDataJob.start(getActivity(),
+                                                                         mTeamHelper));
         } else {
             Constants.sFirebaseTeams.addChangeEventListener(this);
-        }
-    }
-
-    @Override
-    public void onComplete(@NonNull Task<Team> task) {
-        if (task.isSuccessful()) {
-            mTeamHelper.updateTeam(task.getResult());
-        } else {
-            DownloadTeamDataJob.start(getContext(), mTeamHelper);
         }
     }
 
