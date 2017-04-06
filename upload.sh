@@ -21,7 +21,6 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   cd ../..
   cd Robot-Scouter
 
-  # TODO remove once Firebase fixes their plugin
   sed -i "s/\(FirebaseCrashVersionCode=\).*\$/\1${VERSION_CODE}/" gradle.properties
   ./gradlew firebaseUploadArchivedProguardMapping
 
