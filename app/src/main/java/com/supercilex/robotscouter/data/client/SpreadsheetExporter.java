@@ -173,6 +173,8 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         List<TeamHelper> teamHelpers = TeamHelper.getList(intent);
         Collections.sort(teamHelpers);
         try {
+            Tasks.await(Scouts.getAll(teamHelpers, this)); // Force a refresh
+
             Task<Map<TeamHelper, List<Scout>>> fetchTeamsTask =
                     Scouts.getAll(teamHelpers, this).addOnFailureListener(this::showError);
             Tasks.await(fetchTeamsTask);
