@@ -153,16 +153,12 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         return builder.build();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        startForeground(R.string.exporting_spreadsheet_title,
-                        getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
-    }
-
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onHandleIntent(Intent intent) {
+        startForeground(R.string.exporting_spreadsheet_title,
+                        getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
+
         if (ConnectivityHelper.isOffline(this)) {
             new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
                                                                           R.string.exporting_offline,
@@ -232,7 +228,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         }
 
         updateNotification(new Random().nextInt(Integer.MAX_VALUE - 1) + 1, builder.build());
-        stopSelf();
+        stopForeground(true);
     }
 
     private String getPluralTeams(@PluralsRes int id) {
