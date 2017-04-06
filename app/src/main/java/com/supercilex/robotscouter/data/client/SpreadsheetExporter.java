@@ -22,6 +22,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -558,14 +559,14 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         int lastDataCellNum = row.getSheet().getRow(0).getLastCellNum() - 2;
 
         Chart chart = null;
-        ScoutMetric<Void> nearestHeader = null;
+        Pair<Integer, ScoutMetric<Void>> nearestHeader = null;
 
         List<Row> rows = getAdjustedList(row.getSheet());
         for (int i = row.getRowNum(); i >= 0; i--) {
             ScoutMetric metric = getMetric(teamHelper, getMetricKey(rows.get(i)));
 
             if (metric.getType() == MetricType.HEADER) {
-                nearestHeader = metric;
+                nearestHeader = Pair.create(i, metric);
 
                 Chart cachedChart = chartPool.get(metric);
                 if (cachedChart != null) chart = cachedChart;
@@ -573,17 +574,22 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             }
         }
 
+        if (nearestHeader == null) {
+            nearestHeader = Pair.create(0, new ScoutMetric<>(null, null, MetricType.HEADER));
+        }
+
         if (chart == null) {
             Drawing drawing = sheet.createDrawingPatriarch();
+            Integer headerIndex = nearestHeader.first + 1;
             chart = drawing.createChart(drawing.createAnchor(0,
                                                              0,
                                                              0,
                                                              0,
                                                              lastDataCellNum + 3,
-                                                             rowNum,
+                                                             headerIndex,
                                                              lastDataCellNum + 18,
-                                                             rowNum));
-            if (nearestHeader != null) chartPool.put(nearestHeader, chart);
+                                                             headerIndex));
+            chartPool.put(nearestHeader.second, chart);
 
             ChartLegend legend = chart.getOrCreateLegend();
             legend.setPosition(LegendPosition.RIGHT);
@@ -612,17 +618,9 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
             setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
 
-            if (nearestHeader != null) setChartTitle(ctChart, nearestHeader.getName());
+            String name = nearestHeader.second.getName();
+            if (!TextUtils.isEmpty(name)) setChartTitle(ctChart, name);
         }
-
-// TODO figure out what this does
-//        plotArea.getLineChartArray()[0].getSmooth();
-//        CTBoolean ctBool = CTBoolean.Factory.newInstance();
-//        ctBool.setVal(false);
-//        plotArea.getLineChartArray()[0].setSmooth(ctBool);
-//        for (CTLineSer ser : plotArea.getLineChartArray()[0].getSerArray()) {
-//            ser.setSmooth(ctBool);
-//        }
     }
 
     private void setChartTitle(CTChart ctChart, String text) {
