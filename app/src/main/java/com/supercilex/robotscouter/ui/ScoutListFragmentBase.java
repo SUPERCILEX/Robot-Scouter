@@ -73,22 +73,21 @@ public abstract class ScoutListFragmentBase extends Fragment
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_scout_list, container, false);
-
-        if (mSavedState == null && ConnectivityHelper.isOffline(getContext())) {
-            Snackbar.make(rootView.findViewById(R.id.root),
-                          R.string.offline_reassurance,
-                          Snackbar.LENGTH_LONG)
-                    .show();
-        }
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_scout_list, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSavedState = savedInstanceState;
+
+        if (mSavedState == null && ConnectivityHelper.isOffline(getContext())) {
+            Snackbar.make(getView().findViewById(R.id.root),
+                          R.string.offline_reassurance,
+                          Snackbar.LENGTH_LONG)
+                    .show();
+        }
+
         mHolder = newAppBarViewHolder(mTeamHelper, mOnScoutingReadyTask.getTask());
         mHolder.bind(mTeamHelper);
         addListeners();
