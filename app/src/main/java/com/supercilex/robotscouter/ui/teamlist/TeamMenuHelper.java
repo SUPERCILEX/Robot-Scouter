@@ -22,6 +22,7 @@ import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.client.SpreadsheetExporter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
@@ -35,6 +36,8 @@ import java.util.List;
 
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
+
+import static com.supercilex.robotscouter.data.client.SpreadsheetExporter.PERMS;
 
 public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.PermissionCallbacks {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
@@ -382,12 +385,12 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     public void onActivityResult(int requestCode) {
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE
                 && EasyPermissions.hasPermissions(mFragment.getContext(),
-                                                  SpreadsheetWriter.PERMS)) {
+                                                  PERMS.toArray(new String[PERMS.size()]))) {
             exportTeams();
         }
     }
 
     private void exportTeams() {
-        if (SpreadsheetWriter.writeAndShareTeams(mFragment, mSelectedTeams)) resetMenu();
+        if (SpreadsheetExporter.writeAndShareTeams(mFragment, mSelectedTeams)) resetMenu();
     }
 }

@@ -1,27 +1,32 @@
-package com.supercilex.robotscouter.ui.teamlist;
+package com.supercilex.robotscouter.data.client;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.Application;
-import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.annotation.PluralsRes;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
@@ -31,7 +36,6 @@ import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -74,7 +78,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,14 +86,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
-public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
-    public static final String[] PERMS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+public final class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
+    private static final String TAG = "SpreadsheetExporter";
+    public static final List<String> PERMS = Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     private static final List<String> UNSUPPORTED_DEVICES =
             Collections.unmodifiableList(Arrays.asList("SAMSUNG-SM-N900A"));
@@ -103,26 +109,13 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
 
-    private Context mContext;
-    private ProgressDialogManager mProgressDialog;
-
     private Map<TeamHelper, List<Scout>> mScouts;
     private List<Cell> mTemporaryCommentCells = new ArrayList<>();
     private CreationHelper mCreationHelper;
 
-    @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    private SpreadsheetWriter(Fragment fragment, @Size(min = 1) List<TeamHelper> teamHelpers) {
-        mContext = fragment.getContext().getApplicationContext();
-        mProgressDialog = ProgressDialogManager.show(fragment.getActivity());
-
-        Collections.sort(teamHelpers);
-        Scouts.getAll(teamHelpers, mContext)
-                .addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this)
-                .addOnFailureListener(this::showError);
-
-        if (ConnectivityHelper.isOffline(mContext)) {
-            Toast.makeText(mContext, R.string.exporting_offline, Toast.LENGTH_LONG).show();
-        }
+    public SpreadsheetExporter() {
+        super(TAG);
+        setIntentRedelivery(true);
     }
 
     /**
@@ -133,57 +126,130 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                                              @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
 
-        if (!EasyPermissions.hasPermissions(fragment.getContext(), PERMS)) {
+        String[] permsArray = PERMS.toArray(new String[PERMS.size()]);
+        if (!EasyPermissions.hasPermissions(fragment.getContext(), permsArray)) {
             EasyPermissions.requestPermissions(
                     fragment,
                     fragment.getString(R.string.write_storage_rationale),
                     8653,
-                    PERMS);
+                    permsArray);
             return false;
         }
 
-        new SpreadsheetWriter(fragment, new ArrayList<>(teamHelpers));
+        Snackbar.make(fragment.getView(),
+                      R.string.exporting_spreadsheet_start,
+                      Snackbar.LENGTH_LONG)
+                .show();
+
+        fragment.getActivity()
+                .startService(new Intent(fragment.getContext(), SpreadsheetExporter.class)
+                                      .putExtras(TeamHelper.toIntent(teamHelpers)));
 
         return true;
     }
 
+    private void updateNotification(Notification notification) {
+        updateNotification(R.string.exporting_spreadsheet_title, notification);
+    }
+
+    private void updateNotification(int id, Notification notification) {
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(id, notification);
+    }
+
+    private Notification getExportNotification(String text) {
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_logo)
+                .setContentTitle(getString(R.string.exporting_spreadsheet_title))
+                .setContentText(text)
+                .setOngoing(true)
+                .setPriority(Notification.PRIORITY_MIN);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        }
+
+        return builder.build();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startForeground(R.string.exporting_spreadsheet_title,
+                        getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
+    }
+
+    @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        if (ConnectivityHelper.isOffline(this)) {
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
+                                                                          R.string.exporting_offline,
+                                                                          Toast.LENGTH_LONG)
+                    .show());
+        }
+
+        List<TeamHelper> teamHelpers = TeamHelper.getList(intent);
+        Collections.sort(teamHelpers);
+        try {
+            Task<Map<TeamHelper, List<Scout>>> fetchTeamsTask =
+                    Scouts.getAll(teamHelpers, this).addOnFailureListener(this::showError);
+            Tasks.await(fetchTeamsTask);
+            if (fetchTeamsTask.isSuccessful()) onSuccess(fetchTeamsTask.getResult());
+        } catch (ExecutionException | InterruptedException e) {
+            showError(e);
+        }
+    }
+
     @Override
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
-        mProgressDialog.setMessage(mContext.getString(R.string.exporting_spreadsheet));
-
         mScouts = scouts;
         Uri spreadsheetUri = getFileUri();
-
-        mProgressDialog.dismiss();
 
         if (spreadsheetUri == null) return;
 
         Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            sharingIntent = Intent.createChooser(sharingIntent.setAction(Intent.ACTION_SEND)
+                                                         .setType(MIME_TYPE_MS_EXCEL)
+                                                         .putExtra(Intent.EXTRA_STREAM,
+                                                                   spreadsheetUri),
+                                                 getPluralTeams(R.plurals.share_spreadsheet_title))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        } else {
             sharingIntent.setAction(Intent.ACTION_VIEW)
                     .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL);
-            try {
-                mContext.startActivity(sharingIntent);
-            } catch (ActivityNotFoundException e) {
+
+            List<ResolveInfo> supportedActivities =
+                    getPackageManager().queryIntentActivities(sharingIntent, 0);
+            if (supportedActivities.isEmpty()) {
                 sharingIntent.setDataAndType(spreadsheetUri, "*/*");
-                mContext.startActivity(sharingIntent);
             }
-        } else {
-            sharingIntent.setAction(Intent.ACTION_SEND)
-                    .setType(MIME_TYPE_MS_EXCEL)
-                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
-            mContext.startActivity(Intent.createChooser(sharingIntent, getShareTitle())
-                                           .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                           .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
         }
+
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_done_white_48dp)
+                .setContentTitle(getPluralTeams(R.plurals.exporting_spreadsheet_complete_title))
+                .setContentIntent(PendingIntent.getActivity(this, 0, sharingIntent, 0))
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_HIGH);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            builder.setShowWhen(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        }
+
+        updateNotification(new Random().nextInt(Integer.MAX_VALUE - 1) + 1, builder.build());
+        stopSelf();
     }
 
-    private String getShareTitle() {
-        return mContext.getResources()
-                .getQuantityString(R.plurals.share_spreadsheet_title,
-                                   mScouts.size(),
-                                   getTeamNames());
+    private String getPluralTeams(@PluralsRes int id) {
+        return getResources().getQuantityString(id, mScouts.size(), getTeamNames());
     }
 
     @Nullable
@@ -274,7 +340,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         Workbook workbook;
         if (isUnsupportedDevice()) {
             workbook = new HSSFWorkbook();
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(mContext,
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
                                                                           R.string.unsupported_device,
                                                                           Toast.LENGTH_SHORT)
                     .show());
@@ -291,15 +357,18 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
         List<TeamHelper> teamHelpers = getTeamHelpers();
         for (TeamHelper teamHelper : teamHelpers) {
+            updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_team,
+                                                               teamHelper)));
+
             Sheet teamSheet = workbook.createSheet(getSafeName(workbook, teamHelper));
             teamSheet.createFreezePane(1, 1);
             buildTeamSheet(teamHelper, teamSheet);
         }
 
+        updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_average)));
         if (averageSheet != null) buildTeamAveragesSheet(averageSheet);
 
         setColumnWidths(workbook);
-
         for (Cell cell : mTemporaryCommentCells) cell.removeCellComment();
 
         return workbook;
@@ -403,7 +472,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
             Row row = rowIterator.next();
             Cell cell = row.createCell(farthestColumn);
             if (i == 0) {
-                cell.setCellValue(mContext.getString(R.string.average));
+                cell.setCellValue(getString(R.string.average));
                 cell.setCellStyle(createHeaderStyle(sheet.getWorkbook()));
                 continue;
             }
@@ -659,7 +728,7 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
         anchor.setRow2(row.getRowNum() + 3);
 
         Comment comment = row.getSheet().createDrawingPatriarch().createCellComment(anchor);
-        comment.setAuthor(mContext.getString(R.string.app_name));
+        comment.setAuthor(getString(R.string.app_name));
         return comment;
     }
 
@@ -817,10 +886,11 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
 
     private void showError(Exception e) {
         FirebaseCrash.report(e);
-        mProgressDialog.dismiss();
 
-        String message = mContext.getString(R.string.general_error) + "\n\n" + e.getMessage();
-        Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+        String message = getString(R.string.general_error) + "\n\n" + e.getMessage();
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
+                                                                      message,
+                                                                      Toast.LENGTH_LONG).show());
     }
 
     private void setApacheProperties() {
@@ -830,81 +900,5 @@ public final class SpreadsheetWriter implements OnSuccessListener<Map<TeamHelper
                            "com.fasterxml.aalto.stax.OutputFactoryImpl");
         System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
                            "com.fasterxml.aalto.stax.EventFactoryImpl");
-    }
-
-    private static final class ProgressDialogManager implements Application.ActivityLifecycleCallbacks {
-        private String mMessage;
-
-        private Application mApplication;
-        private WeakReference<ProgressDialog> mProgressDialog;
-
-        private ProgressDialogManager(Activity activity) {
-            mApplication = activity.getApplication();
-            mMessage = activity.getString(R.string.loading_teams);
-
-            mApplication.registerActivityLifecycleCallbacks(this);
-            initProgressDialog(activity);
-        }
-
-        public static ProgressDialogManager show(Activity activity) {
-            return new ProgressDialogManager(activity);
-        }
-
-        public void setMessage(String message) {
-            mMessage = message;
-
-            new Handler(Looper.getMainLooper()).post(() -> {
-                ProgressDialog dialog = mProgressDialog.get();
-                if (dialog != null) dialog.setMessage(mMessage);
-            });
-        }
-
-        public void dismiss() {
-            internalDismiss();
-            mApplication.unregisterActivityLifecycleCallbacks(this);
-        }
-
-        private void initProgressDialog(Activity activity) {
-            mProgressDialog = new WeakReference<>(
-                    ProgressDialog.show(activity, "", mMessage, true));
-        }
-
-        private void internalDismiss() {
-            ProgressDialog dialog = mProgressDialog.get();
-            if (dialog != null) {
-                dialog.dismiss();
-                mProgressDialog = new WeakReference<>(null);
-            }
-        }
-
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-            if (mProgressDialog.get() == null) initProgressDialog(activity);
-        }
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
-            internalDismiss();
-        }
-
-        @Override
-        public void onActivityStarted(Activity activity) {
-        }
-
-        @Override
-        public void onActivityResumed(Activity activity) {
-        }
-
-        @Override
-        public void onActivityPaused(Activity activity) {
-        }
-
-        @Override
-        public void onActivityStopped(Activity activity) {
-        }
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        }
     }
 }
