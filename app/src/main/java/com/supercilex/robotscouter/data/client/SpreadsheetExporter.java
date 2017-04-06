@@ -83,6 +83,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
+    private static final String MIME_TYPE_ALL = "*/*";
     private static final String FILE_EXTENSION = ".xlsx";
     private static final String UNSUPPORTED_FILE_EXTENSION = ".xls";
     private static final int MAX_SHEET_LENGTH = 31;
@@ -206,7 +207,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             List<ResolveInfo> supportedActivities =
                     getPackageManager().queryIntentActivities(sharingIntent, 0);
             if (supportedActivities.isEmpty()) {
-                sharingIntent.setDataAndType(spreadsheetUri, "*/*");
+                sharingIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL);
             }
         }
 
