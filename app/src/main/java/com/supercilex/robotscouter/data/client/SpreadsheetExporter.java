@@ -103,6 +103,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
+    private static final String MIME_TYPE_ALL = "*/*";
     private static final String FILE_EXTENSION = ".xlsx";
     private static final String UNSUPPORTED_FILE_EXTENSION = ".xls";
     private static final int MAX_SHEET_LENGTH = 31;
@@ -211,10 +212,11 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            sharingIntent = Intent.createChooser(sharingIntent.setAction(Intent.ACTION_SEND)
-                                                         .setType(MIME_TYPE_MS_EXCEL)
-                                                         .putExtra(Intent.EXTRA_STREAM,
-                                                                   spreadsheetUri),
+            Intent typeIntent = sharingIntent.setAction(Intent.ACTION_SEND)
+                    .setType(MIME_TYPE_MS_EXCEL)
+                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
+
+            sharingIntent = Intent.createChooser(typeIntent,
                                                  getPluralTeams(R.plurals.share_spreadsheet_title))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -225,14 +227,17 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             List<ResolveInfo> supportedActivities =
                     getPackageManager().queryIntentActivities(sharingIntent, 0);
             if (supportedActivities.isEmpty()) {
-                sharingIntent.setDataAndType(spreadsheetUri, "*/*");
+                sharingIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL);
             }
         }
 
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_done_white_48dp)
                 .setContentTitle(getPluralTeams(R.plurals.exporting_spreadsheet_complete_title))
-                .setContentIntent(PendingIntent.getActivity(this, 0, sharingIntent, 0))
+                .setContentIntent(PendingIntent.getActivity(this,
+                                                            0,
+                                                            sharingIntent,
+                                                            PendingIntent.FLAG_ONE_SHOT))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
