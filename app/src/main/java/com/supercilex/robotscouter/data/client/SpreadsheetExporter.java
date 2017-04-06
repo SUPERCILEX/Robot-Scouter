@@ -42,6 +42,7 @@ import com.supercilex.robotscouter.util.Constants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -741,8 +742,17 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
         String safeSheetName = scoutSheet.getSheetName().replace("'", "''");
-        valueCell.setCellFormula("'" + safeSheetName + "'!" + averageCell.getAddress());
+        String rangeAddress = "'" + safeSheetName + "'!" + averageCell.getAddress();
+
+        valueCell.setCellFormula("IF(" +
+                                         "OR(" + rangeAddress + " = TRUE, " + rangeAddress + " = FALSE), " +
+                                         "IF(" + rangeAddress + " = TRUE, 100, 0), " +
+                                         rangeAddress + ")");
         valueCell.setCellStyle(averageCell.getCellStyle());
+
+        if (averageCell.getCellTypeEnum() == CellType.BOOLEAN) {
+            setCellFormat(valueCell, "0.00%");
+        }
     }
 
     private <T> List<T> getAdjustedList(Iterable<T> iterator) {
