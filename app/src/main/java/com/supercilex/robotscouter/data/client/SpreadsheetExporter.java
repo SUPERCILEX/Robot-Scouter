@@ -191,10 +191,11 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            sharingIntent = Intent.createChooser(sharingIntent.setAction(Intent.ACTION_SEND)
-                                                         .setType(MIME_TYPE_MS_EXCEL)
-                                                         .putExtra(Intent.EXTRA_STREAM,
-                                                                   spreadsheetUri),
+            Intent typeIntent = sharingIntent.setAction(Intent.ACTION_SEND)
+                    .setType(MIME_TYPE_MS_EXCEL)
+                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
+
+            sharingIntent = Intent.createChooser(typeIntent,
                                                  getPluralTeams(R.plurals.share_spreadsheet_title))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -212,7 +213,10 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_done_white_48dp)
                 .setContentTitle(getPluralTeams(R.plurals.exporting_spreadsheet_complete_title))
-                .setContentIntent(PendingIntent.getActivity(this, 0, sharingIntent, 0))
+                .setContentIntent(PendingIntent.getActivity(this,
+                                                            0,
+                                                            sharingIntent,
+                                                            PendingIntent.FLAG_ONE_SHOT))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)

@@ -30,8 +30,8 @@
     <string name="share_call_to_action">Import team %s into Robot Scouter</string>
     <string name="export_spreadsheet">Export to spreadsheet</string>
     <plurals name="share_spreadsheet_title">
-        <item quantity="one">Share team %s’s scouting data as a spreadsheet</item>
-        <item quantity="other">Share teams %s’s scouting data as a spreadsheet</item>
+        <item quantity="one">Share team %s’s scouting data</item>
+        <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
     <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
     <string name="exporting_spreadsheet_start">Spreadsheet exporting started; view progress in the notification drawer.</string>
