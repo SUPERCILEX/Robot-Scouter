@@ -121,7 +121,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
 
-    private FreeRefFunction AVERAGEIF = new FreeRefFunction() {
+    private static final FreeRefFunction AVERAGEIF = new FreeRefFunction() {
         @Override
         public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext context) {
             if (args.length >= 2 && args.length % 2 == 0) {
@@ -156,6 +156,16 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             return new NumberEval(totalEval.getNumberValue() / countEval.getNumberValue());
         }
     };
+
+    static {
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory",
+                           "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                           "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
+                           "com.fasterxml.aalto.stax.EventFactoryImpl");
+        WorkbookEvaluator.registerFunction("AVERAGEIF", AVERAGEIF);
+    }
 
     private Map<TeamHelper, List<Scout>> mScouts;
     private List<Cell> mTemporaryCommentCells = new ArrayList<>();
@@ -389,8 +399,6 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     }
 
     private Workbook getWorkbook() {
-        setApacheProperties();
-
         Workbook workbook;
         if (isUnsupportedDevice()) {
             workbook = new HSSFWorkbook();
@@ -975,15 +983,5 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
                                                                       message,
                                                                       Toast.LENGTH_LONG).show());
-    }
-
-    private void setApacheProperties() {
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory",
-                           "com.fasterxml.aalto.stax.InputFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory",
-                           "com.fasterxml.aalto.stax.OutputFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
-                           "com.fasterxml.aalto.stax.EventFactoryImpl");
-        WorkbookEvaluator.registerFunction("AVERAGEIF", AVERAGEIF);
     }
 }
