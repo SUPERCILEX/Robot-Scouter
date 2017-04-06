@@ -919,10 +919,11 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         ChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.RIGHT);
 
-        ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
-        ChartDataSource<Number> categorySource = DataSources.fromNumericCellRange(
-                sheet, new CellRangeAddress(1, sheet.getLastRowNum(), 0, 0));
+        int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
+        ChartDataSource<String> categorySource = DataSources.fromStringCellRange(
+                sheet, new CellRangeAddress(0, 0, 1, lastColumn));
 
+        ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
         List<Row> dataRows = getAdjustedList(sheet);
         for (Row row : dataRows) {
             data.addSerie(
