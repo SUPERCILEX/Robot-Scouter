@@ -942,7 +942,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
         if (chart instanceof XSSFChart) {
             CTPlotArea plotArea = ((XSSFChart) chart).getCTChart().getPlotArea();
-            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Teams");
+            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
             setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Metrics");
         }
     }
