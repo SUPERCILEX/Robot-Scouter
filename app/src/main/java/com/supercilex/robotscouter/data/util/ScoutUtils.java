@@ -27,8 +27,20 @@ import java.util.Map;
 public final class ScoutUtils {
     public static final SnapshotParser<ScoutMetric> METRIC_PARSER = snapshot -> {
         ScoutMetric metric;
+        Integer typeObject = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
 
-        @MetricType int type = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
+        if (typeObject == null) {
+            // TODO Figure out why the hell this happens. Nothing makes sense here since opening the
+            // same scout later works fine. This crash is completely random.
+
+            FirebaseCrash.log("Snapshot: " + snapshot.toString());
+            FirebaseCrash.log("Ref: " + snapshot.getRef());
+            FirebaseCrash.report(new NullPointerException()); // NOPMD
+
+            return new ScoutMetric<Void>("Sanity check failed", null, MetricType.HEADER);
+        }
+
+        @MetricType int type = typeObject;
         switch (type) {
             case MetricType.CHECKBOX:
                 metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {});
