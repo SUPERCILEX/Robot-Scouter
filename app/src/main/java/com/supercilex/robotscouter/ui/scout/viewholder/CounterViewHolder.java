@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.CallSuper;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -37,16 +38,19 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     @CallSuper
     public void onClick(View v) {
         int id = v.getId();
-        String stringValue = getStringWithoutUnit();
+        int value = Integer.parseInt(getStringWithoutUnit());
         if (id == R.id.increment_counter) {
-            int value = Integer.parseInt(stringValue) + 1;
-            setValue(value);
-            updateMetricValue(value);
-        } else if (id == R.id.decrement_counter && Integer.parseInt(stringValue) > 0) { // no negative values
-            int value = Integer.parseInt(stringValue) - 1;
-            setValue(value);
-            updateMetricValue(value);
+            value++;
+            updateValue(value);
+        } else if (id == R.id.decrement_counter && value > 0) { // no negative values
+            value--;
+            updateValue(value);
         }
+    }
+
+    private void updateValue(int value) {
+        setValue(value);
+        updateMetricValue(value);
     }
 
     @Override
@@ -60,16 +64,12 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     private String getStringWithoutUnit() {
         String unit = ((CounterMetric) mMetric).getUnit();
         String count = mCount.getText().toString();
-        return unit == null ? count : count.replace(unit, "");
+        return TextUtils.isEmpty(unit) ? count : count.replace(unit, "");
     }
 
     @SuppressLint("SetTextI18n")
     private void setValue(int value) {
         String unit = ((CounterMetric) mMetric).getUnit();
-        if (unit == null) {
-            mCount.setText(String.valueOf(value));
-        } else {
-            mCount.setText(value + unit);
-        }
+        mCount.setText(TextUtils.isEmpty(unit) ? String.valueOf(value) : value + unit);
     }
 }
