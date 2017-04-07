@@ -100,17 +100,17 @@
   },
   "o": {
     ".priority": 14.0,
-    "name": "Cycle time for gear + shoot (pick up -> pick up)",
+    "name": "Cycle time for gear + shoot (drop off -> drop off)",
     "type": 4
   },
   "p": {
     ".priority": 15.0,
-    "name": "Cycle time for gear (pick up -> pick up)",
+    "name": "Cycle time for gear (drop off -> drop off)",
     "type": 4
   },
   "q": {
     ".priority": 16.0,
-    "name": "Cycle time for shooting (pick up -> pick up)",
+    "name": "Cycle time for shooting (drop off -> drop off)",
     "type": 4
   },
   "r": {
