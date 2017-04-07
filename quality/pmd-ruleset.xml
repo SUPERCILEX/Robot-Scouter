@@ -45,6 +45,7 @@
         <exclude name="GodClass"/>
         <exclude name="UncommentedEmptyMethodBody"/>
         <exclude name="AccessorMethodGeneration"/>
+        <exclude name="AvoidDeeplyNestedIfStmts"/>
     </rule>
 
     <rule ref="rulesets/java/empty.xml"/>
