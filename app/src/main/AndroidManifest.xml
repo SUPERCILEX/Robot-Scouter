@@ -34,7 +34,8 @@
         <activity
             android:name=".ui.teamlist.TeamListActivity"
             android:label="${appName}"
-            android:theme="@style/RobotScouter.Launcher">
+            android:theme="@style/RobotScouter.Launcher"
+            android:windowSoftInputMode="adjustPan">
 
             <meta-data
                 android:name="android.app.shortcuts"
