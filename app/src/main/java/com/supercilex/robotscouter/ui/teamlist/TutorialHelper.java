@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.MotionEvent;
 
 import com.supercilex.robotscouter.R;
@@ -14,7 +15,8 @@ public final class TutorialHelper {
     }
 
     public static void showCreateFirstTeamPrompt(Activity activity) {
-        if (!PreferencesHelper.hasShownFabTutorial(activity)) {
+        final Context appContext = activity.getApplicationContext();
+        if (!PreferencesHelper.hasShownFabTutorial(appContext)) {
             new MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
                     .setTarget(R.id.fab)
                     .setPrimaryText(R.string.create_first_team)
@@ -22,7 +24,7 @@ public final class TutorialHelper {
                     .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                         @Override
                         public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                            PreferencesHelper.setHasShownFabTutorial(activity, tappedTarget);
+                            PreferencesHelper.setHasShownFabTutorial(appContext, tappedTarget);
                         }
 
                         @Override
@@ -34,15 +36,16 @@ public final class TutorialHelper {
     }
 
     public static void showSignInPrompt(Activity activity) {
-        if (PreferencesHelper.hasShownFabTutorial(activity)
-                && !PreferencesHelper.hasShownSignInTutorial(activity)) {
+        final Context appContext = activity.getApplicationContext();
+        if (PreferencesHelper.hasShownFabTutorial(appContext)
+                && !PreferencesHelper.hasShownSignInTutorial(appContext)) {
             new MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
                     .setTarget(R.id.action_sign_in)
                     .setPrimaryText(R.string.sign_in)
                     .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                         @Override
                         public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                            PreferencesHelper.setHasShownSignInTutorial(activity, tappedTarget);
+                            PreferencesHelper.setHasShownSignInTutorial(appContext, tappedTarget);
                         }
 
                         @Override
