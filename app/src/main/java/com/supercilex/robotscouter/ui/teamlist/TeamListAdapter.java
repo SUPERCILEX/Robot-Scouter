@@ -38,7 +38,10 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         mSelectedTeamKey = teamKey;
 
         if (mSelectedTeamKey == null) {
-            RecyclerView recyclerView = (RecyclerView) mFragment.getView().findViewById(R.id.list);
+            View view = mFragment.getView();
+            if (view == null) return;
+
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
             for (int i = 0; i < getItemCount(); i++) {
                 TeamViewHolder viewHolder =
                         (TeamViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
