@@ -43,13 +43,18 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) {
-            updateMetricName(mName.getText().toString());
+            if (v.getId() == R.id.name) {
+                updateMetricName(mName.getText().toString());
+            } else if (v.getId() == R.id.unit) {
+                CounterMetric counterMetric = (CounterMetric) mMetric;
+                String newUnit = mUnit.getText().toString();
 
-            CounterMetric counterMetric = (CounterMetric) mMetric;
-            String newUnit = mUnit.getText().toString();
-            if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
-                disableAnimations();
-                counterMetric.updateUnit(newUnit);
+                if (TextUtils.isEmpty(newUnit)) newUnit = null;
+
+                if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
+                    disableAnimations();
+                    counterMetric.updateUnit(newUnit);
+                }
             }
         }
     }
