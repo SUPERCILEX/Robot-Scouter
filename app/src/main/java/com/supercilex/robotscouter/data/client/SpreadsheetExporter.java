@@ -38,6 +38,7 @@ import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.PreferencesHelper;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -108,8 +109,10 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                                              @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
 
+        Context context = fragment.getContext();
+
         String[] permsArray = PERMS.toArray(new String[PERMS.size()]);
-        if (!EasyPermissions.hasPermissions(fragment.getContext(), permsArray)) {
+        if (!EasyPermissions.hasPermissions(context, permsArray)) {
             EasyPermissions.requestPermissions(
                     fragment,
                     fragment.getString(R.string.write_storage_rationale),
@@ -118,13 +121,17 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             return false;
         }
 
-        Snackbar.make(fragment.getView(),
-                      R.string.exporting_spreadsheet_start,
-                      Snackbar.LENGTH_LONG)
-                .show();
+        if (PreferencesHelper.shouldShowExportHint(context)) {
+            Snackbar.make(fragment.getView(),
+                          R.string.exporting_spreadsheet_hint,
+                          Snackbar.LENGTH_LONG)
+                    .setAction(R.string.never_again,
+                               v -> PreferencesHelper.setShouldShowExportHint(context, false))
+                    .show();
+        }
 
         fragment.getActivity()
-                .startService(new Intent(fragment.getContext(), SpreadsheetExporter.class)
+                .startService(new Intent(context, SpreadsheetExporter.class)
                                       .putExtras(TeamHelper.toIntent(teamHelpers)));
 
         return true;
