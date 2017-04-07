@@ -933,7 +933,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
 
         Drawing drawing = sheet.createDrawingPatriarch();
-        Chart chart = drawing.createChart(createAnchor(drawing, lastRowNum, 0, lastColumn));
+        Chart chart = drawing.createChart(createAnchor(drawing, lastRowNum, 1, lastColumn));
 
         ChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.RIGHT);
