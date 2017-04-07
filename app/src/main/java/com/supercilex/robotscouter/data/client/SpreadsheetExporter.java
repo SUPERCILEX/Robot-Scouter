@@ -79,9 +79,6 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarkerStyle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
@@ -556,7 +553,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
 
-                    buildTeamChart(row, teamHelper, chartPool);
+//                    buildTeamChart(row, teamHelper, chartPool);
                     break;
                 case MetricType.STOPWATCH:
                     String excludeZeros = "\"<>0\"";
@@ -564,7 +561,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
 
-                    buildTeamChart(row, teamHelper, chartPool);
+//                    buildTeamChart(row, teamHelper, chartPool);
                     break;
                 case MetricType.SPINNER:
                     sheet.setArrayFormula(
@@ -669,12 +666,6 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
             String name = nearestHeader.second.getName();
             if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
-
-            CTMarker ctMarker = CTMarker.Factory.newInstance();
-            ctMarker.setSymbol(CTMarkerStyle.Factory.newInstance());
-            for (CTLineSer ser : plotArea.getLineChartArray()[0].getSerArray()) {
-                ser.setMarker(ctMarker);
-            }
         }
     }
 
@@ -909,14 +900,15 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private void buildAverageCharts(Sheet sheet) {
         int lastRowNum = sheet.getLastRowNum() + 2;
+        int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
+
         Drawing drawing = sheet.createDrawingPatriarch();
         Chart chart = drawing.createChart(drawing.createAnchor(
-                0, 0, 0, 0, 0, lastRowNum, 0, lastRowNum));
+                0, 0, 0, 0, 0, lastRowNum, lastColumn, lastRowNum + lastColumn / 2));
 
         ChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.RIGHT);
 
-        int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
         ChartDataSource<String> categorySource = DataSources.fromStringCellRange(
                 sheet, new CellRangeAddress(0, 0, 1, lastColumn));
 
