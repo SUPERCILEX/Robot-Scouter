@@ -62,19 +62,19 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     private void updateConstraints(ConstraintLayout layout) {
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
-        set.connect(R.id.decrement_counter,
-                    ConstraintSet.TOP,
-                    R.id.increment_counter,
-                    ConstraintSet.TOP,
-                    0);
-        set.connect(R.id.decrement_counter,
-                    ConstraintSet.BOTTOM,
-                    R.id.increment_counter,
-                    ConstraintSet.BOTTOM,
-                    0);
         set.connect(R.id.count, ConstraintSet.RIGHT, R.id.unit, ConstraintSet.LEFT, 0);
-        set.setMargin(R.id.count, ConstraintSet.RIGHT, 0);
         set.setMargin(R.id.count, ConstraintSet.END, 0);
+
+        int[] chainIds = {R.id.decrement_counter, R.id.count, R.id.unit, R.id.increment_counter};
+        set.createHorizontalChain(ConstraintSet.PARENT_ID,
+                                  ConstraintSet.LEFT,
+                                  ConstraintSet.PARENT_ID,
+                                  ConstraintSet.RIGHT,
+                                  chainIds,
+                                  null,
+                                  ConstraintSet.CHAIN_PACKED);
+        for (int id : chainIds) set.setHorizontalBias(id, 1F);
+
         set.applyTo(layout);
     }
 }
