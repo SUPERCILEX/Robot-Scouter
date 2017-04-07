@@ -87,8 +87,9 @@ android.applicationVariants.all { variant ->
 }
 
 dependencies {
-    // To update Apache POI, use https://github.com/SUPERCILEX/poi-on-android
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    // To update Apache POI, use https://github.com/SUPERCILEX/poi-on-android
+    provided 'org.apache.poi:poi-ooxml:3.16-beta2' // Used for documentation
 
     // Support libraries
     compile 'com.android.support:multidex:1.0.1'
