@@ -521,6 +521,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             if (last > farthestColumn) farthestColumn = last;
         }
 
+        Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData = new HashMap<>();
         Map<ScoutMetric<Void>, Chart> chartPool = new HashMap<>();
 
         Iterator<Row> rowIterator = sheet.rowIterator();
@@ -553,7 +554,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
 
-//                    buildTeamChart(row, teamHelper, chartPool);
+                    buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
                 case MetricType.STOPWATCH:
                     String excludeZeros = "\"<>0\"";
@@ -561,7 +562,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
 
-//                    buildTeamChart(row, teamHelper, chartPool);
+                    buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
                 case MetricType.SPINNER:
                     sheet.setArrayFormula(
@@ -583,6 +584,33 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                     break;
             }
         }
+
+        for (Chart chart : chartData.keySet()) {
+            Pair<LineChartData, List<ChartAxis>> data = chartData.get(chart);
+
+            chart.plot(data.first, data.second.toArray(new ChartAxis[data.second.size()]));
+            if (chart instanceof XSSFChart) {
+                XSSFChart xChart = (XSSFChart) chart;
+                CTChart ctChart = xChart.getCTChart();
+
+                CTPlotArea plotArea = ctChart.getPlotArea();
+                setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
+                setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
+
+                String name = getMetricForChart(chart, chartPool).getName();
+                if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
+            }
+        }
+    }
+
+    private ScoutMetric<Void> getMetricForChart(Chart chart, Map<ScoutMetric<Void>, Chart> pool) {
+        for (ScoutMetric<Void> metric : pool.keySet()) {
+            if (pool.get(metric) == chart) {
+                return metric;
+            }
+        }
+
+        throw new IllegalStateException("Could not find chart in pool");
     }
 
     private ScoutMetric getMetric(TeamHelper teamHelper, String key) {
@@ -603,6 +631,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private void buildTeamChart(Row row,
                                 TeamHelper teamHelper,
+                                Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
                                 Map<ScoutMetric<Void>, Chart> chartPool) {
         Sheet sheet = row.getSheet();
         int rowNum = row.getRowNum();
@@ -628,19 +657,30 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             nearestHeader = Pair.create(0, new ScoutMetric<>(null, null, MetricType.HEADER));
         }
 
+        LineChartData data;
         if (chart == null) {
             Drawing drawing = sheet.createDrawingPatriarch();
             Integer headerIndex = nearestHeader.first + 1;
             int startChartIndex = lastDataCellNum + 3;
             chart = drawing.createChart(drawing.createAnchor(
                     0, 0, 0, 0, startChartIndex, headerIndex, startChartIndex, headerIndex));
+
+            LineChartData lineChartData = chart.getChartDataFactory().createLineChartData();
+            data = lineChartData;
+
+            ChartAxis bottomAxis = chart.getChartAxisFactory()
+                    .createCategoryAxis(AxisPosition.BOTTOM);
+            ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+            leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+
+            chartData.put(chart, Pair.create(lineChartData, Arrays.asList(bottomAxis, leftAxis)));
             chartPool.put(nearestHeader.second, chart);
 
             ChartLegend legend = chart.getOrCreateLegend();
             legend.setPosition(LegendPosition.RIGHT);
+        } else {
+            data = chartData.get(chart).first;
         }
-
-        LineChartData data = chart.getChartDataFactory().createLineChartData();
 
         ChartDataSource<Number> categorySource = DataSources.fromNumericCellRange(
                 sheet, new CellRangeAddress(0, 0, 1, lastDataCellNum));
@@ -650,23 +690,6 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                         sheet,
                         new CellRangeAddress(rowNum, rowNum, 1, lastDataCellNum)))
                 .setTitle(row.getCell(0).getStringCellValue());
-
-        ChartAxis bottomAxis = chart.getChartAxisFactory().createCategoryAxis(AxisPosition.BOTTOM);
-        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
-        leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-        chart.plot(data, bottomAxis, leftAxis);
-
-        if (chart instanceof XSSFChart) {
-            XSSFChart xChart = (XSSFChart) chart;
-            CTChart ctChart = xChart.getCTChart();
-
-            CTPlotArea plotArea = ctChart.getPlotArea();
-            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
-            setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
-
-            String name = nearestHeader.second.getName();
-            if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
-        }
     }
 
     private void setAxisTitle(CTTitle title, String text) {
