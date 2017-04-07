@@ -662,8 +662,8 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             Drawing drawing = sheet.createDrawingPatriarch();
             Integer headerIndex = nearestHeader.first + 1;
             int startChartIndex = lastDataCellNum + 3;
-            chart = drawing.createChart(drawing.createAnchor(
-                    0, 0, 0, 0, startChartIndex, headerIndex, startChartIndex, headerIndex));
+            chart = drawing.createChart(
+                    createAnchor(drawing, headerIndex, startChartIndex, startChartIndex + 10));
 
             LineChartData lineChartData = chart.getChartDataFactory().createLineChartData();
             data = lineChartData;
@@ -926,8 +926,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
 
         Drawing drawing = sheet.createDrawingPatriarch();
-        Chart chart = drawing.createChart(drawing.createAnchor(
-                0, 0, 0, 0, 0, lastRowNum, lastColumn, lastRowNum + lastColumn / 2));
+        Chart chart = drawing.createChart(createAnchor(drawing, lastRowNum, 0, lastColumn));
 
         ChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.RIGHT);
@@ -960,6 +959,14 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
             setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Metrics");
         }
+    }
+
+    private ClientAnchor createAnchor(Drawing drawing,
+                                      int startRow,
+                                      int startColumn,
+                                      int endColumn) {
+        return drawing.createAnchor(
+                0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2);
     }
 
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
