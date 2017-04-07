@@ -41,7 +41,6 @@ import static com.supercilex.robotscouter.data.client.SpreadsheetExporter.PERMS;
 
 public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.PermissionCallbacks {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
-    private static final int SELECT_ALL_THRESHOLD = 3;
     private static final int ANIMATION_DURATION = 250;
 
     /**
@@ -220,7 +219,7 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
                 hideTeamSpecificMenuItems();
             }
 
-            if (newSize > oldSize && newSize >= SELECT_ALL_THRESHOLD && mAdapter.getItemCount() > newSize) {
+            if (newSize > oldSize && newSize > Constants.SINGLE_ITEM && mAdapter.getItemCount() > newSize) {
                 Snackbar.make(mFragment.getView(),
                               R.string.multiple_teams_selected,
                               Snackbar.LENGTH_LONG)
