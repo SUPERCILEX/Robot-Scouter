@@ -121,7 +121,7 @@ dependencies {
     compile "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    compile 'pub.devrel:easypermissions:0.3.0'
+    compile 'pub.devrel:easypermissions:0.3.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     // Third party
