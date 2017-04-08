@@ -22,6 +22,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
 import com.supercilex.robotscouter.util.ViewHelper;
 
@@ -67,7 +68,9 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     public void onSuccess(Void aVoid) {
         double minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY);
-        if (BuildConfig.VERSION_CODE < minimum) UpdateDialog.show(getSupportFragmentManager());
+        if (BuildConfig.VERSION_CODE < minimum && !ConnectivityHelper.isOffline(this)) {
+            UpdateDialog.show(getSupportFragmentManager());
+        }
     }
 
     @Override
