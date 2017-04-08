@@ -49,7 +49,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // See TabletAppBarViewHolder
+        // Noop: see TabletAppBarViewHolder
     }
 
     @Override
