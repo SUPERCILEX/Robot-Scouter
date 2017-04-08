@@ -140,7 +140,7 @@ public final class DatabaseHelper {
     private static void addTeamsListener(final Context appContext) {
         Constants.sFirebaseTeams.removeAllListeners();
         Constants.sFirebaseTeams = new FirebaseIndexArray<>(
-                TeamHelper.getIndicesRef(),
+                TeamHelper.getIndicesRef().orderByValue(),
                 Constants.FIREBASE_TEAMS,
                 TEAM_PARSER);
 
