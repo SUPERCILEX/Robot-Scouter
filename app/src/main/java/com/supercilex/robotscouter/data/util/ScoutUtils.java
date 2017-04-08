@@ -30,14 +30,10 @@ public final class ScoutUtils {
         Integer typeObject = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
 
         if (typeObject == null) {
-            // TODO Figure out why the hell this happens. Nothing makes sense here since opening the
-            // same scout later works fine. This crash is completely random.
-
-            FirebaseCrash.log("Snapshot: " + snapshot.toString());
-            FirebaseCrash.log("Ref: " + snapshot.getRef());
-            FirebaseCrash.report(new NullPointerException()); // NOPMD
-
-            return new ScoutMetric<Void>("Sanity check failed", null, MetricType.HEADER);
+            // This appears to happen in the in-between state when the metric has been half copied.
+            return new ScoutMetric<Void>("Sanity check failed. Please report: bit.ly/RSGitHub.",
+                                         null,
+                                         MetricType.HEADER);
         }
 
         @MetricType int type = typeObject;
