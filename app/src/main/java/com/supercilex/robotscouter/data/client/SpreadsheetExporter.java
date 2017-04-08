@@ -22,6 +22,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,12 +42,22 @@ import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.PreferencesHelper;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.Countif;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.Sumif;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -54,9 +65,25 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.ChartDataSource;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.ss.usermodel.charts.DataSources;
+import org.apache.poi.ss.usermodel.charts.LegendPosition;
+import org.apache.poi.ss.usermodel.charts.LineChartData;
+import org.apache.poi.ss.usermodel.charts.ScatterChartData;
+import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,6 +91,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -91,6 +119,52 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     private static final int MAX_SHEET_LENGTH = 31;
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
+
+    private static final FreeRefFunction AVERAGEIF = new FreeRefFunction() {
+        @Override
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext context) {
+            if (args.length >= 2 && args.length % 2 == 0) {
+                double result = 0;
+
+                for (int i = 0; i < args.length; i += 2) {
+                    ValueEval firstArg = args[i];
+                    ValueEval secondArg = args[i + 1];
+                    NumberEval evaluate = evaluate(context.getRowIndex(),
+                                                   context.getColumnIndex(),
+                                                   firstArg,
+                                                   secondArg);
+
+                    result = evaluate.getNumberValue();
+                }
+
+                return new NumberEval(result);
+            } else {
+                return ErrorEval.VALUE_INVALID;
+            }
+        }
+
+        private NumberEval evaluate(int srcRowIndex,
+                                    int srcColumnIndex,
+                                    ValueEval arg0,
+                                    ValueEval arg1) {
+            NumberEval totalEval =
+                    (NumberEval) new Sumif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);
+            NumberEval countEval =
+                    (NumberEval) new Countif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1);
+
+            return new NumberEval(totalEval.getNumberValue() / countEval.getNumberValue());
+        }
+    };
+
+    static {
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory",
+                           "com.fasterxml.aalto.stax.InputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                           "com.fasterxml.aalto.stax.OutputFactoryImpl");
+        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
+                           "com.fasterxml.aalto.stax.EventFactoryImpl");
+        WorkbookEvaluator.registerFunction("AVERAGEIF", AVERAGEIF);
+    }
 
     private Map<TeamHelper, List<Scout>> mScouts;
     private List<Cell> mTemporaryCommentCells = new ArrayList<>();
@@ -326,8 +400,6 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     }
 
     private Workbook getWorkbook() {
-        setApacheProperties();
-
         Workbook workbook;
         if (isUnsupportedDevice()) {
             workbook = new HSSFWorkbook();
@@ -419,8 +491,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
                     for (Row row1 : rows) {
                         Cell cell1 = row1.getCell(0);
-                        String rowKey = cell1.getCellComment().getString().toString();
-                        if (TextUtils.equals(rowKey, metric.getKey())) {
+                        if (TextUtils.equals(getMetricKey(row1), metric.getKey())) {
                             setRowValue(column, metric, row1);
 
                             if (TextUtils.isEmpty(cell1.getStringCellValue())) {
@@ -457,6 +528,9 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             if (last > farthestColumn) farthestColumn = last;
         }
 
+        Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData = new HashMap<>();
+        Map<ScoutMetric<Void>, Chart> chartPool = new HashMap<>();
+
         Iterator<Row> rowIterator = sheet.rowIterator();
         for (int i = 0; rowIterator.hasNext(); i++) {
             Row row = rowIterator.next();
@@ -470,8 +544,8 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             Cell first = row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             cell.setCellStyle(first.getCellStyle());
 
-            String key = row.getCell(0).getCellComment().getString().toString();
-            @MetricType int type = getMetricType(teamHelper, key);
+            String key = getMetricKey(row);
+            @MetricType int type = getMetric(teamHelper, key).getType();
 
             String rangeAddress = getRangeAddress(
                     first,
@@ -486,12 +560,16 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                             "SUM(" + rangeAddress + ")" +
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
+
+                    buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
                 case MetricType.STOPWATCH:
                     String excludeZeros = "\"<>0\"";
                     cell.setCellFormula(
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
+
+                    buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
                 case MetricType.SPINNER:
                     sheet.setArrayFormula(
@@ -513,14 +591,40 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                     break;
             }
         }
+
+        for (Chart chart : chartData.keySet()) {
+            Pair<LineChartData, List<ChartAxis>> data = chartData.get(chart);
+
+            chart.plot(data.first, data.second.toArray(new ChartAxis[data.second.size()]));
+            if (chart instanceof XSSFChart) {
+                XSSFChart xChart = (XSSFChart) chart;
+                CTChart ctChart = xChart.getCTChart();
+
+                CTPlotArea plotArea = ctChart.getPlotArea();
+                setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
+                setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
+
+                String name = getMetricForChart(chart, chartPool).getName();
+                if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
+            }
+        }
     }
 
-    @MetricType
-    private int getMetricType(TeamHelper teamHelper, String key) {
+    private ScoutMetric<Void> getMetricForChart(Chart chart, Map<ScoutMetric<Void>, Chart> pool) {
+        for (ScoutMetric<Void> metric : pool.keySet()) {
+            if (pool.get(metric) == chart) {
+                return metric;
+            }
+        }
+
+        throw new IllegalStateException("Could not find chart in pool");
+    }
+
+    private ScoutMetric getMetric(TeamHelper teamHelper, String key) {
         for (Scout scout : mScouts.get(teamHelper)) {
             for (ScoutMetric metric : scout.getMetrics()) {
-                if (key.equals(metric.getKey())) {
-                    return metric.getType();
+                if (TextUtils.equals(key, metric.getKey())) {
+                    return metric;
                 }
             }
         }
@@ -530,6 +634,83 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
     private String getRangeAddress(Cell first, Cell last) {
         return first.getAddress().toString() + ":" + last.getAddress().toString();
+    }
+
+    private void buildTeamChart(Row row,
+                                TeamHelper teamHelper,
+                                Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
+                                Map<ScoutMetric<Void>, Chart> chartPool) {
+        Sheet sheet = row.getSheet();
+        int rowNum = row.getRowNum();
+        int lastDataCellNum = row.getSheet().getRow(0).getLastCellNum() - 2;
+
+        Chart chart = null;
+        Pair<Integer, ScoutMetric<Void>> nearestHeader = null;
+
+        List<Row> rows = getAdjustedList(row.getSheet());
+        for (int i = row.getRowNum(); i >= 0; i--) {
+            ScoutMetric metric = getMetric(teamHelper, getMetricKey(rows.get(i)));
+
+            if (metric.getType() == MetricType.HEADER) {
+                nearestHeader = Pair.create(i, metric);
+
+                Chart cachedChart = chartPool.get(metric);
+                if (cachedChart != null) chart = cachedChart;
+                break;
+            }
+        }
+
+        if (nearestHeader == null) {
+            nearestHeader = Pair.create(0, new ScoutMetric<>(null, null, MetricType.HEADER));
+        }
+
+        LineChartData data;
+        if (chart == null) {
+            Drawing drawing = sheet.createDrawingPatriarch();
+            Integer headerIndex = nearestHeader.first + 1;
+            int startChartIndex = lastDataCellNum + 3;
+            chart = drawing.createChart(
+                    createAnchor(drawing, headerIndex, startChartIndex, startChartIndex + 10));
+
+            LineChartData lineChartData = chart.getChartDataFactory().createLineChartData();
+            data = lineChartData;
+
+            ChartAxis bottomAxis = chart.getChartAxisFactory()
+                    .createCategoryAxis(AxisPosition.BOTTOM);
+            ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+            leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+
+            chartData.put(chart, Pair.create(lineChartData, Arrays.asList(bottomAxis, leftAxis)));
+            chartPool.put(nearestHeader.second, chart);
+
+            ChartLegend legend = chart.getOrCreateLegend();
+            legend.setPosition(LegendPosition.RIGHT);
+        } else {
+            data = chartData.get(chart).first;
+        }
+
+        ChartDataSource<String> categorySource = DataSources.fromStringCellRange(
+                sheet, new CellRangeAddress(0, 0, 1, lastDataCellNum));
+        data.addSeries(
+                categorySource,
+                DataSources.fromNumericCellRange(
+                        sheet,
+                        new CellRangeAddress(rowNum, rowNum, 1, lastDataCellNum)))
+                .setTitle(row.getCell(0).getStringCellValue());
+    }
+
+    private void setAxisTitle(CTTitle title, String text) {
+        title.addNewLayout();
+        title.addNewOverlay().setVal(false);
+
+        CTTextBody textBody = title.addNewTx().addNewRich();
+        textBody.addNewBodyPr();
+        textBody.addNewLstStyle();
+
+        CTTextParagraph paragraph = textBody.addNewP();
+        paragraph.addNewPPr().addNewDefRPr();
+        paragraph.addNewR().setT(text);
+        paragraph.addNewEndParaRPr();
     }
 
     private void setCellFormat(Cell cell, String format) {
@@ -717,14 +898,12 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
 
                 if (TextUtils.isEmpty(getStringForCell(averageCell))) continue;
 
-                Cell metricCell = averageRow.getCell(0);
-                String metricKey = metricCell.getCellComment().getString().toString();
-
+                String metricKey = getMetricKey(averageRow);
                 for (Cell keyCell : getAdjustedList(headerRow)) {
                     Comment keyComment = keyCell.getCellComment();
                     String key = keyComment == null ? null : keyComment.getString().toString();
 
-                    if (metricKey.equals(key)) {
+                    if (TextUtils.equals(metricKey, key)) {
                         setAverageFormula(scoutSheet,
                                           row.createCell(keyCell.getColumnIndex()),
                                           averageCell);
@@ -733,7 +912,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                 }
 
                 Cell keyCell = headerRow.createCell(headerRow.getLastCellNum());
-                keyCell.setCellValue(metricCell.getStringCellValue());
+                keyCell.setCellValue(averageRow.getCell(0).getStringCellValue());
                 keyCell.setCellStyle(headerStyle);
                 Comment keyComment = getComment(headerRow, keyCell);
                 mTemporaryCommentCells.add(keyCell);
@@ -745,6 +924,56 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                                   averageCell);
             }
         }
+
+        buildAverageCharts(averageSheet);
+    }
+
+    private void buildAverageCharts(Sheet sheet) {
+        int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
+
+        Drawing drawing = sheet.createDrawingPatriarch();
+        Chart chart = drawing.createChart(
+                createAnchor(drawing, sheet.getLastRowNum() + 3, 1, lastColumn + 1));
+
+        ChartLegend legend = chart.getOrCreateLegend();
+        legend.setPosition(LegendPosition.RIGHT);
+
+        ChartDataSource<String> categorySource = DataSources.fromStringCellRange(
+                sheet, new CellRangeAddress(0, 0, 1, lastColumn));
+
+        ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
+        List<Row> dataRows = getAdjustedList(sheet);
+        for (Row row : dataRows) {
+            data.addSerie(
+                    categorySource,
+                    DataSources.fromNumericCellRange(
+                            sheet,
+                            new CellRangeAddress(row.getRowNum(),
+                                                 row.getRowNum(),
+                                                 1,
+                                                 row.getLastCellNum() - 1)))
+                    .setTitle(row.getCell(0).getStringCellValue());
+        }
+
+        ChartAxis bottomAxis = chart.getChartAxisFactory()
+                .createCategoryAxis(AxisPosition.BOTTOM);
+        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+        leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+        chart.plot(data, bottomAxis, leftAxis);
+
+        if (chart instanceof XSSFChart) {
+            CTPlotArea plotArea = ((XSSFChart) chart).getCTChart().getPlotArea();
+            setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
+            setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Metrics");
+        }
+    }
+
+    private ClientAnchor createAnchor(Drawing drawing,
+                                      int startRow,
+                                      int startColumn,
+                                      int endColumn) {
+        return drawing.createAnchor(
+                0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2);
     }
 
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
@@ -760,6 +989,10 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         if (averageCell.getCellTypeEnum() == CellType.BOOLEAN) {
             setCellFormat(valueCell, "0.00%");
         }
+    }
+
+    private String getMetricKey(Row row) {
+        return row.getCell(0).getCellComment().getString().toString();
     }
 
     private <T> List<T> getAdjustedList(Iterable<T> iterator) {
@@ -786,14 +1019,5 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
         new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
                                                                       message,
                                                                       Toast.LENGTH_LONG).show());
-    }
-
-    private void setApacheProperties() {
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLInputFactory",
-                           "com.fasterxml.aalto.stax.InputFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLOutputFactory",
-                           "com.fasterxml.aalto.stax.OutputFactoryImpl");
-        System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
-                           "com.fasterxml.aalto.stax.EventFactoryImpl");
     }
 }
