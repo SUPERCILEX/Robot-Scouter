@@ -689,7 +689,7 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
             data = chartData.get(chart).first;
         }
 
-        ChartDataSource<Number> categorySource = DataSources.fromNumericCellRange(
+        ChartDataSource<String> categorySource = DataSources.fromStringCellRange(
                 sheet, new CellRangeAddress(0, 0, 1, lastDataCellNum));
         data.addSeries(
                 categorySource,
@@ -929,11 +929,11 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     }
 
     private void buildAverageCharts(Sheet sheet) {
-        int lastRowNum = sheet.getLastRowNum() + 2;
         int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
 
         Drawing drawing = sheet.createDrawingPatriarch();
-        Chart chart = drawing.createChart(createAnchor(drawing, lastRowNum, 1, lastColumn));
+        Chart chart = drawing.createChart(
+                createAnchor(drawing, sheet.getLastRowNum() + 3, 1, lastColumn + 1));
 
         ChartLegend legend = chart.getOrCreateLegend();
         legend.setPosition(LegendPosition.RIGHT);
