@@ -104,7 +104,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
-public final class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
+public class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     private static final String TAG = "SpreadsheetExporter";
     public static final List<String> PERMS = Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -640,6 +640,8 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
                                 TeamHelper teamHelper,
                                 Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
                                 Map<ScoutMetric<Void>, Chart> chartPool) {
+        if (isUnsupportedDevice()) return;
+
         Sheet sheet = row.getSheet();
         int rowNum = row.getRowNum();
         int lastDataCellNum = row.getSheet().getRow(0).getLastCellNum() - 2;
@@ -929,6 +931,8 @@ public final class SpreadsheetExporter extends IntentService implements OnSucces
     }
 
     private void buildAverageCharts(Sheet sheet) {
+        if (isUnsupportedDevice()) return;
+
         int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
 
         Drawing drawing = sheet.createDrawingPatriarch();
