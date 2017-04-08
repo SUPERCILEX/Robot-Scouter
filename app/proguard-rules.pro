@@ -159,8 +159,7 @@
 -keep class org.openxmlformats.schemas.officeDocument.x2006.customProperties.impl.PropertiesDocumentImpl { *; }
 -keep class org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.impl.CTPropertiesImpl { *; }
 -keep class org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.impl.PropertiesDocumentImpl { *; }
--keep class org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.impl.CTDrawingImpl { *; }
--keep class org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.impl.CTMarkerImpl { *; }
+-keep class org.openxmlformats.schemas.drawingml.x2006.** { *; } # TODO optimize this
 -keep class com.microsoft.schemas.office.office.impl.CTIdMapImpl { *; }
 -keep class com.microsoft.schemas.office.office.impl.CTShapeLayoutImpl { *; }
 -keep class com.microsoft.schemas.vml.impl.CTShadowImpl { *; }
