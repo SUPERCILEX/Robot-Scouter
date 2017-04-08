@@ -45,6 +45,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     private AppBarViewHolder mHolder;
     private ScoutPagerAdapter mPagerAdapter;
 
+    private TaskCompletionSource<Void> mOnActivityReadyTask = new TaskCompletionSource<>();
     private TaskCompletionSource<Void> mOnScoutingReadyTask = new TaskCompletionSource<>();
     private Bundle mSavedState;
 
@@ -78,6 +79,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSavedState = savedInstanceState;
+        mOnActivityReadyTask.setResult(null);
 
         if (mSavedState == null && ConnectivityHelper.isOffline(getContext())) {
             Snackbar.make(getView().findViewById(R.id.root),
@@ -125,7 +127,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.scout, menu);
-        mHolder.initMenu(menu);
+        mOnActivityReadyTask.getTask().addOnSuccessListener(aVoid -> mHolder.initMenu(menu));
     }
 
     @Override
