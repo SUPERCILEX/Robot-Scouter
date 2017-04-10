@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,18 +15,20 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class TeamViewHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
     private Team mTeam;
+    private Fragment mFragment;
     private TeamMenuManager mMenuManager;
     private boolean mIsItemSelected;
     private boolean mCouldItemBeSelected;
     private boolean mIsScouting;
 
-    private CircleImageView mLogo;
+    private CircleImageView mMedia;
     private TextView mNumber;
     private TextView mName;
     private ImageButton mNewScout;
@@ -33,7 +36,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     @Keep
     public TeamViewHolder(View itemView) {
         super(itemView);
-        mLogo = (CircleImageView) itemView.findViewById(R.id.logo);
+        mMedia = (CircleImageView) itemView.findViewById(R.id.media);
         mNumber = (TextView) itemView.findViewById(R.id.number);
         mName = (TextView) itemView.findViewById(R.id.name);
         mNewScout = (ImageButton) itemView.findViewById(R.id.new_scout);
@@ -44,11 +47,13 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     }
 
     public void bind(Team team,
+                     Fragment fragment,
                      TeamMenuManager menuManager,
                      boolean isItemSelected,
                      boolean couldItemBeSelected,
                      boolean isScouting) {
         mTeam = team;
+        mFragment = fragment;
         mMenuManager = menuManager;
         mIsItemSelected = isItemSelected;
         mCouldItemBeSelected = couldItemBeSelected;
@@ -59,7 +64,8 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         setTeamName();
         updateItemStatus();
 
-        mLogo.setOnClickListener(this);
+        mMedia.setOnClickListener(this);
+        mMedia.setOnLongClickListener(this);
         mNewScout.setOnClickListener(this);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
@@ -72,11 +78,11 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
                     .load("")
                     .placeholder(ContextCompat.getDrawable(itemView.getContext(),
                                                            R.drawable.ic_check_circle_grey_144dp))
-                    .into(mLogo);
+                    .into(mMedia);
             itemView.setBackgroundColor(
                     ContextCompat.getColor(itemView.getContext(), R.color.selected_item));
         } else {
-            setTeamLogo();
+            setTeamMedia();
         }
         mNewScout.setVisibility(mCouldItemBeSelected ? View.GONE : View.VISIBLE);
 
@@ -108,17 +114,17 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         }
     }
 
-    private void setTeamLogo() {
+    private void setTeamMedia() {
         Glide.with(itemView.getContext())
                 .load(mTeam.getMedia())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.ic_android_black_144dp)
-                .into(mLogo);
+                .error(R.drawable.ic_add_a_photo_black_144dp)
+                .into(mMedia);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.logo || mIsItemSelected || mCouldItemBeSelected) {
+        if (v.getId() == R.id.media || mIsItemSelected || mCouldItemBeSelected) {
             onTeamContextMenuRequested();
         } else {
             ((TeamSelectionListener) itemView.getContext())
@@ -128,8 +134,15 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
 
     @Override
     public boolean onLongClick(View v) {
-        onTeamContextMenuRequested();
-        return true;
+        if (mIsItemSelected || mCouldItemBeSelected || v.getId() == R.id.root) {
+            onTeamContextMenuRequested();
+            return true;
+        } else if (v.getId() == R.id.media) {
+            TeamDetailsDialog.show(mFragment.getChildFragmentManager(), mTeam.getHelper());
+            return true;
+        }
+
+        return false;
     }
 
     private void onTeamContextMenuRequested() {

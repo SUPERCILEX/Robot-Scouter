@@ -9,14 +9,14 @@
     android:background="?android:attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/logo"
+        android:id="@+id/media"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/ic_android_black_144dp"
+        android:src="@drawable/ic_add_a_photo_black_144dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/logo"
+        app:layout_constraintLeft_toRightOf="@id/media"
         app:layout_constraintRight_toLeftOf="@+id/new_scout"
         app:layout_constraintTop_toTopOf="parent">
 

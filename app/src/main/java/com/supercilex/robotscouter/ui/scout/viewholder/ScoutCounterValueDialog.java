@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.scout;
+package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.text.InputType;
 
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.ui.scout.ScoutValueDialogBase;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 
 import java.math.BigDecimal;

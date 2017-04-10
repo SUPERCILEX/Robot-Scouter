@@ -7,57 +7,42 @@ import android.text.TextUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.android.gms.tasks.Tasks;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.concurrent.Callable;
 
 import retrofit2.Response;
 
-public final class TbaApi implements Callable<Team> {
+public class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
     private static final String TEAM_NICKNAME = "nickname";
     private static final String TEAM_WEBSITE = "website";
     private static final String IMGUR = "imgur";
     private static final String CHIEF_DELPHI = "cdphotothread";
-    private static final int ERROR_404 = 404;
     private static final int MAX_HISTORY = 2000;
 
-    private Team mTeam;
-    private Context mContext;
-    private TbaService mTbaService;
-    private TaskCompletionSource<Void> mInfoTask = new TaskCompletionSource<>();
-    private TaskCompletionSource<Void> mMediaTask = new TaskCompletionSource<>();
-
-    private TbaApi(Team team, Context context) {
-        mTeam = new Team.Builder(team).build();
-        mContext = context.getApplicationContext();
-        mTbaService = TbaService.RETROFIT.create(TbaService.class);
+    private TbaDownloader(Team team, Context context) {
+        super(team, context, TbaTeamApi.class);
     }
 
-    public static Task<Team> fetch(Team team, Context context) {
-        return AsyncTaskExecutor.execute(new TbaApi(team, context));
+    public static Task<Team> load(Team team, Context context) {
+        return executeAsync(new TbaDownloader(team, context));
     }
 
     @Override
     public Team call() throws Exception {
         getTeamInfo();
         getTeamMedia(Calendar.getInstance().get(Calendar.YEAR));
-        Tasks.await(Tasks.whenAll(mInfoTask.getTask(), mMediaTask.getTask()));
         return mTeam;
     }
 
     private void getTeamInfo() throws IOException {
-        Response<JsonObject> response =
-                mTbaService.getTeamInfo(mTeam.getNumber()).execute();
+        Response<JsonObject> response = mApi.getInfo(mTeam.getNumber()).execute();
 
-        if (cannotContinue(mInfoTask, response)) return;
+        if (cannotContinue(response)) return;
 
         JsonObject result = response.body();
         JsonElement teamNickname = result.get(TEAM_NICKNAME);
@@ -68,15 +53,13 @@ public final class TbaApi implements Callable<Team> {
         if (teamWebsite != null && !teamWebsite.isJsonNull()) {
             mTeam.setWebsite(teamWebsite.getAsString());
         }
-
-        mInfoTask.setResult(null);
     }
 
     private void getTeamMedia(int year) throws IOException {
         Response<JsonArray> response =
-                mTbaService.getTeamMedia(mTeam.getNumber(), String.valueOf(year)).execute();
+                mApi.getMedia(mTeam.getNumber(), String.valueOf(year)).execute();
 
-        if (cannotContinue(mMediaTask, response)) return;
+        if (cannotContinue(response)) return;
 
         JsonArray result = response.body();
         for (int i = 0; i < result.size(); i++) {
@@ -102,26 +85,7 @@ public final class TbaApi implements Callable<Team> {
             }
         }
 
-        if (mTeam.getMedia() == null && year > MAX_HISTORY) {
-            getTeamMedia(year - 1);
-            return;
-        }
-
-        mMediaTask.setResult(null);
-    }
-
-    private boolean cannotContinue(TaskCompletionSource<Void> task, Response response) {
-        if (response.isSuccessful()) {
-            return false;
-        } else if (response.code() == ERROR_404) {
-            task.setResult(null);
-            return true;
-        } else {
-            throw new IllegalStateException("Error code: "
-                                                    + response.code()
-                                                    + "\n Error message: "
-                                                    + response.errorBody().toString());
-        }
+        if (mTeam.getMedia() == null && year > MAX_HISTORY) getTeamMedia(year - 1);
     }
 
     private void setAndCacheMedia(String url) {

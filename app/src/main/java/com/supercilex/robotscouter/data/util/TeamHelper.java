@@ -56,19 +56,19 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         return Constants.FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
     }
 
-    public static TeamHelper get(Intent intent) {
+    public static TeamHelper parse(Intent intent) {
         return intent.getParcelableExtra(TEAM_HELPER_KEY);
     }
 
-    public static TeamHelper get(Bundle args) {
+    public static TeamHelper parse(Bundle args) {
         return args.getParcelable(TEAM_HELPER_KEY);
     }
 
-    public static List<TeamHelper> getList(Intent intent) {
+    public static List<TeamHelper> parseList(Intent intent) {
         return intent.getParcelableArrayListExtra(TEAM_HELPERS_KEY);
     }
 
-    public static List<TeamHelper> getList(Bundle args) {
+    public static List<TeamHelper> parseList(Bundle args) {
         return args.getParcelableArrayList(TEAM_HELPERS_KEY);
     }
 
@@ -128,6 +128,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         if (mTeam.getHasCustomName() == null) mTeam.setName(newTeam.getName());
         if (mTeam.getHasCustomMedia() == null) mTeam.setMedia(newTeam.getMedia());
         if (mTeam.getHasCustomWebsite() == null) mTeam.setWebsite(newTeam.getWebsite());
+        forceUpdateTeam();
+    }
+
+    public void updateMedia(Team newTeam) {
+        mTeam.setMedia(newTeam.getMedia());
         forceUpdateTeam();
     }
 

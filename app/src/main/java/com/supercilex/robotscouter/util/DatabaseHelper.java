@@ -150,7 +150,7 @@ public final class DatabaseHelper {
                                        DataSnapshot snapshot,
                                        int index,
                                        int oldIndex) {
-                if (type == EventType.ADDED) {
+                if (type == EventType.ADDED || type == EventType.CHANGED) {
                     Constants.sFirebaseTeams.getObject(index)
                             .getHelper()
                             .fetchLatestData(appContext);

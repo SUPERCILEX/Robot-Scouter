@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.client.SpreadsheetExporter;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.IoHelper;
 
 import java.util.List;
 
@@ -171,7 +172,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     /**
-     * Used in {@link SpreadsheetExporter#writeAndShareTeams(Fragment, List)}
+     * Used in {@link SpreadsheetExporter#writeAndShareTeams(Fragment, IoHelper.RequestHandler, List)}
      * <p>
      * {@inheritDoc}
      */
@@ -179,13 +180,11 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mMenuHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         mMenuHelper.onActivityResult(requestCode);
     }
 }

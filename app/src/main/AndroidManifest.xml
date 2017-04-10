@@ -3,9 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.supercilex.robotscouter">
 
-    <!-- For Chromebooks -->
     <uses-feature
         android:name="android.hardware.touchscreen"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false"/>
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -96,6 +98,18 @@
         </service>
 
         <service
+            android:name=".data.client.UploadTeamMediaJob21"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service
+            android:name=".data.client.UploadTeamMediaJob14"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>"
+            </intent-filter>
+        </service>
+
+        <service
             android:name=".data.client.AppIndexingService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.APPINDEXING">
@@ -103,6 +117,16 @@
                 <action android:name="com.google.firebase.appindexing.UPDATE_INDEX"/>
             </intent-filter>
         </service>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.supercilex.robotscouter.debug.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
 
     </application>
 

@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.ui;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,17 +11,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.client.UploadTeamMediaJob;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
 
-public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocusChangeListener {
+import java.io.File;
+
+public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocusChangeListener, View.OnTouchListener, OnSuccessListener<Uri> {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;
+    private TeamMediaCreator mMediaCapture;
 
     private TextInputLayout mMediaInputLayout;
     private TextInputLayout mWebsiteInputLayout;
@@ -33,12 +42,22 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         dialog.show(manager, TAG);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mTeamHelper = TeamHelper.parse(getArguments());
+        if (savedInstanceState == null) {
+            mMediaCapture = TeamMediaCreator.newInstance(this, mTeamHelper, this);
+        } else {
+            mMediaCapture = TeamMediaCreator.get(savedInstanceState, this, this);
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mTeamHelper = TeamHelper.get(getArguments());
-
         View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
+
         mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
         mWebsiteInputLayout = (TextInputLayout) rootView.findViewById(R.id.website_layout);
         mNameEditText = (EditText) rootView.findViewById(R.id.name);
@@ -51,7 +70,16 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         mNameEditText.setOnFocusChangeListener(this);
         mMediaEditText.setOnFocusChangeListener(this);
         mWebsiteEditText.setOnFocusChangeListener(this);
+
+        mMediaEditText.setOnTouchListener(this);
+
         return createDialog(rootView, R.string.team_details);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putAll(mMediaCapture.toBundle());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -61,29 +89,39 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     @Override
     public boolean onClick() {
-        boolean isMediaValid = validateUrl(mMediaEditText.getText(), mMediaInputLayout);
-        boolean isWebsiteValid = validateUrl(mWebsiteEditText.getText(), mWebsiteInputLayout);
+        boolean isMediaValid = validateUrl(mMediaEditText.getText().toString(), mMediaInputLayout);
+        boolean isWebsiteValid = validateUrl(mWebsiteEditText.getText().toString(),
+                                             mWebsiteInputLayout);
 
         if (isWebsiteValid && isMediaValid) {
-            String name = mNameEditText.getText().toString();
-            if (!TextUtils.equals(mTeamHelper.getTeam().getName(), name)) {
-                mTeamHelper.getTeam().setHasCustomName(true);
-                mTeamHelper.getTeam().setName(name);
+            Team team = mTeamHelper.getTeam();
+
+            String rawName = mNameEditText.getText().toString();
+            String name = TextUtils.isEmpty(rawName) ? null : rawName;
+            if (!TextUtils.equals(team.getName(), name)) {
+                team.setHasCustomName(!TextUtils.isEmpty(name));
+                team.setName(name);
             }
 
-            String media = formatUrl(mMediaEditText.getText());
-            if (!TextUtils.equals(mTeamHelper.getTeam().getMedia(), media)) {
-                mTeamHelper.getTeam().setHasCustomMedia(true);
-                mTeamHelper.getTeam().setMedia(media);
+            String media = formatUrl(mMediaEditText.getText().toString());
+            boolean isNewMedia = false;
+            if (!TextUtils.equals(team.getMedia(), media)) {
+                team.setHasCustomMedia(!TextUtils.isEmpty(media));
+                team.setMedia(media);
+                isNewMedia = true;
             }
 
-            String website = formatUrl(mWebsiteEditText.getText());
-            if (!TextUtils.equals(mTeamHelper.getTeam().getWebsite(), website)) {
-                mTeamHelper.getTeam().setHasCustomWebsite(true);
-                mTeamHelper.getTeam().setWebsite(website);
+            String website = formatUrl(mWebsiteEditText.getText().toString());
+            if (!TextUtils.equals(team.getWebsite(), website)) {
+                team.setHasCustomWebsite(!TextUtils.isEmpty(website));
+                team.setWebsite(website);
             }
 
             mTeamHelper.forceUpdateTeam();
+
+            if (isNewMedia && media != null && new File(media).exists()) {
+                UploadTeamMediaJob.start(getContext(), mTeamHelper);
+            }
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             Fragment fragment = getParentFragment();
@@ -98,22 +136,55 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP
+                && event.getRawX() >= (mMediaEditText.getRight() - mMediaEditText.getCompoundDrawables()[2]
+                .getBounds()
+                .width())) {
+            mMediaCapture.capture();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Used in {@link TeamMediaCreator#capture()}
+     * <p>
+     * {@inheritDoc}
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        mMediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mMediaCapture.onActivityResult(requestCode, resultCode);
+    }
+
+    @Override
+    public void onSuccess(Uri uri) {
+        mMediaEditText.setText(uri.getPath());
+    }
+
+    @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) return; // Only consider views losing focus
 
         int id = v.getId();
         if (id == R.id.media) {
-            validateUrl(mMediaEditText.getText(), mMediaInputLayout);
+            validateUrl(mMediaEditText.getText().toString(), mMediaInputLayout);
         } else if (id == R.id.website) {
-            validateUrl(mWebsiteEditText.getText(), mWebsiteInputLayout);
+            validateUrl(mWebsiteEditText.getText().toString(), mWebsiteInputLayout);
         }
     }
 
-    private boolean validateUrl(CharSequence url, TextInputLayout inputLayout) {
+    private boolean validateUrl(String url, TextInputLayout inputLayout) {
         if (TextUtils.isEmpty(url)) return true;
 
-        boolean isValid = Patterns.WEB_URL.matcher(formatUrl(url)).matches();
-        if (isValid) {
+        if (Patterns.WEB_URL.matcher(formatUrl(url)).matches() || new File(url).exists()) {
             inputLayout.setError(null);
             return true;
         } else {
@@ -123,8 +194,10 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     @Nullable
-    private String formatUrl(CharSequence url) {
-        String trimmedUrl = url.toString().trim();
+    private String formatUrl(String url) {
+        if (new File(url).exists()) return url;
+
+        String trimmedUrl = url.trim();
         if (trimmedUrl.isEmpty()) return null;
         if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
             return trimmedUrl;

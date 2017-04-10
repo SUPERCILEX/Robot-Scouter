@@ -2,6 +2,8 @@ package com.supercilex.robotscouter.ui.scout;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -17,16 +19,20 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.client.UploadTeamMediaJob;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.ui.TeamMediaCreator;
 
-public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
+public abstract class AppBarViewHolderBase implements OnSuccessListener<Void>, View.OnClickListener {
+    private boolean mInit;
+
     protected TeamHelper mTeamHelper;
     private Fragment mFragment;
 
@@ -41,7 +47,18 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
     private Task mOnScoutingReadyTask;
     private boolean mIsDeleteScoutItemVisible;
 
-    protected AppBarViewHolder(TeamHelper teamHelper, Fragment fragment, Task onScoutingReadyTask) {
+    private TeamMediaCreator mMediaCapture;
+    private OnSuccessListener<Uri> mMediaCaptureListener = uri -> {
+        mTeamHelper.getTeam().setHasCustomMedia(true);
+        mTeamHelper.getTeam().setMedia(uri.getPath());
+        mTeamHelper.forceUpdateTeam();
+
+        UploadTeamMediaJob.start(mFragment.getContext(), mTeamHelper);
+    };
+
+    protected AppBarViewHolderBase(TeamHelper teamHelper,
+                                   Fragment fragment,
+                                   Task onScoutingReadyTask) {
         mTeamHelper = teamHelper;
         mFragment = fragment;
         View rootView = fragment.getView();
@@ -49,20 +66,23 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
         mHeader = (CollapsingToolbarLayout) rootView.findViewById(R.id.header);
         mBackdrop = (ImageView) rootView.findViewById(R.id.backdrop);
         mOnScoutingReadyTask = onScoutingReadyTask;
-
-        bind(); // NOPMD
+        mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
     }
 
     public final void bind(@NonNull TeamHelper teamHelper) {
-        if (!mTeamHelper.equals(teamHelper)) {
+        if (!mTeamHelper.equals(teamHelper) || !mInit) {
             mTeamHelper = teamHelper;
             bind();
         }
+        mInit = true;
     }
 
     @CallSuper
     protected void bind() {
+        mBackdrop.setOnClickListener(this);
+
         mToolbar.setTitle(mTeamHelper.toString());
+        mMediaCapture.setTeamHelper(mTeamHelper);
         loadImages();
         bindMenu();
     }
@@ -71,26 +91,45 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
         String media = mTeamHelper.getTeam().getMedia();
         Glide.with(mFragment)
                 .load(media)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.ic_android_black_144dp)
-                .into(mBackdrop);
-
-        Glide.with(mFragment)
-                .load(media)
                 .asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .error(R.drawable.ic_add_a_photo_black_144dp)
+                .listener(new RequestListener<String, Bitmap>() {
                     @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                    public boolean onException(Exception e,
+                                               String s,
+                                               Target<Bitmap> target,
+                                               boolean b) {
+                        mBackdrop.setOnClickListener(AppBarViewHolderBase.this);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap bitmap,
+                                                   String s,
+                                                   Target<Bitmap> target,
+                                                   boolean b,
+                                                   boolean b1) {
+                        mBackdrop.setOnClickListener(null);
+
                         if (bitmap != null && !bitmap.isRecycled()) {
                             Palette.from(bitmap).generate(palette -> {
                                 Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
                                 if (vibrantSwatch != null) {
                                     updateScrim(vibrantSwatch.getRgb(), bitmap);
+                                    return;
+                                }
+
+                                Palette.Swatch dominantSwatch = palette.getDominantSwatch();
+                                if (dominantSwatch != null) {
+                                    updateScrim(dominantSwatch.getRgb(), bitmap);
                                 }
                             });
                         }
+                        return false;
                     }
-                });
+                })
+                .into(mBackdrop);
     }
 
     @CallSuper
@@ -138,5 +177,32 @@ public abstract class AppBarViewHolder implements OnSuccessListener<Void> {
                           Color.red(opaque),
                           Color.green(opaque),
                           Color.blue(opaque));
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.backdrop) mMediaCapture.capture();
+    }
+
+    @CallSuper
+    public void onActivityResult(int requestCode, int resultCode) {
+        mMediaCapture.onActivityResult(requestCode, resultCode);
+    }
+
+    @CallSuper
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
+        mMediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @CallSuper
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putAll(mMediaCapture.toBundle());
+    }
+
+    @CallSuper
+    public void restoreState(Bundle savedInstanceState) {
+        mMediaCapture = TeamMediaCreator.get(savedInstanceState, mFragment, mMediaCaptureListener);
     }
 }

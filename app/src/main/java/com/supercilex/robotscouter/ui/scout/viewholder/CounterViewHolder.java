@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
-import com.supercilex.robotscouter.ui.scout.ScoutCounterValueDialog;
 import com.supercilex.robotscouter.util.Constants;
 
 public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> implements View.OnClickListener, View.OnLongClickListener {
