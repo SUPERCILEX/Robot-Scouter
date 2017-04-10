@@ -142,6 +142,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
                 .getBounds()
                 .width())) {
             mMediaCapture.capture();
+            v.performClick();
             return true;
         }
         return false;

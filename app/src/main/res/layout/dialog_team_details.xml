@@ -50,6 +50,7 @@
                 style="@style/RobotScouter.Text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:drawableEnd="@drawable/ic_add_a_photo_black_24dp"
                 android:drawableRight="@drawable/ic_add_a_photo_black_24dp"
                 android:inputType="textUri"/>
 
