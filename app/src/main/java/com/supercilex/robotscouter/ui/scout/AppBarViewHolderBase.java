@@ -192,7 +192,7 @@ public abstract class AppBarViewHolderBase implements OnSuccessListener<Void>, V
     @CallSuper
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions,
-                                           int[] grantResults) {
+                                           int[] grantResults) { // NOPMD
         mMediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

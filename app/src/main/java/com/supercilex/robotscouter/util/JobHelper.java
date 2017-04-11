@@ -18,7 +18,7 @@ import com.firebase.jobdispatcher.Trigger;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
-public class JobHelper {
+public final class JobHelper {
     private JobHelper() {
         throw new AssertionError("No instance for you!");
     }
@@ -40,7 +40,7 @@ public class JobHelper {
 
         int result = dispatcher.schedule(job);
         if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-            throw new RuntimeException(String.valueOf(result));
+            throw new IllegalStateException(String.valueOf(result));
         }
     }
 
@@ -59,7 +59,7 @@ public class JobHelper {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
         if (result != JobScheduler.RESULT_SUCCESS) {
-            throw new RuntimeException(String.valueOf(result));
+            throw new IllegalStateException(String.valueOf(result));
         }
     }
 

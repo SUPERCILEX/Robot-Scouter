@@ -16,7 +16,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
+public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
     private static final Retrofit IMGUR_RETROFIT = new Retrofit.Builder()
             .baseUrl("https://api.imgur.com/3/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -33,7 +33,7 @@ public class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
     @Override
     public Team call() throws Exception {
         uploadToImgur();
-//        uploadToTba();
+//        uploadToTba(); TODO waiting on https://github.com/the-blue-alliance/the-blue-alliance/pull/1876
         return mTeam;
     }
 
@@ -52,7 +52,7 @@ public class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
         mTeam.setMedia(link.contains("https://") ? link : link.replace("http://", "https://"));
     }
 
-    private void uploadToTba() throws IOException {
+    private void uploadToTba() throws IOException { // NOPMD
         Response<JsonObject> response = mApi.postToTba(mTeam.getNumber(), getYear(), getTbaApiKey(),
                                                        RequestBody.create(MediaType.parse("text/*"),
                                                                           mTeam.getMedia()))

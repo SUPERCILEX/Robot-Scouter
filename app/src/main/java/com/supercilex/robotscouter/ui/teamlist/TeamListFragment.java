@@ -172,7 +172,8 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     /**
-     * Used in {@link SpreadsheetExporter#writeAndShareTeams(Fragment, IoHelper.RequestHandler, List)}
+     * Used in
+     * {@link SpreadsheetExporter#writeAndShareTeams(Fragment, IoHelper.RequestHandler, List)}
      * <p>
      * {@inheritDoc}
      */

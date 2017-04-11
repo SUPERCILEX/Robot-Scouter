@@ -26,7 +26,7 @@ import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class TeamMediaCreator implements Parcelable, OnSuccessListener<Void> {
+public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void> {
     public static final Parcelable.Creator<TeamMediaCreator> CREATOR = new Parcelable.Creator<TeamMediaCreator>() {
         @Override
         public TeamMediaCreator createFromParcel(Parcel source) {
@@ -94,6 +94,7 @@ public class TeamMediaCreator implements Parcelable, OnSuccessListener<Void> {
         capture();
     }
 
+    @SuppressWarnings("MissingPermission") // TODO remove once Google fixes their plugin
     public void capture() {
         Context context = mFragment.getContext();
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -147,7 +148,7 @@ public class TeamMediaCreator implements Parcelable, OnSuccessListener<Void> {
 
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions,
-                                           int[] grantResults) {
+                                           int[] grantResults) { // NOPMD
         mWriteAccessRequestHandler.onRequestPermissionsResult(
                 requestCode, permissions, grantResults);
     }

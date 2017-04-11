@@ -18,6 +18,7 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks;
 
+@SuppressWarnings("MissingPermission") // TODO remove once Google fixes their plugin
 public final class IoHelper {
     public static final List<String> WRITE_PERMS = Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -32,14 +33,14 @@ public final class IoHelper {
     @Nullable
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public static File getRootFolder() {
-        return isExternalStorageMounted() ? !ROOT_FOLDER.exists() && !ROOT_FOLDER.mkdirs() ? null : ROOT_FOLDER : null;
+        return isExternalStorageMounted() && ROOT_FOLDER.mkdirs() ? ROOT_FOLDER : null;
     }
 
     @Nullable
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public static File getMediaFolder() {
         //noinspection MissingPermission
-        return getRootFolder() == null ? null : !MEDIA_FOLDER.exists() && !MEDIA_FOLDER.mkdirs() ? null : MEDIA_FOLDER;
+        return getRootFolder() != null && MEDIA_FOLDER.mkdirs() ? MEDIA_FOLDER : null;
     }
 
     private static boolean isExternalStorageMounted() {

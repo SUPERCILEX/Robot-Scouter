@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import retrofit2.Response;
 
-public class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
+public final class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
     private static final String TEAM_NICKNAME = "nickname";
     private static final String TEAM_WEBSITE = "website";
     private static final String IMGUR = "imgur";
