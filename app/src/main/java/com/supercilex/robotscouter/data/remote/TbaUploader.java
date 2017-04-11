@@ -45,13 +45,19 @@ public class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
                                                 new File(mTeam.getMedia())))
                 .execute();
 
-        if (cannotContinue(response)) return;
+        if (cannotContinue(response)) throw new IllegalStateException();
 
-        mTeam.setMedia(response.body().get("data").getAsJsonObject().get("link").getAsString());
+        String link = response.body().get("data").getAsJsonObject().get("link").getAsString();
+        // Oh Imgur, why don't you use https by default? 😢
+        mTeam.setMedia(link.contains("https://") ? link : link.replace("http://", "https://"));
     }
 
     private void uploadToTba() throws IOException {
-        Response<JsonObject> response = mApi.postToTba(mTeam.getNumber()).execute();
-        if (cannotContinue(response)) throw new IllegalStateException();
+        Response<JsonObject> response = mApi.postToTba(mTeam.getNumber(), getYear(), getTbaApiKey(),
+                                                       RequestBody.create(MediaType.parse("text/*"),
+                                                                          mTeam.getMedia()))
+                .execute();
+
+        cannotContinue(response);
     }
 }

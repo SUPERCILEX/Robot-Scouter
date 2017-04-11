@@ -18,12 +18,12 @@ public final class DownloadTeamDataJob {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             JobHelper.startInternetJob21(context,
                                          teamHelper,
-                                         Integer.parseInt(teamHelper.getTeam().getNumber()),
+                                         (int) teamHelper.getTeam().getNumberAsLong(),
                                          DownloadTeamDataJob21.class);
         } else {
             JobHelper.startInternetJob14(context,
                                          teamHelper,
-                                         teamHelper.getTeam().getNumber(),
+                                         (int) teamHelper.getTeam().getNumberAsLong(),
                                          DownloadTeamDataJob14.class);
         }
     }

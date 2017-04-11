@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.data.model.Team;
 
 import java.io.IOException;
-import java.util.Calendar;
 
 import retrofit2.Response;
 
@@ -35,12 +34,12 @@ public class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
     @Override
     public Team call() throws Exception {
         getTeamInfo();
-        getTeamMedia(Calendar.getInstance().get(Calendar.YEAR));
+        getTeamMedia(getYear());
         return mTeam;
     }
 
     private void getTeamInfo() throws IOException {
-        Response<JsonObject> response = mApi.getInfo(mTeam.getNumber()).execute();
+        Response<JsonObject> response = mApi.getInfo(mTeam.getNumber(), getTbaApiKey()).execute();
 
         if (cannotContinue(response)) return;
 
@@ -57,7 +56,7 @@ public class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
 
     private void getTeamMedia(int year) throws IOException {
         Response<JsonArray> response =
-                mApi.getMedia(mTeam.getNumber(), String.valueOf(year)).execute();
+                mApi.getMedia(mTeam.getNumber(), year, getTbaApiKey()).execute();
 
         if (cannotContinue(response)) return;
 

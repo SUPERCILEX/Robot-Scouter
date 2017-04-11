@@ -16,5 +16,9 @@ public interface TbaTeamMediaApi {
                                  @Query("title") String title,
                                  @Body RequestBody file);
 
-    Call<JsonObject> postToTba(@Path("number") String number);
+    @POST("suggest/media/team/{number}/{year}")
+    Call<JsonObject> postToTba(@Path("number") String number,
+                               @Path("year") int year,
+                               @Query("X-TBA-Auth-Key") String auth,
+                               @Body RequestBody url);
 }

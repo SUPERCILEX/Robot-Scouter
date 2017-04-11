@@ -3,10 +3,11 @@ package com.supercilex.robotscouter.data.remote;
 import android.content.Context;
 
 import com.google.android.gms.tasks.Task;
-import com.supercilex.robotscouter.BuildConfig;
+import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
+import java.util.Calendar;
 import java.util.concurrent.Callable;
 
 import retrofit2.Response;
@@ -14,11 +15,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 abstract class TbaServiceBase<T> implements Callable<Team> {
-    private static final String TOKEN = "frc2521:Robot_Scouter:" + BuildConfig.VERSION_NAME;
-    public static final String APP_ID_QUERY = "?X-TBA-App-Id=" + TOKEN;
-
     private static final Retrofit TBA_RETROFIT = new Retrofit.Builder()
-            .baseUrl("https://www.thebluealliance.com/api/v2/team/")
+            .baseUrl("https://www.thebluealliance.com/api/v3/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -36,6 +34,14 @@ abstract class TbaServiceBase<T> implements Callable<Team> {
 
     protected static Task<Team> executeAsync(TbaServiceBase<?> service) {
         return AsyncTaskExecutor.execute(service);
+    }
+
+    protected String getTbaApiKey() {
+        return mContext.getString(R.string.tba_api_key);
+    }
+
+    protected int getYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
     }
 
     protected boolean cannotContinue(Response response) throws IllegalStateException {

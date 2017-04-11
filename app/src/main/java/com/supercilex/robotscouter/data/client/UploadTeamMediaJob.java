@@ -16,7 +16,7 @@ public class UploadTeamMediaJob {
         } else {
             JobHelper.startInternetJob14(context,
                                          teamHelper,
-                                         String.valueOf(teamHelper.getTeam().getMedia().hashCode()),
+                                         teamHelper.getTeam().getMedia().hashCode(),
                                          UploadTeamMediaJob14.class);
         }
     }

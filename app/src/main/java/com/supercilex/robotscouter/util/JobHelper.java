@@ -25,14 +25,14 @@ public class JobHelper {
 
     public static void startInternetJob14(Context context,
                                           TeamHelper teamHelper,
-                                          String jobId,
+                                          int jobId,
                                           Class<? extends com.firebase.jobdispatcher.JobService> clazz) {
         FirebaseJobDispatcher dispatcher =
                 new FirebaseJobDispatcher(new GooglePlayDriver(context.getApplicationContext()));
 
         Job job = dispatcher.newJobBuilder()
                 .setService(clazz)
-                .setTag(jobId)
+                .setTag(String.valueOf(jobId))
                 .setTrigger(Trigger.executionWindow(0, 0))
                 .setExtras(JobHelper.toRawBundle(teamHelper))
                 .setConstraints(Constraint.ON_ANY_NETWORK)
