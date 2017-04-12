@@ -14,4 +14,5 @@ else
   mv travis-dummies/google-play-auto-publisher.json app/google-play-auto-publisher.json
   mv travis-dummies/keystore.properties app/keystore.properties
   mv travis-dummies/keystore.jks app/keystore.jks
+  mv travis-dummies/config.xml app/src/main/res/values/config.xml
 fi

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Replace the "CHANGE ME" bits with your api keys -->
+    <string name="facebook_application_id" translatable="false">CHANGE ME</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">CHANGE ME</string>
+    <string name="twitter_consumer_key" translatable="false">CHANGE ME</string>
+    <string name="twitter_consumer_secret" translatable="false">CHANGE ME</string>
+    <string name="imgur_client_id" translatable="false">Client-ID CHANGE ME</string>
+    <string name="tba_api_key" translatable="false">CHANGE ME</string>
+</resources>
