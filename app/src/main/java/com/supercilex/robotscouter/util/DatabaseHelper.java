@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.client.UploadTeamMediaJob;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
@@ -27,6 +28,7 @@ import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -151,9 +153,13 @@ public final class DatabaseHelper {
                                        int index,
                                        int oldIndex) {
                 if (type == EventType.ADDED || type == EventType.CHANGED) {
-                    Constants.sFirebaseTeams.getObject(index)
-                            .getHelper()
-                            .fetchLatestData(appContext);
+                    Team team = Constants.sFirebaseTeams.getObject(index);
+                    TeamHelper teamHelper = team.getHelper();
+
+                    teamHelper.fetchLatestData(appContext);
+                    if (new File(team.getMedia()).exists()) {
+                        UploadTeamMediaJob.start(appContext, teamHelper);
+                    }
                 }
             }
         });

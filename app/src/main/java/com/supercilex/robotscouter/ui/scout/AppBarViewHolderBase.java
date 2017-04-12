@@ -52,8 +52,6 @@ public abstract class AppBarViewHolderBase implements OnSuccessListener<Void>, V
         mTeamHelper.getTeam().setHasCustomMedia(true);
         mTeamHelper.getTeam().setMedia(uri.getPath());
         mTeamHelper.forceUpdateTeam();
-
-        UploadTeamMediaJob.start(mFragment.getContext(), mTeamHelper);
     };
 
     protected AppBarViewHolderBase(TeamHelper teamHelper,

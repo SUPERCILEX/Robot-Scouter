@@ -1,14 +1,17 @@
 package com.supercilex.robotscouter.data.remote;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -22,6 +25,8 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
+    private static final int ERROR_400 = 400;
+
     private TbaUploader(Team team, Context context) {
         super(team, context, TbaTeamMediaApi.class);
     }
@@ -33,7 +38,7 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
     @Override
     public Team call() throws Exception {
         uploadToImgur();
-//        uploadToTba(); TODO waiting on https://github.com/the-blue-alliance/the-blue-alliance/pull/1876
+        uploadToTba();
         return mTeam;
     }
 
@@ -52,12 +57,23 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
         mTeam.setMedia(link.contains("https://") ? link : link.replace("http://", "https://"));
     }
 
-    private void uploadToTba() throws IOException { // NOPMD
-        Response<JsonObject> response = mApi.postToTba(mTeam.getNumber(), getYear(), getTbaApiKey(),
-                                                       RequestBody.create(MediaType.parse("text/*"),
-                                                                          mTeam.getMedia()))
-                .execute();
+    private void uploadToTba() throws IOException {
+        String jsonBody = new GsonBuilder().create()
+                .toJson(Collections.singletonMap("media_url", mTeam.getMedia()));
 
-        cannotContinue(response);
+        Response<JsonObject> response =
+                mApi.postToTba(mTeam.getNumber(), getYear(), getTbaApiKey(), jsonBody).execute();
+
+        Log.d("TAG", jsonBody);
+        Log.d("TAG", response.toString());
+        Log.d("TAG", response.body().toString());
+        if (cannotContinue(response)) return;
+
+        if (!response.body().get("success").getAsBoolean()) throw new IllegalStateException();
+    }
+
+    @Override
+    protected boolean cannotContinue(Response response) throws IllegalStateException {
+        return response.code() == ERROR_400 || super.cannotContinue(response); // TODO remove if https://github.com/the-blue-alliance/the-blue-alliance/pull/1882 goes through
     }
 }

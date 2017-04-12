@@ -121,10 +121,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
             mTeamHelper.forceUpdateTeam();
 
-            if (isNewMedia && media != null && new File(media).exists()) {
-                UploadTeamMediaJob.start(getContext(), mTeamHelper);
-            }
-
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             Fragment fragment = getParentFragment();
             if (fragment instanceof TeamListFragment) {
