@@ -2,7 +2,7 @@
 
 if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   cd app
-  openssl aes-256-cbc -K $encrypted_79745bcca107_key -iv $encrypted_79745bcca107_iv -in secrets.tar.enc -out secrets.tar -d &> /dev/null
+  openssl aes-256-cbc -K $encrypted_8e2b28f9b71e_key -iv $encrypted_8e2b28f9b71e_iv -in secrets.tar.enc -out secrets.tar -d &> /dev/null
   tar -xvf secrets.tar
   cd ..
 
