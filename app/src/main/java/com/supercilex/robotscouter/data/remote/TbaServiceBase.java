@@ -50,10 +50,7 @@ abstract class TbaServiceBase<T> implements Callable<Team> {
         } else if (response.code() == ERROR_404) {
             return true;
         } else {
-            throw new IllegalStateException("Unknown error code: "
-                                                    + response.code()
-                                                    + "\n Error message: "
-                                                    + response.errorBody().toString());
+            throw new IllegalStateException(response.toString());
         }
     }
 }

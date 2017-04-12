@@ -4,14 +4,14 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -25,8 +25,6 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    private static final int ERROR_400 = 400;
-
     private TbaUploader(Team team, Context context) {
         super(team, context, TbaTeamMediaApi.class);
     }
@@ -37,8 +35,15 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
 
     @Override
     public Team call() throws Exception {
-        uploadToImgur();
-        uploadToTba();
+        try {
+//            uploadToImgur();
+            mTeam.setMedia("https://i.imgur.com/foo.png");
+            uploadToTba();
+        } catch (Throwable e) {
+            Log.e("TAG", "call: ", e);
+            throw e;
+        }
+        Log.d("TAG", "call: ");
         return mTeam;
     }
 
@@ -50,30 +55,44 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
                                                 new File(mTeam.getMedia())))
                 .execute();
 
+        Log.d("TAG", "uploadToImgur: " + response.body());
         if (cannotContinue(response)) throw new IllegalStateException();
 
         String link = response.body().get("data").getAsJsonObject().get("link").getAsString();
         // Oh Imgur, why don't you use https by default? 😢
-        mTeam.setMedia(link.contains("https://") ? link : link.replace("http://", "https://"));
+        link = link.startsWith("https://") ? link : link.replace("http://", "https://");
+        // And what about png?
+        link = link.endsWith(".png") ? link : link.replace(getFileExtension(link), "png");
+
+        mTeam.setMedia(link);
     }
 
     private void uploadToTba() throws IOException {
-        String jsonBody = new GsonBuilder().create()
-                .toJson(Collections.singletonMap("media_url", mTeam.getMedia()));
+        String rawUrl = mTeam.getMedia();
+        Log.d("TAG", "uploadToTba: " + rawUrl);
+        String strippedUrl = rawUrl.replace("." + getFileExtension(rawUrl), "")
+                .replace("https://i.", "");
+        Log.d("TAG", "uploadToTba: " + strippedUrl);
+        Response<JsonObject> response;
+        try {
+            response =
+                    mApi.postToTba(mTeam.getNumber(), getYear(), getTbaApiKey(), strippedUrl)
+                            .execute();
+        } catch (Exception e) {
+            Log.e("TAG", "uploadToTba: ", e);
+            throw e;
+        }
 
-        Response<JsonObject> response =
-                mApi.postToTba(mTeam.getNumber(), getYear(), getTbaApiKey(), jsonBody).execute();
-
-        Log.d("TAG", jsonBody);
         Log.d("TAG", response.toString());
-        Log.d("TAG", response.body().toString());
         if (cannotContinue(response)) return;
+        Log.d("TAG", "Made it past cannotContinue");
 
         if (!response.body().get("success").getAsBoolean()) throw new IllegalStateException();
+        Log.d("TAG", "Success!");
     }
 
-    @Override
-    protected boolean cannotContinue(Response response) throws IllegalStateException {
-        return response.code() == ERROR_400 || super.cannotContinue(response); // TODO remove if https://github.com/the-blue-alliance/the-blue-alliance/pull/1882 goes through
+    private String getFileExtension(String url) {
+        List<String> splitUrl = Arrays.asList(url.split("\\."));
+        return splitUrl.get(splitUrl.size() - 1);
     }
 }

@@ -12,15 +12,17 @@ public final class UploadTeamMediaJob {
     }
 
     public static void start(Context context, TeamHelper teamHelper) {
+        int mediaHash = teamHelper.getTeam().getMedia().hashCode();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             JobHelper.startInternetJob21(context,
                                          teamHelper,
-                                         teamHelper.getTeam().getMedia().hashCode(),
+                                         mediaHash,
                                          UploadTeamMediaJob21.class);
         } else {
             JobHelper.startInternetJob14(context,
                                          teamHelper,
-                                         teamHelper.getTeam().getMedia().hashCode(),
+                                         mediaHash,
                                          UploadTeamMediaJob14.class);
         }
     }
