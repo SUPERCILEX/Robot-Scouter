@@ -36,6 +36,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     private EditText mMediaEditText;
     private EditText mWebsiteEditText;
 
+    private float mStartX = -1;
+
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
         dialog.setArguments(teamHelper.toBundle());
@@ -137,14 +139,19 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP
-                && event.getRawX() >= (mMediaEditText.getRight() - mMediaEditText.getCompoundDrawables()[2]
-                .getBounds()
-                .width())) {
+        int action = event.getAction();
+        float x = event.getX();
+
+        if (action == MotionEvent.ACTION_DOWN && mStartX == -1) mStartX = x;
+
+        int iconX = mMediaEditText.getRight() - mMediaEditText.getCompoundDrawables()[2].getBounds()
+                .width();
+        if (action == MotionEvent.ACTION_UP && mStartX >= iconX && x >= iconX) {
             mMediaCapture.capture();
-            v.performClick();
             return true;
         }
+        if (action == MotionEvent.ACTION_UP) mStartX = -1;
+
         return false;
     }
 

@@ -22,8 +22,8 @@ import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks;
 public final class IoHelper {
     public static final List<String> WRITE_PERMS = Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-    private static final String ROOT_DIRECTORY = Environment.getExternalStorageDirectory() + "/Robot Scouter/";
-    private static final File ROOT_FOLDER = new File(ROOT_DIRECTORY);
+    private static final File ROOT_FOLDER =
+            new File(Environment.getExternalStorageDirectory(), "Robot Scouter");
     private static final File MEDIA_FOLDER = new File(ROOT_FOLDER, "Media");
 
     private IoHelper() {

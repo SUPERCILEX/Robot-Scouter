@@ -21,7 +21,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.client.SpreadsheetExporter;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.IoHelper;
+import com.supercilex.robotscouter.util.IoHelper; // NOPMD
 
 import java.util.List;
 

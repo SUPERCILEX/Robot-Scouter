@@ -20,9 +20,6 @@ import com.supercilex.robotscouter.util.IoHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -138,12 +135,15 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             mediaScanIntent.setData(contentUri);
             mFragment.getContext().sendBroadcast(mediaScanIntent);
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            new File(mPhotoPath).delete();
         }
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        String timeStamp = new SimpleDateFormat("ss", Locale.US).format(new Date());
-        return File.createTempFile(mTeamHelper + "_" + timeStamp, ".jpg", mediaFolder);
+        return File.createTempFile(mTeamHelper + "_" + System.currentTimeMillis(),
+                                   ".jpg",
+                                   mediaFolder);
     }
 
     public void onRequestPermissionsResult(int requestCode,
