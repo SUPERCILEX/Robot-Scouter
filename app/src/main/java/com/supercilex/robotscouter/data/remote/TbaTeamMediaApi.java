@@ -23,5 +23,5 @@ public interface TbaTeamMediaApi {
     Call<JsonObject> postToTba(@Path("number") String number,
                                @Path("year") int year,
                                @Query("X-TBA-Auth-Key") String auth,
-                               @Part(value = "media_url") String url);
+                               @Part("media_url") RequestBody url);
 }
