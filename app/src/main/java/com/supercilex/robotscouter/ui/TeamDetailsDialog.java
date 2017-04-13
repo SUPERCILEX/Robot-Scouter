@@ -17,7 +17,6 @@ import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.client.UploadTeamMediaJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;

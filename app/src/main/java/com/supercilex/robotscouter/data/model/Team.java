@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import com.firebase.ui.auth.util.Preconditions;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
-import com.google.firebase.database.ServerValue;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
 
