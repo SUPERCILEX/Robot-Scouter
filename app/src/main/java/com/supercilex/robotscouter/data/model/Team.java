@@ -188,10 +188,9 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
-    @SuppressWarnings("SameReturnValue")
     @PropertyName(Constants.FIREBASE_TIMESTAMP)
-    public Object getServerTimestamp() {
-        return ServerValue.TIMESTAMP;
+    public Object getCurrentTimestamp() {
+        return System.currentTimeMillis();
     }
 
     @Exclude

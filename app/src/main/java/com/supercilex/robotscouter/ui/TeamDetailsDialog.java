@@ -106,11 +106,9 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
             }
 
             String media = formatUrl(mMediaEditText.getText().toString());
-            boolean isNewMedia = false;
             if (!TextUtils.equals(team.getMedia(), media)) {
                 team.setHasCustomMedia(!TextUtils.isEmpty(media));
                 team.setMedia(media);
-                isNewMedia = true;
             }
 
             String website = formatUrl(mWebsiteEditText.getText().toString());
