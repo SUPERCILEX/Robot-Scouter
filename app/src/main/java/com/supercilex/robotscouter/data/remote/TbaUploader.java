@@ -36,6 +36,7 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
     public Team call() throws Exception {
         uploadToImgur();
         if (mTeam.getShouldUploadMediaToTba() != null) uploadToTba();
+//        if (mTeam.getShouldUploadMediaToTba() != null) Log.d("TAG", "tba upload"); // uploadToTba();
         return mTeam;
     }
 

@@ -42,15 +42,15 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         }
     };
 
-    private static final int REQUEST_TAKE_PHOTO = 334;
-    private static final String MEDIA_CREATOR_KEY = "media_creator";
+    private static final int TAKE_PHOTO_RC = 334; // NOPMD https://github.com/pmd/pmd/issues/345
+    private static final String MEDIA_CREATOR_KEY = "media_creator"; // NOPMD https://github.com/pmd/pmd/issues/345
 
-    private WeakReference<Fragment> mFragment;
-    private TeamHelper mTeamHelper;
-    private IoHelper.RequestHandler mWriteAccessRequestHandler;
-    private WeakReference<OnSuccessListener<TeamHelper>> mListener;
-    private String mPhotoPath;
-    private boolean mShouldUploadMediaToTba;
+    private WeakReference<Fragment> mFragment; // NOPMD https://github.com/pmd/pmd/issues/345
+    private TeamHelper mTeamHelper; // NOPMD https://github.com/pmd/pmd/issues/345
+    private IoHelper.RequestHandler mWriteAccessRequestHandler; // NOPMD https://github.com/pmd/pmd/issues/345
+    private WeakReference<OnSuccessListener<TeamHelper>> mListener; // NOPMD https://github.com/pmd/pmd/issues/345
+    private String mPhotoPath; // NOPMD https://github.com/pmd/pmd/issues/345
+    private boolean mShouldUploadMediaToTba; // NOPMD https://github.com/pmd/pmd/issues/345
 
     private TeamMediaCreator(TeamHelper teamHelper,
                              String photoPath,
@@ -129,7 +129,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 Uri photoUri = FileProvider.getUriForFile(
                         context, context.getPackageName() + ".fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                mFragment.get().startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                mFragment.get().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC);
             }
         }
     }
@@ -137,7 +137,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     public void onActivityResult(int requestCode, int resultCode) {
         mWriteAccessRequestHandler.onActivityResult(requestCode);
 
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == TAKE_PHOTO_RC && resultCode == Activity.RESULT_OK) {
             Uri contentUri = Uri.fromFile(new File(mPhotoPath));
 
             mTeamHelper.getTeam().setHasCustomMedia(true);
@@ -162,7 +162,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions,
-                                           int[] grantResults) { // NOPMD
+                                           int[] grantResults) { // NOPMD https://github.com/pmd/pmd/issues/346
         mWriteAccessRequestHandler.onRequestPermissionsResult(
                 requestCode, permissions, grantResults);
     }

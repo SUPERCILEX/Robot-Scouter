@@ -376,7 +376,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void> 
 
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions,
-                                           int[] grantResults) { // NOPMD
+                                           int[] grantResults) { // NOPMD https://github.com/pmd/pmd/issues/346
         mWriteAccessRequestHandler.onRequestPermissionsResult(requestCode,
                                                               permissions,
                                                               grantResults);

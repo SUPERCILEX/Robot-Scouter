@@ -194,7 +194,7 @@ public abstract class AppBarViewHolderBase
     @CallSuper
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions,
-                                           int[] grantResults) { // NOPMD
+                                           int[] grantResults) { // NOPMD https://github.com/pmd/pmd/issues/346
         mMediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

@@ -263,7 +263,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     }
 
     @Override
-    public void onDataChanged() { // NOPMD
+    public void onDataChanged() { // NOPMD https://github.com/pmd/pmd/issues/347
         // Noop
     }
 }
