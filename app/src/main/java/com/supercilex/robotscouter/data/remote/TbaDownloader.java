@@ -32,7 +32,7 @@ public final class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
     }
 
     @Override
-    public Team call() throws Exception {
+    public Team call() throws Exception { // NOPMD https://github.com/pmd/pmd/issues/350
         getTeamInfo();
         getTeamMedia(getYear());
         return mTeam;

@@ -204,7 +204,7 @@ public class DonateDialog extends DialogFragment
         }
 
         @Override
-        public Void call() throws Exception {
+        public Void call() throws Exception { // NOPMD https://github.com/pmd/pmd/issues/350
             mService.consumePurchase(3, mPackageName, mPurchaseToken);
             mDialog.dismiss();
             return null;
