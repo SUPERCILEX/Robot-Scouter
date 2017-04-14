@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaDownloader;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSender;
@@ -163,6 +164,9 @@ public abstract class ScoutListFragmentBase extends Fragment
         switch (item.getItemId()) {
             case R.id.action_new_scout:
                 mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+                break;
+            case R.id.action_add_media:
+                ShouldUploadMediaToTbaDialog.show(this);
                 break;
             case R.id.action_share:
                 TeamSender.launchInvitationIntent(getActivity(),

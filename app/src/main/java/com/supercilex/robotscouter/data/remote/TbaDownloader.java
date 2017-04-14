@@ -89,6 +89,7 @@ public final class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
 
     private void setAndCacheMedia(String url) {
         mTeam.setMedia(url);
+        mTeam.setMediaYear(getYear());
         new Handler(mContext.getMainLooper()).post(() -> Glide.with(mContext)
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)

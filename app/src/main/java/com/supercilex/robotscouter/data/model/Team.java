@@ -29,6 +29,7 @@ public class Team implements Parcelable, Comparable<Team> {
                             getBooleanForInt(source.readInt()),
                             getBooleanForInt(source.readInt()),
                             getBooleanForInt(source.readInt()),
+                            source.readInt(),
                             source.readLong());
         }
 
@@ -52,6 +53,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Exclude private boolean mHasCustomMedia;
     @Exclude private boolean mHasCustomWebsite;
     @Exclude private boolean mShouldUploadMediaToTba;
+    @Exclude private int mMediaYear;
     @Exclude private long mTimestamp;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
@@ -68,6 +70,7 @@ public class Team implements Parcelable, Comparable<Team> {
                  boolean hasCustomMedia,
                  boolean hasCustomWebsite,
                  boolean shouldUploadMediaToTba,
+                 int mediaYear,
                  long timestamp) {
         mNumber = number;
         mKey = key;
@@ -79,6 +82,7 @@ public class Team implements Parcelable, Comparable<Team> {
         mHasCustomMedia = hasCustomMedia;
         mHasCustomWebsite = hasCustomWebsite;
         mShouldUploadMediaToTba = shouldUploadMediaToTba;
+        mMediaYear = mediaYear;
         mTimestamp = timestamp;
     }
 
@@ -201,6 +205,16 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
+    public int getMediaYear() {
+        return mMediaYear;
+    }
+
+    @Keep
+    public void setMediaYear(int mediaYear) {
+        mMediaYear = mediaYear;
+    }
+
+    @Keep
     @PropertyName(Constants.FIREBASE_TIMESTAMP)
     public Object getCurrentTimestamp() {
         return System.currentTimeMillis();
@@ -234,6 +248,7 @@ public class Team implements Parcelable, Comparable<Team> {
         dest.writeInt(getIntForBoolean(mHasCustomMedia));
         dest.writeInt(getIntForBoolean(mHasCustomWebsite));
         dest.writeInt(getIntForBoolean(mShouldUploadMediaToTba));
+        dest.writeInt(mMediaYear);
         dest.writeLong(mTimestamp);
     }
 
@@ -258,6 +273,7 @@ public class Team implements Parcelable, Comparable<Team> {
                 && mHasCustomMedia == team.mHasCustomMedia
                 && mHasCustomWebsite == team.mHasCustomWebsite
                 && mShouldUploadMediaToTba == team.mShouldUploadMediaToTba
+                && mMediaYear == team.mMediaYear
                 && mTimestamp == team.mTimestamp;
     }
 
@@ -273,6 +289,7 @@ public class Team implements Parcelable, Comparable<Team> {
         result = 31 * result + (mHasCustomMedia ? 1 : 0);
         result = 31 * result + (mHasCustomWebsite ? 1 : 0);
         result = 31 * result + (mShouldUploadMediaToTba ? 1 : 0);
+        result = 31 * result + mMediaYear;
         result = 31 * result + (int) (mTimestamp ^ (mTimestamp >>> 32));
         return result;
     }
@@ -300,6 +317,7 @@ public class Team implements Parcelable, Comparable<Team> {
         private boolean mHasCustomMedia;
         private boolean mHasCustomWebsite;
         private boolean mShouldUploadMediaToTba;
+        private int mMediaYear;
         private long mTimestamp;
 
         public Builder(@NonNull String number) {
@@ -319,6 +337,7 @@ public class Team implements Parcelable, Comparable<Team> {
             if (team.getShouldUploadMediaToTba() != null) {
                 mShouldUploadMediaToTba = team.getShouldUploadMediaToTba();
             }
+            mMediaYear = team.getMediaYear();
             mTimestamp = team.getTimestamp();
         }
 
@@ -367,6 +386,11 @@ public class Team implements Parcelable, Comparable<Team> {
             return this;
         }
 
+        public Builder setMediaYear(int mediaYear) {
+            mMediaYear = mediaYear;
+            return this;
+        }
+
         public Builder setTimestamp(long timestamp) {
             mTimestamp = timestamp;
             return this;
@@ -384,6 +408,7 @@ public class Team implements Parcelable, Comparable<Team> {
                             mHasCustomMedia,
                             mHasCustomWebsite,
                             mShouldUploadMediaToTba,
+                            mMediaYear,
                             mTimestamp);
         }
     }

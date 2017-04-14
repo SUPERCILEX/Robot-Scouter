@@ -41,8 +41,9 @@ public abstract class AppBarViewHolderBase
     protected CollapsingToolbarLayout mHeader;
     private ImageView mBackdrop;
 
-    private MenuItem mVisitTeamWebsiteItem;
     private MenuItem mNewScoutItem;
+    private MenuItem mAddMediaItem;
+    private MenuItem mVisitTeamWebsiteItem;
     private MenuItem mDeleteScoutItem;
     private TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
     private Task mOnScoutingReadyTask;
@@ -91,36 +92,36 @@ public abstract class AppBarViewHolderBase
                 .load(media)
                 .asBitmap()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.ic_add_a_photo_black_144dp)
+                .error(R.drawable.ic_memory_grey_144dp)
                 .listener(new RequestListener<String, Bitmap>() {
                     @Override
                     public boolean onException(Exception e,
-                                               String s,
+                                               String model,
                                                Target<Bitmap> target,
-                                               boolean b) {
+                                               boolean isFirstResource) {
                         mBackdrop.setOnClickListener(AppBarViewHolderBase.this);
                         return false;
                     }
 
                     @Override
-                    public boolean onResourceReady(Bitmap bitmap,
-                                                   String s,
+                    public boolean onResourceReady(Bitmap resource,
+                                                   String model,
                                                    Target<Bitmap> target,
-                                                   boolean b,
-                                                   boolean b1) {
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
                         mBackdrop.setOnClickListener(null);
 
-                        if (bitmap != null && !bitmap.isRecycled()) {
-                            Palette.from(bitmap).generate(palette -> {
+                        if (resource != null && !resource.isRecycled()) {
+                            Palette.from(resource).generate(palette -> {
                                 Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
                                 if (vibrantSwatch != null) {
-                                    updateScrim(vibrantSwatch.getRgb(), bitmap);
+                                    updateScrim(vibrantSwatch.getRgb(), resource);
                                     return;
                                 }
 
                                 Palette.Swatch dominantSwatch = palette.getDominantSwatch();
                                 if (dominantSwatch != null) {
-                                    updateScrim(dominantSwatch.getRgb(), bitmap);
+                                    updateScrim(dominantSwatch.getRgb(), resource);
                                 }
                             });
                         }
@@ -136,8 +137,9 @@ public abstract class AppBarViewHolderBase
     }
 
     public final void initMenu(Menu menu) {
-        mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
         mNewScoutItem = menu.findItem(R.id.action_new_scout);
+        mAddMediaItem = menu.findItem(R.id.action_add_media);
+        mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
         mDeleteScoutItem = menu.findItem(R.id.action_delete);
 
         menu.findItem(R.id.action_visit_tba_team_website)
@@ -157,16 +159,14 @@ public abstract class AppBarViewHolderBase
     }
 
     private void bindMenu() {
-        if (mVisitTeamWebsiteItem != null) {
-            mVisitTeamWebsiteItem.setVisible(
-                    !TextUtils.isEmpty(mTeamHelper.getTeam().getWebsite()));
-        }
         Tasks.whenAll(mOnMenuReadyTask.getTask(), mOnScoutingReadyTask).addOnSuccessListener(this);
     }
 
     @Override
     public final void onSuccess(Void aVoid) {
         mNewScoutItem.setVisible(true);
+        mAddMediaItem.setVisible(mTeamHelper.isOutdatedMedia());
+        mVisitTeamWebsiteItem.setVisible(!TextUtils.isEmpty(mTeamHelper.getTeam().getWebsite()));
         mDeleteScoutItem.setVisible(mIsDeleteScoutItemVisible);
     }
 

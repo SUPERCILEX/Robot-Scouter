@@ -97,9 +97,10 @@
     <string name="should_delete_team_message">You have deleted the last scout for team %s.</string>
 
     <string name="add_scout">Add scout/team</string>
+    <string name="add_media">Add media</string>
     <string name="add_scout_long">Add a new scout or team</string>
 
-    <string name="visit_team_website">Visit team %s\'s website</string>
+    <string name="visit_team_website">Visit team %s’s website</string>
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
 
     <string name="edit_team_details">Edit team details</string>
@@ -145,7 +146,7 @@
     <string name="unsupported_device">WARNING: you are using an unsupported device</string>
 
     <!-- Accessibility -->
-    <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>
+    <string name="accessibility_robot_icon">A picture of the team’s robot.</string>
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
     <string name="accessibility_reorder">The reorder icon. It can be used to change the order of scout metrics.</string>

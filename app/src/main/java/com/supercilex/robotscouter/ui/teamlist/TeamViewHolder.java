@@ -117,8 +117,8 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     private void setTeamMedia() {
         Glide.with(itemView.getContext())
                 .load(mTeam.getMedia())
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.ic_add_a_photo_black_144dp)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.drawable.ic_memory_grey_48dp)
                 .into(mMedia);
     }
 

@@ -74,6 +74,7 @@ public final class JobHelper {
                 .setHasCustomMedia(args.getBoolean("custom-media"))
                 .setHasCustomWebsite(args.getBoolean("custom-website"))
                 .setShouldUploadMediaToTba(args.getBoolean("should-upload-media-to-tba"))
+                .setMediaYear(args.getInt("media-year"))
                 .setTimestamp(args.getLong("timestamp"))
                 .build()
                 .getHelper();
@@ -91,6 +92,7 @@ public final class JobHelper {
                 .setHasCustomMedia(args.getInt("custom-media") == 1)
                 .setHasCustomWebsite(args.getInt("custom-website") == 1)
                 .setShouldUploadMediaToTba(args.getInt("should-upload-media-to-tba") == 1)
+                .setMediaYear(args.getInt("media-year"))
                 .setTimestamp(args.getLong("timestamp"))
                 .build()
                 .getHelper();
@@ -118,6 +120,7 @@ public final class JobHelper {
         if (team.getShouldUploadMediaToTba() != null) {
             args.putBoolean("should-upload-media-to-tba", team.getShouldUploadMediaToTba());
         }
+        args.putInt("media-year", team.getMediaYear());
         args.putLong("timestamp", team.getTimestamp());
 
         return args;
@@ -146,6 +149,7 @@ public final class JobHelper {
         if (team.getShouldUploadMediaToTba() != null) {
             args.putInt("should-upload-media-to-tba", team.getShouldUploadMediaToTba() ? 1 : 0);
         }
+        args.putInt("media-year", team.getMediaYear());
         args.putLong("timestamp", team.getTimestamp());
 
         return args;

@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.CustomTabsHelper;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -126,7 +127,10 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         }
 
         if (mTeam.getHasCustomName() == null) mTeam.setName(newTeam.getName());
-        if (mTeam.getHasCustomMedia() == null) mTeam.setMedia(newTeam.getMedia());
+        if (mTeam.getHasCustomMedia() == null) {
+            mTeam.setMedia(newTeam.getMedia());
+            mTeam.setMediaYear(newTeam.getMediaYear());
+        }
         if (mTeam.getHasCustomWebsite() == null) mTeam.setWebsite(newTeam.getWebsite());
         forceUpdateTeam();
     }
@@ -155,11 +159,12 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void copyMediaInfo(TeamHelper newHelper) {
-        Team team = getTeam();
+        Team currentTeam = getTeam();
         Team newTeam = newHelper.getTeam();
 
-        team.setMedia(newTeam.getMedia());
-        team.setShouldUploadMediaToTba(newTeam.getShouldUploadMediaToTba() != null);
+        currentTeam.setMedia(newTeam.getMedia());
+        currentTeam.setShouldUploadMediaToTba(newTeam.getShouldUploadMediaToTba() != null);
+        currentTeam.setMediaYear(Calendar.getInstance().get(Calendar.YEAR));
     }
 
     public void updateTemplateKey(String key) {
@@ -187,6 +192,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
                         DownloadTeamDataJob.start(appContext, this);
                     }
                 });
+    }
+
+    public boolean isOutdatedMedia() {
+        return mTeam.getMediaYear() < Calendar.getInstance().get(Calendar.YEAR)
+                || TextUtils.isEmpty(mTeam.getMedia());
     }
 
     public void visitTbaWebsite(Context context) {
