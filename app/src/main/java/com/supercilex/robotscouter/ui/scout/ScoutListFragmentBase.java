@@ -40,7 +40,8 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
-public abstract class ScoutListFragmentBase extends Fragment implements ChangeEventListener, FirebaseAuth.AuthStateListener {
+public abstract class ScoutListFragmentBase extends Fragment
+        implements ChangeEventListener, FirebaseAuth.AuthStateListener, TeamMediaCreator.StartCaptureListener {
     public static final String ADD_SCOUT_KEY = "add_scout_key";
 
     private TeamHelper mTeamHelper;
@@ -129,7 +130,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     }
 
     /**
-     * Used in {@link TeamMediaCreator#capture()}
+     * Used in {@link TeamMediaCreator#startCapture(boolean)}
      * <p>
      * {@inheritDoc}
      */
@@ -138,6 +139,11 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         mHolder.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onStartCapture(boolean shouldUploadMediaToTba) {
+        mHolder.onStartCapture(shouldUploadMediaToTba);
     }
 
     @Override
@@ -212,38 +218,35 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
 
     @Override
     public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
         if (type == EventType.REMOVED) {
-            if (TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) {
-                onTeamDeleted();
-            }
+            onTeamDeleted();
             return;
         } else if (type == EventType.MOVED) return;
 
-        Team team = Constants.sFirebaseTeams.getObject(index);
-        if (team.getKey().equals(mTeamHelper.getTeam().getKey())) {
-            mTeamHelper = team.getHelper();
-            mHolder.bind(mTeamHelper);
 
-            if (!mOnScoutingReadyTask.getTask().isComplete()) {
-                TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.tabs);
-                ViewPager viewPager = (ViewPager) getView().findViewById(R.id.viewpager);
-                String scoutKey = null;
+        mTeamHelper = Constants.sFirebaseTeams.getObject(index).getHelper();
+        mHolder.bind(mTeamHelper);
 
-                if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-                mPagerAdapter = new ScoutPagerAdapter(
-                        this, mHolder, tabLayout, mTeamHelper, scoutKey);
+        if (!mOnScoutingReadyTask.getTask().isComplete()) {
+            TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.tabs);
+            ViewPager viewPager = (ViewPager) getView().findViewById(R.id.viewpager);
+            String scoutKey = null;
 
-                viewPager.setAdapter(mPagerAdapter);
-                tabLayout.setupWithViewPager(viewPager);
+            if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
+            mPagerAdapter = new ScoutPagerAdapter(
+                    this, mHolder, tabLayout, mTeamHelper, scoutKey);
+
+            viewPager.setAdapter(mPagerAdapter);
+            tabLayout.setupWithViewPager(viewPager);
 
 
-                if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
-                    getArguments().remove(ADD_SCOUT_KEY);
-                    mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
-                }
-
-                mOnScoutingReadyTask.setResult(null);
+            if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
+                getArguments().remove(ADD_SCOUT_KEY);
+                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
             }
+
+            mOnScoutingReadyTask.setResult(null);
         }
     }
 

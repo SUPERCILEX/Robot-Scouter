@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="18dp"
+    android:paddingStart="18dp"
+    android:paddingTop="8dp">
+
+    <CheckBox
+        android:id="@+id/save_response"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_response"/>
+
+</FrameLayout>

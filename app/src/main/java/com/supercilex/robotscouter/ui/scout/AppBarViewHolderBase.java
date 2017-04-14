@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scout;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.ColorInt;
@@ -27,9 +26,11 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 
-public abstract class AppBarViewHolderBase implements OnSuccessListener<Void>, View.OnClickListener {
+public abstract class AppBarViewHolderBase
+        implements OnSuccessListener<Void>, View.OnClickListener, TeamMediaCreator.StartCaptureListener {
     private boolean mInit;
 
     protected TeamHelper mTeamHelper;
@@ -47,9 +48,8 @@ public abstract class AppBarViewHolderBase implements OnSuccessListener<Void>, V
     private boolean mIsDeleteScoutItemVisible;
 
     private TeamMediaCreator mMediaCapture;
-    private OnSuccessListener<Uri> mMediaCaptureListener = uri -> {
-        mTeamHelper.getTeam().setHasCustomMedia(true);
-        mTeamHelper.getTeam().setMedia(uri.getPath());
+    private OnSuccessListener<TeamHelper> mMediaCaptureListener = teamHelper -> {
+        mTeamHelper.copyMediaInfo(teamHelper);
         mTeamHelper.forceUpdateTeam();
     };
 
@@ -178,7 +178,12 @@ public abstract class AppBarViewHolderBase implements OnSuccessListener<Void>, V
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.backdrop) mMediaCapture.capture();
+        if (v.getId() == R.id.backdrop) ShouldUploadMediaToTbaDialog.show(mFragment);
+    }
+
+    @Override
+    public void onStartCapture(boolean shouldUploadMediaToTba) {
+        mMediaCapture.startCapture(shouldUploadMediaToTba);
     }
 
     @CallSuper

@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,15 +14,21 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 
+import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
+import com.supercilex.robotscouter.util.Constants;
 
 import java.io.File;
 
-public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocusChangeListener, View.OnTouchListener, OnSuccessListener<Uri> {
+public class TeamDetailsDialog extends KeyboardDialogBase
+        implements View.OnFocusChangeListener, View.OnTouchListener, OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;
@@ -39,7 +44,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
-        dialog.setArguments(teamHelper.toBundle());
+        dialog.setArguments(new Team.Builder(teamHelper.getTeam()).build().getHelper().toBundle());
         dialog.show(manager, TAG);
     }
 
@@ -47,11 +52,14 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTeamHelper = TeamHelper.parse(getArguments());
+
         if (savedInstanceState == null) {
             mMediaCapture = TeamMediaCreator.newInstance(this, mTeamHelper, this);
         } else {
             mMediaCapture = TeamMediaCreator.get(savedInstanceState, this, this);
         }
+
+        Constants.sFirebaseTeams.addChangeEventListener(this);
     }
 
     @NonNull
@@ -65,14 +73,12 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         mMediaEditText = (EditText) rootView.findViewById(R.id.media);
         mWebsiteEditText = (EditText) rootView.findViewById(R.id.website);
 
-        mNameEditText.setText(mTeamHelper.getTeam().getName());
-        mMediaEditText.setText(mTeamHelper.getTeam().getMedia());
-        mWebsiteEditText.setText(mTeamHelper.getTeam().getWebsite());
         mNameEditText.setOnFocusChangeListener(this);
         mMediaEditText.setOnFocusChangeListener(this);
+        mMediaEditText.setOnTouchListener(this);
         mWebsiteEditText.setOnFocusChangeListener(this);
 
-        mMediaEditText.setOnTouchListener(this);
+        updateUi();
 
         return createDialog(rootView, R.string.team_details);
     }
@@ -84,8 +90,36 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Constants.sFirebaseTeams.removeChangeEventListener(this);
+    }
+
+    private void updateUi() {
+        if (mNameEditText != null && mMediaCapture != null && mWebsiteEditText != null) {
+            mNameEditText.setText(mTeamHelper.getTeam().getName());
+            mMediaEditText.setText(mTeamHelper.getTeam().getMedia());
+            mWebsiteEditText.setText(mTeamHelper.getTeam().getWebsite());
+        }
+    }
+
+    @Override
     protected EditText getLastEditText() {
         return mWebsiteEditText;
+    }
+
+    @Override
+    public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
+
+        if (type == EventType.CHANGED) {
+            mTeamHelper =
+                    new Team.Builder(Constants.sFirebaseTeams.getObject(index)).build().getHelper();
+            mMediaCapture.setTeamHelper(mTeamHelper);
+            updateUi();
+        } else if (type == EventType.REMOVED) {
+            dismiss();
+        }
     }
 
     @Override
@@ -140,7 +174,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         int iconX = mMediaEditText.getRight() - mMediaEditText.getCompoundDrawables()[2].getBounds()
                 .width();
         if (action == MotionEvent.ACTION_UP && mStartX >= iconX && x >= iconX) {
-            mMediaCapture.capture();
+            ShouldUploadMediaToTbaDialog.show(this);
             return true;
         }
         if (action == MotionEvent.ACTION_UP) mStartX = -1;
@@ -149,7 +183,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     /**
-     * Used in {@link TeamMediaCreator#capture()}
+     * Used in {@link TeamMediaCreator#startCapture(boolean)}
      * <p>
      * {@inheritDoc}
      */
@@ -166,8 +200,14 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
     }
 
     @Override
-    public void onSuccess(Uri uri) {
-        mMediaEditText.setText(uri.getPath());
+    public void onSuccess(TeamHelper teamHelper) {
+        mTeamHelper.copyMediaInfo(teamHelper);
+        updateUi();
+    }
+
+    @Override
+    public void onStartCapture(boolean shouldUploadMediaToTba) {
+        mMediaCapture.startCapture(shouldUploadMediaToTba);
     }
 
     @Override
@@ -205,5 +245,15 @@ public class TeamDetailsDialog extends KeyboardDialogBase implements View.OnFocu
         } else {
             return "http://" + trimmedUrl;
         }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError error) {
+        FirebaseCrash.report(error.toException());
+    }
+
+    @Override
+    public void onDataChanged() {
+        // Noop
     }
 }

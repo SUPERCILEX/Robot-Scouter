@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.util;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseArray;
@@ -157,7 +158,8 @@ public final class DatabaseHelper {
                     TeamHelper teamHelper = team.getHelper();
 
                     teamHelper.fetchLatestData(appContext);
-                    if (new File(team.getMedia()).exists()) {
+                    String media = team.getMedia();
+                    if (!TextUtils.isEmpty(media) && new File(media).exists()) {
                         UploadTeamMediaJob.start(appContext, teamHelper);
                     }
                 }

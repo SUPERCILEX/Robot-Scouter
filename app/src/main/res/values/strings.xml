@@ -3,6 +3,8 @@
     <string name="app_name">Robot Scouter</string>
 
     <!-- Common -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
 
@@ -11,6 +13,11 @@
     <string name="no_team_selected">Select a team to start scouting</string>
     <string name="no_teams">Teams you add appear here</string>
     <string name="no_scouts">Scouts you add appear here</string>
+
+    <!-- Media upload -->
+    <string name="should_upload_media_dialog_title">Upload media to The Blue Alliance?</string>
+    <string name="should_upload_media_rationale">If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a> to help other Robot Scouter users and the greater TBA community.</string>
+    <string name="save_response">Save response</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>

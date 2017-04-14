@@ -28,6 +28,7 @@ public class Team implements Parcelable, Comparable<Team> {
                             getBooleanForInt(source.readInt()),
                             getBooleanForInt(source.readInt()),
                             getBooleanForInt(source.readInt()),
+                            getBooleanForInt(source.readInt()),
                             source.readLong());
         }
 
@@ -50,6 +51,7 @@ public class Team implements Parcelable, Comparable<Team> {
     @Exclude private boolean mHasCustomName;
     @Exclude private boolean mHasCustomMedia;
     @Exclude private boolean mHasCustomWebsite;
+    @Exclude private boolean mShouldUploadMediaToTba;
     @Exclude private long mTimestamp;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
@@ -65,6 +67,7 @@ public class Team implements Parcelable, Comparable<Team> {
                  boolean hasCustomName,
                  boolean hasCustomMedia,
                  boolean hasCustomWebsite,
+                 boolean shouldUploadMediaToTba,
                  long timestamp) {
         mNumber = number;
         mKey = key;
@@ -75,6 +78,7 @@ public class Team implements Parcelable, Comparable<Team> {
         mHasCustomName = hasCustomName;
         mHasCustomMedia = hasCustomMedia;
         mHasCustomWebsite = hasCustomWebsite;
+        mShouldUploadMediaToTba = shouldUploadMediaToTba;
         mTimestamp = timestamp;
     }
 
@@ -140,7 +144,6 @@ public class Team implements Parcelable, Comparable<Team> {
         mMedia = media;
     }
 
-
     @Keep
     public String getWebsite() {
         return mWebsite;
@@ -187,6 +190,17 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
+    @Nullable
+    public Boolean getShouldUploadMediaToTba() {
+        return mShouldUploadMediaToTba ? true : null;
+    }
+
+    @Keep
+    public void setShouldUploadMediaToTba(boolean shouldUploadMediaToTba) {
+        mShouldUploadMediaToTba = shouldUploadMediaToTba;
+    }
+
+    @Keep
     @PropertyName(Constants.FIREBASE_TIMESTAMP)
     public Object getCurrentTimestamp() {
         return System.currentTimeMillis();
@@ -219,6 +233,7 @@ public class Team implements Parcelable, Comparable<Team> {
         dest.writeInt(getIntForBoolean(mHasCustomName));
         dest.writeInt(getIntForBoolean(mHasCustomMedia));
         dest.writeInt(getIntForBoolean(mHasCustomWebsite));
+        dest.writeInt(getIntForBoolean(mShouldUploadMediaToTba));
         dest.writeLong(mTimestamp);
     }
 
@@ -233,16 +248,17 @@ public class Team implements Parcelable, Comparable<Team> {
 
         Team team = (Team) o;
 
-        return mHasCustomName == team.mHasCustomName
-                && mHasCustomMedia == team.mHasCustomMedia
-                && mHasCustomWebsite == team.mHasCustomWebsite
-                && mTimestamp == team.mTimestamp
-                && TextUtils.equals(mNumber, team.mNumber)
+        return mNumber.equals(team.mNumber)
                 && TextUtils.equals(mKey, team.mKey)
                 && TextUtils.equals(mTemplateKey, team.mTemplateKey)
                 && TextUtils.equals(mName, team.mName)
                 && TextUtils.equals(mMedia, team.mMedia)
-                && TextUtils.equals(mWebsite, team.mWebsite);
+                && TextUtils.equals(mWebsite, team.mWebsite)
+                && mHasCustomName == team.mHasCustomName
+                && mHasCustomMedia == team.mHasCustomMedia
+                && mHasCustomWebsite == team.mHasCustomWebsite
+                && mShouldUploadMediaToTba == team.mShouldUploadMediaToTba
+                && mTimestamp == team.mTimestamp;
     }
 
     @Override
@@ -256,6 +272,7 @@ public class Team implements Parcelable, Comparable<Team> {
         result = 31 * result + (mHasCustomName ? 1 : 0);
         result = 31 * result + (mHasCustomMedia ? 1 : 0);
         result = 31 * result + (mHasCustomWebsite ? 1 : 0);
+        result = 31 * result + (mShouldUploadMediaToTba ? 1 : 0);
         result = 31 * result + (int) (mTimestamp ^ (mTimestamp >>> 32));
         return result;
     }
@@ -282,6 +299,7 @@ public class Team implements Parcelable, Comparable<Team> {
         private boolean mHasCustomName;
         private boolean mHasCustomMedia;
         private boolean mHasCustomWebsite;
+        private boolean mShouldUploadMediaToTba;
         private long mTimestamp;
 
         public Builder(@NonNull String number) {
@@ -298,6 +316,9 @@ public class Team implements Parcelable, Comparable<Team> {
             if (team.getHasCustomName() != null) mHasCustomName = team.getHasCustomName();
             if (team.getHasCustomMedia() != null) mHasCustomMedia = team.getHasCustomMedia();
             if (team.getHasCustomWebsite() != null) mHasCustomWebsite = team.getHasCustomWebsite();
+            if (team.getShouldUploadMediaToTba() != null) {
+                mShouldUploadMediaToTba = team.getShouldUploadMediaToTba();
+            }
             mTimestamp = team.getTimestamp();
         }
 
@@ -341,6 +362,11 @@ public class Team implements Parcelable, Comparable<Team> {
             return this;
         }
 
+        public Builder setShouldUploadMediaToTba(boolean shouldUploadMediaToTba) {
+            mShouldUploadMediaToTba = shouldUploadMediaToTba;
+            return this;
+        }
+
         public Builder setTimestamp(long timestamp) {
             mTimestamp = timestamp;
             return this;
@@ -357,6 +383,7 @@ public class Team implements Parcelable, Comparable<Team> {
                             mHasCustomName,
                             mHasCustomMedia,
                             mHasCustomWebsite,
+                            mShouldUploadMediaToTba,
                             mTimestamp);
         }
     }

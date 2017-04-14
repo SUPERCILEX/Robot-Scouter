@@ -131,16 +131,6 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         forceUpdateTeam();
     }
 
-    public void updateMedia(Team newTeam) {
-        mTeam.setMedia(newTeam.getMedia());
-        forceUpdateTeam();
-    }
-
-    public void forceUpdateTeam() {
-        getRef().setValue(mTeam);
-        FirebaseAppIndex.getInstance().update(getIndexable());
-    }
-
     private void checkForMatchingTeamDetails(Team newTeam) {
         if (TextUtils.equals(mTeam.getName(), newTeam.getName())) {
             mTeam.setHasCustomName(false);
@@ -151,6 +141,25 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         if (TextUtils.equals(mTeam.getWebsite(), newTeam.getWebsite())) {
             mTeam.setHasCustomWebsite(false);
         }
+    }
+
+    public void updateMedia(Team newTeam) {
+        mTeam.setMedia(newTeam.getMedia());
+        mTeam.setShouldUploadMediaToTba(false);
+        forceUpdateTeam();
+    }
+
+    public void forceUpdateTeam() {
+        getRef().setValue(mTeam);
+        FirebaseAppIndex.getInstance().update(getIndexable());
+    }
+
+    public void copyMediaInfo(TeamHelper newHelper) {
+        Team team = getTeam();
+        Team newTeam = newHelper.getTeam();
+
+        team.setMedia(newTeam.getMedia());
+        team.setShouldUploadMediaToTba(newTeam.getShouldUploadMediaToTba() != null);
     }
 
     public void updateTemplateKey(String key) {

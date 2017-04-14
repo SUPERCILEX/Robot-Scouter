@@ -68,11 +68,12 @@ public final class JobHelper {
                 .setKey(args.getString("key"))
                 .setTemplateKey(args.getString("template-key"))
                 .setName(args.getString("name"))
-                .setWebsite(args.getString("website"))
                 .setMedia(args.getString("media"))
+                .setWebsite(args.getString("website"))
                 .setHasCustomName(args.getBoolean("custom-name"))
-                .setHasCustomWebsite(args.getBoolean("custom-website"))
                 .setHasCustomMedia(args.getBoolean("custom-media"))
+                .setHasCustomWebsite(args.getBoolean("custom-website"))
+                .setShouldUploadMediaToTba(args.getBoolean("should-upload-media-to-tba"))
                 .setTimestamp(args.getLong("timestamp"))
                 .build()
                 .getHelper();
@@ -84,11 +85,12 @@ public final class JobHelper {
                 .setKey(args.getString("key"))
                 .setTemplateKey(args.getString("template-key"))
                 .setName(args.getString("name"))
-                .setWebsite(args.getString("website"))
                 .setMedia(args.getString("media"))
+                .setWebsite(args.getString("website"))
                 .setHasCustomName(args.getInt("custom-name") == 1)
-                .setHasCustomWebsite(args.getInt("custom-website") == 1)
                 .setHasCustomMedia(args.getInt("custom-media") == 1)
+                .setHasCustomWebsite(args.getInt("custom-website") == 1)
+                .setShouldUploadMediaToTba(args.getInt("should-upload-media-to-tba") == 1)
                 .setTimestamp(args.getLong("timestamp"))
                 .build()
                 .getHelper();
@@ -96,23 +98,27 @@ public final class JobHelper {
 
     private static Bundle toRawBundle(TeamHelper teamHelper) {
         Bundle args = new Bundle();
+        Team team = teamHelper.getTeam();
 
-        args.putString("key", teamHelper.getTeam().getKey());
-        args.putString("template-key", teamHelper.getTeam().getTemplateKey());
-        args.putString("number", teamHelper.getTeam().getNumber());
-        args.putString("name", teamHelper.getTeam().getName());
-        args.putString("website", teamHelper.getTeam().getWebsite());
-        args.putString("media", teamHelper.getTeam().getMedia());
-        if (teamHelper.getTeam().getHasCustomName() != null) {
-            args.putBoolean("custom-name", teamHelper.getTeam().getHasCustomName());
+        args.putString("key", team.getKey());
+        args.putString("template-key", team.getTemplateKey());
+        args.putString("number", team.getNumber());
+        args.putString("name", team.getName());
+        args.putString("media", team.getMedia());
+        args.putString("website", team.getWebsite());
+        if (team.getHasCustomName() != null) {
+            args.putBoolean("custom-name", team.getHasCustomName());
         }
-        if (teamHelper.getTeam().getHasCustomWebsite() != null) {
-            args.putBoolean("custom-website", teamHelper.getTeam().getHasCustomWebsite());
+        if (team.getHasCustomMedia() != null) {
+            args.putBoolean("custom-media", team.getHasCustomMedia());
         }
-        if (teamHelper.getTeam().getHasCustomMedia() != null) {
-            args.putBoolean("custom-media", teamHelper.getTeam().getHasCustomMedia());
+        if (team.getHasCustomWebsite() != null) {
+            args.putBoolean("custom-website", team.getHasCustomWebsite());
         }
-        args.putLong("timestamp", teamHelper.getTeam().getTimestamp());
+        if (team.getShouldUploadMediaToTba() != null) {
+            args.putBoolean("should-upload-media-to-tba", team.getShouldUploadMediaToTba());
+        }
+        args.putLong("timestamp", team.getTimestamp());
 
         return args;
     }
@@ -120,23 +126,27 @@ public final class JobHelper {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static PersistableBundle toRawPersistableBundle(TeamHelper teamHelper) {
         PersistableBundle args = new PersistableBundle();
+        Team team = teamHelper.getTeam();
 
-        args.putString("key", teamHelper.getTeam().getKey());
-        args.putString("template-key", teamHelper.getTeam().getTemplateKey());
-        args.putString("number", teamHelper.getTeam().getNumber());
-        args.putString("name", teamHelper.getTeam().getName());
-        args.putString("website", teamHelper.getTeam().getWebsite());
-        args.putString("media", teamHelper.getTeam().getMedia());
-        if (teamHelper.getTeam().getHasCustomName() != null) {
-            args.putInt("custom-name", teamHelper.getTeam().getHasCustomName() ? 1 : 0);
+        args.putString("key", team.getKey());
+        args.putString("template-key", team.getTemplateKey());
+        args.putString("number", team.getNumber());
+        args.putString("name", team.getName());
+        args.putString("media", team.getMedia());
+        args.putString("website", team.getWebsite());
+        if (team.getHasCustomName() != null) {
+            args.putInt("custom-name", team.getHasCustomName() ? 1 : 0);
         }
-        if (teamHelper.getTeam().getHasCustomWebsite() != null) {
-            args.putInt("custom-website", teamHelper.getTeam().getHasCustomWebsite() ? 1 : 0);
+        if (team.getHasCustomMedia() != null) {
+            args.putInt("custom-media", team.getHasCustomMedia() ? 1 : 0);
         }
-        if (teamHelper.getTeam().getHasCustomMedia() != null) {
-            args.putInt("custom-media", teamHelper.getTeam().getHasCustomMedia() ? 1 : 0);
+        if (team.getHasCustomWebsite() != null) {
+            args.putInt("custom-website", team.getHasCustomWebsite() ? 1 : 0);
         }
-        args.putLong("timestamp", teamHelper.getTeam().getTimestamp());
+        if (team.getShouldUploadMediaToTba() != null) {
+            args.putInt("should-upload-media-to-tba", team.getShouldUploadMediaToTba() ? 1 : 0);
+        }
+        args.putLong("timestamp", team.getTimestamp());
 
         return args;
     }
