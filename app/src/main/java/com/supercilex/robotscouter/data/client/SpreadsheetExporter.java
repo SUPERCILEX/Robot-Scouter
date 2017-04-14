@@ -198,7 +198,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         if (PreferencesHelper.shouldShowExportHint(context)) {
             Snackbar.make(fragment.getView(),
                           R.string.exporting_spreadsheet_hint,
-                          Snackbar.LENGTH_LONG)
+                          Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.never_again,
                                v -> PreferencesHelper.setShouldShowExportHint(context, false))
                     .show();

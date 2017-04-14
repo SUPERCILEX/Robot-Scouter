@@ -36,7 +36,7 @@
         <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
     <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
-    <string name="never_again">Never show again</string>
+    <string name="never_again">Don’t show again</string>
     <string name="exporting_spreadsheet_hint">Export started; view progress in the notification drawer.</string>
     <plurals name="exporting_spreadsheet_complete_title">
         <item quantity="one">Spreadsheet exporting complete for team %s</item>
