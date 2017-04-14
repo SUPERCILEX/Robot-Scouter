@@ -7,6 +7,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -30,7 +31,7 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 
 public abstract class AppBarViewHolderBase
-        implements OnSuccessListener<Void>, View.OnClickListener, TeamMediaCreator.StartCaptureListener {
+        implements OnSuccessListener<Void>, View.OnClickListener, TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private boolean mInit;
 
     protected TeamHelper mTeamHelper;
@@ -192,9 +193,10 @@ public abstract class AppBarViewHolderBase
     }
 
     @CallSuper
+    @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions,
-                                           int[] grantResults) { // NOPMD https://github.com/pmd/pmd/issues/346
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         mMediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

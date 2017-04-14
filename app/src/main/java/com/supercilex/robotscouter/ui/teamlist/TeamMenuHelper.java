@@ -6,8 +6,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -35,7 +37,7 @@ import com.supercilex.robotscouter.util.IoHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void> {
+public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
     private static final int ANIMATION_DURATION = 250;
 
@@ -374,9 +376,10 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void> 
         }
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions,
-                                           int[] grantResults) { // NOPMD https://github.com/pmd/pmd/issues/346
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         mWriteAccessRequestHandler.onRequestPermissionsResult(requestCode,
                                                               permissions,
                                                               grantResults);

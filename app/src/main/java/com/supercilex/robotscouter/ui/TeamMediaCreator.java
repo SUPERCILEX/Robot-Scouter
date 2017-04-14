@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.widget.Toast;
@@ -23,7 +25,7 @@ import java.lang.ref.WeakReference;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void> {
+public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     public interface StartCaptureListener {
         void onStartCapture(boolean shouldUploadMediaToTba);
     }
@@ -160,9 +162,10 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                                    mediaFolder);
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions,
-                                           int[] grantResults) { // NOPMD https://github.com/pmd/pmd/issues/346
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         mWriteAccessRequestHandler.onRequestPermissionsResult(
                 requestCode, permissions, grantResults);
     }
