@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.util;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.firebase.ui.database.ChangeEventListener;
 import com.firebase.ui.database.FirebaseArray;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.client.UploadTeamMediaJob;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
@@ -27,6 +29,7 @@ import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -150,10 +153,15 @@ public final class DatabaseHelper {
                                        DataSnapshot snapshot,
                                        int index,
                                        int oldIndex) {
-                if (type == EventType.ADDED) {
-                    Constants.sFirebaseTeams.getObject(index)
-                            .getHelper()
-                            .fetchLatestData(appContext);
+                if (type == EventType.ADDED || type == EventType.CHANGED) {
+                    Team team = Constants.sFirebaseTeams.getObject(index);
+                    TeamHelper teamHelper = team.getHelper();
+
+                    teamHelper.fetchLatestData(appContext);
+                    String media = team.getMedia();
+                    if (!TextUtils.isEmpty(media) && new File(media).exists()) {
+                        UploadTeamMediaJob.start(appContext, teamHelper);
+                    }
                 }
             }
         });

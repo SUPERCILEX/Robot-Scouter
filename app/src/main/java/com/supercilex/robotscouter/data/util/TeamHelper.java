@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.CustomTabsHelper;
 import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -56,19 +57,19 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         return Constants.FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
     }
 
-    public static TeamHelper get(Intent intent) {
+    public static TeamHelper parse(Intent intent) {
         return intent.getParcelableExtra(TEAM_HELPER_KEY);
     }
 
-    public static TeamHelper get(Bundle args) {
+    public static TeamHelper parse(Bundle args) {
         return args.getParcelable(TEAM_HELPER_KEY);
     }
 
-    public static List<TeamHelper> getList(Intent intent) {
+    public static List<TeamHelper> parseList(Intent intent) {
         return intent.getParcelableArrayListExtra(TEAM_HELPERS_KEY);
     }
 
-    public static List<TeamHelper> getList(Bundle args) {
+    public static List<TeamHelper> parseList(Bundle args) {
         return args.getParcelableArrayList(TEAM_HELPERS_KEY);
     }
 
@@ -121,19 +122,17 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     public void updateTeam(Team newTeam) {
         checkForMatchingTeamDetails(newTeam);
         if (mTeam.equals(newTeam)) {
-            getRef().child(Constants.FIREBASE_TIMESTAMP).setValue(mTeam.getServerTimestamp());
+            getRef().child(Constants.FIREBASE_TIMESTAMP).setValue(mTeam.getCurrentTimestamp());
             return;
         }
 
         if (mTeam.getHasCustomName() == null) mTeam.setName(newTeam.getName());
-        if (mTeam.getHasCustomMedia() == null) mTeam.setMedia(newTeam.getMedia());
+        if (mTeam.getHasCustomMedia() == null) {
+            mTeam.setMedia(newTeam.getMedia());
+            mTeam.setMediaYear(newTeam.getMediaYear());
+        }
         if (mTeam.getHasCustomWebsite() == null) mTeam.setWebsite(newTeam.getWebsite());
         forceUpdateTeam();
-    }
-
-    public void forceUpdateTeam() {
-        getRef().setValue(mTeam);
-        FirebaseAppIndex.getInstance().update(getIndexable());
     }
 
     private void checkForMatchingTeamDetails(Team newTeam) {
@@ -146,6 +145,26 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         if (TextUtils.equals(mTeam.getWebsite(), newTeam.getWebsite())) {
             mTeam.setHasCustomWebsite(false);
         }
+    }
+
+    public void updateMedia(Team newTeam) {
+        mTeam.setMedia(newTeam.getMedia());
+        mTeam.setShouldUploadMediaToTba(false);
+        forceUpdateTeam();
+    }
+
+    public void forceUpdateTeam() {
+        getRef().setValue(mTeam);
+        FirebaseAppIndex.getInstance().update(getIndexable());
+    }
+
+    public void copyMediaInfo(TeamHelper newHelper) {
+        Team currentTeam = getTeam();
+        Team newTeam = newHelper.getTeam();
+
+        currentTeam.setMedia(newTeam.getMedia());
+        currentTeam.setShouldUploadMediaToTba(newTeam.getShouldUploadMediaToTba() != null);
+        currentTeam.setMediaYear(Calendar.getInstance().get(Calendar.YEAR));
     }
 
     public void updateTemplateKey(String key) {
@@ -173,6 +192,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
                         DownloadTeamDataJob.start(appContext, this);
                     }
                 });
+    }
+
+    public boolean isOutdatedMedia() {
+        return mTeam.getMediaYear() < Calendar.getInstance().get(Calendar.YEAR)
+                || TextUtils.isEmpty(mTeam.getMedia());
     }
 
     public void visitTbaWebsite(Context context) {

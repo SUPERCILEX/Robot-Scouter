@@ -12,8 +12,8 @@ import com.google.android.gms.tasks.Task;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.ScoutListFragmentBase;
-import com.supercilex.robotscouter.ui.scout.AppBarViewHolder;
+import com.supercilex.robotscouter.ui.scout.AppBarViewHolderBase;
+import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase;
 import com.supercilex.robotscouter.util.ViewHelper;
 
 public class TabletScoutListFragment extends ScoutListFragmentBase {
@@ -27,7 +27,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         TeamSelectionListener listener = (TeamSelectionListener) getActivity();
-        Team team = TeamHelper.get(getArguments()).getTeam();
+        Team team = TeamHelper.parse(getArguments()).getTeam();
         if (!ViewHelper.isTabletMode(getContext())) {
             listener.onTeamSelected(team, getArguments().getBoolean(ADD_SCOUT_KEY));
             removeFragment();
@@ -42,8 +42,8 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    protected AppBarViewHolder newAppBarViewHolder(TeamHelper teamHelper,
-                                                   Task<Void> onScoutingReadyTask) {
+    protected AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
+                                                       Task<Void> onScoutingReadyTask) {
         return new TabletAppBarViewHolder(teamHelper, onScoutingReadyTask);
     }
 
@@ -71,7 +71,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    private class TabletAppBarViewHolder extends AppBarViewHolder implements Toolbar.OnMenuItemClickListener {
+    private class TabletAppBarViewHolder extends AppBarViewHolderBase implements Toolbar.OnMenuItemClickListener {
         public TabletAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
             super(teamHelper, TabletScoutListFragment.this, onScoutingReadyTask);
             mToolbar.inflateMenu(R.menu.scout);

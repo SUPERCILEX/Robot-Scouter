@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import com.google.android.gms.tasks.Task;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.ScoutListFragmentBase;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 
 public class ActivityScoutListFragment extends ScoutListFragmentBase {
@@ -40,8 +39,8 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    protected AppBarViewHolder newAppBarViewHolder(TeamHelper teamHelper,
-                                                   Task<Void> onScoutingReadyTask) {
+    protected AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
+                                                       Task<Void> onScoutingReadyTask) {
         return new ActivityAppBarViewHolder(teamHelper, onScoutingReadyTask);
     }
 
@@ -68,7 +67,7 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
         getActivity().finish();
     }
 
-    private class ActivityAppBarViewHolder extends AppBarViewHolder {
+    private class ActivityAppBarViewHolder extends AppBarViewHolderBase {
         public ActivityAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
             super(teamHelper, ActivityScoutListFragment.this, onScoutingReadyTask);
         }

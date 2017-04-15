@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ruleset
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Android Application Rules"
-    xmlns="http://pmd.sf.net/ruleset/5.5.1"
+    xmlns="http://pmd.sf.net/ruleset/5.5.5"
     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
-    xsi:schemaLocation="http://pmd.sf.net/ruleset/5.5.1 http://pmd.sf.net/ruleset_xml_schema.xsd">
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/5.5.5 http://pmd.sf.net/ruleset_xml_schema.xsd">
 
     <exclude-pattern>.*/R.java</exclude-pattern>
 
@@ -38,6 +38,11 @@
         <exclude name="NullAssignment"/>
     </rule>
 
+    <rule ref="rulesets/java/coupling.xml">
+        <exclude name="LawOfDemeter"/>
+        <exclude name="ExcessiveImports"/>
+    </rule>
+
     <rule ref="rulesets/java/design.xml">
         <exclude name="ImmutableField"/>
         <exclude name="AccessorClassGeneration"/>
@@ -52,7 +57,12 @@
 
     <rule ref="rulesets/java/finalizers.xml"/>
 
-    <rule ref="rulesets/java/imports.xml"/>
+    <rule ref="rulesets/java/imports.xml">
+
+        <!-- "typeresolution.xml" has this rule, but with less bugs -->
+        <exclude name="UnusedImports"/>
+
+    </rule>
 
     <rule ref="rulesets/java/javabeans.xml">
         <exclude name="BeanMembersShouldSerialize"/>
@@ -87,6 +97,8 @@
     <rule ref="rulesets/java/strings.xml">
         <exclude name="AvoidDuplicateLiterals"/>
     </rule>
+
+    <rule ref="rulesets/java/typeresolution.xml"/>
 
     <rule ref="rulesets/java/unnecessary.xml"/>
 

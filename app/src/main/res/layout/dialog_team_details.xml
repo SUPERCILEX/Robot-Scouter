@@ -31,7 +31,7 @@
         android:id="@+id/media_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/team_logo"
+        android:hint="@string/team_media_hint"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
         app:errorTextAppearance="@style/RobotScouter.Text.ErrorText"
@@ -45,6 +45,8 @@
             style="@style/RobotScouter.Text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:drawableEnd="@drawable/ic_add_a_photo_black_24dp"
+            android:drawableRight="@drawable/ic_add_a_photo_black_24dp"
             android:inputType="textUri"/>
 
     </android.support.design.widget.TextInputLayout>

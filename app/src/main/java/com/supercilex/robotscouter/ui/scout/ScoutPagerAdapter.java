@@ -47,12 +47,12 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     private Query mQuery;
 
     private Fragment mFragment;
-    private AppBarViewHolder mAppBarViewHolder;
+    private AppBarViewHolderBase mAppBarViewHolder;
     private TabLayout mTabLayout;
     private TeamHelper mTeamHelper;
 
     public ScoutPagerAdapter(Fragment fragment,
-                             AppBarViewHolder appBarViewHolder,
+                             AppBarViewHolderBase appBarViewHolder,
                              TabLayout tabLayout,
                              TeamHelper helper,
                              String currentScoutKey) {

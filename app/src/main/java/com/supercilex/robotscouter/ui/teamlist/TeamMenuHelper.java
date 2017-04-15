@@ -9,6 +9,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.SpreadsheetExporter;
 import com.supercilex.robotscouter.data.model.Team;
@@ -30,16 +32,12 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.IoHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
-
-import static com.supercilex.robotscouter.data.client.SpreadsheetExporter.PERMS;
-
-public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.PermissionCallbacks {
+public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
     private static final int ANIMATION_DURATION = 250;
 
@@ -60,8 +58,11 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     private List<TeamHelper> mSelectedTeams = new ArrayList<>();
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
+    private IoHelper.RequestHandler mWriteAccessRequestHandler;
+
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
+        mWriteAccessRequestHandler = new IoHelper.RequestHandler(mFragment, this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
@@ -363,33 +364,28 @@ public class TeamMenuHelper implements TeamMenuManager, EasyPermissions.Permissi
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
+    public void onSuccess(Void aVoid) {
         exportTeams();
     }
 
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(mFragment, perms)) {
-            new AppSettingsDialog.Builder(mFragment).build().show();
+    private void exportTeams() {
+        if (SpreadsheetExporter.writeAndShareTeams(mFragment,
+                                                   mWriteAccessRequestHandler,
+                                                   mSelectedTeams)) {
+            resetMenu();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        mWriteAccessRequestHandler.onRequestPermissionsResult(requestCode,
+                                                              permissions,
+                                                              grantResults);
     }
 
     public void onActivityResult(int requestCode) {
-        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE
-                && EasyPermissions.hasPermissions(mFragment.getContext(),
-                                                  PERMS.toArray(new String[PERMS.size()]))) {
-            exportTeams();
-        }
-    }
-
-    private void exportTeams() {
-        if (SpreadsheetExporter.writeAndShareTeams(mFragment, mSelectedTeams)) resetMenu();
+        mWriteAccessRequestHandler.onActivityResult(requestCode);
     }
 }

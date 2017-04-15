@@ -71,7 +71,8 @@ task pmd(type: Pmd) {
 android {
     lintOptions {
         disable 'InvalidPackage', // Needed because of Okio
-                'GradleDependency', 'NewerVersionAvailable'
+                'GradleDependency', 'NewerVersionAvailable',
+                'ClickableViewAccessibility' // TODO remove once Google fixes their plugin
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
