@@ -33,6 +33,7 @@ import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoHelper;
+import com.supercilex.robotscouter.util.PermissionRequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +59,11 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     private List<TeamHelper> mSelectedTeams = new ArrayList<>();
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
-    private IoHelper.RequestHandler mWriteAccessRequestHandler;
+    private PermissionRequestHandler mPermHandler;
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
-        mWriteAccessRequestHandler = new IoHelper.RequestHandler(mFragment, this);
+        mPermHandler = new PermissionRequestHandler(IoHelper.PERMS, mFragment, this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
@@ -370,7 +371,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
 
     private void exportTeams() {
         if (SpreadsheetExporter.writeAndShareTeams(mFragment,
-                                                   mWriteAccessRequestHandler,
+                                                   mPermHandler,
                                                    mSelectedTeams)) {
             resetMenu();
         }
@@ -380,12 +381,12 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        mWriteAccessRequestHandler.onRequestPermissionsResult(requestCode,
-                                                              permissions,
-                                                              grantResults);
+        mPermHandler.onRequestPermissionsResult(requestCode,
+                                                permissions,
+                                                grantResults);
     }
 
     public void onActivityResult(int requestCode) {
-        mWriteAccessRequestHandler.onActivityResult(requestCode);
+        mPermHandler.onActivityResult(requestCode);
     }
 }

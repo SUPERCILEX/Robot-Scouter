@@ -38,6 +38,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoHelper;
+import com.supercilex.robotscouter.util.PermissionRequestHandler;
 import com.supercilex.robotscouter.util.PreferencesHelper;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -177,15 +178,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
      */
     @SuppressWarnings("MissingPermission")
     public static boolean writeAndShareTeams(Fragment fragment,
-                                             IoHelper.RequestHandler writeAccessRequestHandler,
+                                             PermissionRequestHandler permHandler,
                                              @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
 
         Context context = fragment.getContext();
 
-        String[] permsArray = IoHelper.WRITE_PERMS.toArray(new String[IoHelper.WRITE_PERMS.size()]);
-        if (!EasyPermissions.hasPermissions(context, permsArray)) {
-            writeAccessRequestHandler.requestPerms(R.string.write_storage_rationale_spreadsheet);
+        if (!EasyPermissions.hasPermissions(context, permHandler.getPermsArray())) {
+            permHandler.requestPerms(R.string.write_storage_rationale_spreadsheet);
             return false;
         }
 
