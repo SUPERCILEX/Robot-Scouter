@@ -93,6 +93,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         initFabMenu();
         mRootView.findViewById(R.id.reset_template_all).setOnClickListener(this);
         mRootView.findViewById(R.id.reset_template_team).setOnClickListener(this);
+        mRootView.findViewById(R.id.remove_metrics).setOnClickListener(this);
 
         return mRootView;
     }
@@ -201,16 +202,21 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        DatabaseReference templateRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey);
+
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
             mRecyclerView.clearFocus();
             ResetTemplateDialog.show(getChildFragmentManager(),
                                      TeamHelper.parse(getArguments()),
                                      id == R.id.reset_template_all);
             return;
+        } else if (id == R.id.remove_metrics) {
+            RemoveAllMetricsDialog.show(getFragmentManager(), templateRef);
+            return;
         }
 
         int priority = FirebaseAdapterHelper.getHighestIntPriority(mAdapter.getSnapshots()) + 1;
-        DatabaseReference metricRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey).push();
+        DatabaseReference metricRef = templateRef.push();
         switch (id) {
             case R.id.add_checkbox:
                 metricRef.setValue(new ScoutMetric<>("", false, MetricType.CHECKBOX), priority);
@@ -232,6 +238,8 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             case R.id.add_header:
                 metricRef.setValue(new ScoutMetric<Void>("", null, MetricType.HEADER), priority);
                 break;
+            default:
+                throw new IllegalStateException("Unknown id: " + id);
         }
 
         mItemTouchCallback.addItemToScrollQueue(mAdapter.getItemCount());

@@ -28,7 +28,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:text="@string/reset_template_all"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/remove_metrics"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@+id/reset_template_team"
                     app:layout_constraintTop_toTopOf="parent"/>
@@ -38,10 +38,20 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/reset_template_team"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@+id/reset_template_all"
+                    app:layout_constraintBottom_toTopOf="@+id/remove_metrics"
+                    app:layout_constraintLeft_toRightOf="@id/reset_template_all"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
+
+                <Button
+                    android:id="@+id/remove_metrics"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remove_metrics"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/reset_template_team"/>
 
             </android.support.constraint.ConstraintLayout>
 
@@ -53,11 +63,11 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:clipToPadding="false"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu"

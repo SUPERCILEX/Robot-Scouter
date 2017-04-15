@@ -122,6 +122,7 @@
     <string name="undo">Undo</string>
     <string name="reset_template_all">Reset scouting template for all teams</string>
     <string name="reset_template_team">Reset scouting template for this team only</string>
+    <string name="remove_metrics">Remove all metrics</string>
     <string name="reset">Reset</string>
 
     <string name="add_checkbox">Add checkbox</string>
