@@ -64,7 +64,7 @@ public class ResetTemplateDialog extends DialogFragment implements DialogInterfa
     @Override
     public void onClick(View v) {
         Bundle args = getArguments();
-        final Team team = TeamHelper.get(getArguments()).getTeam();
+        final Team team = TeamHelper.parse(getArguments()).getTeam();
         final String templateKey = team.getTemplateKey();
 
         if (args.getBoolean(RESET_ALL_KEY)) {

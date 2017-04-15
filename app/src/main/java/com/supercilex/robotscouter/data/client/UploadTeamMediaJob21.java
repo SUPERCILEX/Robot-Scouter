@@ -5,18 +5,18 @@ import android.app.job.JobService;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import com.supercilex.robotscouter.data.remote.TbaDownloader;
+import com.supercilex.robotscouter.data.remote.TbaUploader;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.JobHelper;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class DownloadTeamDataJob21 extends JobService {
+public class UploadTeamMediaJob21 extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         TeamHelper oldTeamHelper = JobHelper.parseRawBundle(params.getExtras());
-        TbaDownloader.load(oldTeamHelper.getTeam(), this)
+        TbaUploader.upload(oldTeamHelper.getTeam(), this)
                 .addOnSuccessListener(newTeam -> {
-                    oldTeamHelper.updateTeam(newTeam);
+                    oldTeamHelper.updateMedia(newTeam);
                     jobFinished(params, false);
                 })
                 .addOnFailureListener(e -> jobFinished(params, true));

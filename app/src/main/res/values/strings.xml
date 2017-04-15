@@ -3,6 +3,8 @@
     <string name="app_name">Robot Scouter</string>
 
     <!-- Common -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
 
@@ -11,6 +13,11 @@
     <string name="no_team_selected">Select a team to start scouting</string>
     <string name="no_teams">Teams you add appear here</string>
     <string name="no_scouts">Scouts you add appear here</string>
+
+    <!-- Media upload -->
+    <string name="should_upload_media_dialog_title">Upload media to The Blue Alliance?</string>
+    <string name="should_upload_media_rationale">If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a> to help other Robot Scouter users and the greater TBA community.</string>
+    <string name="save_response">Save response</string>
 
     <!-- Team List Activity -->
     <string name="hint_team_number">Team number</string>
@@ -35,7 +42,7 @@
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
-    <string name="write_storage_rationale">Robot Scouter needs access to your storage to create the XLSX file.</string>
+    <string name="write_storage_rationale_spreadsheet">Robot Scouter needs access to your storage to create the XLSX file.</string>
     <string name="never_again">Don’t show again</string>
     <string name="exporting_spreadsheet_hint">Export started; view progress in the notification drawer.</string>
     <plurals name="exporting_spreadsheet_complete_title">
@@ -81,6 +88,8 @@
     <string name="update_required_title">Update Robot Scouter</string>
     <string name="update_required_message">An update is required for Robot Scouter to work correctly.</string>
 
+    <string name="write_storage_rationale_media">Robot Scouter needs access to your storage to save your photo.</string>
+
     <!-- Scout Activity -->
     <string name="title_activity_scout">Scout</string>
     <string name="offline_reassurance">Offline. Data will be saved</string>
@@ -88,16 +97,17 @@
     <string name="should_delete_team_message">You have deleted the last scout for team %s.</string>
 
     <string name="add_scout">Add scout/team</string>
+    <string name="add_media">Add media</string>
     <string name="add_scout_long">Add a new scout or team</string>
 
-    <string name="visit_team_website">Visit team %s\'s website</string>
+    <string name="visit_team_website">Visit team %s’s website</string>
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
 
     <string name="edit_team_details">Edit team details</string>
     <string name="team_details">Team details</string>
     <string name="team_name">Team name</string>
     <string name="team_website">Team website</string>
-    <string name="team_logo">Team logo url</string>
+    <string name="team_media_hint">Team media url</string>
     <string name="malformed_url">Make sure you have a valid url.</string>
 
     <string name="edit_scout_name">Edit scout name</string>
@@ -136,7 +146,7 @@
     <string name="unsupported_device">WARNING: you are using an unsupported device</string>
 
     <!-- Accessibility -->
-    <string name="accessibility_robot_icon">A picture of the team\'s robot.</string>
+    <string name="accessibility_robot_icon">A picture of the team’s robot.</string>
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
     <string name="accessibility_reorder">The reorder icon. It can be used to change the order of scout metrics.</string>

@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.ScoutListFragmentBase;
 
 public class ScoutActivity extends AppCompatActivity {
     public static void start(Context context, TeamHelper teamHelper, boolean addScout) {
@@ -34,7 +33,7 @@ public class ScoutActivity extends AppCompatActivity {
             Intent intent = getIntent();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.scouts, ActivityScoutListFragment.newInstance(
-                            TeamHelper.get(intent),
+                            TeamHelper.parse(intent),
                             intent.getBooleanExtra(ScoutListFragmentBase.ADD_SCOUT_KEY, false)))
                     .commit();
         }

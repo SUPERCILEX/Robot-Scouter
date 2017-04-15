@@ -112,7 +112,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     }
 
     private void getTemplateKey() {
-        final TeamHelper teamHelper = TeamHelper.get(getArguments());
+        final TeamHelper teamHelper = TeamHelper.parse(getArguments());
         mTemplateKey = teamHelper.getTeam().getTemplateKey();
 
         if (TextUtils.isEmpty(mTemplateKey)) {
@@ -204,7 +204,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
             mRecyclerView.clearFocus();
             ResetTemplateDialog.show(getChildFragmentManager(),
-                                     TeamHelper.get(getArguments()),
+                                     TeamHelper.parse(getArguments()),
                                      id == R.id.reset_template_all);
             return;
         }

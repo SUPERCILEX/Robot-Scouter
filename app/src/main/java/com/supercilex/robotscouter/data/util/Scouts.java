@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
     private TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
     private Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
-    private ArrayList<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
+    private List<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
 
     private List<TeamHelper> mTeamHelpers;
     private Context mContext;

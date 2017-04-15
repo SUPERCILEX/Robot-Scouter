@@ -25,7 +25,7 @@ public class ShouldDeleteTeamDialog extends DialogFragment implements Dialog.OnC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamHelper = TeamHelper.get(getArguments());
+        mTeamHelper = TeamHelper.parse(getArguments());
     }
 
     @NonNull

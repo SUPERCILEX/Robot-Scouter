@@ -1,5 +1,6 @@
-package com.supercilex.robotscouter.ui;
+package com.supercilex.robotscouter.ui.scout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,11 +27,13 @@ import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.remote.TbaApi;
+import com.supercilex.robotscouter.data.remote.TbaDownloader;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.scout.AppBarViewHolder;
-import com.supercilex.robotscouter.ui.scout.ScoutPagerAdapter;
+import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
+import com.supercilex.robotscouter.ui.TeamDetailsDialog;
+import com.supercilex.robotscouter.ui.TeamMediaCreator;
+import com.supercilex.robotscouter.ui.TeamSender;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
@@ -38,11 +41,12 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
-public abstract class ScoutListFragmentBase extends Fragment implements ChangeEventListener, FirebaseAuth.AuthStateListener {
+public abstract class ScoutListFragmentBase extends Fragment
+        implements ChangeEventListener, FirebaseAuth.AuthStateListener, TeamMediaCreator.StartCaptureListener {
     public static final String ADD_SCOUT_KEY = "add_scout_key";
 
     private TeamHelper mTeamHelper;
-    private AppBarViewHolder mHolder;
+    private AppBarViewHolderBase mHolder;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnActivityReadyTask = new TaskCompletionSource<>();
@@ -62,7 +66,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamHelper = TeamHelper.get(getArguments());
+        mTeamHelper = TeamHelper.parse(getArguments());
 
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
@@ -89,12 +93,13 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
         }
 
         mHolder = newAppBarViewHolder(mTeamHelper, mOnScoutingReadyTask.getTask());
+        if (savedInstanceState != null) mHolder.restoreState(savedInstanceState);
         mHolder.bind(mTeamHelper);
         addListeners();
     }
 
-    protected abstract AppBarViewHolder newAppBarViewHolder(TeamHelper teamHelper,
-                                                            Task<Void> onScoutingReadyTask);
+    protected abstract AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
+                                                                Task<Void> onScoutingReadyTask);
 
     @Override
     public void onStart() {
@@ -121,7 +126,30 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
         if (mPagerAdapter != null) {
             outState.putAll(ScoutUtils.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         }
+        mHolder.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Used in {@link TeamMediaCreator#startCapture(boolean)}
+     * <p>
+     * {@inheritDoc}
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        mHolder.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onStartCapture(boolean shouldUploadMediaToTba) {
+        mHolder.onStartCapture(shouldUploadMediaToTba);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mHolder.onActivityResult(requestCode, resultCode);
     }
 
     @Override
@@ -136,6 +164,9 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
         switch (item.getItemId()) {
             case R.id.action_new_scout:
                 mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+                break;
+            case R.id.action_add_media:
+                ShouldUploadMediaToTbaDialog.show(this);
                 break;
             case R.id.action_share:
                 TeamSender.launchInvitationIntent(getActivity(),
@@ -179,7 +210,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
 
             mTeamHelper.addTeam();
             addListeners();
-            TbaApi.fetch(mTeamHelper.getTeam(), getContext())
+            TbaDownloader.load(mTeamHelper.getTeam(), getContext())
                     .addOnSuccessListener(team -> mTeamHelper.updateTeam(team))
                     .addOnFailureListener(getActivity(),
                                           e -> DownloadTeamDataJob.start(getActivity(),
@@ -191,38 +222,39 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
 
     @Override
     public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
+        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
+
         if (type == EventType.REMOVED) {
-            if (TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) {
-                onTeamDeleted();
-            }
+            onTeamDeleted();
             return;
         } else if (type == EventType.MOVED) return;
 
-        Team team = Constants.sFirebaseTeams.getObject(index);
-        if (team.getKey().equals(mTeamHelper.getTeam().getKey())) {
-            mTeamHelper = team.getHelper();
-            mHolder.bind(mTeamHelper);
 
-            if (!mOnScoutingReadyTask.getTask().isComplete()) {
-                TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.tabs);
-                ViewPager viewPager = (ViewPager) getView().findViewById(R.id.viewpager);
-                String scoutKey = null;
+        mTeamHelper = Constants.sFirebaseTeams.getObject(index).getHelper();
+        mHolder.bind(mTeamHelper);
 
-                if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-                mPagerAdapter = new ScoutPagerAdapter(
-                        this, mHolder, tabLayout, mTeamHelper, scoutKey);
+        if (!mOnScoutingReadyTask.getTask().isComplete()) {
+            initScoutList();
+            mOnScoutingReadyTask.setResult(null);
+        }
+    }
 
-                viewPager.setAdapter(mPagerAdapter);
-                tabLayout.setupWithViewPager(viewPager);
+    private void initScoutList() {
+        View view = getView();
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        String scoutKey = null;
+
+        if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
+        mPagerAdapter = new ScoutPagerAdapter(this, mHolder, tabLayout, mTeamHelper, scoutKey);
+
+        viewPager.setAdapter(mPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
 
-                if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
-                    getArguments().remove(ADD_SCOUT_KEY);
-                    mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
-                }
-
-                mOnScoutingReadyTask.setResult(null);
-            }
+        if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
+            getArguments().remove(ADD_SCOUT_KEY);
+            mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
         }
     }
 
@@ -239,7 +271,7 @@ public abstract class ScoutListFragmentBase extends Fragment implements ChangeEv
     }
 
     @Override
-    public void onDataChanged() { // NOPMD
+    public void onDataChanged() { // NOPMD https://github.com/pmd/pmd/issues/347
         // Noop
     }
 }

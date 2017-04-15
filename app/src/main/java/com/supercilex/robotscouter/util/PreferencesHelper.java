@@ -1,16 +1,22 @@
 package com.supercilex.robotscouter.util;
 
 import android.content.Context;
+import android.util.Pair;
 
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 
 public final class PreferencesHelper {
     private static final String TEAM_LIST_ACTIVITY_PREF_NAME = TeamListActivity.class.getName();
     private static final String EXPORT_PREF_NAME = "spreadsheet_export";
+    private static final String UPLOAD_MEDIA_PREF_NAME = "upload_media";
+
 
     private static final String HAS_SHOWN_TUTORIAL = "has_shown_tutorial";
     private static final String HAS_SHOWN_FAB_TUTORIAL = HAS_SHOWN_TUTORIAL + "_fab";
     private static final String HAS_SHOWN_SIGN_IN_TUTORIAL = HAS_SHOWN_TUTORIAL + "_sign_in";
+
+    private static final String SHOULD_ASK_TO_UPLOAD_MEDIA = "should_ask_to_upload_media";
+    private static final String SHOULD_UPLOAD_MEDIA = "should_upload_media_to_tba";
 
     private PreferencesHelper() {
         throw new AssertionError("No instance for you!");
@@ -51,6 +57,27 @@ public final class PreferencesHelper {
     public static void setShouldShowExportHint(Context context, boolean value) {
         context.getSharedPreferences(EXPORT_PREF_NAME, Context.MODE_PRIVATE).edit()
                 .putBoolean(EXPORT_PREF_NAME, value)
+                .apply();
+    }
+
+    /**
+     * @return A pair of booleans where the first is whether or not an upload media to TBA
+     * confirmation dialog should be shown and the second is whether or not the media should be
+     * uploaded to TBA.
+     */
+    public static Pair<Boolean, Boolean> shouldAskToUploadMediaToTba(Context context) {
+        return Pair.create(
+                context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE)
+                        .getBoolean(SHOULD_ASK_TO_UPLOAD_MEDIA, true),
+                context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE)
+                        .getBoolean(SHOULD_UPLOAD_MEDIA, false));
+    }
+
+    public static void setShouldAskToUploadMediaToTba(Context context,
+                                                      Pair<Boolean, Boolean> value) {
+        context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE).edit()
+                .putBoolean(SHOULD_ASK_TO_UPLOAD_MEDIA, value.first)
+                .putBoolean(SHOULD_UPLOAD_MEDIA, value.second)
                 .apply();
     }
 }

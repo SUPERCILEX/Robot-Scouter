@@ -7,11 +7,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
@@ -39,6 +37,7 @@ import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.IoHelper;
 import com.supercilex.robotscouter.util.PreferencesHelper;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -106,12 +105,10 @@ import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 public class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     private static final String TAG = "SpreadsheetExporter";
-    public static final List<String> PERMS = Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     private static final List<String> UNSUPPORTED_DEVICES =
             Collections.unmodifiableList(Arrays.asList("SAMSUNG-SM-N900A"));
 
-    private static final String EXPORT_FOLDER_NAME = "Robot Scouter/";
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
     private static final String MIME_TYPE_ALL = "*/*";
     private static final String FILE_EXTENSION = ".xlsx";
@@ -180,18 +177,15 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
      */
     @SuppressWarnings("MissingPermission")
     public static boolean writeAndShareTeams(Fragment fragment,
+                                             IoHelper.RequestHandler writeAccessRequestHandler,
                                              @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
 
         Context context = fragment.getContext();
 
-        String[] permsArray = PERMS.toArray(new String[PERMS.size()]);
+        String[] permsArray = IoHelper.WRITE_PERMS.toArray(new String[IoHelper.WRITE_PERMS.size()]);
         if (!EasyPermissions.hasPermissions(context, permsArray)) {
-            EasyPermissions.requestPermissions(
-                    fragment,
-                    fragment.getString(R.string.write_storage_rationale),
-                    8653,
-                    permsArray);
+            writeAccessRequestHandler.requestPerms(R.string.write_storage_rationale_spreadsheet);
             return false;
         }
 
@@ -248,7 +242,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                     .show());
         }
 
-        List<TeamHelper> teamHelpers = TeamHelper.getList(intent);
+        List<TeamHelper> teamHelpers = TeamHelper.parseList(intent);
         Collections.sort(teamHelpers);
         try {
             Tasks.await(Scouts.getAll(teamHelpers, this)); // Force a refresh
@@ -284,9 +278,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             sharingIntent.setAction(Intent.ACTION_VIEW)
                     .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL);
 
-            List<ResolveInfo> supportedActivities =
-                    getPackageManager().queryIntentActivities(sharingIntent, 0);
-            if (supportedActivities.isEmpty()) {
+            if (sharingIntent.resolveActivity(getPackageManager()) == null) {
                 sharingIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL);
             }
         }
@@ -319,31 +311,24 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
     @Nullable
     private Uri getFileUri() {
-        if (!isExternalStorageWritable()) return null;
-        String pathname =
-                Environment.getExternalStorageDirectory().toString() + "/" + EXPORT_FOLDER_NAME;
-        File robotScouterFolder = new File(pathname);
-        if (!robotScouterFolder.exists() && !robotScouterFolder.mkdirs()) return null;
+        @SuppressWarnings("MissingPermission")
+        File rsFolder = IoHelper.getRootFolder();
+        if (rsFolder == null) return null;
 
-        File file = writeFile(robotScouterFolder);
+        File file = writeFile(rsFolder);
         return file == null ? null : Uri.fromFile(file);
     }
 
-    private boolean isExternalStorageWritable() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-    }
-
     @Nullable
-    private File writeFile(File robotScouterFolder) {
+    private File writeFile(File rsFolder) {
         FileOutputStream stream = null;
-        File absoluteFile = new File(robotScouterFolder, getFullyQualifiedFileName(null));
+        File absoluteFile = new File(rsFolder, getFullyQualifiedFileName(null));
         try {
             for (int i = 1; true; i++) {
                 if (absoluteFile.createNewFile()) {
                     break;
                 } else { // File already exists
-                    absoluteFile = new File(robotScouterFolder,
-                                            getFullyQualifiedFileName(" (" + i + ")"));
+                    absoluteFile = new File(rsFolder, getFullyQualifiedFileName(" (" + i + ")"));
                 }
             }
 

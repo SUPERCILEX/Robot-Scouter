@@ -57,7 +57,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
         return 0;
     }
 
-    private ArrayList<String> getKeys() {
+    private List<String> getKeys() {
         return new ArrayList<>(mMetric.getValue().keySet());
     }
 

@@ -32,7 +32,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (Parcelable parcelable : TeamHelper.getList(getArguments())) {
+        for (Parcelable parcelable : TeamHelper.parseList(getArguments())) {
             mTeamHelpers.add((TeamHelper) parcelable);
         }
         Collections.sort(mTeamHelpers);
