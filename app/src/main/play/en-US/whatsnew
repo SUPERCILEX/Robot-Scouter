@@ -1,3 +1,7 @@
-Fixed various crashes and updated internal dependencies
+Robot Scouter v1.1 is out!!! Here are just a few of the highlights:
+    - The spreadsheet exporting experience has been completely resigned
+    - Added charts to the spreadsheet
+    - Made long team names look much better in tablet mode
+    - You can now add pictures of a team's robot directly from Robot Scouter! On top of that, those pictures can be shared with The Blue Alliance to help the greater community! 🎉
 
-https://github.com/SUPERCILEX/Robot-Scouter/releases
+Full release notes: https://github.com/SUPERCILEX/Robot-Scouter/releases
