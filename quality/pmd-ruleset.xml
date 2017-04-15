@@ -57,7 +57,12 @@
 
     <rule ref="rulesets/java/finalizers.xml"/>
 
-    <rule ref="rulesets/java/imports.xml"/>
+    <rule ref="rulesets/java/imports.xml">
+
+        <!-- "typeresolution.xml" has this rule, but with less bugs -->
+        <exclude name="UnusedImports"/>
+
+    </rule>
 
     <rule ref="rulesets/java/javabeans.xml">
         <exclude name="BeanMembersShouldSerialize"/>

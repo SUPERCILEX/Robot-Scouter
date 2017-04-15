@@ -19,11 +19,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.client.SpreadsheetExporter;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.IoHelper; // NOPMD https://github.com/pmd/pmd/issues/348
-
-import java.util.List;
 
 /**
  * Created in {@link R.layout#activity_team_list}
@@ -172,8 +168,8 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     /**
-     * Used in
-     * {@link SpreadsheetExporter#writeAndShareTeams(Fragment, IoHelper.RequestHandler, List)}
+     * Used in {@link com.supercilex.robotscouter.data.client.SpreadsheetExporter#writeAndShareTeams(Fragment,
+     * com.supercilex.robotscouter.util.IoHelper.RequestHandler, java.util.List)}
      * <p>
      * {@inheritDoc}
      */

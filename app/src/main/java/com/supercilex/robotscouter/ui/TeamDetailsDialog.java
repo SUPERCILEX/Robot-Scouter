@@ -75,8 +75,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         mNameEditText.setOnFocusChangeListener(this);
         mMediaEditText.setOnFocusChangeListener(this);
-        mMediaEditText.setOnTouchListener(this);
         mWebsiteEditText.setOnFocusChangeListener(this);
+        mMediaEditText.setOnTouchListener(this);
 
         updateUi();
 
@@ -235,7 +235,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     }
 
     @Nullable
-    private String formatUrl(String url) {
+    private String formatUrl(@NonNull String url) {
         if (new File(url).exists()) return url;
 
         String trimmedUrl = url.trim();

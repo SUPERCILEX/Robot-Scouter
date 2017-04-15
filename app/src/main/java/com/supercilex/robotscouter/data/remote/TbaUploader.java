@@ -53,7 +53,7 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
         String link = response.body().get("data").getAsJsonObject().get("link").getAsString();
         // Oh Imgur, why don't you use https by default? 😢
         link = link.startsWith("https://") ? link : link.replace("http://", "https://");
-        // And what about png?
+        // And what about pngs?
         link = link.endsWith(".png") ? link : link.replace(getFileExtension(link), ".png");
 
         mTeam.setMedia(link);

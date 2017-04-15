@@ -16,7 +16,7 @@ public final class PreferencesHelper {
     private static final String HAS_SHOWN_SIGN_IN_TUTORIAL = HAS_SHOWN_TUTORIAL + "_sign_in";
 
     private static final String SHOULD_ASK_TO_UPLOAD_MEDIA = "should_ask_to_upload_media";
-    private static final String SHOULD_UPLOAD_MEDIA = "should_upload_media";
+    private static final String SHOULD_UPLOAD_MEDIA = "should_upload_media_to_tba";
 
     private PreferencesHelper() {
         throw new AssertionError("No instance for you!");
@@ -66,18 +66,16 @@ public final class PreferencesHelper {
      * uploaded to TBA.
      */
     public static Pair<Boolean, Boolean> shouldAskToUploadMediaToTba(Context context) {
-        return Pair.create(context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME,
-                                                        Context.MODE_PRIVATE)
-                                   .getBoolean(SHOULD_ASK_TO_UPLOAD_MEDIA, true),
-                           context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME,
-                                                        Context.MODE_PRIVATE)
-                                   .getBoolean(SHOULD_UPLOAD_MEDIA, false));
+        return Pair.create(
+                context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE)
+                        .getBoolean(SHOULD_ASK_TO_UPLOAD_MEDIA, true),
+                context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE)
+                        .getBoolean(SHOULD_UPLOAD_MEDIA, false));
     }
 
     public static void setShouldAskToUploadMediaToTba(Context context,
                                                       Pair<Boolean, Boolean> value) {
-        context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE)
-                .edit()
+        context.getSharedPreferences(UPLOAD_MEDIA_PREF_NAME, Context.MODE_PRIVATE).edit()
                 .putBoolean(SHOULD_ASK_TO_UPLOAD_MEDIA, value.first)
                 .putBoolean(SHOULD_UPLOAD_MEDIA, value.second)
                 .apply();

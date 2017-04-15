@@ -223,6 +223,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
         if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
+
         if (type == EventType.REMOVED) {
             onTeamDeleted();
             return;
@@ -233,24 +234,27 @@ public abstract class ScoutListFragmentBase extends Fragment
         mHolder.bind(mTeamHelper);
 
         if (!mOnScoutingReadyTask.getTask().isComplete()) {
-            TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.tabs);
-            ViewPager viewPager = (ViewPager) getView().findViewById(R.id.viewpager);
-            String scoutKey = null;
-
-            if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-            mPagerAdapter = new ScoutPagerAdapter(
-                    this, mHolder, tabLayout, mTeamHelper, scoutKey);
-
-            viewPager.setAdapter(mPagerAdapter);
-            tabLayout.setupWithViewPager(viewPager);
-
-
-            if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
-                getArguments().remove(ADD_SCOUT_KEY);
-                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
-            }
-
+            initScoutList();
             mOnScoutingReadyTask.setResult(null);
+        }
+    }
+
+    private void initScoutList() {
+        View view = getView();
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        String scoutKey = null;
+
+        if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
+        mPagerAdapter = new ScoutPagerAdapter(this, mHolder, tabLayout, mTeamHelper, scoutKey);
+
+        viewPager.setAdapter(mPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+
+        if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
+            getArguments().remove(ADD_SCOUT_KEY);
+            mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
         }
     }
 

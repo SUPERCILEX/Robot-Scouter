@@ -45,12 +45,8 @@ abstract class TbaServiceBase<T> implements Callable<Team> {
     }
 
     protected boolean cannotContinue(Response response) throws IllegalStateException {
-        if (response.isSuccessful()) {
-            return false;
-        } else if (response.code() == ERROR_404) {
-            return true;
-        } else {
-            throw new IllegalStateException(response.toString());
-        }
+        if (response.isSuccessful()) return false;
+        if (response.code() == ERROR_404) return true;
+        throw new IllegalStateException(response.toString());
     }
 }

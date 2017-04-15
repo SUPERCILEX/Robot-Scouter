@@ -40,7 +40,7 @@ public final class JobHelper {
 
         int result = dispatcher.schedule(job);
         if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-            throw new IllegalStateException(String.valueOf(result));
+            throw new IllegalStateException(getErrorMessage(clazz, result));
         }
     }
 
@@ -59,41 +59,45 @@ public final class JobHelper {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int result = scheduler.schedule(jobInfo);
         if (result != JobScheduler.RESULT_SUCCESS) {
-            throw new IllegalStateException(String.valueOf(result));
+            throw new IllegalStateException(getErrorMessage(clazz, result));
         }
     }
 
+    private static String getErrorMessage(Class clazz, int result) {
+        return clazz.getName() + " failed with error code " + result;
+    }
+
     public static TeamHelper parseRawBundle(Bundle args) {
-        return new Team.Builder(args.getString("number"))
-                .setKey(args.getString("key"))
-                .setTemplateKey(args.getString("template-key"))
-                .setName(args.getString("name"))
-                .setMedia(args.getString("media"))
-                .setWebsite(args.getString("website"))
-                .setHasCustomName(args.getBoolean("custom-name"))
-                .setHasCustomMedia(args.getBoolean("custom-media"))
-                .setHasCustomWebsite(args.getBoolean("custom-website"))
-                .setShouldUploadMediaToTba(args.getBoolean("should-upload-media-to-tba"))
-                .setMediaYear(args.getInt("media-year"))
-                .setTimestamp(args.getLong("timestamp"))
+        return new Team.Builder(args.getString(TeamKeys.NUMBER))
+                .setKey(args.getString(TeamKeys.KEY))
+                .setTemplateKey(args.getString(TeamKeys.TEMPLATE_KEY))
+                .setName(args.getString(TeamKeys.NAME))
+                .setMedia(args.getString(TeamKeys.MEDIA))
+                .setWebsite(args.getString(TeamKeys.WEBSITE))
+                .setHasCustomName(args.getBoolean(TeamKeys.CUSTOM_NAME))
+                .setHasCustomMedia(args.getBoolean(TeamKeys.CUSTOM_MEDIA))
+                .setHasCustomWebsite(args.getBoolean(TeamKeys.CUSTOM_WEBSITE))
+                .setShouldUploadMediaToTba(args.getBoolean(TeamKeys.SHOULD_UPLOAD_MEDIA))
+                .setMediaYear(args.getInt(TeamKeys.MEDIA_YEAR))
+                .setTimestamp(args.getLong(TeamKeys.TIMESTAMP))
                 .build()
                 .getHelper();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static TeamHelper parseRawBundle(PersistableBundle args) {
-        return new Team.Builder(args.getString("number"))
-                .setKey(args.getString("key"))
-                .setTemplateKey(args.getString("template-key"))
-                .setName(args.getString("name"))
-                .setMedia(args.getString("media"))
-                .setWebsite(args.getString("website"))
-                .setHasCustomName(args.getInt("custom-name") == 1)
-                .setHasCustomMedia(args.getInt("custom-media") == 1)
-                .setHasCustomWebsite(args.getInt("custom-website") == 1)
-                .setShouldUploadMediaToTba(args.getInt("should-upload-media-to-tba") == 1)
-                .setMediaYear(args.getInt("media-year"))
-                .setTimestamp(args.getLong("timestamp"))
+        return new Team.Builder(args.getString(TeamKeys.NUMBER))
+                .setKey(args.getString(TeamKeys.KEY))
+                .setTemplateKey(args.getString(TeamKeys.TEMPLATE_KEY))
+                .setName(args.getString(TeamKeys.NAME))
+                .setMedia(args.getString(TeamKeys.MEDIA))
+                .setWebsite(args.getString(TeamKeys.WEBSITE))
+                .setHasCustomName(args.getInt(TeamKeys.CUSTOM_NAME) == 1)
+                .setHasCustomMedia(args.getInt(TeamKeys.CUSTOM_MEDIA) == 1)
+                .setHasCustomWebsite(args.getInt(TeamKeys.CUSTOM_WEBSITE) == 1)
+                .setShouldUploadMediaToTba(args.getInt(TeamKeys.SHOULD_UPLOAD_MEDIA) == 1)
+                .setMediaYear(args.getInt(TeamKeys.MEDIA_YEAR))
+                .setTimestamp(args.getLong(TeamKeys.TIMESTAMP))
                 .build()
                 .getHelper();
     }
@@ -102,26 +106,26 @@ public final class JobHelper {
         Bundle args = new Bundle();
         Team team = teamHelper.getTeam();
 
-        args.putString("key", team.getKey());
-        args.putString("template-key", team.getTemplateKey());
-        args.putString("number", team.getNumber());
-        args.putString("name", team.getName());
-        args.putString("media", team.getMedia());
-        args.putString("website", team.getWebsite());
+        args.putString(TeamKeys.NUMBER, team.getNumber());
+        args.putString(TeamKeys.KEY, team.getKey());
+        args.putString(TeamKeys.TEMPLATE_KEY, team.getTemplateKey());
+        args.putString(TeamKeys.NAME, team.getName());
+        args.putString(TeamKeys.MEDIA, team.getMedia());
+        args.putString(TeamKeys.WEBSITE, team.getWebsite());
         if (team.getHasCustomName() != null) {
-            args.putBoolean("custom-name", team.getHasCustomName());
+            args.putBoolean(TeamKeys.CUSTOM_NAME, team.getHasCustomName());
         }
         if (team.getHasCustomMedia() != null) {
-            args.putBoolean("custom-media", team.getHasCustomMedia());
+            args.putBoolean(TeamKeys.CUSTOM_MEDIA, team.getHasCustomMedia());
         }
         if (team.getHasCustomWebsite() != null) {
-            args.putBoolean("custom-website", team.getHasCustomWebsite());
+            args.putBoolean(TeamKeys.CUSTOM_WEBSITE, team.getHasCustomWebsite());
         }
         if (team.getShouldUploadMediaToTba() != null) {
-            args.putBoolean("should-upload-media-to-tba", team.getShouldUploadMediaToTba());
+            args.putBoolean(TeamKeys.SHOULD_UPLOAD_MEDIA, team.getShouldUploadMediaToTba());
         }
-        args.putInt("media-year", team.getMediaYear());
-        args.putLong("timestamp", team.getTimestamp());
+        args.putInt(TeamKeys.MEDIA_YEAR, team.getMediaYear());
+        args.putLong(TeamKeys.TIMESTAMP, team.getTimestamp());
 
         return args;
     }
@@ -131,27 +135,42 @@ public final class JobHelper {
         PersistableBundle args = new PersistableBundle();
         Team team = teamHelper.getTeam();
 
-        args.putString("key", team.getKey());
-        args.putString("template-key", team.getTemplateKey());
-        args.putString("number", team.getNumber());
-        args.putString("name", team.getName());
-        args.putString("media", team.getMedia());
-        args.putString("website", team.getWebsite());
+        args.putString(TeamKeys.NUMBER, team.getNumber());
+        args.putString(TeamKeys.KEY, team.getKey());
+        args.putString(TeamKeys.TEMPLATE_KEY, team.getTemplateKey());
+        args.putString(TeamKeys.NAME, team.getName());
+        args.putString(TeamKeys.MEDIA, team.getMedia());
+        args.putString(TeamKeys.WEBSITE, team.getWebsite());
         if (team.getHasCustomName() != null) {
-            args.putInt("custom-name", team.getHasCustomName() ? 1 : 0);
+            args.putInt(TeamKeys.CUSTOM_NAME, team.getHasCustomName() ? 1 : 0);
         }
         if (team.getHasCustomMedia() != null) {
-            args.putInt("custom-media", team.getHasCustomMedia() ? 1 : 0);
+            args.putInt(TeamKeys.CUSTOM_MEDIA, team.getHasCustomMedia() ? 1 : 0);
         }
         if (team.getHasCustomWebsite() != null) {
-            args.putInt("custom-website", team.getHasCustomWebsite() ? 1 : 0);
+            args.putInt(TeamKeys.CUSTOM_WEBSITE, team.getHasCustomWebsite() ? 1 : 0);
         }
         if (team.getShouldUploadMediaToTba() != null) {
-            args.putInt("should-upload-media-to-tba", team.getShouldUploadMediaToTba() ? 1 : 0);
+            args.putInt(TeamKeys.SHOULD_UPLOAD_MEDIA, team.getShouldUploadMediaToTba() ? 1 : 0);
         }
-        args.putInt("media-year", team.getMediaYear());
-        args.putLong("timestamp", team.getTimestamp());
+        args.putInt(TeamKeys.MEDIA_YEAR, team.getMediaYear());
+        args.putLong(TeamKeys.TIMESTAMP, team.getTimestamp());
 
         return args;
+    }
+
+    private static final class TeamKeys {
+        public static final String NUMBER = "number";
+        public static final String KEY = "key";
+        public static final String TEMPLATE_KEY = "template-key";
+        public static final String NAME = "name";
+        public static final String MEDIA = "media";
+        public static final String WEBSITE = "website";
+        public static final String CUSTOM_NAME = "custom-name";
+        public static final String CUSTOM_MEDIA = "custom-media";
+        public static final String CUSTOM_WEBSITE = "custom-website";
+        public static final String SHOULD_UPLOAD_MEDIA = "should-upload-media-to-tba";
+        public static final String MEDIA_YEAR = "media-year";
+        public static final String TIMESTAMP = "timestamp";
     }
 }

@@ -15,6 +15,7 @@ import android.support.v4.content.FileProvider;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.IoHelper;
@@ -122,6 +123,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             try {
                 photoFile = createImageFile(rsFolder);
             } catch (IOException e) {
+                FirebaseCrash.report(e);
                 Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
             }
 
@@ -139,20 +141,22 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     public void onActivityResult(int requestCode, int resultCode) {
         mWriteAccessRequestHandler.onActivityResult(requestCode);
 
-        if (requestCode == TAKE_PHOTO_RC && resultCode == Activity.RESULT_OK) {
-            Uri contentUri = Uri.fromFile(new File(mPhotoPath));
+        if (requestCode == TAKE_PHOTO_RC) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri contentUri = Uri.fromFile(new File(mPhotoPath));
 
-            mTeamHelper.getTeam().setHasCustomMedia(true);
-            mTeamHelper.getTeam().setShouldUploadMediaToTba(mShouldUploadMediaToTba);
-            mTeamHelper.getTeam().setMedia(contentUri.getPath());
-            mListener.get().onSuccess(mTeamHelper);
+                mTeamHelper.getTeam().setHasCustomMedia(true);
+                mTeamHelper.getTeam().setShouldUploadMediaToTba(mShouldUploadMediaToTba);
+                mTeamHelper.getTeam().setMedia(contentUri.getPath());
+                mListener.get().onSuccess(mTeamHelper);
 
-            // Tell gallery that we have a new photo
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            mediaScanIntent.setData(contentUri);
-            mFragment.get().getContext().sendBroadcast(mediaScanIntent);
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            new File(mPhotoPath).delete();
+                // Tell gallery that we have a new photo
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                mediaScanIntent.setData(contentUri);
+                mFragment.get().getContext().sendBroadcast(mediaScanIntent);
+            } else {
+                new File(mPhotoPath).delete();
+            }
         }
     }
 
