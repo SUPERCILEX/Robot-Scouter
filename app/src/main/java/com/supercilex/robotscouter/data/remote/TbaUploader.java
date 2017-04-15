@@ -36,7 +36,7 @@ public final class TbaUploader extends TbaServiceBase<TbaTeamMediaApi> {
     public Team call() throws Exception { // NOPMD https://github.com/pmd/pmd/issues/350
         uploadToImgur();
         if (mTeam.getShouldUploadMediaToTba() != null) uploadToTba();
-//        if (mTeam.getShouldUploadMediaToTba() != null) Log.d("TAG", "tba upload"); // uploadToTba();
+        if (mTeam.getShouldUploadMediaToTba() != null) uploadToTba();
         return mTeam;
     }
 
