@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +20,14 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.IoHelper;
+import com.supercilex.robotscouter.util.PermissionRequestHandler;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -46,14 +51,22 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     };
 
     private static final int TAKE_PHOTO_RC = 334; // NOPMD https://github.com/pmd/pmd/issues/345
+    private static final List<String> PERMS; // NOPMD https://github.com/pmd/pmd/issues/345
     private static final String MEDIA_CREATOR_KEY = "media_creator"; // NOPMD https://github.com/pmd/pmd/issues/345
 
     private WeakReference<Fragment> mFragment; // NOPMD https://github.com/pmd/pmd/issues/345
     private TeamHelper mTeamHelper; // NOPMD https://github.com/pmd/pmd/issues/345
-    private IoHelper.RequestHandler mWriteAccessRequestHandler; // NOPMD https://github.com/pmd/pmd/issues/345
+    private PermissionRequestHandler mPermHandler; // NOPMD https://github.com/pmd/pmd/issues/345
     private WeakReference<OnSuccessListener<TeamHelper>> mListener; // NOPMD https://github.com/pmd/pmd/issues/345
     private String mPhotoPath; // NOPMD https://github.com/pmd/pmd/issues/345
     private boolean mShouldUploadMediaToTba; // NOPMD https://github.com/pmd/pmd/issues/345
+
+    static {
+        List<String> perms = new ArrayList<>();
+        perms.addAll(IoHelper.PERMS);
+        perms.add(Manifest.permission.CAMERA);
+        PERMS = Collections.unmodifiableList(perms);
+    }
 
     private TeamMediaCreator(TeamHelper teamHelper,
                              String photoPath,
@@ -84,8 +97,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                              OnSuccessListener<TeamHelper> listener) {
         mediaCreator.mFragment = new WeakReference<>(fragment);
         mediaCreator.mListener = new WeakReference<>(listener);
-        mediaCreator.mWriteAccessRequestHandler =
-                new IoHelper.RequestHandler(fragment, mediaCreator);
+        mediaCreator.mPermHandler = new PermissionRequestHandler(PERMS, fragment, mediaCreator);
     }
 
     public Bundle toBundle() {
@@ -110,9 +122,8 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         Context context = mFragment.get().getContext();
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            String[] permsArray = IoHelper.WRITE_PERMS.toArray(new String[IoHelper.WRITE_PERMS.size()]);
-            if (!EasyPermissions.hasPermissions(context, permsArray)) {
-                mWriteAccessRequestHandler.requestPerms(R.string.write_storage_rationale_media);
+            if (!EasyPermissions.hasPermissions(context, mPermHandler.getPermsArray())) {
+                mPermHandler.requestPerms(R.string.write_storage_rationale_media);
                 return;
             }
 
@@ -139,7 +150,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     public void onActivityResult(int requestCode, int resultCode) {
-        mWriteAccessRequestHandler.onActivityResult(requestCode);
+        mPermHandler.onActivityResult(requestCode);
 
         if (requestCode == TAKE_PHOTO_RC) {
             if (resultCode == Activity.RESULT_OK) {
@@ -170,7 +181,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        mWriteAccessRequestHandler.onRequestPermissionsResult(
+        mPermHandler.onRequestPermissionsResult(
                 requestCode, permissions, grantResults);
     }
 
