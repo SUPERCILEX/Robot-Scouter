@@ -116,6 +116,7 @@ public class ScoutMetric<T> {
         else if (getType() == MetricType.STOPWATCH) metricType = "Stopwatch";
         else if (getType() == MetricType.HEADER) metricType = "Header";
 
-        return metricType + " (" + mRef.getKey() + ")" + " \"" + mName + "\": " + getValue();
+        String key = mRef == null ? null : mRef.getKey();
+        return metricType + " (" + key + ")" + " \"" + mName + "\": " + getValue();
     }
 }

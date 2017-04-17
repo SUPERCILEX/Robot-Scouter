@@ -589,7 +589,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 setAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
                 setAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Scouts");
 
-                String name = getMetricForChart(chart, chartPool).getName();
+                String name = getMetricForChart(xChart, chartPool).getName();
                 if (!TextUtils.isEmpty(name)) xChart.setTitle(name);
             }
         }
@@ -647,7 +647,19 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             }
         }
 
+        chartFinder:
         if (nearestHeader == null) {
+            for (Chart possibleChart : chartData.keySet()) {
+                if (possibleChart instanceof XSSFChart) {
+                    XSSFChart xChart = (XSSFChart) possibleChart;
+                    if (xChart.getGraphicFrame().getAnchor().getRow1() == Constants.SINGLE_ITEM) {
+                        nearestHeader = Pair.create(0, getMetricForChart(xChart, chartPool));
+                        chart = xChart;
+                        break chartFinder;
+                    }
+                }
+            }
+
             nearestHeader = Pair.create(0, new ScoutMetric<>(null, null, MetricType.HEADER));
         }
 
@@ -657,7 +669,10 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             Integer headerIndex = nearestHeader.first + 1;
             int startChartIndex = lastDataCellNum + 3;
             chart = drawing.createChart(
-                    createAnchor(drawing, headerIndex, startChartIndex, startChartIndex + 10));
+                    createAnchor(drawing,
+                                 getRowIndex(headerIndex, new ArrayList<>(chartData.keySet())),
+                                 startChartIndex,
+                                 startChartIndex + 10));
 
             LineChartData lineChartData = chart.getChartDataFactory().createLineChartData();
             data = lineChartData;
@@ -667,11 +682,11 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
             leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
-            chartData.put(chart, Pair.create(lineChartData, Arrays.asList(bottomAxis, leftAxis)));
-            chartPool.put(nearestHeader.second, chart);
-
             ChartLegend legend = chart.getOrCreateLegend();
             legend.setPosition(LegendPosition.RIGHT);
+
+            chartData.put(chart, Pair.create(lineChartData, Arrays.asList(bottomAxis, leftAxis)));
+            chartPool.put(nearestHeader.second, chart);
         } else {
             data = chartData.get(chart).first;
         }
@@ -684,6 +699,30 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                         sheet,
                         new CellRangeAddress(rowNum, rowNum, 1, lastDataCellNum)))
                 .setTitle(row.getCell(0).getStringCellValue());
+    }
+
+    private int getRowIndex(int defaultIndex, List<Chart> charts) {
+        if (charts.isEmpty()) return defaultIndex;
+
+        List<ClientAnchor> anchors = new ArrayList<>();
+        for (Chart chart : charts) {
+            if (chart instanceof XSSFChart) {
+                XSSFChart xChart = (XSSFChart) chart;
+                anchors.add(xChart.getGraphicFrame().getAnchor());
+            } else {
+                return defaultIndex;
+            }
+        }
+
+        Collections.sort(anchors, (o1, o2) -> {
+            int endRow1 = o1.getRow2();
+            int endRow2 = o2.getRow2();
+
+            return endRow1 == endRow2 ? 0 : endRow1 > endRow2 ? 1 : -1;
+        });
+
+        int lastRow = anchors.get(anchors.size() - 1).getRow2();
+        return defaultIndex > lastRow ? defaultIndex : lastRow;
     }
 
     private void setAxisTitle(CTTitle title, String text) {
