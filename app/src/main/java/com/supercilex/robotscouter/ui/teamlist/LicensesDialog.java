@@ -41,18 +41,18 @@ public class LicensesDialog extends DialogFragment {
                                      "Google Inc.",
                                      GoogleApiAvailability.getInstance()
                                              .getOpenSourceSoftwareLicenseInfo(getContext())));
-        licenses.add(Licenses.fromGitHubApacheV2("firebase/FirebaseUI-Android"));
-        licenses.add(Licenses.fromGitHubApacheV2("firebase/firebase-jobdispatcher-android"));
-        licenses.add(Licenses.fromGitHubApacheV2("googlesamples/Easypermissions"));
-        licenses.add(Licenses.fromGitHub("bumptech/Glide", "Glide license", Licenses.FILE_AUTO));
-        licenses.add(Licenses.fromGitHubApacheV2("hdodenhof/CircleImageView"));
-        licenses.add(Licenses.fromGitHub("apache/poi", Licenses.LICENSE_APACHE_V2));
+        licenses.add(Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"));
+        licenses.add(Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"));
+        licenses.add(Licenses.fromGitHubApacheV2("GoogleSamples/Easypermissions"));
+        licenses.add(Licenses.fromGitHub("Bumptech/Glide", "Glide license", Licenses.FILE_AUTO));
+        licenses.add(Licenses.fromGitHubApacheV2("Hdodenhof/CircleImageView"));
+        licenses.add(Licenses.fromGitHub("Apache/POI", Licenses.LICENSE_APACHE_V2));
         licenses.add(Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"));
-        licenses.add(Licenses.fromGitHubApacheV2("sjwall/MaterialTapTargetPrompt"));
-        licenses.add(Licenses.fromGitHubApacheV2("square/Retrofit"));
-        licenses.add(Licenses.fromGitHubApacheV2("square/Leakcanary"));
+        licenses.add(Licenses.fromGitHubApacheV2("Sjwall/MaterialTapTargetPrompt"));
+        licenses.add(Licenses.fromGitHubApacheV2("Square/Retrofit"));
+        licenses.add(Licenses.fromGitHubApacheV2("Square/Leakcanary"));
         licenses.add(Licenses.fromGitHubMIT("Triple-T/gradle-play-publisher"));
-        licenses.add(Licenses.fromGitHubApacheV2("yshrsmz/LicenseAdapter"));
+        licenses.add(Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter"));
 
         RecyclerView list = (RecyclerView) rootView.findViewById(R.id.list);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
