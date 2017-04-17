@@ -54,7 +54,7 @@ public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnCl
                 .setMessage(mTeamHelpers.size() == Constants.SINGLE_ITEM
                                     ? null : getString(R.string.caution_delete, deletedTeams))
                 .setPositiveButton(R.string.delete, this)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .create();
     }
 

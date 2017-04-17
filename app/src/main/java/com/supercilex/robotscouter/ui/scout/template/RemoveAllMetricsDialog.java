@@ -27,7 +27,7 @@ public class RemoveAllMetricsDialog extends DialogFragment implements AlertDialo
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.confirm_action)
                 .setPositiveButton(R.string.remove_metrics, this)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .create();
     }
 
