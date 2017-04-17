@@ -92,14 +92,14 @@ public class ScoutMetric<T> {
         ScoutMetric<?> metric = (ScoutMetric<?>) o;
 
         return mType == metric.mType
-                && mRef.equals(metric.mRef)
+                && (mRef == null ? metric.mRef == null : mRef.equals(metric.mRef))
                 && TextUtils.equals(mName, metric.mName)
                 && (getValue() == null ? metric.getValue() == null : getValue().equals(metric.getValue()));
     }
 
     @Override
     public int hashCode() {
-        int result = mRef.hashCode();
+        int result = mRef == null ? 0 : mRef.hashCode();
         result = 31 * result + (mName == null ? 0 : mName.hashCode());
         result = 31 * result + (getValue() == null ? 0 : getValue().hashCode());
         result = 31 * result + mType;
