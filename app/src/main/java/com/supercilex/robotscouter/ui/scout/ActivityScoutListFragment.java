@@ -12,6 +12,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.android.gms.tasks.Task;
@@ -42,6 +44,12 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     protected AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
                                                        Task<Void> onScoutingReadyTask) {
         return new ActivityAppBarViewHolder(teamHelper, onScoutingReadyTask);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.scout, menu);
+        mHolder.initMenu(menu);
     }
 
     @Override

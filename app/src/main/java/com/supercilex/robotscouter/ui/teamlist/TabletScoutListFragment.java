@@ -2,10 +2,6 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.tasks.Task;
@@ -48,11 +44,6 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Noop: see TabletAppBarViewHolder
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         setHintVisibility(View.VISIBLE);
@@ -71,17 +62,12 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    private class TabletAppBarViewHolder extends AppBarViewHolderBase implements Toolbar.OnMenuItemClickListener {
+    private class TabletAppBarViewHolder extends AppBarViewHolderBase {
         public TabletAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
             super(teamHelper, TabletScoutListFragment.this, onScoutingReadyTask);
             mToolbar.inflateMenu(R.menu.scout);
-            mToolbar.setOnMenuItemClickListener(this);
+            mToolbar.setOnMenuItemClickListener(TabletScoutListFragment.this::onOptionsItemSelected);
             initMenu(mToolbar.getMenu());
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            return onOptionsItemSelected(item);
         }
     }
 }

@@ -10,8 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,10 +44,9 @@ public abstract class ScoutListFragmentBase extends Fragment
     public static final String ADD_SCOUT_KEY = "add_scout_key";
 
     private TeamHelper mTeamHelper;
-    private AppBarViewHolderBase mHolder;
+    protected AppBarViewHolderBase mHolder;
     private ScoutPagerAdapter mPagerAdapter;
 
-    private TaskCompletionSource<Void> mOnActivityReadyTask = new TaskCompletionSource<>();
     private TaskCompletionSource<Void> mOnScoutingReadyTask = new TaskCompletionSource<>();
     private Bundle mSavedState;
 
@@ -83,7 +80,6 @@ public abstract class ScoutListFragmentBase extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSavedState = savedInstanceState;
-        mOnActivityReadyTask.setResult(null);
 
         if (mSavedState == null && ConnectivityHelper.isOffline(getContext())) {
             Snackbar.make(getView().findViewById(R.id.root),
@@ -150,12 +146,6 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mHolder.onActivityResult(requestCode, resultCode);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.scout, menu);
-        mOnActivityReadyTask.getTask().addOnSuccessListener(aVoid -> mHolder.initMenu(menu));
     }
 
     @Override
