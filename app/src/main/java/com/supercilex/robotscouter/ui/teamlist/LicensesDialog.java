@@ -46,6 +46,7 @@ public class LicensesDialog extends DialogFragment {
         licenses.add(Licenses.fromGitHubApacheV2("googlesamples/Easypermissions"));
         licenses.add(Licenses.fromGitHub("bumptech/Glide", "Glide license", Licenses.FILE_AUTO));
         licenses.add(Licenses.fromGitHubApacheV2("hdodenhof/CircleImageView"));
+        licenses.add(Licenses.fromGitHub("apache/poi", Licenses.LICENSE_APACHE_V2));
         licenses.add(Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"));
         licenses.add(Licenses.fromGitHubApacheV2("sjwall/MaterialTapTargetPrompt"));
         licenses.add(Licenses.fromGitHubApacheV2("square/Retrofit"));
