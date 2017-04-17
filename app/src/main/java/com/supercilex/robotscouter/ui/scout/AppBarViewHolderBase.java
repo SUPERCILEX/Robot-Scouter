@@ -31,7 +31,7 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 
 public abstract class AppBarViewHolderBase
-        implements OnSuccessListener<Void>, View.OnClickListener, TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        implements OnSuccessListener<Void>, View.OnLongClickListener, TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private boolean mInit;
 
     protected TeamHelper mTeamHelper;
@@ -66,6 +66,8 @@ public abstract class AppBarViewHolderBase
         mBackdrop = (ImageView) rootView.findViewById(R.id.backdrop);
         mOnScoutingReadyTask = onScoutingReadyTask;
         mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
+
+        mBackdrop.setOnLongClickListener(this);
     }
 
     public final void bind(@NonNull TeamHelper teamHelper) {
@@ -78,8 +80,6 @@ public abstract class AppBarViewHolderBase
 
     @CallSuper
     protected void bind() {
-        mBackdrop.setOnClickListener(this);
-
         mToolbar.setTitle(mTeamHelper.toString());
         mMediaCapture.setTeamHelper(mTeamHelper);
         loadImages();
@@ -99,7 +99,6 @@ public abstract class AppBarViewHolderBase
                                                String model,
                                                Target<Bitmap> target,
                                                boolean isFirstResource) {
-                        mBackdrop.setOnClickListener(AppBarViewHolderBase.this);
                         return false;
                     }
 
@@ -109,8 +108,6 @@ public abstract class AppBarViewHolderBase
                                                    Target<Bitmap> target,
                                                    boolean isFromMemoryCache,
                                                    boolean isFirstResource) {
-                        mBackdrop.setOnClickListener(null);
-
                         if (resource != null && !resource.isRecycled()) {
                             Palette.from(resource).generate(palette -> {
                                 Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
@@ -178,8 +175,12 @@ public abstract class AppBarViewHolderBase
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.backdrop) ShouldUploadMediaToTbaDialog.show(mFragment);
+    public boolean onLongClick(View v) {
+        if (v.getId() == R.id.backdrop) {
+            ShouldUploadMediaToTbaDialog.show(mFragment);
+            return true;
+        }
+        return false;
     }
 
     @Override
