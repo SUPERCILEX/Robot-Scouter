@@ -35,7 +35,7 @@ public class ShouldDeleteTeamDialog extends DialogFragment implements Dialog.OnC
                 .setTitle(R.string.should_delete_team)
                 .setMessage(getString(R.string.should_delete_team_message, mTeamHelper.toString()))
                 .setPositiveButton(R.string.delete, this)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(R.string.no, null)
                 .create();
     }
 

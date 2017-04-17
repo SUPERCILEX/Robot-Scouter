@@ -38,7 +38,7 @@ public class ResetTemplateDialog extends DialogFragment implements DialogInterfa
         AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.confirm_action)
                 .setPositiveButton(R.string.reset, null)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .create();
         dialog.setOnShowListener(this);
         return dialog;
