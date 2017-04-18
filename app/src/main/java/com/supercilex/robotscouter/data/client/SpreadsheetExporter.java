@@ -236,10 +236,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                         getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
 
         if (ConnectivityHelper.isOffline(this)) {
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
-                                                                          R.string.exporting_offline,
-                                                                          Toast.LENGTH_LONG)
-                    .show());
+            showToast(getString(R.string.exporting_offline));
         }
 
         List<TeamHelper> teamHelpers = TeamHelper.parseList(intent);
@@ -325,19 +322,25 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         File absoluteFile = new File(rsFolder, getFullyQualifiedFileName(null));
         try {
             for (int i = 1; true; i++) {
-                if (absoluteFile.createNewFile()) {
+                if (absoluteFile.exists()) {
+                    absoluteFile = new File(
+                            rsFolder, getFullyQualifiedFileName(" (" + i + ")"));
+                } else {
+                    absoluteFile = new File(absoluteFile.getParentFile(),
+                                            IoHelper.hide(absoluteFile.getName()));
+                    if (!absoluteFile.createNewFile()) {
+                        throw new IOException("Failed to create file");
+                    }
                     break;
-                } else { // File already exists
-                    absoluteFile = new File(rsFolder, getFullyQualifiedFileName(" (" + i + ")"));
                 }
             }
 
             stream = new FileOutputStream(absoluteFile);
             getWorkbook().write(stream);
 
-            return absoluteFile;
+            return IoHelper.unhide(absoluteFile);
         } catch (IOException e) {
-            new Handler(Looper.getMainLooper()).post(() -> showError(e));
+            showError(e);
             absoluteFile.delete();
         } finally {
             if (stream != null) try {
@@ -388,10 +391,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         Workbook workbook;
         if (isUnsupportedDevice()) {
             workbook = new HSSFWorkbook();
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
-                                                                          R.string.unsupported_device,
-                                                                          Toast.LENGTH_SHORT)
-                    .show());
+            showToast(getString(R.string.unsupported_device));
         } else {
             workbook = new XSSFWorkbook();
         }
@@ -1044,8 +1044,11 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         FirebaseCrash.report(e);
 
         String message = getString(R.string.general_error) + "\n\n" + e.getMessage();
-        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this,
-                                                                      message,
-                                                                      Toast.LENGTH_LONG).show());
+        showToast(message);
+    }
+
+    private void showToast(String message) {
+        new Handler(Looper.getMainLooper()).post(
+                () -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
 }

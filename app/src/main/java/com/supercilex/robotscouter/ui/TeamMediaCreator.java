@@ -153,8 +153,16 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         mPermHandler.onActivityResult(requestCode);
 
         if (requestCode == TAKE_PHOTO_RC) {
+            File photo = new File(mPhotoPath);
+            Context context = mFragment.get().getContext();
             if (resultCode == Activity.RESULT_OK) {
-                Uri contentUri = Uri.fromFile(new File(mPhotoPath));
+                try {
+                    photo = IoHelper.unhide(photo);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+
+                Uri contentUri = Uri.fromFile(photo);
 
                 mTeamHelper.getTeam().setHasCustomMedia(true);
                 mTeamHelper.getTeam().setShouldUploadMediaToTba(mShouldUploadMediaToTba);
@@ -164,15 +172,15 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 // Tell gallery that we have a new photo
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 mediaScanIntent.setData(contentUri);
-                mFragment.get().getContext().sendBroadcast(mediaScanIntent);
+                context.sendBroadcast(mediaScanIntent);
             } else {
-                new File(mPhotoPath).delete();
+                photo.delete();
             }
         }
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        return File.createTempFile(mTeamHelper + "_" + System.currentTimeMillis(),
+        return File.createTempFile(IoHelper.hide(mTeamHelper + "_" + System.currentTimeMillis()),
                                    ".jpg",
                                    mediaFolder);
     }

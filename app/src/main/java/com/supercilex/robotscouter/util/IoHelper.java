@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +32,18 @@ public final class IoHelper {
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public static File getMediaFolder() {
         return getRootFolder() != null && (MEDIA_FOLDER.exists() || MEDIA_FOLDER.mkdirs()) ? MEDIA_FOLDER : null;
+    }
+
+    public static String hide(String fileName) {
+        return "." + fileName;
+    }
+
+    public static File unhide(File file) throws IOException {
+        File unhidden = new File(file.getParentFile(), file.getName().substring(1));
+        if (!file.renameTo(unhidden)) {
+            throw new IOException("Failed to rename file: " + file);
+        }
+        return unhidden;
     }
 
     private static boolean isExternalStorageMounted() {
