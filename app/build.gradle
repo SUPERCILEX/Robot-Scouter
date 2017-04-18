@@ -3,7 +3,7 @@ apply plugin: 'com.google.firebase.firebase-crash'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'project-report'
 apply from: '../quality/quality.gradle'
-build.dependsOn 'updateProdReleasePlayVersion'
+build.dependsOn 'updateReleasePlayVersion'
 
 def keystorePropertiesFile = file('keystore.properties')
 def keystoreProperties = new Properties()
@@ -30,11 +30,6 @@ android {
             storeFile file(keystoreProperties['storeFile'])
             storePassword keystoreProperties['storePassword']
         }
-    }
-
-    productFlavors {
-        dev
-        prod
     }
 
     buildTypes {
@@ -67,17 +62,6 @@ play {
     track = 'alpha'
     serviceAccountEmail = 'google-play-auto-publisher@robot-scouter-app.iam.gserviceaccount.com'
     jsonFile = file('google-play-auto-publisher.json')
-}
-
-configurations {
-    devDebugCompile
-    prodDebugCompile
-    devReleaseCompile
-    prodReleaseCompile
-}
-
-android.variantFilter { variant ->
-    if (variant.name == 'devRelease' || variant.name == 'prodDebug') variant.setIgnore(true)
 }
 
 android.applicationVariants.all { variant ->
@@ -133,7 +117,7 @@ dependencies {
 
     // Leak canary
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    prodReleaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     // Retrofit
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"

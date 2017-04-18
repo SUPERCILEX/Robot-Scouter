@@ -8,15 +8,11 @@
         message="The resource `R.string.google_crash_reporting_api_key` appears to be unused">
         <location
             column="13"
-            file="build/generated/res/google-services/prod/release/values/values.xml"
+            file="build/generated/res/google-services/release/values/values.xml"
             line="8"/>
         <location
             column="13"
-            file="build/generated/res/google-services/dev/debug/values/values.xml"
-            line="8"/>
-        <location
-            column="13"
-            file="build/generated/res/google-services/prod/debug/values/values.xml"
+            file="build/generated/res/google-services/debug/values/values.xml"
             line="8"/>
     </issue>
 
