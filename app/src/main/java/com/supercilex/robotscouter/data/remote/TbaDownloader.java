@@ -60,36 +60,38 @@ public final class TbaDownloader extends TbaServiceBase<TbaTeamApi> {
 
         if (cannotContinue(response)) return;
 
+        String media = null;
+
         JsonArray result = response.body();
         for (int i = 0; i < result.size(); i++) {
             JsonObject mediaObject = result.get(i).getAsJsonObject();
             String mediaType = mediaObject.get("type").getAsString();
 
             if (TextUtils.equals(mediaType, IMGUR)) {
-                String url = "https://i.imgur.com/" +
+                media = "https://i.imgur.com/" +
                         mediaObject.get("foreign_key").getAsString() +
                         ".png";
 
-                setAndCacheMedia(url);
+                setAndCacheMedia(media, year);
                 break;
             } else if (TextUtils.equals(mediaType, CHIEF_DELPHI)) {
-                String url = "https://www.chiefdelphi.com/media/img/" +
+                media = "https://www.chiefdelphi.com/media/img/" +
                         mediaObject.get("details")
                                 .getAsJsonObject()
                                 .get("image_partial")
                                 .getAsString();
 
-                setAndCacheMedia(url);
+                setAndCacheMedia(media, year);
                 break;
             }
         }
 
-        if (mTeam.getMedia() == null && year > MAX_HISTORY) getTeamMedia(year - 1);
+        if (TextUtils.isEmpty(media) && year > MAX_HISTORY) getTeamMedia(year - 1);
     }
 
-    private void setAndCacheMedia(String url) {
+    private void setAndCacheMedia(String url, int year) {
         mTeam.setMedia(url);
-        mTeam.setMediaYear(getYear());
+        mTeam.setMediaYear(year);
         new Handler(mContext.getMainLooper()).post(() -> Glide.with(mContext)
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
