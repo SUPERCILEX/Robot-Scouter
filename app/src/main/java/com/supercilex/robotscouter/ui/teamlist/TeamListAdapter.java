@@ -37,7 +37,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     public void updateSelection(String teamKey) {
         mSelectedTeamKey = teamKey;
 
-        if (mSelectedTeamKey == null) {
+        if (TextUtils.isEmpty(mSelectedTeamKey)) {
             View view = mFragment.getView();
             if (view == null) return;
 

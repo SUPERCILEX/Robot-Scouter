@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.util;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.firebase.ui.database.SnapshotParser;
 import com.google.android.gms.tasks.Task;
@@ -107,7 +108,7 @@ public final class ScoutUtils {
         indexRef.setValue(System.currentTimeMillis());
         DatabaseReference scoutRef = Constants.getScoutMetrics(indexRef.getKey());
 
-        if (team.getTemplateKey() == null) {
+        if (TextUtils.isEmpty(team.getTemplateKey())) {
             FirebaseCopier.copyTo(Constants.sDefaultTemplate, scoutRef);
         } else {
             new FirebaseCopier(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()),

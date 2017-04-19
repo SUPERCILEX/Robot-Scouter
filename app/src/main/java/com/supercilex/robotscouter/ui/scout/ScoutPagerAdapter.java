@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.scout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -134,7 +135,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         mTabLayout.addOnTabSelectedListener(this);
 
         if (!mKeys.isEmpty()) {
-            if (mCurrentScoutKey == null) {
+            if (TextUtils.isEmpty(mCurrentScoutKey)) {
                 selectTab(0);
                 mCurrentScoutKey = mKeys.get(0);
             } else {
