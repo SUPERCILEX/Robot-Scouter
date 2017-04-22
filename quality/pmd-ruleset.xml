@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ruleset
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Android Application Rules"
-    xmlns="http://pmd.sf.net/ruleset/5.5.5"
+    xmlns="http://pmd.sf.net/ruleset/5.6.0"
     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
-    xsi:schemaLocation="http://pmd.sf.net/ruleset/5.5.5 http://pmd.sf.net/ruleset_xml_schema.xsd">
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/5.6.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
 
     <exclude-pattern>.*/R.java</exclude-pattern>
 
@@ -16,8 +16,8 @@
     <rule ref="rulesets/java/braces.xml">
         <exclude name="IfStmtsMustUseBraces"/>
         <exclude name="IfElseStmtsMustUseBraces"/>
-        <exclude name="WhileLoopsMustUseBraces"/>
         <exclude name="ForLoopsMustUseBraces"/>
+        <exclude name="WhileLoopsMustUseBraces"/>
     </rule>
 
     <rule ref="rulesets/java/clone.xml"/>
@@ -25,44 +25,34 @@
     <rule ref="rulesets/java/comments.xml">
         <exclude name="CommentRequired"/>
         <exclude name="CommentSize"/>
-        <exclude name="CommentRequired"/>
     </rule>
 
     <rule ref="rulesets/java/controversial.xml">
-        <exclude name="OnlyOneReturn"/>
         <exclude name="AvoidPrefixingMethodParameters"/>
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="DataflowAnomalyAnalysis"/>
-        <exclude name="UseConcurrentHashMap"/>
-        <exclude name="OneDeclarationPerLine"/>
         <exclude name="NullAssignment"/>
+        <exclude name="OnlyOneReturn"/>
+        <exclude name="OneDeclarationPerLine"/>
+        <exclude name="UseConcurrentHashMap"/>
     </rule>
 
     <rule ref="rulesets/java/coupling.xml">
-        <exclude name="LawOfDemeter"/>
         <exclude name="ExcessiveImports"/>
+        <exclude name="LawOfDemeter"/>
     </rule>
 
     <rule ref="rulesets/java/design.xml">
-        <exclude name="ImmutableField"/>
         <exclude name="AccessorClassGeneration"/>
-        <exclude name="SwitchStmtsShouldHaveDefault"/>
-        <exclude name="GodClass"/>
-        <exclude name="UncommentedEmptyMethodBody"/>
         <exclude name="AccessorMethodGeneration"/>
-        <exclude name="AvoidDeeplyNestedIfStmts"/>
+        <exclude name="GodClass"/>
     </rule>
 
     <rule ref="rulesets/java/empty.xml"/>
 
     <rule ref="rulesets/java/finalizers.xml"/>
 
-    <rule ref="rulesets/java/imports.xml">
-
-        <!-- "typeresolution.xml" has this rule, but with less bugs -->
-        <exclude name="UnusedImports"/>
-
-    </rule>
+    <rule ref="rulesets/java/imports.xml"/>
 
     <rule ref="rulesets/java/javabeans.xml">
         <exclude name="BeanMembersShouldSerialize"/>
@@ -75,28 +65,27 @@
     <rule ref="rulesets/java/migrating.xml"/>
 
     <rule ref="rulesets/java/naming.xml">
+        <exclude name="AbstractNaming"/>
         <exclude name="LongVariable"/>
+        <exclude name="GenericsNaming"/>
         <exclude name="ShortClassName"/>
         <exclude name="ShortVariable"/>
-        <exclude name="AbstractNaming"/>
-        <exclude name="GenericsNaming"/>
     </rule>
 
     <rule ref="rulesets/java/optimizations.xml">
+        <exclude name="AvoidInstantiatingObjectsInLoops"/>
         <exclude name="LocalVariableCouldBeFinal"/>
         <exclude name="MethodArgumentCouldBeFinal"/>
-        <exclude name="AvoidInstantiatingObjectsInLoops"/>
     </rule>
 
     <rule ref="rulesets/java/sunsecure.xml"/>
 
     <rule ref="rulesets/java/strictexception.xml">
+        <!-- TODO remove once PMD fixes the bug: https://github.com/pmd/pmd/issues/350 -->
         <exclude name="SignatureDeclareThrowsException"/>
     </rule>
 
-    <rule ref="rulesets/java/strings.xml">
-        <exclude name="AvoidDuplicateLiterals"/>
-    </rule>
+    <rule ref="rulesets/java/strings.xml"/>
 
     <rule ref="rulesets/java/typeresolution.xml"/>
 

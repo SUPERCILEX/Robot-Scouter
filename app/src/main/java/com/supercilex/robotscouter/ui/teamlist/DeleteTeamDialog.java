@@ -21,7 +21,7 @@ import java.util.List;
 public class DeleteTeamDialog extends DialogFragment implements AlertDialog.OnClickListener {
     private static final String TAG = "DeleteTeamDialog";
 
-    private List<TeamHelper> mTeamHelpers = new ArrayList<>();
+    private final List<TeamHelper> mTeamHelpers = new ArrayList<>();
 
     public static void show(FragmentManager manager, List<TeamHelper> teamHelpers) {
         DialogFragment dialog = new DeleteTeamDialog();

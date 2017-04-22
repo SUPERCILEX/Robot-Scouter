@@ -39,8 +39,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         implements View.OnClickListener, OnSuccessListener<Void> {
     private static final Map<StopwatchMetric, Timer> TIMERS = new ConcurrentHashMap<>();
 
-    private Button mToggleStopwatch;
-    private RecyclerView mCycles;
+    private final Button mToggleStopwatch;
+    private final RecyclerView mCycles;
 
     private Timer mTimer;
 

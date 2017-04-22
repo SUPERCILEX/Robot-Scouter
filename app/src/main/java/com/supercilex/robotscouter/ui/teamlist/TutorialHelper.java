@@ -29,6 +29,7 @@ public final class TutorialHelper {
 
                         @Override
                         public void onHidePromptComplete() {
+                            // Noop
                         }
                     })
                     .show();
@@ -50,6 +51,7 @@ public final class TutorialHelper {
 
                         @Override
                         public void onHidePromptComplete() {
+                            // Noop
                         }
                     })
                     .show();

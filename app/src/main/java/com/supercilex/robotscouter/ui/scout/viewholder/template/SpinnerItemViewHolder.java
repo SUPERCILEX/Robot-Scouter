@@ -10,9 +10,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.supercilex.robotscouter.R;
 
 public class SpinnerItemViewHolder extends RecyclerView.ViewHolder implements ScoutTemplateViewHolder {
-    private String mPrevText;
+    private final EditText mItemEditText;
 
-    private EditText mItemEditText;
+    private String mPrevText;
     private DataSnapshot mSnapshot;
 
     @Keep

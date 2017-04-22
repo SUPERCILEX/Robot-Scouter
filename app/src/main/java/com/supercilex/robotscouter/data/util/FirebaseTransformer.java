@@ -15,7 +15,7 @@ public abstract class FirebaseTransformer implements ValueEventListener {
     private final Query mFromQuery;
     private final DatabaseReference mToRef;
 
-    private TaskCompletionSource<DataSnapshot> mCompleteTask = new TaskCompletionSource<>();
+    private final TaskCompletionSource<DataSnapshot> mCompleteTask = new TaskCompletionSource<>();
 
     public FirebaseTransformer(Query from, DatabaseReference to) {
         mFromQuery = from;

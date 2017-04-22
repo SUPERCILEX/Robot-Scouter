@@ -171,7 +171,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     }
 
     private Map<TeamHelper, List<Scout>> mScouts;
-    private List<Cell> mTemporaryCommentCells = new ArrayList<>();
     private Cache mCache;
 
     public SpreadsheetExporter() {
@@ -403,7 +402,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         if (averageSheet != null) buildTeamAveragesSheet(averageSheet);
 
         setColumnWidths(workbook);
-        for (Cell cell : mTemporaryCommentCells) cell.removeCellComment();
+        mCache.clearTemporaryCommentCells();
 
         return workbook;
     }
@@ -558,6 +557,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 case MetricType.NOTE:
                     // Nothing to average
                     break;
+                default:
+                    throw new IllegalStateException();
             }
         }
 
@@ -729,7 +730,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         Comment comment = getComment(row, headerCell);
         comment.setString(mCache.getCreationHelper().createRichTextString(metric.getKey()));
         headerCell.setCellComment(comment);
-        mTemporaryCommentCells.add(headerCell);
+        mCache.addTemporaryCommentCell(headerCell);
 
         if (metric.getType() == MetricType.HEADER) {
             headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
@@ -793,6 +794,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             case MetricType.HEADER:
                 // Headers are skipped because they don't contain any data
                 break;
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -870,7 +873,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 keyCell.setCellValue(averageRow.getCell(0).getStringCellValue());
                 keyCell.setCellStyle(mCache.getColumnHeaderStyle());
                 Comment keyComment = getComment(headerRow, keyCell);
-                mTemporaryCommentCells.add(keyCell);
+                mCache.addTemporaryCommentCell(keyCell);
                 keyComment.setString(mCache.getCreationHelper().createRichTextString(metricKey));
                 keyCell.setCellComment(keyComment);
 
@@ -978,7 +981,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         private static final Object COLUMN_HEADER_STYLE_LOCK = new Object();
 
         private final Map<TeamHelper, List<Scout>> mScouts;
-        private Workbook mWorkbook;
+        private final List<Cell> mTemporaryCommentCells = new ArrayList<>();
+        private final Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
 
         private List<TeamHelper> mTeamHelpers;
         private String mTeamNames;
@@ -986,7 +990,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         private CellStyle mRowHeaderStyle;
         private CellStyle mColumnHeaderStyle;
 
-        private Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
+        private Workbook mWorkbook;
 
         public Cache(Map<TeamHelper, List<Scout>> scouts) {
             mScouts = scouts;
@@ -1067,6 +1071,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             CellStyle style = mWorkbook.createCellStyle();
             style.setDataFormat(cachedFormat);
             cell.setCellStyle(style);
+        }
+
+        public void addTemporaryCommentCell(Cell cell) {
+            mTemporaryCommentCells.add(cell);
+        }
+
+        public void clearTemporaryCommentCells() {
+            for (Cell cell : mTemporaryCommentCells) cell.removeCellComment();
         }
 
         private CellStyle createColumnHeaderStyle() {

@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 
 public abstract class ScoutViewHolderBase<TMetric, VView extends TextView> extends RecyclerView.ViewHolder {
-    protected VView mName;
+    protected final VView mName;
     protected ScoutMetric<TMetric> mMetric;
     protected FragmentManager mManager;
 

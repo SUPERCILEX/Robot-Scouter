@@ -32,28 +32,29 @@ import com.supercilex.robotscouter.ui.TeamMediaCreator;
 
 public abstract class AppBarViewHolderBase
         implements OnSuccessListener<Void>, View.OnLongClickListener, TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
-    private boolean mInit;
+    private final Fragment mFragment;
+    protected final Toolbar mToolbar;
+    protected final CollapsingToolbarLayout mHeader;
+    private final ImageView mBackdrop;
+
+    private final TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
+    private final Task mOnScoutingReadyTask;
 
     protected TeamHelper mTeamHelper;
-    private Fragment mFragment;
 
-    protected Toolbar mToolbar;
-    protected CollapsingToolbarLayout mHeader;
-    private ImageView mBackdrop;
+    private TeamMediaCreator mMediaCapture;
+    private final OnSuccessListener<TeamHelper> mMediaCaptureListener = teamHelper -> {
+        mTeamHelper.copyMediaInfo(teamHelper);
+        mTeamHelper.forceUpdateTeam();
+    };
 
     private MenuItem mNewScoutItem;
     private MenuItem mAddMediaItem;
     private MenuItem mVisitTeamWebsiteItem;
     private MenuItem mDeleteScoutItem;
-    private TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
-    private Task mOnScoutingReadyTask;
     private boolean mIsDeleteScoutItemVisible;
 
-    private TeamMediaCreator mMediaCapture;
-    private OnSuccessListener<TeamHelper> mMediaCaptureListener = teamHelper -> {
-        mTeamHelper.copyMediaInfo(teamHelper);
-        mTeamHelper.forceUpdateTeam();
-    };
+    private boolean mInit;
 
     protected AppBarViewHolderBase(TeamHelper teamHelper,
                                    Fragment fragment,

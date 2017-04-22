@@ -19,10 +19,10 @@ import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
 import java.util.List;
 
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
-    private Fragment mFragment;
+    private final Fragment mFragment;
+    private final TeamMenuManager mMenuManager;
     private View mNoTeamsText;
 
-    private TeamMenuManager mMenuManager;
     private String mSelectedTeamKey;
 
     public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
@@ -101,6 +101,8 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                     }
                 }
                 break;
+            default:
+                // Noop
         }
         super.onChildChanged(type, snapshot, index, oldIndex);
     }

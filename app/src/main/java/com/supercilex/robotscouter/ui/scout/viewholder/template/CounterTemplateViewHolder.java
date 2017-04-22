@@ -11,7 +11,7 @@ import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 
 public class CounterTemplateViewHolder extends CounterViewHolder implements ScoutTemplateViewHolder {
-    private EditText mUnit;
+    private final EditText mUnit;
 
     public CounterTemplateViewHolder(View itemView) {
         super(itemView);
@@ -42,19 +42,19 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-            if (v.getId() == R.id.name) {
-                updateMetricName(mName.getText().toString());
-            } else if (v.getId() == R.id.unit) {
-                CounterMetric counterMetric = (CounterMetric) mMetric;
-                String newUnit = mUnit.getText().toString();
+        if (hasFocus) return; // Only save data when the user is done
 
-                if (TextUtils.isEmpty(newUnit)) newUnit = null;
+        if (v.getId() == R.id.name) {
+            updateMetricName(mName.getText().toString());
+        } else if (v.getId() == R.id.unit) {
+            CounterMetric counterMetric = (CounterMetric) mMetric;
+            String newUnit = mUnit.getText().toString();
 
-                if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
-                    disableAnimations();
-                    counterMetric.updateUnit(newUnit);
-                }
+            if (TextUtils.isEmpty(newUnit)) newUnit = null;
+
+            if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
+                disableAnimations();
+                counterMetric.updateUnit(newUnit);
             }
         }
     }

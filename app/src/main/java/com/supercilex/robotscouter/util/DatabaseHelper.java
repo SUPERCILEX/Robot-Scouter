@@ -231,7 +231,7 @@ public final class DatabaseHelper {
     }
 
     private static final class TeamMergerListener extends ChangeEventListenerBase {
-        private Context mAppContext;
+        private final Context mAppContext;
 
         public TeamMergerListener(Context appContext) {
             super();

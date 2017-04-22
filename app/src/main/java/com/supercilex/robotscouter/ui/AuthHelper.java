@@ -36,9 +36,9 @@ import com.supercilex.robotscouter.util.RemoteConfigHelper;
 public final class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
 
-    private IntentReceiver mLinkReceiver;
+    private final FragmentActivity mActivity;
 
-    private FragmentActivity mActivity;
+    private IntentReceiver mLinkReceiver;
     private MenuItem mActionSignIn;
     private MenuItem mActionSignOut;
 

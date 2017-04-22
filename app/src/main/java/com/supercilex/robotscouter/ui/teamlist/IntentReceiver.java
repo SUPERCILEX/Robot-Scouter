@@ -30,7 +30,7 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
     private static final String DONATE = "donate";
     private static final String UPDATE = "update";
 
-    private FragmentActivity mActivity;
+    private final FragmentActivity mActivity;
 
     private IntentReceiver(FragmentActivity activity) {
         mActivity = activity;

@@ -30,12 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
-    private TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
-    private Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
-    private List<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
+    private final TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
+    private final Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
+    private final List<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
 
-    private List<TeamHelper> mTeamHelpers;
-    private Context mContext;
+    private final List<TeamHelper> mTeamHelpers;
+    private final Context mContext;
 
     private Scouts(@Size(min = 1) List<TeamHelper> helpers, Context appContext) {
         mTeamHelpers = helpers;
@@ -106,12 +106,13 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
     private class ScoutListener implements ChildEventListener, ValueEventListener {
         private static final int TIMEOUT = 1;
 
-        private Query mQuery;
-        private DatabaseReference mMetricsQuery;
-        private Pair<TeamHelper, List<String>> mPair;
-        private TaskCompletionSource<Void> mScoutMetricsTask;
+        private final Query mQuery;
+        private final DatabaseReference mMetricsQuery;
+        private final Pair<TeamHelper, List<String>> mPair;
+        private final TaskCompletionSource<Void> mScoutMetricsTask;
 
-        private Scout mScout = new Scout();
+        private final Scout mScout = new Scout();
+
         private Timer mTimer = new Timer();
 
         public ScoutListener(Query query,

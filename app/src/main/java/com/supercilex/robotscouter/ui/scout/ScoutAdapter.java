@@ -20,8 +20,8 @@ import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.StopwatchViewHolder;
 
 public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> {
-    private FragmentManager mManager;
-    private SimpleItemAnimator mAnimator;
+    private final FragmentManager mManager;
+    private final SimpleItemAnimator mAnimator;
 
     public ScoutAdapter(Query query, FragmentManager manager, SimpleItemAnimator animator) {
         super(ScoutUtils.METRIC_PARSER, 0, ScoutViewHolderBase.class, query);

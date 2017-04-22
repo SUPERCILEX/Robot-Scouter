@@ -47,7 +47,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     protected AppBarViewHolderBase mHolder;
     private ScoutPagerAdapter mPagerAdapter;
 
-    private TaskCompletionSource<Void> mOnScoutingReadyTask = new TaskCompletionSource<>();
+    private TaskCompletionSource<Void> mOnScoutingReadyTask;
     private Bundle mSavedState;
 
     protected static ScoutListFragmentBase setArgs(TeamHelper teamHelper,
@@ -64,6 +64,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTeamHelper = TeamHelper.parse(getArguments());
+        mOnScoutingReadyTask = new TaskCompletionSource<>();
 
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }

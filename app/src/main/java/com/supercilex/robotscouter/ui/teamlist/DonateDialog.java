@@ -188,10 +188,10 @@ public class DonateDialog extends DialogFragment
     }
 
     private static final class PurchaseConsumer implements Callable<Void> {
-        private IInAppBillingService mService;
-        private Dialog mDialog;
-        private String mPackageName;
-        private String mPurchaseToken;
+        private final IInAppBillingService mService;
+        private final Dialog mDialog;
+        private final String mPackageName;
+        private final String mPurchaseToken;
 
         private PurchaseConsumer(IInAppBillingService service,
                                  Dialog dialog,

@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Scout {
+    @Exclude private final List<ScoutMetric> mMetrics = new ArrayList<>();
     @Exclude private String mName;
-
-    @Exclude private List<ScoutMetric> mMetrics = new ArrayList<>();
 
     public Scout() {
         // Needed for Firebase

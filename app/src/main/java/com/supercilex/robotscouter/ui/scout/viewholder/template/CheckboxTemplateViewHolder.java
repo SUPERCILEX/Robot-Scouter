@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
 
 public class CheckboxTemplateViewHolder extends CheckboxViewHolder implements ScoutTemplateViewHolder {
-    private EditText mCheckBoxName;
+    private final EditText mCheckBoxName;
 
     public CheckboxTemplateViewHolder(View itemView) {
         super(itemView);

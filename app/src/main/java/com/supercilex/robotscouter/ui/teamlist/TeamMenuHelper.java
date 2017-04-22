@@ -42,6 +42,11 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
     private static final int ANIMATION_DURATION = 250;
 
+    private final Fragment mFragment;
+    private final PermissionRequestHandler mPermHandler;
+
+    private final List<TeamHelper> mSelectedTeams = new ArrayList<>();
+
     /**
      * Do not use.
      * <p>
@@ -51,15 +56,9 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
      * @see #getFab()
      */
     private FloatingActionButton mFab;
-
-    private Fragment mFragment;
     private RecyclerView mRecyclerView;
-    private Menu mMenu;
-
-    private List<TeamHelper> mSelectedTeams = new ArrayList<>();
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
-
-    private PermissionRequestHandler mPermHandler;
+    private Menu mMenu;
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;

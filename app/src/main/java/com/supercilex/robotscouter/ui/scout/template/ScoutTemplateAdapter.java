@@ -21,7 +21,7 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateV
 import com.supercilex.robotscouter.ui.scout.viewholder.template.StopwatchTemplateViewHolder;
 
 public class ScoutTemplateAdapter extends ScoutAdapter {
-    private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mCallback;
+    private final ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mCallback;
 
     public ScoutTemplateAdapter(Query query,
                                 FragmentManager manager,
