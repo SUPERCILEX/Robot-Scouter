@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
+
+import java.util.List;
 
 import static com.google.firebase.analytics.FirebaseAnalytics.Event;
 import static com.google.firebase.analytics.FirebaseAnalytics.Param;
@@ -40,6 +43,14 @@ public class AnalyticsHelper {
         args.putString(Param.ITEM_NAME, teamNumber);
         args.putString(Param.ITEM_CATEGORY, "team");
         INSTANCE.mAnalytics.logEvent(Event.SHARE, args);
+    }
+
+    public static void exportTeams(List<TeamHelper> teamHelpers) {
+        Bundle args = new Bundle();
+        args.putString(Param.ITEM_ID, "export_teams");
+        args.putString(Param.ITEM_NAME, TeamHelper.getTeamNames(teamHelpers));
+        args.putString(Param.ITEM_CATEGORY, "teams");
+        INSTANCE.mAnalytics.logEvent(Event.VIEW_ITEM, args);
     }
 
     public static void addScout(String teamNumber) {
