@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.Size;
 import android.support.design.widget.Snackbar;
@@ -8,22 +9,27 @@ import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.util.TeamCache;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
+import com.supercilex.robotscouter.util.Constants;
 
+import java.util.Collection;
 import java.util.List;
 
-public final class TeamSender {
-    private final FragmentActivity mActivity;
-    private final List<TeamHelper> mTeamHelpers;
+public final class TeamSharer {
+    private static final int MAX_MESSAGE_LENGTH = 100;
 
-    private TeamSender(FragmentActivity activity, @Size(min = 1) List<TeamHelper> teamHelpers) {
+    private final FragmentActivity mActivity;
+    private final Cache mCache;
+
+    private TeamSharer(FragmentActivity activity, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mActivity = activity;
-        mTeamHelpers = teamHelpers;
+        mCache = new Cache(mActivity, teamHelpers);
 
         StringBuilder deepLinkBuilder = new StringBuilder(IntentReceiver.APP_LINK_BASE);
-        for (TeamHelper teamHelper : teamHelpers) {
+        for (TeamHelper teamHelper : mCache.getTeamHelpers()) {
             deepLinkBuilder.append(teamHelper.getLinkKeyNumberPair());
         }
 
@@ -44,31 +50,72 @@ public final class TeamSender {
         }
         if (teamHelpers.isEmpty()) return false;
 
-        new TeamSender(activity, teamHelpers);
+        new TeamSharer(activity, teamHelpers);
         return true;
     }
 
     private Intent getInvitationIntent(String deepLink) {
-        return new AppInviteInvitation.IntentBuilder(mActivity.getString(R.string.share_title,
-                                                                         getFormattedTeamName()))
-                .setMessage(mActivity.getString(R.string.share_message, getFormattedTeamName()))
+        return new AppInviteInvitation.IntentBuilder(mCache.getShareTitle())
+                .setMessage(getSafeMessage())
                 .setDeepLink(Uri.parse(deepLink))
-                .setEmailSubject(mActivity.getString(R.string.share_call_to_action,
-                                                     getFormattedTeamName()))
+                .setEmailSubject(mCache.getShareCta())
                 .setEmailHtmlContent(getFormattedHtml())
                 .build();
     }
 
-    private String getFormattedHtml() {
-        return String.format(LazyLoader.HTML_IMPORT_TEAM,
-                             getFormattedTeamName(),
-                             getFormattedTeamName(),
-                             mTeamHelpers.get(0).getTeam().getMedia());
+    private String getSafeMessage() {
+        String message;
+
+        String fullMessage = mCache.getShareMessage();
+        if (fullMessage.length() >= MAX_MESSAGE_LENGTH) {
+            message = mActivity.getResources().getQuantityString(
+                    R.plurals.share_message,
+                    Constants.SINGLE_ITEM,
+                    mCache.getTeamHelpers().get(0) + " and more");
+        } else {
+            message = fullMessage;
+        }
+
+        return message;
     }
 
-    private String getFormattedTeamName() {
-        String formattedName = mTeamHelpers.get(0).toString();
-        return mTeamHelpers.size() == 1 ? formattedName : formattedName + " and more";
+    private String getFormattedHtml() {
+        return String.format(
+                LazyLoader.HTML_IMPORT_TEAM,
+                mCache.getShareCta(),
+                mCache.getTeamHelpers().get(0).getTeam().getMedia());
+    }
+
+    private static final class Cache extends TeamCache {
+        private final String mShareMessage;
+        private final String mShareCta;
+        private final String mShareTitle;
+
+        public Cache(FragmentActivity activity, Collection<TeamHelper> teamHelpers) {
+            super(teamHelpers);
+
+            Resources resources = activity.getResources();
+            int quantity = getTeamHelpers().size();
+
+            mShareMessage = resources.getQuantityString(
+                    R.plurals.share_message, quantity, getTeamNames());
+            mShareCta = resources.getQuantityString(
+                    R.plurals.share_call_to_action, quantity, getTeamNames());
+            mShareTitle = resources.getQuantityString(
+                    R.plurals.share_title, quantity, getTeamNames());
+        }
+
+        public String getShareMessage() {
+            return mShareMessage;
+        }
+
+        public String getShareCta() {
+            return mShareCta;
+        }
+
+        public String getShareTitle() {
+            return mShareTitle;
+        }
     }
 
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
@@ -682,7 +729,6 @@ public final class TeamSender {
                     "                        \n" +
                     "                        <td valign=\"top\" class=\"mcnTextContent\" style=\"padding: 0px 18px 9px; font-family: Roboto, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\">\n" +
                     "                        \n" +
-                    "                            <span style=\"font-size:14px\"><span style=\"font-family:roboto,helvetica neue,helvetica,arial,sans-serif\">You were invited to edit team %s in Robot Scouter:</span></span>\n" +
                     "                        </td>\n" +
                     "                    </tr>\n" +
                     "                </tbody></table>\n" +
@@ -705,7 +751,7 @@ public final class TeamSender {
                     "                    <tbody>\n" +
                     "                        <tr>\n" +
                     "                            <td align=\"center\" valign=\"middle\" class=\"mcnButtonContent\" style=\"font-family: Roboto, &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; font-size: 16px; padding: 15px;\">\n" +
-                    "                                <a class=\"mcnButton \" title=\"Import team %s\" href=\"%%%%APPINVITE_LINK_PLACEHOLDER%%%%\" target=\"_blank\" style=\"font-weight: bold;letter-spacing: normal;line-height: 100%%;text-align: center;text-decoration: none;color: #FFFFFF;\">Import team 2521 - SERT</a>\n" +
+                    "                                <a class=\"mcnButton \" href=\"%%%%APPINVITE_LINK_PLACEHOLDER%%%%\" target=\"_blank\" style=\"font-weight: bold;letter-spacing: normal;line-height: 100%%;text-align: center;text-decoration: none;color: #FFFFFF;\">%s</a>\n" +
                     "                            </td>\n" +
                     "                        </tr>\n" +
                     "                    </tbody>\n" +

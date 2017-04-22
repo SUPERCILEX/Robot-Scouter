@@ -32,9 +32,18 @@
     <string name="multiple_teams_selected">Multiple teams selected</string>
 
     <string name="share">Share</string>
-    <string name="share_title">Share team %s</string>
-    <string name="share_message">Edit team %s with me!</string>
-    <string name="share_call_to_action">Import team %s into Robot Scouter</string>
+    <plurals name="share_title">
+        <item quantity="one">Share team %s</item>
+        <item quantity="other">Share teams %s</item>
+    </plurals>
+    <plurals name="share_message">
+        <item quantity="one">You were invited to edit team %s with me in Robot Scouter!</item>
+        <item quantity="other">You were invited to edit teams %s with me in Robot Scouter!</item>
+    </plurals>
+    <plurals name="share_call_to_action">
+        <item quantity="one">Import team %s into Robot Scouter</item>
+        <item quantity="other">Import teams %s into Robot Scouter</item>
+    </plurals>
 
     <!-- Spreadsheet exporting -->
     <string name="export_spreadsheet">Export to spreadsheet</string>

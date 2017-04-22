@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
+import com.supercilex.robotscouter.data.util.TeamCache;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
@@ -91,6 +92,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -266,9 +268,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     @Override
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
         mScouts = scouts;
-        mCache = new Cache(mScouts);
+        mCache = new Cache(mScouts.keySet());
 
-        AnalyticsHelper.exportTeams(new ArrayList<>(mCache.getTeamHelpers()));
+        AnalyticsHelper.exportTeams(mCache.getTeamHelpers());
 
         Uri spreadsheetUri = getFileUri();
         if (spreadsheetUri == null) return;
@@ -974,50 +976,24 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 () -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
     }
 
-    private static final class Cache {
-        private static final Object TEAM_HELPERS_LOCK = new Object();
-        private static final Object TEAM_NAMES_LOCK = new Object();
+    private static final class Cache extends TeamCache {
         private static final Object ROW_HEADER_STYLE_LOCK = new Object();
         private static final Object COLUMN_HEADER_STYLE_LOCK = new Object();
 
-        private final Map<TeamHelper, List<Scout>> mScouts;
         private final List<Cell> mTemporaryCommentCells = new ArrayList<>();
         private final Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
-
-        private List<TeamHelper> mTeamHelpers;
-        private String mTeamNames;
 
         private CellStyle mRowHeaderStyle;
         private CellStyle mColumnHeaderStyle;
 
         private Workbook mWorkbook;
 
-        public Cache(Map<TeamHelper, List<Scout>> scouts) {
-            mScouts = scouts;
+        public Cache(Collection<TeamHelper> teamHelpers) {
+            super(teamHelpers);
         }
 
         public void setWorkbook(Workbook workbook) {
             mWorkbook = workbook;
-        }
-
-        public List<TeamHelper> getTeamHelpers() {
-            synchronized (TEAM_HELPERS_LOCK) {
-                if (mTeamHelpers == null) {
-                    List<TeamHelper> helpers = new ArrayList<>(mScouts.keySet());
-                    Collections.sort(helpers);
-                    mTeamHelpers = Collections.unmodifiableList(helpers);
-                }
-                return mTeamHelpers;
-            }
-        }
-
-        public String getTeamNames() {
-            synchronized (TEAM_NAMES_LOCK) {
-                if (mTeamNames == null) {
-                    mTeamNames = TeamHelper.getTeamNames(new ArrayList<>(getTeamHelpers()));
-                }
-                return mTeamNames;
-            }
         }
 
         public CreationHelper getCreationHelper() {

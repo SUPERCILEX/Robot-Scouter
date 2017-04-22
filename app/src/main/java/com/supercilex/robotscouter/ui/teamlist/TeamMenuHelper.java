@@ -29,7 +29,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
-import com.supercilex.robotscouter.ui.TeamSender;
+import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoHelper;
@@ -124,7 +124,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         TeamHelper teamHelper = mSelectedTeams.get(0);
         switch (item.getItemId()) {
             case R.id.action_share:
-                if (TeamSender.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
+                if (TeamSharer.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
                 AnalyticsHelper.shareTeam(teamHelper.getTeam().getNumber());
