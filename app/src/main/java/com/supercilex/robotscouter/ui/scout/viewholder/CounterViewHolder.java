@@ -12,9 +12,9 @@ import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
 import com.supercilex.robotscouter.util.Constants;
 
 public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> implements View.OnClickListener, View.OnLongClickListener {
-    protected TextView mCount;
-    private ImageButton mIncrement;
-    private ImageButton mDecrement;
+    protected final TextView mCount;
+    private final ImageButton mIncrement;
+    private final ImageButton mDecrement;
 
     public CounterViewHolder(View itemView) {
         super(itemView);

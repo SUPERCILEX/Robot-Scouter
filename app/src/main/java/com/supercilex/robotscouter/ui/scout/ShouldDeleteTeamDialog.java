@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 
 public class ShouldDeleteTeamDialog extends DialogFragment implements Dialog.OnClickListener {
     private static final String TAG = "ShouldDeleteTeamDialog";
+
     private TeamHelper mTeamHelper;
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {

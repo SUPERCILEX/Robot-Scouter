@@ -18,7 +18,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
 
 public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolder> extends ItemTouchHelper.SimpleCallback {
-    private View mRootView;
+    private final View mRootView;
     private FirebaseRecyclerAdapter<T, VH> mAdapter;
     private ItemTouchHelper mItemTouchHelper;
 

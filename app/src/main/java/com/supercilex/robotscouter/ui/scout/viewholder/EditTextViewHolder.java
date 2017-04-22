@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R;
 
 public class EditTextViewHolder extends ScoutViewHolderBase<String, TextView>
         implements View.OnFocusChangeListener {
-    private EditText mNotes;
+    private final EditText mNotes;
 
     public EditTextViewHolder(View itemView) {
         super(itemView);

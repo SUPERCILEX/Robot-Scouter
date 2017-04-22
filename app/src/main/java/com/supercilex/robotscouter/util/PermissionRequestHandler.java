@@ -15,9 +15,9 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class PermissionRequestHandler implements EasyPermissions.PermissionCallbacks {
     private static final int WRITE_RC = 8653;
 
-    private List<String> mPerms;
-    private Fragment mFragment;
-    private OnSuccessListener<Void> mListener;
+    private final List<String> mPerms;
+    private final Fragment mFragment;
+    private final OnSuccessListener<Void> mListener;
 
     public PermissionRequestHandler(List<String> perms,
                                     Fragment fragment,
@@ -25,10 +25,6 @@ public class PermissionRequestHandler implements EasyPermissions.PermissionCallb
         mPerms = Collections.unmodifiableList(perms);
         mFragment = fragment;
         mListener = listener;
-    }
-
-    public List<String> getPerms() {
-        return mPerms;
     }
 
     public String[] getPermsArray() {
@@ -71,5 +67,4 @@ public class PermissionRequestHandler implements EasyPermissions.PermissionCallb
                                                    grantResults,
                                                    this);
     }
-
 }

@@ -24,7 +24,7 @@ import java.util.List;
 public class AppIndexingService extends IntentService implements OnSuccessListener<FirebaseAuth>, ValueEventListener {
     private static final String TAG = "AppIndexingService";
 
-    private List<Indexable> mIndexables = new ArrayList<>();
+    private final List<Indexable> mIndexables = new ArrayList<>();
 
     public AppIndexingService() {
         super(TAG);

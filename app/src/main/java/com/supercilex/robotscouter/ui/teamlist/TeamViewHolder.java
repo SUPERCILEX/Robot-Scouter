@@ -21,17 +21,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class TeamViewHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
+    private final CircleImageView mMedia;
+    private final TextView mNumber;
+    private final TextView mName;
+    private final ImageButton mNewScout;
+
     private Team mTeam;
     private Fragment mFragment;
     private TeamMenuManager mMenuManager;
     private boolean mIsItemSelected;
     private boolean mCouldItemBeSelected;
     private boolean mIsScouting;
-
-    private CircleImageView mMedia;
-    private TextView mNumber;
-    private TextView mName;
-    private ImageButton mNewScout;
 
     @Keep
     public TeamViewHolder(View itemView) {

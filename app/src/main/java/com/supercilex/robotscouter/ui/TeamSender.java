@@ -15,8 +15,8 @@ import com.supercilex.robotscouter.util.ConnectivityHelper;
 import java.util.List;
 
 public final class TeamSender {
-    private FragmentActivity mActivity;
-    private List<TeamHelper> mTeamHelpers;
+    private final FragmentActivity mActivity;
+    private final List<TeamHelper> mTeamHelpers;
 
     private TeamSender(FragmentActivity activity, @Size(min = 1) List<TeamHelper> teamHelpers) {
         mActivity = activity;
@@ -71,6 +71,7 @@ public final class TeamSender {
         return mTeamHelpers.size() == 1 ? formattedName : formattedName + " and more";
     }
 
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     private static final class LazyLoader {
         public static final String HTML_IMPORT_TEAM;
 

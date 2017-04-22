@@ -43,14 +43,15 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         }
     };
 
-    private List<String> mKeys = new ArrayList<>();
-    private String mCurrentScoutKey;
-    private Query mQuery;
+    private final List<String> mKeys = new ArrayList<>();
 
-    private Fragment mFragment;
-    private AppBarViewHolderBase mAppBarViewHolder;
-    private TabLayout mTabLayout;
-    private TeamHelper mTeamHelper;
+    private final Fragment mFragment;
+    private final AppBarViewHolderBase mAppBarViewHolder;
+    private final TabLayout mTabLayout;
+    private final TeamHelper mTeamHelper;
+    private final Query mQuery;
+
+    private String mCurrentScoutKey;
 
     public ScoutPagerAdapter(Fragment fragment,
                              AppBarViewHolderBase appBarViewHolder,
