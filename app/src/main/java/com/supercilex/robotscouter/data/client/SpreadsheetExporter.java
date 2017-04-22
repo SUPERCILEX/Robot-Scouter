@@ -97,6 +97,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -107,6 +108,7 @@ import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 public class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
     private static final String TAG = "SpreadsheetExporter";
 
+    private static final String DEVICE_MODEL;
     private static final List<String> UNSUPPORTED_DEVICES =
             Collections.unmodifiableList(Arrays.asList("SAMSUNG-SM-N900A"));
 
@@ -162,11 +164,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         System.setProperty("org.apache.poi.javax.xml.stream.XMLEventFactory",
                            "com.fasterxml.aalto.stax.EventFactoryImpl");
         WorkbookEvaluator.registerFunction("AVERAGEIF", AVERAGEIF);
+
+        DEVICE_MODEL = (Build.MANUFACTURER.toUpperCase(Locale.ROOT) + "-" +
+                Build.MODEL.toUpperCase(Locale.ROOT)).replace(' ', '-');
     }
 
     private Map<TeamHelper, List<Scout>> mScouts;
     private List<Cell> mTemporaryCommentCells = new ArrayList<>();
-    private CreationHelper mCreationHelper;
+    private Cache mCache;
 
     public SpreadsheetExporter() {
         super(TAG);
@@ -203,6 +208,11 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                                       .putExtras(TeamHelper.toIntent(teamHelpers)));
 
         return true;
+    }
+
+    private static boolean isUnsupportedDevice() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+                || UNSUPPORTED_DEVICES.contains(DEVICE_MODEL);
     }
 
     private void updateNotification(Notification notification) {
@@ -256,6 +266,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     @Override
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
         mScouts = scouts;
+        mCache = new Cache(mScouts);
+
         Uri spreadsheetUri = getFileUri();
 
         if (spreadsheetUri == null) return;
@@ -303,7 +315,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     }
 
     private String getPluralTeams(@PluralsRes int id) {
-        return getResources().getQuantityString(id, mScouts.size(), getTeamNames());
+        return getResources().getQuantityString(id, mScouts.size(), mCache.getTeamNames());
     }
 
     @Nullable
@@ -354,37 +366,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
     private String getFullyQualifiedFileName(@Nullable String middleMan) {
         String extension = isUnsupportedDevice() ? UNSUPPORTED_FILE_EXTENSION : FILE_EXTENSION;
-        return middleMan == null ? getTeamNames() + extension : getTeamNames() + middleMan + extension;
-    }
 
-    private String getTeamNames() {
-        String teamName;
-        List<TeamHelper> teamHelpers = getTeamHelpers();
-
-        if (mScouts.size() == Constants.SINGLE_ITEM) {
-            teamName = teamHelpers.get(0).toString();
-        } else {
-            boolean teamsMaxedOut = mScouts.size() > 10;
-            int size = teamsMaxedOut ? 10 : mScouts.size();
-
-            StringBuilder names = new StringBuilder(4 * size);
-            for (int i = 0; i < size; i++) {
-                names.append(teamHelpers.get(i).getTeam().getNumber());
-                if (i < size - 1) names.append(", ");
-            }
-
-            if (teamsMaxedOut) names.append(" and more");
-
-            teamName = names.toString();
-        }
-
-        return teamName;
-    }
-
-    private List<TeamHelper> getTeamHelpers() {
-        ArrayList<TeamHelper> helpers = new ArrayList<>(mScouts.keySet());
-        Collections.sort(helpers);
-        return helpers;
+        if (middleMan == null) return mCache.getTeamNames() + extension;
+        else return mCache.getTeamNames() + middleMan + extension;
     }
 
     private Workbook getWorkbook() {
@@ -395,7 +379,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         } else {
             workbook = new XSSFWorkbook();
         }
-        mCreationHelper = workbook.getCreationHelper();
+        mCache.setWorkbook(workbook);
 
         Sheet averageSheet = null;
         if (mScouts.size() > Constants.SINGLE_ITEM) {
@@ -403,7 +387,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             averageSheet.createFreezePane(1, 1);
         }
 
-        List<TeamHelper> teamHelpers = getTeamHelpers();
+        List<TeamHelper> teamHelpers = mCache.getTeamHelpers();
         for (TeamHelper teamHelper : teamHelpers) {
             updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_team,
                                                                teamHelper)));
@@ -443,8 +427,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
         List<Scout> scouts = mScouts.get(teamHelper);
 
-        Workbook workbook = teamSheet.getWorkbook();
-
         Row header = teamSheet.createRow(0);
         header.createCell(0); // Create empty top left corner cell
         List<ScoutMetric> orderedMetrics = scouts.get(scouts.size() - 1).getMetrics();
@@ -462,7 +444,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             Cell cell = header.getCell(column, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             String name = scout.getName();
             cell.setCellValue(TextUtils.isEmpty(name) ? "Scout " + column : name);
-            cell.setCellStyle(createHeaderStyle(workbook));
+            cell.setCellStyle(mCache.getColumnHeaderStyle());
 
             columnIterator:
             for (int j = 0, rowNum = 1; j < metrics.size(); j++, rowNum++) {
@@ -522,7 +504,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             Cell cell = row.createCell(farthestColumn);
             if (i == 0) {
                 cell.setCellValue(getString(R.string.average));
-                cell.setCellStyle(createHeaderStyle(sheet.getWorkbook()));
+                cell.setCellStyle(mCache.getColumnHeaderStyle());
                 continue;
             }
 
@@ -538,7 +520,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             switch (type) {
                 case MetricType.CHECKBOX:
                     cell.setCellFormula("COUNTIF(" + rangeAddress + ", TRUE) / COUNTA(" + rangeAddress + ")");
-                    setCellFormat(cell, "0.00%");
+                    mCache.setCellFormat(cell, "0.00%");
                     break;
                 case MetricType.COUNTER:
                     cell.setCellFormula(
@@ -739,84 +721,31 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         paragraph.addNewEndParaRPr();
     }
 
-    private void setCellFormat(Cell cell, String format) {
-        if (isUnsupportedDevice()) return;
-
-        Workbook workbook = cell.getSheet().getWorkbook();
-        CellStyle style = workbook.createCellStyle();
-        style.setDataFormat(workbook.createDataFormat().getFormat(format));
-
-        cell.setCellStyle(style);
-    }
-
-    @Nullable
-    private CellStyle createRowHeaderStyle(Workbook workbook) {
-        CellStyle rowHeaderStyle = createHeaderStyle(workbook);
-        if (rowHeaderStyle != null) rowHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
-        return rowHeaderStyle;
-    }
-
-    @Nullable
-    private CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle style = createBaseStyle(workbook);
-        if (style == null) return null;
-
-        style.setFont(createBaseHeaderFont(workbook));
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);
-
-        return style;
-    }
-
-    @Nullable
-    private Font createBaseHeaderFont(Workbook workbook) {
-        if (isUnsupportedDevice()) return null;
-
-        Font font = workbook.createFont();
-        font.setBold(true);
-        return font;
-    }
-
-    @Nullable
-    private CellStyle createBaseStyle(Workbook workbook) {
-        if (isUnsupportedDevice()) return null;
-
-        CellStyle style = workbook.createCellStyle();
-        style.setWrapText(true);
-        return style;
-    }
-
     private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
         Comment comment = getComment(row, headerCell);
-        comment.setString(mCreationHelper.createRichTextString(metric.getKey()));
+        comment.setString(mCache.getCreationHelper().createRichTextString(metric.getKey()));
         headerCell.setCellComment(comment);
         mTemporaryCommentCells.add(headerCell);
 
-        Sheet sheet = row.getSheet();
-        Workbook workbook = sheet.getWorkbook();
-        CellStyle headerStyle = createRowHeaderStyle(workbook);
-        if (headerStyle != null && metric.getType() == MetricType.HEADER) {
-            Font font = createBaseHeaderFont(workbook);
-            if (font != null) {
-                font.setItalic(true);
-                font.setFontHeightInPoints((short) 14);
-                headerStyle.setFont(font);
-            }
+        if (metric.getType() == MetricType.HEADER) {
+            headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
 
-            int rowNum = row.getRowNum();
             int numOfScouts = mScouts.get(teamHelper).size();
             if (numOfScouts > Constants.SINGLE_ITEM) {
-                sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 1, numOfScouts));
+                int rowNum = row.getRowNum();
+                row.getSheet()
+                        .addMergedRegion(new CellRangeAddress(rowNum, rowNum, 1, numOfScouts));
             }
+        } else {
+            headerCell.setCellStyle(mCache.getRowHeaderStyle());
         }
-        headerCell.setCellStyle(headerStyle);
     }
 
     private Comment getComment(Row row, Cell cell) {
         // When the comment box is visible, have it show in a 1x3 space
-        ClientAnchor anchor = mCreationHelper.createClientAnchor();
+        ClientAnchor anchor = mCache.getCreationHelper().createClientAnchor();
         anchor.setCol1(cell.getColumnIndex());
         anchor.setCol2(cell.getColumnIndex() + 1);
         anchor.setRow1(row.getRowNum());
@@ -845,7 +774,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 valueCell.setCellValue(selectedItem);
                 break;
             case MetricType.NOTE:
-                RichTextString note = mCreationHelper.createRichTextString(String.valueOf(metric.getValue()));
+                RichTextString note = mCache.getCreationHelper()
+                        .createRichTextString(String.valueOf(metric.getValue()));
                 valueCell.setCellValue(note);
                 break;
             case MetricType.STOPWATCH:
@@ -856,7 +786,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 long nanoAverage = cycles.isEmpty() ? 0 : sum / cycles.size();
 
                 valueCell.setCellValue(TimeUnit.NANOSECONDS.toSeconds(nanoAverage));
-                setCellFormat(valueCell, "#0\"s\"");
+                mCache.setCellFormat(valueCell, "#0\"s\"");
                 break;
             case MetricType.HEADER:
                 // Headers are skipped because they don't contain any data
@@ -906,16 +836,13 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         Row headerRow = averageSheet.createRow(0);
         headerRow.createCell(0);
 
-        CellStyle headerStyle = createHeaderStyle(workbook);
-        CellStyle rowHeaderStyle = createRowHeaderStyle(workbook);
-
         List<Sheet> scoutSheets = getAdjustedList(workbook);
         for (int i = 0; i < scoutSheets.size(); i++) {
             Sheet scoutSheet = scoutSheets.get(i);
             Row row = averageSheet.createRow(i + 1);
             Cell rowHeaderCell = row.createCell(0);
             rowHeaderCell.setCellValue(scoutSheet.getSheetName());
-            rowHeaderCell.setCellStyle(rowHeaderStyle);
+            rowHeaderCell.setCellStyle(mCache.getRowHeaderStyle());
 
             List<Row> metricsRows = getAdjustedList(scoutSheet);
             rowIterator:
@@ -939,10 +866,10 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                 Cell keyCell = headerRow.createCell(headerRow.getLastCellNum());
                 keyCell.setCellValue(averageRow.getCell(0).getStringCellValue());
-                keyCell.setCellStyle(headerStyle);
+                keyCell.setCellStyle(mCache.getColumnHeaderStyle());
                 Comment keyComment = getComment(headerRow, keyCell);
                 mTemporaryCommentCells.add(keyCell);
-                keyComment.setString(mCreationHelper.createRichTextString(metricKey));
+                keyComment.setString(mCache.getCreationHelper().createRichTextString(metricKey));
                 keyCell.setCellComment(keyComment);
 
                 setAverageFormula(scoutSheet,
@@ -1015,7 +942,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         valueCell.setCellStyle(averageCell.getCellStyle());
 
         if (averageCell.getCellTypeEnum() == CellType.BOOLEAN) {
-            setCellFormat(valueCell, "0.00%");
+            mCache.setCellFormat(valueCell, "0.00%");
         }
     }
 
@@ -1030,16 +957,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         return copy;
     }
 
-    private boolean isUnsupportedDevice() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
-                || UNSUPPORTED_DEVICES.contains(getDeviceModel());
-    }
-
-    private String getDeviceModel() {
-        return (Build.MANUFACTURER.toUpperCase(Locale.ROOT) + "-" + Build.MODEL.toUpperCase(Locale.ROOT))
-                .replace(' ', '-');
-    }
-
     private void showError(Exception e) {
         FirebaseCrash.report(e);
 
@@ -1050,5 +967,132 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void showToast(String message) {
         new Handler(Looper.getMainLooper()).post(
                 () -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
+    }
+
+    private static final class Cache {
+        private static final Object TEAM_HELPERS_LOCK = new Object();
+        private static final Object TEAM_NAMES_LOCK = new Object();
+        private static final Object ROW_HEADER_STYLE_LOCK = new Object();
+        private static final Object COLUMN_HEADER_STYLE_LOCK = new Object();
+
+        private final Map<TeamHelper, List<Scout>> mScouts;
+        private Workbook mWorkbook;
+
+        private List<TeamHelper> mTeamHelpers;
+        private String mTeamNames;
+
+        private CellStyle mRowHeaderStyle;
+        private CellStyle mColumnHeaderStyle;
+
+        private Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
+
+        public Cache(Map<TeamHelper, List<Scout>> scouts) {
+            mScouts = scouts;
+        }
+
+        public void setWorkbook(Workbook workbook) {
+            mWorkbook = workbook;
+        }
+
+        public List<TeamHelper> getTeamHelpers() {
+            synchronized (TEAM_HELPERS_LOCK) {
+                if (mTeamHelpers == null) {
+                    List<TeamHelper> helpers = new ArrayList<>(mScouts.keySet());
+                    Collections.sort(helpers);
+                    mTeamHelpers = Collections.unmodifiableList(helpers);
+                }
+                return mTeamHelpers;
+            }
+        }
+
+        public String getTeamNames() {
+            synchronized (TEAM_NAMES_LOCK) {
+                if (mTeamNames == null) {
+                    mTeamNames = TeamHelper.getTeamNames(new ArrayList<>(getTeamHelpers()));
+                }
+                return mTeamNames;
+            }
+        }
+
+        public CreationHelper getCreationHelper() {
+            return mWorkbook.getCreationHelper();
+        }
+
+        @Nullable
+        public CellStyle getColumnHeaderStyle() {
+            if (isUnsupportedDevice()) return null;
+
+            synchronized (COLUMN_HEADER_STYLE_LOCK) {
+                if (mColumnHeaderStyle == null) {
+                    mColumnHeaderStyle = createColumnHeaderStyle();
+                }
+                return mColumnHeaderStyle;
+            }
+        }
+
+        @Nullable
+        public CellStyle getRowHeaderStyle() {
+            if (isUnsupportedDevice()) return null;
+
+            synchronized (ROW_HEADER_STYLE_LOCK) {
+                if (mRowHeaderStyle == null) {
+                    mRowHeaderStyle = createRowHeaderStyle();
+                }
+                return mRowHeaderStyle;
+            }
+        }
+
+        @Nullable
+        public CellStyle getHeaderMetricRowHeaderStyle() {
+            if (isUnsupportedDevice()) return null;
+
+            CellStyle rowHeaderStyle = createRowHeaderStyle();
+            Font font = createBaseHeaderFont();
+            font.setItalic(true);
+            font.setFontHeightInPoints((short) 14);
+            rowHeaderStyle.setFont(font);
+
+            return rowHeaderStyle;
+        }
+
+        public void setCellFormat(Cell cell, String format) {
+            Short cachedFormat = mFormatStyles.get(format);
+            if (cachedFormat == null) {
+                cachedFormat = mWorkbook.createDataFormat().getFormat(format);
+                mFormatStyles.put(format, cachedFormat);
+            }
+
+            CellStyle style = mWorkbook.createCellStyle();
+            style.setDataFormat(cachedFormat);
+            cell.setCellStyle(style);
+        }
+
+        private CellStyle createColumnHeaderStyle() {
+            CellStyle style = createBaseStyle();
+
+            style.setFont(createBaseHeaderFont());
+            style.setAlignment(HorizontalAlignment.CENTER);
+            style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+            return style;
+        }
+
+        private CellStyle createRowHeaderStyle() {
+            CellStyle rowHeaderStyle = createColumnHeaderStyle();
+            rowHeaderStyle.setAlignment(HorizontalAlignment.LEFT);
+            return rowHeaderStyle;
+        }
+
+        private CellStyle createBaseStyle() {
+            CellStyle style = mWorkbook.createCellStyle();
+            style.setWrapText(true);
+            return style;
+        }
+
+        private Font createBaseHeaderFont() {
+            Font font = mWorkbook.createFont();
+            font.setBold(true);
+            return font;
+        }
     }
 }
