@@ -43,7 +43,7 @@ public class LicensesDialog extends DialogFragment {
                                              .getOpenSourceSoftwareLicenseInfo(getContext())));
         licenses.add(Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"));
         licenses.add(Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"));
-        licenses.add(Licenses.fromGitHubApacheV2("GoogleSamples/Easypermissions"));
+        licenses.add(Licenses.fromGitHubApacheV2("GoogleSamples/EasyPermissions"));
         licenses.add(Licenses.fromGitHub("Bumptech/Glide", "Glide license", Licenses.FILE_AUTO));
         licenses.add(Licenses.fromGitHubApacheV2("Hdodenhof/CircleImageView"));
         licenses.add(Licenses.fromGitHub("Apache/POI", Licenses.LICENSE_APACHE_V2));
