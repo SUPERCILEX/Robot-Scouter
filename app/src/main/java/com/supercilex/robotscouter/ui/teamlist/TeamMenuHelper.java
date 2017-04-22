@@ -81,6 +81,10 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     public void onCreateOptionsMenu(Menu menu) {
         mMenu = menu;
 
+        mMenu.add(Menu.NONE, R.id.action_export_spreadsheet, Menu.NONE, R.string.export_spreadsheet)
+                .setVisible(false)
+                .setIcon(R.drawable.ic_import_export_white_24dp)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE, R.id.action_share, Menu.NONE, R.string.share)
                 .setVisible(false)
                 .setIcon(R.drawable.ic_share_white_24dp)
@@ -96,10 +100,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         mMenu.add(Menu.NONE, R.id.action_edit_team_details, Menu.NONE, R.string.edit_team_details)
                 .setVisible(false)
                 .setIcon(R.drawable.ic_mode_edit_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_export_spreadsheet, Menu.NONE, R.string.export_spreadsheet)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_import_export_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         mMenu.add(Menu.NONE, R.id.action_delete, Menu.NONE, R.string.delete)
                 .setVisible(false)
