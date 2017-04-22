@@ -343,7 +343,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 } else {
                     absoluteFile = new File(absoluteFile.getParentFile(),
                                             IoHelper.hide(absoluteFile.getName()));
-                    if (!absoluteFile.createNewFile()) {
+                    if (!absoluteFile.createNewFile()
+                            // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
+                            && (!absoluteFile.delete() || !absoluteFile.createNewFile())) {
                         throw new IOException("Failed to create file");
                     }
                     break;
@@ -351,7 +353,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             }
 
             stream = new FileOutputStream(absoluteFile);
-            getWorkbook().write(stream);
+            Workbook workbook;
+            try {
+                workbook = getWorkbook();
+            } catch (Exception e) { // NOPMD
+                absoluteFile.delete();
+                throw e;
+            }
+            workbook.write(stream);
 
             return IoHelper.unhide(absoluteFile);
         } catch (IOException e) {
