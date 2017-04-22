@@ -939,7 +939,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         valueCell.setCellFormula("IF(" +
                                          "OR(" + rangeAddress + " = TRUE, " + rangeAddress + " = FALSE), " +
-                                         "IF(" + rangeAddress + " = TRUE, 100, 0), " +
+                                         "IF(" + rangeAddress + " = TRUE, 1, 0), " +
                                          rangeAddress + ")");
         valueCell.setCellStyle(averageCell.getCellStyle());
 
