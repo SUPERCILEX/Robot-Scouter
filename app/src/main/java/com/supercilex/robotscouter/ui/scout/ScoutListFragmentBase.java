@@ -202,10 +202,7 @@ public abstract class ScoutListFragmentBase extends Fragment
             mTeamHelper.addTeam();
             addListeners();
             TbaDownloader.load(mTeamHelper.getTeam(), getContext())
-                    .addOnSuccessListener(team -> mTeamHelper.updateTeam(team))
-                    .addOnFailureListener(getActivity(),
-                                          e -> DownloadTeamDataJob.start(getActivity(),
-                                                                         mTeamHelper));
+                    .addOnSuccessListener(team -> mTeamHelper.updateTeam(team));
         } else {
             Constants.sFirebaseTeams.addChangeEventListener(this);
         }
