@@ -20,6 +20,7 @@ public final class Constants {
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
     public static final int SINGLE_ITEM = 1;
+    public static final int TWO_ITEMS = 2;
 
     /** The list of all supported authentication providers in Firebase Auth UI. */
     public static final List<AuthUI.IdpConfig> ALL_PROVIDERS =
