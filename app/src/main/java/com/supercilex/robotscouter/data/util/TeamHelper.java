@@ -91,7 +91,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
         if (teamHelpers.size() == Constants.SINGLE_ITEM) {
             teamName = teamHelpers.get(0).toString();
-        } else if (teamHelpers.size() == 2) {
+        } else if (teamHelpers.size() == Constants.TWO_ITEMS) {
             teamName = teamHelpers.get(0) + " and " + teamHelpers.get(1);
         } else {
             boolean teamsMaxedOut = teamHelpers.size() > 10;

@@ -24,6 +24,7 @@ android:
     - platform-tools
     - extra-android-m2repository
     - extra-google-m2repository
+install: nvm install 7
 before_script:
   - chmod +x gradlew setup.sh build.sh upload.sh
   - ./setup.sh
