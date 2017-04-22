@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.util.RemoteConfigHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -81,6 +82,34 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         Bundle args = new Bundle();
         args.putParcelableArrayList(TEAM_HELPERS_KEY, new ArrayList<>(teamHelpers));
         return args;
+    }
+
+    public static String getTeamNames(List<TeamHelper> teamHelpers) {
+        Collections.sort(teamHelpers);
+
+        String teamName;
+
+        if (teamHelpers.size() == Constants.SINGLE_ITEM) {
+            teamName = teamHelpers.get(0).toString();
+        } else if (teamHelpers.size() == 2) {
+            teamName = teamHelpers.get(0) + " and " + teamHelpers.get(1);
+        } else {
+            boolean teamsMaxedOut = teamHelpers.size() > 10;
+            int size = teamsMaxedOut ? 10 : teamHelpers.size();
+
+            StringBuilder names = new StringBuilder(4 * size);
+            for (int i = 0; i < size; i++) {
+                names.append(teamHelpers.get(i).getTeam().getNumber());
+                if (i < size - 1) names.append(", ");
+                if (i == size - 2 && !teamsMaxedOut) names.append("and ");
+            }
+
+            if (teamsMaxedOut) names.append(" and more");
+
+            teamName = names.toString();
+        }
+
+        return teamName;
     }
 
     public Intent toIntent() {
