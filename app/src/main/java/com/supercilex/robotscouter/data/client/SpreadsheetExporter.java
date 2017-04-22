@@ -99,7 +99,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -275,6 +274,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         Uri spreadsheetUri = getFileUri();
         if (spreadsheetUri == null) return;
 
+        int exportId = (int) System.currentTimeMillis();
         Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -299,7 +299,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 .setSmallIcon(R.drawable.ic_done_white_48dp)
                 .setContentTitle(getPluralTeams(R.plurals.exporting_spreadsheet_complete_title))
                 .setContentIntent(PendingIntent.getActivity(this,
-                                                            0,
+                                                            exportId,
                                                             sharingIntent,
                                                             PendingIntent.FLAG_ONE_SHOT))
                 .setWhen(System.currentTimeMillis())
@@ -313,7 +313,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
         }
 
-        updateNotification(new Random().nextInt(Integer.MAX_VALUE - 1) + 1, builder.build());
+        updateNotification(exportId, builder.build());
         stopForeground(true);
     }
 
