@@ -1038,6 +1038,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
 
         public void setCellFormat(Cell cell, String format) {
+            if (isUnsupportedDevice()) return;
+
             Short cachedFormat = mFormatStyles.get(format);
             if (cachedFormat == null) {
                 cachedFormat = mWorkbook.createDataFormat().getFormat(format);
