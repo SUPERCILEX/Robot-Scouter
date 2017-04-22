@@ -35,6 +35,7 @@ import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoHelper;
@@ -268,8 +269,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         mScouts = scouts;
         mCache = new Cache(mScouts);
 
-        Uri spreadsheetUri = getFileUri();
+        AnalyticsHelper.exportTeams(new ArrayList<>(mCache.getTeamHelpers()));
 
+        Uri spreadsheetUri = getFileUri();
         if (spreadsheetUri == null) return;
 
         Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
