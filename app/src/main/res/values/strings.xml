@@ -46,7 +46,7 @@
     </plurals>
 
     <!-- Spreadsheet exporting -->
-    <string name="export_spreadsheet">Export to spreadsheet</string>
+    <string name="export_spreadsheet">Export spreadsheet</string>
     <plurals name="share_spreadsheet_title">
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>
