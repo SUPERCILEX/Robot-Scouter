@@ -31,7 +31,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
-import com.supercilex.robotscouter.ui.TeamSender;
+import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
 import com.supercilex.robotscouter.util.AnalyticsHelper;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
@@ -160,7 +160,7 @@ public abstract class ScoutListFragmentBase extends Fragment
                 ShouldUploadMediaToTbaDialog.show(this);
                 break;
             case R.id.action_share:
-                TeamSender.launchInvitationIntent(getActivity(),
+                TeamSharer.launchInvitationIntent(getActivity(),
                                                   Collections.singletonList(mTeamHelper));
                 AnalyticsHelper.shareTeam(teamNumber);
                 break;

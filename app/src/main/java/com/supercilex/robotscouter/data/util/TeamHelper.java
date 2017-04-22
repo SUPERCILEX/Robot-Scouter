@@ -85,21 +85,22 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public static String getTeamNames(List<TeamHelper> teamHelpers) {
-        Collections.sort(teamHelpers);
+        List<TeamHelper> sortedTeamHelpers = new ArrayList<>(teamHelpers);
+        Collections.sort(sortedTeamHelpers);
 
         String teamName;
 
-        if (teamHelpers.size() == Constants.SINGLE_ITEM) {
-            teamName = teamHelpers.get(0).toString();
-        } else if (teamHelpers.size() == Constants.TWO_ITEMS) {
-            teamName = teamHelpers.get(0) + " and " + teamHelpers.get(1);
+        if (sortedTeamHelpers.size() == Constants.SINGLE_ITEM) {
+            teamName = sortedTeamHelpers.get(0).toString();
+        } else if (sortedTeamHelpers.size() == Constants.TWO_ITEMS) {
+            teamName = sortedTeamHelpers.get(0) + " and " + sortedTeamHelpers.get(1);
         } else {
-            boolean teamsMaxedOut = teamHelpers.size() > 10;
-            int size = teamsMaxedOut ? 10 : teamHelpers.size();
+            boolean teamsMaxedOut = sortedTeamHelpers.size() > 10;
+            int size = teamsMaxedOut ? 10 : sortedTeamHelpers.size();
 
             StringBuilder names = new StringBuilder(4 * size);
             for (int i = 0; i < size; i++) {
-                names.append(teamHelpers.get(i).getTeam().getNumber());
+                names.append(sortedTeamHelpers.get(i).getTeam().getNumber());
                 if (i < size - 1) names.append(", ");
                 if (i == size - 2 && !teamsMaxedOut) names.append("and ");
             }
