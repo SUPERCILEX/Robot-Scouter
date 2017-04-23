@@ -109,10 +109,10 @@ public class ScoutMetric<T> {
     @Override
     public String toString() {
         String metricType = null;
-        if (getType() == MetricType.CHECKBOX) metricType = "Checkbox";
-        else if (getType() == MetricType.COUNTER) metricType = "Counter";
-        else if (getType() == MetricType.NOTE) metricType = "Note";
-        else if (getType() == MetricType.SPINNER) metricType = "Spinner";
+        if (getType() == MetricType.BOOLEAN) metricType = "Boolean";
+        else if (getType() == MetricType.NUMBER) metricType = "Number";
+        else if (getType() == MetricType.TEXT) metricType = "Text";
+        else if (getType() == MetricType.LIST) metricType = "List";
         else if (getType() == MetricType.STOPWATCH) metricType = "Stopwatch";
         else if (getType() == MetricType.HEADER) metricType = "Header";
 

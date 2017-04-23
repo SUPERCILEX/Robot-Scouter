@@ -19,7 +19,7 @@ public class SpinnerMetric extends ScoutMetric<Map<String, String>> {
     }
 
     public SpinnerMetric(String name, Map<String, String> values, String selectedValueKey) {
-        super(name, values, MetricType.SPINNER);
+        super(name, values, MetricType.LIST);
         mSelectedValueKey = selectedValueKey;
     }
 

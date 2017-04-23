@@ -43,16 +43,16 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
     public ScoutViewHolderBase onCreateViewHolder(ViewGroup parent, @MetricType int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
-            case MetricType.CHECKBOX:
+            case MetricType.BOOLEAN:
                 return new CheckboxTemplateViewHolder(
                         inflater.inflate(R.layout.scout_template_checkbox, parent, false));
-            case MetricType.COUNTER:
+            case MetricType.NUMBER:
                 return new CounterTemplateViewHolder(
                         inflater.inflate(R.layout.scout_template_counter, parent, false));
-            case MetricType.NOTE:
+            case MetricType.TEXT:
                 return new EditTextTemplateViewHolder(
                         inflater.inflate(R.layout.scout_template_notes, parent, false));
-            case MetricType.SPINNER:
+            case MetricType.LIST:
                 return new SpinnerTemplateViewHolder(
                         inflater.inflate(R.layout.scout_template_spinner, parent, false));
             case MetricType.STOPWATCH:

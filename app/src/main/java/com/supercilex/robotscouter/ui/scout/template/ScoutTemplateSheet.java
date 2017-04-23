@@ -219,16 +219,16 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         DatabaseReference metricRef = templateRef.push();
         switch (id) {
             case R.id.add_checkbox:
-                metricRef.setValue(new ScoutMetric<>("", false, MetricType.CHECKBOX), priority);
+                metricRef.setValue(new ScoutMetric<>("", false, MetricType.BOOLEAN), priority);
                 break;
             case R.id.add_counter:
-                metricRef.setValue(new ScoutMetric<>("", 0, MetricType.COUNTER), priority);
+                metricRef.setValue(new ScoutMetric<>("", 0, MetricType.NUMBER), priority);
                 break;
             case R.id.add_spinner:
                 metricRef.setValue(SpinnerMetric.init(), priority);
                 break;
             case R.id.add_note:
-                metricRef.setValue(new ScoutMetric<>("", "", MetricType.NOTE), priority);
+                metricRef.setValue(new ScoutMetric<>("", "", MetricType.TEXT), priority);
                 break;
             case R.id.add_stopwatch:
                 metricRef.setValue(

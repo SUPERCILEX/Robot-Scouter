@@ -42,16 +42,16 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     public ScoutViewHolderBase onCreateViewHolder(ViewGroup parent, @MetricType int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
-            case MetricType.CHECKBOX:
+            case MetricType.BOOLEAN:
                 return new CheckboxViewHolder(
                         inflater.inflate(R.layout.scout_checkbox, parent, false));
-            case MetricType.COUNTER:
+            case MetricType.NUMBER:
                 return new CounterViewHolder(
                         inflater.inflate(R.layout.scout_counter, parent, false));
-            case MetricType.NOTE:
+            case MetricType.TEXT:
                 return new EditTextViewHolder(
                         inflater.inflate(R.layout.scout_notes, parent, false));
-            case MetricType.SPINNER:
+            case MetricType.LIST:
                 return new SpinnerViewHolder(
                         inflater.inflate(R.layout.scout_spinner, parent, false));
             case MetricType.STOPWATCH:
