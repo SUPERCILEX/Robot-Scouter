@@ -24,7 +24,7 @@ import android.view.View;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.client.SpreadsheetExporter;
+import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetExporter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
