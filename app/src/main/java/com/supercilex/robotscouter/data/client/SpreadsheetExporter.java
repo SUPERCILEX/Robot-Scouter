@@ -57,7 +57,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
@@ -412,8 +411,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_average)));
         if (averageSheet != null) buildTeamAveragesSheet(averageSheet);
 
+        updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_cleanup)));
         setColumnWidths(workbook);
-        mCache.clearTemporaryCommentCells();
 
         return workbook;
     }
@@ -470,7 +469,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                     for (Row row1 : rows) {
                         Cell cell1 = row1.getCell(0);
-                        if (TextUtils.equals(getMetricKey(row1), metric.getKey())) {
+                        if (TextUtils.equals(mCache.getMetricKey(row1), metric.getKey())) {
                             setRowValue(column, metric, row1);
 
                             if (TextUtils.isEmpty(cell1.getStringCellValue())) {
@@ -523,8 +522,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             Cell first = row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             cell.setCellStyle(first.getCellStyle());
 
-            String key = getMetricKey(row);
-            @MetricType int type = getMetric(teamHelper, key).getType();
+            @MetricType int type = getMetric(teamHelper, mCache.getMetricKey(row)).getType();
 
             String rangeAddress = getRangeAddress(
                     first,
@@ -632,7 +630,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         List<Row> rows = getAdjustedList(row.getSheet());
         for (int i = row.getRowNum(); i >= 0; i--) {
-            ScoutMetric metric = getMetric(teamHelper, getMetricKey(rows.get(i)));
+            ScoutMetric metric = getMetric(teamHelper, mCache.getMetricKey(rows.get(i)));
 
             if (metric.getType() == MetricType.HEADER) {
                 nearestHeader = Pair.create(i, metric);
@@ -738,10 +736,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
-        Comment comment = getComment(row, headerCell);
-        comment.setString(mCache.getCreationHelper().createRichTextString(metric.getKey()));
-        headerCell.setCellComment(comment);
-        mCache.addTemporaryCommentCell(headerCell);
+        mCache.putMetricKey(headerCell, metric.getKey());
 
         if (metric.getType() == MetricType.HEADER) {
             headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
@@ -755,19 +750,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         } else {
             headerCell.setCellStyle(mCache.getRowHeaderStyle());
         }
-    }
-
-    private Comment getComment(Row row, Cell cell) {
-        // When the comment box is visible, have it show in a 1x3 space
-        ClientAnchor anchor = mCache.getCreationHelper().createClientAnchor();
-        anchor.setCol1(cell.getColumnIndex());
-        anchor.setCol2(cell.getColumnIndex() + 1);
-        anchor.setRow1(row.getRowNum());
-        anchor.setRow2(row.getRowNum() + 3);
-
-        Comment comment = row.getSheet().createDrawingPatriarch().createCellComment(anchor);
-        comment.setAuthor(getString(R.string.app_name));
-        return comment;
     }
 
     private void setRowValue(int column, ScoutMetric metric, Row row) {
@@ -867,12 +849,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                 if (TextUtils.isEmpty(getStringForCell(averageCell))) continue;
 
-                String metricKey = getMetricKey(averageRow);
+                String metricKey = mCache.getMetricKey(averageRow);
                 for (Cell keyCell : getAdjustedList(headerRow)) {
-                    Comment keyComment = keyCell.getCellComment();
-                    String key = keyComment == null ? null : keyComment.getString().toString();
-
-                    if (TextUtils.equals(metricKey, key)) {
+                    if (TextUtils.equals(metricKey, mCache.getMetricKey(keyCell))) {
                         setAverageFormula(scoutSheet,
                                           row.createCell(keyCell.getColumnIndex()),
                                           averageCell);
@@ -883,10 +862,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 Cell keyCell = headerRow.createCell(headerRow.getLastCellNum());
                 keyCell.setCellValue(averageRow.getCell(0).getStringCellValue());
                 keyCell.setCellStyle(mCache.getColumnHeaderStyle());
-                Comment keyComment = getComment(headerRow, keyCell);
-                mCache.addTemporaryCommentCell(keyCell);
-                keyComment.setString(mCache.getCreationHelper().createRichTextString(metricKey));
-                keyCell.setCellComment(keyComment);
+                mCache.putMetricKey(keyCell, metricKey);
 
                 setAverageFormula(scoutSheet,
                                   row.createCell(keyCell.getColumnIndex()),
@@ -962,10 +938,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
-    private String getMetricKey(Row row) {
-        return row.getCell(0).getCellComment().getString().toString();
-    }
-
     private <T> List<T> getAdjustedList(Iterable<T> iterator) {
         List<T> copy = new ArrayList<>();
         for (T t : iterator) copy.add(t);
@@ -989,7 +961,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         private static final Object ROW_HEADER_STYLE_LOCK = new Object();
         private static final Object COLUMN_HEADER_STYLE_LOCK = new Object();
 
-        private final List<Cell> mTemporaryCommentCells = new ArrayList<>();
+        private final Map<Cell, String> mKeyMetrics = new ConcurrentHashMap<>();
         private final Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
 
         private CellStyle mRowHeaderStyle;
@@ -1060,12 +1032,16 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             cell.setCellStyle(style);
         }
 
-        public void addTemporaryCommentCell(Cell cell) {
-            mTemporaryCommentCells.add(cell);
+        public void putMetricKey(Cell cell, String key) {
+            mKeyMetrics.put(cell, key);
         }
 
-        public void clearTemporaryCommentCells() {
-            for (Cell cell : mTemporaryCommentCells) cell.removeCellComment();
+        public String getMetricKey(Row row) {
+            return getMetricKey(row.getCell(0));
+        }
+
+        public String getMetricKey(Cell cell) {
+            return mKeyMetrics.get(cell);
         }
 
         private CellStyle createColumnHeaderStyle() {
