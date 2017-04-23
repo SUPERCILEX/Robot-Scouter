@@ -169,7 +169,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     /**
      * Used in {@link com.supercilex.robotscouter.data.client.SpreadsheetExporter#writeAndShareTeams(Fragment,
-     * com.supercilex.robotscouter.util.IoHelper.RequestHandler, java.util.List)}
+     * com.supercilex.robotscouter.util.PermissionRequestHandler, java.util.List)}
      * <p>
      * {@inheritDoc}
      */
