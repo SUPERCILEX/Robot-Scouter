@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 import com.supercilex.robotscouter.util.ConnectivityHelper;
 import com.supercilex.robotscouter.util.Constants;
 
@@ -27,12 +28,13 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
     private final TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
     private final Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
-    private final List<Task<Void>> mScoutMetricsTasks = new ArrayList<>();
+    private final List<Task<Void>> mScoutMetricsTasks = new CopyOnWriteArrayList<>();
 
     private final List<TeamHelper> mTeamHelpers;
     private final Context mContext;
@@ -58,11 +60,14 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-                            List<String> scoutKeys = new ArrayList<>();
-                            for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
-                                scoutKeys.add(scoutKeyTemplate.getKey());
-                            }
-                            scoutIndicesTask.setResult(Pair.create(helper, scoutKeys));
+                            AsyncTaskExecutor.execute(() -> {
+                                List<String> scoutKeys = new ArrayList<>();
+                                for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
+                                    scoutKeys.add(scoutKeyTemplate.getKey());
+                                }
+                                return scoutKeys;
+                            }).addOnSuccessListener(scoutKeys -> scoutIndicesTask.setResult(
+                                    Pair.create(helper, scoutKeys)));
                         }
 
                         @Override
@@ -75,7 +80,8 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
 
 
         for (Task<Pair<TeamHelper, List<String>>> scoutKeysTask : scoutIndicesTasks) {
-            scoutKeysTask.addOnSuccessListener(this).addOnFailureListener(this);
+            scoutKeysTask.addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this)
+                    .addOnFailureListener(this);
         }
 
         Tasks.whenAll(scoutIndicesTasks)

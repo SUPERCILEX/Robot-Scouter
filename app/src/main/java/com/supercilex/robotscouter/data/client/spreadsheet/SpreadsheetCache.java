@@ -21,8 +21,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.isUnsupportedDevice;
 
@@ -36,8 +36,8 @@ public final class SpreadsheetCache extends TeamCache {
     private final int mProgressMax;
     private int mCurrentProgress;
 
-    private final Map<Cell, String> mKeyMetrics = new ConcurrentHashMap<>();
-    private final Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
+    private final Map<Cell, String> mKeyMetrics = new HashMap<>();
+    private final Map<String, Short> mFormatStyles = new HashMap<>();
 
     private CellStyle mRowHeaderStyle;
     private CellStyle mColumnHeaderStyle;
