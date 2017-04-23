@@ -391,7 +391,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
 
         if (scouts.size() > Constants.SINGLE_ITEM) {
-            buildAverageCells(teamSheet, teamHelper);
+            buildAverageColumn(teamSheet, teamHelper);
         }
     }
 
@@ -400,7 +400,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         setRowValue(column, metric, row);
     }
 
-    private void buildAverageCells(Sheet sheet, TeamHelper teamHelper) {
+    private void buildAverageColumn(Sheet sheet, TeamHelper teamHelper) {
         int farthestColumn = 0;
         for (Row row : sheet) {
             int last = row.getLastCellNum();
@@ -576,7 +576,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
-        mCache.putMetricKey(headerCell, metric.getKey());
+        mCache.putKeyMetric(headerCell, metric);
 
         if (metric.getType() == MetricType.HEADER) {
             headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
@@ -649,12 +649,15 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             rowIterator:
             for (Row averageRow : metricsRows) {
                 Cell averageCell = averageRow.getCell(averageRow.getLastCellNum() - 1);
+                ScoutMetric<?> keyMetric = mCache.getKeyMetric(averageRow.getCell(0));
 
-                if (TextUtils.isEmpty(getStringForCell(averageCell))) continue;
+                if (TextUtils.isEmpty(getStringForCell(averageCell))
+                        || keyMetric.getType() == MetricType.NOTE) {
+                    continue;
+                }
 
-                String metricKey = mCache.getMetricKey(averageRow);
                 for (Cell keyCell : getAdjustedList(headerRow)) {
-                    if (TextUtils.equals(metricKey, mCache.getMetricKey(keyCell))) {
+                    if (TextUtils.equals(keyMetric.getKey(), mCache.getMetricKey(keyCell))) {
                         setAverageFormula(scoutSheet,
                                           row.createCell(keyCell.getColumnIndex()),
                                           averageCell);
@@ -665,7 +668,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 Cell keyCell = headerRow.createCell(headerRow.getLastCellNum());
                 keyCell.setCellValue(averageRow.getCell(0).getStringCellValue());
                 keyCell.setCellStyle(mCache.getColumnHeaderStyle());
-                mCache.putMetricKey(keyCell, metricKey);
+                mCache.putKeyMetric(keyCell, keyMetric);
 
                 setAverageFormula(scoutSheet,
                                   row.createCell(keyCell.getColumnIndex()),
