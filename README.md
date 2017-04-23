@@ -11,20 +11,24 @@ scouting simple and collaborative.
 
 ## Features:
 
-  - Full offline support
-  - No setup required
+  - **Full offline support**
+  - **No setup required e.g. no databases**
   - Easy sharing between users
   - Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
  Android N and use split screen mode to scout several teams at once.
-  - Customizable scouting templates with several different metrics to choose from:
+  - **Customizable scouting templates** with several different metrics to choose from:
     - header/title
     - true/false (checkbox)
     - stopwatch (for keeping track of cycle time)
     - number (counter)
     - list (item selector)
     - text (notes)
-  - Integration with [The Blue Alliance](https://www.thebluealliance.com) to automatically populate relevant team info
-  - Export scouting data to a spreadsheet with pre-computed averages and statistics
+  - **Integration with [The Blue Alliance](https://www.thebluealliance.com)** to automatically populate relevant team info
+  - **Highly advanced spreadsheet exporting**:
+    - Averages are computed for each team automatically
+    - An average sheet is included to compare teams against each other in a global view
+    - Fancy formatting on devices with Android Lollipop (21) and above
+    - **Charts!**
   - And more!
 
 ## Contributing
