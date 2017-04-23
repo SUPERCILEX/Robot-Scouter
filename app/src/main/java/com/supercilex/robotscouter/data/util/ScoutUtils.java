@@ -39,20 +39,20 @@ public final class ScoutUtils {
 
         @MetricType int type = typeObject;
         switch (type) {
-            case MetricType.CHECKBOX:
+            case MetricType.BOOLEAN:
                 metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {});
                 break;
-            case MetricType.COUNTER:
+            case MetricType.NUMBER:
                 metric = new CounterMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         snapshot.child(Constants.FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<Integer>() {}),
                         snapshot.child(Constants.FIREBASE_UNIT).getValue(String.class));
                 break;
-            case MetricType.NOTE:
+            case MetricType.TEXT:
                 metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {});
                 break;
-            case MetricType.SPINNER:
+            case MetricType.LIST:
                 Map<String, String> values = new LinkedHashMap<>();
                 Iterable<DataSnapshot> children =
                         snapshot.child(Constants.FIREBASE_VALUE).getChildren();

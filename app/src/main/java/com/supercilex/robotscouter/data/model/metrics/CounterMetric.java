@@ -19,7 +19,7 @@ public class CounterMetric extends ScoutMetric<Integer> {
     }
 
     public CounterMetric(String name, int value, @Nullable String unit) {
-        super(name, value, MetricType.COUNTER);
+        super(name, value, MetricType.NUMBER);
         mUnit = unit;
     }
 

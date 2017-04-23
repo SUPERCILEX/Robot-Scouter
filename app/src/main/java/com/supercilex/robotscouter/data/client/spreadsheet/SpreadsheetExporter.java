@@ -430,11 +430,11 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                     first,
                     row.getCell(cell.getColumnIndex() - 1, MissingCellPolicy.CREATE_NULL_AS_BLANK));
             switch (type) {
-                case MetricType.CHECKBOX:
+                case MetricType.BOOLEAN:
                     cell.setCellFormula("COUNTIF(" + rangeAddress + ", TRUE) / COUNTA(" + rangeAddress + ")");
                     mCache.setCellFormat(cell, "0.00%");
                     break;
-                case MetricType.COUNTER:
+                case MetricType.NUMBER:
                     cell.setCellFormula(
                             "SUM(" + rangeAddress + ")" +
                                     " / " +
@@ -450,7 +450,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                     buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
-                case MetricType.SPINNER:
+                case MetricType.LIST:
                     sheet.setArrayFormula(
                             "INDEX(" + rangeAddress + ", " +
                                     "MATCH(" +
@@ -465,7 +465,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                                                  cell.getColumnIndex()));
                     break;
                 case MetricType.HEADER:
-                case MetricType.NOTE:
+                case MetricType.TEXT:
                     // Nothing to average
                     break;
                 default:
@@ -597,19 +597,19 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         Cell valueCell = row.getCell(column, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         switch (metric.getType()) {
-            case MetricType.CHECKBOX:
+            case MetricType.BOOLEAN:
                 valueCell.setCellValue((boolean) metric.getValue());
                 break;
-            case MetricType.COUNTER:
+            case MetricType.NUMBER:
                 valueCell.setCellValue((int) metric.getValue());
                 break;
-            case MetricType.SPINNER:
+            case MetricType.LIST:
                 SpinnerMetric spinnerMetric = (SpinnerMetric) metric;
                 String selectedItem =
                         spinnerMetric.getValue().get(spinnerMetric.getSelectedValueKey());
                 valueCell.setCellValue(selectedItem);
                 break;
-            case MetricType.NOTE:
+            case MetricType.TEXT:
                 RichTextString note = mCache.getCreationHelper()
                         .createRichTextString(String.valueOf(metric.getValue()));
                 valueCell.setCellValue(note);
@@ -652,7 +652,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 ScoutMetric<?> keyMetric = mCache.getKeyMetric(averageRow.getCell(0));
 
                 if (TextUtils.isEmpty(getStringForCell(averageCell))
-                        || keyMetric.getType() == MetricType.NOTE) {
+                        || keyMetric.getType() == MetricType.TEXT) {
                     continue;
                 }
 
