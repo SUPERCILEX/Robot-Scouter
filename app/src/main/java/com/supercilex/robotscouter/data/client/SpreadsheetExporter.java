@@ -18,6 +18,7 @@ import android.support.annotation.RequiresPermission;
 import android.support.annotation.Size;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -215,47 +216,28 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 || UNSUPPORTED_DEVICES.contains(DEVICE_MODEL);
     }
 
-    private void updateNotification(Notification notification) {
-        updateNotification(R.string.exporting_spreadsheet_title, notification);
-    }
-
-    private void updateNotification(int id, Notification notification) {
-        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.notify(id, notification);
-    }
-
-    private Notification getExportNotification(String text) {
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_logo)
-                .setContentTitle(getString(R.string.exporting_spreadsheet_title))
-                .setContentText(text)
-                .setOngoing(true)
-                .setPriority(Notification.PRIORITY_MIN);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        }
-
-        return builder.build();
-    }
-
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
     protected void onHandleIntent(Intent intent) {
+        mCache = new Cache(this, TeamHelper.parseList(intent));
+
+        AnalyticsHelper.exportTeams(mCache.getTeamHelpers());
+
         startForeground(R.string.exporting_spreadsheet_title,
-                        getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
+                        mCache.getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
 
         if (ConnectivityHelper.isOffline(this)) {
             showToast(getString(R.string.exporting_offline));
         }
 
-        List<TeamHelper> teamHelpers = TeamHelper.parseList(intent);
-        Collections.sort(teamHelpers);
         try {
-            Tasks.await(Scouts.getAll(teamHelpers, this)); // Force a refresh
+            Tasks.await(Scouts.getAll(mCache.getTeamHelpers(), this)); // Force a refresh
+
+            mCache.updateNotification(getString(R.string.exporting_spreadsheet_loading));
 
             Task<Map<TeamHelper, List<Scout>>> fetchTeamsTask =
-                    Scouts.getAll(teamHelpers, this).addOnFailureListener(this::showError);
+                    Scouts.getAll(mCache.getTeamHelpers(), this)
+                            .addOnFailureListener(this::showError);
             Tasks.await(fetchTeamsTask);
             if (fetchTeamsTask.isSuccessful()) onSuccess(fetchTeamsTask.getResult());
         } catch (ExecutionException | InterruptedException e) {
@@ -266,9 +248,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     @Override
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
         mScouts = scouts;
-        mCache = new Cache(mScouts.keySet());
 
-        AnalyticsHelper.exportTeams(mCache.getTeamHelpers());
+        mCache.onExportStarted();
 
         Uri spreadsheetUri = getFileUri();
         if (spreadsheetUri == null) return;
@@ -294,30 +275,34 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             }
         }
 
-        Notification.Builder builder = new Notification.Builder(this)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_done_white_48dp)
-                .setContentTitle(getPluralTeams(R.plurals.exporting_spreadsheet_complete_title))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                                  .setBigContentTitle(getString(R.string.exporting_spreadsheet_complete_title))
+                                  .setSummaryText(getPluralTeams(
+                                          R.plurals.exporting_spreadsheet_complete_summary,
+                                          mCache.getTeamHelpers().size()))
+                                  .bigText(getPluralTeams(R.plurals.exporting_spreadsheet_complete_message)))
                 .setContentIntent(PendingIntent.getActivity(this,
                                                             exportId,
                                                             sharingIntent,
                                                             PendingIntent.FLAG_ONE_SHOT))
+                .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(Notification.PRIORITY_HIGH);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            builder.setShowWhen(true);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        }
 
-        updateNotification(exportId, builder.build());
+        mCache.updateNotification(exportId, builder.build());
         stopForeground(true);
     }
 
     private String getPluralTeams(@PluralsRes int id) {
-        return getResources().getQuantityString(id, mScouts.size(), mCache.getTeamNames());
+        return getPluralTeams(id, mCache.getTeamNames());
+    }
+
+    private String getPluralTeams(@PluralsRes int id, Object... args) {
+        return getResources().getQuantityString(id, mCache.getTeamHelpers().size(), args);
     }
 
     @Nullable
@@ -393,25 +378,24 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         mCache.setWorkbook(workbook);
 
         Sheet averageSheet = null;
-        if (mScouts.size() > Constants.SINGLE_ITEM) {
+        if (mCache.getTeamHelpers().size() > Constants.SINGLE_ITEM) {
             averageSheet = workbook.createSheet("Team Averages");
             averageSheet.createFreezePane(1, 1);
         }
 
         List<TeamHelper> teamHelpers = mCache.getTeamHelpers();
         for (TeamHelper teamHelper : teamHelpers) {
-            updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_team,
-                                                               teamHelper)));
+            mCache.updateNotification(getString(R.string.exporting_spreadsheet_team, teamHelper));
 
             Sheet teamSheet = workbook.createSheet(getSafeName(workbook, teamHelper));
             teamSheet.createFreezePane(1, 1);
             buildTeamSheet(teamHelper, teamSheet);
         }
 
-        updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_average)));
+        mCache.updateNotification(getString(R.string.exporting_spreadsheet_average));
         if (averageSheet != null) buildTeamAveragesSheet(averageSheet);
 
-        updateNotification(getExportNotification(getString(R.string.exporting_spreadsheet_cleanup)));
+        mCache.updateNotification(getString(R.string.exporting_spreadsheet_cleanup));
         setColumnWidths(workbook);
 
         return workbook;
@@ -960,6 +944,13 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private static final class Cache extends TeamCache {
         private static final Object ROW_HEADER_STYLE_LOCK = new Object();
         private static final Object COLUMN_HEADER_STYLE_LOCK = new Object();
+        private static final int EXTRA_OPS = 4;
+
+        private final Context mContext;
+        private final NotificationManager mNotificationManager;
+        private final NotificationCompat.Builder mProgressNotification;
+        private final int mProgressMax;
+        private int mCurrentProgress;
 
         private final Map<Cell, String> mKeyMetrics = new ConcurrentHashMap<>();
         private final Map<String, Short> mFormatStyles = new ConcurrentHashMap<>();
@@ -969,8 +960,43 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         private Workbook mWorkbook;
 
-        public Cache(Collection<TeamHelper> teamHelpers) {
+        public Cache(Context context, Collection<TeamHelper> teamHelpers) {
             super(teamHelpers);
+            mContext = context;
+            mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            mProgressMax = getTeamHelpers().size() + EXTRA_OPS;
+            mProgressNotification = new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setContentTitle(mContext.getString(R.string.exporting_spreadsheet_title))
+                    .setProgress(mProgressMax, mCurrentProgress, false)
+                    .setSubText("0%")
+                    .setColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
+                    .setWhen(System.currentTimeMillis())
+                    .setOngoing(true)
+                    .setPriority(Notification.PRIORITY_MIN);
+        }
+
+        public Notification getExportNotification(String text) {
+            return mProgressNotification.setContentText(text).build();
+        }
+
+        public void updateNotification(String text) {
+            mCurrentProgress++;
+            int percentage = Math.round((float) mCurrentProgress / (float) mProgressMax * 100);
+
+            mProgressNotification.setProgress(mProgressMax, mCurrentProgress, false);
+            mProgressNotification.setSubText(percentage + "%");
+            updateNotification(R.string.exporting_spreadsheet_title, getExportNotification(text));
+        }
+
+        public void updateNotification(int id, Notification notification) {
+            mNotificationManager.notify(id, notification);
+        }
+
+        public void onExportStarted() {
+            mProgressNotification.setSmallIcon(android.R.drawable.stat_sys_upload);
+            updateNotification(R.string.exporting_spreadsheet_title, mProgressNotification.build());
         }
 
         public void setWorkbook(Workbook workbook) {
