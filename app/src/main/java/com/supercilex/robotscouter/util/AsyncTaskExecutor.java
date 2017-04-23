@@ -5,20 +5,20 @@ import com.google.android.gms.tasks.Tasks;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public final class AsyncTaskExecutor implements Executor {
-    public static final AsyncTaskExecutor INSTANCE = new AsyncTaskExecutor();
+public enum AsyncTaskExecutor implements Executor {
+    INSTANCE;
 
-    private AsyncTaskExecutor() {
-        // Singleton
-    }
+    private ExecutorService mService = Executors.newCachedThreadPool();
 
     public static <TResult> Task<TResult> execute(Callable<TResult> callable) {
-        return Tasks.call(new AsyncTaskExecutor(), callable);
+        return Tasks.call(INSTANCE, callable);
     }
 
     @Override
     public void execute(Runnable runnable) {
-        new Thread(runnable).start();
+        mService.submit(runnable);
     }
 }
