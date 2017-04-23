@@ -62,6 +62,7 @@
     <string name="exporting_spreadsheet_loading">Loading teams</string>
     <string name="exporting_spreadsheet_team">Exporting team %s’s sheet</string>
     <string name="exporting_spreadsheet_average">Exporting average sheet</string>
+    <string name="exporting_spreadsheet_cleanup">Cleanup</string>
     <string name="exporting_offline">Exporting spreadsheet while offline may yield incomplete results.</string>
 
     <string name="sign_in">Sign in</string>
