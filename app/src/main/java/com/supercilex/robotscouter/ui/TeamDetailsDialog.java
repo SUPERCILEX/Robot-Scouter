@@ -151,6 +151,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
             }
 
             mTeamHelper.forceUpdateTeam();
+            mTeamHelper.forceRefresh();
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             Fragment fragment = getParentFragment();
