@@ -20,7 +20,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
@@ -75,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -166,16 +166,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
 
         try {
-            Tasks.await(Scouts.getAll(mCache.getTeamHelpers(), this)); // Force a refresh
+            // Force a refresh
+            Tasks.await(Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES);
 
             mCache.updateNotification(getString(R.string.exporting_spreadsheet_loading));
 
-            Task<Map<TeamHelper, List<Scout>>> fetchTeamsTask =
-                    Scouts.getAll(mCache.getTeamHelpers(), this)
-                            .addOnFailureListener(e -> showError(this, e));
-            Tasks.await(fetchTeamsTask);
-            if (fetchTeamsTask.isSuccessful()) onSuccess(fetchTeamsTask.getResult());
-        } catch (ExecutionException | InterruptedException e) {
+            onSuccess(Tasks.await(
+                    Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES));
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
             showError(this, e);
         }
     }
