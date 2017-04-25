@@ -240,7 +240,7 @@ public final class DatabaseHelper {
 
         @Override
         public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-            if (ConnectivityHelper.isOffline(mAppContext) && !(type == EventType.ADDED || type == EventType.CHANGED)) {
+            if (ConnectivityHelper.isOffline(mAppContext) || !(type == EventType.ADDED || type == EventType.CHANGED)) {
                 return;
             }
 
