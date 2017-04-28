@@ -23,6 +23,6 @@ allprojects {
 ext {
     supportLibVersion = '25.3.1'
     playServicesVersion = '10.2.1'
-    leakCanaryVersion = '1.5'
+    leakCanaryVersion = '1.5.1'
     retrofitVersion = '2.2.0'
 }
