@@ -122,8 +122,8 @@ public final class DatabaseHelper {
                 FirebaseCrash.log(user.getUid());
                 AnalyticsHelper.updateUserId();
 
-                addTeamsListener(appContext);
-                addScoutTemplatesListener();
+                setTeamsListener(appContext);
+                setScoutTemplatesListener();
             }
         });
 
@@ -140,7 +140,7 @@ public final class DatabaseHelper {
         });
     }
 
-    private static void addTeamsListener(final Context appContext) {
+    private static void setTeamsListener(final Context appContext) {
         Constants.sFirebaseTeams.removeAllListeners();
         Constants.sFirebaseTeams = new FirebaseIndexArray<>(
                 TeamHelper.getIndicesRef().orderByValue(),
@@ -175,7 +175,7 @@ public final class DatabaseHelper {
         }
     }
 
-    private static void addScoutTemplatesListener() {
+    private static void setScoutTemplatesListener() {
         Constants.sFirebaseScoutTemplates.removeAllListeners();
         Constants.sFirebaseScoutTemplates = new FirebaseIndexArray<>(
                 UserHelper.getScoutTemplateIndicesRef(),
@@ -222,6 +222,10 @@ public final class DatabaseHelper {
     private static final class NoopArrayBase<T> extends ObservableSnapshotArray<T> {
         public NoopArrayBase(@NonNull Class<T> clazz) {
             super(clazz);
+        }
+
+        public List<ChangeEventListener> getListeners() {
+            return mListeners;
         }
 
         @Override

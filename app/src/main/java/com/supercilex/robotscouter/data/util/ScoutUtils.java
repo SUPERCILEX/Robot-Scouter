@@ -104,6 +104,8 @@ public final class ScoutUtils {
     }
 
     public static String add(Team team) {
+        AnalyticsHelper.addScout(team.getNumber());
+
         DatabaseReference indexRef = getIndicesRef(team.getKey()).push();
         indexRef.setValue(System.currentTimeMillis());
         DatabaseReference scoutRef = Constants.getScoutMetrics(indexRef.getKey());
@@ -115,8 +117,6 @@ public final class ScoutUtils {
                                scoutRef)
                     .performTransformation();
         }
-
-        AnalyticsHelper.addScout(team.getNumber());
 
         return indexRef.getKey();
     }
