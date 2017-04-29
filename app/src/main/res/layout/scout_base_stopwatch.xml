@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <Button
         android:id="@+id/stopwatch"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_add_alarm_white_24dp"
+        android:drawablePadding="4dp"
+        android:drawableStart="@drawable/ic_add_alarm_white_24dp"
         android:stateListAnimator="@null"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
