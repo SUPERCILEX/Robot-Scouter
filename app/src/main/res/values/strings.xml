@@ -156,7 +156,7 @@
     <string name="header_name">Header name</string>
 
     <string name="unit">Unit</string>
-    <string name="start_stopwatch">Start (0:00)</string>
+    <string name="start_stopwatch">Start</string>
     <string name="stop_stopwatch">Stop (%s)</string>
     <string name="cycle_item">Cycle %d</string>
     <string name="average">Average</string>

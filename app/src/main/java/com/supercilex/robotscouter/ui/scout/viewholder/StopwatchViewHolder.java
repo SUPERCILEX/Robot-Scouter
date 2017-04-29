@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
@@ -139,7 +140,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             mIsRunning = true;
             TIMERS.put((StopwatchMetric) holder.mMetric, this);
 
-            setStyle(true);
+            setStyle();
 
             TaskCompletionSource<Void> start = new TaskCompletionSource<>();
             start.getTask().addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
@@ -161,7 +162,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         public void setHolder(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
-            setStyle(mIsRunning);
+            setStyle();
         }
 
         public void updateButtonTime() {
@@ -177,8 +178,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             }
 
             mTimerTask.trySetException(new CancellationException());
+            setStyle();
             setText(R.string.start_stopwatch);
-            setStyle(false);
 
             return getElapsedTime();
         }
@@ -226,24 +227,40 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         }
 
         @SuppressLint("PrivateResource")
-        private void setStyle(boolean isRunning) {
+        private void setStyle() {
             StopwatchViewHolder holder = mHolder.get();
-            if (holder != null) {
-                TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
+            if (holder == null) return;
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    holder.mToggleStopwatch.setTextAppearance(
-                            isRunning ?
-                                    TextAppearance_AppCompat_Widget_Button_Borderless_Colored :
-                                    TextAppearance_AppCompat_Widget_Button_Colored);
-                } else {
-                    int colorAccent = ContextCompat.getColor(holder.itemView.getContext(),
-                                                             R.color.colorAccent);
-                    holder.mToggleStopwatch.setTextColor(isRunning ? colorAccent : Color.WHITE);
-                }
+            View rootView = holder.itemView;
+            Context context = rootView.getContext();
+            TransitionManager.beginDelayedTransition((ViewGroup) rootView);
 
-                holder.mToggleStopwatch.setBackgroundResource(
-                        isRunning ? R.drawable.outline : abc_btn_colored_material);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                holder.mToggleStopwatch.setTextAppearance(
+                        mIsRunning ?
+                                TextAppearance_AppCompat_Widget_Button_Borderless_Colored :
+                                TextAppearance_AppCompat_Widget_Button_Colored);
+            } else {
+                holder.mToggleStopwatch.setTextColor(
+                        mIsRunning ?
+                                ContextCompat.getColor(context, R.color.colorAccent) : Color.WHITE);
+            }
+
+            holder.mToggleStopwatch.setBackgroundResource(
+                    mIsRunning ? R.drawable.outline : abc_btn_colored_material);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                holder.mToggleStopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        mIsRunning ? R.drawable.ic_alarm_off_color_accent_24dp : R.drawable.ic_add_alarm_white_24dp,
+                        0,
+                        0,
+                        0);
+            } else {
+                holder.mToggleStopwatch.setCompoundDrawablesWithIntrinsicBounds(
+                        mIsRunning ? R.drawable.ic_alarm_off_color_accent_24dp : R.drawable.ic_add_alarm_white_24dp,
+                        0,
+                        0,
+                        0);
             }
         }
     }
