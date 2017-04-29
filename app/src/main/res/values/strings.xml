@@ -69,6 +69,7 @@
     <string name="exporting_spreadsheet_average">Exporting average sheet</string>
     <string name="exporting_spreadsheet_cleanup">Cleanup</string>
     <string name="exporting_offline">Exporting spreadsheet while offline may yield incomplete results.</string>
+    <string name="unsupported_device">WARNING: you are using an unsupported device</string>
 
     <string name="sign_in">Sign in</string>
     <string name="sign_out">Sign out</string>
@@ -159,7 +160,6 @@
     <string name="stop_stopwatch">Stop (%s)</string>
     <string name="cycle_item">Cycle %d</string>
     <string name="average">Average</string>
-    <string name="unsupported_device">WARNING: you are using an unsupported device</string>
 
     <!-- Accessibility -->
     <string name="accessibility_robot_icon">A picture of the team’s robot.</string>

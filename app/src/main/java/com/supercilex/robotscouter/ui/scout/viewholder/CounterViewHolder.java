@@ -2,8 +2,10 @@ package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.CallSuper;
+import android.support.transition.TransitionManager;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -48,6 +50,7 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     }
 
     private void updateValue(int value) {
+        TransitionManager.beginDelayedTransition((ViewGroup) itemView);
         setValue(value);
         updateMetricValue(value);
     }
