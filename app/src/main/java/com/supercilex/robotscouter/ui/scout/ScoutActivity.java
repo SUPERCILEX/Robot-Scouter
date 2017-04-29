@@ -27,6 +27,7 @@ public class ScoutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scout);
         if (savedInstanceState == null) {
