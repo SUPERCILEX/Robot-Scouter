@@ -33,7 +33,7 @@ public class Scout {
 
     @Exclude
     public List<ScoutMetric> getMetrics() {
-        return new ArrayList<>(mMetrics);
+        return mMetrics;
     }
 
     public void add(ScoutMetric metric) {
