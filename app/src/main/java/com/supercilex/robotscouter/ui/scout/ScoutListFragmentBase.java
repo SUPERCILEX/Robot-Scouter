@@ -65,8 +65,6 @@ public abstract class ScoutListFragmentBase extends Fragment
         super.onCreate(savedInstanceState);
         mTeamHelper = TeamHelper.parse(getArguments());
         mOnScoutingReadyTask = new TaskCompletionSource<>();
-
-        FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @Nullable
@@ -81,6 +79,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSavedState = savedInstanceState;
+        FirebaseAuth.getInstance().addAuthStateListener(this);
 
         if (mSavedState == null && ConnectivityHelper.isOffline(getContext())) {
             Snackbar.make(getView().findViewById(R.id.root),
@@ -92,7 +91,6 @@ public abstract class ScoutListFragmentBase extends Fragment
         mHolder = newAppBarViewHolder(mTeamHelper, mOnScoutingReadyTask.getTask());
         if (savedInstanceState != null) mHolder.restoreState(savedInstanceState);
         mHolder.bind(mTeamHelper);
-        addListeners();
     }
 
     protected abstract AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
@@ -113,8 +111,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Constants.sFirebaseTeams.removeChangeEventListener(this);
-        if (mPagerAdapter != null) mPagerAdapter.cleanup();
+        removeListeners();
         FirebaseAuth.getInstance().removeAuthStateListener(this);
     }
 
@@ -208,6 +205,11 @@ public abstract class ScoutListFragmentBase extends Fragment
         }
     }
 
+    private void removeListeners() {
+        Constants.sFirebaseTeams.removeChangeEventListener(this);
+        if (mPagerAdapter != null) mPagerAdapter.cleanup();
+    }
+
     @Override
     public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
         if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
@@ -251,6 +253,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
         if (auth.getCurrentUser() == null) onTeamDeleted();
+        else addListeners();
     }
 
     @Override
