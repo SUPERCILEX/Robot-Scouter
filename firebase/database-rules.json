@@ -35,7 +35,8 @@
     },
     "teams": {
       "$key": {
-        ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()"
+        ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()",
+        ".validate": "newData.child('number').exists()"
       }
     },
     "users": {
