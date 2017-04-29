@@ -1,10 +1,15 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -34,6 +39,10 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static android.support.v7.appcompat.R.drawable.abc_btn_colored_material;
+import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Borderless_Colored;
+import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Colored;
 
 public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextView>
         implements View.OnClickListener, OnSuccessListener<Void> {
@@ -130,6 +139,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             mIsRunning = true;
             TIMERS.put((StopwatchMetric) holder.mMetric, this);
 
+            setStyle(true);
+
             TaskCompletionSource<Void> start = new TaskCompletionSource<>();
             start.getTask().addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
             start.setResult(null);
@@ -150,6 +161,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         public void setHolder(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
+            setStyle(mIsRunning);
         }
 
         public void updateButtonTime() {
@@ -166,6 +178,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
             mTimerTask.trySetException(new CancellationException());
             setText(R.string.start_stopwatch);
+            setStyle(false);
 
             return getElapsedTime();
         }
@@ -209,8 +222,28 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         private void setText(@StringRes int id, Object... formatArgs) {
             StopwatchViewHolder holder = mHolder.get();
+            if (holder != null) holder.setText(id, formatArgs);
+        }
+
+        @SuppressLint("PrivateResource")
+        private void setStyle(boolean isRunning) {
+            StopwatchViewHolder holder = mHolder.get();
             if (holder != null) {
-                holder.setText(id, formatArgs);
+                TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    holder.mToggleStopwatch.setTextAppearance(
+                            isRunning ?
+                                    TextAppearance_AppCompat_Widget_Button_Borderless_Colored :
+                                    TextAppearance_AppCompat_Widget_Button_Colored);
+                } else {
+                    int colorAccent = ContextCompat.getColor(holder.itemView.getContext(),
+                                                             R.color.colorAccent);
+                    holder.mToggleStopwatch.setTextColor(isRunning ? colorAccent : Color.WHITE);
+                }
+
+                holder.mToggleStopwatch.setBackgroundResource(
+                        isRunning ? R.drawable.outline : abc_btn_colored_material);
             }
         }
     }
