@@ -182,6 +182,13 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
         mScouts = scouts;
 
+        if (mScouts.size() != mCache.getTeamHelpers().size()) {
+            // Some error occurred, let's try again
+            startService(new Intent(this, SpreadsheetExporter.class)
+                                 .putExtras(TeamHelper.toIntent(mCache.getTeamHelpers())));
+            return;
+        }
+
         mCache.onExportStarted();
 
         Uri spreadsheetUri = getFileUri();
