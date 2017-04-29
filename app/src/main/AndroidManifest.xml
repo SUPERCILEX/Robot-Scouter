@@ -79,7 +79,7 @@
             android:name=".ui.scout.ScoutActivity"
             android:label="@string/title_activity_scout"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
-            android:theme="@style/RobotScouter.NoActionBar.TransparentStatusBar"
+            android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan">
 
             <meta-data
