@@ -1,11 +1,10 @@
 package com.supercilex.robotscouter.ui.scout.viewholder.template;
 
 import android.view.View;
-import android.widget.TextView;
 
-import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
+import com.supercilex.robotscouter.ui.scout.viewholder.HeaderViewHolder;
 
-public class HeaderTemplateViewHolder extends ScoutViewHolderBase<Void, TextView> implements ScoutTemplateViewHolder {
+public class HeaderTemplateViewHolder extends HeaderViewHolder implements ScoutTemplateViewHolder {
     public HeaderTemplateViewHolder(View itemView) {
         super(itemView);
     }
