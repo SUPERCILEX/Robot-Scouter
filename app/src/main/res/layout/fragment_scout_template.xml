@@ -84,37 +84,37 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_header"
-            style="@style/RobotScouter.Metric.Fab"
+            style="@style/RobotScouter.Fab.Metric"
             android:src="@drawable/ic_title_white_24dp"
             app:fab_label="@string/add_header"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_checkbox"
-            style="@style/RobotScouter.Metric.Fab"
+            style="@style/RobotScouter.Fab.Metric"
             android:src="@drawable/ic_check_circle_white_24dp"
             app:fab_label="@string/add_checkbox"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_stopwatch"
-            style="@style/RobotScouter.Metric.Fab"
+            style="@style/RobotScouter.Fab.Metric"
             android:src="@drawable/ic_add_alarm_white_24dp"
             app:fab_label="@string/add_stopwatch"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_note"
-            style="@style/RobotScouter.Metric.Fab"
+            style="@style/RobotScouter.Fab.Metric"
             android:src="@drawable/ic_note_white_24dp"
             app:fab_label="@string/add_note"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_counter"
-            style="@style/RobotScouter.Metric.Fab"
+            style="@style/RobotScouter.Fab.Metric"
             android:src="@drawable/ic_count_white_24dp"
             app:fab_label="@string/add_counter"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_spinner"
-            style="@style/RobotScouter.Metric.Fab"
+            style="@style/RobotScouter.Fab.Metric"
             android:src="@drawable/ic_list_white_24dp"
             app:fab_label="@string/add_spinner"/>
 

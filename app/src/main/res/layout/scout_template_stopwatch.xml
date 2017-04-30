@@ -3,9 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    style="@style/RobotScouter.Metric">
 
     <include layout="@layout/scout_template_base_reorder"/>
 
@@ -15,9 +13,10 @@
         android:layout_height="wrap_content"
         android:hint="@string/stopwatch_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintBaseline_toBaselineOf="@+id/stopwatch"
+        app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
         app:layout_constraintLeft_toRightOf="@id/reorder"
         app:layout_constraintRight_toLeftOf="@id/stopwatch"
+        app:layout_constraintTop_toTopOf="@+id/stopwatch"
         tools:ignore="UnknownIdInLayout"
         tools:layout_constraintLeft_creator="1"
         tools:text="Example"/>
