@@ -1,7 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -12,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -34,13 +31,13 @@ import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoUtils;
+import com.supercilex.robotscouter.util.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
-    private static final int ANIMATION_DURATION = 250;
 
     private final Fragment mFragment;
     private final PermissionRequestHandler mPermHandler;
@@ -313,26 +310,22 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         @ColorRes int newColorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
 
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
-        ValueAnimator toolbarAnimator = ValueAnimator.ofObject(
-                new ArgbEvaluator(),
-                ContextCompat.getColor(mFragment.getContext(), oldColorPrimary),
-                ContextCompat.getColor(mFragment.getContext(), newColorPrimary));
-        toolbarAnimator.setDuration(ANIMATION_DURATION);
-        toolbarAnimator.addUpdateListener(animator -> toolbar.setBackgroundColor((int) animator.getAnimatedValue()));
-        toolbarAnimator.start();
+        ViewUtils.animateColorChange(
+                mFragment.getContext(),
+                oldColorPrimary,
+                newColorPrimary,
+                animator -> toolbar.setBackgroundColor((int) animator.getAnimatedValue()));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             @ColorRes int oldColorPrimaryDark = visible ? R.color.selected_status_bar : R.color.colorPrimaryDark;
             @ColorRes int newColorPrimaryDark = visible ? R.color.colorPrimaryDark : R.color.selected_status_bar;
 
-            ValueAnimator statusBarAnimator = ValueAnimator.ofObject(
-                    new ArgbEvaluator(),
-                    ContextCompat.getColor(mFragment.getContext(), oldColorPrimaryDark),
-                    ContextCompat.getColor(mFragment.getContext(), newColorPrimaryDark));
-            statusBarAnimator.setDuration(ANIMATION_DURATION);
-            statusBarAnimator.addUpdateListener(animator -> activity.getWindow()
-                    .setStatusBarColor((int) animator.getAnimatedValue()));
-            statusBarAnimator.start();
+            ViewUtils.animateColorChange(
+                    mFragment.getContext(),
+                    oldColorPrimaryDark,
+                    newColorPrimaryDark,
+                    animator -> activity.getWindow()
+                            .setStatusBarColor((int) animator.getAnimatedValue()));
         }
     }
 
