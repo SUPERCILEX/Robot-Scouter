@@ -13,10 +13,17 @@
         android:textIsSelectable="false"
         app:layout_constraintBottom_toBottomOf="@+id/notes"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/notes"
+        app:layout_constraintRight_toLeftOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/notes"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33"/>
 
     <include layout="@layout/scout_base_notes"/>
 
