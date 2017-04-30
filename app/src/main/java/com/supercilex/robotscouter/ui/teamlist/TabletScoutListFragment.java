@@ -24,7 +24,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
         super.onActivityCreated(savedInstanceState);
         TeamSelectionListener listener = (TeamSelectionListener) getActivity();
         Team team = TeamHelper.parse(getArguments()).getTeam();
-        if (!ViewUtils.isTabletMode(getContext())) {
+        if (!ViewUtils.isTabletMode()) {
             listener.onTeamSelected(team, getArguments().getBoolean(ADD_SCOUT_KEY));
             removeFragment();
             return;

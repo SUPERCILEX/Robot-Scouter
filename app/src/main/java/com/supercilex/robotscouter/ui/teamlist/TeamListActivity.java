@@ -45,7 +45,7 @@ public class TeamListActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         mTeamListFragment =
                 (TeamListFragment) getSupportFragmentManager().findFragmentByTag(TeamListFragment.TAG);
-        if (savedInstanceState != null && ViewUtils.isTabletMode(this)) {
+        if (savedInstanceState != null && ViewUtils.isTabletMode()) {
             mSelectedTeamKey = savedInstanceState.getString(SELECTED_TEAM_KEY);
             mTeamListFragment.selectTeam(mSelectedTeamKey);
         }
@@ -146,7 +146,7 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     public void onTeamSelected(Team team, boolean addScout) {
         TeamHelper helper = team.getHelper();
-        if (ViewUtils.isTabletMode(this)) {
+        if (ViewUtils.isTabletMode()) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.scouts, TabletScoutListFragment.newInstance(helper, addScout))
                     .commit();
