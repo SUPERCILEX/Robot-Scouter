@@ -18,7 +18,7 @@ import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.LinkedHashMap;
@@ -104,7 +104,7 @@ public final class ScoutUtils {
     }
 
     public static String add(Team team) {
-        AnalyticsHelper.addScout(team.getNumber());
+        AnalyticsUtils.addScout(team.getNumber());
 
         DatabaseReference indexRef = getIndicesRef(team.getKey()).push();
         indexRef.setValue(System.currentTimeMillis());

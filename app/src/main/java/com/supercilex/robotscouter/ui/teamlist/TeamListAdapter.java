@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 import java.util.List;
 
@@ -92,7 +92,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                 break;
             case REMOVED:
                 if (!mMenuManager.getSelectedTeams().isEmpty()) {
-                    List<Team> tmpTeams = FirebaseAdapterHelper.getItems(this);
+                    List<Team> tmpTeams = FirebaseAdapterUtils.getItems(this);
                     for (TeamHelper oldTeamHelper : mMenuManager.getSelectedTeams()) {
                         if (!tmpTeams.contains(oldTeamHelper.getTeam())) { // We found the deleted item
                             mMenuManager.onSelectedTeamRemoved(oldTeamHelper);

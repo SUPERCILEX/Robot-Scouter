@@ -17,7 +17,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
+import com.supercilex.robotscouter.util.ConnectivityUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         }
         if (hadScouts
                 && mKeys.isEmpty()
-                && !ConnectivityHelper.isOffline(mFragment.getContext())
+                && !ConnectivityUtils.isOffline(mFragment.getContext())
                 && mFragment.isResumed()) {
             ShouldDeleteTeamDialog.show(mFragment.getChildFragmentManager(), mTeamHelper);
         }

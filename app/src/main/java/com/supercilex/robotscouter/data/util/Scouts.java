@@ -19,7 +19,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
+import com.supercilex.robotscouter.util.ConnectivityUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
         }
 
         private void resetTimeout() {
-            if (ConnectivityHelper.isOffline(mContext)) {
+            if (ConnectivityUtils.isOffline(mContext)) {
                 mTimer.cancel();
                 mTimer = new Timer();
                 mTimer.schedule(new TimerTask() {

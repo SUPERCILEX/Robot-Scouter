@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public final class DatabaseHelper {
+public enum DatabaseHelper {;
     private static final String QUERY_KEY = "query_key";
 
     private static final SnapshotParser<Team> TEAM_PARSER = snapshot -> {
@@ -57,10 +57,6 @@ public final class DatabaseHelper {
             new NoopArrayBase<>(Team.class);
     private static final ObservableSnapshotArray<Scout> SCOUT_TEMPLATES_NOOP_ARRAY =
             new NoopArrayBase<>(Scout.class);
-
-    private DatabaseHelper() {
-        throw new AssertionError("No instance for you!");
-    }
 
     public static DatabaseReference getRef() {
         return DatabaseHolder.INSTANCE;
@@ -120,7 +116,7 @@ public final class DatabaseHelper {
             } else {
                 // Log uid to help debug db crashes
                 FirebaseCrash.log(user.getUid());
-                AnalyticsHelper.updateUserId();
+                AnalyticsUtils.updateUserId();
 
                 setTeamsListener(appContext);
                 setScoutTemplatesListener();
@@ -244,7 +240,7 @@ public final class DatabaseHelper {
 
         @Override
         public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-            if (ConnectivityHelper.isOffline(mAppContext) || !(type == EventType.ADDED || type == EventType.CHANGED)) {
+            if (ConnectivityUtils.isOffline(mAppContext) || !(type == EventType.ADDED || type == EventType.CHANGED)) {
                 return;
             }
 

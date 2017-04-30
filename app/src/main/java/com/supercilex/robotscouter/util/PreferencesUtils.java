@@ -5,7 +5,7 @@ import android.util.Pair;
 
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 
-public final class PreferencesHelper {
+public enum PreferencesUtils {;
     private static final String TEAM_LIST_ACTIVITY_PREF_NAME = TeamListActivity.class.getName();
     private static final String EXPORT_PREF_NAME = "spreadsheet_export";
     private static final String UPLOAD_MEDIA_PREF_NAME = "upload_media";
@@ -17,10 +17,6 @@ public final class PreferencesHelper {
 
     private static final String SHOULD_ASK_TO_UPLOAD_MEDIA = "should_ask_to_upload_media";
     private static final String SHOULD_UPLOAD_MEDIA = "should_upload_media_to_tba";
-
-    private PreferencesHelper() {
-        throw new AssertionError("No instance for you!");
-    }
 
     private static boolean getTeamListActivityBoolean(Context context, String key) {
         return context.getSharedPreferences(TEAM_LIST_ACTIVITY_PREF_NAME, Context.MODE_PRIVATE)

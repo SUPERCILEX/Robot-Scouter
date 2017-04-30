@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public final class Constants {
+public enum Constants {;
     public static final String MANAGER_STATE = "manager_state";
     public static final String ITEM_COUNT = "count";
     public static final int SINGLE_ITEM = 1;
@@ -66,10 +66,6 @@ public final class Constants {
 
     public static DataSnapshot sDefaultTemplate;
     public static ObservableSnapshotArray<Scout> sFirebaseScoutTemplates;
-
-    private Constants() {
-        throw new AssertionError("No instance for you!");
-    }
 
     public static DatabaseReference getScoutMetrics(String key) {
         return FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS);

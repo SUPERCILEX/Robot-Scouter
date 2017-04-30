@@ -10,6 +10,9 @@
 # In-app billing
 -keep class com.android.vending.billing.**
 
+# Work around proguard bug https://sourceforge.net/p/proguard/bugs/643/
+-keep enum com.supercilex.robotscouter.util.AnalyticsUtils { public static *** init(...); }
+
 # Apache POI
 -dontwarn org.apache.**
 -dontwarn org.openxmlformats.schemas.**

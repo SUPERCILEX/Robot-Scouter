@@ -30,12 +30,12 @@ import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
+import com.supercilex.robotscouter.ui.PermissionRequestHandler;
+import com.supercilex.robotscouter.util.AnalyticsUtils;
+import com.supercilex.robotscouter.util.ConnectivityUtils;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.IoHelper;
-import com.supercilex.robotscouter.util.PermissionRequestHandler;
-import com.supercilex.robotscouter.util.PreferencesHelper;
+import com.supercilex.robotscouter.util.IoUtils;
+import com.supercilex.robotscouter.util.PreferencesUtils;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -135,12 +135,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             return false;
         }
 
-        if (PreferencesHelper.shouldShowExportHint(context)) {
+        if (PreferencesUtils.shouldShowExportHint(context)) {
             Snackbar.make(fragment.getView(),
                           R.string.exporting_spreadsheet_hint,
                           Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.never_again,
-                               v -> PreferencesHelper.setShouldShowExportHint(context, false))
+                               v -> PreferencesUtils.setShouldShowExportHint(context, false))
                     .show();
         }
 
@@ -156,12 +156,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     protected void onHandleIntent(Intent intent) {
         mCache = new SpreadsheetCache(TeamHelper.parseList(intent), this);
 
-        AnalyticsHelper.exportTeams(mCache.getTeamHelpers());
+        AnalyticsUtils.exportTeams(mCache.getTeamHelpers());
 
         startForeground(R.string.exporting_spreadsheet_title,
                         mCache.getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
 
-        if (ConnectivityHelper.isOffline(this)) {
+        if (ConnectivityUtils.isOffline(this)) {
             showToast(this, getString(R.string.exporting_offline));
         }
 
@@ -248,7 +248,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     @Nullable
     private Uri getFileUri() {
         @SuppressWarnings("MissingPermission")
-        File rsFolder = IoHelper.getRootFolder();
+        File rsFolder = IoUtils.getRootFolder();
         if (rsFolder == null) return null;
 
         File file = writeFile(rsFolder);
@@ -266,7 +266,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                             rsFolder, getFullyQualifiedFileName(" (" + i + ")"));
                 } else {
                     absoluteFile = new File(absoluteFile.getParentFile(),
-                                            IoHelper.hide(absoluteFile.getName()));
+                                            IoUtils.hide(absoluteFile.getName()));
                     if (!absoluteFile.createNewFile()
                             // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
                             && (!absoluteFile.delete() || !absoluteFile.createNewFile())) {
@@ -286,7 +286,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             }
             workbook.write(stream);
 
-            return IoHelper.unhide(absoluteFile);
+            return IoUtils.unhide(absoluteFile);
         } catch (IOException e) {
             showError(this, e);
             absoluteFile.delete();

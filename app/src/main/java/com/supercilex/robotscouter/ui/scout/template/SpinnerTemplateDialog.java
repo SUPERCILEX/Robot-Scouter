@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.DatabaseHelper;
-import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 public class SpinnerTemplateDialog extends DialogFragment implements View.OnClickListener, DialogInterface.OnShowListener {
     private static final String TAG = "SpinnerTemplateDialog";
@@ -78,7 +78,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 
@@ -94,7 +94,7 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
     public void onClick(View v) {
         int itemCount = mAdapter.getItemCount();
         mRef.push().setValue("item " + (itemCount + 1),
-                             FirebaseAdapterHelper.getHighestIntPriority(mAdapter.getSnapshots()));
+                             FirebaseAdapterUtils.getHighestIntPriority(mAdapter.getSnapshots()));
         mItemTouchCallback.addItemToScrollQueue(itemCount);
     }
 
@@ -150,6 +150,6 @@ public class SpinnerTemplateDialog extends DialogFragment implements View.OnClic
         };
         recyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);
-        FirebaseAdapterHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
     }
 }

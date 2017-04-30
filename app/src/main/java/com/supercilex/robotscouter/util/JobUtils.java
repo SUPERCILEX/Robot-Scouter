@@ -18,11 +18,7 @@ import com.firebase.jobdispatcher.Trigger;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
-public final class JobHelper {
-    private JobHelper() {
-        throw new AssertionError("No instance for you!");
-    }
-
+public enum JobUtils {;
     public static void startInternetJob14(Context context,
                                           TeamHelper teamHelper,
                                           int jobId,
@@ -34,7 +30,7 @@ public final class JobHelper {
                 .setService(clazz)
                 .setTag(String.valueOf(jobId))
                 .setTrigger(Trigger.executionWindow(0, 0))
-                .setExtras(JobHelper.toRawBundle(teamHelper))
+                .setExtras(toRawBundle(teamHelper))
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
 
@@ -53,7 +49,7 @@ public final class JobHelper {
                                               new ComponentName(context.getPackageName(),
                                                                 clazz.getName()))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setExtras(JobHelper.toRawPersistableBundle(teamHelper))
+                .setExtras(toRawPersistableBundle(teamHelper))
                 .build();
 
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);

@@ -17,7 +17,7 @@ import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 public class ScoutFragment extends Fragment {
     private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
@@ -52,14 +52,14 @@ public class ScoutFragment extends Fragment {
                 getChildFragmentManager(),
                 (SimpleItemAnimator) mRecyclerView.getItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-        FirebaseAdapterHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 
         return mRecyclerView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 

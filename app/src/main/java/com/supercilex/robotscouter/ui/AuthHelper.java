@@ -29,9 +29,9 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.RemoteConfigHelper;
+import com.supercilex.robotscouter.util.RemoteConfigUtils;
 
 public final class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
@@ -88,7 +88,7 @@ public final class AuthHelper implements View.OnClickListener {
 
     private static Task<AuthResult> signInAnonymouslyInitBasic() {
         return FirebaseAuth.getInstance().signInAnonymously()
-                .addOnSuccessListener(result -> AnalyticsHelper.updateUserId());
+                .addOnSuccessListener(result -> AnalyticsUtils.updateUserId());
     }
 
     private static Task<AuthResult> signInAnonymouslyDbInit() {
@@ -170,7 +170,7 @@ public final class AuthHelper implements View.OnClickListener {
                 userHelper.add();
                 if (response != null) userHelper.transferData(response.getPrevUid());
 
-                AnalyticsHelper.login();
+                AnalyticsUtils.login();
             } else {
                 if (response == null) return; // User cancelled sign in
 
@@ -206,7 +206,7 @@ public final class AuthHelper implements View.OnClickListener {
         private static final String SHOULD_CACHE_DB = "should_cache_db";
 
         private DatabaseInitializer() {
-            RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this);
+            RemoteConfigUtils.fetchAndActivate().addOnSuccessListener(this);
             Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
         }
 

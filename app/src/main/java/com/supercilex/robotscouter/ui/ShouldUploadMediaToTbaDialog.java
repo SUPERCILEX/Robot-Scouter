@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.util.PreferencesHelper;
+import com.supercilex.robotscouter.util.PreferencesUtils;
 
 public class ShouldUploadMediaToTbaDialog extends DialogFragment implements DialogInterface.OnClickListener, DialogInterface.OnShowListener {
     private static final String TAG = "ShouldUploadMediaToTbaD";
@@ -24,7 +24,7 @@ public class ShouldUploadMediaToTbaDialog extends DialogFragment implements Dial
 
     public static void show(Fragment fragment) {
         Pair<Boolean, Boolean> uploadMediaToTbaPair =
-                PreferencesHelper.shouldAskToUploadMediaToTba(fragment.getContext());
+                PreferencesUtils.shouldAskToUploadMediaToTba(fragment.getContext());
         if (uploadMediaToTbaPair.first) {
             new ShouldUploadMediaToTbaDialog().show(fragment.getChildFragmentManager(), TAG);
         } else {
@@ -60,7 +60,7 @@ public class ShouldUploadMediaToTbaDialog extends DialogFragment implements Dial
     @Override
     public void onClick(DialogInterface dialog, int which) {
         boolean isYes = which == Dialog.BUTTON_POSITIVE;
-        PreferencesHelper.setShouldAskToUploadMediaToTba(
+        PreferencesUtils.setShouldAskToUploadMediaToTba(
                 getContext(), Pair.create(!mSaveResponseCheckbox.isChecked(), isYes));
 
         ((TeamMediaCreator.StartCaptureListener) getParentFragment()).onStartCapture(isYes);

@@ -28,12 +28,12 @@ import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetExporter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
+import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
+import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.IoHelper;
-import com.supercilex.robotscouter.util.PermissionRequestHandler;
+import com.supercilex.robotscouter.util.IoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
-        mPermHandler = new PermissionRequestHandler(IoHelper.PERMS, mFragment, this);
+        mPermHandler = new PermissionRequestHandler(IoUtils.PERMS, mFragment, this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
@@ -127,7 +127,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 if (TeamSharer.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
-                AnalyticsHelper.shareTeam(teamHelper.getTeam().getNumber());
+                AnalyticsUtils.shareTeam(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_visit_tba_team_website:
                 teamHelper.visitTbaWebsite(mFragment.getContext());
@@ -139,7 +139,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mFragment.getChildFragmentManager(), teamHelper);
-                AnalyticsHelper.editTeamDetails(teamHelper.getTeam().getNumber());
+                AnalyticsUtils.editTeamDetails(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_export_spreadsheet:
                 exportTeams();

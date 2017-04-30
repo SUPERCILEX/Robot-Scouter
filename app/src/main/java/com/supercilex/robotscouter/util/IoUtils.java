@@ -11,16 +11,12 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("MissingPermission") // TODO remove once Google fixes their plugin
-public final class IoHelper {
+public enum IoUtils {;
     public static final List<String> PERMS = Collections.singletonList(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
     private static final File ROOT_FOLDER =
             new File(Environment.getExternalStorageDirectory(), "Robot Scouter");
     private static final File MEDIA_FOLDER = new File(ROOT_FOLDER, "Media");
-
-    private IoHelper() {
-        throw new AssertionError("No instance for you!");
-    }
 
     @Nullable
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
