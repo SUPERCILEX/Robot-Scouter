@@ -1,7 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -59,7 +57,6 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         mCouldItemBeSelected = couldItemBeSelected;
         mIsScouting = isScouting;
 
-        mNewScout.setBackground(getRippleDrawable());
         setTeamNumber();
         setTeamName();
         updateItemStatus();
@@ -72,7 +69,6 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     }
 
     private void updateItemStatus() {
-        itemView.setBackground(getRippleDrawable());
         if (mIsItemSelected) {
             Glide.with(itemView.getContext())
                     .load("")
@@ -83,22 +79,13 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
                     ContextCompat.getColor(itemView.getContext(), R.color.selected_item));
         } else {
             setTeamMedia();
+            itemView.setBackground(null);
         }
         mNewScout.setVisibility(mCouldItemBeSelected ? View.GONE : View.VISIBLE);
 
         if (!mIsItemSelected && !mCouldItemBeSelected && mIsScouting) {
             itemView.setBackgroundColor(
                     ContextCompat.getColor(itemView.getContext(), R.color.grey));
-        }
-    }
-
-    private Drawable getRippleDrawable() {
-        int[] attrs = new int[]{android.R.attr.selectableItemBackground};
-        TypedArray typedArray = itemView.getContext().obtainStyledAttributes(attrs);
-        try {
-            return typedArray.getDrawable(0);
-        } finally {
-            typedArray.recycle();
         }
     }
 

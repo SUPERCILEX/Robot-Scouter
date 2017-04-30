@@ -233,6 +233,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
             View rootView = holder.itemView;
             Context context = rootView.getContext();
+
             TransitionManager.beginDelayedTransition((ViewGroup) rootView);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
