@@ -2,14 +2,11 @@ package com.supercilex.robotscouter;
 
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
-import android.text.TextUtils;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.supercilex.robotscouter.data.util.UserHelper;
-import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.DatabaseHelper;
 import com.supercilex.robotscouter.util.ViewUtils;
@@ -40,13 +37,5 @@ public class RobotScouter extends MultiDexApplication {
         config.setConfigSettings(new FirebaseRemoteConfigSettings.Builder()
                                          .setDeveloperModeEnabled(BuildConfig.DEBUG)
                                          .build());
-
-        // Ensure backwards compatibility TODO remove once enough people have upgraded
-        String key = "com.supercilex.robotscouter.scout_template";
-        String templateKey = getSharedPreferences(key, Context.MODE_PRIVATE).getString(key, null);
-        if (!TextUtils.isEmpty(templateKey) && AuthHelper.isSignedIn()) {
-            UserHelper.getScoutTemplateIndicesRef().child(templateKey).setValue(true);
-            getSharedPreferences(key, Context.MODE_PRIVATE).edit().remove(key).apply();
-        }
     }
 }
