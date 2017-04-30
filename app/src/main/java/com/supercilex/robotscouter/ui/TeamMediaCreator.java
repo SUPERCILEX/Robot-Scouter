@@ -19,8 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.IoHelper;
-import com.supercilex.robotscouter.util.PermissionRequestHandler;
+import com.supercilex.robotscouter.util.IoUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
     static {
         List<String> perms = new ArrayList<>();
-        perms.addAll(IoHelper.PERMS);
+        perms.addAll(IoUtils.PERMS);
         perms.add(Manifest.permission.CAMERA);
         PERMS = Collections.unmodifiableList(perms);
     }
@@ -128,7 +127,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             }
 
             //noinspection MissingPermission
-            File rsFolder = IoHelper.getMediaFolder();
+            File rsFolder = IoUtils.getMediaFolder();
 
             File photoFile = null;
             try {
@@ -157,7 +156,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             Context context = mFragment.get().getContext();
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    photo = IoHelper.unhide(photo);
+                    photo = IoUtils.unhide(photo);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -180,7 +179,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        return File.createTempFile(IoHelper.hide(mTeamHelper + "_" + System.currentTimeMillis()),
+        return File.createTempFile(IoUtils.hide(mTeamHelper + "_" + System.currentTimeMillis()),
                                    ".jpg",
                                    mediaFolder);
     }

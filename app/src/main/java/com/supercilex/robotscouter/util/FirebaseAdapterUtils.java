@@ -10,11 +10,7 @@ import com.google.firebase.database.DataSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class FirebaseAdapterHelper {
-    private FirebaseAdapterHelper() {
-        throw new AssertionError("No instance for you!");
-    }
-
+public enum FirebaseAdapterUtils {;
     public static <T> List<T> getItems(FirebaseRecyclerAdapter<T, ?> adapter) {
         List<T> items = new ArrayList<>(adapter.getItemCount());
         for (int i = 0; i < adapter.getItemCount(); i++) {

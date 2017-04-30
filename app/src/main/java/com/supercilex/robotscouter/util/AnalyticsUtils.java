@@ -12,8 +12,8 @@ import java.util.List;
 import static com.google.firebase.analytics.FirebaseAnalytics.Event;
 import static com.google.firebase.analytics.FirebaseAnalytics.Param;
 
-public class AnalyticsHelper {
-    private static final AnalyticsHelper INSTANCE = new AnalyticsHelper();
+public enum AnalyticsUtils {
+    INSTANCE;
 
     private FirebaseAnalytics mAnalytics;
 

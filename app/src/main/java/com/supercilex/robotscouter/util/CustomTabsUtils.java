@@ -9,11 +9,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.supercilex.robotscouter.R;
 
-public final class CustomTabsHelper {
-    private CustomTabsHelper() {
-        throw new AssertionError("No instance for you!");
-    }
-
+public enum CustomTabsUtils {;
     public static void launchUrl(Context context, Uri url) {
         getCustomTabsIntent(context).launchUrl(context, url);
     }

@@ -7,13 +7,13 @@ import android.support.annotation.RequiresApi;
 
 import com.supercilex.robotscouter.data.remote.TbaUploader;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.JobHelper;
+import com.supercilex.robotscouter.util.JobUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class UploadTeamMediaJob21 extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
-        TeamHelper oldTeamHelper = JobHelper.parseRawBundle(params.getExtras());
+        TeamHelper oldTeamHelper = JobUtils.parseRawBundle(params.getExtras());
         TbaUploader.upload(oldTeamHelper.getTeam(), this)
                 .addOnSuccessListener(newTeam -> {
                     oldTeamHelper.updateMedia(newTeam);

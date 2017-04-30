@@ -32,7 +32,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseAdapterHelper;
+import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 import java.util.Collections;
 
@@ -100,7 +100,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterHelper.saveRecyclerViewState(outState, mAdapter, mManager);
+        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, mManager);
         super.onSaveInstanceState(outState);
     }
 
@@ -176,7 +176,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 mItemTouchCallback);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);
-        FirebaseAdapterHelper.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
     }
 
     private void initFabMenu() {
@@ -215,7 +215,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             return;
         }
 
-        int priority = FirebaseAdapterHelper.getHighestIntPriority(mAdapter.getSnapshots()) + 1;
+        int priority = FirebaseAdapterUtils.getHighestIntPriority(mAdapter.getSnapshots()) + 1;
         DatabaseReference metricRef = templateRef.push();
         switch (id) {
             case R.id.add_checkbox:

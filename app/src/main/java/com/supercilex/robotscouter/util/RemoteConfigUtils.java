@@ -6,11 +6,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.concurrent.TimeUnit;
 
-public final class RemoteConfigHelper {
-    private RemoteConfigHelper() {
-        throw new AssertionError("No instance for you!");
-    }
-
+public enum RemoteConfigUtils {;
     public static Task<Void> fetchAndActivate() {
         FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
         long cacheExpiration = config.getInfo()

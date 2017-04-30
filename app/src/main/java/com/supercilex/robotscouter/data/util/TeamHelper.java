@@ -22,8 +22,8 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.CustomTabsHelper;
-import com.supercilex.robotscouter.util.RemoteConfigHelper;
+import com.supercilex.robotscouter.util.CustomTabsUtils;
+import com.supercilex.robotscouter.util.RemoteConfigUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -216,7 +216,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public void fetchLatestData(Context context) {
         Context appContext = context.getApplicationContext();
-        RemoteConfigHelper.fetchAndActivate()
+        RemoteConfigUtils.fetchAndActivate()
                 .addOnSuccessListener(aVoid -> {
                     long differenceDays =
                             TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
@@ -235,11 +235,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public void visitTbaWebsite(Context context) {
         Uri tbaUrl = Uri.parse("https://www.thebluealliance.com/team/" + mTeam.getNumber());
-        CustomTabsHelper.launchUrl(context, tbaUrl);
+        CustomTabsUtils.launchUrl(context, tbaUrl);
     }
 
     public void visitTeamWebsite(Context context) {
-        CustomTabsHelper.launchUrl(context, Uri.parse(mTeam.getWebsite()));
+        CustomTabsUtils.launchUrl(context, Uri.parse(mTeam.getWebsite()));
     }
 
     public Indexable getIndexable() {

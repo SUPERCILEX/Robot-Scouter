@@ -10,7 +10,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.AppBarViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase;
-import com.supercilex.robotscouter.util.ViewHelper;
+import com.supercilex.robotscouter.util.ViewUtils;
 
 public class TabletScoutListFragment extends ScoutListFragmentBase {
     private View mHint;
@@ -24,7 +24,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
         super.onActivityCreated(savedInstanceState);
         TeamSelectionListener listener = (TeamSelectionListener) getActivity();
         Team team = TeamHelper.parse(getArguments()).getTeam();
-        if (!ViewHelper.isTabletMode(getContext())) {
+        if (!ViewUtils.isTabletMode(getContext())) {
             listener.onTeamSelected(team, getArguments().getBoolean(ADD_SCOUT_KEY));
             removeFragment();
             return;

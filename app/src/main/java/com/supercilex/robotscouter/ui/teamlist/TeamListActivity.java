@@ -21,10 +21,10 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
-import com.supercilex.robotscouter.util.RemoteConfigHelper;
-import com.supercilex.robotscouter.util.ViewHelper;
+import com.supercilex.robotscouter.util.AnalyticsUtils;
+import com.supercilex.robotscouter.util.ConnectivityUtils;
+import com.supercilex.robotscouter.util.RemoteConfigUtils;
+import com.supercilex.robotscouter.util.ViewUtils;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity
@@ -45,7 +45,7 @@ public class TeamListActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         mTeamListFragment =
                 (TeamListFragment) getSupportFragmentManager().findFragmentByTag(TeamListFragment.TAG);
-        if (savedInstanceState != null && ViewHelper.isTabletMode(this)) {
+        if (savedInstanceState != null && ViewUtils.isTabletMode(this)) {
             mSelectedTeamKey = savedInstanceState.getString(SELECTED_TEAM_KEY);
             mTeamListFragment.selectTeam(mSelectedTeamKey);
         }
@@ -62,13 +62,13 @@ public class TeamListActivity extends AppCompatActivity
         int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         GoogleApiAvailability.getInstance().showErrorNotification(this, result);
 
-        RemoteConfigHelper.fetchAndActivate().addOnSuccessListener(this, this);
+        RemoteConfigUtils.fetchAndActivate().addOnSuccessListener(this, this);
     }
 
     @Override
     public void onSuccess(Void aVoid) {
         double minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY);
-        if (BuildConfig.VERSION_CODE < minimum && !ConnectivityHelper.isOffline(this)) {
+        if (BuildConfig.VERSION_CODE < minimum && !ConnectivityUtils.isOffline(this)) {
             UpdateDialog.show(getSupportFragmentManager());
         }
     }
@@ -146,14 +146,14 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     public void onTeamSelected(Team team, boolean addScout) {
         TeamHelper helper = team.getHelper();
-        if (ViewHelper.isTabletMode(this)) {
+        if (ViewUtils.isTabletMode(this)) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.scouts, TabletScoutListFragment.newInstance(helper, addScout))
                     .commit();
         } else {
             ScoutActivity.start(this, helper, addScout);
         }
-        AnalyticsHelper.selectTeam(team.getNumber());
+        AnalyticsUtils.selectTeam(team.getNumber());
     }
 
     @Override

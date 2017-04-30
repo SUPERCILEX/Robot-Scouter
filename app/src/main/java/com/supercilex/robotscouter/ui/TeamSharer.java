@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamCache;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
+import com.supercilex.robotscouter.util.ConnectivityUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collection;
@@ -41,7 +41,7 @@ public final class TeamSharer {
      */
     public static boolean launchInvitationIntent(FragmentActivity activity,
                                                  @Size(min = 1) List<TeamHelper> teamHelpers) {
-        if (ConnectivityHelper.isOffline(activity)) {
+        if (ConnectivityUtils.isOffline(activity)) {
             Snackbar.make(activity.findViewById(R.id.root),
                           R.string.no_connection,
                           Snackbar.LENGTH_LONG)

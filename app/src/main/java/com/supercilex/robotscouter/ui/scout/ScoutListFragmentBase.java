@@ -33,8 +33,8 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
-import com.supercilex.robotscouter.util.AnalyticsHelper;
-import com.supercilex.robotscouter.util.ConnectivityHelper;
+import com.supercilex.robotscouter.util.AnalyticsUtils;
+import com.supercilex.robotscouter.util.ConnectivityUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
@@ -81,7 +81,7 @@ public abstract class ScoutListFragmentBase extends Fragment
         mSavedState = savedInstanceState;
         FirebaseAuth.getInstance().addAuthStateListener(this);
 
-        if (mSavedState == null && ConnectivityHelper.isOffline(getContext())) {
+        if (mSavedState == null && ConnectivityUtils.isOffline(getContext())) {
             Snackbar.make(getView().findViewById(R.id.root),
                           R.string.offline_reassurance,
                           Snackbar.LENGTH_LONG)
@@ -159,7 +159,7 @@ public abstract class ScoutListFragmentBase extends Fragment
             case R.id.action_share:
                 TeamSharer.launchInvitationIntent(getActivity(),
                                                   Collections.singletonList(mTeamHelper));
-                AnalyticsHelper.shareTeam(teamNumber);
+                AnalyticsUtils.shareTeam(teamNumber);
                 break;
             case R.id.action_visit_tba_team_website:
                 mTeamHelper.visitTbaWebsite(getContext());
@@ -170,11 +170,11 @@ public abstract class ScoutListFragmentBase extends Fragment
             case R.id.action_edit_scout_templates:
                 DownloadTeamDataJob.cancelAll(getContext());
                 ScoutTemplateSheet.show(getChildFragmentManager(), mTeamHelper);
-                AnalyticsHelper.editTemplate(teamNumber);
+                AnalyticsUtils.editTemplate(teamNumber);
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(getChildFragmentManager(), mTeamHelper);
-                AnalyticsHelper.editTeamDetails(teamNumber);
+                AnalyticsUtils.editTeamDetails(teamNumber);
                 break;
             case R.id.action_delete:
                 mPagerAdapter.onScoutDeleted();

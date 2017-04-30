@@ -4,11 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public final class ConnectivityHelper {
-    private ConnectivityHelper() {
-        throw new AssertionError("No instance for you!");
-    }
-
+public enum ConnectivityUtils {;
     public static boolean isOffline(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
