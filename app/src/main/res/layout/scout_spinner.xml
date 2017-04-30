@@ -11,8 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textIsSelectable="false"
-        app:layout_constraintBaseline_toBaselineOf="@+id/spinner"
+        app:layout_constraintBottom_toBottomOf="@+id/spinner"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/spinner"
+        app:layout_constraintTop_toTopOf="@+id/spinner"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
