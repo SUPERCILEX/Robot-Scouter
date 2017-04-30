@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
+import com.supercilex.robotscouter.ui.CardListHelper;
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder;
@@ -22,11 +23,27 @@ import com.supercilex.robotscouter.ui.scout.viewholder.StopwatchViewHolder;
 public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> {
     private final FragmentManager mManager;
     private final SimpleItemAnimator mAnimator;
+    private final CardListHelper mCardListHelper;
 
     public ScoutAdapter(Query query, FragmentManager manager, SimpleItemAnimator animator) {
         super(ScoutUtils.METRIC_PARSER, 0, ScoutViewHolderBase.class, query);
         mManager = manager;
         mAnimator = animator;
+        mCardListHelper = new CardListHelper(this) {
+            @Override
+            public boolean isFirstItem(int position) {
+                return super.isFirstItem(position) || isHeader(position);
+            }
+
+            @Override
+            protected boolean isLastItem(int position) {
+                return super.isLastItem(position) || isHeader(position + 1);
+            }
+
+            private boolean isHeader(int position) {
+                return getItem(position).getType() == MetricType.HEADER;
+            }
+        };
     }
 
     @Override
@@ -35,24 +52,9 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
                                    int position) {
         mAnimator.setSupportsChangeAnimations(true);
 
-        if (metric.getType() != MetricType.HEADER) {
-            int paddingLeft = viewHolder.itemView.getPaddingLeft();
-            int paddingTop = viewHolder.itemView.getPaddingTop();
-            int paddingRight = viewHolder.itemView.getPaddingRight();
-            int paddingBottom = viewHolder.itemView.getPaddingBottom();
-
-            if (position == getItemCount() - 1
-                    || getItem(position + 1).getType() == MetricType.HEADER) {
-                viewHolder.itemView.setBackgroundResource(R.drawable.list_divider_last_item);
-            } else {
-                viewHolder.itemView.setBackgroundResource(R.drawable.list_divider);
-            }
-
-            viewHolder.itemView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        }
-
         //noinspection unchecked
         viewHolder.bind(metric, mManager, mAnimator);
+        mCardListHelper.onBind(viewHolder, position);
     }
 
     @Override
