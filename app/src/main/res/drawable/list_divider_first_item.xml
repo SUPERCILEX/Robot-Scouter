@@ -12,12 +12,14 @@
             <corners android:radius="@dimen/abc_control_corner_material"/>
         </shape>
     </item>
-    <item android:bottom="@dimen/abc_control_corner_material">
+    <item
+        android:bottom="1.25dp"
+        android:top="@dimen/abc_control_corner_material">
         <shape android:shape="rectangle">
             <solid android:color="@android:color/white"/>
         </shape>
     </item>
-    <item android:top="@dimen/abc_control_corner_material">
+    <item android:bottom="@dimen/abc_control_corner_material">
         <shape android:shape="rectangle">
             <solid android:color="@android:color/white"/>
             <corners android:radius="@dimen/abc_control_corner_material"/>
