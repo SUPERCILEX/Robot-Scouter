@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
+import com.supercilex.robotscouter.util.ViewUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -75,18 +76,13 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
                     .placeholder(ContextCompat.getDrawable(itemView.getContext(),
                                                            R.drawable.ic_check_circle_grey_144dp))
                     .into(mMedia);
-            itemView.setBackgroundColor(
-                    ContextCompat.getColor(itemView.getContext(), R.color.selected_item));
         } else {
             setTeamMedia();
-            itemView.setBackground(null);
         }
-        mNewScout.setVisibility(mCouldItemBeSelected ? View.GONE : View.VISIBLE);
 
-        if (!mIsItemSelected && !mCouldItemBeSelected && mIsScouting) {
-            itemView.setBackgroundColor(
-                    ContextCompat.getColor(itemView.getContext(), R.color.grey));
-        }
+        ViewUtils.animateCircularReveal(mNewScout, !mCouldItemBeSelected);
+        itemView.setActivated(!mIsItemSelected && !mCouldItemBeSelected && mIsScouting);
+        itemView.setSelected(mIsItemSelected);
     }
 
     private void setTeamNumber() {

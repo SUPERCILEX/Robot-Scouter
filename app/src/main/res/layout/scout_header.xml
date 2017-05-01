@@ -2,7 +2,7 @@
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/name"
-    style="@style/RobotScouter.Metric"
+    style="@style/RobotScouter.CardList.Metric"
     android:textIsSelectable="false"
     android:textSize="18sp"
     android:textStyle="bold"/>

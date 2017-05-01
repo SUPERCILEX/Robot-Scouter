@@ -54,7 +54,7 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
 
         //noinspection unchecked
         viewHolder.bind(metric, mManager, mAnimator);
-        mCardListHelper.onBind(viewHolder, position);
+        mCardListHelper.onBind(viewHolder);
     }
 
     @Override

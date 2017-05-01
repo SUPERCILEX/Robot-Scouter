@@ -1,8 +1,9 @@
 package com.supercilex.robotscouter.ui;
 
+import android.support.v7.widget.RecyclerView;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 
 public class CardListHelper {
     private final FirebaseRecyclerAdapter mAdapter;
@@ -11,7 +12,9 @@ public class CardListHelper {
         mAdapter = adapter;
     }
 
-    public void onBind(ScoutViewHolderBase viewHolder, int position) {
+    public void onBind(RecyclerView.ViewHolder viewHolder) {
+        int position = viewHolder.getLayoutPosition();
+
         int paddingLeft = viewHolder.itemView.getPaddingLeft();
         int paddingTop = viewHolder.itemView.getPaddingTop();
         int paddingRight = viewHolder.itemView.getPaddingRight();

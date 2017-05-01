@@ -6,6 +6,7 @@
     <color name="errorColor">#E62E00</color>
     <color name="grey">#CFCFCF</color>
 
+    <color name="list_divider">#E1E1E1</color>
     <color name="selected_item">#462A56C6</color>
     <color name="selected_toolbar">#616161</color>
     <color name="selected_status_bar">#424242</color>

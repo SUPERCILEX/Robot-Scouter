@@ -49,15 +49,22 @@
         <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="RobotScouter.Metric">
+    <style name="RobotScouter.CardList">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/card_padding_horizontal_small</item>
+        <item name="android:layout_marginRight">@dimen/card_padding_horizontal_small</item>
+        <item name="android:paddingBottom">@dimen/card_padding_vertical</item>
+        <item name="android:paddingLeft">@dimen/card_padding_horizontal_small</item>
+        <item name="android:paddingRight">@dimen/card_padding_horizontal_small</item>
+        <item name="android:paddingTop">@dimen/card_padding_vertical</item>
+    </style>
+
+    <style name="RobotScouter.CardList.Metric">
         <item name="android:layout_marginLeft">@dimen/card_padding_horizontal</item>
         <item name="android:layout_marginRight">@dimen/card_padding_horizontal</item>
-        <item name="android:paddingBottom">@dimen/card_padding_vertical</item>
         <item name="android:paddingLeft">@dimen/card_padding_horizontal</item>
         <item name="android:paddingRight">@dimen/card_padding_horizontal</item>
-        <item name="android:paddingTop">@dimen/card_padding_vertical</item>
     </style>
 
     <style name="RobotScouter.Fab">

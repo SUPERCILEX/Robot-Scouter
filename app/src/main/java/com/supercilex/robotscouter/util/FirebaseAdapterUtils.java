@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.util;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -57,5 +58,15 @@ public enum FirebaseAdapterUtils {;
             outState.putParcelable(Constants.MANAGER_STATE, layoutManager.onSaveInstanceState());
             outState.putInt(Constants.ITEM_COUNT, adapter.getItemCount());
         }
+    }
+
+    public static void notifyAllItemsChangedNoAnimation(RecyclerView recyclerView,
+                                                        RecyclerView.Adapter adapter) {
+        SimpleItemAnimator animator = (SimpleItemAnimator) recyclerView.getItemAnimator();
+
+        animator.setSupportsChangeAnimations(false);
+        adapter.notifyItemRangeChanged(0, adapter.getItemCount() + 1);
+
+        recyclerView.post(() -> animator.setSupportsChangeAnimations(true));
     }
 }
