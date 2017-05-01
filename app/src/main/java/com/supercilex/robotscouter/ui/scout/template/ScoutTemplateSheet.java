@@ -113,7 +113,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     }
 
     private void getTemplateKey() {
-        final TeamHelper teamHelper = TeamHelper.parse(getArguments());
+        TeamHelper teamHelper = TeamHelper.parse(getArguments());
         mTemplateKey = teamHelper.getTeam().getTemplateKey();
 
         if (TextUtils.isEmpty(mTemplateKey)) {

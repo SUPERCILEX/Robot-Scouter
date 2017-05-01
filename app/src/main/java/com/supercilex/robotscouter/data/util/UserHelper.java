@@ -30,7 +30,7 @@ public class UserHelper {
     public void transferData(String prevUid) {
         if (TextUtils.isEmpty(prevUid)) return;
 
-        final DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
+        DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
         new FirebaseCopier(prevTeamRef, TeamHelper.getIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -39,7 +39,7 @@ public class UserHelper {
             }
         }.performTransformation();
 
-        final DatabaseReference prevScoutTemplatesRef = getScoutTemplateIndicesRef(prevUid);
+        DatabaseReference prevScoutTemplatesRef = getScoutTemplateIndicesRef(prevUid);
         new FirebaseCopier(prevScoutTemplatesRef, getScoutTemplateIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
