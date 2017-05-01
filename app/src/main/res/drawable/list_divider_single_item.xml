@@ -6,17 +6,13 @@
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/list_divider"/>
-            <corners
-                android:topLeftRadius="@dimen/abc_control_corner_material"
-                android:topRightRadius="@dimen/abc_control_corner_material"/>
+            <corners android:radius="@dimen/abc_control_corner_material"/>
         </shape>
     </item>
-    <item android:bottom="1.25dp">
+    <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/list_item"/>
-            <corners
-                android:topLeftRadius="@dimen/abc_control_corner_material"
-                android:topRightRadius="@dimen/abc_control_corner_material"/>
+            <corners android:radius="@dimen/abc_control_corner_material"/>
         </shape>
     </item>
 </layer-list>

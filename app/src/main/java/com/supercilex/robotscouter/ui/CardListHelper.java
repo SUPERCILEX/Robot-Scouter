@@ -20,9 +20,14 @@ public class CardListHelper {
         int paddingRight = viewHolder.itemView.getPaddingRight();
         int paddingBottom = viewHolder.itemView.getPaddingBottom();
 
-        if (isFirstItem(position)) {
+        boolean isFirstItem = isFirstItem(position);
+        boolean isLastItem = isLastItem(position);
+
+        if (isFirstItem && isLastItem) {
+            viewHolder.itemView.setBackgroundResource(R.drawable.list_divider_single_item);
+        } else if (isFirstItem) {
             viewHolder.itemView.setBackgroundResource(R.drawable.list_divider_first_item);
-        } else if (isLastItem(position)) {
+        } else if (isLastItem) {
             viewHolder.itemView.setBackgroundResource(R.drawable.list_divider_last_item);
         } else {
             viewHolder.itemView.setBackgroundResource(R.drawable.list_divider_middle_item);
