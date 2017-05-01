@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="RobotScouter.Metric">
+    <style name="RobotScouter.CardList">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/card_padding_horizontal_small</item>
+        <item name="android:layout_marginStart">@dimen/card_padding_horizontal_small</item>
+        <item name="android:paddingBottom">@dimen/card_padding_vertical</item>
+        <item name="android:paddingEnd">@dimen/card_padding_horizontal_small</item>
+        <item name="android:paddingStart">@dimen/card_padding_horizontal_small</item>
+        <item name="android:paddingTop">@dimen/card_padding_vertical</item>
+    </style>
+
+    <style name="RobotScouter.CardList.Metric">
         <item name="android:layout_marginEnd">@dimen/card_padding_horizontal</item>
         <item name="android:layout_marginStart">@dimen/card_padding_horizontal</item>
-        <item name="android:paddingBottom">@dimen/card_padding_vertical</item>
         <item name="android:paddingEnd">@dimen/card_padding_horizontal</item>
         <item name="android:paddingStart">@dimen/card_padding_horizontal</item>
-        <item name="android:paddingTop">@dimen/card_padding_vertical</item>
     </style>
 
 </resources>

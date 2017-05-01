@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.ui.CardListHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
@@ -21,7 +22,9 @@ import java.util.List;
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
     private final Fragment mFragment;
     private final TeamMenuManager mMenuManager;
+    private final CardListHelper mCardListHelper;
     private View mNoTeamsText;
+    private RecyclerView mRecyclerView;
 
     private String mSelectedTeamKey;
 
@@ -29,9 +32,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         super(Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder.class);
         mFragment = fragment;
         mMenuManager = menuManager;
-
-        View view = mFragment.getView();
-        if (view != null) mNoTeamsText = view.findViewById(R.id.no_content_hint);
+        mCardListHelper = new CardListHelper(this);
     }
 
     public void updateSelection(String teamKey) {
@@ -62,6 +63,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
 
     @Override
     public void populateViewHolder(TeamViewHolder teamHolder, Team team, int position) {
+        mCardListHelper.onBind(teamHolder);
         teamHolder.bind(team,
                         mFragment,
                         mMenuManager,
@@ -108,11 +110,28 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     }
 
     @Override
+    public void onDataChanged() {
+        if (mRecyclerView == null && mFragment != null) {
+            View view = mFragment.getView();
+            if (view != null) mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+        }
+
+        if (mRecyclerView != null) {
+            FirebaseAdapterUtils.notifyAllItemsChangedNoAnimation(mRecyclerView, this);
+        }
+    }
+
+    @Override
     public void onCancelled(DatabaseError error) {
         FirebaseCrash.report(error.toException());
     }
 
     private void showNoTeamsHint() {
+        if (mNoTeamsText == null && mFragment != null) {
+            View view = mFragment.getView();
+            if (view != null) mNoTeamsText = view.findViewById(R.id.no_content_hint);
+        }
+
         if (mNoTeamsText != null) {
             mNoTeamsText.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
         }

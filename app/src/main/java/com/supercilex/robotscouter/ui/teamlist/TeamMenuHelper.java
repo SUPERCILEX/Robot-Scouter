@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +29,7 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 import com.supercilex.robotscouter.util.IoUtils;
 import com.supercilex.robotscouter.util.ViewUtils;
 
@@ -341,12 +341,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     }
 
     private void notifyItemsChanged() {
-        SimpleItemAnimator animator = (SimpleItemAnimator) mRecyclerView.getItemAnimator();
-
-        animator.setSupportsChangeAnimations(false);
-        mAdapter.notifyItemRangeChanged(0, mAdapter.getItemCount() + 1);
-
-        mRecyclerView.post(() -> animator.setSupportsChangeAnimations(true));
+        FirebaseAdapterUtils.notifyAllItemsChangedNoAnimation(mRecyclerView, mAdapter);
     }
 
     private FloatingActionButton getFab() {
