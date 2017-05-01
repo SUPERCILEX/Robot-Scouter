@@ -41,7 +41,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static android.support.v7.appcompat.R.drawable.abc_btn_colored_material;
 import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Borderless_Colored;
 import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Colored;
 
@@ -58,6 +57,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         super(itemView);
         mToggleStopwatch = (Button) itemView.findViewById(R.id.stopwatch);
         mCycles = (RecyclerView) itemView.findViewById(R.id.list);
+
+        mToggleStopwatch.setBackgroundResource(R.drawable.button_outline_colored);
     }
 
     @Override
@@ -247,8 +248,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
                                 ContextCompat.getColor(context, R.color.colorAccent) : Color.WHITE);
             }
 
-            holder.mToggleStopwatch.setBackgroundResource(
-                    mIsRunning ? R.drawable.outline : abc_btn_colored_material);
+            holder.mToggleStopwatch.setActivated(mIsRunning);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 holder.mToggleStopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
