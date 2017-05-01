@@ -17,7 +17,6 @@
             android:bottom="@dimen/abc_button_padding_vertical_material"
             android:left="@dimen/abc_button_padding_horizontal_material"
             android:right="@dimen/abc_button_padding_horizontal_material"
-            android:top="@dimen/abc_button_padding_vertical_material"
-            />
+            android:top="@dimen/abc_button_padding_vertical_material"/>
     </shape>
 </inset>
