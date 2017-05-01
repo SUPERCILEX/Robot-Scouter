@@ -232,32 +232,32 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             StopwatchViewHolder holder = mHolder.get();
             if (holder == null) return;
 
-            View rootView = holder.itemView;
-            Context context = rootView.getContext();
+            Context context = holder.itemView.getContext();
+            Button stopwatch = holder.mToggleStopwatch;
 
-            TransitionManager.beginDelayedTransition((ViewGroup) rootView);
+            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                holder.mToggleStopwatch.setTextAppearance(
+                stopwatch.setTextAppearance(
                         mIsRunning ?
                                 TextAppearance_AppCompat_Widget_Button_Borderless_Colored :
                                 TextAppearance_AppCompat_Widget_Button_Colored);
             } else {
-                holder.mToggleStopwatch.setTextColor(
+                stopwatch.setTextColor(
                         mIsRunning ?
                                 ContextCompat.getColor(context, R.color.colorAccent) : Color.WHITE);
             }
 
-            holder.mToggleStopwatch.setActivated(mIsRunning);
+            stopwatch.setActivated(mIsRunning);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                holder.mToggleStopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         mIsRunning ? R.drawable.ic_alarm_off_color_accent_24dp : R.drawable.ic_add_alarm_white_24dp,
                         0,
                         0,
                         0);
             } else {
-                holder.mToggleStopwatch.setCompoundDrawablesWithIntrinsicBounds(
+                stopwatch.setCompoundDrawablesWithIntrinsicBounds(
                         mIsRunning ? R.drawable.ic_alarm_off_color_accent_24dp : R.drawable.ic_add_alarm_white_24dp,
                         0,
                         0,
