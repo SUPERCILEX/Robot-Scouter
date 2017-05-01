@@ -53,7 +53,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
     public Task<Map<TeamHelper, List<Scout>>> build() {
         List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
         for (TeamHelper helper : mTeamHelpers) {
-            final TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
+            TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
             scoutIndicesTasks.add(scoutIndicesTask.getTask());
 
             ScoutUtils.getIndicesRef(helper.getTeam().getKey())
@@ -97,7 +97,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
     @Override
     public void onSuccess(Pair<TeamHelper, List<String>> pair) {
         for (String scoutKey : pair.second) {
-            final TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
+            TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
             mScoutMetricsTasks.add(scoutMetricsTask.getTask());
 
             new ScoutListener(Constants.FIREBASE_SCOUTS.child(scoutKey), pair, scoutMetricsTask);

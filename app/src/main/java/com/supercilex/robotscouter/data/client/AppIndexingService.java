@@ -49,7 +49,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
 
     @Override
     public void onDataChange(DataSnapshot snapshot) {
-        final long numOfExpectedTeams = snapshot.getChildrenCount();
+        long numOfExpectedTeams = snapshot.getChildrenCount();
         if (numOfExpectedTeams == 0) {
             FirebaseAppIndex.getInstance().update();
             return;
