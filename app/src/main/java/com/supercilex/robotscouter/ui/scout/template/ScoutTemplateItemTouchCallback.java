@@ -16,9 +16,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
+import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolder> extends ItemTouchHelper.SimpleCallback {
     private final View mRootView;
+    private final RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter<T, VH> mAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
@@ -28,6 +30,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
     public ScoutTemplateItemTouchCallback(View rootView) {
         super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
         mRootView = rootView;
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
     }
 
     public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
@@ -64,7 +67,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
         if (mIsItemMoving) {
             return type == ChangeEventListener.EventType.MOVED;
         } else if (type == ChangeEventListener.EventType.ADDED && index == mScrollToPosition) {
-            ((RecyclerView) mRootView.findViewById(R.id.list)).scrollToPosition(mScrollToPosition);
+            mRecyclerView.scrollToPosition(mScrollToPosition);
         }
         return true;
     }
@@ -111,5 +114,6 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
         mIsItemMoving = false;
+        FirebaseAdapterUtils.notifyAllItemsChangedNoAnimation(mRecyclerView, mAdapter);
     }
 }

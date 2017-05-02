@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,7 @@ public class ScoutFragment extends Fragment {
         mAdapter = new ScoutAdapter(
                 Constants.getScoutMetrics(mScoutKey),
                 getChildFragmentManager(),
-                (SimpleItemAnimator) mRecyclerView.getItemAnimator());
+                mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
         FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
 

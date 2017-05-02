@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -25,9 +25,9 @@ public class ScoutTemplateAdapter extends ScoutAdapter {
 
     public ScoutTemplateAdapter(Query query,
                                 FragmentManager manager,
-                                SimpleItemAnimator animator,
+                                RecyclerView recyclerView,
                                 ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> touchCallback) {
-        super(query, manager, animator);
+        super(query, manager, recyclerView);
         mCallback = touchCallback;
     }
 

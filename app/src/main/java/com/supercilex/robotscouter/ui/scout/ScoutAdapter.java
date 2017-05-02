@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scout;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -25,11 +26,11 @@ public class ScoutAdapter extends FirebaseRecyclerAdapter<ScoutMetric, ScoutView
     private final SimpleItemAnimator mAnimator;
     private final CardListHelper mCardListHelper;
 
-    public ScoutAdapter(Query query, FragmentManager manager, SimpleItemAnimator animator) {
+    public ScoutAdapter(Query query, FragmentManager manager, RecyclerView recyclerView) {
         super(ScoutUtils.METRIC_PARSER, 0, ScoutViewHolderBase.class, query);
         mManager = manager;
-        mAnimator = animator;
-        mCardListHelper = new CardListHelper(this) {
+        mAnimator = (SimpleItemAnimator) recyclerView.getItemAnimator();
+        mCardListHelper = new CardListHelper(this, recyclerView, true) {
             @Override
             public boolean isFirstItem(int position) {
                 return super.isFirstItem(position) || isHeader(position);

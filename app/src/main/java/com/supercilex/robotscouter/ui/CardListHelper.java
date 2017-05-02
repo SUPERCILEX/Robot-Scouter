@@ -7,14 +7,45 @@ import com.supercilex.robotscouter.R;
 
 public class CardListHelper {
     private final FirebaseRecyclerAdapter mAdapter;
+    private final RecyclerView mRecyclerView;
 
-    public CardListHelper(FirebaseRecyclerAdapter adapter) {
+    private final boolean mHasSafeCorners;
+
+    public CardListHelper(FirebaseRecyclerAdapter adapter,
+                          RecyclerView recyclerView,
+                          boolean hasSafeCorners) {
         mAdapter = adapter;
+        mRecyclerView = recyclerView;
+        mHasSafeCorners = hasSafeCorners;
     }
 
     public void onBind(RecyclerView.ViewHolder viewHolder) {
         int position = viewHolder.getLayoutPosition();
 
+        setBackground(viewHolder, position);
+
+
+        if (mHasSafeCorners) return;
+
+        // Update the items above and below to ensure the correct corner configuration is shown
+        int abovePos = position - 1;
+        int belowPos = position + 1;
+        RecyclerView.ViewHolder above = mRecyclerView.findViewHolderForLayoutPosition(abovePos);
+        RecyclerView.ViewHolder below = mRecyclerView.findViewHolderForLayoutPosition(belowPos);
+
+        if (above != null) setBackground(above, abovePos);
+        if (below != null) setBackground(below, belowPos);
+    }
+
+    protected boolean isFirstItem(int position) {
+        return position == 0;
+    }
+
+    protected boolean isLastItem(int position) {
+        return position == mAdapter.getItemCount() - 1;
+    }
+
+    private void setBackground(RecyclerView.ViewHolder viewHolder, int position) {
         int paddingLeft = viewHolder.itemView.getPaddingLeft();
         int paddingTop = viewHolder.itemView.getPaddingTop();
         int paddingRight = viewHolder.itemView.getPaddingRight();
@@ -34,13 +65,5 @@ public class CardListHelper {
         }
 
         viewHolder.itemView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-    }
-
-    public boolean isFirstItem(int position) {
-        return position == 0;
-    }
-
-    protected boolean isLastItem(int position) {
-        return position == mAdapter.getItemCount() - 1;
     }
 }
