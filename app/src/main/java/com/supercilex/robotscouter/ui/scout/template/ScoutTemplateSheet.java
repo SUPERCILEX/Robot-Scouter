@@ -10,7 +10,6 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -172,7 +171,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mAdapter = new ScoutTemplateAdapter(
                 Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
                 getChildFragmentManager(),
-                (SimpleItemAnimator) mRecyclerView.getItemAnimator(),
+                mRecyclerView,
                 mItemTouchCallback);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);

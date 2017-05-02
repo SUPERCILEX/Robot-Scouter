@@ -24,7 +24,6 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
     private final TeamMenuManager mMenuManager;
     private final CardListHelper mCardListHelper;
     private View mNoTeamsText;
-    private RecyclerView mRecyclerView;
 
     private String mSelectedTeamKey;
 
@@ -32,7 +31,10 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         super(Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder.class);
         mFragment = fragment;
         mMenuManager = menuManager;
-        mCardListHelper = new CardListHelper(this);
+        mCardListHelper = new CardListHelper(
+                this,
+                (RecyclerView) fragment.getView().findViewById(R.id.list),
+                false);
     }
 
     public void updateSelection(String teamKey) {
@@ -107,18 +109,6 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                 // Noop
         }
         super.onChildChanged(type, snapshot, index, oldIndex);
-    }
-
-    @Override
-    public void onDataChanged() {
-        if (mRecyclerView == null && mFragment != null) {
-            View view = mFragment.getView();
-            if (view != null) mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
-        }
-
-        if (mRecyclerView != null) {
-            FirebaseAdapterUtils.notifyAllItemsChangedNoAnimation(mRecyclerView, this);
-        }
     }
 
     @Override
