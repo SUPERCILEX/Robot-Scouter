@@ -8,17 +8,17 @@ import android.text.TextUtils;
 import com.google.firebase.database.Exclude;
 import com.supercilex.robotscouter.util.Constants;
 
-public class CounterMetric extends ScoutMetric<Integer> {
+public class NumberMetric extends ScoutMetric<Integer> {
     @Exclude
     @Nullable
     private String mUnit;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public CounterMetric() { // Needed for Firebase
+    public NumberMetric() { // Needed for Firebase
         super();
     }
 
-    public CounterMetric(String name, int value, @Nullable String unit) {
+    public NumberMetric(String name, int value, @Nullable String unit) {
         super(name, value, MetricType.NUMBER);
         mUnit = unit;
     }
@@ -45,7 +45,7 @@ public class CounterMetric extends ScoutMetric<Integer> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        CounterMetric metric = (CounterMetric) o;
+        NumberMetric metric = (NumberMetric) o;
 
         return TextUtils.equals(mUnit, metric.mUnit);
     }

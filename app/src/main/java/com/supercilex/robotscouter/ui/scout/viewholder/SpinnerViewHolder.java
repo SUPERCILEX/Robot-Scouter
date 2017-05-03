@@ -9,7 +9,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
+import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,24 +27,24 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
     @Override
     public void bind() {
         super.bind();
-        SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
-        if (spinnerMetric.getValue().isEmpty()) return;
+        ListMetric listMetric = (ListMetric) mMetric;
+        if (listMetric.getValue().isEmpty()) return;
 
-        ArrayAdapter<String> spinnerArrayAdapter = getAdapter(spinnerMetric);
+        ArrayAdapter<String> spinnerArrayAdapter = getAdapter(listMetric);
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner.setAdapter(spinnerArrayAdapter);
         mSpinner.setOnItemSelectedListener(this);
-        mSpinner.setSelection(indexOfKey(spinnerMetric.getSelectedValueKey()));
+        mSpinner.setSelection(indexOfKey(listMetric.getSelectedValueKey()));
     }
 
     @Override
     @CallSuper
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
-        SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
-        if (indexOfKey(spinnerMetric.getSelectedValueKey()) != itemPosition) {
+        ListMetric listMetric = (ListMetric) mMetric;
+        if (indexOfKey(listMetric.getSelectedValueKey()) != itemPosition) {
             disableAnimations();
-            spinnerMetric.updateSelectedValueKey(getKeys().get(itemPosition));
+            listMetric.updateSelectedValueKey(getKeys().get(itemPosition));
         }
     }
 
@@ -61,10 +61,10 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
         return new ArrayList<>(mMetric.getValue().keySet());
     }
 
-    protected ArrayAdapter<String> getAdapter(SpinnerMetric spinnerMetric) {
+    protected ArrayAdapter<String> getAdapter(ListMetric listMetric) {
         return new ArrayAdapter<>(itemView.getContext(),
                                   android.R.layout.simple_spinner_item,
-                                  new ArrayList<>(spinnerMetric.getValue().values()));
+                                  new ArrayList<>(listMetric.getValue().values()));
     }
 
     @Override

@@ -23,9 +23,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
-import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
@@ -224,7 +224,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 metricRef.setValue(new ScoutMetric<>("", 0, MetricType.NUMBER), priority);
                 break;
             case R.id.add_spinner:
-                metricRef.setValue(SpinnerMetric.init(), priority);
+                metricRef.setValue(ListMetric.init(), priority);
                 break;
             case R.id.add_note:
                 metricRef.setValue(new ScoutMetric<>("", "", MetricType.TEXT), priority);

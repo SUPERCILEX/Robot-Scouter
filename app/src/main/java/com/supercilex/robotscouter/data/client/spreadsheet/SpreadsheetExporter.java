@@ -24,9 +24,9 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
-import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
@@ -616,9 +616,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 valueCell.setCellValue((int) metric.getValue());
                 break;
             case MetricType.LIST:
-                SpinnerMetric spinnerMetric = (SpinnerMetric) metric;
+                ListMetric listMetric = (ListMetric) metric;
                 String selectedItem =
-                        spinnerMetric.getValue().get(spinnerMetric.getSelectedValueKey());
+                        listMetric.getValue().get(listMetric.getSelectedValueKey());
                 valueCell.setCellValue(selectedItem);
                 break;
             case MetricType.TEXT:

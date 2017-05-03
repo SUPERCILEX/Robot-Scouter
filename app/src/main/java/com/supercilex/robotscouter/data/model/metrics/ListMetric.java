@@ -10,21 +10,21 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.Collections;
 import java.util.Map;
 
-public class SpinnerMetric extends ScoutMetric<Map<String, String>> {
+public class ListMetric extends ScoutMetric<Map<String, String>> {
     @Exclude private String mSelectedValueKey;
 
     @RestrictTo(RestrictTo.Scope.TESTS)
-    public SpinnerMetric() { // Needed for Firebase
+    public ListMetric() { // Needed for Firebase
         super();
     }
 
-    public SpinnerMetric(String name, Map<String, String> values, String selectedValueKey) {
+    public ListMetric(String name, Map<String, String> values, String selectedValueKey) {
         super(name, values, MetricType.LIST);
         mSelectedValueKey = selectedValueKey;
     }
 
-    public static SpinnerMetric init() {
-        return new SpinnerMetric("", Collections.singletonMap("0", "item 1"), null);
+    public static ListMetric init() {
+        return new ListMetric("", Collections.singletonMap("0", "item 1"), null);
     }
 
     @Keep
@@ -48,7 +48,7 @@ public class SpinnerMetric extends ScoutMetric<Map<String, String>> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        SpinnerMetric spinner = (SpinnerMetric) o;
+        ListMetric spinner = (ListMetric) o;
 
         return TextUtils.equals(mSelectedValueKey, spinner.mSelectedValueKey);
     }
