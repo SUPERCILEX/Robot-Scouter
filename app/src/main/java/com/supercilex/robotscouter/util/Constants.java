@@ -25,9 +25,9 @@ public enum Constants {;
     /** The list of all supported authentication providers in Firebase Auth UI. */
     public static final List<AuthUI.IdpConfig> ALL_PROVIDERS =
             Collections.unmodifiableList(
-                    Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
+                    Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
                                   new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
-                                  new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                  new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
                                   new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()));
 
     // *** CAUTION--DO NOT TOUCH! ***
