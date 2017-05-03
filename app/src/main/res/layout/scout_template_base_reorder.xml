@@ -12,9 +12,9 @@
         android:paddingRight="@dimen/spacing_normal"
         android:contentDescription="@string/accessibility_reorder"
         android:src="@drawable/ic_reorder_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@id/name"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@id/name"
+        app:layout_constraintBottom_toBottomOf="@id/name"
         tools:ignore="RtlSymmetry"/>
 
 </merge>

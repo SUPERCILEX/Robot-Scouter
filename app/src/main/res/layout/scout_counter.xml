@@ -11,10 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textIsSelectable="false"
-        app:layout_constraintBottom_toBottomOf="@+id/decrement_counter"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/decrement_counter"
         app:layout_constraintTop_toTopOf="@+id/decrement_counter"
+        app:layout_constraintBottom_toBottomOf="@+id/decrement_counter"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
