@@ -11,10 +11,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textIsSelectable="false"
-        app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/stopwatch"
         app:layout_constraintTop_toTopOf="@+id/stopwatch"
+        app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 

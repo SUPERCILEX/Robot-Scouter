@@ -15,9 +15,9 @@
         android:layout_marginRight="@dimen/spacing_large"
         android:hint="@string/counter_name"
         android:inputType="text"
-        app:layout_constraintBaseline_toBaselineOf="@+id/count"
         app:layout_constraintLeft_toRightOf="@id/reorder"
         app:layout_constraintRight_toLeftOf="@+id/decrement_counter"
+        app:layout_constraintBaseline_toBaselineOf="@+id/count"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
@@ -31,11 +31,11 @@
         android:layout_marginRight="@dimen/spacing_large"
         android:hint="@string/unit"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintBaseline_toBaselineOf="@+id/count"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/count"
         app:layout_constraintRight_toLeftOf="@id/increment_counter"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@+id/count"
         tools:ignore="UnknownIdInLayout"
         tools:text="s"/>
 

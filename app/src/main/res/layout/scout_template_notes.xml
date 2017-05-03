@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:hint="@string/note_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintBottom_toBottomOf="@+id/notes"
         app:layout_constraintLeft_toRightOf="@id/reorder"
         app:layout_constraintRight_toLeftOf="@+id/notes"
         app:layout_constraintTop_toTopOf="@+id/notes"
+        app:layout_constraintBottom_toBottomOf="@+id/notes"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example"/>
 
