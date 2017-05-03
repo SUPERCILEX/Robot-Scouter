@@ -4,14 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="0dp"
     android:layout_height="0dp"
+    android:paddingBottom="@dimen/spacing_dialog_layout"
+    android:paddingEnd="@dimen/spacing_large"
+    android:paddingStart="@dimen/spacing_large"
+    android:paddingTop="@dimen/spacing_dialog_layout"
     android:hint="@string/hint_team_number"
-    android:paddingEnd="8dp"
-    android:paddingStart="8dp"
     app:errorTextAppearance="@style/RobotScouter.Text.ErrorText"
-    app:hintTextAppearance="@style/RobotScouter.Text.HintText"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    app:hintTextAppearance="@style/RobotScouter.Text.HintText">
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/team_number"

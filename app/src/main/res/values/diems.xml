@@ -3,4 +3,7 @@
     <dimen name="card_padding_horizontal">12dp</dimen>
     <dimen name="card_padding_horizontal_small">8dp</dimen>
     <dimen name="card_padding_vertical">8dp</dimen>
+
+    <dimen name="spacing_large">16dp</dimen>
+    <dimen name="spacing_dialog_layout">20dp</dimen>
 </resources>
