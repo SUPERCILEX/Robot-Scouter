@@ -11,4 +11,6 @@
     <dimen name="fab_size">56dp</dimen>
 
     <dimen name="card_elevation">2dp</dimen>
+
+    <dimen name="text_size_normal">16sp</dimen>
 </resources>

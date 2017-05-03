@@ -2,15 +2,10 @@
 <android.support.design.widget.TextInputLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:paddingBottom="@dimen/spacing_dialog_layout"
-    android:paddingEnd="@dimen/spacing_large"
-    android:paddingStart="@dimen/spacing_large"
-    android:paddingTop="@dimen/spacing_dialog_layout"
+    style="@style/RobotScouter.Dialog"
     android:hint="@string/hint_team_number"
-    app:errorTextAppearance="@style/RobotScouter.Text.ErrorText"
-    app:hintTextAppearance="@style/RobotScouter.Text.HintText">
+    app:errorTextAppearance="@style/RobotScouter.Text.Error"
+    app:hintTextAppearance="@style/RobotScouter.Text.Hint">
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/team_number"
