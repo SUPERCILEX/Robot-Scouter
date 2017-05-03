@@ -42,6 +42,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -687,42 +688,46 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void buildAverageCharts(Sheet sheet) {
         if (isUnsupportedDevice()) return;
 
-        int lastColumn = sheet.getRow(0).getLastCellNum() - 1;
-
         Drawing drawing = sheet.createDrawingPatriarch();
-        Chart chart = drawing.createChart(
-                createChartAnchor(drawing, sheet.getLastRowNum() + 3, 1, lastColumn + 1));
 
-        ChartLegend legend = chart.getOrCreateLegend();
-        legend.setPosition(LegendPosition.RIGHT);
+        List<Cell> headerCells = getAdjustedList(sheet.getRow(0));
+        for (Cell cell : headerCells) {
+            int columnIndex = cell.getColumnIndex();
+            String headerName = cell.getStringCellValue();
 
-        ChartDataSource<String> categorySource = DataSources.fromStringCellRange(
-                sheet, new CellRangeAddress(0, 0, 1, lastColumn));
+            ClientAnchor anchor = createChartAnchor(
+                    drawing, sheet.getLastRowNum() + 3, columnIndex, columnIndex + 1);
+            anchor.setRow2(anchor.getRow2() + 30);
+            Chart chart = drawing.createChart(anchor);
+            chart.getOrCreateLegend().setPosition(LegendPosition.BOTTOM);
 
-        ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
-        List<Row> dataRows = getAdjustedList(sheet);
-        for (Row row : dataRows) {
-            data.addSerie(
-                    categorySource,
-                    DataSources.fromNumericCellRange(
-                            sheet,
-                            new CellRangeAddress(row.getRowNum(),
-                                                 row.getRowNum(),
-                                                 1,
-                                                 row.getLastCellNum() - 1)))
-                    .setTitle(row.getCell(0).getStringCellValue());
-        }
+            ChartDataSource<String> categorySource = DataSources.fromArray(new String[]{headerName});
+            ScatterChartData data = chart.getChartDataFactory().createScatterChartData();
+            List<Row> dataRows = getAdjustedList(sheet);
+            for (Row row : dataRows) {
+                data.addSerie(
+                        categorySource,
+                        DataSources.fromNumericCellRange(
+                                sheet,
+                                new CellRangeAddress(row.getRowNum(),
+                                                     row.getRowNum(),
+                                                     columnIndex,
+                                                     columnIndex)))
+                        .setTitle(row.getCell(0).getStringCellValue());
+            }
 
-        ChartAxis bottomAxis = chart.getChartAxisFactory()
-                .createCategoryAxis(AxisPosition.BOTTOM);
-        ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
-        leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-        chart.plot(data, bottomAxis, leftAxis);
+            ChartAxis bottomAxis = chart.getChartAxisFactory()
+                    .createCategoryAxis(AxisPosition.BOTTOM);
+            ValueAxis leftAxis = chart.getChartAxisFactory().createValueAxis(AxisPosition.LEFT);
+            leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+            chart.plot(data, bottomAxis, leftAxis);
 
-        if (chart instanceof XSSFChart) {
-            CTPlotArea plotArea = ((XSSFChart) chart).getCTChart().getPlotArea();
-            setChartAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
-            setChartAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), "Metrics");
+            if (chart instanceof XSSFChart) {
+                CTPlotArea plotArea = ((XSSFChart) chart).getCTChart().getPlotArea();
+
+                setChartAxisTitle(plotArea.getValAxArray(0).addNewTitle(), "Values");
+                setChartAxisTitle(plotArea.getCatAxArray(0).addNewTitle(), headerName);
+            }
         }
     }
 
