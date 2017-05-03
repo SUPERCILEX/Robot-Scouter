@@ -63,9 +63,9 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/spacing_normal"
         android:paddingTop="@dimen/spacing_normal"
+        android:paddingBottom="@dimen/spacing_normal"
+        android:clipToPadding="false"
         android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
