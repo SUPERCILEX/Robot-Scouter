@@ -220,10 +220,6 @@ public enum DatabaseHelper {;
             super(clazz);
         }
 
-        public List<ChangeEventListener> getListeners() {
-            return mListeners;
-        }
-
         @Override
         protected List<DataSnapshot> getSnapshots() {
             return new ArrayList<>();
