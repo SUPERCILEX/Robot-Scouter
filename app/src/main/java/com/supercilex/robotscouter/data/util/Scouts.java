@@ -96,6 +96,11 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
 
     @Override
     public void onSuccess(Pair<TeamHelper, List<String>> pair) {
+        if (pair.second.isEmpty()) {
+            mScouts.put(pair.first, new ArrayList<>());
+            return;
+        }
+
         for (String scoutKey : pair.second) {
             TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
             mScoutMetricsTasks.add(scoutMetricsTask.getTask());

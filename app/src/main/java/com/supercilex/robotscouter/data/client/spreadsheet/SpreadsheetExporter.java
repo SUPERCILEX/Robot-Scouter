@@ -345,6 +345,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
         List<Scout> scouts = mScouts.get(teamHelper);
 
+        if (scouts.isEmpty()) {
+            Workbook workbook = teamSheet.getWorkbook();
+            workbook.removeSheetAt(workbook.getSheetIndex(teamSheet));
+            return;
+        }
+
         Row header = teamSheet.createRow(0);
         header.createCell(0); // Create empty top left corner cell
         List<ScoutMetric> orderedMetrics = scouts.get(scouts.size() - 1).getMetrics();
