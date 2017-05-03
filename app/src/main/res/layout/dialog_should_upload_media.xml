@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingEnd="@dimen/spacing_large"
     android:paddingStart="@dimen/spacing_large"
+    android:paddingEnd="@dimen/spacing_large"
     android:paddingTop="@dimen/spacing_normal">
 
     <CheckBox

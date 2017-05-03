@@ -9,8 +9,8 @@
         style="@style/RobotScouter.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="-7dp"
         android:layout_marginStart="-7dp"
+        android:layout_marginLeft="-7dp"
         app:layout_constraintLeft_toLeftOf="parent"
         tools:ignore="NegativeMargin"
         tools:text="Example"/>
