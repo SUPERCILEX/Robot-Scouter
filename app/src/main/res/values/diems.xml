@@ -4,6 +4,11 @@
     <dimen name="card_padding_horizontal_small">8dp</dimen>
     <dimen name="card_padding_vertical">8dp</dimen>
 
+    <dimen name="spacing_normal">8dp</dimen>
     <dimen name="spacing_large">16dp</dimen>
     <dimen name="spacing_dialog_layout">20dp</dimen>
+
+    <dimen name="fab_size">56dp</dimen>
+
+    <dimen name="card_elevation">2dp</dimen>
 </resources>
