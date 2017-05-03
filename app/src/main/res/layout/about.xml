@@ -2,11 +2,7 @@
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/RobotScouter.Text"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:paddingEnd="16dp"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp"
+    style="@style/RobotScouter.Dialog"
     android:text="@string/developed_with_love"
+    android:textSize="@dimen/text_size_normal"
     tools:text="About"/>

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="RobotScouter.Dialog">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:paddingTop">@dimen/spacing_dialog_layout</item>
+        <item name="android:paddingBottom">@dimen/spacing_dialog_layout</item>
+        <item name="android:paddingStart">@dimen/spacing_large</item>
+        <item name="android:paddingEnd">@dimen/spacing_large</item>
+    </style>
+
     <style name="RobotScouter.CardList">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
