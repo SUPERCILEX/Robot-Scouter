@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
+import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder;
 
 public class CounterTemplateViewHolder extends CounterViewHolder implements ScoutTemplateViewHolder {
@@ -23,7 +23,7 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     public void bind() {
         super.bind();
         mCount.setText(String.valueOf(mMetric.getValue()));
-        mUnit.setText(((CounterMetric) mMetric).getUnit());
+        mUnit.setText(((NumberMetric) mMetric).getUnit());
 
         mName.setOnFocusChangeListener(this);
         mUnit.setOnFocusChangeListener(this);
@@ -47,14 +47,14 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
         if (v.getId() == R.id.name) {
             updateMetricName(mName.getText().toString());
         } else if (v.getId() == R.id.unit) {
-            CounterMetric counterMetric = (CounterMetric) mMetric;
+            NumberMetric numberMetric = (NumberMetric) mMetric;
             String newUnit = mUnit.getText().toString();
 
             if (TextUtils.isEmpty(newUnit)) newUnit = null;
 
-            if (!TextUtils.equals(counterMetric.getUnit(), newUnit)) {
+            if (!TextUtils.equals(numberMetric.getUnit(), newUnit)) {
                 disableAnimations();
-                counterMetric.updateUnit(newUnit);
+                numberMetric.updateUnit(newUnit);
             }
         }
     }

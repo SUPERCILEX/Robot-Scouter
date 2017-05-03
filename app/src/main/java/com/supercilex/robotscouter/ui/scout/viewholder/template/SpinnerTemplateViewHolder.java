@@ -5,7 +5,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
+import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.ui.scout.template.SpinnerTemplateDialog;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
 import com.supercilex.robotscouter.util.Constants;
@@ -26,11 +26,11 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     }
 
     @Override
-    protected ArrayAdapter<String> getAdapter(SpinnerMetric spinnerMetric) {
+    protected ArrayAdapter<String> getAdapter(ListMetric listMetric) {
         Map<String, String> items = new LinkedHashMap<>();
         items.put(mMetric.getRef().push().getKey(),
                   itemView.getContext().getString(R.string.edit_spinner_items));
-        items.putAll(spinnerMetric.getValue());
+        items.putAll(listMetric.getValue());
         return new ArrayAdapter<>(itemView.getContext(),
                                   android.R.layout.simple_spinner_item,
                                   new ArrayList<>(items.values()));
@@ -41,11 +41,11 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
         if (itemPosition == 0) {
             disableAnimations();
 
-            SpinnerMetric spinnerMetric = (SpinnerMetric) mMetric;
+            ListMetric listMetric = (ListMetric) mMetric;
             SpinnerTemplateDialog.show(mManager,
                                        mMetric.getRef().child(Constants.FIREBASE_VALUE),
-                                       spinnerMetric.getSelectedValueKey());
-            mSpinner.setSelection(indexOfKey(spinnerMetric.getSelectedValueKey()));
+                                       listMetric.getSelectedValueKey());
+            mSpinner.setSelection(indexOfKey(listMetric.getSelectedValueKey()));
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id);
         }

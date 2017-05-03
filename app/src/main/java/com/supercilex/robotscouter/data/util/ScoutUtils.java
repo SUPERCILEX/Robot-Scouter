@@ -13,10 +13,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
+import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
+import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
-import com.supercilex.robotscouter.data.model.metrics.SpinnerMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
@@ -43,7 +43,7 @@ public final class ScoutUtils {
                 metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<Boolean>>() {});
                 break;
             case MetricType.NUMBER:
-                metric = new CounterMetric(
+                metric = new NumberMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         snapshot.child(Constants.FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<Integer>() {}),
@@ -60,7 +60,7 @@ public final class ScoutUtils {
                     values.put(snapshot1.getKey(), snapshot1.getValue(String.class));
                 }
 
-                metric = new SpinnerMetric(
+                metric = new ListMetric(
                         snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
                         values,
                         snapshot.child(Constants.FIREBASE_SELECTED_VALUE_KEY)

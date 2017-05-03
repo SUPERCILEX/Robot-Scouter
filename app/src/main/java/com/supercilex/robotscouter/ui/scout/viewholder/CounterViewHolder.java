@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.metrics.CounterMetric;
+import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
 import com.supercilex.robotscouter.util.Constants;
 
 public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> implements View.OnClickListener, View.OnLongClickListener {
@@ -64,14 +64,14 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     }
 
     private String getStringWithoutUnit() {
-        String unit = ((CounterMetric) mMetric).getUnit();
+        String unit = ((NumberMetric) mMetric).getUnit();
         String count = mCount.getText().toString();
         return TextUtils.isEmpty(unit) ? count : count.replace(unit, "");
     }
 
     @SuppressLint("SetTextI18n")
     private void setValue(int value) {
-        String unit = ((CounterMetric) mMetric).getUnit();
+        String unit = ((NumberMetric) mMetric).getUnit();
         mCount.setText(TextUtils.isEmpty(unit) ? String.valueOf(value) : value + unit);
     }
 }
