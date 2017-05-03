@@ -64,8 +64,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
+        android:paddingBottom="@dimen/spacing_normal"
+        android:paddingTop="@dimen/spacing_normal"
         android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|end"
-        android:padding="16dp"
+        android:padding="@dimen/spacing_large"
         android:src="@drawable/ic_add_white_24dp"
         app:layout_behavior="com.supercilex.robotscouter.ui.scout.template.FabMenuBehavior"
         app:menu_backgroundColor="#dcf1f1f1"
