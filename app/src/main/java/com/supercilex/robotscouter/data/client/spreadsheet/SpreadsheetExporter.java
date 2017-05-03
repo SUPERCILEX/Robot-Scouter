@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
+import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
@@ -613,7 +614,13 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 valueCell.setCellValue((boolean) metric.getValue());
                 break;
             case MetricType.NUMBER:
-                valueCell.setCellValue((int) metric.getValue());
+                NumberMetric numberMetric = (NumberMetric) metric;
+                valueCell.setCellValue(numberMetric.getValue());
+
+                String unit = numberMetric.getUnit();
+                if (!TextUtils.isEmpty(unit)) {
+                    mCache.setCellFormat(valueCell, "#0\"" + unit + "\"");
+                }
                 break;
             case MetricType.LIST:
                 ListMetric listMetric = (ListMetric) metric;
