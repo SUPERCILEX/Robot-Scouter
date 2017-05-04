@@ -1,19 +1,27 @@
 package com.supercilex.robotscouter.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -27,20 +35,29 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.io.File;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.supercilex.robotscouter.util.ViewUtils.animateCircularReveal;
+
 public class TeamDetailsDialog extends KeyboardDialogBase
-        implements View.OnFocusChangeListener, View.OnTouchListener, OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
+        implements View.OnFocusChangeListener, OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;
     private TeamMediaCreator mMediaCapture;
 
+    private View mRootView;
+
+    private CircleImageView mMedia;
+    private TextView mName;
+    private ImageButton mEditNameButton;
+
+    private TextInputLayout mNameInputLayout;
     private TextInputLayout mMediaInputLayout;
     private TextInputLayout mWebsiteInputLayout;
     private EditText mNameEditText;
     private EditText mMediaEditText;
     private EditText mWebsiteEditText;
-
-    private float mStartX = -1;
 
     public static void show(FragmentManager manager, TeamHelper teamHelper) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
@@ -65,22 +82,29 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
+        mRootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
 
-        mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
-        mWebsiteInputLayout = (TextInputLayout) rootView.findViewById(R.id.website_layout);
-        mNameEditText = (EditText) rootView.findViewById(R.id.name);
-        mMediaEditText = (EditText) rootView.findViewById(R.id.media);
-        mWebsiteEditText = (EditText) rootView.findViewById(R.id.website);
+        mMedia = (CircleImageView) mRootView.findViewById(R.id.media);
+        mName = (TextView) mRootView.findViewById(R.id.name);
+        mEditNameButton = (ImageButton) mRootView.findViewById(R.id.edit_name_button);
+
+        mNameInputLayout = (TextInputLayout) mRootView.findViewById(R.id.name_layout);
+        mMediaInputLayout = (TextInputLayout) mRootView.findViewById(R.id.media_layout);
+        mWebsiteInputLayout = (TextInputLayout) mRootView.findViewById(R.id.website_layout);
+        mNameEditText = (EditText) mRootView.findViewById(R.id.name_edit);
+        mMediaEditText = (EditText) mRootView.findViewById(R.id.media_edit);
+        mWebsiteEditText = (EditText) mRootView.findViewById(R.id.website_edit);
+
+        mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.show(this));
+        mEditNameButton.setOnClickListener(this);
 
         mNameEditText.setOnFocusChangeListener(this);
         mMediaEditText.setOnFocusChangeListener(this);
         mWebsiteEditText.setOnFocusChangeListener(this);
-        mMediaEditText.setOnTouchListener(this);
 
         updateUi();
 
-        return createDialog(rootView, R.string.team_details);
+        return createDialog(mRootView, R.string.team_details);
     }
 
     @Override
@@ -96,10 +120,23 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     }
 
     private void updateUi() {
-        if (mNameEditText != null && mMediaCapture != null && mWebsiteEditText != null) {
-            mNameEditText.setText(mTeamHelper.getTeam().getName());
-            mMediaEditText.setText(mTeamHelper.getTeam().getMedia());
-            mWebsiteEditText.setText(mTeamHelper.getTeam().getWebsite());
+        if (mMedia != null
+                && mName != null
+                && mNameEditText != null
+                && mMediaCapture != null
+                && mWebsiteEditText != null) {
+            Team team = mTeamHelper.getTeam();
+
+            Glide.with(getContext())
+                    .load(team.getMedia())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.ic_memory_grey_48dp)
+                    .into(mMedia);
+            mName.setText(team.toString());
+
+            mNameEditText.setText(team.getName());
+            mMediaEditText.setText(team.getMedia());
+            mWebsiteEditText.setText(team.getWebsite());
         }
     }
 
@@ -119,6 +156,55 @@ public class TeamDetailsDialog extends KeyboardDialogBase
             updateUi();
         } else if (type == EventType.REMOVED) {
             dismiss();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.edit_name_button) {
+            Animator editNameAnimator = animateCircularReveal(
+                    mEditNameButton,
+                    false,
+                    0,
+                    mEditNameButton.getHeight() / 2,
+                    mEditNameButton.getWidth());
+            Animator nameAnimator = animateCircularReveal(
+                    mName,
+                    false,
+                    0,
+                    mName.getHeight() / 2,
+                    mName.getWidth());
+
+            int buttonCenterX = mEditNameButton.getLeft() + (mEditNameButton.getWidth() / 2);
+            Animator nameLayoutAnimator = animateCircularReveal(
+                    mNameInputLayout,
+                    true,
+                    buttonCenterX,
+                    0,
+                    (float) Math.hypot(buttonCenterX, mNameInputLayout.getHeight()));
+
+            if (editNameAnimator == null || nameAnimator == null || nameLayoutAnimator == null) {
+                return;
+            }
+
+            nameAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    ConstraintLayout layout = (ConstraintLayout) mRootView.findViewById(R.id.container);
+                    ConstraintSet constraints = new ConstraintSet();
+                    constraints.clone(layout);
+
+                    constraints.connect(
+                            R.id.media, ConstraintSet.BOTTOM, R.id.name_layout, ConstraintSet.TOP);
+                    constraints.applyTo(layout);
+                }
+            });
+
+            AnimatorSet animator = new AnimatorSet();
+            animator.playTogether(editNameAnimator, nameAnimator, nameLayoutAnimator);
+            animator.start();
+        } else {
+            super.onClick(v);
         }
     }
 
@@ -165,24 +251,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         }
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int action = event.getAction();
-        float x = event.getX();
-
-        if (action == MotionEvent.ACTION_DOWN && mStartX == -1) mStartX = x;
-
-        int iconX = mMediaEditText.getRight() - mMediaEditText.getCompoundDrawables()[2].getBounds()
-                .width();
-        if (action == MotionEvent.ACTION_UP && mStartX >= iconX && x >= iconX) {
-            ShouldUploadMediaToTbaDialog.show(this);
-            return true;
-        }
-        if (action == MotionEvent.ACTION_UP) mStartX = -1;
-
-        return false;
-    }
-
     /**
      * Used in {@link TeamMediaCreator#startCapture(boolean)}
      * <p>
@@ -218,7 +286,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         int id = v.getId();
         if (id == R.id.media) {
             validateUrl(mMediaEditText.getText().toString(), mMediaInputLayout);
-        } else if (id == R.id.website) {
+        } else if (id == R.id.website_edit) {
             validateUrl(mWebsiteEditText.getText().toString(), mWebsiteInputLayout);
         }
     }
