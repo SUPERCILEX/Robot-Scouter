@@ -30,14 +30,15 @@ public abstract class ScoutValueDialogBase<T> extends KeyboardDialogBase impleme
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View rootView = View.inflate(getContext(), R.layout.dialog_scout_value, null);
         mInputLayout =
-                (TextInputLayout) View.inflate(getContext(), R.layout.dialog_scout_value, null);
+                (TextInputLayout) rootView.findViewById(R.id.value_layout);
         mInputLayout.setHint(getString(getHint()));
         mValue = (EditText) mInputLayout.findViewById(R.id.value);
         mValue.setText(getArguments().getString(CURRENT_VALUE));
         mValue.post(this);
 
-        return createDialog(mInputLayout, getTitle());
+        return createDialog(rootView, getTitle());
     }
 
     @Override
