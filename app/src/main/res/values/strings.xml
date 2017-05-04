@@ -162,6 +162,7 @@
     <string name="average">Average</string>
 
     <!-- Accessibility -->
+    <string name="accessibility_edit_team_name">Edit the team name</string>
     <string name="accessibility_robot_icon">A picture of the team’s robot.</string>
     <string name="accessibility_increment_counter">Increment counter</string>
     <string name="accessibility_decrement_counter">Decrement counter</string>
