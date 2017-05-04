@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.TextInputLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/RobotScouter.Dialog"
-    android:hint="@string/hint_team_number"
-    app:errorTextAppearance="@style/RobotScouter.Text.Error"
-    app:hintTextAppearance="@style/RobotScouter.Text.Hint">
+    style="@style/RobotScouter.Dialog">
 
-    <android.support.design.widget.TextInputEditText
-        android:id="@+id/team_number"
-        style="@style/RobotScouter.Text"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/name"
+        style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:inputType="number"/>
+        android:hint="@string/hint_team_number">
 
-</android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/team_number"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+</FrameLayout>
