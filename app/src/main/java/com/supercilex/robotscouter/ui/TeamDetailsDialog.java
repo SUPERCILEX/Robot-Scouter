@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -105,6 +106,13 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         updateUi();
 
         return createDialog(mRootView, R.string.team_details);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getDialog().getWindow()
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
