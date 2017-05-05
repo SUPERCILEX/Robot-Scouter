@@ -44,7 +44,7 @@
                 android:minHeight="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleMarginTop="13dp"/>
+                app:titleMarginTop="14dp"/>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
