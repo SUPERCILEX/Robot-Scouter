@@ -1,15 +1,12 @@
 package com.supercilex.robotscouter.ui;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,8 +44,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     private TeamHelper mTeamHelper;
     private TeamMediaCreator mMediaCapture;
 
-    private View mRootView;
-
     private CircleImageView mMedia;
     private TextView mName;
     private ImageButton mEditNameButton;
@@ -83,18 +78,18 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mRootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
+        View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
 
-        mMedia = (CircleImageView) mRootView.findViewById(R.id.media);
-        mName = (TextView) mRootView.findViewById(R.id.name);
-        mEditNameButton = (ImageButton) mRootView.findViewById(R.id.edit_name_button);
+        mMedia = (CircleImageView) rootView.findViewById(R.id.media);
+        mName = (TextView) rootView.findViewById(R.id.name);
+        mEditNameButton = (ImageButton) rootView.findViewById(R.id.edit_name_button);
 
-        mNameInputLayout = (TextInputLayout) mRootView.findViewById(R.id.name_layout);
-        mMediaInputLayout = (TextInputLayout) mRootView.findViewById(R.id.media_layout);
-        mWebsiteInputLayout = (TextInputLayout) mRootView.findViewById(R.id.website_layout);
-        mNameEditText = (EditText) mRootView.findViewById(R.id.name_edit);
-        mMediaEditText = (EditText) mRootView.findViewById(R.id.media_edit);
-        mWebsiteEditText = (EditText) mRootView.findViewById(R.id.website_edit);
+        mNameInputLayout = (TextInputLayout) rootView.findViewById(R.id.name_layout);
+        mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
+        mWebsiteInputLayout = (TextInputLayout) rootView.findViewById(R.id.website_layout);
+        mNameEditText = (EditText) rootView.findViewById(R.id.name_edit);
+        mMediaEditText = (EditText) rootView.findViewById(R.id.media_edit);
+        mWebsiteEditText = (EditText) rootView.findViewById(R.id.website_edit);
 
         mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.show(this));
         mEditNameButton.setOnClickListener(this);
@@ -105,7 +100,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         updateUi();
 
-        return createDialog(mRootView, R.string.team_details);
+        return createDialog(rootView, R.string.team_details);
     }
 
     @Override
@@ -191,26 +186,11 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                     0,
                     (float) Math.hypot(buttonCenterX, mNameInputLayout.getHeight()));
 
-            if (editNameAnimator == null || nameAnimator == null || nameLayoutAnimator == null) {
-                return;
+            if (editNameAnimator != null && nameAnimator != null && nameLayoutAnimator != null) {
+                AnimatorSet animator = new AnimatorSet();
+                animator.playTogether(editNameAnimator, nameAnimator, nameLayoutAnimator);
+                animator.start();
             }
-
-            nameAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    ConstraintLayout layout = (ConstraintLayout) mRootView.findViewById(R.id.container);
-                    ConstraintSet constraints = new ConstraintSet();
-                    constraints.clone(layout);
-
-                    constraints.connect(
-                            R.id.media, ConstraintSet.BOTTOM, R.id.name_layout, ConstraintSet.TOP);
-                    constraints.applyTo(layout);
-                }
-            });
-
-            AnimatorSet animator = new AnimatorSet();
-            animator.playTogether(editNameAnimator, nameAnimator, nameLayoutAnimator);
-            animator.start();
         } else {
             super.onClick(v);
         }
