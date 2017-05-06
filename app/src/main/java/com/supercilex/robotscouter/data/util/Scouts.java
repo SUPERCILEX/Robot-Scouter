@@ -80,8 +80,7 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
 
 
         for (Task<Pair<TeamHelper, List<String>>> scoutKeysTask : scoutIndicesTasks) {
-            scoutKeysTask.addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this)
-                    .addOnFailureListener(this);
+            scoutKeysTask.addOnSuccessListener(this).addOnFailureListener(this);
         }
 
         Tasks.whenAll(scoutIndicesTasks)
