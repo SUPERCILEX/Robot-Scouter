@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.util;
 
+import android.content.Context;
 import android.os.Build;
 
 import com.firebase.ui.auth.AuthUI;
@@ -66,6 +67,12 @@ public enum Constants {;
 
     public static DataSnapshot sDefaultTemplate;
     public static ObservableSnapshotArray<Scout> sFirebaseScoutTemplates;
+
+    public static String sProviderAuthority;
+
+    public static void init(Context context) {
+        sProviderAuthority = context.getPackageName() + ".provider";
+    }
 
     public static DatabaseReference getScoutMetrics(String key) {
         return FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS);

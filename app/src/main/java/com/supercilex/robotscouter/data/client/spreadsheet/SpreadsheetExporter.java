@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.client.NotificationForwarder;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.data.model.metrics.MetricType;
@@ -197,25 +199,31 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         if (spreadsheetUri == null) return;
 
         int exportId = (int) System.currentTimeMillis();
-        Intent sharingIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent baseIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent shareIntent = new Intent(baseIntent);
+
+        Intent viewIntent = new Intent(baseIntent).setAction(Intent.ACTION_VIEW)
+                .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (viewIntent.resolveActivity(getPackageManager()) == null) {
+            viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Intent typeIntent = sharingIntent.setAction(Intent.ACTION_SEND)
+            Intent typeIntent = shareIntent.setAction(Intent.ACTION_SEND)
                     .setType(MIME_TYPE_MS_EXCEL)
                     .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
 
-            sharingIntent = Intent.createChooser(typeIntent,
-                                                 getPluralTeams(R.plurals.share_spreadsheet_title))
+            shareIntent = Intent.createChooser(typeIntent,
+                                               getPluralTeams(R.plurals.share_spreadsheet_title))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         } else {
-            sharingIntent.setAction(Intent.ACTION_VIEW)
-                    .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL);
-
-            if (sharingIntent.resolveActivity(getPackageManager()) == null) {
-                sharingIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL);
-            }
+            shareIntent = new Intent(viewIntent);
         }
+
+        PendingIntent sharePendingIntent = PendingIntent.getActivity(
+                this, exportId, shareIntent, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_done_white_48dp)
@@ -225,15 +233,30 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                                           R.plurals.exporting_spreadsheet_complete_summary,
                                           mCache.getTeamHelpers().size()))
                                   .bigText(getPluralTeams(R.plurals.exporting_spreadsheet_complete_message)))
-                .setContentIntent(PendingIntent.getActivity(this,
-                                                            exportId,
-                                                            sharingIntent,
-                                                            PendingIntent.FLAG_ONE_SHOT))
+                .setContentIntent(sharePendingIntent)
+                .addAction(R.drawable.ic_share_white_24dp,
+                           getString(R.string.share),
+                           PendingIntent.getBroadcast(
+                                   this,
+                                   exportId,
+                                   NotificationForwarder.getCancelIntent(this,
+                                                                         exportId,
+                                                                         shareIntent),
+                                   PendingIntent.FLAG_ONE_SHOT))
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(Notification.PRIORITY_HIGH);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            builder.addAction(R.drawable.ic_launch_white_24dp,
+                              getString(R.string.open),
+                              PendingIntent.getActivity(this,
+                                                        exportId,
+                                                        viewIntent,
+                                                        PendingIntent.FLAG_UPDATE_CURRENT));
+        }
 
         mCache.updateNotification(exportId, builder.build());
         stopForeground(true);
@@ -254,7 +277,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         if (rsFolder == null) return null;
 
         File file = writeFile(rsFolder);
-        return file == null ? null : Uri.fromFile(file);
+        if (file == null) return null;
+        else return FileProvider.getUriForFile(this, Constants.sProviderAuthority, file);
     }
 
     @Nullable

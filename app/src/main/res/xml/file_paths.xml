@@ -3,4 +3,7 @@
     <external-path
         name="team_media"
         path="Robot Scouter/Media"/>
+    <external-path
+        name="spreadsheets"
+        path="Robot Scouter"/>
 </paths>
