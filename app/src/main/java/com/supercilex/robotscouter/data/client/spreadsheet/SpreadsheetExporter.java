@@ -72,6 +72,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -184,7 +185,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
     @Override
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
-        mScouts = scouts;
+        mScouts = Collections.unmodifiableMap(scouts);
 
         if (mScouts.size() != mCache.getTeamHelpers().size()) {
             // Some error occurred, let's try again
@@ -542,7 +543,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         Pair<Integer, ScoutMetric<Void>> nearestHeader = null;
 
         List<Row> rows = getAdjustedList(row.getSheet());
-        for (int i = row.getRowNum(); i >= 0; i--) {
+        for (int i = row.getRowNum() - 1; i >= 0; i--) {
             ScoutMetric metric = getMetricForScouts(mScouts.get(teamHelper),
                                                     mCache.getMetricKey(rows.get(i)));
 
