@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoUtils;
 
 import java.io.File;
@@ -141,7 +142,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 mPhotoPath = photoFile.getAbsolutePath();
 
                 Uri photoUri = FileProvider.getUriForFile(
-                        context, context.getPackageName() + ".fileprovider", photoFile);
+                        context, Constants.sProviderAuthority, photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 mFragment.get().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC);
             }
