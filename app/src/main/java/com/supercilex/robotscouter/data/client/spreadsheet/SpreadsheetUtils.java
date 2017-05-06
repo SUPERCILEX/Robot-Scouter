@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public final class SpreadsheetUtils {
+public enum SpreadsheetUtils {;
     public static final FreeRefFunction AVERAGEIF = new FreeRefFunction() {
         @Override
         public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext context) {
@@ -86,10 +86,6 @@ public final class SpreadsheetUtils {
     private static final int MAX_SHEET_LENGTH = 31;
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
-
-    private SpreadsheetUtils() {
-        throw new AssertionError("No instance for you!");
-    }
 
     public static boolean isUnsupportedDevice() {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
