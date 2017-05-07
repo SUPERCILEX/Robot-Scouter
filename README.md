@@ -9,7 +9,7 @@ scouting simple and collaborative.
 
 ![Robot Scouter demo](demo.gif)
 
-## Features:
+## Features
 
   - **Full offline support** 📡
   - **No setup required e.g. no databases** 🗄️ (managing databases = 💩)
