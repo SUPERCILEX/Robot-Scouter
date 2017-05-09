@@ -154,6 +154,12 @@ public class DonateDialog extends DialogFragment
         }
 
         PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+
+        if (pendingIntent == null) {
+            showError();
+            return;
+        }
+
         try {
             startIntentSenderForResult(
                     pendingIntent.getIntentSender(),
