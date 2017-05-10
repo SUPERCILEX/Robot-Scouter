@@ -663,9 +663,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                 long sum = 0;
                 for (Long duration : cycles) sum += duration;
-                long nanoAverage = cycles.isEmpty() ? 0 : sum / cycles.size();
+                long average = cycles.isEmpty() ? 0 : sum / cycles.size();
 
-                valueCell.setCellValue(TimeUnit.NANOSECONDS.toSeconds(nanoAverage));
+                valueCell.setCellValue(TimeUnit.MILLISECONDS.toSeconds(average));
                 mCache.setCellFormat(valueCell, "#0\"s\"");
                 break;
             case MetricType.HEADER:
