@@ -111,7 +111,6 @@ public final class AuthHelper implements View.OnClickListener {
         mActivity.startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(Constants.ALL_PROVIDERS)
-                        .setTheme(R.style.RobotScouter)
                         .setLogo(R.drawable.ic_logo)
                         .setTosUrl("https://supercilex.github.io/privacy-policy/")
                         .setIsAccountLinkingEnabled(true)

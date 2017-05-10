@@ -3,7 +3,6 @@
     <color name="colorPrimary">#2A56C6</color>
     <color name="colorPrimaryDark">#1C3AA9</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="errorColor">#E62E00</color>
     <color name="grey">#CFCFCF</color>
 
     <color name="list_divider">#E1E1E1</color>
