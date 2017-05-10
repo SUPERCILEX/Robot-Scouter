@@ -91,10 +91,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             setText(R.string.stop_stopwatch, "0:00");
             mTimer = new Timer(this);
         } else {
-            long nanoElapsed = mTimer.cancel();
-
             ArrayList<Long> newCycles = new ArrayList<>(mMetric.getValue());
-            newCycles.add(nanoElapsed);
+            newCycles.add(mTimer.cancel());
             updateMetricValue(newCycles);
         }
     }
@@ -129,7 +127,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         private static final String COLON = ":";
         private static final String LEADING_ZERO = "0";
 
-        private final long mStartNanoTime = System.nanoTime();
+        /** In milliseconds */
+        private final long mStartTime = System.currentTimeMillis();
 
         private TaskCompletionSource<Void> mTimerTask;
         private boolean mIsRunning;
@@ -148,11 +147,11 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             start.setResult(null);
         }
 
-        private static String getFormattedTime(long nanos) {
-            long seconds = TimeUnit.NANOSECONDS.toSeconds(nanos);
+        public static String getFormattedTime(long nanos) {
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(nanos);
 
-            long minutes = TimeUnit.NANOSECONDS.toMinutes(nanos);
-            String formattedTime = minutes + COLON + (seconds - (minutes * 60));
+            String formattedTime =
+                    minutes + COLON + (TimeUnit.MILLISECONDS.toSeconds(nanos) - (minutes * 60));
             String[] split = formattedTime.split(COLON);
             if (split[1].length() <= Constants.SINGLE_ITEM) {
                 formattedTime = split[0] + COLON + LEADING_ZERO + split[1];
@@ -170,6 +169,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             setText(R.string.stop_stopwatch, getFormattedTime(getElapsedTime()));
         }
 
+        /** @return The time since this class was instantiated and then cancelled */
         public long cancel() {
             mIsRunning = false;
             StopwatchViewHolder holder = mHolder.get();
@@ -194,7 +194,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             try {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
-                final long seconds = TimeUnit.NANOSECONDS.toSeconds(getElapsedTime());
+                final long seconds = TimeUnit.MILLISECONDS.toSeconds(getElapsedTime());
                 if (!mIsRunning || TimeUnit.SECONDS.toMinutes(seconds) >= GAME_TIME) {
                     mTimerTask.trySetException(
                             new TimeoutException("Cycle time is longer than game time."));
@@ -218,8 +218,9 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             cancel();
         }
 
+        /** @return the time since this class was instantiated in milliseconds */
         private long getElapsedTime() {
-            return System.nanoTime() - mStartNanoTime;
+            return System.currentTimeMillis() - mStartTime;
         }
 
         private void setText(@StringRes int id, Object... formatArgs) {
