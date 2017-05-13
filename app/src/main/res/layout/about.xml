@@ -5,4 +5,4 @@
     style="@style/RobotScouter.Dialog"
     android:text="@string/developed_with_love"
     android:textSize="@dimen/text_size_normal"
-    tools:text="About"/>
+    tools:text="About" />

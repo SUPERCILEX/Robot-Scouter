@@ -16,15 +16,15 @@
         app:layout_constraintTop_toTopOf="@+id/notes"
         app:layout_constraintBottom_toBottomOf="@+id/notes"
         tools:ignore="UnknownIdInLayout"
-        tools:text="Example"/>
+        tools:text="Example" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.33"/>
+        app:layout_constraintGuide_percent="0.33" />
 
-    <include layout="@layout/scout_base_notes"/>
+    <include layout="@layout/scout_base_notes" />
 
 </android.support.constraint.ConstraintLayout>

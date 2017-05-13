@@ -16,8 +16,8 @@
         app:layout_constraintTop_toTopOf="@+id/stopwatch"
         app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
         tools:ignore="UnknownIdInLayout"
-        tools:text="Example"/>
+        tools:text="Example" />
 
-    <include layout="@layout/scout_base_stopwatch"/>
+    <include layout="@layout/scout_base_stopwatch" />
 
 </android.support.constraint.ConstraintLayout>

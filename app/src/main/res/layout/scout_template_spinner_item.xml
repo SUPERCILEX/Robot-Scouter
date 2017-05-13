@@ -9,7 +9,7 @@
     tools:ignore="UnusedResources">
     <!-- TODO remove ignore once the Gradle plugin is fixed -->
 
-    <include layout="@layout/scout_template_base_reorder"/>
+    <include layout="@layout/scout_template_base_reorder" />
 
     <EditText
         android:id="@+id/name"
@@ -22,6 +22,6 @@
         app:layout_constraintLeft_toRightOf="@id/reorder"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Item 1"/>
+        tools:text="Item 1" />
 
 </android.support.constraint.ConstraintLayout>

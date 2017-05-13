@@ -10,7 +10,7 @@
             android:action="android.intent.action.VIEW"
             android:data="add_scout"
             android:targetClass="com.supercilex.robotscouter.ui.teamlist.TeamListActivity"
-            android:targetPackage="com.supercilex.robotscouter"/>
-        <categories android:name="android.shortcut.new_scout"/>
+            android:targetPackage="com.supercilex.robotscouter" />
+        <categories android:name="android.shortcut.new_scout" />
     </shortcut>
 </shortcuts>

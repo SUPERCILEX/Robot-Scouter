@@ -5,18 +5,18 @@
     tools:ignore="PrivateResource">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/list_divider"/>
+            <solid android:color="@color/list_divider" />
             <corners
                 android:bottomLeftRadius="@dimen/abc_control_corner_material"
-                android:bottomRightRadius="@dimen/abc_control_corner_material"/>
+                android:bottomRightRadius="@dimen/abc_control_corner_material" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/list_item"/>
+            <solid android:color="@color/list_item" />
             <corners
                 android:bottomLeftRadius="@dimen/abc_control_corner_material"
-                android:bottomRightRadius="@dimen/abc_control_corner_material"/>
+                android:bottomRightRadius="@dimen/abc_control_corner_material" />
         </shape>
     </item>
 </layer-list>
