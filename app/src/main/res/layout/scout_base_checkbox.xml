@@ -13,6 +13,6 @@
         android:layout_marginLeft="-7dp"
         app:layout_constraintLeft_toLeftOf="parent"
         tools:ignore="NegativeMargin"
-        tools:text="Example"/>
+        tools:text="Example" />
 
 </merge>

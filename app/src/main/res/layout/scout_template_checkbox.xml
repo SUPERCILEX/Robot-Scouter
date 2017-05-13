@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.CardList.Metric">
 
-    <include layout="@layout/scout_template_base_reorder"/>
+    <include layout="@layout/scout_template_base_reorder" />
 
-    <include layout="@layout/scout_base_checkbox"/>
+    <include layout="@layout/scout_base_checkbox" />
 
     <EditText
         android:id="@+id/checkbox_name"
@@ -22,6 +22,6 @@
         app:layout_constraintTop_toTopOf="@id/name"
         app:layout_constraintBottom_toBottomOf="@+id/name"
         tools:ignore="UnknownIdInLayout"
-        tools:text="Name"/>
+        tools:text="Name" />
 
 </android.support.constraint.ConstraintLayout>

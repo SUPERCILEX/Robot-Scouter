@@ -16,8 +16,8 @@
         app:layout_constraintTop_toTopOf="@+id/decrement_counter"
         app:layout_constraintBottom_toBottomOf="@+id/decrement_counter"
         tools:ignore="UnknownIdInLayout"
-        tools:text="Example"/>
+        tools:text="Example" />
 
-    <include layout="@layout/scout_base_counter"/>
+    <include layout="@layout/scout_base_counter" />
 
 </android.support.constraint.ConstraintLayout>

@@ -5,4 +5,4 @@
     android:id="@+id/scouts"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="MergeRootFrame"/>
+    tools:ignore="MergeRootFrame" />

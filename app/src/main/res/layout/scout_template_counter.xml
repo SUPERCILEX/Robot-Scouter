@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.CardList.Metric">
 
-    <include layout="@layout/scout_template_base_reorder"/>
+    <include layout="@layout/scout_template_base_reorder" />
 
     <EditText
         android:id="@+id/name"
@@ -19,9 +19,9 @@
         app:layout_constraintRight_toLeftOf="@+id/decrement_counter"
         app:layout_constraintBaseline_toBaselineOf="@+id/count"
         tools:ignore="UnknownIdInLayout"
-        tools:text="Example"/>
+        tools:text="Example" />
 
-    <include layout="@layout/scout_base_counter"/>
+    <include layout="@layout/scout_base_counter" />
 
     <EditText
         android:id="@+id/unit"
@@ -37,6 +37,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBaseline_toBaselineOf="@+id/count"
         tools:ignore="UnknownIdInLayout"
-        tools:text="s"/>
+        tools:text="s" />
 
 </android.support.constraint.ConstraintLayout>

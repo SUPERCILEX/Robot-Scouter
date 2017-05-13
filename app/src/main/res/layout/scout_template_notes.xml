@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.CardList.Metric">
 
-    <include layout="@layout/scout_template_base_reorder"/>
+    <include layout="@layout/scout_template_base_reorder" />
 
     <EditText
         android:id="@+id/name"
@@ -18,8 +18,8 @@
         app:layout_constraintTop_toTopOf="@+id/notes"
         app:layout_constraintBottom_toBottomOf="@+id/notes"
         tools:ignore="UnknownIdInLayout"
-        tools:text="Example"/>
+        tools:text="Example" />
 
-    <include layout="@layout/scout_base_notes"/>
+    <include layout="@layout/scout_base_notes" />
 
 </android.support.constraint.ConstraintLayout>

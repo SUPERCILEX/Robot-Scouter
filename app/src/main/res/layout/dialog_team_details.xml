@@ -19,7 +19,7 @@
                 android:layout_height="96dp"
                 android:src="@drawable/ic_memory_grey_144dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                app:layout_constraintRight_toRightOf="parent" />
 
             <ImageView
                 android:layout_width="24dp"
@@ -29,7 +29,7 @@
                 app:layout_constraintLeft_toLeftOf="@+id/media"
                 app:layout_constraintRight_toRightOf="@+id/media"
                 app:layout_constraintTop_toTopOf="@+id/media"
-                app:layout_constraintBottom_toBottomOf="@+id/media"/>
+                app:layout_constraintBottom_toBottomOf="@+id/media" />
 
         </android.support.constraint.ConstraintLayout>
 
@@ -49,7 +49,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                app:layout_constraintRight_toRightOf="parent" />
 
             <ImageButton
                 android:id="@+id/edit_name_button"
@@ -64,7 +64,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/name"
                 app:layout_constraintBottom_toBottomOf="@+id/name"
-                app:layout_constraintHorizontal_bias="0"/>
+                app:layout_constraintHorizontal_bias="0" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/name_layout"
@@ -79,7 +79,7 @@
                     android:id="@+id/name_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textCapWords"/>
+                    android:inputType="textCapWords" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +98,7 @@
                 android:id="@+id/media_edit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="textUri"/>
+                android:inputType="textUri" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -113,7 +113,7 @@
                 android:id="@+id/website_edit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="textUri"/>
+                android:inputType="textUri" />
 
         </android.support.design.widget.TextInputLayout>
 

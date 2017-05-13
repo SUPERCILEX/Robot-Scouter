@@ -5,4 +5,4 @@
     style="@style/RobotScouter.CardList.Metric"
     android:textIsSelectable="false"
     android:textSize="18sp"
-    android:textStyle="bold"/>
+    android:textStyle="bold" />

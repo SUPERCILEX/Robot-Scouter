@@ -9,6 +9,6 @@
     app:cardCornerRadius="5dp"
     app:cardUseCompatPadding="true">
 
-    <include layout="@android:layout/simple_list_item_2"/>
+    <include layout="@android:layout/simple_list_item_2" />
 
 </android.support.v7.widget.CardView>

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.CardList.Metric">
 
-    <include layout="@layout/scout_template_base_reorder"/>
+    <include layout="@layout/scout_template_base_reorder" />
 
     <EditText
         android:id="@+id/name"
@@ -19,8 +19,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
         tools:ignore="UnknownIdInLayout"
         tools:layout_constraintLeft_creator="1"
-        tools:text="Example"/>
+        tools:text="Example" />
 
-    <include layout="@layout/scout_base_stopwatch"/>
+    <include layout="@layout/scout_base_stopwatch" />
 
 </android.support.constraint.ConstraintLayout>
