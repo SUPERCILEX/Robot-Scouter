@@ -115,8 +115,9 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         if (!mSelectedTeams.isEmpty()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            int size = mSelectedTeams.size();
-            if (size == Constants.SINGLE_ITEM) showTeamSpecificItems();
+            if (mSelectedTeams.size() == Constants.SINGLE_ITEM) {
+                setTeamSpecificItemsVisible(true);
+            }
             setToolbarTitle();
         }
     }
@@ -205,21 +206,22 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         } else {
             mSelectedTeams.add(teamHelper);
         }
+
         setToolbarTitle();
 
         int newSize = mSelectedTeams.size();
         if (hadNormalMenu) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            showTeamSpecificItems();
+            setTeamSpecificItemsVisible(true);
             notifyItemsChanged();
         } else {
             if (mSelectedTeams.isEmpty()) {
                 resetMenu();
             } else if (newSize == Constants.SINGLE_ITEM) {
-                showTeamSpecificItems();
+                setTeamSpecificItemsVisible(true);
             } else {
-                hideTeamSpecificMenuItems();
+                setTeamSpecificItemsVisible(false);
             }
 
             if (newSize > oldSize && newSize > Constants.SINGLE_ITEM && mAdapter.getItemCount() > newSize) {
@@ -260,19 +262,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         }
     }
 
-    private void showTeamSpecificItems() {
-        Team team = mSelectedTeams.get(0).getTeam();
-
-        mVisitTbaWebsiteItem
-                .setVisible(true)
-                .setTitle(mFragment.getString(R.string.visit_team_website_on_tba,
-                                              team.getNumber()));
-        mVisitTeamWebsiteItem
-                .setVisible(team.getWebsite() != null)
-                .setTitle(mFragment.getString(R.string.visit_team_website, team.getNumber()));
-        mEditTeamDetailsItem.setVisible(true);
-    }
-
     private void setContextMenuItemsVisible(boolean visible) {
         mExportItem.setVisible(visible);
         mShareItem.setVisible(visible);
@@ -280,6 +269,21 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(visible);
         if (visible) getFab().hide();
+    }
+
+    private void setTeamSpecificItemsVisible(boolean visible) {
+        mVisitTbaWebsiteItem.setVisible(visible);
+        mVisitTeamWebsiteItem.setVisible(visible);
+        mEditTeamDetailsItem.setVisible(visible);
+
+        if (visible) {
+            Team team = mSelectedTeams.get(0).getTeam();
+
+            mVisitTbaWebsiteItem.setTitle(
+                    mFragment.getString(R.string.visit_team_website_on_tba, team.getNumber()));
+            mVisitTeamWebsiteItem.setTitle(
+                    mFragment.getString(R.string.visit_team_website, team.getNumber()));
+        }
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
@@ -299,7 +303,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 mSignInItem.setVisible(true);
                 mSignOutItem.setVisible(false);
             }
-            hideTeamSpecificMenuItems();
+            setTeamSpecificItemsVisible(false);
         } else {
             mSignInItem.setVisible(false);
             mSignOutItem.setVisible(false);
@@ -332,12 +336,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                     animator -> activity.getWindow()
                             .setStatusBarColor((int) animator.getAnimatedValue()));
         }
-    }
-
-    private void hideTeamSpecificMenuItems() {
-        mVisitTbaWebsiteItem.setVisible(false);
-        mVisitTeamWebsiteItem.setVisible(false);
-        mEditTeamDetailsItem.setVisible(false);
     }
 
     private void setToolbarTitle() {
