@@ -161,7 +161,7 @@ public abstract class ScoutListFragmentBase extends Fragment
                                                   Collections.singletonList(mTeamHelper));
                 AnalyticsUtils.shareTeam(teamNumber);
                 break;
-            case R.id.action_visit_tba_team_website:
+            case R.id.action_visit_tba_website:
                 mTeamHelper.visitTbaWebsite(getContext());
                 break;
             case R.id.action_visit_team_website:

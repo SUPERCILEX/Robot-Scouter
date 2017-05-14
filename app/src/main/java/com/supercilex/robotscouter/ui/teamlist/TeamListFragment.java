@@ -127,7 +127,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        mMenuHelper.onCreateOptionsMenu(menu);
+        mMenuHelper.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

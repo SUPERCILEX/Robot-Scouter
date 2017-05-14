@@ -140,7 +140,7 @@ public abstract class AppBarViewHolderBase
         mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
         mDeleteScoutItem = menu.findItem(R.id.action_delete);
 
-        menu.findItem(R.id.action_visit_tba_team_website)
+        menu.findItem(R.id.action_visit_tba_website)
                 .setTitle(mFragment.getString(R.string.visit_team_website_on_tba,
                                               mTeamHelper.getTeam().getNumber()));
         mVisitTeamWebsiteItem.setTitle(mFragment.getString(R.string.visit_team_website,

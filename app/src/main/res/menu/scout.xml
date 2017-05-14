@@ -25,7 +25,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_visit_tba_team_website"
+        android:id="@+id/action_visit_tba_website"
         android:icon="@drawable/ic_launch_white_24dp"
         app:showAsAction="ifRoom"
         tools:ignore="MenuTitle" />

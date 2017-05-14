@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -55,7 +56,22 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     private FloatingActionButton mFab;
     private RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
-    private Menu mMenu;
+
+
+    private boolean mIsMenuReady;
+
+    private MenuItem mExportItem;
+    private MenuItem mShareItem;
+    private MenuItem mVisitTbaWebsiteItem;
+    private MenuItem mVisitTeamWebsiteItem;
+    private MenuItem mEditTeamDetailsItem;
+    private MenuItem mDeleteItem;
+
+    private MenuItem mSignInItem;
+    private MenuItem mSignOutItem;
+    private MenuItem mDonateItem;
+    private MenuItem mLicencesItem;
+    private MenuItem mAboutItem;
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
@@ -75,33 +91,22 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu) {
-        mMenu = menu;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        mIsMenuReady = true;
+        inflater.inflate(R.menu.team_options, menu);
 
-        mMenu.add(Menu.NONE, R.id.action_export_spreadsheet, Menu.NONE, R.string.export_spreadsheet)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_import_export_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_share, Menu.NONE, R.string.share)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_share_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_visit_tba_team_website, Menu.NONE, null)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_launch_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_visit_team_website, Menu.NONE, null)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_launch_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_edit_team_details, Menu.NONE, R.string.edit_team_details)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_mode_edit_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        mMenu.add(Menu.NONE, R.id.action_delete, Menu.NONE, R.string.delete)
-                .setVisible(false)
-                .setIcon(R.drawable.ic_delete_forever_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        mExportItem = menu.findItem(R.id.action_export_spreadsheet);
+        mShareItem = menu.findItem(R.id.action_share);
+        mVisitTbaWebsiteItem = menu.findItem(R.id.action_visit_tba_website);
+        mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
+        mEditTeamDetailsItem = menu.findItem(R.id.action_edit_team_details);
+        mDeleteItem = menu.findItem(R.id.action_delete);
+
+        mSignInItem = menu.findItem(R.id.action_sign_in);
+        mSignOutItem = menu.findItem(R.id.action_sign_out);
+        mDonateItem = menu.findItem(R.id.action_donate);
+        mLicencesItem = menu.findItem(R.id.action_licenses);
+        mAboutItem = menu.findItem(R.id.action_about);
 
         updateState();
     }
@@ -120,13 +125,16 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     public boolean onOptionsItemSelected(MenuItem item) {
         TeamHelper teamHelper = mSelectedTeams.get(0);
         switch (item.getItemId()) {
+            case R.id.action_export_spreadsheet:
+                exportTeams();
+                break;
             case R.id.action_share:
                 if (TeamSharer.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
                 AnalyticsUtils.shareTeam(teamHelper.getTeam().getNumber());
                 break;
-            case R.id.action_visit_tba_team_website:
+            case R.id.action_visit_tba_website:
                 teamHelper.visitTbaWebsite(mFragment.getContext());
                 resetMenu();
                 break;
@@ -137,9 +145,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mFragment.getChildFragmentManager(), teamHelper);
                 AnalyticsUtils.editTeamDetails(teamHelper.getTeam().getNumber());
-                break;
-            case R.id.action_export_spreadsheet:
-                exportTeams();
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
@@ -187,7 +192,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
             notifyItemsChanged();
         }
 
-        if (mMenu != null) updateState();
+        if (mIsMenuReady) updateState();
     }
 
     @Override
@@ -258,29 +263,29 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     private void showTeamSpecificItems() {
         Team team = mSelectedTeams.get(0).getTeam();
 
-        mMenu.findItem(R.id.action_visit_tba_team_website)
+        mVisitTbaWebsiteItem
                 .setVisible(true)
                 .setTitle(mFragment.getString(R.string.visit_team_website_on_tba,
                                               team.getNumber()));
-        mMenu.findItem(R.id.action_visit_team_website)
+        mVisitTeamWebsiteItem
                 .setVisible(team.getWebsite() != null)
                 .setTitle(mFragment.getString(R.string.visit_team_website, team.getNumber()));
-        mMenu.findItem(R.id.action_edit_team_details).setVisible(true);
+        mEditTeamDetailsItem.setVisible(true);
     }
 
     private void setContextMenuItemsVisible(boolean visible) {
-        mMenu.findItem(R.id.action_share).setVisible(visible);
-        mMenu.findItem(R.id.action_export_spreadsheet).setVisible(visible);
-        mMenu.findItem(R.id.action_delete).setVisible(visible);
+        mExportItem.setVisible(visible);
+        mShareItem.setVisible(visible);
+        mDeleteItem.setVisible(visible);
         ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                 .setDisplayHomeAsUpEnabled(visible);
         if (visible) getFab().hide();
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
-        mMenu.findItem(R.id.action_donate).setVisible(visible);
-        mMenu.findItem(R.id.action_licenses).setVisible(visible);
-        mMenu.findItem(R.id.action_about).setVisible(visible);
+        mDonateItem.setVisible(visible);
+        mLicencesItem.setVisible(visible);
+        mAboutItem.setVisible(visible);
 
         if (visible) {
             getFab().show();
@@ -288,16 +293,16 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                     .setTitle(R.string.app_name);
 
             if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {
-                mMenu.findItem(R.id.action_sign_in).setVisible(false);
-                mMenu.findItem(R.id.action_sign_out).setVisible(true);
+                mSignInItem.setVisible(false);
+                mSignOutItem.setVisible(true);
             } else {
-                mMenu.findItem(R.id.action_sign_in).setVisible(true);
-                mMenu.findItem(R.id.action_sign_out).setVisible(false);
+                mSignInItem.setVisible(true);
+                mSignOutItem.setVisible(false);
             }
             hideTeamSpecificMenuItems();
         } else {
-            mMenu.findItem(R.id.action_sign_in).setVisible(false);
-            mMenu.findItem(R.id.action_sign_out).setVisible(false);
+            mSignInItem.setVisible(false);
+            mSignOutItem.setVisible(false);
         }
 
         updateToolbarColor(visible);
@@ -330,9 +335,9 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     }
 
     private void hideTeamSpecificMenuItems() {
-        mMenu.findItem(R.id.action_visit_tba_team_website).setVisible(false);
-        mMenu.findItem(R.id.action_visit_team_website).setVisible(false);
-        mMenu.findItem(R.id.action_edit_team_details).setVisible(false);
+        mVisitTbaWebsiteItem.setVisible(false);
+        mVisitTeamWebsiteItem.setVisible(false);
+        mEditTeamDetailsItem.setVisible(false);
     }
 
     private void setToolbarTitle() {
