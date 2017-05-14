@@ -24,9 +24,13 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   sed -i "s/\(FirebaseCrashVersionCode=\).*\$/\1${VERSION_CODE}/" gradle.properties
   ./gradlew firebaseUploadArchivedProguardMapping
 
-  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-146.0.0-linux-x86_64.tar.gz
-  tar xf google-cloud-sdk-146.0.0-linux-x86_64.tar.gz
+  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-155.0.0-linux-x86_64.tar.gz
+  tar xf google-cloud-sdk-155.0.0-linux-x86_64.tar.gz
   echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
-  ./google-cloud-sdk/bin/gcloud alpha test android run --async --app app-release.apk --device-ids m0,Nexus6P --os-version-ids 18,25 --orientations portrait --max-depth 100 --robo-directives team_number=2521 --project robot-scouter-app
+  ./google-cloud-sdk/bin/gcloud alpha firebase test android run --project robot-scouter-app --app app-release.apk \
+    --async --timeout=30m \
+    --device model=sailfish,version=26 --device model=m0,version=18 \
+    --device model=Nexus9,version=25 --device model=NexusLowRes,version=25 \
+    --max-depth 100 --robo-directives team_number=2521
 fi
