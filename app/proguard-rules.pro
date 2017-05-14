@@ -3,7 +3,7 @@
 -repackageclasses com.supercilex.robotscouter
 -mergeinterfacesaggressively
 
-# will keep line numbers and file name obfuscation
+# Keeps line numbers and file name obfuscation
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
@@ -13,6 +13,15 @@
 # Work around proguard bug https://sourceforge.net/p/proguard/bugs/643/
 -keep enum com.supercilex.robotscouter.util.AnalyticsUtils { public static void init(...); }
 -keep enum com.supercilex.robotscouter.util.ViewUtils { public static void init(...); }
+
+# Retrofit
+-dontnote retrofit2.Platform
+-dontwarn retrofit2.**
+-dontwarn okio.**
+-dontwarn okhttp3.**
+
+# Play services
+-dontnote com.google.android.gms.internal.**
 
 # Apache POI
 -dontwarn org.apache.**

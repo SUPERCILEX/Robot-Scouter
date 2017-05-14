@@ -24,5 +24,5 @@ ext {
     supportLibVersion = '25.3.1'
     playServicesVersion = '10.2.4'
     leakCanaryVersion = '1.5.1'
-    retrofitVersion = '2.2.0'
+    retrofitVersion = '2.3.0'
 }
