@@ -133,13 +133,11 @@ public enum SpreadsheetUtils {;
     public static void autoFitColumnWidths(Iterable<Sheet> sheetIterator) {
         Paint paint = new Paint();
         for (Sheet sheet : sheetIterator) {
-            Row row = sheet.getRow(0);
-
-            int numColumns = row.getLastCellNum();
+            int numColumns = sheet.getRow(0).getLastCellNum();
             for (int i = 0; i < numColumns; i++) {
                 int maxWidth = 2560;
-                for (Row row1 : sheet) {
-                    String value = getStringForCell(row1.getCell(i));
+                for (Row row : sheet) {
+                    String value = getStringForCell(row.getCell(i));
                     int width = (int) (paint.measureText(value) * COLUMN_WIDTH_SCALE_FACTOR);
                     if (width > maxWidth) maxWidth = width;
                 }
