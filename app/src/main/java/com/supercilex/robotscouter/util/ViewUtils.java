@@ -6,7 +6,6 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
@@ -14,17 +13,10 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 
-public enum ViewUtils {
-    INSTANCE;
+public enum ViewUtils {;
 
-    private Resources mResources;
-
-    public static void init(Context context) {
-        INSTANCE.mResources = context.getResources();
-    }
-
-    public static boolean isTabletMode() {
-        Configuration config = INSTANCE.mResources.getConfiguration();
+    public static boolean isTabletMode(Context context) {
+        Configuration config = context.getResources().getConfiguration();
         int size = config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
         return size == Configuration.SCREENLAYOUT_SIZE_LARGE
                 && config.orientation == Configuration.ORIENTATION_LANDSCAPE
