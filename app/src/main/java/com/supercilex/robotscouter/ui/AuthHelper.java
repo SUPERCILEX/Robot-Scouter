@@ -42,8 +42,14 @@ public final class AuthHelper implements View.OnClickListener {
     private MenuItem mActionSignIn;
     private MenuItem mActionSignOut;
 
-    private AuthHelper(FragmentActivity activity) {
+    public AuthHelper(FragmentActivity activity) {
         mActivity = activity;
+
+        if (isSignedIn()) {
+            initDeepLinkReceiver();
+        } else {
+            signInAnonymously();
+        }
     }
 
     @Nullable
@@ -60,6 +66,10 @@ public final class AuthHelper implements View.OnClickListener {
         return getUser() != null;
     }
 
+    public static boolean isFullUser() {
+        return isSignedIn() && !getUser().isAnonymous();
+    }
+
     public static Task<FirebaseAuth> onSignedIn() {
         final TaskCompletionSource<FirebaseAuth> signInTask = new TaskCompletionSource<>();
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -74,16 +84,6 @@ public final class AuthHelper implements View.OnClickListener {
             }
         });
         return signInTask.getTask();
-    }
-
-    public static AuthHelper init(FragmentActivity activity) {
-        AuthHelper helper = new AuthHelper(activity);
-        if (isSignedIn()) {
-            helper.initDeepLinkReceiver();
-        } else {
-            helper.signInAnonymously();
-        }
-        return helper;
     }
 
     private static Task<AuthResult> signInAnonymouslyInitBasic() {
@@ -147,7 +147,7 @@ public final class AuthHelper implements View.OnClickListener {
                 .show();
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
@@ -170,8 +170,10 @@ public final class AuthHelper implements View.OnClickListener {
                 if (response != null) userHelper.transferData(response.getPrevUid());
 
                 AnalyticsUtils.login();
+
+                return true;
             } else {
-                if (response == null) return; // User cancelled sign in
+                if (response == null) return false; // User cancelled sign in
 
                 if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Snackbar.make(mActivity.findViewById(R.id.root),
@@ -179,7 +181,7 @@ public final class AuthHelper implements View.OnClickListener {
                                   Snackbar.LENGTH_LONG)
                             .setAction(R.string.try_again, this)
                             .show();
-                    return;
+                    return false;
                 }
 
                 Snackbar.make(mActivity.findViewById(R.id.root),
@@ -189,6 +191,8 @@ public final class AuthHelper implements View.OnClickListener {
                         .show();
             }
         }
+
+        return false;
     }
 
     private void toggleMenuSignIn(boolean isSignedIn) {

@@ -296,7 +296,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
             ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                     .setTitle(R.string.app_name);
 
-            if (AuthHelper.isSignedIn() && !AuthHelper.getUser().isAnonymous()) {
+            if (AuthHelper.isFullUser()) {
                 mSignInItem.setVisible(false);
                 mSignOutItem.setVisible(true);
             } else {

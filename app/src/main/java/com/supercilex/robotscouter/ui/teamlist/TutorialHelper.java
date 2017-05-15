@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 
 import com.supercilex.robotscouter.R;
@@ -14,17 +15,18 @@ public final class TutorialHelper {
         throw new AssertionError("No instance for you!");
     }
 
-    public static void showCreateFirstTeamPrompt(Activity activity) {
+    @Nullable
+    public static MaterialTapTargetPrompt showCreateFirstTeamPrompt(Activity activity) {
         final Context appContext = activity.getApplicationContext();
-        if (!PreferencesUtils.hasShownFabTutorial(appContext)) {
-            new MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
+        if (!PreferencesUtils.hasShownAddTeamTutorial(appContext)) {
+            return new MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
                     .setTarget(R.id.fab)
                     .setPrimaryText(R.string.create_first_team)
                     .setAutoDismiss(false)
                     .setOnHidePromptListener(new MaterialTapTargetPrompt.OnHidePromptListener() {
                         @Override
                         public void onHidePrompt(MotionEvent event, boolean tappedTarget) {
-                            PreferencesUtils.setHasShownFabTutorial(appContext, tappedTarget);
+                            PreferencesUtils.setHasShownAddTeamTutorial(appContext, tappedTarget);
                         }
 
                         @Override
@@ -34,11 +36,12 @@ public final class TutorialHelper {
                     })
                     .show();
         }
+        return null;
     }
 
     public static void showSignInPrompt(Activity activity) {
         final Context appContext = activity.getApplicationContext();
-        if (PreferencesUtils.hasShownFabTutorial(appContext)
+        if (PreferencesUtils.hasShownAddTeamTutorial(appContext)
                 && !PreferencesUtils.hasShownSignInTutorial(appContext)) {
             new MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
                     .setTarget(R.id.action_sign_in)

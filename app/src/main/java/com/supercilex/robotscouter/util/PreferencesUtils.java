@@ -12,7 +12,7 @@ public enum PreferencesUtils {;
 
 
     private static final String HAS_SHOWN_TUTORIAL = "has_shown_tutorial";
-    private static final String HAS_SHOWN_FAB_TUTORIAL = HAS_SHOWN_TUTORIAL + "_fab";
+    private static final String HAS_SHOWN_ADD_TEAM_TUTORIAL = HAS_SHOWN_TUTORIAL + "_fab";
     private static final String HAS_SHOWN_SIGN_IN_TUTORIAL = HAS_SHOWN_TUTORIAL + "_sign_in";
 
     private static final String SHOULD_ASK_TO_UPLOAD_MEDIA = "should_ask_to_upload_media";
@@ -29,12 +29,12 @@ public enum PreferencesUtils {;
                 .apply();
     }
 
-    public static boolean hasShownFabTutorial(Context context) {
-        return getTeamListActivityBoolean(context, HAS_SHOWN_FAB_TUTORIAL);
+    public static boolean hasShownAddTeamTutorial(Context context) {
+        return getTeamListActivityBoolean(context, HAS_SHOWN_ADD_TEAM_TUTORIAL);
     }
 
-    public static void setHasShownFabTutorial(Context context, boolean value) {
-        setTeamListActivityBoolean(context, HAS_SHOWN_FAB_TUTORIAL, value);
+    public static void setHasShownAddTeamTutorial(Context context, boolean value) {
+        setTeamListActivityBoolean(context, HAS_SHOWN_ADD_TEAM_TUTORIAL, value);
     }
 
     public static boolean hasShownSignInTutorial(Context context) {

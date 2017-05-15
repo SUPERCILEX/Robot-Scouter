@@ -23,8 +23,11 @@ import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.ConnectivityUtils;
+import com.supercilex.robotscouter.util.PreferencesUtils;
 import com.supercilex.robotscouter.util.RemoteConfigUtils;
 import com.supercilex.robotscouter.util.ViewUtils;
+
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity
@@ -36,6 +39,7 @@ public class TeamListActivity extends AppCompatActivity
     private TeamListFragment mTeamListFragment;
     private String mSelectedTeamKey;
     private AuthHelper mAuthHelper;
+    private MaterialTapTargetPrompt mAddTeamPrompt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +55,8 @@ public class TeamListActivity extends AppCompatActivity
         }
         findViewById(R.id.fab).setOnClickListener(this);
 
-        mAuthHelper = AuthHelper.init(this);
-        TutorialHelper.showCreateFirstTeamPrompt(this);
+        mAuthHelper = new AuthHelper(this);
+        mAddTeamPrompt = TutorialHelper.showCreateFirstTeamPrompt(this);
     }
 
     @Override
@@ -118,7 +122,11 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mAuthHelper.onActivityResult(requestCode, resultCode, data);
+        if (mAuthHelper.onActivityResult(requestCode, resultCode, data) && mAddTeamPrompt != null) {
+            mAddTeamPrompt.dismiss();
+            PreferencesUtils.setHasShownAddTeamTutorial(this, true);
+            PreferencesUtils.setHasShownSignInTutorial(this, true);
+        }
     }
 
     @Override
