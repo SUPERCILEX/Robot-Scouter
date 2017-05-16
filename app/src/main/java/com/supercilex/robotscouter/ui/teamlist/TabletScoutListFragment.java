@@ -3,9 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,17 +20,6 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
                                                     boolean addScout,
                                                     String scoutKey) {
         return setArgs(new TabletScoutListFragment(), teamHelper, addScout, scoutKey);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        TeamSelectionListener listener = (TeamSelectionListener) getActivity();
-        listener.saveSelection(null);
-        listener.saveSelection(TeamHelper.parse(getArguments()).getTeam());
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -58,6 +45,11 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
         if (ViewUtils.isTabletMode(getContext())) {
             super.onAuthStateChanged(auth);
+            if (auth.getCurrentUser() != null) {
+                TeamSelectionListener listener = (TeamSelectionListener) getActivity();
+                listener.saveSelection(null);
+                listener.saveSelection(mTeamHelper.getTeam());
+            }
         } else {
             TeamSelectionListener listener = (TeamSelectionListener) getActivity();
             listener.onTeamSelected(

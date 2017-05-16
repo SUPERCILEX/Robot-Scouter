@@ -46,11 +46,11 @@ public abstract class ScoutListFragmentBase extends Fragment
     protected View mRootView;
     protected AppBarViewHolderBase mHolder;
 
-    private TeamHelper mTeamHelper;
+    protected TeamHelper mTeamHelper;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
-    protected Bundle mSavedState;
+    private Bundle mSavedState;
 
     protected static ScoutListFragmentBase setArgs(ScoutListFragmentBase fragment,
                                                    TeamHelper teamHelper,
