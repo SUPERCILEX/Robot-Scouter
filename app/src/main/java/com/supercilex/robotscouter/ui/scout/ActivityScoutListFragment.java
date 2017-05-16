@@ -35,7 +35,7 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar((Toolbar) getView().findViewById(R.id.toolbar));
+        activity.setSupportActionBar((Toolbar) mRootView.findViewById(R.id.toolbar));
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         super.onActivityCreated(savedInstanceState);
     }
@@ -77,7 +77,7 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
 
     private class ActivityAppBarViewHolder extends AppBarViewHolderBase {
         public ActivityAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
-            super(teamHelper, ActivityScoutListFragment.this, onScoutingReadyTask);
+            super(teamHelper, ActivityScoutListFragment.this, mRootView, onScoutingReadyTask);
         }
 
         @Override

@@ -64,7 +64,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
 
     private class TabletAppBarViewHolder extends AppBarViewHolderBase {
         public TabletAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
-            super(teamHelper, TabletScoutListFragment.this, onScoutingReadyTask);
+            super(teamHelper, TabletScoutListFragment.this, mRootView, onScoutingReadyTask);
             mToolbar.inflateMenu(R.menu.scout);
             mToolbar.setOnMenuItemClickListener(TabletScoutListFragment.this::onOptionsItemSelected);
             initMenu(mToolbar.getMenu());

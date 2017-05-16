@@ -43,8 +43,10 @@ public abstract class ScoutListFragmentBase extends Fragment
         implements ChangeEventListener, FirebaseAuth.AuthStateListener, TeamMediaCreator.StartCaptureListener {
     public static final String ADD_SCOUT_KEY = "add_scout_key";
 
-    private TeamHelper mTeamHelper;
+    protected View mRootView;
     protected AppBarViewHolderBase mHolder;
+
+    private TeamHelper mTeamHelper;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
@@ -72,22 +74,27 @@ public abstract class ScoutListFragmentBase extends Fragment
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_scout_list, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_scout_list, container, false);
+        mSavedState = savedInstanceState;
+
+        FirebaseAuth.getInstance().addAuthStateListener(this);
+        showOfflineReassurance();
+
+        return mRootView;
+    }
+
+    private void showOfflineReassurance() {
+        if (mSavedState == null && ConnectivityUtils.isOffline(getContext())) {
+            Snackbar.make(mRootView,
+                          R.string.offline_reassurance,
+                          Snackbar.LENGTH_LONG)
+                    .show();
+        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mSavedState = savedInstanceState;
-        FirebaseAuth.getInstance().addAuthStateListener(this);
-
-        if (mSavedState == null && ConnectivityUtils.isOffline(getContext())) {
-            Snackbar.make(getView().findViewById(R.id.root),
-                          R.string.offline_reassurance,
-                          Snackbar.LENGTH_LONG)
-                    .show();
-        }
-
         mHolder = newAppBarViewHolder(mTeamHelper, mOnScoutingReadyTask.getTask());
         if (savedInstanceState != null) mHolder.restoreState(savedInstanceState);
         mHolder.bind(mTeamHelper);
@@ -111,8 +118,8 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        removeListeners();
         FirebaseAuth.getInstance().removeAuthStateListener(this);
+        removeListeners();
     }
 
     @Override
@@ -230,9 +237,8 @@ public abstract class ScoutListFragmentBase extends Fragment
     }
 
     private void initScoutList() {
-        View view = getView();
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) mRootView.findViewById(R.id.tabs);
+        ViewPager viewPager = (ViewPager) mRootView.findViewById(R.id.viewpager);
         String scoutKey = null;
 
         if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);

@@ -58,10 +58,10 @@ public abstract class AppBarViewHolderBase
 
     protected AppBarViewHolderBase(TeamHelper teamHelper,
                                    Fragment fragment,
+                                   View rootView,
                                    Task onScoutingReadyTask) {
         mTeamHelper = teamHelper;
         mFragment = fragment;
-        View rootView = fragment.getView();
         mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         mHeader = (CollapsingToolbarLayout) rootView.findViewById(R.id.header);
         mBackdrop = (ImageView) rootView.findViewById(R.id.backdrop);
