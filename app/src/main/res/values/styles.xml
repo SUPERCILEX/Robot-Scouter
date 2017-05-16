@@ -50,22 +50,32 @@
         <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="RobotScouter.CardList">
+    <style name="RobotScouter.List">
+        <item name="android:id">@id/list</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/card_padding_horizontal_small</item>
-        <item name="android:layout_marginRight">@dimen/card_padding_horizontal_small</item>
-        <item name="android:paddingLeft">@dimen/card_padding_horizontal_small</item>
-        <item name="android:paddingRight">@dimen/card_padding_horizontal_small</item>
-        <item name="android:paddingTop">@dimen/card_padding_vertical</item>
-        <item name="android:paddingBottom">@dimen/card_padding_vertical</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_vertical</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">vertical</item>
     </style>
 
-    <style name="RobotScouter.CardList.Metric">
-        <item name="android:layout_marginLeft">@dimen/card_padding_horizontal</item>
-        <item name="android:layout_marginRight">@dimen/card_padding_horizontal</item>
-        <item name="android:paddingLeft">@dimen/card_padding_horizontal</item>
-        <item name="android:paddingRight">@dimen/card_padding_horizontal</item>
+    <style name="RobotScouter.List.Scout">
+        <item name="android:paddingLeft">@dimen/list_item_padding_horizontal_scout</item>
+        <item name="android:paddingRight">@dimen/list_item_padding_horizontal_scout</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_vertical_scout</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_vertical_scout</item>
+    </style>
+
+    <style name="RobotScouter.ListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_vertical_within</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_vertical_within</item>
     </style>
 
     <style name="RobotScouter.Fab">

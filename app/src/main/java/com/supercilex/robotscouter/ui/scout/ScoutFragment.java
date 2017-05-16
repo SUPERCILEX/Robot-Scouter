@@ -40,7 +40,7 @@ public class ScoutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.recycler_view, container, false);
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_scout, container, false);
 
         mManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mManager);

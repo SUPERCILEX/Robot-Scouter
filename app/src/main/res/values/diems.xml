@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="card_padding_horizontal">12dp</dimen>
-    <dimen name="card_padding_horizontal_small">8dp</dimen>
-    <dimen name="card_padding_vertical">8dp</dimen>
+    <dimen name="list_item_padding_horizontal">@dimen/spacing_normal</dimen>
+    <dimen name="list_item_padding_vertical">@dimen/spacing_normal</dimen>
+    <dimen name="list_item_padding_vertical_within">@dimen/spacing_normal</dimen>
+    <dimen name="list_item_padding_horizontal_scout">@dimen/list_item_padding_horizontal</dimen>
+    <dimen name="list_item_padding_vertical_scout">@dimen/list_item_padding_vertical</dimen>
 
     <dimen name="spacing_normal">8dp</dimen>
     <dimen name="spacing_large">16dp</dimen>
+    <dimen name="spacing_large_medium">24dp</dimen>
+    <dimen name="spacing_xlarge">32dp</dimen>
+    <dimen name="spacing_xxlarge">64dp</dimen>
     <dimen name="spacing_dialog_layout">20dp</dimen>
 
     <dimen name="fab_size">56dp</dimen>

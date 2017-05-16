@@ -16,7 +16,7 @@ public class HeaderViewHolder extends ScoutViewHolderBase {
         if (getLayoutPosition() != 0) {
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
             params.topMargin =
-                    (int) itemView.getResources().getDimension(R.dimen.card_padding_vertical);
+                    (int) itemView.getResources().getDimension(R.dimen.list_item_padding_vertical_within);
         }
     }
 }

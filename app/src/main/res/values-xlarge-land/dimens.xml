@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="list_item_padding_horizontal">@dimen/spacing_large_medium</dimen>
+    <dimen name="list_item_padding_vertical">@dimen/spacing_large</dimen>
+    <dimen name="list_item_padding_horizontal_scout">@dimen/spacing_xxlarge</dimen>
+    <dimen name="list_item_padding_vertical_scout">@dimen/spacing_large</dimen>
+</resources>
