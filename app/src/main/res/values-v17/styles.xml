@@ -20,6 +20,7 @@
         <item name="android:paddingBottom">@dimen/list_item_padding_vertical</item>
         <item name="android:clipToPadding">false</item>
         <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
     </style>
 
     <style name="RobotScouter.List.Scout">
