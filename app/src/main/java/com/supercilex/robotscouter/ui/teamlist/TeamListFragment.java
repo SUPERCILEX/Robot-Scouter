@@ -52,7 +52,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             View view = getView();
             if (view != null) view.findViewById(R.id.no_content_hint).setVisibility(View.VISIBLE);
         } else {
-            mAdapter = new TeamListAdapter(this, mMenuHelper);
+            mAdapter = new TeamListAdapter(this, mMenuHelper, mSavedInstanceState);
             mOnAdapterReadyTask.setResult(mAdapter);
             mOnAdapterReadyTask = new TaskCompletionSource<>();
 
@@ -107,6 +107,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         if (mManager != null) {
             outState.putParcelable(Constants.MANAGER_STATE, mManager.onSaveInstanceState());
         }
+        if (mAdapter != null) mAdapter.onSaveInstanceState(outState);
         mMenuHelper.saveState(outState);
         super.onSaveInstanceState(outState);
     }
@@ -136,12 +137,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     public void selectTeam(String teamKey) {
-        if (mAdapter == null) {
-            mOnAdapterReadyTask.getTask()
-                    .addOnSuccessListener(adapter -> adapter.updateSelection(teamKey));
-        } else {
-            mAdapter.updateSelection(teamKey);
-        }
+        if (mAdapter != null) mAdapter.updateSelection(teamKey);
     }
 
     private void cleanup() {

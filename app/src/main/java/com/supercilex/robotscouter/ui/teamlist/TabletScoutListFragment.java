@@ -3,12 +3,13 @@ package com.supercilex.robotscouter.ui.teamlist;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.AppBarViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase;
@@ -23,14 +24,20 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
         return setArgs(new TabletScoutListFragment(), teamHelper, addScout, scoutKey);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        TeamSelectionListener listener = (TeamSelectionListener) getActivity();
+        listener.saveSelection(null);
+        listener.saveSelection(TeamHelper.parse(getArguments()).getTeam());
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        TeamSelectionListener listener = (TeamSelectionListener) getActivity();
-        Team team = TeamHelper.parse(getArguments()).getTeam();
-        listener.saveSelection(null);
-        listener.saveSelection(team);
-
         mHint = getActivity().findViewById(R.id.no_team_selected_hint);
         setHintVisibility(View.GONE);
     }

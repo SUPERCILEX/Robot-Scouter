@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,6 +21,8 @@ import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 import java.util.List;
 
 public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolder> {
+    private static final String TEAM_KEY = "team_key";
+
     private final Fragment mFragment;
     private final TeamMenuManager mMenuManager;
     private final CardListHelper mCardListHelper;
@@ -27,7 +30,9 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
 
     private String mSelectedTeamKey;
 
-    public TeamListAdapter(Fragment fragment, TeamMenuManager menuManager) {
+    public TeamListAdapter(Fragment fragment,
+                           TeamMenuManager menuManager,
+                           Bundle savedInstanceState) {
         super(Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder.class);
         mFragment = fragment;
         mMenuManager = menuManager;
@@ -35,32 +40,34 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
                 this,
                 (RecyclerView) fragment.getView().findViewById(R.id.list),
                 false);
+        mSelectedTeamKey =
+                savedInstanceState == null ? null : savedInstanceState.getString(TEAM_KEY);
     }
 
     public void updateSelection(String teamKey) {
-        mSelectedTeamKey = teamKey;
-
-        if (TextUtils.isEmpty(mSelectedTeamKey)) {
-            View view = mFragment.getView();
-            if (view == null) return;
-
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
-            for (int i = 0; i < getItemCount(); i++) {
-                TeamViewHolder viewHolder =
-                        (TeamViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
-                if (viewHolder != null && viewHolder.isScouting()) {
-                    notifyItemChanged(i);
-                    break;
+        if (TextUtils.isEmpty(teamKey)) {
+            if (!TextUtils.isEmpty(mSelectedTeamKey)) {
+                for (int i = 0; i < getItemCount(); i++) {
+                    if (TextUtils.equals(mSelectedTeamKey, getItem(i).getKey())) {
+                        notifyItemChanged(i);
+                        break;
+                    }
                 }
             }
         } else {
             for (int i = 0; i < getItemCount(); i++) {
-                if (TextUtils.equals(mSelectedTeamKey, getItem(i).getKey())) {
+                if (TextUtils.equals(teamKey, getItem(i).getKey())) {
                     notifyItemChanged(i);
                     break;
                 }
             }
         }
+
+        mSelectedTeamKey = teamKey;
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(TEAM_KEY, mSelectedTeamKey);
     }
 
     @Override
@@ -111,11 +118,6 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         super.onChildChanged(type, snapshot, index, oldIndex);
     }
 
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
-    }
-
     private void showNoTeamsHint() {
         if (mNoTeamsText == null && mFragment != null) {
             View view = mFragment.getView();
@@ -125,5 +127,10 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         if (mNoTeamsText != null) {
             mNoTeamsText.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
         }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError error) {
+        FirebaseCrash.report(error.toException());
     }
 }
