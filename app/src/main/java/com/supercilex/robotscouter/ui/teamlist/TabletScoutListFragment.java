@@ -1,10 +1,12 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
@@ -24,12 +26,6 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
         super.onActivityCreated(savedInstanceState);
         TeamSelectionListener listener = (TeamSelectionListener) getActivity();
         Team team = TeamHelper.parse(getArguments()).getTeam();
-        if (!ViewUtils.isTabletMode(getContext())) {
-            listener.onTeamSelected(team, getArguments().getBoolean(ADD_SCOUT_KEY));
-            removeFragment();
-            return;
-        }
-
         listener.saveSelection(null);
         listener.saveSelection(team);
 
@@ -47,6 +43,20 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     public void onDestroy() {
         super.onDestroy();
         setHintVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+        if (ViewUtils.isTabletMode(getContext())) {
+            super.onAuthStateChanged(auth);
+        } else {
+            TeamSelectionListener listener = (TeamSelectionListener) getActivity();
+            listener.onTeamSelected(
+                    TeamHelper.parse(getArguments()).getTeam(),
+                    getArguments().getBoolean(ADD_SCOUT_KEY));
+            listener.saveSelection(null);
+            removeFragment();
+        }
     }
 
     @Override
