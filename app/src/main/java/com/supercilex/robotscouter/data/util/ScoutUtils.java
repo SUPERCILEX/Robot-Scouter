@@ -25,7 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class ScoutUtils {
+public enum  ScoutUtils {;
+    public static final String SCOUT_KEY = "scout_key";
     public static final SnapshotParser<ScoutMetric> METRIC_PARSER = snapshot -> {
         ScoutMetric metric;
         Integer typeObject = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
@@ -82,12 +83,6 @@ public final class ScoutUtils {
         metric.setRef(snapshot.getRef());
         return metric;
     };
-
-    private static final String SCOUT_KEY = "scout_key";
-
-    private ScoutUtils() {
-        throw new AssertionError("No instance for you!");
-    }
 
     public static Bundle getScoutKeyBundle(String key) {
         Bundle args = new Bundle();

@@ -22,8 +22,8 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
 
 public class ActivityScoutListFragment extends ScoutListFragmentBase {
-    public static ScoutListFragmentBase newInstance(TeamHelper teamHelper, boolean addScout) {
-        return setArgs(teamHelper, addScout, new ActivityScoutListFragment());
+    public static ScoutListFragmentBase newInstance(TeamHelper teamHelper, boolean addScout, String scoutKey) {
+        return setArgs(new ActivityScoutListFragment(), teamHelper, addScout, scoutKey);
     }
 
     @Override

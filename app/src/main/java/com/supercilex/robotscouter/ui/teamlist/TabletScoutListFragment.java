@@ -17,8 +17,10 @@ import com.supercilex.robotscouter.util.ViewUtils;
 public class TabletScoutListFragment extends ScoutListFragmentBase {
     private View mHint;
 
-    public static ScoutListFragmentBase newInstance(TeamHelper teamHelper, boolean addScout) {
-        return setArgs(teamHelper, addScout, new TabletScoutListFragment());
+    public static ScoutListFragmentBase newInstance(TeamHelper teamHelper,
+                                                    boolean addScout,
+                                                    String scoutKey) {
+        return setArgs(new TabletScoutListFragment(), teamHelper, addScout, scoutKey);
     }
 
     @Override
@@ -53,7 +55,8 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
             TeamSelectionListener listener = (TeamSelectionListener) getActivity();
             listener.onTeamSelected(
                     TeamHelper.parse(getArguments()).getTeam(),
-                    getArguments().getBoolean(ADD_SCOUT_KEY));
+                    getArguments().getBoolean(ADD_SCOUT_KEY),
+                    getScoutKey());
             listener.saveSelection(null);
             removeFragment();
         }

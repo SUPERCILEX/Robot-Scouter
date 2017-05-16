@@ -50,13 +50,15 @@ public abstract class ScoutListFragmentBase extends Fragment
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
-    private Bundle mSavedState;
+    protected Bundle mSavedState;
 
-    protected static ScoutListFragmentBase setArgs(TeamHelper teamHelper,
+    protected static ScoutListFragmentBase setArgs(ScoutListFragmentBase fragment,
+                                                   TeamHelper teamHelper,
                                                    boolean addScout,
-                                                   ScoutListFragmentBase fragment) {
+                                                   String scoutKey) {
         Bundle args = teamHelper.toBundle();
         args.putBoolean(ADD_SCOUT_KEY, addScout);
+        args.putAll(ScoutUtils.getScoutKeyBundle(scoutKey));
         fragment.setArguments(args);
 
         return fragment;
@@ -239,10 +241,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     private void initScoutList() {
         TabLayout tabLayout = (TabLayout) mRootView.findViewById(R.id.tabs);
         ViewPager viewPager = (ViewPager) mRootView.findViewById(R.id.viewpager);
-        String scoutKey = null;
-
-        if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState);
-        mPagerAdapter = new ScoutPagerAdapter(this, mHolder, tabLayout, mTeamHelper, scoutKey);
+        mPagerAdapter = new ScoutPagerAdapter(this, mHolder, tabLayout, mTeamHelper, getScoutKey());
 
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -252,6 +251,16 @@ public abstract class ScoutListFragmentBase extends Fragment
             getArguments().remove(ADD_SCOUT_KEY);
             mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
         }
+    }
+
+    protected String getScoutKey() {
+        String scoutKey;
+
+        if (mPagerAdapter != null) scoutKey = mPagerAdapter.getCurrentScoutKey(); // NOPMD
+        else if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState); // NOPMD
+        else scoutKey = ScoutUtils.getScoutKey(getArguments());
+
+        return scoutKey;
     }
 
     protected abstract void onTeamDeleted();

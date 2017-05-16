@@ -111,7 +111,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
             onTeamContextMenuRequested();
         } else {
             ((TeamSelectionListener) itemView.getContext())
-                    .onTeamSelected(mTeam, v.getId() == R.id.new_scout);
+                    .onTeamSelected(mTeam, v.getId() == R.id.new_scout, null);
         }
     }
 

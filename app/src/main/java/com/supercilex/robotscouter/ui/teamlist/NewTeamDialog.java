@@ -43,7 +43,7 @@ public class NewTeamDialog extends KeyboardDialogBase {
         if (isValid(teamNumber)) {
             teamNumber = String.valueOf(Long.parseLong(teamNumber));
             ((TeamSelectionListener) getActivity())
-                    .onTeamSelected(new Team.Builder(teamNumber).build(), true);
+                    .onTeamSelected(new Team.Builder(teamNumber).build(), true, null);
             return true;
         } else {
             mInputLayout.setError(getString(R.string.invalid_team_number));

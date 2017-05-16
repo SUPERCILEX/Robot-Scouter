@@ -152,14 +152,15 @@ public class TeamListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTeamSelected(Team team, boolean addScout) {
+    public void onTeamSelected(Team team, boolean addScout, String scoutKey) {
         TeamHelper helper = team.getHelper();
         if (ViewUtils.isTabletMode(this)) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.scouts, TabletScoutListFragment.newInstance(helper, addScout))
+                    .replace(R.id.scouts,
+                             TabletScoutListFragment.newInstance(helper, addScout, scoutKey))
                     .commit();
         } else {
-            ScoutActivity.start(this, helper, addScout);
+            ScoutActivity.start(this, helper, addScout, scoutKey);
         }
         AnalyticsUtils.selectTeam(team.getNumber());
     }
