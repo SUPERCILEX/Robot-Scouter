@@ -1,12 +1,15 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
@@ -17,13 +20,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
+import com.supercilex.robotscouter.util.ViewUtils;
 
 public class ActivityScoutListFragment extends ScoutListFragmentBase {
-    public static ScoutListFragmentBase newInstance(TeamHelper teamHelper, boolean addScout, String scoutKey) {
-        return setArgs(new ActivityScoutListFragment(), teamHelper, addScout, scoutKey);
+    public static ScoutListFragmentBase newInstance(Bundle args) {
+        return setArgs(new ActivityScoutListFragment(), args);
     }
 
     @Override
@@ -67,6 +72,18 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
             return true;
         } else {
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+        if (getActivity().getCallingActivity() != null && ViewUtils.isTabletMode(getContext())) {
+            FragmentActivity activity = getActivity();
+            activity.setResult(
+                    Activity.RESULT_OK, new Intent().putExtra(KEY_SCOUT_ARGS, getBundle()));
+            activity.finish();
+        } else {
+            super.onAuthStateChanged(auth);
         }
     }
 

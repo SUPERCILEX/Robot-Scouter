@@ -16,10 +16,8 @@ import com.supercilex.robotscouter.util.ViewUtils;
 public class TabletScoutListFragment extends ScoutListFragmentBase {
     private View mHint;
 
-    public static ScoutListFragmentBase newInstance(TeamHelper teamHelper,
-                                                    boolean addScout,
-                                                    String scoutKey) {
-        return setArgs(new TabletScoutListFragment(), teamHelper, addScout, scoutKey);
+    public static ScoutListFragmentBase newInstance(Bundle args) {
+        return setArgs(new TabletScoutListFragment(), args);
     }
 
     @Override
@@ -45,18 +43,9 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
         if (ViewUtils.isTabletMode(getContext())) {
             super.onAuthStateChanged(auth);
-            if (auth.getCurrentUser() != null) {
-                TeamSelectionListener listener = (TeamSelectionListener) getActivity();
-                listener.saveSelection(null);
-                listener.saveSelection(mTeamHelper.getTeam());
-            }
         } else {
             TeamSelectionListener listener = (TeamSelectionListener) getActivity();
-            listener.onTeamSelected(
-                    TeamHelper.parse(getArguments()).getTeam(),
-                    getArguments().getBoolean(ADD_SCOUT_KEY),
-                    getScoutKey());
-            listener.saveSelection(null);
+            listener.onTeamSelected(getBundle(), true);
             removeFragment();
         }
     }

@@ -1,9 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
-import com.supercilex.robotscouter.data.model.Team;
+import android.os.Bundle;
 
 public interface TeamSelectionListener {
-    void onTeamSelected(Team team, boolean addScout, String scoutKey);
-
-    void saveSelection(Team team);
+    void onTeamSelected(Bundle args, boolean restoreOnConfigChange);
 }

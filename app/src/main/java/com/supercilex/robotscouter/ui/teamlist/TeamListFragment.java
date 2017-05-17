@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.Constants;
 
 /**
@@ -136,8 +137,14 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         return mMenuHelper.onOptionsItemSelected(item);
     }
 
-    public void selectTeam(String teamKey) {
-        if (mAdapter != null) mAdapter.updateSelection(teamKey);
+    public void selectTeam(@Nullable Team team) {
+        String teamKey = team == null ? null : team.getKey();
+        if (mAdapter == null) {
+            mOnAdapterReadyTask.getTask()
+                    .addOnSuccessListener(adapter -> adapter.updateSelection(teamKey));
+        } else {
+            mAdapter.updateSelection(teamKey);
+        }
     }
 
     private void cleanup() {

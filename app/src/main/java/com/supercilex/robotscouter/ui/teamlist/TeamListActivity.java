@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,15 +30,16 @@ import com.supercilex.robotscouter.util.ViewUtils;
 
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
+import static com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS;
+
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity
         implements View.OnClickListener, Runnable, DialogInterface.OnCancelListener, TeamSelectionListener, OnSuccessListener<Void> {
+    private static final int RC_SCOUT = 744;
     private static final int API_AVAILABILITY_RC = 65;
-    private static final String SELECTED_TEAM_KEY = "selected_team_key";
     private static final String MINIMUM_APP_VERSION_KEY = "minimum_app_version";
 
     private TeamListFragment mTeamListFragment;
-    private String mSelectedTeamKey;
     private AuthHelper mAuthHelper;
     private MaterialTapTargetPrompt mAddTeamPrompt;
 
@@ -45,18 +47,17 @@ public class TeamListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.RobotScouter_NoActionBar);
         super.onCreate(savedInstanceState);
+        ViewUtils.isTabletMode(this);
+
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
         mTeamListFragment =
                 (TeamListFragment) getSupportFragmentManager().findFragmentByTag(TeamListFragment.TAG);
-        if (savedInstanceState != null && ViewUtils.isTabletMode(this)) {
-            mSelectedTeamKey = savedInstanceState.getString(SELECTED_TEAM_KEY);
-            mTeamListFragment.selectTeam(mSelectedTeamKey);
-        }
-        findViewById(R.id.fab).setOnClickListener(this);
-
         mAuthHelper = new AuthHelper(this);
         mAddTeamPrompt = TutorialHelper.showCreateFirstTeamPrompt(this);
+
+        findViewById(R.id.fab).setOnClickListener(this);
     }
 
     @Override
@@ -127,12 +128,9 @@ public class TeamListActivity extends AppCompatActivity
             PreferencesUtils.setHasShownAddTeamTutorial(this, true);
             PreferencesUtils.setHasShownSignInTutorial(this, true);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(SELECTED_TEAM_KEY, mSelectedTeamKey);
-        super.onSaveInstanceState(outState);
+        if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
+            onTeamSelected(data.getBundleExtra(KEY_SCOUT_ARGS), true);
+        }
     }
 
     @Override
@@ -152,22 +150,24 @@ public class TeamListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTeamSelected(Team team, boolean addScout, String scoutKey) {
-        TeamHelper helper = team.getHelper();
+    public void onTeamSelected(Bundle args, boolean restoreOnConfigChange) {
+        Team team = TeamHelper.parse(args).getTeam();
+
         if (ViewUtils.isTabletMode(this)) {
+            mTeamListFragment.selectTeam(null);
+            mTeamListFragment.selectTeam(team);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.scouts,
-                             TabletScoutListFragment.newInstance(helper, addScout, scoutKey))
+                    .replace(R.id.scouts, TabletScoutListFragment.newInstance(args))
                     .commit();
         } else {
-            ScoutActivity.start(this, helper, addScout, scoutKey);
+            if (restoreOnConfigChange) {
+                startActivityForResult(ScoutActivity.createIntent(this, args), RC_SCOUT);
+            } else {
+                startActivity(ScoutActivity.createIntent(this, args));
+            }
+            mTeamListFragment.selectTeam(null);
         }
-        AnalyticsUtils.selectTeam(team.getNumber());
-    }
 
-    @Override
-    public void saveSelection(Team team) {
-        mSelectedTeamKey = team == null ? null : team.getKey();
-        mTeamListFragment.selectTeam(mSelectedTeamKey);
+        AnalyticsUtils.selectTeam(team.getNumber());
     }
 }

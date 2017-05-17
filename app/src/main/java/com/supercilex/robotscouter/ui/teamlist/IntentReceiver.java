@@ -107,6 +107,6 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
     }
 
     private void launchTeam(Team team) {
-        ScoutActivity.start(mActivity, team.getHelper(), false);
+        ScoutActivity.start(mActivity, team, false);
     }
 }

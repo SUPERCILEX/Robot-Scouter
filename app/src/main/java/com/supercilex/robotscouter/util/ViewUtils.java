@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 
 public enum ViewUtils {;
-
     public static boolean isTabletMode(Context context) {
         Configuration config = context.getResources().getConfiguration();
         int size = config.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;

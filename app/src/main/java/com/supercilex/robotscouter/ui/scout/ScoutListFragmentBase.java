@@ -41,27 +41,35 @@ import java.util.Collections;
 
 public abstract class ScoutListFragmentBase extends Fragment
         implements ChangeEventListener, FirebaseAuth.AuthStateListener, TeamMediaCreator.StartCaptureListener {
-    public static final String ADD_SCOUT_KEY = "add_scout_key";
+    public static final String KEY_SCOUT_ARGS = "scout_args";
+    private static final String KEY_ADD_SCOUT = "add_scout";
 
     protected View mRootView;
     protected AppBarViewHolderBase mHolder;
 
-    protected TeamHelper mTeamHelper;
+    private TeamHelper mTeamHelper;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
     private Bundle mSavedState;
 
-    protected static ScoutListFragmentBase setArgs(ScoutListFragmentBase fragment,
-                                                   TeamHelper teamHelper,
-                                                   boolean addScout,
-                                                   String scoutKey) {
-        Bundle args = teamHelper.toBundle();
-        args.putBoolean(ADD_SCOUT_KEY, addScout);
+    public static Bundle getBundle(Team team, boolean addScout, String scoutKey) {
+        Bundle args = team.getHelper().toBundle();
+        args.putBoolean(KEY_ADD_SCOUT, addScout);
         args.putAll(ScoutUtils.getScoutKeyBundle(scoutKey));
-        fragment.setArguments(args);
+        return args;
+    }
 
+    protected static ScoutListFragmentBase setArgs(ScoutListFragmentBase fragment, Bundle args) {
+        fragment.setArguments(args);
         return fragment;
+    }
+
+    protected Bundle getBundle() {
+        return ScoutListFragmentBase.getBundle(
+                mTeamHelper.getTeam(),
+                getArguments().getBoolean(KEY_ADD_SCOUT),
+                getScoutKey());
     }
 
     @Override
@@ -247,13 +255,13 @@ public abstract class ScoutListFragmentBase extends Fragment
         tabLayout.setupWithViewPager(viewPager);
 
 
-        if (getArguments().getBoolean(ADD_SCOUT_KEY, false)) {
-            getArguments().remove(ADD_SCOUT_KEY);
+        if (getArguments().getBoolean(KEY_ADD_SCOUT, false)) {
+            getArguments().remove(KEY_ADD_SCOUT);
             mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
         }
     }
 
-    protected String getScoutKey() {
+    private String getScoutKey() {
         String scoutKey;
 
         if (mPagerAdapter != null) scoutKey = mPagerAdapter.getCurrentScoutKey(); // NOPMD

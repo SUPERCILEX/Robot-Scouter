@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
+import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase;
 import com.supercilex.robotscouter.util.ViewUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -110,8 +111,8 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
         if (v.getId() == R.id.media || mIsItemSelected || mCouldItemBeSelected) {
             onTeamContextMenuRequested();
         } else {
-            ((TeamSelectionListener) itemView.getContext())
-                    .onTeamSelected(mTeam, v.getId() == R.id.new_scout, null);
+            ((TeamSelectionListener) itemView.getContext()).onTeamSelected(
+                    ScoutListFragmentBase.getBundle(mTeam, v.getId() == R.id.new_scout, null), false);
         }
     }
 
