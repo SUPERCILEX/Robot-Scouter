@@ -40,6 +40,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         if (itemPosition == 0) {
             disableAnimations();
+            updateMetricName(getMName().getText().toString());
 
             ListMetric listMetric = (ListMetric) getMMetric();
             SpinnerTemplateDialog.Companion.show(getMManager(),
