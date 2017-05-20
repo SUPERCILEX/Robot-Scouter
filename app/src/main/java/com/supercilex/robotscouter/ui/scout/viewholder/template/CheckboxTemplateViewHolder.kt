@@ -38,7 +38,7 @@ class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView),
     private fun updateConstraints(layout: ConstraintLayout) {
         val set = ConstraintSet()
         set.clone(layout)
-        set.connect(R.id.name, ConstraintSet.LEFT, R.id.reorder, ConstraintSet.RIGHT, 0)
+        set.connect(R.id.name, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
         set.applyTo(layout)
     }
 }

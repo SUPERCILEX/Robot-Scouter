@@ -19,8 +19,8 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintLeft_toRightOf="@id/reorder"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@id/reorder"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Item 1" />
 

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="-7dp"
         android:layout_marginLeft="-7dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="NegativeMargin"
         tools:text="Example" />
 

@@ -13,7 +13,7 @@
         android:drawableLeft="@drawable/ic_add_alarm_white_24dp"
         android:drawablePadding="4dp"
         android:stateListAnimator="@null"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute" />
 
@@ -24,7 +24,7 @@
         android:clipToPadding="false"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </merge>

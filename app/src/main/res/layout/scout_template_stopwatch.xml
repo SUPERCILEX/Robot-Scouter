@@ -13,12 +13,11 @@
         android:layout_height="wrap_content"
         android:hint="@string/stopwatch_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintLeft_toRightOf="@id/reorder"
-        app:layout_constraintRight_toLeftOf="@id/stopwatch"
+        app:layout_constraintStart_toEndOf="@id/reorder"
+        app:layout_constraintEnd_toStartOf="@id/stopwatch"
         app:layout_constraintTop_toTopOf="@+id/stopwatch"
         app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
         tools:ignore="UnknownIdInLayout"
-        tools:layout_constraintLeft_creator="1"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_stopwatch" />

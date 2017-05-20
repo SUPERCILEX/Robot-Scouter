@@ -18,16 +18,16 @@
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:src="@drawable/ic_memory_grey_144dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@string/accessibility_robot_icon"
                 android:src="@drawable/ic_add_a_photo_black_24dp"
-                app:layout_constraintLeft_toLeftOf="@+id/media"
-                app:layout_constraintRight_toRightOf="@+id/media"
+                app:layout_constraintStart_toStartOf="@+id/media"
+                app:layout_constraintEnd_toEndOf="@+id/media"
                 app:layout_constraintTop_toTopOf="@+id/media"
                 app:layout_constraintBottom_toBottomOf="@+id/media" />
 
@@ -48,8 +48,8 @@
                 android:textIsSelectable="false"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <ImageButton
                 android:id="@+id/edit_name_button"
@@ -60,8 +60,8 @@
                 android:background="@android:color/white"
                 android:contentDescription="@string/accessibility_edit_team_name"
                 android:src="@drawable/ic_mode_edit_black_24dp"
-                app:layout_constraintLeft_toRightOf="@+id/name"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/name"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/name"
                 app:layout_constraintBottom_toBottomOf="@+id/name"
                 app:layout_constraintHorizontal_bias="0" />

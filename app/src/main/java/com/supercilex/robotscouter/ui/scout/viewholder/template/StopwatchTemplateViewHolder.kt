@@ -15,7 +15,7 @@ class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView
         val layout = itemView as ConstraintLayout
         val set = ConstraintSet()
         set.clone(layout)
-        set.connect(R.id.list, ConstraintSet.LEFT, R.id.reorder, ConstraintSet.RIGHT, 0)
+        set.connect(R.id.list, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
         set.applyTo(layout)
     }
 
