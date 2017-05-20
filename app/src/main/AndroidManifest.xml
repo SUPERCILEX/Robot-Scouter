@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.supercilex.robotscouter">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
-        android:required="false"/>
+        android:required="false" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:name=".RobotScouter"
@@ -30,13 +31,17 @@
 
         <meta-data
             android:name="asset_statements"
-            android:resource="@string/asset_statements"/>
+            android:resource="@string/asset_statements" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_logo"/>
+            android:resource="@drawable/ic_logo" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorPrimary"/>
+            android:resource="@color/colorPrimary" />
+        <meta-data
+            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="false"
+            tools:replace="android:value" />
 
         <activity
             android:name=".ui.teamlist.TeamListActivity"
@@ -46,31 +51,28 @@
 
             <meta-data
                 android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts"/>
+                android:resource="@xml/shortcuts" />
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!--TODO<intent-filter-->
-            <!--android:label="@string/app_name"-->
-            <!--android:autoVerify="true"-->
-            <!--tools:ignore="UnusedAttribute">-->
             <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
                     android:host="supercilex.github.io"
                     android:pathPrefix="/Robot-Scouter"
-                    android:scheme="http"/>
+                    android:scheme="http" />
                 <data
                     android:host="supercilex.github.io"
                     android:pathPrefix="/Robot-Scouter"
-                    android:scheme="https"/>
+                    android:scheme="https" />
             </intent-filter>
 
         </activity>
@@ -84,33 +86,33 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.teamlist.TeamListActivity"/>
+                android:value=".ui.teamlist.TeamListActivity" />
 
         </activity>
 
-        <service android:name=".data.client.spreadsheet.SpreadsheetExporter"/>
+        <service android:name=".data.client.spreadsheet.SpreadsheetExporter" />
 
         <service
             android:name=".data.client.DownloadTeamDataJob21"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name=".data.client.DownloadTeamDataJob14"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>"
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
 
         <service
             android:name=".data.client.UploadTeamMediaJob21"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name=".data.client.UploadTeamMediaJob14"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>"
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
 
@@ -119,7 +121,7 @@
             android:exported="true"
             android:permission="com.google.android.gms.permission.APPINDEXING">
             <intent-filter>
-                <action android:name="com.google.firebase.appindexing.UPDATE_INDEX"/>
+                <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
             </intent-filter>
         </service>
 
@@ -130,10 +132,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".data.client.NotificationForwarder"/>
+        <receiver android:name=".data.client.NotificationForwarder" />
 
     </application>
 

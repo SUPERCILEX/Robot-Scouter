@@ -171,7 +171,7 @@ public abstract class ScoutListFragmentBase extends Fragment
                 mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
                 break;
             case R.id.action_add_media:
-                ShouldUploadMediaToTbaDialog.show(this);
+                ShouldUploadMediaToTbaDialog.Companion.show(this);
                 break;
             case R.id.action_share:
                 TeamSharer.launchInvitationIntent(getActivity(),
@@ -215,7 +215,7 @@ public abstract class ScoutListFragmentBase extends Fragment
 
             mTeamHelper.addTeam();
             addListeners();
-            TbaDownloader.load(mTeamHelper.getTeam(), getContext())
+            TbaDownloader.Companion.load(mTeamHelper.getTeam(), getContext())
                     .addOnSuccessListener(team -> mTeamHelper.updateTeam(team));
         } else {
             Constants.sFirebaseTeams.addChangeEventListener(this);

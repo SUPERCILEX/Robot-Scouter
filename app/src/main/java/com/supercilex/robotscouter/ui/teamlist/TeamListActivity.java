@@ -15,6 +15,7 @@ import android.view.View;
 import com.firebase.ui.auth.util.PlayServicesHelper;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.perf.metrics.AddTrace;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.R;
@@ -44,6 +45,7 @@ public class TeamListActivity extends AppCompatActivity
     private MaterialTapTargetPrompt mAddTeamPrompt;
 
     @Override
+    @AddTrace(name = "onCreate")
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.RobotScouter_NoActionBar);
         super.onCreate(savedInstanceState);
@@ -74,7 +76,7 @@ public class TeamListActivity extends AppCompatActivity
     public void onSuccess(Void aVoid) {
         double minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY);
         if (BuildConfig.VERSION_CODE < minimum && !ConnectivityUtils.isOffline(this)) {
-            UpdateDialog.show(getSupportFragmentManager());
+            UpdateDialog.Companion.show(getSupportFragmentManager());
         }
     }
 
@@ -106,13 +108,13 @@ public class TeamListActivity extends AppCompatActivity
                 mAuthHelper.signOut();
                 break;
             case R.id.action_donate:
-                DonateDialog.show(getSupportFragmentManager());
+                DonateDialog.Companion.show(getSupportFragmentManager());
                 break;
             case R.id.action_licenses:
-                LicensesDialog.show(getSupportFragmentManager());
+                LicensesDialog.Companion.show(getSupportFragmentManager());
                 break;
             case R.id.action_about:
-                AboutDialog.show(getSupportFragmentManager());
+                AboutDialog.Companion.show(getSupportFragmentManager());
                 break;
             default:
                 return false;
@@ -142,7 +144,7 @@ public class TeamListActivity extends AppCompatActivity
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
             if (AuthHelper.isSignedIn()) {
-                NewTeamDialog.show(getSupportFragmentManager());
+                NewTeamDialog.Companion.show(getSupportFragmentManager());
             } else {
                 mAuthHelper.showSignInResolution();
             }
@@ -161,9 +163,9 @@ public class TeamListActivity extends AppCompatActivity
                     .commit();
         } else {
             if (restoreOnConfigChange) {
-                startActivityForResult(ScoutActivity.createIntent(this, args), RC_SCOUT);
+                startActivityForResult(ScoutActivity.Companion.createIntent(this, args), RC_SCOUT);
             } else {
-                startActivity(ScoutActivity.createIntent(this, args));
+                startActivity(ScoutActivity.Companion.createIntent(this, args));
             }
             mTeamListFragment.selectTeam(null);
         }

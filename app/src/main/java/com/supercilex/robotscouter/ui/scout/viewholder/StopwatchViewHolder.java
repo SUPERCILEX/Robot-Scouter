@@ -66,7 +66,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         super.bind();
         mToggleStopwatch.setOnClickListener(this);
         setText(R.string.start_stopwatch);
-        Tasks.whenAll(getOnViewReadyTask(mName), getOnViewReadyTask(mToggleStopwatch))
+        Tasks.whenAll(getOnViewReadyTask(getMName()), getOnViewReadyTask(mToggleStopwatch))
                 .addOnSuccessListener(this);
 
         LinearLayoutManager manager =
@@ -77,7 +77,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         mCycles.setLayoutManager(manager);
         mCycles.setAdapter(new Adapter());
 
-        Timer timer = TIMERS.get(mMetric);
+        Timer timer = TIMERS.get(getMMetric());
         if (timer != null) {
             timer.setHolder(this);
             mTimer = timer;
@@ -91,7 +91,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             setText(R.string.stop_stopwatch, "0:00");
             mTimer = new Timer(this);
         } else {
-            ArrayList<Long> newCycles = new ArrayList<>(mMetric.getValue());
+            ArrayList<Long> newCycles = new ArrayList<>(getMMetric().getValue());
             newCycles.add(mTimer.cancel());
             updateMetricValue(newCycles);
         }
@@ -115,7 +115,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         set.connect(R.id.list,
                     ConstraintSet.TOP,
-                    mToggleStopwatch.getBottom() < mName.getBottom() ? R.id.name : R.id.stopwatch,
+                    mToggleStopwatch.getBottom() < getMName().getBottom() ? R.id.name : R.id.stopwatch,
                     ConstraintSet.BOTTOM,
                     0);
 
@@ -138,7 +138,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         public Timer(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
             mIsRunning = true;
-            TIMERS.put((StopwatchMetric) holder.mMetric, this);
+            TIMERS.put((StopwatchMetric) holder.getMMetric(), this);
 
             setStyle();
 
@@ -285,7 +285,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         @Override
         public void onBindViewHolder(DataHolder holder, int position) {
-            List<Long> cycles = mMetric.getValue();
+            List<Long> cycles = getMMetric().getValue();
             if (holder instanceof AverageHolder) {
                 ((AverageHolder) holder).bind(cycles);
             } else {
@@ -300,7 +300,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         @Override
         public int getItemCount() {
-            int size = mMetric.getValue().size();
+            int size = getMMetric().getValue().size();
             return containsAverageItems() ? size + 1 : size;
         }
 
@@ -310,7 +310,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         }
 
         private boolean containsAverageItems() {
-            return mMetric.getValue().size() > 1;
+            return getMMetric().getValue().size() > 1;
         }
     }
 
@@ -343,7 +343,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            ArrayList<Long> newCycles = new ArrayList<>(mMetric.getValue());
+            ArrayList<Long> newCycles = new ArrayList<>(getMMetric().getValue());
             newCycles.remove(mIndex);
             updateMetricValue(newCycles);
             return true;

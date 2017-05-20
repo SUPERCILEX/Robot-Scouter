@@ -29,7 +29,6 @@ import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
-import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
@@ -45,7 +44,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     private RecyclerView mRecyclerView;
     private ScoutTemplateAdapter mAdapter;
     private LinearLayoutManager mManager;
-    private ScoutTemplateItemTouchCallback<ScoutMetric, ScoutViewHolderBase> mItemTouchCallback;
+    private ScoutTemplateItemTouchCallback mItemTouchCallback;
     private boolean mHasAddedItem;
 
     private String mTemplateKey;
@@ -108,7 +107,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         super.onDestroy();
         mAdapter.cleanup();
         mRecyclerView.clearFocus(); // Needed to ensure template is saved if user taps outside sheet
-        RobotScouter.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.Companion.getRefWatcher(getActivity()).watch(this);
     }
 
     private void getTemplateKey() {
@@ -145,7 +144,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mManager = new LinearLayoutManager(getContext());
 
         mRecyclerView.setLayoutManager(mManager);
-        mItemTouchCallback = new ScoutTemplateItemTouchCallback<>(mRootView);
+        mItemTouchCallback = new ScoutTemplateItemTouchCallback(mRootView);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(mItemTouchCallback);
         mItemTouchCallback.setItemTouchHelper(itemTouchHelper);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
@@ -205,12 +204,12 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
             mRecyclerView.clearFocus();
-            ResetTemplateDialog.show(getChildFragmentManager(),
-                                     TeamHelper.parse(getArguments()),
-                                     id == R.id.reset_template_all);
+            ResetTemplateDialog.Companion.show(getChildFragmentManager(),
+                                               TeamHelper.parse(getArguments()),
+                                               id == R.id.reset_template_all);
             return;
         } else if (id == R.id.remove_metrics) {
-            RemoveAllMetricsDialog.show(getFragmentManager(), templateRef);
+            RemoveAllMetricsDialog.Companion.show(getFragmentManager(), templateRef);
             return;
         }
 

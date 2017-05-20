@@ -178,7 +178,7 @@ public abstract class AppBarViewHolderBase
     @Override
     public boolean onLongClick(View v) {
         if (v.getId() == R.id.backdrop) {
-            ShouldUploadMediaToTbaDialog.show(mFragment);
+            ShouldUploadMediaToTbaDialog.Companion.show(mFragment);
             return true;
         }
         return false;

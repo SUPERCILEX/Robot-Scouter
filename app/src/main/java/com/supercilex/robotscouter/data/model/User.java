@@ -92,7 +92,7 @@ public class User {
                 '}';
     }
 
-    public static class Builder implements com.supercilex.robotscouter.data.util.Builder<User> {
+    public static class Builder {
         private final String mUid;
         private String mEmail;
         private String mName;
@@ -117,7 +117,6 @@ public class User {
             return this;
         }
 
-        @Override
         public User build() {
             return new User(mUid, mEmail, mName, mPhotoUrl);
         }

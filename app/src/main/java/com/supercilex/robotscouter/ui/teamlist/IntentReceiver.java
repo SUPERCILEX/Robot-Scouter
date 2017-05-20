@@ -73,9 +73,9 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 if (extras.containsKey(DONATE)) {
-                    DonateDialog.show(mActivity.getSupportFragmentManager());
+                    DonateDialog.Companion.show(mActivity.getSupportFragmentManager());
                 } else if (extras.containsKey(UPDATE)) {
-                    UpdateDialog.showStoreListing(mActivity);
+                    UpdateDialog.Companion.showStoreListing(mActivity);
                 }
             }
 
@@ -84,7 +84,7 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
                 if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD https://github.com/pmd/pmd/issues/278
                     launchTeam(getTeam(deepLink).get(0));
                 } else if (deepLink.toString().equals(ADD_SCOUT_INTENT)) {
-                    NewTeamDialog.show(mActivity.getSupportFragmentManager());
+                    NewTeamDialog.Companion.show(mActivity.getSupportFragmentManager());
                 }
             }
         }
@@ -107,6 +107,6 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
     }
 
     private void launchTeam(Team team) {
-        ScoutActivity.start(mActivity, team, false);
+        ScoutActivity.Companion.start(mActivity, team, false);
     }
 }

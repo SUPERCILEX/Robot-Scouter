@@ -1,7 +1,7 @@
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
-check.dependsOn 'checkstyle', 'findbugs', 'pmd'
+check.dependsOn 'checkstyle', 'pmd'
 
 def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
@@ -19,31 +19,6 @@ task checkstyle(type: Checkstyle) {
     source 'src'
     include '**/*.*'
     exclude '**/gen/**', '**/*.png'
-    classpath = files()
-}
-
-task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
-    ignoreFailures = false
-    effort = "max"
-    reportLevel = "high"
-    classes = files("${project.rootDir}/app/build/intermediates/classes")
-
-    source 'src'
-    include '**/*.java'
-    exclude '**/gen/**'
-    excludeFilter = file("$configDir/findbugs-filter.xml")
-
-    reports {
-        xml.enabled = false
-        html.enabled = true
-        xml {
-            destination "$reportsDir/findbugs.xml"
-        }
-        html {
-            destination "$reportsDir/findbugs.html"
-        }
-    }
-
     classpath = files()
 }
 
@@ -71,7 +46,8 @@ task pmd(type: Pmd) {
 android {
     lintOptions {
         disable 'InvalidPackage', // Needed because of Okio
-                'GradleDependency', 'NewerVersionAvailable' // For build reproducibility
+                'GradleDependency', 'NewerVersionAvailable', // For build reproducibility
+                'UnusedIds', 'UnusedResources' // TODO remove once the Gradle plugin understands Kotlin
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true

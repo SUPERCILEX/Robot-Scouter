@@ -123,7 +123,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RobotScouter.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.Companion.getRefWatcher(getActivity()).watch(this);
     }
 
     @Override

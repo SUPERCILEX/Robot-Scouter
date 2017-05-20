@@ -1,13 +1,24 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+
+    ext {
+        kotlinVersion = '1.1.2-4'
+        supportLibVersion = '25.3.1'
+        playServicesVersion = '10.2.6'
+        leakCanaryVersion = '1.5.1'
+        retrofitVersion = '2.3.0'
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.4.0-alpha7'
-        classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'com.google.firebase:firebase-plugins:1.0.5'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.google.gms:google-services:3.1.0'
+        classpath 'com.google.firebase:firebase-plugins:1.1.0'
         classpath 'com.github.SUPERCILEX:gradle-play-publisher:8987ce0a61dfb466b677d62197cf41300a5594bc'
     }
 }
@@ -15,14 +26,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
     }
-}
-
-ext {
-    supportLibVersion = '25.3.1'
-    playServicesVersion = '10.2.4'
-    leakCanaryVersion = '1.5.1'
-    retrofitVersion = '2.3.0'
 }

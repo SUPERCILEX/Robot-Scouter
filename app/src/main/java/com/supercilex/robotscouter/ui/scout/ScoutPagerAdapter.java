@@ -125,7 +125,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
                 && mKeys.isEmpty()
                 && !ConnectivityUtils.isOffline(mFragment.getContext())
                 && mFragment.isResumed()) {
-            ShouldDeleteTeamDialog.show(mFragment.getChildFragmentManager(), mTeamHelper);
+            ShouldDeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mTeamHelper);
         }
         mFragment.getView().findViewById(R.id.no_content_hint)
                 .setVisibility(mKeys.isEmpty() ? View.VISIBLE : View.GONE);
@@ -157,7 +157,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     public void cleanup() {
         mQuery.removeEventListener(this);
         removeNameListeners();
-        RobotScouter.getRefWatcher(mFragment.getActivity()).watch(this);
+        RobotScouter.Companion.getRefWatcher(mFragment.getActivity()).watch(this);
     }
 
     private void removeNameListeners() {
@@ -166,7 +166,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
 
     @Override
     public boolean onLongClick(View v) {
-        ScoutNameDialog.show(
+        ScoutNameDialog.Companion.show(
                 mFragment.getChildFragmentManager(),
                 Constants.FIREBASE_SCOUTS.child(mKeys.get(v.getId()))
                         .child(Constants.FIREBASE_NAME),

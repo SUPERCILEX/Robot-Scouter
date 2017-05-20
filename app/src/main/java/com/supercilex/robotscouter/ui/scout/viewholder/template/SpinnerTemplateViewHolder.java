@@ -22,13 +22,13 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     @Override
     public void bind() {
         super.bind();
-        mName.setOnFocusChangeListener(this);
+        getMName().setOnFocusChangeListener(this);
     }
 
     @Override
     protected ArrayAdapter<String> getAdapter(ListMetric listMetric) {
         Map<String, String> items = new LinkedHashMap<>();
-        items.put(mMetric.getRef().push().getKey(),
+        items.put(getMMetric().getRef().push().getKey(),
                   itemView.getContext().getString(R.string.edit_spinner_items));
         items.putAll(listMetric.getValue());
         return new ArrayAdapter<>(itemView.getContext(),
@@ -41,10 +41,10 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
         if (itemPosition == 0) {
             disableAnimations();
 
-            ListMetric listMetric = (ListMetric) mMetric;
-            SpinnerTemplateDialog.show(mManager,
-                                       mMetric.getRef().child(Constants.FIREBASE_VALUE),
-                                       listMetric.getSelectedValueKey());
+            ListMetric listMetric = (ListMetric) getMMetric();
+            SpinnerTemplateDialog.Companion.show(getMManager(),
+                                                 getMMetric().getRef().child(Constants.FIREBASE_VALUE),
+                                                 listMetric.getSelectedValueKey());
             mSpinner.setSelection(indexOfKey(listMetric.getSelectedValueKey()));
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id);
@@ -58,11 +58,11 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
 
     @Override
     public void requestFocus() {
-        mName.requestFocus();
+        getMName().requestFocus();
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) updateMetricName(mName.getText().toString());
+        if (!hasFocus) updateMetricName(getMName().getText().toString());
     }
 }

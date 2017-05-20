@@ -91,7 +91,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         mMediaEditText = (EditText) rootView.findViewById(R.id.media_edit);
         mWebsiteEditText = (EditText) rootView.findViewById(R.id.website_edit);
 
-        mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.show(this));
+        mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.Companion.show(this));
         mEditNameButton.setOnClickListener(this);
 
         mNameEditText.setOnFocusChangeListener(this);
@@ -144,7 +144,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     }
 
     @Override
-    protected EditText getLastEditText() {
+    protected EditText getMLastEditText() {
         return mWebsiteEditText;
     }
 

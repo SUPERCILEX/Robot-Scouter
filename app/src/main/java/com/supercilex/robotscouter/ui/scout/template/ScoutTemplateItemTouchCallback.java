@@ -18,10 +18,10 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.ui.scout.viewholder.template.ScoutTemplateViewHolder;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
-public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolder> extends ItemTouchHelper.SimpleCallback {
+public class ScoutTemplateItemTouchCallback extends ItemTouchHelper.SimpleCallback {
     private final View mRootView;
     private final RecyclerView mRecyclerView;
-    private FirebaseRecyclerAdapter<T, VH> mAdapter;
+    private FirebaseRecyclerAdapter mAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
     private int mScrollToPosition;
@@ -37,7 +37,7 @@ public class ScoutTemplateItemTouchCallback<T, VH extends RecyclerView.ViewHolde
         mItemTouchHelper = itemTouchHelper;
     }
 
-    public void setAdapter(FirebaseRecyclerAdapter<T, VH> adapter) {
+    public void setAdapter(FirebaseRecyclerAdapter adapter) {
         mAdapter = adapter;
     }
 

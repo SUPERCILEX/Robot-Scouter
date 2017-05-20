@@ -148,7 +148,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 AnalyticsUtils.editTeamDetails(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_delete:
-                DeleteTeamDialog.show(mFragment.getChildFragmentManager(), mSelectedTeams);
+                DeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mSelectedTeams);
                 break;
             case android.R.id.home:
                 resetMenu();

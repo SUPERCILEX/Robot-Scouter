@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.firebase.firebase-crash'
+apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'project-report'
 apply from: '../quality/quality.gradle'
@@ -73,12 +76,15 @@ android.applicationVariants.all { variant ->
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
     // Support libraries
     compile 'com.android.support:multidex:1.0.1'
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:customtabs:$supportLibVersion"
     compile "com.android.support:palette-v7:$supportLibVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
     // Firebase UI
     // Auth
@@ -97,6 +103,7 @@ dependencies {
     // Firebase core
     compile "com.google.firebase:firebase-core:$playServicesVersion"
     compile "com.google.firebase:firebase-crash:$playServicesVersion"
+    compile "com.google.firebase:firebase-perf:$playServicesVersion"
     compile "com.google.firebase:firebase-invites:$playServicesVersion"
     compile "com.google.firebase:firebase-appindexing:$playServicesVersion"
     compile "com.google.firebase:firebase-config:$playServicesVersion"

@@ -9,17 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
-import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 public class ScoutFragment extends Fragment {
-    private FirebaseRecyclerAdapter<ScoutMetric, ScoutViewHolderBase> mAdapter;
+    private ScoutAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mManager;
     private String mScoutKey;
@@ -72,6 +69,6 @@ public class ScoutFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
-        RobotScouter.getRefWatcher(getActivity()).watch(this);
+        RobotScouter.Companion.getRefWatcher(getActivity()).watch(this);
     }
 }

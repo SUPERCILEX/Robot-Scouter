@@ -306,7 +306,7 @@ public class Team implements Parcelable, Comparable<Team> {
                 Long.valueOf(mTimestamp).compareTo(team.getTimestamp()) : comparison;
     }
 
-    public static class Builder implements com.supercilex.robotscouter.data.util.Builder<Team> {
+    public static class Builder {
         private final String mNumber;
         private String mKey;
         private String mTemplateKey;
@@ -396,7 +396,6 @@ public class Team implements Parcelable, Comparable<Team> {
             return this;
         }
 
-        @Override
         public Team build() {
             return new Team(mNumber,
                             mKey,

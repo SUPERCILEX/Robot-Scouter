@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>, OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
+public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
     private final TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
     private final Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
     private final List<Task<Void>> mScoutMetricsTasks = new CopyOnWriteArrayList<>();
@@ -49,7 +49,6 @@ public final class Scouts implements Builder<Task<Map<TeamHelper, List<Scout>>>>
         return new Scouts(teamHelpers, appContext).build();
     }
 
-    @Override
     public Task<Map<TeamHelper, List<Scout>>> build() {
         List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
         for (TeamHelper helper : mTeamHelpers) {

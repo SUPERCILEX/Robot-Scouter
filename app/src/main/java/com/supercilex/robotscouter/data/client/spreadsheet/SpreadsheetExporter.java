@@ -23,6 +23,7 @@ import android.util.Pair;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.perf.metrics.AddTrace;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.NotificationForwarder;
 import com.supercilex.robotscouter.data.model.Scout;
@@ -156,8 +157,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         return true;
     }
 
-    @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     @Override
+    @AddTrace(name = "onHandleIntent")
+    @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     protected void onHandleIntent(Intent intent) {
         mCache = new SpreadsheetCache(TeamHelper.parseList(intent), this);
 
@@ -184,6 +186,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     }
 
     @Override
+    @AddTrace(name = "onSuccess")
     public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
         mScouts = Collections.unmodifiableMap(scouts);
 
@@ -240,15 +243,15 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                            PendingIntent.getBroadcast(
                                    this,
                                    exportId,
-                                   NotificationForwarder.getCancelIntent(this,
-                                                                         exportId,
-                                                                         shareIntent),
+                                   NotificationForwarder.Companion.getCancelIntent(this,
+                                                                                   exportId,
+                                                                                   shareIntent),
                                    PendingIntent.FLAG_ONE_SHOT))
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setPriority(Notification.PRIORITY_HIGH);
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             builder.addAction(R.drawable.ic_launch_white_24dp,
@@ -283,6 +286,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     }
 
     @Nullable
+    @AddTrace(name = "writeFile")
     private File writeFile(File rsFolder) {
         FileOutputStream stream = null;
         File absoluteFile = new File(rsFolder, getFullyQualifiedFileName(null));
@@ -334,6 +338,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         else return mCache.getTeamNames() + middleMan + extension;
     }
 
+    @AddTrace(name = "getWorkbook")
     private Workbook getWorkbook() {
         Workbook workbook;
         if (isUnsupportedDevice()) {
@@ -368,6 +373,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         return workbook;
     }
 
+    @AddTrace(name = "buildTeamSheet")
     private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
         List<Scout> scouts = mScouts.get(teamHelper);
 
@@ -438,6 +444,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         setRowValue(column, metric, row);
     }
 
+    @AddTrace(name = "buildAverageColumn")
     private void buildAverageColumn(Sheet sheet, TeamHelper teamHelper) {
         int farthestColumn = 0;
         for (Row row : sheet) {
@@ -529,6 +536,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
+    @AddTrace(name = "buildTeamChart")
     private void buildTeamChart(Row row,
                                 TeamHelper teamHelper,
                                 Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
@@ -611,6 +619,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 .setTitle(row.getCell(0).getStringCellValue());
     }
 
+    @AddTrace(name = "setupRow")
     private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
@@ -630,6 +639,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
+    @AddTrace(name = "setRowValue")
     private void setRowValue(int column, ScoutMetric metric, Row row) {
         row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellValue(metric.getName());
 
@@ -676,6 +686,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
+    @AddTrace(name = "buildTeamAveragesSheet")
     private void buildTeamAveragesSheet(Sheet averageSheet) {
         Workbook workbook = averageSheet.getWorkbook();
         Row headerRow = averageSheet.createRow(0);
@@ -723,6 +734,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         buildAverageCharts(averageSheet);
     }
 
+    @AddTrace(name = "buildAverageCharts")
     private void buildAverageCharts(Sheet sheet) {
         if (isUnsupportedDevice()) return;
 
@@ -769,6 +781,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
+    @AddTrace(name = "setAverageFormula")
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
         String safeSheetName = scoutSheet.getSheetName().replace("'", "''");
         String rangeAddress = "'" + safeSheetName + "'!" + averageCell.getAddress();
