@@ -17,9 +17,9 @@ import java.util.*
 
 class LicensesDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val rootView = View.inflate(context, R.layout.recycler_view, null)
+        val rootView: View = View.inflate(context, R.layout.recycler_view, null)
 
-        val licenses = ArrayList<LicenseEntry>()
+        val licenses: MutableList<LicenseEntry> = ArrayList()
         licenses.apply {
             add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
             add(Licenses.noLink(

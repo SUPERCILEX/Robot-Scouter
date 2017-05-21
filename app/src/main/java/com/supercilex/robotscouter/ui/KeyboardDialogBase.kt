@@ -12,7 +12,7 @@ import android.widget.TextView
 import com.supercilex.robotscouter.RobotScouter
 
 abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, TextView.OnEditorActionListener {
-    protected abstract val mLastEditText: EditText
+    protected abstract val lastEditText: EditText
 
     protected abstract fun onClick(): Boolean
 
@@ -34,7 +34,7 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
             inflater: LayoutInflater?,
             container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        mLastEditText.setOnEditorActionListener(this)
+        lastEditText.setOnEditorActionListener(this)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -52,7 +52,7 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
 
     override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
         if (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
-            onClick(mLastEditText)
+            onClick(lastEditText)
             return true
         }
         return false

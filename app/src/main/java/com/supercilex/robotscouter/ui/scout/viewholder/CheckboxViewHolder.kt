@@ -9,10 +9,10 @@ open class CheckboxViewHolder(itemView: View) :
         View.OnClickListener {
     public override fun bind() {
         super.bind()
-        mName.isChecked = mMetric.value
-        mName.setOnClickListener(this)
+        name.isChecked = metric.value
+        name.setOnClickListener(this)
     }
 
     @CallSuper
-    override fun onClick(v: View) = updateMetricValue(mName.isChecked)
+    override fun onClick(v: View) = updateMetricValue(name.isChecked)
 }

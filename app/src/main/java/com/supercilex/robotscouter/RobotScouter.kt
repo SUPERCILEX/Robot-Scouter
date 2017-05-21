@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.DatabaseHelper
 
 class RobotScouter : MultiDexApplication() {
-    private val mRefWatcher: RefWatcher by lazy { LeakCanary.install(this) }
+    private val refWatcher: RefWatcher by lazy { LeakCanary.install(this) }
 
     @AddTrace(name = "onCreate")
     override fun onCreate() {
@@ -36,6 +36,6 @@ class RobotScouter : MultiDexApplication() {
     }
 
     companion object {
-        fun getRefWatcher(context: Context): RefWatcher = (context.applicationContext as RobotScouter).mRefWatcher
+        fun getRefWatcher(context: Context): RefWatcher = (context.applicationContext as RobotScouter).refWatcher
     }
 }

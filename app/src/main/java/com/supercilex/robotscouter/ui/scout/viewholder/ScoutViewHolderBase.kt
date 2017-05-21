@@ -13,41 +13,41 @@ import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
 abstract class ScoutViewHolderBase<TMetric, out VView : TextView>(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
     @Suppress("UNCHECKED_CAST")
-    protected val mName: VView = itemView.findViewById(R.id.name) as VView
-    protected lateinit var mMetric: ScoutMetric<TMetric>
-    protected lateinit var mManager: FragmentManager
-    private lateinit var mAnimator: SimpleItemAnimator
+    protected val name: VView = itemView.findViewById(R.id.name) as VView
+    protected lateinit var metric: ScoutMetric<TMetric>
+    protected lateinit var manager: FragmentManager
+    private lateinit var animator: SimpleItemAnimator
 
     fun bind(metric: ScoutMetric<TMetric>, manager: FragmentManager, animator: SimpleItemAnimator) {
-        mMetric = metric
-        mManager = manager
-        mAnimator = animator
+        this.metric = metric
+        this.manager = manager
+        this.animator = animator
 
         bind()
     }
 
     @CallSuper
     protected open fun bind() {
-        mName.text = mMetric.name
+        name.text = metric.name
     }
 
     protected fun updateMetricName(name: String) {
-        if (!TextUtils.equals(mMetric.name, name)) {
+        if (!TextUtils.equals(metric.name, name)) {
             disableAnimations()
-            mMetric.updateName(name)
+            metric.updateName(name)
         }
     }
 
     protected fun updateMetricValue(value: TMetric) {
-        if (value != mMetric.value) {
+        if (value != metric.value) {
             disableAnimations()
-            mMetric.updateValue(value)
+            metric.updateValue(value)
         }
     }
 
     protected fun disableAnimations() {
-        mAnimator.supportsChangeAnimations = false
+        animator.supportsChangeAnimations = false
     }
 
-    override fun toString() = mMetric.toString()
+    override fun toString(): String = metric.toString()
 }

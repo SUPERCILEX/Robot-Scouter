@@ -11,27 +11,27 @@ import com.supercilex.robotscouter.R
 
 class SpinnerItemViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), ScoutTemplateViewHolder {
-    private val mItemEditText: EditText = itemView.findViewById(R.id.name) as EditText
+    private val itemEditText: EditText = itemView.findViewById(R.id.name) as EditText
 
-    private lateinit var mPrevText: String
-    private lateinit var mSnapshot: DataSnapshot
+    private lateinit var prevText: String
+    private lateinit var snapshot: DataSnapshot
 
     fun bind(text: String, snapshot: DataSnapshot) {
-        mPrevText = text
-        mSnapshot = snapshot
+        prevText = text
+        this.snapshot = snapshot
 
-        mItemEditText.setText(text)
-        mItemEditText.onFocusChangeListener = this
+        itemEditText.setText(text)
+        itemEditText.onFocusChangeListener = this
     }
 
     override fun requestFocus() {
-        mItemEditText.requestFocus()
+        itemEditText.requestFocus()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        val text = mItemEditText.text.toString()
-        if (!hasFocus && !TextUtils.equals(text, mPrevText)) {
-            mSnapshot.ref.setValue(text, mSnapshot.priority)
+        val text: String = itemEditText.text.toString()
+        if (!hasFocus && !TextUtils.equals(text, prevText)) {
+            snapshot.ref.setValue(text, snapshot.priority)
         }
     }
 }

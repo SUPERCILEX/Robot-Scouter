@@ -15,17 +15,17 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.PreferencesUtils
 
 class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickListener {
-    private val mRootView: View by lazy {
+    private val rootView: View by lazy {
         View.inflate(context, R.layout.dialog_should_upload_media, null)
     }
-    private val mSaveResponseCheckbox: CheckBox by lazy {
-        mRootView.findViewById(R.id.save_response) as CheckBox
+    private val saveResponseCheckbox: CheckBox by lazy {
+        rootView.findViewById(R.id.save_response) as CheckBox
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.should_upload_media_dialog_title)
             .setMessage(R.string.should_upload_media_rationale)
-            .setView(mRootView)
+            .setView(rootView)
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
             .createAndListen {
@@ -34,10 +34,10 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
             }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        val isYes = which == Dialog.BUTTON_POSITIVE
+        val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
         PreferencesUtils.setShouldAskToUploadMediaToTba(
                 context,
-                Pair(!mSaveResponseCheckbox.isChecked, isYes))
+                Pair(!saveResponseCheckbox.isChecked, isYes))
 
         (parentFragment as TeamMediaCreator.StartCaptureListener).onStartCapture(isYes)
     }
@@ -46,7 +46,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
         private val TAG = "ShouldUploadMediaToTbaD"
 
         fun show(fragment: Fragment) {
-            val uploadMediaToTbaPair = PreferencesUtils.shouldAskToUploadMediaToTba(fragment.context)
+            val uploadMediaToTbaPair: Pair<Boolean, Boolean> = PreferencesUtils.shouldAskToUploadMediaToTba(fragment.context)
             if (uploadMediaToTbaPair.first) {
                 ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
             } else {

@@ -29,8 +29,8 @@ class UpdateDialog : DialogFragment(), DialogInterface.OnClickListener {
 
     companion object {
         private val TAG = "UpdateDialog"
-        private val STORE_LISTING_URI = Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID)
-        private val LATEST_APK_URI = Uri.parse("https://github.com/SUPERCILEX/app-version-history/blob/master/" + "Robot-Scouter/app-release.apk")
+        private val STORE_LISTING_URI: Uri = Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID)
+        private val LATEST_APK_URI: Uri = Uri.parse("https://github.com/SUPERCILEX/app-version-history/blob/master/" + "Robot-Scouter/app-release.apk")
 
         fun show(manager: FragmentManager) {
             if (manager.findFragmentByTag(TAG) == null) {

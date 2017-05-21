@@ -29,7 +29,7 @@ class ScoutActivity : AppCompatActivity() {
                 createIntent(context, ScoutListFragmentBase.getBundle(team, addScout, null)))
 
         fun createIntent(context: Context, args: Bundle): Intent {
-            val starter = Intent(context, ScoutActivity::class.java).putExtra(KEY_SCOUT_ARGS, args)
+            val starter: Intent = Intent(context, ScoutActivity::class.java).putExtra(KEY_SCOUT_ARGS, args)
 
             starter.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

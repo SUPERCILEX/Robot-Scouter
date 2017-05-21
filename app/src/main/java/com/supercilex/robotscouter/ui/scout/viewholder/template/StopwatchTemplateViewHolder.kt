@@ -10,9 +10,9 @@ import com.supercilex.robotscouter.ui.scout.viewholder.StopwatchViewHolder
 class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView), ScoutTemplateViewHolder {
     override fun bind() {
         super.bind()
-        mName.onFocusChangeListener = this
+        name.onFocusChangeListener = this
 
-        val layout = itemView as ConstraintLayout
+        val layout: ConstraintLayout = itemView as ConstraintLayout
         val set = ConstraintSet()
         set.clone(layout)
         set.connect(R.id.list, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
@@ -20,10 +20,10 @@ class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView
     }
 
     override fun requestFocus() {
-        mName.requestFocus()
+        name.requestFocus()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(mName.text.toString())
+        if (!hasFocus) updateMetricName(name.text.toString())
     }
 }

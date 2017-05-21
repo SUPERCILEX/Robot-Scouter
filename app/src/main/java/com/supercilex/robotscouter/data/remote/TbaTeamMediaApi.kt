@@ -13,10 +13,10 @@ interface TbaTeamMediaApi {
             @Body file: RequestBody): Call<JsonObject>
 
     @Multipart
-    @POST("suggest/media/team/frc{number}/{mYear}")
+    @POST("suggest/media/team/frc{number}/{year}")
     fun postToTba(
             @Path("number") number: String,
-            @Path("mYear") year: Int,
+            @Path("year") year: Int,
             @Query("X-TBA-Auth-Key") auth: String,
             @Part("media_url") url: RequestBody): Call<JsonObject>
 }

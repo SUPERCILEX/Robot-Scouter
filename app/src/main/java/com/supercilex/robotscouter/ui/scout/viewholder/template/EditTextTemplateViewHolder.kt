@@ -8,15 +8,15 @@ import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder
 class EditTextTemplateViewHolder(itemView: View) : EditTextViewHolder(itemView), ScoutTemplateViewHolder {
     override fun bind() {
         super.bind()
-        mName.onFocusChangeListener = this
+        name.onFocusChangeListener = this
     }
 
     override fun requestFocus() {
-        mName.requestFocus()
+        name.requestFocus()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
-        if (!hasFocus && v.id == R.id.name) updateMetricName(mName.text.toString())
+        if (!hasFocus && v.id == R.id.name) updateMetricName(name.text.toString())
     }
 }

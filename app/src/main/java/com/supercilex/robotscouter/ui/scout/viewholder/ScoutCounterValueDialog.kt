@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder
 
+import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.InputType
@@ -10,24 +11,24 @@ import com.supercilex.robotscouter.util.DatabaseHelper
 import java.math.BigDecimal
 
 class ScoutCounterValueDialog : ScoutValueDialogBase<Int>() {
-    override val mValue: Int? get() = Integer.valueOf(mLastEditText.text.toString())
-    override val mTitle = R.string.edit_value
-    override val mHint = R.string.value
+    override val value: Int get() = Integer.valueOf(lastEditText.text.toString())
+    override val title: Int = R.string.edit_value
+    override val hint: Int = R.string.value
 
     override fun onShow(dialog: AlertDialog) {
         super.onShow(dialog)
-        mLastEditText.inputType = InputType.TYPE_CLASS_NUMBER
+        lastEditText.inputType = InputType.TYPE_CLASS_NUMBER
     }
 
     override fun onClick(): Boolean {
         try {
-            BigDecimal(mLastEditText.text.toString()).intValueExact() // Checking for failure
+            BigDecimal(lastEditText.text.toString()).intValueExact() // Checking for failure
             return super.onClick()
         } catch (e: NumberFormatException) {
-            mInputLayout.error = getString(R.string.invalid_team_number)
+            inputLayout.error = getString(R.string.invalid_team_number)
             return false
         } catch (e: ArithmeticException) {
-            mInputLayout.error = getString(R.string.invalid_team_number)
+            inputLayout.error = getString(R.string.invalid_team_number)
             return false
         }
     }
@@ -38,7 +39,7 @@ class ScoutCounterValueDialog : ScoutValueDialogBase<Int>() {
         fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) {
             val dialog = ScoutCounterValueDialog()
 
-            val args = DatabaseHelper.getRefBundle(ref)
+            val args: Bundle = DatabaseHelper.getRefBundle(ref)
             args.putString(CURRENT_VALUE, currentValue)
             dialog.arguments = args
 

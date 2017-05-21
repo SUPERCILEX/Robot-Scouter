@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout
 
+import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.InputType
@@ -9,19 +10,19 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.DatabaseHelper
 
 class ScoutNameDialog : ScoutValueDialogBase<String>() {
-    override val mValue: String? get() {
-        val name: String = mLastEditText.text.toString()
+    override val value: String? get() {
+        val name: String = lastEditText.text.toString()
         return when {
             TextUtils.isEmpty(name) -> null
             else -> name
         }
     }
-    override val mTitle = R.string.edit_scout_name
-    override val mHint = R.string.scout_name
+    override val title: Int = R.string.edit_scout_name
+    override val hint: Int = R.string.scout_name
 
     override fun onShow(dialog: AlertDialog) {
         super.onShow(dialog)
-        mLastEditText.inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
+        lastEditText.inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
     }
 
     companion object {
@@ -30,7 +31,7 @@ class ScoutNameDialog : ScoutValueDialogBase<String>() {
         fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) {
             val dialog = ScoutNameDialog()
 
-            val args = DatabaseHelper.getRefBundle(ref)
+            val args: Bundle = DatabaseHelper.getRefBundle(ref)
             args.putString(CURRENT_VALUE, currentValue)
             dialog.arguments = args
 

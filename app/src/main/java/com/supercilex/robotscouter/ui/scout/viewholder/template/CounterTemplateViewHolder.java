@@ -22,22 +22,22 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
     @Override
     public void bind() {
         super.bind();
-        mCount.setText(String.valueOf(getMMetric().getValue()));
-        mUnit.setText(((NumberMetric) getMMetric()).getUnit());
+        mCount.setText(String.valueOf(getMetric().getValue()));
+        mUnit.setText(((NumberMetric) getMetric()).getUnit());
 
-        getMName().setOnFocusChangeListener(this);
+        getName().setOnFocusChangeListener(this);
         mUnit.setOnFocusChangeListener(this);
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        if (getMName().hasFocus()) updateMetricName(getMName().getText().toString());
+        if (getName().hasFocus()) updateMetricName(getName().getText().toString());
     }
 
     @Override
     public void requestFocus() {
-        getMName().requestFocus();
+        getName().requestFocus();
     }
 
     @Override
@@ -45,9 +45,9 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
         if (hasFocus) return; // Only save data when the user is done
 
         if (v.getId() == R.id.name) {
-            updateMetricName(getMName().getText().toString());
+            updateMetricName(getName().getText().toString());
         } else if (v.getId() == R.id.unit) {
-            NumberMetric numberMetric = (NumberMetric) getMMetric();
+            NumberMetric numberMetric = (NumberMetric) getMetric();
             String newUnit = mUnit.getText().toString();
 
             if (TextUtils.isEmpty(newUnit)) newUnit = null;

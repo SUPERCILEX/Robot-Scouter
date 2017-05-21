@@ -14,9 +14,9 @@ interface TbaTeamApi {
             @Path("number") number: String,
             @Query("X-TBA-Auth-Key") auth: String): Call<JsonObject>
 
-    @GET("team/frc{number}/media/{mYear}")
+    @GET("team/frc{number}/media/{year}")
     fun getMedia(
             @Path("number") number: String,
-            @Path("mYear") year: Int,
+            @Path("year") year: Int,
             @Query("X-TBA-Auth-Key") auth: String): Call<JsonArray>
 }

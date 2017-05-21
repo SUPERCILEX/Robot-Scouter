@@ -27,7 +27,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
     @Override
     public void bind() {
         super.bind();
-        ListMetric listMetric = (ListMetric) getMMetric();
+        ListMetric listMetric = (ListMetric) getMetric();
         if (listMetric.getValue().isEmpty()) return;
 
         ArrayAdapter<String> spinnerArrayAdapter = getAdapter(listMetric);
@@ -41,7 +41,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
     @Override
     @CallSuper
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
-        ListMetric listMetric = (ListMetric) getMMetric();
+        ListMetric listMetric = (ListMetric) getMetric();
         if (indexOfKey(listMetric.getSelectedValueKey()) != itemPosition) {
             disableAnimations();
             listMetric.updateSelectedValueKey(getKeys().get(itemPosition));
@@ -58,7 +58,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
     }
 
     private List<String> getKeys() {
-        return new ArrayList<>(getMMetric().getValue().keySet());
+        return new ArrayList<>(getMetric().getValue().keySet());
     }
 
     protected ArrayAdapter<String> getAdapter(ListMetric listMetric) {

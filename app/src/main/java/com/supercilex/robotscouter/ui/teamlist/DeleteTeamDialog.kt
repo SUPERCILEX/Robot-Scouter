@@ -12,26 +12,26 @@ import com.supercilex.robotscouter.util.Constants
 import java.util.*
 
 class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
-    private val mTeamHelpers by lazy { TeamHelper.parseList(arguments) }
+    private val teamHelpers: List<TeamHelper> by lazy { TeamHelper.parseList(arguments) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Collections.sort(mTeamHelpers)
+        Collections.sort(teamHelpers)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val deletedTeams = StringBuilder()
-        for (i in mTeamHelpers.indices) {
+        for ((i: Int, teamHelper: TeamHelper) in teamHelpers.withIndex()) {
             deletedTeams.append(i + 1)
                     .append(". ")
-                    .append(mTeamHelpers[i])
+                    .append(teamHelper)
                     .append('\n')
         }
 
         return AlertDialog.Builder(context)
                 .setTitle(R.string.confirm_action)
                 .setMessage(when {
-                    mTeamHelpers.size == Constants.SINGLE_ITEM -> null
+                    teamHelpers.size == Constants.SINGLE_ITEM -> null
                     else -> getString(R.string.caution_delete, deletedTeams)
                 })
                 .setPositiveButton(R.string.delete, this)
@@ -40,7 +40,7 @@ class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        for (teamHelper in mTeamHelpers) teamHelper.deleteTeam()
+        for (teamHelper: TeamHelper in teamHelpers) teamHelper.deleteTeam()
     }
 
     companion object {

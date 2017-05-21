@@ -13,21 +13,21 @@ import com.supercilex.robotscouter.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
 
 class NewTeamDialog : KeyboardDialogBase() {
-    private val mRootView: View by lazy { View.inflate(context, R.layout.dialog_new_team, null) }
-    private val mInputLayout: TextInputLayout by lazy { mRootView.findViewById(R.id.name) as TextInputLayout }
-    override val mLastEditText: EditText by lazy { mInputLayout.findViewById(R.id.team_number) as EditText }
+    private val rootView: View by lazy { View.inflate(context, R.layout.dialog_new_team, null) }
+    private val inputLayout: TextInputLayout by lazy { rootView.findViewById(R.id.name) as TextInputLayout }
+    override val lastEditText: EditText by lazy { inputLayout.findViewById(R.id.team_number) as EditText }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-            createDialog(mRootView, R.string.add_scout)
+            createDialog(rootView, R.string.add_scout)
 
     public override fun onClick(): Boolean {
-        val teamNumber = mLastEditText.text.toString()
+        val teamNumber: String = lastEditText.text.toString()
         if (isValid(teamNumber)) {
             (activity as TeamSelectionListener).onTeamSelected(ScoutListFragmentBase.getBundle(
                     Team.Builder(teamNumber).build(), true, null), false)
             return true
         } else {
-            mInputLayout.error = getString(R.string.invalid_team_number)
+            inputLayout.error = getString(R.string.invalid_team_number)
             return false
         }
     }

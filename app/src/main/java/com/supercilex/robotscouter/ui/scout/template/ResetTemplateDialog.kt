@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.view.View
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.data.util.UserHelper
 import com.supercilex.robotscouter.ui.createAndListen
@@ -34,8 +35,8 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        val team = TeamHelper.parse(arguments).team
-        val templateKey = team.templateKey
+        val team: Team = TeamHelper.parse(arguments).team
+        val templateKey: String = team.templateKey
 
         if (arguments.getBoolean(RESET_ALL_KEY)) {
             Constants.sFirebaseTeams
@@ -59,7 +60,7 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
         fun show(manager: FragmentManager, helper: TeamHelper, shouldResetAll: Boolean) {
             val dialog = ResetTemplateDialog()
 
-            val bundle = helper.toBundle()
+            val bundle: Bundle = helper.toBundle()
             bundle.putBoolean(RESET_ALL_KEY, shouldResetAll)
             dialog.arguments = bundle
 

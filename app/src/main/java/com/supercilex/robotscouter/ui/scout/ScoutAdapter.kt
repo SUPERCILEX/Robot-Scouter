@@ -15,17 +15,17 @@ import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.viewholder.*
 
 open class ScoutAdapter(
-        query: Query, private val mManager: FragmentManager, recyclerView: RecyclerView) :
+        query: Query, private val manager: FragmentManager, recyclerView: RecyclerView) :
         FirebaseRecyclerAdapter<ScoutMetric<Any>, ScoutViewHolderBase<*, *>>(
                 ScoutUtils.METRIC_PARSER,
                 0,
                 ScoutViewHolderBase::class.java,
                 query) {
-    private val mAnimator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
-    private val mCardListHelper: CardListHelper
+    private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
+    private val cardListHelper: CardListHelper
 
     init {
-        mCardListHelper = object : CardListHelper(this, recyclerView, true) {
+        cardListHelper = object : CardListHelper(this, recyclerView, true) {
             override fun isFirstItem(position: Int): Boolean =
                     super.isFirstItem(position) || isHeader(position)
 
@@ -40,18 +40,18 @@ open class ScoutAdapter(
             viewHolder: ScoutViewHolderBase<*, *>,
             metric: ScoutMetric<Any>,
             position: Int) {
-        mAnimator.supportsChangeAnimations = true
+        animator.supportsChangeAnimations = true
 
-        mCardListHelper.onBind(viewHolder)
+        cardListHelper.onBind(viewHolder)
 
         @Suppress("UNCHECKED_CAST")
         viewHolder as ScoutViewHolderBase<Any, *>
-        viewHolder.bind(metric, mManager, mAnimator)
+        viewHolder.bind(metric, manager, animator)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
             ScoutViewHolderBase<*, *> {
-        val inflater = LayoutInflater.from(parent.context)
+        val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
             MetricType.BOOLEAN -> return CheckboxViewHolder(
                     inflater.inflate(R.layout.scout_checkbox, parent, false))

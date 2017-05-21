@@ -18,19 +18,19 @@ class ScoutTemplateAdapter(
         query: Query,
         manager: FragmentManager,
         recyclerView: RecyclerView,
-        private val mCallback: ScoutTemplateItemTouchCallback) :
+        private val callback: ScoutTemplateItemTouchCallback) :
         ScoutAdapter(query, manager, recyclerView) {
     override fun populateViewHolder(
             viewHolder: ScoutViewHolderBase<*, *>,
             metric: ScoutMetric<Any>,
             position: Int) {
         super.populateViewHolder(viewHolder, metric, position)
-        mCallback.onBind(viewHolder, position)
+        callback.onBind(viewHolder, position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
             ScoutViewHolderBase<*, *> {
-        val inflater = LayoutInflater.from(parent.context)
+        val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
             MetricType.BOOLEAN -> return CheckboxTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_checkbox, parent, false))
@@ -53,7 +53,7 @@ class ScoutTemplateAdapter(
             snapshot: DataSnapshot?,
             index: Int,
             oldIndex: Int) {
-        if (mCallback.onChildChanged(type, index)) {
+        if (callback.onChildChanged(type, index)) {
             super.onChildChanged(type, snapshot, index, oldIndex)
         }
     }

@@ -13,22 +13,22 @@ import com.supercilex.robotscouter.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.util.DatabaseHelper
 
 abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
-    private val mRootView: View by lazy { View.inflate(context, R.layout.dialog_scout_value, null) }
-    protected val mInputLayout: TextInputLayout by lazy { mRootView.findViewById(R.id.value_layout) as TextInputLayout }
-    override val mLastEditText: EditText by lazy { mInputLayout.findViewById(R.id.value) as EditText }
+    private val rootView: View by lazy { View.inflate(context, R.layout.dialog_scout_value, null) }
+    protected val inputLayout: TextInputLayout by lazy { rootView.findViewById(R.id.value_layout) as TextInputLayout }
+    override val lastEditText: EditText by lazy { inputLayout.findViewById(R.id.value) as EditText }
 
-    protected abstract val mValue: T?
-    @get:StringRes protected abstract val mTitle: Int
-    @get:StringRes protected abstract val mHint: Int
+    protected abstract val value: T?
+    @get:StringRes protected abstract val title: Int
+    @get:StringRes protected abstract val hint: Int
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        mInputLayout.hint = getString(mHint)
-        mLastEditText.apply {
+        inputLayout.hint = getString(hint)
+        lastEditText.apply {
             setText(arguments.getString(CURRENT_VALUE))
             post { selectAll() }
         }
 
-        return createDialog(mRootView, mTitle)
+        return createDialog(rootView, title)
     }
 
     override fun onDestroy() {
@@ -37,7 +37,7 @@ abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
     }
 
     override fun onClick(): Boolean {
-        DatabaseHelper.getRef(arguments).setValue(mValue)
+        DatabaseHelper.getRef(arguments).setValue(value)
         return true
     }
 

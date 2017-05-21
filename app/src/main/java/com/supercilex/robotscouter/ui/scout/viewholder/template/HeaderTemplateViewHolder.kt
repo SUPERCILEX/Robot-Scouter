@@ -7,14 +7,14 @@ import com.supercilex.robotscouter.ui.scout.viewholder.HeaderViewHolder
 class HeaderTemplateViewHolder(itemView: View) : HeaderViewHolder(itemView), ScoutTemplateViewHolder {
     override fun bind() {
         super.bind()
-        mName.onFocusChangeListener = this
+        name.onFocusChangeListener = this
     }
 
     override fun requestFocus() {
-        mName.requestFocus()
+        name.requestFocus()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(mName.text.toString())
+        if (!hasFocus) updateMetricName(name.text.toString())
     }
 }

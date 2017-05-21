@@ -6,7 +6,11 @@ import android.text.TextUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.tasks.Task
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.supercilex.robotscouter.data.model.Team
+import retrofit2.Response
 import java.io.IOException
 
 class TbaDownloader private constructor(team: Team, context: Context) : TbaServiceBase<TbaTeamApi>(
@@ -16,39 +20,38 @@ class TbaDownloader private constructor(team: Team, context: Context) : TbaServi
     @Throws(Exception::class)
     override fun call(): Team {
         getTeamInfo()
-        getTeamMedia(mYear)
-        return mTeam
+        getTeamMedia(year)
+        return team
     }
 
     @Throws(IOException::class)
     private fun getTeamInfo() {
-        val response = mApi.getInfo(mTeam.number, mTbaApiKey).execute()
+        val response: Response<JsonObject> = api.getInfo(team.number, tbaApiKey).execute()
 
         if (cannotContinue(response)) return
 
-        val result = response.body()
-        val teamNickname = result!!.get(TEAM_NICKNAME)
+        val result: JsonObject = response.body()!!
+        val teamNickname: JsonElement? = result.get(TEAM_NICKNAME)
         if (teamNickname != null && !teamNickname.isJsonNull) {
-            mTeam.name = teamNickname.asString
+            team.name = teamNickname.asString
         }
-        val teamWebsite = result.get(TEAM_WEBSITE)
+        val teamWebsite: JsonElement? = result.get(TEAM_WEBSITE)
         if (teamWebsite != null && !teamWebsite.isJsonNull) {
-            mTeam.website = teamWebsite.asString
+            team.website = teamWebsite.asString
         }
     }
 
     @Throws(IOException::class)
     private fun getTeamMedia(year: Int) {
-        val response = mApi.getMedia(mTeam.number, year, mTbaApiKey).execute()
+        val response: Response<JsonArray> = api.getMedia(team.number, year, tbaApiKey).execute()
 
         if (cannotContinue(response)) return
 
         var media: String? = null
 
-        val result = response.body()
-        for (i in 0..result!!.size() - 1) {
-            val mediaObject = result.get(i).asJsonObject
-            val mediaType = mediaObject.get("type").asString
+        for (element: JsonElement in response.body()!!) {
+            val mediaObject: JsonObject = element.asJsonObject
+            val mediaType: String = mediaObject.get("type").asString
 
             if (TextUtils.equals(mediaType, IMGUR)) {
                 media = "https://i.imgur.com/${mediaObject.get("foreign_key").asString}.png"
@@ -70,10 +73,10 @@ class TbaDownloader private constructor(team: Team, context: Context) : TbaServi
     }
 
     private fun setAndCacheMedia(url: String, year: Int) {
-        mTeam.media = url
-        mTeam.mediaYear = year
-        Handler(mContext.mainLooper).post {
-            Glide.with(mContext)
+        team.media = url
+        team.mediaYear = year
+        Handler(context.mainLooper).post {
+            Glide.with(context)
                     .load(url)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .preload()

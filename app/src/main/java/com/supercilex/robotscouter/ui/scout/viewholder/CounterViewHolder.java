@@ -28,7 +28,7 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     @Override
     public void bind() {
         super.bind();
-        setValue(getMMetric().getValue());
+        setValue(getMetric().getValue());
         mIncrement.setOnClickListener(this);
         mIncrement.setOnLongClickListener(this);
         mDecrement.setOnClickListener(this);
@@ -57,21 +57,21 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
 
     @Override
     public boolean onLongClick(View v) {
-        ScoutCounterValueDialog.Companion.show(getMManager(),
-                                               getMMetric().getRef().child(Constants.FIREBASE_VALUE),
+        ScoutCounterValueDialog.Companion.show(getManager(),
+                                               getMetric().getRef().child(Constants.FIREBASE_VALUE),
                                                getStringWithoutUnit());
         return true;
     }
 
     private String getStringWithoutUnit() {
-        String unit = ((NumberMetric) getMMetric()).getUnit();
+        String unit = ((NumberMetric) getMetric()).getUnit();
         String count = mCount.getText().toString();
         return TextUtils.isEmpty(unit) ? count : count.replace(unit, "");
     }
 
     @SuppressLint("SetTextI18n")
     private void setValue(int value) {
-        String unit = ((NumberMetric) getMMetric()).getUnit();
+        String unit = ((NumberMetric) getMetric()).getUnit();
         mCount.setText(TextUtils.isEmpty(unit) ? String.valueOf(value) : value + unit);
     }
 }

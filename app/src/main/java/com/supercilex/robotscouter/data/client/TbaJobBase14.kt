@@ -17,5 +17,5 @@ abstract class TbaJobBase14 : JobService() {
 
     abstract fun startTask(previousTeam: Team): Task<Team>
 
-    override fun onStopJob(params: JobParameters?) = true
+    override fun onStopJob(params: JobParameters?): Boolean = true
 }

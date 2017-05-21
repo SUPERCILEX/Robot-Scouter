@@ -22,13 +22,13 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     @Override
     public void bind() {
         super.bind();
-        getMName().setOnFocusChangeListener(this);
+        getName().setOnFocusChangeListener(this);
     }
 
     @Override
     protected ArrayAdapter<String> getAdapter(ListMetric listMetric) {
         Map<String, String> items = new LinkedHashMap<>();
-        items.put(getMMetric().getRef().push().getKey(),
+        items.put(getMetric().getRef().push().getKey(),
                   itemView.getContext().getString(R.string.edit_spinner_items));
         items.putAll(listMetric.getValue());
         return new ArrayAdapter<>(itemView.getContext(),
@@ -40,11 +40,11 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
     public void onItemSelected(AdapterView parent, View view, int itemPosition, long id) {
         if (itemPosition == 0) {
             disableAnimations();
-            updateMetricName(getMName().getText().toString());
+            updateMetricName(getName().getText().toString());
 
-            ListMetric listMetric = (ListMetric) getMMetric();
-            SpinnerTemplateDialog.Companion.show(getMManager(),
-                                                 getMMetric().getRef().child(Constants.FIREBASE_VALUE),
+            ListMetric listMetric = (ListMetric) getMetric();
+            SpinnerTemplateDialog.Companion.show(getManager(),
+                                                 getMetric().getRef().child(Constants.FIREBASE_VALUE),
                                                  listMetric.getSelectedValueKey());
             mSpinner.setSelection(indexOfKey(listMetric.getSelectedValueKey()));
         } else {
@@ -59,11 +59,11 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
 
     @Override
     public void requestFocus() {
-        getMName().requestFocus();
+        getName().requestFocus();
     }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) updateMetricName(getMName().getText().toString());
+        if (!hasFocus) updateMetricName(getName().getText().toString());
     }
 }

@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder
 
 class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView), ScoutTemplateViewHolder {
-    private val mCheckBoxName: EditText = itemView.findViewById(R.id.checkbox_name) as EditText
+    private val checkBoxName: EditText = itemView.findViewById(R.id.checkbox_name) as EditText
 
     init {
         updateConstraints(itemView as ConstraintLayout)
@@ -17,22 +17,22 @@ class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView),
 
     override fun bind() {
         super.bind()
-        mName.text = null
-        mCheckBoxName.setText(mMetric.name)
-        mCheckBoxName.onFocusChangeListener = this
+        name.text = null
+        checkBoxName.setText(metric.name)
+        checkBoxName.onFocusChangeListener = this
     }
 
     override fun onClick(v: View) {
-        if (mCheckBoxName.hasFocus()) updateMetricName(mCheckBoxName.text.toString())
+        if (checkBoxName.hasFocus()) updateMetricName(checkBoxName.text.toString())
         super.onClick(v)
     }
 
     override fun requestFocus() {
-        mCheckBoxName.requestFocus()
+        checkBoxName.requestFocus()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(mCheckBoxName.text.toString())
+        if (!hasFocus) updateMetricName(checkBoxName.text.toString())
     }
 
     private fun updateConstraints(layout: ConstraintLayout) {

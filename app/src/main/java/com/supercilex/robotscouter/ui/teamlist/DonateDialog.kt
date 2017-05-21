@@ -27,8 +27,8 @@ import org.json.JSONObject
 import java.util.concurrent.Callable
 
 class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClickListener, OnCompleteListener<Void> {
-    private var mService: IInAppBillingService? = null
-    private var mProgressDialog: ProgressDialog? = null
+    private var service: IInAppBillingService? = null
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +48,13 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mService != null) context.unbindService(this)
+        if (service != null) context.unbindService(this)
         destroyProgressDialog()
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     private fun initProgressDialog() {
-        mProgressDialog = ProgressDialog.show(
+        progressDialog = ProgressDialog.show(
                 context,
                 "",
                 getString(R.string.progress_dialog_loading),
@@ -64,10 +64,8 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
     }
 
     private fun destroyProgressDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog!!.dismiss()
-            mProgressDialog = null
-        }
+        progressDialog?.dismiss()
+        progressDialog = null
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -81,7 +79,7 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
 
                     val purchaseToken = purchaseData.getString("purchaseToken")
                     AsyncTaskExecutor.execute(PurchaseConsumer(
-                            mService!!,
+                            service!!,
                             dialog,
                             context.packageName,
                             purchaseToken))
@@ -95,14 +93,14 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
     }
 
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        if (mService == null) {
+        if (service == null) {
             showError()
             return
         }
 
         val buyIntentBundle: Bundle
         try {
-            buyIntentBundle = mService!!.getBuyIntent(
+            buyIntentBundle = service!!.getBuyIntent(
                     3,
                     context.packageName,
                     ITEM_SKUS[position],
@@ -113,7 +111,7 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
             return
         }
 
-        val pendingIntent = buyIntentBundle.getParcelable<PendingIntent>("BUY_INTENT")
+        val pendingIntent: PendingIntent? = buyIntentBundle.getParcelable<PendingIntent>("BUY_INTENT")
 
         if (pendingIntent == null) {
             showError()
@@ -137,11 +135,11 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
     private fun showError() = Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT).show()
 
     override fun onServiceConnected(name: ComponentName, service: IBinder) {
-        mService = IInAppBillingService.Stub.asInterface(service)
+        this.service = IInAppBillingService.Stub.asInterface(service)
     }
 
     override fun onServiceDisconnected(name: ComponentName) {
-        mService = null
+        service = null
     }
 
     override fun onComplete(task: Task<Void>) = destroyProgressDialog()
@@ -164,7 +162,7 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
         private val KEY_IS_PROGRESS_SHOWING = "is_progress_showing_key"
 
         private val RC_PURCHASE = 1001
-        private val ITEM_SKUS = arrayOf(
+        private val ITEM_SKUS: List<String> = listOf(
                 "1.00_donate_single",
                 "1.00_donate_subscription",
                 "2.00_donate_single",

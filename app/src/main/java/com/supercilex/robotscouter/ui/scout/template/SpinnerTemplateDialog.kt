@@ -24,54 +24,54 @@ import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
-    private val mRootView: View by lazy {
+    private val rootView: View by lazy {
         View.inflate(context, R.layout.scout_template_edit_spinner_items, null)
     }
 
-    private val mSelectedValueKey: String by lazy { arguments.getString(Constants.FIREBASE_SELECTED_VALUE_KEY) }
-    private val mRef: DatabaseReference by lazy { DatabaseHelper.getRef(arguments) }
+    private val selectedValueKey: String by lazy { arguments.getString(Constants.FIREBASE_SELECTED_VALUE_KEY) }
+    private val ref: DatabaseReference by lazy { DatabaseHelper.getRef(arguments) }
 
-    private val mRecyclerView: RecyclerView by lazy { mRootView.findViewById(R.id.list) as RecyclerView }
-    private val mManager: LinearLayoutManager by lazy { LinearLayoutManager(context) }
-    private val mItemTouchCallback: ScoutTemplateItemTouchCallback by lazy {
-        ScoutTemplateItemTouchCallback(mRecyclerView)
+    private val recyclerView: RecyclerView by lazy { rootView.findViewById(R.id.list) as RecyclerView }
+    private val manager: LinearLayoutManager by lazy { LinearLayoutManager(context) }
+    private val itemTouchCallback: ScoutTemplateItemTouchCallback by lazy {
+        ScoutTemplateItemTouchCallback(recyclerView)
     }
     private val mAdapter: FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> by lazy {
         object : FirebaseRecyclerAdapter<String, SpinnerItemViewHolder>(
                 String::class.java,
                 R.layout.scout_template_spinner_item,
                 SpinnerItemViewHolder::class.java,
-                mRef) {
+                ref) {
             override fun populateViewHolder(
                     viewHolder: SpinnerItemViewHolder,
                     itemText: String,
                     position: Int) {
                 viewHolder.bind(itemText, mSnapshots[position])
-                mItemTouchCallback.onBind(viewHolder, position)
+                itemTouchCallback.onBind(viewHolder, position)
             }
 
             override fun onChildChanged(
                     type: ChangeEventListener.EventType,
-                    snapshot: DataSnapshot?,
+                    snapshot: DataSnapshot,
                     index: Int,
                     oldIndex: Int) {
                 if (type == ChangeEventListener.EventType.REMOVED) {
                     if (itemCount == 0) {
                         dismiss()
-                        mRef.parent.removeValue()
+                        ref.parent.removeValue()
                         return
                     }
 
-                    if (TextUtils.equals(mSelectedValueKey, snapshot!!.key)) {
-                        mRef.parent.child(Constants.FIREBASE_SELECTED_VALUE_KEY).removeValue()
+                    if (TextUtils.equals(selectedValueKey, snapshot.key)) {
+                        ref.parent.child(Constants.FIREBASE_SELECTED_VALUE_KEY).removeValue()
                     }
                 }
 
-                if (type == ChangeEventListener.EventType.ADDED && snapshot!!.priority == null) {
+                if (type == ChangeEventListener.EventType.ADDED && snapshot.priority == null) {
                     snapshot.ref.setPriority(index)
                 }
 
-                if (mItemTouchCallback.onChildChanged(type, index)) {
+                if (itemTouchCallback.onChildChanged(type, index)) {
                     super.onChildChanged(type, snapshot, index, oldIndex)
                 }
             }
@@ -80,43 +80,43 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mRootView.findViewById(R.id.fab).setOnClickListener(this)
+        rootView.findViewById(R.id.fab).setOnClickListener(this)
 
 
-        mRecyclerView.layoutManager = mManager
-        val touchHelper = ItemTouchHelper(mItemTouchCallback)
-        mItemTouchCallback.setItemTouchHelper(touchHelper)
-        touchHelper.attachToRecyclerView(mRecyclerView)
+        recyclerView.layoutManager = manager
+        val touchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchCallback.setItemTouchHelper(touchHelper)
+        touchHelper.attachToRecyclerView(recyclerView)
 
-        mRecyclerView.adapter = mAdapter
-        mItemTouchCallback.setAdapter(mAdapter)
-        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager)
+        recyclerView.adapter = mAdapter
+        itemTouchCallback.setAdapter(mAdapter)
+        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, manager)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.edit_spinner_items)
-            .setView(mRootView)
+            .setView(rootView)
             .setPositiveButton(android.R.string.ok, null)
             .createAndListen { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, mManager)
+    override fun onSaveInstanceState(outState: Bundle) {
+        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, manager)
         super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mAdapter.cleanup()
-        mRecyclerView.clearFocus()
+        recyclerView.clearFocus()
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     override fun onClick(v: View) {
-        val itemCount = mAdapter.itemCount
-        mRef.push().setValue(
+        val itemCount: Int = mAdapter.itemCount
+        ref.push().setValue(
                 "item " + (itemCount + 1),
                 FirebaseAdapterUtils.getHighestIntPriority(mAdapter.snapshots))
-        mItemTouchCallback.addItemToScrollQueue(itemCount)
+        itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 
     companion object {
@@ -125,7 +125,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueIndex: String) {
             val dialog = SpinnerTemplateDialog()
 
-            val args = DatabaseHelper.getRefBundle(ref)
+            val args: Bundle = DatabaseHelper.getRefBundle(ref)
             args.putString(Constants.FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
             dialog.arguments = args
 
