@@ -50,16 +50,16 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         }
     };
 
-    private static final int TAKE_PHOTO_RC = 334; // NOPMD https://github.com/pmd/pmd/issues/345
-    private static final List<String> PERMS; // NOPMD https://github.com/pmd/pmd/issues/345
-    private static final String MEDIA_CREATOR_KEY = "media_creator"; // NOPMD https://github.com/pmd/pmd/issues/345
+    private static final int TAKE_PHOTO_RC = 334;
+    private static final List<String> PERMS;
+    private static final String MEDIA_CREATOR_KEY = "media_creator";
 
-    private WeakReference<Fragment> mFragment; // NOPMD https://github.com/pmd/pmd/issues/345
-    private TeamHelper mTeamHelper; // NOPMD https://github.com/pmd/pmd/issues/345
-    private PermissionRequestHandler mPermHandler; // NOPMD https://github.com/pmd/pmd/issues/345
-    private WeakReference<OnSuccessListener<TeamHelper>> mListener; // NOPMD https://github.com/pmd/pmd/issues/345
-    private String mPhotoPath; // NOPMD https://github.com/pmd/pmd/issues/345
-    private boolean mShouldUploadMediaToTba; // NOPMD https://github.com/pmd/pmd/issues/345
+    private WeakReference<Fragment> mFragment;
+    private TeamHelper mTeamHelper;
+    private PermissionRequestHandler mPermHandler;
+    private WeakReference<OnSuccessListener<TeamHelper>> mListener;
+    private String mPhotoPath;
+    private boolean mShouldUploadMediaToTba;
 
     static {
         List<String> perms = new ArrayList<>();
