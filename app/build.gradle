@@ -14,7 +14,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.3' // Note: remember to update travis.yml and upload.sh versions too
+    buildToolsVersion '26.0.0-rc2' // Note: remember to update travis.yml and upload.sh versions too
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
