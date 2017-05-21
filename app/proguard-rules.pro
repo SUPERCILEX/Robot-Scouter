@@ -7,6 +7,9 @@
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
+# Kotlin
+-dontwarn kotlin.internal.JRE8PlatformImplementations
+
 # In-app billing
 -keep class com.android.vending.billing.**
 
@@ -22,6 +25,9 @@
 
 # Play services
 -dontnote com.google.android.gms.internal.**
+
+# Other
+-dontnote com.twitter.sdk.android.**
 
 # Apache POI
 -dontwarn org.apache.**

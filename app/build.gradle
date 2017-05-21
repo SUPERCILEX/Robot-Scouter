@@ -77,7 +77,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 
     // Support libraries
     compile 'com.android.support:multidex:1.0.1'
