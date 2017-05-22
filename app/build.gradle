@@ -13,7 +13,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 'android-O'
     buildToolsVersion '26.0.0-rc2' // Note: remember to update travis.yml and upload.sh versions too
 
     defaultConfig {

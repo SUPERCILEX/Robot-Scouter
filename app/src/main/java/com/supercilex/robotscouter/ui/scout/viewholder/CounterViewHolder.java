@@ -20,9 +20,9 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
 
     public CounterViewHolder(View itemView) {
         super(itemView);
-        mIncrement = (ImageButton) itemView.findViewById(R.id.increment_counter);
-        mCount = (TextView) itemView.findViewById(R.id.count);
-        mDecrement = (ImageButton) itemView.findViewById(R.id.decrement_counter);
+        mIncrement = itemView.findViewById(R.id.increment_counter);
+        mCount = itemView.findViewById(R.id.count);
+        mDecrement = itemView.findViewById(R.id.decrement_counter);
     }
 
     @Override

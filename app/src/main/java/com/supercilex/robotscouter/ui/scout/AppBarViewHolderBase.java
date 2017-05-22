@@ -62,9 +62,9 @@ public abstract class AppBarViewHolderBase
                                    Task onScoutingReadyTask) {
         mTeamHelper = teamHelper;
         mFragment = fragment;
-        mToolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        mHeader = (CollapsingToolbarLayout) rootView.findViewById(R.id.header);
-        mBackdrop = (ImageView) rootView.findViewById(R.id.backdrop);
+        mToolbar = rootView.findViewById(R.id.toolbar);
+        mHeader = rootView.findViewById(R.id.header);
+        mBackdrop = rootView.findViewById(R.id.backdrop);
         mOnScoutingReadyTask = onScoutingReadyTask;
         mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
 

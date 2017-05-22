@@ -55,8 +55,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
     public StopwatchViewHolder(View itemView) {
         super(itemView);
-        mToggleStopwatch = (Button) itemView.findViewById(R.id.stopwatch);
-        mCycles = (RecyclerView) itemView.findViewById(R.id.list);
+        mToggleStopwatch = itemView.findViewById(R.id.stopwatch);
+        mCycles = itemView.findViewById(R.id.list);
 
         mToggleStopwatch.setBackgroundResource(R.drawable.button_outline_colored);
     }
@@ -322,8 +322,8 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
 
         public DataHolder(View itemView) {
             super(itemView);
-            mTitle = (TextView) itemView.findViewById(android.R.id.text1);
-            mValue = (TextView) itemView.findViewById(android.R.id.text2);
+            mTitle = itemView.findViewById(android.R.id.text1);
+            mValue = itemView.findViewById(android.R.id.text2);
         }
 
         public void bind(long nanoTime, int index) {

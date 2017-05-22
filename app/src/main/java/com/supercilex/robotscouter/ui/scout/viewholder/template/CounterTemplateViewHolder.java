@@ -15,7 +15,7 @@ public class CounterTemplateViewHolder extends CounterViewHolder implements Scou
 
     public CounterTemplateViewHolder(View itemView) {
         super(itemView);
-        mUnit = (EditText) itemView.findViewById(R.id.unit);
+        mUnit = itemView.findViewById(R.id.unit);
         updateConstraints((ConstraintLayout) itemView);
     }
 

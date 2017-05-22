@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.teamlist;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -38,7 +37,7 @@ public class TeamListAdapter extends FirebaseRecyclerAdapter<Team, TeamViewHolde
         mMenuManager = menuManager;
         mCardListHelper = new CardListHelper(
                 this,
-                (RecyclerView) fragment.getView().findViewById(R.id.list),
+                fragment.getView().findViewById(R.id.list),
                 false);
         mSelectedTeamKey =
                 savedInstanceState == null ? null : savedInstanceState.getString(TEAM_KEY);

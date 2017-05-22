@@ -35,10 +35,10 @@ task pmd(type: Pmd) {
         xml.enabled = false
         html.enabled = true
         xml {
-            destination "$reportsDir/pmd.xml"
+            destination file("$reportsDir/pmd.xml")
         }
         html {
-            destination "$reportsDir/pmd.html"
+            destination file("$reportsDir/pmd.html")
         }
     }
 }
@@ -47,7 +47,8 @@ android {
     lintOptions {
         disable 'InvalidPackage', // Needed because of Okio
                 'GradleDependency', 'NewerVersionAvailable', // For build reproducibility
-                'UnusedIds', 'UnusedResources' // TODO remove once the Gradle plugin understands Kotlin
+                'UnusedIds', 'UnusedResources', // TODO remove once the Gradle plugin understands Kotlin
+                'GradleCompatible', 'ClickableViewAccessibility' // TODO remove once https://issuetracker.google.com/issues/38509650 is fixed
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true

@@ -36,14 +36,10 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
     @Keep
     public TeamViewHolder(View itemView) {
         super(itemView);
-        mMedia = (CircleImageView) itemView.findViewById(R.id.media);
-        mNumber = (TextView) itemView.findViewById(R.id.number);
-        mName = (TextView) itemView.findViewById(R.id.name);
-        mNewScout = (ImageButton) itemView.findViewById(R.id.new_scout);
-    }
-
-    public boolean isScouting() {
-        return mIsScouting;
+        mMedia = itemView.findViewById(R.id.media);
+        mNumber = itemView.findViewById(R.id.number);
+        mName = itemView.findViewById(R.id.name);
+        mNewScout = itemView.findViewById(R.id.new_scout);
     }
 
     public void bind(Team team,

@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
 abstract class ScoutViewHolderBase<TMetric, out VView : TextView>(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
     @Suppress("UNCHECKED_CAST")
-    protected val name: VView = itemView.findViewById(R.id.name) as VView
+    protected val name: VView = itemView.findViewById(R.id.name)
     protected lateinit var metric: ScoutMetric<TMetric>
     protected lateinit var manager: FragmentManager
     private lateinit var animator: SimpleItemAnimator

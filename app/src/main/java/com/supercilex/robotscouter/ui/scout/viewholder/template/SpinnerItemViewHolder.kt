@@ -11,7 +11,7 @@ import com.supercilex.robotscouter.R
 
 class SpinnerItemViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), ScoutTemplateViewHolder {
-    private val itemEditText: EditText = itemView.findViewById(R.id.name) as EditText
+    private val itemEditText: EditText = itemView.findViewById(R.id.name)
 
     private lateinit var prevText: String
     private lateinit var snapshot: DataSnapshot

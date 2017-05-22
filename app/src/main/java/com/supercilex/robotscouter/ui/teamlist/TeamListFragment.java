@@ -73,7 +73,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                              @Nullable Bundle savedInstanceState) {
         mSavedInstanceState = savedInstanceState;
         View rootView = inflater.inflate(R.layout.fragment_team_list, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        mRecyclerView = rootView.findViewById(R.id.list);
         mManager = new LinearLayoutManager(getContext());
 
         mMenuHelper.setRecyclerView(mRecyclerView);
@@ -100,7 +100,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mFab = getActivity().findViewById(R.id.fab);
     }
 
     @Override

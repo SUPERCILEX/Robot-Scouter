@@ -30,7 +30,7 @@ public class ScoutTemplateItemTouchCallback extends ItemTouchHelper.SimpleCallba
     public ScoutTemplateItemTouchCallback(View rootView) {
         super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
         mRootView = rootView;
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
+        mRecyclerView = mRootView.findViewById(R.id.list);
     }
 
     public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {

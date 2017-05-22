@@ -140,7 +140,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     }
 
     private void setupRecyclerView(Bundle savedInstanceState) {
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
+        mRecyclerView = mRootView.findViewById(R.id.list);
         mManager = new LinearLayoutManager(getContext());
 
         mRecyclerView.setLayoutManager(mManager);
@@ -178,7 +178,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     }
 
     private void initFabMenu() {
-        mFam = (FloatingActionMenu) mRootView.findViewById(R.id.fab_menu);
+        mFam = mRootView.findViewById(R.id.fab_menu);
 
         mRootView.findViewById(R.id.add_checkbox).setOnClickListener(this);
         mRootView.findViewById(R.id.add_counter).setOnClickListener(this);

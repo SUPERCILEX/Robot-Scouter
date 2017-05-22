@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder
 
 class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView), ScoutTemplateViewHolder {
-    private val checkBoxName: EditText = itemView.findViewById(R.id.checkbox_name) as EditText
+    private val checkBoxName: EditText = itemView.findViewById(R.id.checkbox_name)
 
     init {
         updateConstraints(itemView as ConstraintLayout)

@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R
 open class EditTextViewHolder(itemView: View) :
         ScoutViewHolderBase<String, TextView>(itemView),
         View.OnFocusChangeListener {
-    private val notes: EditText = itemView.findViewById(R.id.notes) as EditText
+    private val notes: EditText = itemView.findViewById(R.id.notes)
 
     public override fun bind() {
         super.bind()

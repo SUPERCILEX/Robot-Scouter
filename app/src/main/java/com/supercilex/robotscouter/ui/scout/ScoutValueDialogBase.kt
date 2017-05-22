@@ -14,8 +14,8 @@ import com.supercilex.robotscouter.util.DatabaseHelper
 
 abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
     private val rootView: View by lazy { View.inflate(context, R.layout.dialog_scout_value, null) }
-    protected val inputLayout: TextInputLayout by lazy { rootView.findViewById(R.id.value_layout) as TextInputLayout }
-    override val lastEditText: EditText by lazy { inputLayout.findViewById(R.id.value) as EditText }
+    protected val inputLayout: TextInputLayout by lazy { rootView.findViewById<TextInputLayout>(R.id.value_layout) }
+    override val lastEditText: EditText by lazy { inputLayout.findViewById<EditText>(R.id.value) }
 
     protected abstract val value: T?
     @get:StringRes protected abstract val title: Int

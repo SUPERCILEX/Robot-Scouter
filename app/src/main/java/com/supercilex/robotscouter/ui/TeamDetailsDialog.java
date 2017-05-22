@@ -80,16 +80,16 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
 
-        mMedia = (CircleImageView) rootView.findViewById(R.id.media);
-        mName = (TextView) rootView.findViewById(R.id.name);
-        mEditNameButton = (ImageButton) rootView.findViewById(R.id.edit_name_button);
+        mMedia = rootView.findViewById(R.id.media);
+        mName = rootView.findViewById(R.id.name);
+        mEditNameButton = rootView.findViewById(R.id.edit_name_button);
 
-        mNameInputLayout = (TextInputLayout) rootView.findViewById(R.id.name_layout);
-        mMediaInputLayout = (TextInputLayout) rootView.findViewById(R.id.media_layout);
-        mWebsiteInputLayout = (TextInputLayout) rootView.findViewById(R.id.website_layout);
-        mNameEditText = (EditText) rootView.findViewById(R.id.name_edit);
-        mMediaEditText = (EditText) rootView.findViewById(R.id.media_edit);
-        mWebsiteEditText = (EditText) rootView.findViewById(R.id.website_edit);
+        mNameInputLayout = rootView.findViewById(R.id.name_layout);
+        mMediaInputLayout = rootView.findViewById(R.id.media_layout);
+        mWebsiteInputLayout = rootView.findViewById(R.id.website_layout);
+        mNameEditText = rootView.findViewById(R.id.name_edit);
+        mMediaEditText = rootView.findViewById(R.id.media_edit);
+        mWebsiteEditText = rootView.findViewById(R.id.website_edit);
 
         mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.Companion.show(this));
         mEditNameButton.setOnClickListener(this);

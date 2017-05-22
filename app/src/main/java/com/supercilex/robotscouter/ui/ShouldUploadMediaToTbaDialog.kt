@@ -19,7 +19,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
         View.inflate(context, R.layout.dialog_should_upload_media, null)
     }
     private val saveResponseCheckbox: CheckBox by lazy {
-        rootView.findViewById(R.id.save_response) as CheckBox
+        rootView.findViewById<CheckBox>(R.id.save_response)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)

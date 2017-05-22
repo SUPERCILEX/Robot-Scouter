@@ -247,8 +247,8 @@ public abstract class ScoutListFragmentBase extends Fragment
     }
 
     private void initScoutList() {
-        TabLayout tabLayout = (TabLayout) mRootView.findViewById(R.id.tabs);
-        ViewPager viewPager = (ViewPager) mRootView.findViewById(R.id.viewpager);
+        TabLayout tabLayout = mRootView.findViewById(R.id.tabs);
+        ViewPager viewPager = mRootView.findViewById(R.id.viewpager);
         mPagerAdapter = new ScoutPagerAdapter(this, mHolder, tabLayout, mTeamHelper, getScoutKey());
 
         viewPager.setAdapter(mPagerAdapter);

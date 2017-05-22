@@ -14,8 +14,8 @@ import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
 
 class NewTeamDialog : KeyboardDialogBase() {
     private val rootView: View by lazy { View.inflate(context, R.layout.dialog_new_team, null) }
-    private val inputLayout: TextInputLayout by lazy { rootView.findViewById(R.id.name) as TextInputLayout }
-    override val lastEditText: EditText by lazy { inputLayout.findViewById(R.id.team_number) as EditText }
+    private val inputLayout: TextInputLayout by lazy { rootView.findViewById<TextInputLayout>(R.id.name) }
+    override val lastEditText: EditText by lazy { inputLayout.findViewById<EditText>(R.id.team_number) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
             createDialog(rootView, R.string.add_scout)

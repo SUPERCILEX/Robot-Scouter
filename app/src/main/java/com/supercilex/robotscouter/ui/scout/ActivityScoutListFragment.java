@@ -14,7 +14,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,7 +39,7 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar((Toolbar) mRootView.findViewById(R.id.toolbar));
+        activity.setSupportActionBar(mRootView.findViewById(R.id.toolbar));
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         super.onActivityCreated(savedInstanceState);
     }

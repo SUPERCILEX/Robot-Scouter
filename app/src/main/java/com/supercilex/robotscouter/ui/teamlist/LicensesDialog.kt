@@ -40,7 +40,7 @@ class LicensesDialog : DialogFragment() {
             add(Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter"))
         }
 
-        val list: RecyclerView = rootView.findViewById(R.id.list) as RecyclerView
+        val list: RecyclerView = rootView.findViewById(R.id.list)
         list.layoutManager = LinearLayoutManager(context)
         list.adapter = LicenseAdapter(licenses)
 

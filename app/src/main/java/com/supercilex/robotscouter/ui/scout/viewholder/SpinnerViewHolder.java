@@ -21,7 +21,7 @@ public class SpinnerViewHolder extends ScoutViewHolderBase<Map<String, String>, 
 
     public SpinnerViewHolder(View itemView) {
         super(itemView);
-        mSpinner = (Spinner) itemView.findViewById(R.id.spinner);
+        mSpinner = itemView.findViewById(R.id.spinner);
     }
 
     @Override

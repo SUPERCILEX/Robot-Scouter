@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.template
 
 import android.app.Dialog
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
@@ -31,7 +32,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     private val selectedValueKey: String by lazy { arguments.getString(Constants.FIREBASE_SELECTED_VALUE_KEY) }
     private val ref: DatabaseReference by lazy { DatabaseHelper.getRef(arguments) }
 
-    private val recyclerView: RecyclerView by lazy { rootView.findViewById(R.id.list) as RecyclerView }
+    private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
     private val manager: LinearLayoutManager by lazy { LinearLayoutManager(context) }
     private val itemTouchCallback: ScoutTemplateItemTouchCallback by lazy {
         ScoutTemplateItemTouchCallback(recyclerView)
@@ -80,7 +81,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        rootView.findViewById(R.id.fab).setOnClickListener(this)
+        rootView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener(this)
 
 
         recyclerView.layoutManager = manager

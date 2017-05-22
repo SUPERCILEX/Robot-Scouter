@@ -318,7 +318,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         @ColorRes int oldColorPrimary = visible ? R.color.selected_toolbar : R.color.colorPrimary;
         @ColorRes int newColorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
 
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        Toolbar toolbar = activity.findViewById(R.id.toolbar);
         ViewUtils.animateColorChange(
                 mFragment.getContext(),
                 oldColorPrimary,
@@ -349,7 +349,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
 
     private FloatingActionButton getFab() {
         if (mFab == null) {
-            mFab = (FloatingActionButton) mFragment.getActivity().findViewById(R.id.fab);
+            mFab = mFragment.getActivity().findViewById(R.id.fab);
         }
         return mFab;
     }

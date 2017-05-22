@@ -2,6 +2,8 @@ language: android
 jdk: oraclejdk8
 # See https://github.com/travis-ci/travis-ci/issues/5582
 sudo: required
+env:
+  - BUILD_TOOLS_VERSION=26.0.0-rc2
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -19,9 +21,6 @@ android:
     # https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943
     - tools
     - tools
-    - build-tools-26.0.0-preview
-    - android-25
-    - platform-tools
 install: nvm install 7
 before_script:
   - chmod +x gradlew setup.sh build.sh upload.sh
