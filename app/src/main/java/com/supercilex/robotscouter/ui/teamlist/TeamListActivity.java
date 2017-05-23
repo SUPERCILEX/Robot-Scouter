@@ -26,6 +26,8 @@ import com.supercilex.robotscouter.ui.scout.ScoutActivity;
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 import static com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS;
+import static com.supercilex.robotscouter.ui.teamlist.TutorialUtilsKt.showCreateFirstTeamPrompt;
+import static com.supercilex.robotscouter.ui.teamlist.TutorialUtilsKt.showSignInPrompt;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logSelectTeamEvent;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setHasShownAddTeamTutorial;
@@ -55,7 +57,7 @@ public class TeamListActivity extends AppCompatActivity
         mTeamListFragment =
                 (TeamListFragment) getSupportFragmentManager().findFragmentByTag(TeamListFragment.TAG);
         mAuthHelper = new AuthHelper(this);
-        mAddTeamPrompt = TutorialHelper.showCreateFirstTeamPrompt(this);
+        mAddTeamPrompt = showCreateFirstTeamPrompt(this);
 
         findViewById(R.id.fab).setOnClickListener(this);
     }
@@ -93,7 +95,7 @@ public class TeamListActivity extends AppCompatActivity
 
     @Override
     public void run() {
-        TutorialHelper.showSignInPrompt(this);
+        showSignInPrompt(this);
     }
 
     @Override
