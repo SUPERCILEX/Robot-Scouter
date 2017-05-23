@@ -11,6 +11,7 @@ class NotificationForwarder : BroadcastReceiver() {
         if (intent.getBooleanExtra(KEY_CANCEL, false)) {
             (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                     .cancel(intent.getIntExtra(KEY_NOTIFICATION_ID, -1))
+            context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
         }
 
         intent.component = intent.getParcelableExtra<ComponentName>(KEY_COMPONENT)
