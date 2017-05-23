@@ -6,7 +6,9 @@ import android.text.TextUtils;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.supercilex.robotscouter.util.Constants;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 
 public class ScoutMetric<T> {
     @Exclude protected DatabaseReference mRef;
@@ -55,7 +57,7 @@ public class ScoutMetric<T> {
 
     public void updateName(String name) {
         setName(name);
-        mRef.child(Constants.FIREBASE_NAME).setValue(mName);
+        mRef.child(FIREBASE_NAME).setValue(mName);
     }
 
     @Keep
@@ -70,7 +72,7 @@ public class ScoutMetric<T> {
 
     public void updateValue(T value) {
         setValue(value);
-        mRef.child(Constants.FIREBASE_VALUE).setValue(mValue);
+        mRef.child(FIREBASE_VALUE).setValue(mValue);
     }
 
     @Keep

@@ -12,7 +12,8 @@ import com.firebase.ui.auth.util.Preconditions;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.Constants;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TIMESTAMP;
 
 public class Team implements Parcelable, Comparable<Team> {
     @Exclude
@@ -215,7 +216,7 @@ public class Team implements Parcelable, Comparable<Team> {
     }
 
     @Keep
-    @PropertyName(Constants.FIREBASE_TIMESTAMP)
+    @PropertyName(FIREBASE_TIMESTAMP)
     public Object getCurrentTimestamp() {
         return System.currentTimeMillis();
     }

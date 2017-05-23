@@ -29,9 +29,13 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
-import com.supercilex.robotscouter.util.AnalyticsUtils;
-import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.RemoteConfigUtils;
+
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logLoginEvent;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.updateAnalyticsUserId;
+import static com.supercilex.robotscouter.util.ConstantsKt.ALL_PROVIDERS;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_INDICES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
 
 public final class AuthHelper implements View.OnClickListener {
     private static final int RC_SIGN_IN = 100;
@@ -88,7 +92,7 @@ public final class AuthHelper implements View.OnClickListener {
 
     private static Task<AuthResult> signInAnonymouslyInitBasic() {
         return FirebaseAuth.getInstance().signInAnonymously()
-                .addOnSuccessListener(result -> AnalyticsUtils.updateUserId());
+                .addOnSuccessListener(result -> updateAnalyticsUserId());
     }
 
     private static Task<AuthResult> signInAnonymouslyDbInit() {
@@ -110,7 +114,7 @@ public final class AuthHelper implements View.OnClickListener {
     public void signIn() {
         mActivity.startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
-                        .setAvailableProviders(Constants.ALL_PROVIDERS)
+                        .setAvailableProviders(ALL_PROVIDERS)
                         .setLogo(R.drawable.ic_logo)
                         .setTosUrl("https://supercilex.github.io/privacy-policy/")
                         .setIsAccountLinkingEnabled(true)
@@ -169,7 +173,7 @@ public final class AuthHelper implements View.OnClickListener {
                 userHelper.add();
                 if (response != null) userHelper.transferData(response.getPrevUid());
 
-                AnalyticsUtils.login();
+                logLoginEvent();
 
                 return true;
             } else {
@@ -209,8 +213,8 @@ public final class AuthHelper implements View.OnClickListener {
         private static final String SHOULD_CACHE_DB = "should_cache_db";
 
         private DatabaseInitializer() {
-            RemoteConfigUtils.fetchAndActivate().addOnSuccessListener(this);
-            Constants.FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
+            fetchAndActivate().addOnSuccessListener(this);
+            FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this);
         }
 
         public static void init() {
@@ -220,7 +224,7 @@ public final class AuthHelper implements View.OnClickListener {
         @Override
         public void onSuccess(Void aVoid) {
             if (FirebaseRemoteConfig.getInstance().getBoolean(SHOULD_CACHE_DB)) {
-                Constants.FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
+                FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this);
             }
         }
 

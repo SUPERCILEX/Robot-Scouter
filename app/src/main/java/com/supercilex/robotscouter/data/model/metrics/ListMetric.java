@@ -5,10 +5,11 @@ import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 import java.util.Map;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SELECTED_VALUE_KEY;
 
 public class ListMetric extends ScoutMetric<Map<String, String>> {
     @Exclude private String mSelectedValueKey;
@@ -39,7 +40,7 @@ public class ListMetric extends ScoutMetric<Map<String, String>> {
 
     public void updateSelectedValueKey(String key) {
         setSelectedValueKey(key);
-        mRef.child(Constants.FIREBASE_SELECTED_VALUE_KEY).setValue(mSelectedValueKey);
+        mRef.child(FIREBASE_SELECTED_VALUE_KEY).setValue(mSelectedValueKey);
     }
 
     @Override

@@ -12,11 +12,12 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamCache;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
-import com.supercilex.robotscouter.util.ConnectivityUtils;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collection;
 import java.util.List;
+
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public final class TeamSharer {
     private static final int MAX_MESSAGE_LENGTH = 100;
@@ -41,7 +42,7 @@ public final class TeamSharer {
      */
     public static boolean launchInvitationIntent(FragmentActivity activity,
                                                  @Size(min = 1) List<TeamHelper> teamHelpers) {
-        if (ConnectivityUtils.isOffline(activity)) {
+        if (isOffline(activity)) {
             Snackbar.make(activity.findViewById(R.id.root),
                           R.string.no_connection,
                           Snackbar.LENGTH_LONG)
@@ -70,7 +71,7 @@ public final class TeamSharer {
         if (fullMessage.length() >= MAX_MESSAGE_LENGTH) {
             message = mActivity.getResources().getQuantityString(
                     R.plurals.share_message,
-                    Constants.SINGLE_ITEM,
+                    SINGLE_ITEM,
                     mCache.getTeamHelpers().get(0) + " and more");
         } else {
             message = fullMessage;

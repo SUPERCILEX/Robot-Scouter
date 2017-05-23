@@ -35,11 +35,7 @@ import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
-import com.supercilex.robotscouter.util.AnalyticsUtils;
-import com.supercilex.robotscouter.util.ConnectivityUtils;
-import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.IoUtils;
-import com.supercilex.robotscouter.util.PreferencesUtils;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -97,6 +93,12 @@ import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUti
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.setChartAxisTitle;
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.showError;
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.showToast;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logExportTeamsEvent;
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
+import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava;
+import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setShouldShowExportHint;
+import static com.supercilex.robotscouter.util.PreferencesUtilsKt.shouldShowExportHint;
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 public class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
@@ -141,12 +143,11 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             return false;
         }
 
-        if (PreferencesUtils.shouldShowExportHint(context)) {
+        if (shouldShowExportHint(context)) {
             Snackbar.make(fragment.getView(),
                           R.string.exporting_spreadsheet_hint,
                           Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.never_again,
-                               v -> PreferencesUtils.setShouldShowExportHint(context, false))
+                    .setAction(R.string.never_again, v -> setShouldShowExportHint(context, false))
                     .show();
         }
 
@@ -163,12 +164,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     protected void onHandleIntent(Intent intent) {
         mCache = new SpreadsheetCache(TeamHelper.parseList(intent), this);
 
-        AnalyticsUtils.exportTeams(mCache.getTeamHelpers());
+        logExportTeamsEvent(mCache.getTeamHelpers());
 
         startForeground(R.string.exporting_spreadsheet_title,
                         mCache.getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
 
-        if (ConnectivityUtils.isOffline(this)) {
+        if (isOffline(this)) {
             showToast(this, getString(R.string.exporting_offline));
         }
 
@@ -282,7 +283,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         File file = writeFile(rsFolder);
         if (file == null) return null;
-        else return FileProvider.getUriForFile(this, Constants.sProviderAuthority, file);
+        else return FileProvider.getUriForFile(this, providerAuthorityJava, file);
     }
 
     @Nullable
@@ -350,7 +351,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         mCache.setWorkbook(workbook);
 
         Sheet averageSheet = null;
-        if (mCache.getTeamHelpers().size() > Constants.SINGLE_ITEM) {
+        if (mCache.getTeamHelpers().size() > SINGLE_ITEM) {
             averageSheet = workbook.createSheet("Team Averages");
             averageSheet.createFreezePane(1, 1);
         }
@@ -434,7 +435,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
 
 
-        if (scouts.size() > Constants.SINGLE_ITEM) {
+        if (scouts.size() > SINGLE_ITEM) {
             buildAverageColumn(teamSheet, teamHelper);
         }
     }
@@ -569,7 +570,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             for (Chart possibleChart : chartData.keySet()) {
                 if (possibleChart instanceof XSSFChart) {
                     XSSFChart xChart = (XSSFChart) possibleChart;
-                    if (xChart.getGraphicFrame().getAnchor().getRow1() == Constants.SINGLE_ITEM) {
+                    if (xChart.getGraphicFrame().getAnchor().getRow1() == SINGLE_ITEM) {
                         nearestHeader = Pair.create(0, getMetricForChart(xChart, chartPool));
                         chart = xChart;
                         break chartFinder;
@@ -629,7 +630,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
 
             int numOfScouts = mScouts.get(teamHelper).size();
-            if (numOfScouts > Constants.SINGLE_ITEM) {
+            if (numOfScouts > SINGLE_ITEM) {
                 int rowNum = row.getRowNum();
                 row.getSheet()
                         .addMergedRegion(new CellRangeAddress(rowNum, rowNum, 1, numOfScouts));

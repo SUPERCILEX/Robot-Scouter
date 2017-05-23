@@ -17,19 +17,26 @@ import com.google.firebase.appindexing.builders.DigitalDocumentBuilder;
 import com.google.firebase.appindexing.builders.Indexables;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.CustomTabsUtils;
-import com.supercilex.robotscouter.util.RemoteConfigUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.startDownloadTeamDataJob;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEMPLATE_KEY;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TIMESTAMP;
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
+import static com.supercilex.robotscouter.util.ConstantsKt.TWO_ITEMS;
+import static com.supercilex.robotscouter.util.CustomTabsUtilsKt.launchUrl;
+import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
 
 public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     public static final Parcelable.Creator<TeamHelper> CREATOR = new Parcelable.Creator<TeamHelper>() {
@@ -55,7 +62,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public static DatabaseReference getIndicesRef() {
-        return Constants.FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
+        return FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
     }
 
     public static TeamHelper parse(Intent intent) {
@@ -90,9 +97,9 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
         String teamName;
 
-        if (sortedTeamHelpers.size() == Constants.SINGLE_ITEM) {
+        if (sortedTeamHelpers.size() == SINGLE_ITEM) {
             teamName = sortedTeamHelpers.get(0).toString();
-        } else if (sortedTeamHelpers.size() == Constants.TWO_ITEMS) {
+        } else if (sortedTeamHelpers.size() == TWO_ITEMS) {
             teamName = sortedTeamHelpers.get(0) + " and " + sortedTeamHelpers.get(1);
         } else {
             boolean teamsMaxedOut = sortedTeamHelpers.size() > 10;
@@ -124,7 +131,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public DatabaseReference getRef() {
-        return Constants.FIREBASE_TEAMS.child(mTeam.getKey());
+        return FIREBASE_TEAMS.child(mTeam.getKey());
     }
 
     public Team getTeam() {
@@ -152,7 +159,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     public void updateTeam(Team newTeam) {
         checkForMatchingTeamDetails(newTeam);
         if (mTeam.equals(newTeam)) {
-            getRef().child(Constants.FIREBASE_TIMESTAMP).setValue(mTeam.getCurrentTimestamp());
+            getRef().child(FIREBASE_TIMESTAMP).setValue(mTeam.getCurrentTimestamp());
             return;
         }
 
@@ -189,7 +196,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void forceRefresh() {
-        getRef().child(Constants.FIREBASE_TIMESTAMP).removeValue();
+        getRef().child(FIREBASE_TIMESTAMP).removeValue();
     }
 
     public void copyMediaInfo(TeamHelper newHelper) {
@@ -203,7 +210,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public void updateTemplateKey(String key) {
         mTeam.setTemplateKey(key);
-        getRef().child(Constants.FIREBASE_TEMPLATE_KEY).setValue(mTeam.getTemplateKey());
+        getRef().child(FIREBASE_TEMPLATE_KEY).setValue(mTeam.getTemplateKey());
     }
 
     public void deleteTeam() {
@@ -216,16 +223,15 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public void fetchLatestData(Context context) {
         Context appContext = context.getApplicationContext();
-        RemoteConfigUtils.fetchAndActivate()
-                .addOnSuccessListener(aVoid -> {
-                    long differenceDays =
-                            TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
-                    double freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);
+        fetchAndActivate().addOnSuccessListener(aVoid -> {
+            long differenceDays =
+                    TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
+            double freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);
 
-                    if (differenceDays >= freshness) {
-                        DownloadTeamDataJob.start(appContext, this);
-                    }
-                });
+            if (differenceDays >= freshness) {
+                startDownloadTeamDataJob(appContext, this);
+            }
+        });
     }
 
     public boolean isOutdatedMedia() {
@@ -235,11 +241,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public void visitTbaWebsite(Context context) {
         Uri tbaUrl = Uri.parse("https://www.thebluealliance.com/team/" + mTeam.getNumber());
-        CustomTabsUtils.launchUrl(context, tbaUrl);
+        launchUrl(context, tbaUrl);
     }
 
     public void visitTeamWebsite(Context context) {
-        CustomTabsUtils.launchUrl(context, Uri.parse(mTeam.getWebsite()));
+        launchUrl(context, Uri.parse(mTeam.getWebsite()));
     }
 
     public Indexable getIndexable() {

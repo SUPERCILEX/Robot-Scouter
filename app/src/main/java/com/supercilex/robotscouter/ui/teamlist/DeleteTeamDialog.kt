@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.util.Constants
+import com.supercilex.robotscouter.util.SINGLE_ITEM
 import java.util.*
 
 class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
@@ -30,8 +30,8 @@ class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
 
         return AlertDialog.Builder(context)
                 .setTitle(R.string.confirm_action)
-                .setMessage(when {
-                    teamHelpers.size == Constants.SINGLE_ITEM -> null
+                .setMessage(when (SINGLE_ITEM) {
+                    teamHelpers.size -> null
                     else -> getString(R.string.caution_delete, deletedTeams)
                 })
                 .setPositiveButton(R.string.delete, this)

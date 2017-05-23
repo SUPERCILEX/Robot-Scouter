@@ -35,7 +35,7 @@ import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.supercilex.robotscouter.util.ViewUtils.animateCircularReveal;
+import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnFocusChangeListener, OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {

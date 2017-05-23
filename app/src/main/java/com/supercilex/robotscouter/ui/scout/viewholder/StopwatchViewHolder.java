@@ -30,7 +30,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -43,6 +42,7 @@ import java.util.concurrent.TimeoutException;
 
 import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Borderless_Colored;
 import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Colored;
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextView>
         implements View.OnClickListener, OnSuccessListener<Void> {
@@ -153,7 +153,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             String formattedTime =
                     minutes + COLON + (TimeUnit.MILLISECONDS.toSeconds(nanos) - (minutes * 60));
             String[] split = formattedTime.split(COLON);
-            if (split[1].length() <= Constants.SINGLE_ITEM) {
+            if (split[1].length() <= SINGLE_ITEM) {
                 formattedTime = split[0] + COLON + LEADING_ZERO + split[1];
             }
 

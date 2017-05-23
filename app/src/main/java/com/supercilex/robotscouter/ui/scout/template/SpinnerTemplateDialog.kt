@@ -20,8 +20,8 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.createAndListen
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder
-import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.DatabaseHelper
+import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
@@ -29,7 +29,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         View.inflate(context, R.layout.scout_template_edit_spinner_items, null)
     }
 
-    private val selectedValueKey: String by lazy { arguments.getString(Constants.FIREBASE_SELECTED_VALUE_KEY) }
+    private val selectedValueKey: String by lazy { arguments.getString(FIREBASE_SELECTED_VALUE_KEY) }
     private val ref: DatabaseReference by lazy { DatabaseHelper.getRef(arguments) }
 
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
@@ -64,7 +64,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
                     }
 
                     if (TextUtils.equals(selectedValueKey, snapshot.key)) {
-                        ref.parent.child(Constants.FIREBASE_SELECTED_VALUE_KEY).removeValue()
+                        ref.parent.child(FIREBASE_SELECTED_VALUE_KEY).removeValue()
                     }
                 }
 
@@ -127,7 +127,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             val dialog = SpinnerTemplateDialog()
 
             val args: Bundle = DatabaseHelper.getRefBundle(ref)
-            args.putString(Constants.FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
+            args.putString(FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
             dialog.arguments = args
 
             dialog.show(manager, TAG)

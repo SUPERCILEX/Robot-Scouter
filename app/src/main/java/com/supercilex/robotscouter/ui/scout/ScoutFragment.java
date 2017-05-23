@@ -12,8 +12,9 @@ import android.view.ViewGroup;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
-import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.getScoutMetrics;
 
 public class ScoutFragment extends Fragment {
     private ScoutAdapter mAdapter;
@@ -44,7 +45,7 @@ public class ScoutFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new ScoutAdapter(
-                Constants.getScoutMetrics(mScoutKey),
+                getScoutMetrics(mScoutKey),
                 getChildFragmentManager(),
                 mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);

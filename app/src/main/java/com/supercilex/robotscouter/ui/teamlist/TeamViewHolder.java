@@ -15,9 +15,10 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase;
-import com.supercilex.robotscouter.util.ViewUtils;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
 
 public class TeamViewHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener, View.OnLongClickListener {
@@ -77,7 +78,7 @@ public class TeamViewHolder extends RecyclerView.ViewHolder
             setTeamMedia();
         }
 
-        ViewUtils.animateCircularReveal(mNewScout, !mCouldItemBeSelected);
+        animateCircularReveal(mNewScout, !mCouldItemBeSelected);
         itemView.setActivated(!mIsItemSelected && !mCouldItemBeSelected && mIsScouting);
         itemView.setSelected(mIsItemSelected);
     }

@@ -8,11 +8,12 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.ListMetric;
 import com.supercilex.robotscouter.ui.scout.template.SpinnerTemplateDialog;
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 
 public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements ScoutTemplateViewHolder {
     public SpinnerTemplateViewHolder(View itemView) {
@@ -44,7 +45,7 @@ public class SpinnerTemplateViewHolder extends SpinnerViewHolder implements Scou
 
             ListMetric listMetric = (ListMetric) getMetric();
             SpinnerTemplateDialog.Companion.show(getManager(),
-                                                 getMetric().getRef().child(Constants.FIREBASE_VALUE),
+                                                 getMetric().getRef().child(FIREBASE_VALUE),
                                                  listMetric.getSelectedValueKey());
             mSpinner.setSelection(indexOfKey(listMetric.getSelectedValueKey()));
         } else {

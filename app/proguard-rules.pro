@@ -8,7 +8,7 @@
 -keepattributes SourceFile,LineNumberTable
 
 # Kotlin
--dontwarn kotlin.internal.JRE8PlatformImplementations
+-dontwarn kotlin.**
 
 # In-app billing
 -keep class com.android.vending.billing.**

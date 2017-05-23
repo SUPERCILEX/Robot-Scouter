@@ -18,18 +18,29 @@ import com.supercilex.robotscouter.data.model.metrics.MetricType;
 import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
-import com.supercilex.robotscouter.util.AnalyticsUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public enum  ScoutUtils {;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logAddScoutEvent;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUTS;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_INDICES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SELECTED_VALUE_KEY;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TYPE;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_UNIT;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
+import static com.supercilex.robotscouter.util.ConstantsKt.getScoutMetrics;
+
+public enum ScoutUtils {
+    ;
     public static final String SCOUT_KEY = "scout_key";
     public static final SnapshotParser<ScoutMetric> METRIC_PARSER = snapshot -> {
         ScoutMetric metric;
-        Integer typeObject = snapshot.child(Constants.FIREBASE_TYPE).getValue(Integer.class);
+        Integer typeObject = snapshot.child(FIREBASE_TYPE).getValue(Integer.class);
 
         if (typeObject == null) {
             // This appears to happen in the in-between state when the metric has been half copied.
@@ -45,10 +56,10 @@ public enum  ScoutUtils {;
                 break;
             case MetricType.NUMBER:
                 metric = new NumberMetric(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        snapshot.child(Constants.FIREBASE_VALUE)
+                        snapshot.child(FIREBASE_NAME).getValue(String.class),
+                        snapshot.child(FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<Integer>() {}),
-                        snapshot.child(Constants.FIREBASE_UNIT).getValue(String.class));
+                        snapshot.child(FIREBASE_UNIT).getValue(String.class));
                 break;
             case MetricType.TEXT:
                 metric = snapshot.getValue(new GenericTypeIndicator<ScoutMetric<String>>() {});
@@ -56,21 +67,21 @@ public enum  ScoutUtils {;
             case MetricType.LIST:
                 Map<String, String> values = new LinkedHashMap<>();
                 Iterable<DataSnapshot> children =
-                        snapshot.child(Constants.FIREBASE_VALUE).getChildren();
+                        snapshot.child(FIREBASE_VALUE).getChildren();
                 for (DataSnapshot snapshot1 : children) {
                     values.put(snapshot1.getKey(), snapshot1.getValue(String.class));
                 }
 
                 metric = new ListMetric(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
+                        snapshot.child(FIREBASE_NAME).getValue(String.class),
                         values,
-                        snapshot.child(Constants.FIREBASE_SELECTED_VALUE_KEY)
+                        snapshot.child(FIREBASE_SELECTED_VALUE_KEY)
                                 .getValue(String.class));
                 break;
             case MetricType.STOPWATCH:
                 metric = new StopwatchMetric(
-                        snapshot.child(Constants.FIREBASE_NAME).getValue(String.class),
-                        snapshot.child(Constants.FIREBASE_VALUE)
+                        snapshot.child(FIREBASE_NAME).getValue(String.class),
+                        snapshot.child(FIREBASE_VALUE)
                                 .getValue(new GenericTypeIndicator<List<Long>>() {}));
                 break;
             case MetricType.HEADER:
@@ -95,20 +106,20 @@ public enum  ScoutUtils {;
     }
 
     public static DatabaseReference getIndicesRef(String teamKey) {
-        return Constants.FIREBASE_SCOUT_INDICES.child(teamKey);
+        return FIREBASE_SCOUT_INDICES.child(teamKey);
     }
 
     public static String add(Team team) {
-        AnalyticsUtils.addScout(team.getNumber());
+        logAddScoutEvent(team.getNumber());
 
         DatabaseReference indexRef = getIndicesRef(team.getKey()).push();
         indexRef.setValue(System.currentTimeMillis());
-        DatabaseReference scoutRef = Constants.getScoutMetrics(indexRef.getKey());
+        DatabaseReference scoutRef = getScoutMetrics(indexRef.getKey());
 
         if (TextUtils.isEmpty(team.getTemplateKey())) {
             FirebaseCopier.copyTo(Constants.sDefaultTemplate, scoutRef);
         } else {
-            new FirebaseCopier(Constants.FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()),
+            new FirebaseCopier(FIREBASE_SCOUT_TEMPLATES.child(team.getTemplateKey()),
                                scoutRef)
                     .performTransformation();
         }
@@ -117,7 +128,7 @@ public enum  ScoutUtils {;
     }
 
     public static void delete(String teamKey, String scoutKey) {
-        Constants.FIREBASE_SCOUTS.child(scoutKey).removeValue();
+        FIREBASE_SCOUTS.child(scoutKey).removeValue();
         getIndicesRef(teamKey).child(scoutKey).removeValue();
     }
 
@@ -127,7 +138,7 @@ public enum  ScoutUtils {;
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot keySnapshot : snapshot.getChildren()) {
-                    Constants.FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
+                    FIREBASE_SCOUTS.child(keySnapshot.getKey()).removeValue();
                     keySnapshot.getRef().removeValue();
                 }
                 deleteTask.setResult(null);

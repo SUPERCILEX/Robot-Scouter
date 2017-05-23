@@ -6,7 +6,8 @@ import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
 
 import com.google.firebase.database.Exclude;
-import com.supercilex.robotscouter.util.Constants;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_UNIT;
 
 public class NumberMetric extends ScoutMetric<Integer> {
     @Exclude
@@ -36,7 +37,7 @@ public class NumberMetric extends ScoutMetric<Integer> {
 
     public void updateUnit(String unit) {
         setUnit(unit);
-        mRef.child(Constants.FIREBASE_UNIT).setValue(mUnit);
+        mRef.child(FIREBASE_UNIT).setValue(mUnit);
     }
 
     @Override

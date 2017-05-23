@@ -23,15 +23,16 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.AnalyticsUtils;
-import com.supercilex.robotscouter.util.ConnectivityUtils;
-import com.supercilex.robotscouter.util.PreferencesUtils;
-import com.supercilex.robotscouter.util.RemoteConfigUtils;
-import com.supercilex.robotscouter.util.ViewUtils;
 
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 import static com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logSelectTeamEvent;
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setHasShownAddTeamTutorial;
+import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setHasShownSignInTutorial;
+import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
+import static com.supercilex.robotscouter.util.ViewUtilsKt.isTabletMode;
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 public class TeamListActivity extends AppCompatActivity
@@ -49,7 +50,6 @@ public class TeamListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.RobotScouter_NoActionBar);
         super.onCreate(savedInstanceState);
-        ViewUtils.isTabletMode(this);
 
         setContentView(R.layout.activity_team_list);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
@@ -69,13 +69,13 @@ public class TeamListActivity extends AppCompatActivity
         int result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         GoogleApiAvailability.getInstance().showErrorNotification(this, result);
 
-        RemoteConfigUtils.fetchAndActivate().addOnSuccessListener(this, this);
+        fetchAndActivate().addOnSuccessListener(this, this);
     }
 
     @Override
     public void onSuccess(Void aVoid) {
         double minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY);
-        if (BuildConfig.VERSION_CODE < minimum && !ConnectivityUtils.isOffline(this)) {
+        if (BuildConfig.VERSION_CODE < minimum && !isOffline(this)) {
             UpdateDialog.Companion.show(getSupportFragmentManager());
         }
     }
@@ -127,8 +127,8 @@ public class TeamListActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (mAuthHelper.onActivityResult(requestCode, resultCode, data) && mAddTeamPrompt != null) {
             mAddTeamPrompt.dismiss();
-            PreferencesUtils.setHasShownAddTeamTutorial(this, true);
-            PreferencesUtils.setHasShownSignInTutorial(this, true);
+            setHasShownAddTeamTutorial(this, true);
+            setHasShownSignInTutorial(this, true);
         }
         if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
             onTeamSelected(data.getBundleExtra(KEY_SCOUT_ARGS), true);
@@ -155,7 +155,7 @@ public class TeamListActivity extends AppCompatActivity
     public void onTeamSelected(Bundle args, boolean restoreOnConfigChange) {
         Team team = TeamHelper.parse(args).getTeam();
 
-        if (ViewUtils.isTabletMode(this)) {
+        if (isTabletMode(this)) {
             mTeamListFragment.selectTeam(null);
             mTeamListFragment.selectTeam(team);
             getSupportFragmentManager().beginTransaction()
@@ -170,6 +170,6 @@ public class TeamListActivity extends AppCompatActivity
             mTeamListFragment.selectTeam(null);
         }
 
-        AnalyticsUtils.selectTeam(team.getNumber());
+        logSelectTeamEvent(team.getNumber());
     }
 }

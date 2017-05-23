@@ -19,8 +19,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
-import com.supercilex.robotscouter.util.ConnectivityUtils;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +28,11 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_METRICS;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUTS;
 
 public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
     private final TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
@@ -59,7 +62,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-                            AsyncTaskExecutor.execute(() -> {
+                            AsyncTaskExecutor.Companion.execute(() -> {
                                 List<String> scoutKeys = new ArrayList<>();
                                 for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
                                     scoutKeys.add(scoutKeyTemplate.getKey());
@@ -103,7 +106,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
             TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
             mScoutMetricsTasks.add(scoutMetricsTask.getTask());
 
-            new ScoutListener(Constants.FIREBASE_SCOUTS.child(scoutKey), pair, scoutMetricsTask);
+            new ScoutListener(FIREBASE_SCOUTS.child(scoutKey), pair, scoutMetricsTask);
         }
     }
 
@@ -128,7 +131,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
                              Pair<TeamHelper, List<String>> pair,
                              TaskCompletionSource<Void> scoutMetricsTask) {
             mQuery = query;
-            mMetricsQuery = mQuery.getRef().child(Constants.FIREBASE_METRICS);
+            mMetricsQuery = mQuery.getRef().child(FIREBASE_METRICS);
             mPair = pair;
             mScoutMetricsTask = scoutMetricsTask;
 
@@ -148,7 +151,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         }
 
         private void resetTimeout() {
-            if (ConnectivityUtils.isOffline(mContext)) {
+            if (isOffline(mContext)) {
                 mTimer.cancel();
                 mTimer = new Timer();
                 mTimer.schedule(new TimerTask() {
@@ -165,7 +168,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
             // This is the hackiest thing ever! See https://github.com/firebase/FirebaseUI-Android/pull/477#issuecomment-270283875
             // for why this hack is necessary.
 
-            mScout.setName(snapshot.child(Constants.FIREBASE_NAME).getValue(String.class));
+            mScout.setName(snapshot.child(FIREBASE_NAME).getValue(String.class));
             finish();
         }
 

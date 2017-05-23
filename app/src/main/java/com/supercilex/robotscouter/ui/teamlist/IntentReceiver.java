@@ -17,10 +17,11 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.ScoutActivity;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public final class IntentReceiver implements ResultCallback<AppInviteInvitationResult> {
     public static final String TEAM_QUERY_KEY = "team";
@@ -59,7 +60,7 @@ public final class IntentReceiver implements ResultCallback<AppInviteInvitationR
                 long number = team.getNumberAsLong();
                 TeamHelper.getIndicesRef().child(team.getKey()).setValue(number, number);
             }
-            if (teams.size() == Constants.SINGLE_ITEM) {
+            if (teams.size() == SINGLE_ITEM) {
                 launchTeam(teams.get(0));
             } else {
                 Snackbar.make(mActivity.findViewById(R.id.root),

@@ -4,12 +4,16 @@ import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.JobUtils
+import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.util.parseRawBundle
 
 abstract class TbaJobBase14 : JobService() {
+    protected abstract val updateTeam: (helper: TeamHelper, newTeam: Team) -> Unit
+
     override fun onStartJob(params: JobParameters): Boolean {
-        startTask(JobUtils.parseRawBundle(params.extras).team).addOnSuccessListener { newTeam ->
-            JobUtils.parseRawBundle(params.extras).updateMedia(newTeam)
+        val teamHelper: TeamHelper = parseRawBundle(params.extras!!)
+        startTask(teamHelper.team).addOnSuccessListener { newTeam ->
+            updateTeam(teamHelper, newTeam)
             jobFinished(params, false)
         }.addOnFailureListener { jobFinished(params, true) }
         return true

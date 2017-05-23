@@ -6,7 +6,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.data.model.User;
 import com.supercilex.robotscouter.ui.AuthHelper;
-import com.supercilex.robotscouter.util.Constants;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_USERS;
+import static com.supercilex.robotscouter.util.ConstantsKt.SCOUT_TEMPLATE_INDICES;
 
 public class UserHelper {
     private final User mUser;
@@ -20,17 +23,17 @@ public class UserHelper {
     }
 
     private static DatabaseReference getScoutTemplateIndicesRef(String uid) {
-        return Constants.FIREBASE_USERS.child(uid).child(Constants.SCOUT_TEMPLATE_INDICES);
+        return FIREBASE_USERS.child(uid).child(SCOUT_TEMPLATE_INDICES);
     }
 
     public void add() {
-        Constants.FIREBASE_USERS.child(mUser.getUid()).setValue(mUser);
+        FIREBASE_USERS.child(mUser.getUid()).setValue(mUser);
     }
 
     public void transferData(String prevUid) {
         if (TextUtils.isEmpty(prevUid)) return;
 
-        DatabaseReference prevTeamRef = Constants.FIREBASE_TEAM_INDICES.child(prevUid);
+        DatabaseReference prevTeamRef = FIREBASE_TEAM_INDICES.child(prevUid);
         new FirebaseCopier(prevTeamRef, TeamHelper.getIndicesRef()) {
             @Override
             public void onDataChange(DataSnapshot snapshot) {

@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.supercilex.robotscouter.data.client.UploadTeamMediaJob;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
@@ -35,6 +34,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.supercilex.robotscouter.data.client.UploadTeamMediaJobKt.startUploadTeamMediaJob;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.updateAnalyticsUserId;
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.Constants.sFirebaseScoutTemplates;
+import static com.supercilex.robotscouter.util.Constants.sFirebaseTeams;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_DEFAULT_TEMPLATE;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_METRICS;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
+
 public enum DatabaseHelper {;
     private static final String QUERY_KEY = "query_key";
 
@@ -44,9 +54,9 @@ public enum DatabaseHelper {;
         return team;
     };
     private static final SnapshotParser<Scout> SCOUT_PARSER = snapshot -> {
-        Scout scout = new Scout(snapshot.child(Constants.FIREBASE_NAME).getValue(String.class));
+        Scout scout = new Scout(snapshot.child(FIREBASE_NAME).getValue(String.class));
 
-        for (DataSnapshot metric : snapshot.child(Constants.FIREBASE_METRICS).getChildren()) {
+        for (DataSnapshot metric : snapshot.child(FIREBASE_METRICS).getChildren()) {
             scout.add(ScoutUtils.METRIC_PARSER.parseSnapshot(metric));
         }
 
@@ -105,8 +115,8 @@ public enum DatabaseHelper {;
     }
 
     public static void init(Context appContext) {
-        Constants.sFirebaseTeams = TEAM_NOOP_ARRAY;
-        Constants.sFirebaseScoutTemplates = SCOUT_TEMPLATES_NOOP_ARRAY;
+        sFirebaseTeams = TEAM_NOOP_ARRAY;
+        sFirebaseScoutTemplates = SCOUT_TEMPLATES_NOOP_ARRAY;
 
         FirebaseAuth.getInstance().addAuthStateListener(auth -> {
             FirebaseUser user = auth.getCurrentUser();
@@ -116,14 +126,14 @@ public enum DatabaseHelper {;
             } else {
                 // Log uid to help debug db crashes
                 FirebaseCrash.log(user.getUid());
-                AnalyticsUtils.updateUserId();
+                updateAnalyticsUserId();
 
                 setTeamsListener(appContext);
                 setScoutTemplatesListener();
             }
         });
 
-        Constants.FIREBASE_DEFAULT_TEMPLATE.addValueEventListener(new ValueEventListener() {
+        FIREBASE_DEFAULT_TEMPLATE.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Constants.sDefaultTemplate = snapshot;
@@ -137,54 +147,54 @@ public enum DatabaseHelper {;
     }
 
     private static void setTeamsListener(final Context appContext) {
-        Constants.sFirebaseTeams.removeAllListeners();
-        Constants.sFirebaseTeams = new FirebaseIndexArray<>(
+        sFirebaseTeams.removeAllListeners();
+        sFirebaseTeams = new FirebaseIndexArray<>(
                 TeamHelper.getIndicesRef().orderByValue(),
-                Constants.FIREBASE_TEAMS,
+                FIREBASE_TEAMS,
                 TEAM_PARSER);
 
-        Constants.sFirebaseTeams.addChangeEventListener(new ChangeEventListenerBase() {
+        sFirebaseTeams.addChangeEventListener(new ChangeEventListenerBase() {
             @Override
             public void onChildChanged(EventType type,
                                        DataSnapshot snapshot,
                                        int index,
                                        int oldIndex) {
                 if (type == EventType.ADDED || type == EventType.CHANGED) {
-                    Team team = Constants.sFirebaseTeams.getObject(index);
+                    Team team = sFirebaseTeams.getObject(index);
                     TeamHelper teamHelper = team.getHelper();
 
                     teamHelper.fetchLatestData(appContext);
                     String media = team.getMedia();
                     if (!TextUtils.isEmpty(media) && new File(media).exists()) {
-                        UploadTeamMediaJob.start(appContext, teamHelper);
+                        startUploadTeamMediaJob(appContext, teamHelper);
                     }
                 }
             }
         });
-        Constants.sFirebaseTeams.addChangeEventListener(new TeamMergerListener(appContext));
+        sFirebaseTeams.addChangeEventListener(new TeamMergerListener(appContext));
     }
 
     private static void removeTeamsListener() {
-        if (Constants.sFirebaseTeams != TEAM_NOOP_ARRAY) {
-            Constants.sFirebaseTeams.removeAllListeners();
-            Constants.sFirebaseTeams = TEAM_NOOP_ARRAY;
+        if (sFirebaseTeams != TEAM_NOOP_ARRAY) {
+            sFirebaseTeams.removeAllListeners();
+            sFirebaseTeams = TEAM_NOOP_ARRAY;
         }
     }
 
     private static void setScoutTemplatesListener() {
-        Constants.sFirebaseScoutTemplates.removeAllListeners();
-        Constants.sFirebaseScoutTemplates = new FirebaseIndexArray<>(
+        sFirebaseScoutTemplates.removeAllListeners();
+        sFirebaseScoutTemplates = new FirebaseIndexArray<>(
                 UserHelper.getScoutTemplateIndicesRef(),
-                Constants.FIREBASE_SCOUT_TEMPLATES,
+                FIREBASE_SCOUT_TEMPLATES,
                 SCOUT_PARSER);
 
-        Constants.sFirebaseScoutTemplates.addChangeEventListener(new ChangeEventListenerBase());
+        sFirebaseScoutTemplates.addChangeEventListener(new ChangeEventListenerBase());
     }
 
     private static void removeScoutTemplatesListener() {
-        if (Constants.sFirebaseScoutTemplates != SCOUT_TEMPLATES_NOOP_ARRAY) {
-            Constants.sFirebaseScoutTemplates.removeAllListeners();
-            Constants.sFirebaseScoutTemplates = SCOUT_TEMPLATES_NOOP_ARRAY;
+        if (sFirebaseScoutTemplates != SCOUT_TEMPLATES_NOOP_ARRAY) {
+            sFirebaseScoutTemplates.removeAllListeners();
+            sFirebaseScoutTemplates = SCOUT_TEMPLATES_NOOP_ARRAY;
         }
     }
 
@@ -236,13 +246,13 @@ public enum DatabaseHelper {;
 
         @Override
         public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-            if (ConnectivityUtils.isOffline(mAppContext) || !(type == EventType.ADDED || type == EventType.CHANGED)) {
+            if (isOffline(mAppContext) || !(type == EventType.ADDED || type == EventType.CHANGED)) {
                 return;
             }
 
             List<TeamHelper> rawTeams = new ArrayList<>();
-            for (int j = 0; j < Constants.sFirebaseTeams.size(); j++) {
-                Team team = Constants.sFirebaseTeams.getObject(j);
+            for (int j = 0; j < sFirebaseTeams.size(); j++) {
+                Team team = sFirebaseTeams.getObject(j);
                 TeamHelper rawTeam = new Team.Builder(team)
                         .setTimestamp(0)
                         .setKey(null)
@@ -251,7 +261,7 @@ public enum DatabaseHelper {;
 
                 if (rawTeams.contains(rawTeam)) {
                     List<TeamHelper> teams = Arrays.asList(
-                            Constants.sFirebaseTeams.getObject(rawTeams.indexOf(rawTeam))
+                            sFirebaseTeams.getObject(rawTeams.indexOf(rawTeam))
                                     .getHelper(),
                             team.getHelper());
                     mergeTeams(new ArrayList<>(teams));

@@ -15,7 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.Constants
+import com.supercilex.robotscouter.util.getDebugInfo
 
 class AboutDialog : DialogFragment(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -32,7 +32,7 @@ class AboutDialog : DialogFragment(), DialogInterface.OnClickListener {
     override fun onClick(dialog: DialogInterface, which: Int) {
         (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip = ClipData.newPlainText(
                 getString(R.string.debug_info_name),
-                Constants.getDebugInfo())
+                getDebugInfo())
         Toast.makeText(context, R.string.debug_info_copied, Toast.LENGTH_SHORT).show()
     }
 

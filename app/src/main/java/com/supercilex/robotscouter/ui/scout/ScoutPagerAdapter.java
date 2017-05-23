@@ -17,11 +17,14 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.ConnectivityUtils;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUTS;
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         implements ValueEventListener, TabLayout.OnTabSelectedListener, View.OnLongClickListener {
@@ -99,7 +102,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     public void onScoutDeleted() {
         int index = mKeys.indexOf(mCurrentScoutKey);
         String newKey = null;
-        if (mKeys.size() > Constants.SINGLE_ITEM) {
+        if (mKeys.size() > SINGLE_ITEM) {
             newKey = mKeys.size() - 1 > index ? mKeys.get(index + 1) : mKeys.get(index - 1);
         }
         ScoutUtils.delete(mQuery.getRef().getKey(), mCurrentScoutKey);
@@ -123,7 +126,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         }
         if (hadScouts
                 && mKeys.isEmpty()
-                && !ConnectivityUtils.isOffline(mFragment.getContext())
+                && !isOffline(mFragment.getContext())
                 && mFragment.isResumed()) {
             ShouldDeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mTeamHelper);
         }
@@ -151,7 +154,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     }
 
     private DatabaseReference getTabNameRef(String key) {
-        return Constants.FIREBASE_SCOUTS.child(key).child(Constants.FIREBASE_NAME);
+        return FIREBASE_SCOUTS.child(key).child(FIREBASE_NAME);
     }
 
     public void cleanup() {
@@ -168,8 +171,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
     public boolean onLongClick(View v) {
         ScoutNameDialog.Companion.show(
                 mFragment.getChildFragmentManager(),
-                Constants.FIREBASE_SCOUTS.child(mKeys.get(v.getId()))
-                        .child(Constants.FIREBASE_NAME),
+                FIREBASE_SCOUTS.child(mKeys.get(v.getId())).child(FIREBASE_NAME),
                 mTabLayout.getTabAt(v.getId()).getText().toString());
         return true;
     }

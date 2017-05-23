@@ -14,6 +14,8 @@ import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.data.util.UserHelper
 import com.supercilex.robotscouter.ui.createAndListen
 import com.supercilex.robotscouter.util.Constants
+import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
+import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 
 class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -40,14 +42,14 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
 
         if (arguments.getBoolean(RESET_ALL_KEY)) {
             Constants.sFirebaseTeams
-                    .map { it.child(Constants.FIREBASE_TEMPLATE_KEY) }
+                    .map { it.child(FIREBASE_TEMPLATE_KEY) }
                     .filter { TextUtils.equals(templateKey, it.getValue(String::class.java)) }
                     .forEach { it.ref.removeValue() }
 
             UserHelper.getScoutTemplateIndicesRef().child(templateKey).removeValue()
-            Constants.FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue()
+            FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue()
         } else {
-            team.helper.ref.child(Constants.FIREBASE_TEMPLATE_KEY).removeValue()
+            team.helper.ref.child(FIREBASE_TEMPLATE_KEY).removeValue()
         }
 
         dismiss()

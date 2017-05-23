@@ -28,14 +28,16 @@ import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
-import com.supercilex.robotscouter.util.AnalyticsUtils;
-import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 import com.supercilex.robotscouter.util.IoUtils;
-import com.supercilex.robotscouter.util.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
+import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
+import static com.supercilex.robotscouter.util.ViewUtilsKt.animateColorChange;
 
 public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
@@ -115,7 +117,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         if (!mSelectedTeams.isEmpty()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            if (mSelectedTeams.size() == Constants.SINGLE_ITEM) {
+            if (mSelectedTeams.size() == SINGLE_ITEM) {
                 setTeamSpecificItemsVisible(true);
             }
             setToolbarTitle();
@@ -133,7 +135,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 if (TeamSharer.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
-                AnalyticsUtils.shareTeam(teamHelper.getTeam().getNumber());
+                logShareTeamEvent(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_visit_tba_website:
                 teamHelper.visitTbaWebsite(mFragment.getContext());
@@ -145,7 +147,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mFragment.getChildFragmentManager(), teamHelper);
-                AnalyticsUtils.editTeamDetails(teamHelper.getTeam().getNumber());
+                logEditTeamDetailsEvent(teamHelper.getTeam().getNumber());
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mSelectedTeams);
@@ -218,13 +220,13 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         } else {
             if (mSelectedTeams.isEmpty()) {
                 resetMenu();
-            } else if (newSize == Constants.SINGLE_ITEM) {
+            } else if (newSize == SINGLE_ITEM) {
                 setTeamSpecificItemsVisible(true);
             } else {
                 setTeamSpecificItemsVisible(false);
             }
 
-            if (newSize > oldSize && newSize > Constants.SINGLE_ITEM && mAdapter.getItemCount() > newSize) {
+            if (newSize > oldSize && newSize > SINGLE_ITEM && mAdapter.getItemCount() > newSize) {
                 Snackbar.make(mFragment.getView(),
                               R.string.multiple_teams_selected,
                               Snackbar.LENGTH_LONG)
@@ -319,7 +321,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         @ColorRes int newColorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
 
         Toolbar toolbar = activity.findViewById(R.id.toolbar);
-        ViewUtils.animateColorChange(
+        animateColorChange(
                 mFragment.getContext(),
                 oldColorPrimary,
                 newColorPrimary,
@@ -329,7 +331,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
             @ColorRes int oldColorPrimaryDark = visible ? R.color.selected_status_bar : R.color.colorPrimaryDark;
             @ColorRes int newColorPrimaryDark = visible ? R.color.colorPrimaryDark : R.color.selected_status_bar;
 
-            ViewUtils.animateColorChange(
+            animateColorChange(
                     mFragment.getContext(),
                     oldColorPrimaryDark,
                     newColorPrimaryDark,

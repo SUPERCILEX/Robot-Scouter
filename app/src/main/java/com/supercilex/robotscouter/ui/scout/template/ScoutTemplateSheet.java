@@ -34,6 +34,8 @@ import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 import java.util.Collections;
 
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
+
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
         implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
     private static final String TAG = "ScoutTemplateSheet";
@@ -121,7 +123,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 return;
             }
 
-            DatabaseReference newTemplateRef = Constants.FIREBASE_SCOUT_TEMPLATES.push();
+            DatabaseReference newTemplateRef = FIREBASE_SCOUT_TEMPLATES.push();
             mTemplateKey = newTemplateRef.getKey();
 
             FirebaseCopier.copyTo(Constants.sDefaultTemplate, newTemplateRef);
@@ -168,7 +170,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         });
 
         mAdapter = new ScoutTemplateAdapter(
-                Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
+                FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey),
                 getChildFragmentManager(),
                 mRecyclerView,
                 mItemTouchCallback);
@@ -200,7 +202,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        DatabaseReference templateRef = Constants.FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey);
+        DatabaseReference templateRef = FIREBASE_SCOUT_TEMPLATES.child(mTemplateKey);
 
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
             mRecyclerView.clearFocus();

@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
-import com.supercilex.robotscouter.util.Constants;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 
 public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> implements View.OnClickListener, View.OnLongClickListener {
     protected final TextView mCount;
@@ -58,7 +59,7 @@ public class CounterViewHolder extends ScoutViewHolderBase<Integer, TextView> im
     @Override
     public boolean onLongClick(View v) {
         ScoutCounterValueDialog.Companion.show(getManager(),
-                                               getMetric().getRef().child(Constants.FIREBASE_VALUE),
+                                               getMetric().getRef().child(FIREBASE_VALUE),
                                                getStringWithoutUnit());
         return true;
     }

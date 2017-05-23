@@ -11,6 +11,9 @@ import com.google.firebase.database.DataSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.supercilex.robotscouter.util.ConstantsKt.ITEM_COUNT;
+import static com.supercilex.robotscouter.util.ConstantsKt.MANAGER_STATE;
+
 public enum FirebaseAdapterUtils {;
     public static <T> List<T> getItems(FirebaseRecyclerAdapter<T, ?> adapter) {
         List<T> items = new ArrayList<>(adapter.getItemCount());
@@ -33,8 +36,8 @@ public enum FirebaseAdapterUtils {;
                                                 final RecyclerView.Adapter adapter,
                                                 final RecyclerView.LayoutManager layoutManager) {
         if (savedInstanceState != null && adapter != null && layoutManager != null) {
-            final Parcelable managerState = savedInstanceState.getParcelable(Constants.MANAGER_STATE);
-            final int count = savedInstanceState.getInt(Constants.ITEM_COUNT);
+            final Parcelable managerState = savedInstanceState.getParcelable(MANAGER_STATE);
+            final int count = savedInstanceState.getInt(ITEM_COUNT);
             if (adapter.getItemCount() >= count) {
                 layoutManager.onRestoreInstanceState(managerState);
             } else {
@@ -55,8 +58,8 @@ public enum FirebaseAdapterUtils {;
                                              RecyclerView.Adapter adapter,
                                              RecyclerView.LayoutManager layoutManager) {
         if (adapter != null) {
-            outState.putParcelable(Constants.MANAGER_STATE, layoutManager.onSaveInstanceState());
-            outState.putInt(Constants.ITEM_COUNT, adapter.getItemCount());
+            outState.putParcelable(MANAGER_STATE, layoutManager.onSaveInstanceState());
+            outState.putInt(ITEM_COUNT, adapter.getItemCount());
         }
     }
 

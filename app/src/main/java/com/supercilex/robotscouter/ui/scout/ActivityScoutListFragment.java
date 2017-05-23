@@ -23,7 +23,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
-import com.supercilex.robotscouter.util.ViewUtils;
+
+import static com.supercilex.robotscouter.util.ViewUtilsKt.isTabletMode;
 
 public class ActivityScoutListFragment extends ScoutListFragmentBase {
     public static ScoutListFragmentBase newInstance(Bundle args) {
@@ -76,7 +77,7 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (getActivity().getCallingActivity() != null && ViewUtils.isTabletMode(getContext())) {
+        if (getActivity().getCallingActivity() != null && isTabletMode(getContext())) {
             FragmentActivity activity = getActivity();
             activity.setResult(
                     Activity.RESULT_OK, new Intent().putExtra(KEY_SCOUT_ARGS, getBundle()));

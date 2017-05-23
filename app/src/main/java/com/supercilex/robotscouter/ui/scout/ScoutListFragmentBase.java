@@ -23,7 +23,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.client.DownloadTeamDataJob;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaDownloader;
 import com.supercilex.robotscouter.data.util.ScoutUtils;
@@ -33,11 +32,15 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
-import com.supercilex.robotscouter.util.AnalyticsUtils;
-import com.supercilex.robotscouter.util.ConnectivityUtils;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
+
+import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.cancelAllDownloadTeamDataJobs;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTemplateEvent;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
+import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 
 public abstract class ScoutListFragmentBase extends Fragment
         implements ChangeEventListener, FirebaseAuth.AuthStateListener, TeamMediaCreator.StartCaptureListener {
@@ -94,7 +97,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     }
 
     private void showOfflineReassurance() {
-        if (mSavedState == null && ConnectivityUtils.isOffline(getContext())) {
+        if (mSavedState == null && isOffline(getContext())) {
             Snackbar.make(mRootView,
                           R.string.offline_reassurance,
                           Snackbar.LENGTH_LONG)
@@ -176,7 +179,7 @@ public abstract class ScoutListFragmentBase extends Fragment
             case R.id.action_share:
                 TeamSharer.launchInvitationIntent(getActivity(),
                                                   Collections.singletonList(mTeamHelper));
-                AnalyticsUtils.shareTeam(teamNumber);
+                logShareTeamEvent(teamNumber);
                 break;
             case R.id.action_visit_tba_website:
                 mTeamHelper.visitTbaWebsite(getContext());
@@ -185,13 +188,13 @@ public abstract class ScoutListFragmentBase extends Fragment
                 mTeamHelper.visitTeamWebsite(getContext());
                 break;
             case R.id.action_edit_scout_templates:
-                DownloadTeamDataJob.cancelAll(getContext());
+                cancelAllDownloadTeamDataJobs(getContext());
                 ScoutTemplateSheet.show(getChildFragmentManager(), mTeamHelper);
-                AnalyticsUtils.editTemplate(teamNumber);
+                logEditTemplateEvent(teamNumber);
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(getChildFragmentManager(), mTeamHelper);
-                AnalyticsUtils.editTeamDetails(teamNumber);
+                logEditTeamDetailsEvent(teamNumber);
                 break;
             case R.id.action_delete:
                 mPagerAdapter.onScoutDeleted();
