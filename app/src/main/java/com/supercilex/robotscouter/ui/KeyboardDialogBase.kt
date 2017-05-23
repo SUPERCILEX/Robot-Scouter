@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.util.createAndListen
 
 abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, TextView.OnEditorActionListener {
     protected abstract val lastEditText: EditText

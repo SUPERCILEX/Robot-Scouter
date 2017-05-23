@@ -20,8 +20,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.ui.createAndListen
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.createAndListen
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.concurrent.Callable

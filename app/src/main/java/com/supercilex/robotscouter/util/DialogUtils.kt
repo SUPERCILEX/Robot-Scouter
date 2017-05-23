@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui
+package com.supercilex.robotscouter.util
 
 import android.support.v7.app.AlertDialog
 

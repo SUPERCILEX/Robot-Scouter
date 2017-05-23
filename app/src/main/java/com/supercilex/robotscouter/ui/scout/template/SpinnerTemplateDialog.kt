@@ -18,11 +18,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.ui.createAndListen
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder
 import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils
+import com.supercilex.robotscouter.util.createAndListen
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     private val rootView: View by lazy {
