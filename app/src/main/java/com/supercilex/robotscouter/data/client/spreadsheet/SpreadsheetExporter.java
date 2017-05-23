@@ -287,7 +287,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     }
 
     @Nullable
-    @AddTrace(name = "writeFile")
     private File writeFile(File rsFolder) {
         FileOutputStream stream = null;
         File absoluteFile = new File(rsFolder, getFullyQualifiedFileName(null));
@@ -620,7 +619,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 .setTitle(row.getCell(0).getStringCellValue());
     }
 
-    @AddTrace(name = "setupRow")
     private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
@@ -640,7 +638,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
-    @AddTrace(name = "setRowValue")
     private void setRowValue(int column, ScoutMetric metric, Row row) {
         row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellValue(metric.getName());
 
@@ -782,7 +779,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
-    @AddTrace(name = "setAverageFormula")
     private void setAverageFormula(Sheet scoutSheet, Cell valueCell, Cell averageCell) {
         String safeSheetName = scoutSheet.getSheetName().replace("'", "''");
         String rangeAddress = "'" + safeSheetName + "'!" + averageCell.getAddress();

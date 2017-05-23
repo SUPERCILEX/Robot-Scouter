@@ -15,7 +15,6 @@ import android.view.View;
 import com.firebase.ui.auth.util.PlayServicesHelper;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.perf.metrics.AddTrace;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.BuildConfig;
 import com.supercilex.robotscouter.R;
@@ -46,7 +45,6 @@ public class TeamListActivity extends AppCompatActivity
     private MaterialTapTargetPrompt mAddTeamPrompt;
 
     @Override
-    @AddTrace(name = "onCreate")
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.RobotScouter_NoActionBar);
         super.onCreate(savedInstanceState);

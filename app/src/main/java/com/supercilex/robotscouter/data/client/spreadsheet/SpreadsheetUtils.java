@@ -154,7 +154,6 @@ public enum SpreadsheetUtils {;
     /**
      * @return A list with its first item removed to take into account header rows and columns.
      */
-    @AddTrace(name = "getAdjustedList")
     public static <T> List<T> getAdjustedList(Iterable<T> iterator) {
         List<T> copy = new ArrayList<>();
         for (T t : iterator) copy.add(t);
@@ -162,7 +161,6 @@ public enum SpreadsheetUtils {;
         return copy;
     }
 
-    @AddTrace(name = "getMetricForScouts")
     public static ScoutMetric getMetricForScouts(List<Scout> scouts, String key) {
         for (Scout scout : scouts) {
             for (ScoutMetric metric : scout.getMetrics()) {
