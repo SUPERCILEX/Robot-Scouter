@@ -24,14 +24,14 @@
         android:name=".RobotScouter"
         android:label="${appName}"
         android:allowBackup="true"
+        android:appCategory="productivity"
         android:fullBackupContent="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/RobotScouter">
+        android:theme="@style/RobotScouter"
+        tools:ignore="UnusedAttribute">
 
-        <meta-data
-            android:name="asset_statements"
-            android:resource="@string/asset_statements" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_logo" />

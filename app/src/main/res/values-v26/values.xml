@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="RobotScouter.Dialog">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:paddingHorizontal">@dimen/spacing_large</item>
+        <item name="android:paddingTop">@dimen/spacing_dialog_layout</item>
+        <item name="android:paddingBottom">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="RobotScouter.List">
+        <item name="android:id">@id/list</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingHorizontal">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingVertical">@dimen/list_item_padding_vertical</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+    </style>
+
+    <style name="RobotScouter.List.Scout">
+        <item name="android:paddingHorizontal">@dimen/list_item_padding_horizontal_scout</item>
+        <item name="android:paddingVertical">@dimen/list_item_padding_vertical_scout</item>
+    </style>
+
+    <style name="RobotScouter.ListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingVertical">@dimen/list_item_padding_vertical_within</item>
+        <item name="android:elevation">@dimen/card_elevation</item>
+    </style>
+
+</resources>

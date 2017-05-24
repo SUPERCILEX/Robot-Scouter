@@ -205,7 +205,11 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         int exportId = (int) System.currentTimeMillis();
         Intent baseIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Intent shareIntent = new Intent(baseIntent);
+        if (Build.VERSION.SDK_INT >= 26) { // NOPMD TODO Build.VERSION_CODES.O
+            baseIntent.putStringArrayListExtra(
+                    Intent.EXTRA_CONTENT_ANNOTATIONS,
+                    new ArrayList<>(Collections.singletonList("document")));
+        }
 
         Intent viewIntent = new Intent(baseIntent).setAction(Intent.ACTION_VIEW)
                 .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL)
@@ -214,10 +218,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL);
         }
 
+        Intent shareIntent = new Intent(baseIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent typeIntent = shareIntent.setAction(Intent.ACTION_SEND)
                     .setType(MIME_TYPE_MS_EXCEL)
-                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri);
+                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri)
+                    .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, new Intent[]{viewIntent});
 
             shareIntent = Intent.createChooser(typeIntent,
                                                getPluralTeams(R.plurals.share_spreadsheet_title))

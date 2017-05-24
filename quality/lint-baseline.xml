@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues by="lint 2.3.0-alpha1" format="4">
+<issues format="4" by="lint 2.4.0-alpha7">
 
     <issue
         errorLine1="    &lt;string name=&quot;google_crash_reporting_api_key&quot; translatable=&quot;false&quot;>AIzaSyDnknBjdqVfDqGmQnT9ecLV-HtBbBy1QxM&lt;/string>"
@@ -16,17 +16,84 @@
             line="8"/>
     </issue>
 
+    <!-- TODO see if these can be removed in newer Android Gradle plugin versions -->
+
     <issue
-        category="Usability:Icons"
-        explanation="If an icon is repeated under different names, you can consolidate and just use one of the icons and delete the others to make your application smaller. However, duplicated icons usually are not intentional and can sometimes point to icons that were accidentally overwritten or accidentally not updated."
+        id="IconXmlAndPng"
+        message="The following images appear both as density independent `.xml` files and as bitmap files: src/main/res/mipmap-anydpi/ic_launcher.xml, src/main/res/mipmap-hdpi/ic_launcher.png">
+        <location
+            file="src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
+        <location
+            file="src/main/res/mipmap-xxhdpi/ic_launcher.png" />
+        <location
+            file="src/main/res/mipmap-xhdpi/ic_launcher.png" />
+        <location
+            file="src/main/res/mipmap-mdpi/ic_launcher.png" />
+        <location
+            file="src/main/res/mipmap-hdpi/ic_launcher.png" />
+        <location
+            file="src/main/res/mipmap-anydpi/ic_launcher.xml" />
+    </issue>
+
+    <issue
+        id="IconXmlAndPng"
+        message="The following images appear both as density independent `.xml` files and as bitmap files: src/main/res/mipmap-anydpi/ic_launcher_round.xml, src/main/res/mipmap-hdpi/ic_launcher_round.png">
+        <location
+            file="src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" />
+        <location
+            file="src/main/res/mipmap-xxhdpi/ic_launcher_round.png" />
+        <location
+            file="src/main/res/mipmap-xhdpi/ic_launcher_round.png" />
+        <location
+            file="src/main/res/mipmap-mdpi/ic_launcher_round.png" />
+        <location
+            file="src/main/res/mipmap-hdpi/ic_launcher_round.png" />
+        <location
+            file="src/main/res/mipmap-anydpi/ic_launcher_round.xml" />
+    </issue>
+
+    <issue
+        id="IconExpectedSize"
+        message="Incorrect icon size for `mipmap-hdpi/ic_launcher_foreground.png`: expected 72x72, but was 162x162">
+        <location
+            file="src/main/res/mipmap-hdpi/ic_launcher_foreground.png" />
+    </issue>
+
+    <issue
+        id="IconExpectedSize"
+        message="Incorrect icon size for `mipmap-mdpi/ic_launcher_foreground.png`: expected 48x48, but was 108x108">
+        <location
+            file="src/main/res/mipmap-mdpi/ic_launcher_foreground.png" />
+    </issue>
+
+    <issue
+        id="IconExpectedSize"
+        message="Incorrect icon size for `mipmap-xhdpi/ic_launcher_foreground.png`: expected 96x96, but was 216x216">
+        <location
+            file="src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" />
+    </issue>
+
+    <issue
+        id="IconExpectedSize"
+        message="Incorrect icon size for `mipmap-xxhdpi/ic_launcher_foreground.png`: expected 144x144, but was 324x324">
+        <location
+            file="src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" />
+    </issue>
+
+    <issue
+        id="IconExpectedSize"
+        message="Incorrect icon size for `mipmap-xxxhdpi/ic_launcher_foreground.png`: expected 192x192, but was 432x432">
+        <location
+            file="src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" />
+    </issue>
+
+    <issue
         id="IconDuplicates"
-        message="The following unrelated icon files have identical contents: ic_launch_logo.png, ic_launcher.png"
-        priority="3" severity="Error"
-        summary="Duplicated icons under different names">
+        message="The following unrelated icon files have identical contents: ic_launch_logo.png, ic_launcher.png">
         <location
-            file="app\src\main\res\drawable-xxhdpi\ic_launcher.png"/>
+            file="src/main/res/mipmap-xxhdpi/ic_launcher.png" />
         <location
-            file="app\src\main\res\drawable-mdpi\ic_launch_logo.png"/>
+            file="src/main/res/drawable-mdpi/ic_launch_logo.png" />
     </issue>
 
 </issues>
