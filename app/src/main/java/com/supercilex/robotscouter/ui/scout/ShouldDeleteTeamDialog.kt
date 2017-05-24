@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog
 
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.util.show
 
 class ShouldDeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
     private val mTeamHelper: TeamHelper by lazy { TeamHelper.parse(arguments) }
@@ -25,10 +26,7 @@ class ShouldDeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener
     companion object {
         private val TAG = "ShouldDeleteTeamDialog"
 
-        fun show(manager: FragmentManager, teamHelper: TeamHelper) {
-            val dialog = ShouldDeleteTeamDialog()
-            dialog.arguments = teamHelper.toBundle()
-            dialog.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager, teamHelper: TeamHelper) =
+                ShouldDeleteTeamDialog().show(manager, TAG, teamHelper.toBundle())
     }
 }

@@ -9,7 +9,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
-import com.firebase.jobdispatcher.*
+import com.firebase.jobdispatcher.Constraint
+import com.firebase.jobdispatcher.FirebaseJobDispatcher
+import com.firebase.jobdispatcher.GooglePlayDriver
+import com.firebase.jobdispatcher.Job
+import com.firebase.jobdispatcher.Trigger
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.TeamHelper
 
@@ -42,11 +46,10 @@ private fun JobInfo.Builder.buildAndSchedule(context: Context, clazz: String) {
     }
 }
 
-fun startInternetJob14(
-        context: Context,
-        teamHelper: TeamHelper,
-        jobId: Int,
-        clazz: Class<out com.firebase.jobdispatcher.JobService>) {
+fun startInternetJob14(context: Context,
+                       teamHelper: TeamHelper,
+                       jobId: Int,
+                       clazz: Class<out com.firebase.jobdispatcher.JobService>) {
     val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context.applicationContext))
 
     dispatcher.newJobBuilder()
@@ -59,19 +62,18 @@ fun startInternetJob14(
 }
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-fun startInternetJob21(
-        context: Context,
-        teamHelper: TeamHelper,
-        jobId: Int,
-        clazz: Class<out JobService>) {
+fun startInternetJob21(context: Context,
+                       teamHelper: TeamHelper,
+                       jobId: Int,
+                       clazz: Class<out JobService>) {
     JobInfo.Builder(jobId, ComponentName(context.packageName, clazz.name))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setExtras(toRawPersistableBundle(teamHelper))
             .buildAndSchedule(context, clazz.name)
 }
 
-private fun getErrorMessage(clazz: String,
-        result: Int): String = clazz + " failed with error code " + result
+private fun getErrorMessage(clazz: String, result: Int): String =
+        clazz + " failed with error code " + result
 
 fun parseRawBundle(args: Bundle): TeamHelper = Team.Builder(args.getString(NUMBER))
         .setKey(args.getString(KEY))

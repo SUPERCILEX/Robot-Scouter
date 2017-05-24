@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scout.viewholder
 
-import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.InputType
@@ -8,6 +7,7 @@ import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.ScoutValueDialogBase
 import com.supercilex.robotscouter.util.DatabaseHelper
+import com.supercilex.robotscouter.util.show
 import java.math.BigDecimal
 
 class ScoutCounterValueDialog : ScoutValueDialogBase<Int>() {
@@ -36,14 +36,9 @@ class ScoutCounterValueDialog : ScoutValueDialogBase<Int>() {
     companion object {
         private val TAG = "ScoutCounterValueDialog"
 
-        fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) {
-            val dialog = ScoutCounterValueDialog()
-
-            val args: Bundle = DatabaseHelper.getRefBundle(ref)
-            args.putString(CURRENT_VALUE, currentValue)
-            dialog.arguments = args
-
-            dialog.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) =
+                ScoutCounterValueDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {
+                    putString(CURRENT_VALUE, currentValue)
+                }
     }
 }

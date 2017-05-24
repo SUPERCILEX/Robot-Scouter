@@ -12,7 +12,13 @@ import com.supercilex.robotscouter.data.model.metrics.MetricType
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
 import com.supercilex.robotscouter.data.util.ScoutUtils
 import com.supercilex.robotscouter.ui.CardListHelper
-import com.supercilex.robotscouter.ui.scout.viewholder.*
+import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.HeaderViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
+import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.StopwatchViewHolder
 
 open class ScoutAdapter(
         query: Query, private val manager: FragmentManager, recyclerView: RecyclerView) :
@@ -36,10 +42,9 @@ open class ScoutAdapter(
         }
     }
 
-    public override fun populateViewHolder(
-            viewHolder: ScoutViewHolderBase<*, *>,
-            metric: ScoutMetric<Any>,
-            position: Int) {
+    public override fun populateViewHolder(viewHolder: ScoutViewHolderBase<*, *>,
+                                           metric: ScoutMetric<Any>,
+                                           position: Int) {
         animator.supportsChangeAnimations = true
 
         cardListHelper.onBind(viewHolder)

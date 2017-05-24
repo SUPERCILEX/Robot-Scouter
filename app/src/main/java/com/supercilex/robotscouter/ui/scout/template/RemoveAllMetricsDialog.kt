@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.DatabaseHelper
+import com.supercilex.robotscouter.util.show
 
 class RemoveAllMetricsDialog : DialogFragment(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -25,10 +26,7 @@ class RemoveAllMetricsDialog : DialogFragment(), DialogInterface.OnClickListener
     companion object {
         private val TAG = "RemoveAllMetricsDialog"
 
-        fun show(manager: FragmentManager, templateRef: DatabaseReference) {
-            val fragment = RemoveAllMetricsDialog()
-            fragment.arguments = DatabaseHelper.getRefBundle(templateRef)
-            fragment.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager, templateRef: DatabaseReference) =
+                RemoveAllMetricsDialog().show(manager, TAG, DatabaseHelper.getRefBundle(templateRef))
     }
 }

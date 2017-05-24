@@ -4,7 +4,11 @@ import android.app.Activity
 import android.app.Dialog
 import android.app.PendingIntent
 import android.app.ProgressDialog
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentSender
+import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.os.RemoteException
@@ -22,6 +26,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.show
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.concurrent.Callable
@@ -132,7 +137,8 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
         }
     }
 
-    private fun showError() = Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT).show()
+    private fun showError() =
+            Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT).show()
 
     override fun onServiceConnected(name: ComponentName, service: IBinder) {
         this.service = IInAppBillingService.Stub.asInterface(service)
@@ -172,14 +178,7 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
                 "10.00_donate_single",
                 "10.00_donate_subscription")
 
-        fun show(manager: FragmentManager) {
-            val dialog = DonateDialog()
-
-            val args = Bundle()
-            args.putBoolean(KEY_IS_PROGRESS_SHOWING, false)
-            dialog.arguments = args
-
-            dialog.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager) =
+                DonateDialog().show(manager, TAG) { putBoolean(KEY_IS_PROGRESS_SHOWING, false) }
     }
 }

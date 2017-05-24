@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.show
 import java.util.*
 
 class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
@@ -46,10 +47,7 @@ class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
     companion object {
         private val TAG = "DeleteTeamDialog"
 
-        fun show(manager: FragmentManager, teamHelpers: List<TeamHelper>) {
-            val dialog = DeleteTeamDialog()
-            dialog.arguments = TeamHelper.toBundle(teamHelpers)
-            dialog.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager, teamHelpers: List<TeamHelper>) =
+                DeleteTeamDialog().show(manager, TAG, TeamHelper.toBundle(teamHelpers))
     }
 }

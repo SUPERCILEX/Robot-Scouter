@@ -12,7 +12,12 @@ import com.supercilex.robotscouter.data.model.metrics.MetricType
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
 import com.supercilex.robotscouter.ui.scout.ScoutAdapter
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
-import com.supercilex.robotscouter.ui.scout.viewholder.template.*
+import com.supercilex.robotscouter.ui.scout.viewholder.template.CheckboxTemplateViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.template.EditTextTemplateViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.template.HeaderTemplateViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.template.StopwatchTemplateViewHolder
 
 class ScoutTemplateAdapter(
         query: Query,
@@ -20,10 +25,9 @@ class ScoutTemplateAdapter(
         recyclerView: RecyclerView,
         private val callback: ScoutTemplateItemTouchCallback) :
         ScoutAdapter(query, manager, recyclerView) {
-    override fun populateViewHolder(
-            viewHolder: ScoutViewHolderBase<*, *>,
-            metric: ScoutMetric<Any>,
-            position: Int) {
+    override fun populateViewHolder(viewHolder: ScoutViewHolderBase<*, *>,
+                                    metric: ScoutMetric<Any>,
+                                    position: Int) {
         super.populateViewHolder(viewHolder, metric, position)
         callback.onBind(viewHolder, position)
     }
@@ -48,11 +52,10 @@ class ScoutTemplateAdapter(
         }
     }
 
-    override fun onChildChanged(
-            type: ChangeEventListener.EventType,
-            snapshot: DataSnapshot?,
-            index: Int,
-            oldIndex: Int) {
+    override fun onChildChanged(type: ChangeEventListener.EventType,
+                                snapshot: DataSnapshot?,
+                                index: Int,
+                                oldIndex: Int) {
         if (callback.onChildChanged(type, index)) {
             super.onChildChanged(type, snapshot, index, oldIndex)
         }

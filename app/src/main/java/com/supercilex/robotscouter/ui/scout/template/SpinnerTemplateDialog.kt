@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils
 import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.show
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     private val rootView: View by lazy {
@@ -123,14 +124,9 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     companion object {
         private val TAG = "SpinnerTemplateDialog"
 
-        fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueIndex: String) {
-            val dialog = SpinnerTemplateDialog()
-
-            val args: Bundle = DatabaseHelper.getRefBundle(ref)
-            args.putString(FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
-            dialog.arguments = args
-
-            dialog.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueIndex: String) =
+                SpinnerTemplateDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {
+                    putString(FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
+                }
     }
 }

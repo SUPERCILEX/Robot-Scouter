@@ -19,11 +19,10 @@ fun isTabletMode(context: Context): Boolean {
             || size > Configuration.SCREENLAYOUT_SIZE_LARGE
 }
 
-fun animateColorChange(
-        context: Context,
-        @ColorRes from: Int,
-        @ColorRes to: Int,
-        listener: ValueAnimator.AnimatorUpdateListener) {
+fun animateColorChange(context: Context,
+                       @ColorRes from: Int,
+                       @ColorRes to: Int,
+                       listener: ValueAnimator.AnimatorUpdateListener) {
     ValueAnimator.ofObject(
             ArgbEvaluator(),
             ContextCompat.getColor(context, from),
@@ -45,12 +44,11 @@ fun animateCircularReveal(view: View, visible: Boolean) {
     animator?.start()
 }
 
-fun animateCircularReveal(
-        view: View,
-        visible: Boolean,
-        centerX: Int,
-        centerY: Int,
-        radius: Float): Animator? {
+fun animateCircularReveal(view: View,
+                          visible: Boolean,
+                          centerX: Int,
+                          centerY: Int,
+                          radius: Float): Animator? {
     if (visible && view.visibility == View.VISIBLE || !visible && view.visibility == View.GONE) {
         return null
     }

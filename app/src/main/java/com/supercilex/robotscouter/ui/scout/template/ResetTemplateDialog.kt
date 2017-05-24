@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.show
 
 class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -59,14 +60,9 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
         private val TAG = "ResetTemplateDialog"
         private val RESET_ALL_KEY = "reset_all_key"
 
-        fun show(manager: FragmentManager, helper: TeamHelper, shouldResetAll: Boolean) {
-            val dialog = ResetTemplateDialog()
-
-            val bundle: Bundle = helper.toBundle()
-            bundle.putBoolean(RESET_ALL_KEY, shouldResetAll)
-            dialog.arguments = bundle
-
-            dialog.show(manager, TAG)
-        }
+        fun show(manager: FragmentManager, helper: TeamHelper, shouldResetAll: Boolean) =
+                ResetTemplateDialog().show(manager, TAG, helper.toBundle()) {
+                    putBoolean(RESET_ALL_KEY, shouldResetAll)
+                }
     }
 }

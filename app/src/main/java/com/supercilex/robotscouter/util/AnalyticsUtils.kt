@@ -4,7 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event
-import com.google.firebase.analytics.FirebaseAnalytics.Param.*
+import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_CATEGORY
+import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
+import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.analytics.FirebaseAnalytics.getInstance
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.ui.AuthHelper

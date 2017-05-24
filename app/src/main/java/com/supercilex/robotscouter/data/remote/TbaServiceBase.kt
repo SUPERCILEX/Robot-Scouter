@@ -11,7 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import java.util.concurrent.Callable
 
-abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<T>) : Callable<Team> {
+abstract class TbaServiceBase<out T>(team: Team,
+                                     context: Context,
+                                     clazz: Class<T>) : Callable<Team> {
     protected val context: Context = context.applicationContext
     protected val team: Team = Team.Builder(team).build()
     protected val api: T = TBA_RETROFIT.create(clazz)
@@ -38,6 +40,7 @@ abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<
         private val ERROR_404 = 404
 
         @JvmStatic
-        protected fun executeAsync(service: TbaServiceBase<*>): Task<Team> = AsyncTaskExecutor.execute(service)
+        protected fun executeAsync(service: TbaServiceBase<*>): Task<Team> =
+                AsyncTaskExecutor.execute(service)
     }
 }

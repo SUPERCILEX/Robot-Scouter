@@ -5,7 +5,11 @@ import android.support.annotation.CallSuper
 import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
@@ -31,10 +35,9 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
                     .setNegativeButton(android.R.string.cancel, null)
                     .createAndListen { onShow(this) }
 
-    override fun onCreateView(
-            inflater: LayoutInflater?,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater?,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         lastEditText.setOnEditorActionListener(this)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
