@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.Dialog"
     android:text="@string/developed_with_love"
-    android:textSize="@dimen/text_size_normal"
-    tools:text="About" />
+    android:textSize="@dimen/text_size_normal" />

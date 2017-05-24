@@ -15,6 +15,7 @@
         android:stateListAnimator="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="Start (0:00)"
         tools:ignore="UnusedAttribute" />
 
     <android.support.v7.widget.RecyclerView
