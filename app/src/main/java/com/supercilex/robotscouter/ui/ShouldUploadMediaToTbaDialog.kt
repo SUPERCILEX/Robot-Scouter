@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.setShouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.util.shouldAskToUploadMediaToTba
 
@@ -29,7 +29,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
             .setView(rootView)
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
-            .createAndListen {
+            .create {
                 (findViewById(android.R.id.message) as TextView).movementMethod =
                         LinkMovementMethod.getInstance()
             }

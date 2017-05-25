@@ -15,7 +15,7 @@ import com.supercilex.robotscouter.data.util.UserHelper
 import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.show
 
 class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
@@ -23,7 +23,7 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
             .setTitle(R.string.confirm_action)
             .setPositiveButton(R.string.reset, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .createAndListen {
+            .create {
                 getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this@ResetTemplateDialog)
             }
 

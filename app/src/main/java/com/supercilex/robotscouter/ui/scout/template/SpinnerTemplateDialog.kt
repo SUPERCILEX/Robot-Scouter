@@ -22,7 +22,7 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewH
 import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils
-import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.show
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
@@ -99,7 +99,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             .setTitle(R.string.edit_spinner_items)
             .setView(rootView)
             .setPositiveButton(android.R.string.ok, null)
-            .createAndListen { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
+            .create { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
 
     override fun onSaveInstanceState(outState: Bundle) {
         FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, manager)

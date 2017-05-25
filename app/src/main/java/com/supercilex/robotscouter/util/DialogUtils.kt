@@ -5,7 +5,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 
-inline fun AlertDialog.Builder.createAndListen(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
+inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
         create().apply { setOnShowListener { (it as AlertDialog).listener() } }
 
 fun DialogFragment.show(manager: FragmentManager,

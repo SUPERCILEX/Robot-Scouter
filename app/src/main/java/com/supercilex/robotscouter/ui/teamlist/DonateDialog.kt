@@ -25,7 +25,7 @@ import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.show
 import org.json.JSONException
 import org.json.JSONObject
@@ -46,7 +46,7 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
             .setTitle(R.string.donate)
             .setItems(R.array.donate_items, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .createAndListen {
+            .create {
                 listView.onItemClickListener = this@DonateDialog
                 if (arguments.getBoolean(KEY_IS_PROGRESS_SHOWING)) initProgressDialog()
             }

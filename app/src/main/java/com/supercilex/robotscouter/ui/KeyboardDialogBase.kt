@@ -14,7 +14,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.createAndListen
+import com.supercilex.robotscouter.util.create
 
 abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, TextView.OnEditorActionListener {
     protected abstract val lastEditText: EditText
@@ -33,7 +33,7 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
                     .setTitle(title)
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .createAndListen { onShow(this) }
+                    .create { onShow(this) }
 
     override fun onCreateView(inflater: LayoutInflater?,
                               container: ViewGroup?,
