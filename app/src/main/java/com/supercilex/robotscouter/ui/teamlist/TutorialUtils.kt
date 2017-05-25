@@ -9,6 +9,12 @@ import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.setHasShownSignInTutorial
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
+private object EmptyOnHidePromptListener : MaterialTapTargetPrompt.OnHidePromptListener {
+    override fun onHidePrompt(event: MotionEvent, tappedTarget: Boolean) {}
+
+    override fun onHidePromptComplete() {}
+}
+
 fun showCreateFirstTeamPrompt(activity: Activity): MaterialTapTargetPrompt? {
     val appContext = activity.applicationContext
     if (!hasShownAddTeamTutorial(appContext)) {
@@ -16,13 +22,9 @@ fun showCreateFirstTeamPrompt(activity: Activity): MaterialTapTargetPrompt? {
                 .setTarget(R.id.fab)
                 .setPrimaryText(R.string.create_first_team)
                 .setAutoDismiss(false)
-                .setOnHidePromptListener(object : MaterialTapTargetPrompt.OnHidePromptListener {
+                .setOnHidePromptListener(object : MaterialTapTargetPrompt.OnHidePromptListener by EmptyOnHidePromptListener {
                     override fun onHidePrompt(event: MotionEvent, tappedTarget: Boolean) {
                         setHasShownAddTeamTutorial(appContext, tappedTarget)
-                    }
-
-                    override fun onHidePromptComplete() {
-                        // Noop
                     }
                 })
                 .show()
@@ -36,13 +38,9 @@ fun showSignInPrompt(activity: Activity) {
         MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
                 .setTarget(R.id.action_sign_in)
                 .setPrimaryText(R.string.sign_in)
-                .setOnHidePromptListener(object : MaterialTapTargetPrompt.OnHidePromptListener {
+                .setOnHidePromptListener(object : MaterialTapTargetPrompt.OnHidePromptListener by EmptyOnHidePromptListener {
                     override fun onHidePrompt(event: MotionEvent, tappedTarget: Boolean) {
                         setHasShownSignInTutorial(appContext, tappedTarget)
-                    }
-
-                    override fun onHidePromptComplete() {
-                        // Noop
                     }
                 })
                 .show()
