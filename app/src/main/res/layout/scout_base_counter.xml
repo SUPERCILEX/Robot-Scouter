@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageButton
@@ -9,15 +8,10 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
+        android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_decrement_counter"
         android:src="@drawable/ic_remove_white_24dp"
         android:stateListAnimator="@null"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/count"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintHorizontal_chainStyle="packed"
         tools:ignore="UnusedAttribute" />
 
     <TextView
@@ -26,13 +20,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_large"
         android:layout_marginEnd="@dimen/spacing_large"
+        android:layout_gravity="center_vertical"
         android:textIsSelectable="true"
         android:textSize="18sp"
         android:textStyle="normal|bold"
-        app:layout_constraintStart_toEndOf="@+id/decrement_counter"
-        app:layout_constraintEnd_toStartOf="@+id/increment_counter"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="10" />
 
     <ImageButton
@@ -40,13 +31,10 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
+        android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_increment_counter"
         android:src="@drawable/ic_add_white_24dp"
         android:stateListAnimator="@null"
-        app:layout_constraintStart_toEndOf="@id/count"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:ignore="UnusedAttribute" />
 
 </merge>

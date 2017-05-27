@@ -11,11 +11,11 @@ class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView),
     private val checkBoxName: EditText = itemView.findViewById(R.id.checkbox_name)
 
     init {
-        val layout = itemView as ConstraintLayout
+        itemView as ConstraintLayout
         val set = ConstraintSet()
-        set.clone(layout)
+        set.clone(itemView)
         set.connect(R.id.name, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
-        set.applyTo(layout)
+        set.applyTo(itemView)
     }
 
     override fun bind() {

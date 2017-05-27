@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
@@ -11,14 +10,12 @@
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/spacing_large"
-        android:layout_marginRight="@dimen/spacing_large"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:hint="@string/counter_name"
         android:inputType="text"
-        app:layout_constraintStart_toEndOf="@id/reorder"
-        app:layout_constraintEnd_toStartOf="@+id/decrement_counter"
-        app:layout_constraintBaseline_toBaselineOf="@+id/count"
-        tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_counter" />
@@ -29,14 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/spacing_large"
         android:layout_marginRight="@dimen/spacing_large"
+        android:layout_gravity="center_vertical"
         android:hint="@string/unit"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@+id/count"
-        app:layout_constraintEnd_toStartOf="@id/increment_counter"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@+id/count"
-        tools:ignore="UnknownIdInLayout"
         tools:text="s" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

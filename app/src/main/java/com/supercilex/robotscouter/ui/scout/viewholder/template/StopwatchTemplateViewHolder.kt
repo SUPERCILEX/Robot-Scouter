@@ -12,11 +12,11 @@ class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView
         super.bind()
         name.onFocusChangeListener = this
 
-        val layout: ConstraintLayout = itemView as ConstraintLayout
+        itemView as ConstraintLayout
         val set = ConstraintSet()
-        set.clone(layout)
+        set.clone(itemView)
         set.connect(R.id.list, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
-        set.applyTo(layout)
+        set.applyTo(itemView)
     }
 
     override fun requestFocus() {
