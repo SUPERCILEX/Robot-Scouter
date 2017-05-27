@@ -6,11 +6,12 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 
 open class HeaderViewHolder(itemView: View) : ScoutViewHolderBase<String, TextView>(itemView) {
+    private val topMargin =
+            itemView.resources.getDimension(R.dimen.list_item_padding_vertical_within).toInt()
+
     override fun bind() {
         super.bind()
-        if (layoutPosition != 0) {
-            val params = itemView.layoutParams as RecyclerView.LayoutParams
-            params.topMargin = itemView.resources.getDimension(R.dimen.list_item_padding_vertical_within).toInt()
-        }
+        (itemView.layoutParams as RecyclerView.LayoutParams).topMargin =
+                if (layoutPosition == 0) 0 else topMargin
     }
 }
