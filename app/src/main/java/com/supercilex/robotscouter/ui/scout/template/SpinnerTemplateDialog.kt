@@ -44,19 +44,17 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
                 R.layout.scout_template_spinner_item,
                 SpinnerItemViewHolder::class.java,
                 ref) {
-            override fun populateViewHolder(
-                    viewHolder: SpinnerItemViewHolder,
-                    itemText: String,
-                    position: Int) {
+            override fun populateViewHolder(viewHolder: SpinnerItemViewHolder,
+                                            itemText: String,
+                                            position: Int) {
                 viewHolder.bind(itemText, mSnapshots[position])
                 itemTouchCallback.onBind(viewHolder, position)
             }
 
-            override fun onChildChanged(
-                    type: ChangeEventListener.EventType,
-                    snapshot: DataSnapshot,
-                    index: Int,
-                    oldIndex: Int) {
+            override fun onChildChanged(type: ChangeEventListener.EventType,
+                                        snapshot: DataSnapshot,
+                                        index: Int,
+                                        oldIndex: Int) {
                 if (type == ChangeEventListener.EventType.REMOVED) {
                     if (itemCount == 0) {
                         dismiss()

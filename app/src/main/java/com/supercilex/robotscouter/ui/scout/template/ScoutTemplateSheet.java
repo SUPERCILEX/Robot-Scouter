@@ -146,6 +146,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mManager = new LinearLayoutManager(getContext());
 
         mRecyclerView.setLayoutManager(mManager);
+        mRecyclerView.setHasFixedSize(true);
         mItemTouchCallback = new ScoutTemplateItemTouchCallback(mRootView);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(mItemTouchCallback);
         mItemTouchCallback.setItemTouchHelper(itemTouchHelper);

@@ -10,7 +10,8 @@ import com.google.firebase.database.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.metrics.MetricType
 import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
-import com.supercilex.robotscouter.ui.scout.ScoutAdapter
+import com.supercilex.robotscouter.ui.CardListHelper
+import com.supercilex.robotscouter.ui.scout.ScoutAdapterBase
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CheckboxTemplateViewHolder
 import com.supercilex.robotscouter.ui.scout.viewholder.template.CounterTemplateViewHolder
@@ -19,12 +20,17 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.HeaderTemplateVi
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerTemplateViewHolder
 import com.supercilex.robotscouter.ui.scout.viewholder.template.StopwatchTemplateViewHolder
 
-class ScoutTemplateAdapter(
-        query: Query,
-        manager: FragmentManager,
-        recyclerView: RecyclerView,
-        private val callback: ScoutTemplateItemTouchCallback) :
-        ScoutAdapter(query, manager, recyclerView) {
+class ScoutTemplateAdapter(query: Query,
+                           manager: FragmentManager,
+                           recyclerView: RecyclerView,
+                           private val callback: ScoutTemplateItemTouchCallback) :
+        ScoutAdapterBase(query, manager, recyclerView) {
+    override val cardListHelper: CardListHelper = ListHelper()
+
+    init {
+        callback.setCardListHelper(cardListHelper)
+    }
+
     override fun populateViewHolder(viewHolder: ScoutViewHolderBase<*, *>,
                                     metric: ScoutMetric<Any>,
                                     position: Int) {
