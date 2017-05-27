@@ -14,9 +14,9 @@
         android:hint="@string/stopwatch_name"
         android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintStart_toEndOf="@id/reorder"
-        app:layout_constraintEnd_toStartOf="@id/stopwatch"
-        app:layout_constraintTop_toTopOf="@+id/stopwatch"
-        app:layout_constraintBottom_toBottomOf="@+id/stopwatch"
+        app:layout_constraintEnd_toStartOf="@+id/stopwatch"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/barrier"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
