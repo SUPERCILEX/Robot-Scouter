@@ -14,12 +14,30 @@
         android:hint="@string/note_name"
         android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintStart_toEndOf="@id/reorder"
-        app:layout_constraintEnd_toStartOf="@+id/notes"
-        app:layout_constraintTop_toTopOf="@+id/notes"
-        app:layout_constraintBottom_toBottomOf="@+id/notes"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/text"
+        app:layout_constraintBottom_toBottomOf="@+id/text"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
-    <include layout="@layout/scout_base_notes" />
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.66" />
+
+    <EditText
+        android:id="@+id/text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_normal"
+        android:layout_marginLeft="@dimen/spacing_normal"
+        android:hint="@string/hint_notes"
+        android:inputType="textMultiLine|textCapSentences"
+        app:layout_constraintStart_toEndOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

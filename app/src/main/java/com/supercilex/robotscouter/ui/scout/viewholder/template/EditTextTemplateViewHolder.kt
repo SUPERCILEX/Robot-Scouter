@@ -1,14 +1,20 @@
 package com.supercilex.robotscouter.ui.scout.viewholder.template
 
 import android.view.View
-
+import android.widget.EditText
+import android.widget.TextView
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.scout.viewholder.EditTextViewHolder
+import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
 
-class EditTextTemplateViewHolder(itemView: View) : EditTextViewHolder(itemView), ScoutTemplateViewHolder {
+class EditTextTemplateViewHolder(itemView: View) :
+        ScoutViewHolderBase<String, TextView>(itemView), ScoutTemplateViewHolder {
+    private val text: EditText = itemView.findViewById(R.id.text)
+
     override fun bind() {
         super.bind()
+        text.setText(metric.value)
         name.onFocusChangeListener = this
+        text.onFocusChangeListener = this
     }
 
     override fun requestFocus() {
@@ -16,7 +22,7 @@ class EditTextTemplateViewHolder(itemView: View) : EditTextViewHolder(itemView),
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        super.onFocusChange(v, hasFocus)
         if (!hasFocus && v.id == R.id.name) updateMetricName(name.text.toString())
+        if (!hasFocus && v.id == R.id.text) updateMetricValue(text.text.toString())
     }
 }
