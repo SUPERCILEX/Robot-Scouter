@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder
 import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
@@ -38,7 +39,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     private val itemTouchCallback: ScoutTemplateItemTouchCallback by lazy {
         ScoutTemplateItemTouchCallback(recyclerView)
     }
-    private val mAdapter: FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> by lazy {
+    private val adapter: FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> by lazy {
         object : FirebaseRecyclerAdapter<String, SpinnerItemViewHolder>(
                 String::class.java,
                 R.layout.scout_template_spinner_item,
@@ -47,8 +48,9 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             override fun populateViewHolder(viewHolder: SpinnerItemViewHolder,
                                             itemText: String,
                                             position: Int) {
-                viewHolder.bind(itemText, mSnapshots[position])
                 itemTouchCallback.onBind(viewHolder, position)
+                cardListHelper.onBind(viewHolder)
+                viewHolder.bind(itemText, mSnapshots[position])
             }
 
             override fun onChildChanged(type: ChangeEventListener.EventType,
@@ -77,6 +79,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             }
         }
     }
+    private val cardListHelper: CardListHelper by lazy { CardListHelper(adapter, recyclerView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,9 +91,10 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         itemTouchCallback.setItemTouchHelper(touchHelper)
         touchHelper.attachToRecyclerView(recyclerView)
 
-        recyclerView.adapter = mAdapter
-        itemTouchCallback.setAdapter(mAdapter)
-        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, manager)
+        recyclerView.adapter = adapter
+        itemTouchCallback.setAdapter(adapter)
+        itemTouchCallback.setCardListHelper(cardListHelper)
+        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, adapter, manager)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -100,22 +104,22 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             .create { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, manager)
+        FirebaseAdapterUtils.saveRecyclerViewState(outState, adapter, manager)
         super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mAdapter.cleanup()
+        adapter.cleanup()
         recyclerView.clearFocus()
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     override fun onClick(v: View) {
-        val itemCount: Int = mAdapter.itemCount
+        val itemCount: Int = adapter.itemCount
         ref.push().setValue(
                 "item " + (itemCount + 1),
-                FirebaseAdapterUtils.getHighestIntPriority(mAdapter.snapshots))
+                FirebaseAdapterUtils.getHighestIntPriority(adapter.snapshots))
         itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 

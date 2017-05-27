@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
     <TextView
         android:id="@+id/name"
-        style="@style/RobotScouter.Text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        style="@style/RobotScouter.MainListItemView"
         android:textIsSelectable="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/spinner"
-        app:layout_constraintTop_toTopOf="@+id/spinner"
-        app:layout_constraintBottom_toBottomOf="@+id/spinner"
+        android:textSize="@dimen/text_size_normal"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_spinner" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

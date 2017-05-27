@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    style="@style/RobotScouter.ListItem"
     tools:ignore="UnusedResources">
     <!-- TODO remove ignore once the Gradle plugin is fixed -->
 
@@ -15,13 +12,11 @@
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/spacing_normal"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@id/reorder"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:text="Item 1" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

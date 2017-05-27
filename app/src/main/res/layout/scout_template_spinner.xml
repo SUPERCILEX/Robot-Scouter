@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
@@ -13,15 +12,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/spacing_normal"
         android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:hint="@string/spinner_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@id/reorder"
-        app:layout_constraintEnd_toStartOf="@id/spinner"
-        app:layout_constraintTop_toTopOf="@+id/spinner"
-        app:layout_constraintBottom_toBottomOf="@+id/spinner"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_spinner" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
