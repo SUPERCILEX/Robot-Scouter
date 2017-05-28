@@ -5,10 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.Team
-
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 
 class ScoutActivity : AppCompatActivity() {
@@ -25,9 +22,6 @@ class ScoutActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun start(context: Context, team: Team, addScout: Boolean) = context.startActivity(
-                createIntent(context, ScoutListFragmentBase.getBundle(team, addScout, null)))
-
         fun createIntent(context: Context, args: Bundle): Intent {
             val starter: Intent =
                     Intent(context, ScoutActivity::class.java).putExtra(KEY_SCOUT_ARGS, args)

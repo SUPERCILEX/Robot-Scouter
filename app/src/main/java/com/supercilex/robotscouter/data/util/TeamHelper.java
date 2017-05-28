@@ -19,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.AuthHelper;
-import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -29,11 +28,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.startDownloadTeamDataJob;
+import static com.supercilex.robotscouter.util.ConstantsKt.APP_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEMPLATE_KEY;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TIMESTAMP;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
+import static com.supercilex.robotscouter.util.ConstantsKt.TEAM_QUERY_KEY;
 import static com.supercilex.robotscouter.util.ConstantsKt.TWO_ITEMS;
 import static com.supercilex.robotscouter.util.CustomTabsUtilsKt.launchUrl;
 import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
@@ -258,11 +259,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     private String getDeepLink() {
-        return IntentReceiver.APP_LINK_BASE + getLinkKeyNumberPair();
+        return APP_LINK_BASE + getLinkKeyNumberPair();
     }
 
     public String getLinkKeyNumberPair() {
-        return "&" + IntentReceiver.TEAM_QUERY_KEY + "=" + mTeam.getKey() + ":" + mTeam.getNumber();
+        return "&" + TEAM_QUERY_KEY + "=" + mTeam.getKey() + ":" + mTeam.getNumber();
     }
 
     public Action getViewAction() {

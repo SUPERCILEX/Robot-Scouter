@@ -11,12 +11,12 @@ import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamCache;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.teamlist.IntentReceiver;
 
 import java.util.Collection;
 import java.util.List;
 
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.ConstantsKt.APP_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public final class TeamSharer {
@@ -29,7 +29,7 @@ public final class TeamSharer {
         mActivity = activity;
         mCache = new Cache(mActivity, teamHelpers);
 
-        StringBuilder deepLinkBuilder = new StringBuilder(IntentReceiver.APP_LINK_BASE);
+        StringBuilder deepLinkBuilder = new StringBuilder(APP_LINK_BASE);
         for (TeamHelper teamHelper : mCache.getTeamHelpers()) {
             deepLinkBuilder.append(teamHelper.getLinkKeyNumberPair());
         }

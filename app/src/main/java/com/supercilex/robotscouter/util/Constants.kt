@@ -16,6 +16,9 @@ import kotlin.properties.Delegates
 @JvmField val SINGLE_ITEM = 1
 @JvmField val TWO_ITEMS = 2
 
+@JvmField val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/?"
+@JvmField val TEAM_QUERY_KEY = "team"
+
 /** The list of all supported authentication providers in Firebase Auth UI.  */
 @JvmField val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),

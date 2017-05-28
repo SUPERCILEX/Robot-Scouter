@@ -24,7 +24,7 @@ class NewTeamDialog : KeyboardDialogBase() {
         val teamNumber: String = lastEditText.text.toString()
         if (isValid(teamNumber)) {
             (activity as TeamSelectionListener).onTeamSelected(ScoutListFragmentBase.getBundle(
-                    Team.Builder(teamNumber).build(), true, null), false)
+                    Team.Builder(teamNumber).build(), true, null))
             return true
         } else {
             inputLayout.error = getString(R.string.invalid_team_number)
