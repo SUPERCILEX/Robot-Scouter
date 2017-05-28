@@ -1,16 +1,16 @@
+def isReleaseBuild = !project.hasProperty('devBuild')
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.google.firebase.firebase-crash'
-apply plugin: 'com.google.firebase.firebase-perf'
+if (isReleaseBuild) {
+    apply plugin: 'com.google.firebase.firebase-crash'
+    apply plugin: 'com.google.firebase.firebase-perf'
+}
 apply plugin: 'com.github.triplet.play'
-apply plugin: 'project-report'
-apply from: '../quality/quality.gradle'
 build.dependsOn 'updateReleasePlayVersion'
 
-def keystorePropertiesFile = file('keystore.properties')
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+apply from: '../quality/quality.gradle'
 
 android {
     compileSdkVersion 'android-O'
@@ -28,6 +28,10 @@ android {
 
     signingConfigs {
         release {
+            def keystorePropertiesFile = file('keystore.properties')
+            def keystoreProperties = new Properties()
+            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
             storeFile file(keystoreProperties['storeFile'])
@@ -51,7 +55,6 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize '3g'
         jumboMode true
     }
 
@@ -67,9 +70,11 @@ play {
     jsonFile = file('google-play-auto-publisher.json')
 }
 
-android.applicationVariants.all { variant ->
-    variant.preBuild.doLast {
-        variant.mergedFlavor.versionName = "${android.defaultConfig.versionName}.$variant.versionCode"
+if (isReleaseBuild) {
+    android.applicationVariants.all { variant ->
+        variant.preBuild.doLast {
+            variant.mergedFlavor.versionName = "${android.defaultConfig.versionName}.$variant.versionCode"
+        }
     }
 }
 
