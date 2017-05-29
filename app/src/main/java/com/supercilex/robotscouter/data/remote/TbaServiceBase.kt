@@ -11,9 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import java.util.concurrent.Callable
 
-abstract class TbaServiceBase<out T>(team: Team,
-                                     context: Context,
-                                     clazz: Class<T>) : Callable<Team> {
+abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<T>) :
+        Callable<Team> {
     protected val context: Context = context.applicationContext
     protected val team: Team = Team.Builder(team).build()
     protected val api: T = TBA_RETROFIT.create(clazz)

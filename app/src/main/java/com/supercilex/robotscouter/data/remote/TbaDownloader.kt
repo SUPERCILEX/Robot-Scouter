@@ -13,10 +13,8 @@ import com.supercilex.robotscouter.data.model.Team
 import retrofit2.Response
 import java.io.IOException
 
-class TbaDownloader private constructor(team: Team, context: Context) : TbaServiceBase<TbaTeamApi>(
-        team,
-        context,
-        TbaTeamApi::class.java) {
+class TbaDownloader private constructor(team: Team, context: Context) :
+        TbaServiceBase<TbaTeamApi>(team, context, TbaTeamApi::class.java) {
     @Throws(Exception::class)
     override fun call(): Team {
         getTeamInfo()

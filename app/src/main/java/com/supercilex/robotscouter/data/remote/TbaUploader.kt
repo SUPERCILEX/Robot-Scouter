@@ -8,8 +8,6 @@ import com.supercilex.robotscouter.data.model.Team
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -25,7 +23,8 @@ class TbaUploader private constructor(team: Team, context: Context) :
 
     @Throws(IOException::class)
     private fun uploadToImgur() {
-        val response: Response<JsonObject> = IMGUR_RETROFIT.create(TbaTeamMediaApi::class.java)
+        val response: Response<JsonObject> = TbaTeamMediaApi.IMGUR_RETROFIT
+                .create(TbaTeamMediaApi::class.java)
                 .postToImgur(context.getString(R.string.imgur_client_id),
                         team.toString(),
                         RequestBody.create(MediaType.parse("image/*"), File(team.media)))
@@ -68,11 +67,6 @@ class TbaUploader private constructor(team: Team, context: Context) :
     }
 
     companion object {
-        private val IMGUR_RETROFIT: Retrofit = Retrofit.Builder()
-                .baseUrl("https://api.imgur.com/3/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
         fun upload(team: Team, context: Context): Task<Team> =
                 TbaServiceBase.executeAsync(TbaUploader(team, context))
     }
