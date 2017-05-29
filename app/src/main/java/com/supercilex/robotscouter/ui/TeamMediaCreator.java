@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.IoUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +30,10 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava;
+import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
+import static com.supercilex.robotscouter.util.IoUtilsKt.getMediaFolder;
+import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
+import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
 
 public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     public interface StartCaptureListener {
@@ -64,7 +67,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
     static {
         List<String> perms = new ArrayList<>();
-        perms.addAll(IoUtils.PERMS);
+        perms.addAll(IO_PERMS);
         perms.add(Manifest.permission.CAMERA);
         PERMS = Collections.unmodifiableList(perms);
     }
@@ -128,12 +131,9 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 return;
             }
 
-            //noinspection MissingPermission
-            File rsFolder = IoUtils.getMediaFolder();
-
             File photoFile = null;
             try {
-                photoFile = createImageFile(rsFolder);
+                photoFile = createImageFile(getMediaFolder());
             } catch (IOException e) {
                 FirebaseCrash.report(e);
                 Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
@@ -158,7 +158,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             Context context = mFragment.get().getContext();
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    photo = IoUtils.unhide(photo);
+                    photo = unhideFile(photo);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -181,7 +181,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        return File.createTempFile(IoUtils.hide(mTeamHelper + "_" + System.currentTimeMillis()),
+        return File.createTempFile(hideFile(mTeamHelper + "_" + System.currentTimeMillis()),
                                    ".jpg",
                                    mediaFolder);
     }

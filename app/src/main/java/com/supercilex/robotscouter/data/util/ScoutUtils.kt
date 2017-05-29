@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.Constants
+import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_INDICES
@@ -28,7 +29,6 @@ import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
-import com.supercilex.robotscouter.util.getScoutMetrics
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val SCOUT_KEY = "scout_key"
@@ -70,6 +70,9 @@ val SCOUT_KEY = "scout_key"
     metric
 }
 
+fun getScoutMetricsRef(key: String): DatabaseReference =
+        FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS)
+
 fun getScoutKeyBundle(key: String?): Bundle {
     val args = Bundle()
     args.putString(SCOUT_KEY, key)
@@ -89,7 +92,7 @@ fun addScout(team: Team): String {
 
     val indexRef = getScoutIndicesRef(team.key).push()
     indexRef.setValue(System.currentTimeMillis())
-    val scoutRef = getScoutMetrics(indexRef.key)
+    val scoutRef = getScoutMetricsRef(indexRef.key)
 
     if (TextUtils.isEmpty(team.templateKey)) {
         FirebaseCopier.copyTo(Constants.sDefaultTemplate, scoutRef)

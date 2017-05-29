@@ -27,8 +27,6 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
-import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
-import com.supercilex.robotscouter.util.IoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +35,8 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetai
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
+import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateColorChange;
 
 public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -77,7 +77,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
-        mPermHandler = new PermissionRequestHandler(IoUtils.PERMS, mFragment, this);
+        mPermHandler = new PermissionRequestHandler(IO_PERMS, mFragment, this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
@@ -249,7 +249,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     }
 
     @Override
-    public void onSelectedTeamMoved(TeamHelper oldTeamHelper, TeamHelper teamHelper) {
+    public void onSelectedTeamChanged(TeamHelper oldTeamHelper, TeamHelper teamHelper) {
         mSelectedTeams.remove(oldTeamHelper);
         mSelectedTeams.add(teamHelper);
     }
@@ -346,7 +346,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
     }
 
     private void notifyItemsChanged() {
-        FirebaseAdapterUtils.notifyAllItemsChangedNoAnimation(mRecyclerView, mAdapter);
+        notifyAllItemsChangedNoAnimation(mRecyclerView, mAdapter);
     }
 
     private FloatingActionButton getFab() {

@@ -22,8 +22,10 @@ import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder
 import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
-import com.supercilex.robotscouter.util.FirebaseAdapterUtils
 import com.supercilex.robotscouter.util.create
+import com.supercilex.robotscouter.util.getHighestIntPriority
+import com.supercilex.robotscouter.util.restoreRecyclerViewState
+import com.supercilex.robotscouter.util.saveRecyclerViewState
 import com.supercilex.robotscouter.util.show
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
@@ -94,7 +96,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         recyclerView.adapter = adapter
         itemTouchCallback.setAdapter(adapter)
         itemTouchCallback.setCardListHelper(cardListHelper)
-        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, adapter, manager)
+        restoreRecyclerViewState(savedInstanceState, manager)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -104,7 +106,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             .create { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        FirebaseAdapterUtils.saveRecyclerViewState(outState, adapter, manager)
+        saveRecyclerViewState(outState, manager)
         super.onSaveInstanceState(outState)
     }
 
@@ -117,9 +119,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         val itemCount: Int = adapter.itemCount
-        ref.push().setValue(
-                "item " + (itemCount + 1),
-                FirebaseAdapterUtils.getHighestIntPriority(adapter.snapshots) + 1)
+        ref.push().setValue("item " + (itemCount + 1), getHighestIntPriority(adapter.snapshots) + 1)
         itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 

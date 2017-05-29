@@ -12,7 +12,6 @@ import kotlin.properties.Delegates
 
 
 const val MANAGER_STATE = "manager_state"
-const val ITEM_COUNT = "count"
 const val SINGLE_ITEM = 1
 const val TWO_ITEMS = 2
 
@@ -61,9 +60,6 @@ fun initConstants(context: Context) {
     providerAuthority = context.packageName + ".provider"
     providerAuthorityJava = providerAuthority
 }
-
-fun getScoutMetrics(key: String): DatabaseReference =
-        FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS)
 
 fun getDebugInfo(): String = "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
         "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +

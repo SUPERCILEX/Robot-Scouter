@@ -11,11 +11,12 @@ import android.view.ViewGroup;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutKey;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutKeyBundle;
-import static com.supercilex.robotscouter.util.ConstantsKt.getScoutMetrics;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutMetricsRef;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.restoreRecyclerViewState;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.saveRecyclerViewState;
 
 public class ScoutFragment extends Fragment {
     private ScoutAdapter mAdapter;
@@ -46,18 +47,18 @@ public class ScoutFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new ScoutAdapter(
-                getScoutMetrics(mScoutKey),
+                getScoutMetricsRef(mScoutKey),
                 getChildFragmentManager(),
                 mRecyclerView);
         mRecyclerView.setAdapter(mAdapter);
-        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        restoreRecyclerViewState(savedInstanceState, mManager);
 
         return mRecyclerView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, mManager);
+        saveRecyclerViewState(outState, mManager);
         super.onSaveInstanceState(outState);
     }
 

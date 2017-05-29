@@ -59,9 +59,7 @@ private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Void> 
         // This allows the database to work offline without any setup
     }
 
-    override fun onCancelled(error: DatabaseError) {
-        FirebaseCrash.report(error.toException())
-    }
+    override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
 
     companion object {
         private val SHOULD_CACHE_DB = "should_cache_db"

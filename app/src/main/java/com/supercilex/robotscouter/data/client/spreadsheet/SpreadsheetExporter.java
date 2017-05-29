@@ -31,7 +31,6 @@ import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
-import com.supercilex.robotscouter.util.IoUtils;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -99,6 +98,9 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logExportTeamsEv
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava;
+import static com.supercilex.robotscouter.util.IoUtilsKt.getRootFolder;
+import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
+import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setShouldShowExportHint;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.shouldShowExportHint;
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -286,7 +288,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     @Nullable
     private Uri getFileUri() {
         @SuppressWarnings("MissingPermission")
-        File rsFolder = IoUtils.getRootFolder();
+        File rsFolder = getRootFolder();
         if (rsFolder == null) return null;
 
         File file = writeFile(rsFolder);
@@ -305,7 +307,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                             rsFolder, getFullyQualifiedFileName(" (" + i + ")"));
                 } else {
                     absoluteFile = new File(absoluteFile.getParentFile(),
-                                            IoUtils.hide(absoluteFile.getName()));
+                                            hideFile(absoluteFile.getName()));
                     if (!absoluteFile.createNewFile()
                             // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
                             && (!absoluteFile.delete() || !absoluteFile.createNewFile())) {
@@ -325,7 +327,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             }
             workbook.write(stream);
 
-            return IoUtils.unhide(absoluteFile);
+            return unhideFile(absoluteFile);
         } catch (IOException e) {
             showError(this, e);
             absoluteFile.delete();

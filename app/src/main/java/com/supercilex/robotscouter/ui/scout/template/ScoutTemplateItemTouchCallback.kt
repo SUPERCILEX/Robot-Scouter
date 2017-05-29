@@ -117,9 +117,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
                         .show()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                FirebaseCrash.report(error.toException())
-            }
+            override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
         })
     }
 

@@ -28,12 +28,14 @@ import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.util.Constants;
-import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
 import java.util.Collections;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.restoreRecyclerViewState;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.saveRecyclerViewState;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
         implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
@@ -99,7 +101,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        FirebaseAdapterUtils.saveRecyclerViewState(outState, mAdapter, mManager);
+        saveRecyclerViewState(outState, mManager);
         super.onSaveInstanceState(outState);
     }
 
@@ -176,7 +178,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 mItemTouchCallback);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);
-        FirebaseAdapterUtils.restoreRecyclerViewState(savedInstanceState, mAdapter, mManager);
+        restoreRecyclerViewState(savedInstanceState, mManager);
     }
 
     private void initFabMenu() {
@@ -215,7 +217,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             return;
         }
 
-        int priority = FirebaseAdapterUtils.getHighestIntPriority(mAdapter.getSnapshots()) + 1;
+        int priority = getHighestIntPriority(mAdapter.getSnapshots()) + 1;
         DatabaseReference metricRef = templateRef.push();
         switch (id) {
             case R.id.add_checkbox:

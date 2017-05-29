@@ -9,7 +9,7 @@ public interface TeamMenuManager extends MenuManager {
 
     List<TeamHelper> getSelectedTeams();
 
-    void onSelectedTeamMoved(TeamHelper oldTeamHelper, TeamHelper teamHelper);
+    void onSelectedTeamChanged(TeamHelper oldTeamHelper, TeamHelper teamHelper);
 
     void onSelectedTeamRemoved(TeamHelper oldTeamHelper);
 }
