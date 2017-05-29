@@ -69,47 +69,41 @@
         android:layout_height="match_parent"
         android:layout_gravity="bottom|end"
         android:padding="@dimen/spacing_large"
-        android:src="@drawable/ic_add_white_24dp"
         app:layout_behavior="com.supercilex.robotscouter.ui.scout.template.FabMenuBehavior"
         app:menu_backgroundColor="#dcf1f1f1"
         app:menu_colorNormal="@color/colorAccent"
         app:menu_colorPressed="@color/colorAccent"
-        app:menu_colorRipple="@color/colorAccent">
+        app:menu_colorRipple="@color/colorAccent"
+        app:srcCompat="@drawable/ic_add_white_24dp">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_header"
             style="@style/RobotScouter.Fab.Metric"
-            android:src="@drawable/ic_title_white_24dp"
             app:fab_label="@string/add_header" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_checkbox"
             style="@style/RobotScouter.Fab.Metric"
-            android:src="@drawable/ic_check_circle_white_24dp"
             app:fab_label="@string/add_checkbox" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_stopwatch"
             style="@style/RobotScouter.Fab.Metric"
-            android:src="@drawable/ic_add_alarm_white_24dp"
             app:fab_label="@string/add_stopwatch" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_note"
             style="@style/RobotScouter.Fab.Metric"
-            android:src="@drawable/ic_note_white_24dp"
             app:fab_label="@string/add_note" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_counter"
             style="@style/RobotScouter.Fab.Metric"
-            android:src="@drawable/ic_count_white_24dp"
             app:fab_label="@string/add_counter" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_spinner"
             style="@style/RobotScouter.Fab.Metric"
-            android:src="@drawable/ic_list_white_24dp"
             app:fab_label="@string/add_spinner" />
 
     </com.github.clans.fab.FloatingActionMenu>

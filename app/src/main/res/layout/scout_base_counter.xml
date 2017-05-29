@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageButton
@@ -10,8 +11,8 @@
         android:layout_height="@dimen/fab_size"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_decrement_counter"
-        android:src="@drawable/ic_remove_white_24dp"
         android:stateListAnimator="@null"
+        app:srcCompat="@drawable/ic_remove_white_24dp"
         tools:ignore="UnusedAttribute" />
 
     <TextView
@@ -33,8 +34,8 @@
         android:layout_height="@dimen/fab_size"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_increment_counter"
-        android:src="@drawable/ic_add_white_24dp"
         android:stateListAnimator="@null"
+        app:srcCompat="@drawable/ic_add_white_24dp"
         tools:ignore="UnusedAttribute" />
 
 </merge>

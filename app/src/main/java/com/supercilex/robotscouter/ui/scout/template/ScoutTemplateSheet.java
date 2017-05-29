@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
@@ -184,12 +185,25 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     private void initFabMenu() {
         mFam = mRootView.findViewById(R.id.fab_menu);
 
-        mRootView.findViewById(R.id.add_checkbox).setOnClickListener(this);
-        mRootView.findViewById(R.id.add_counter).setOnClickListener(this);
-        mRootView.findViewById(R.id.add_spinner).setOnClickListener(this);
-        mRootView.findViewById(R.id.add_note).setOnClickListener(this);
-        mRootView.findViewById(R.id.add_stopwatch).setOnClickListener(this);
-        mRootView.findViewById(R.id.add_header).setOnClickListener(this);
+        FloatingActionButton header = mRootView.findViewById(R.id.add_header);
+        FloatingActionButton checkbox = mRootView.findViewById(R.id.add_checkbox);
+        FloatingActionButton stopwatch = mRootView.findViewById(R.id.add_stopwatch);
+        FloatingActionButton note = mRootView.findViewById(R.id.add_note);
+        FloatingActionButton counter = mRootView.findViewById(R.id.add_counter);
+        FloatingActionButton spinner = mRootView.findViewById(R.id.add_spinner);
+
+        header.setOnClickListener(this);
+        checkbox.setOnClickListener(this);
+        stopwatch.setOnClickListener(this);
+        note.setOnClickListener(this);
+        counter.setOnClickListener(this);
+        spinner.setOnClickListener(this);
+        header.setImageResource(R.drawable.ic_title_white_24dp);
+        checkbox.setImageResource(R.drawable.ic_done_white_24dp);
+        stopwatch.setImageResource(R.drawable.ic_add_alarm_white_24dp);
+        note.setImageResource(R.drawable.ic_note_white_24dp);
+        counter.setImageResource(R.drawable.ic_count_white_24dp);
+        spinner.setImageResource(R.drawable.ic_list_white_24dp);
 
         // This lets us close the fam when the recyclerview it touched
         mRecyclerView.addOnItemTouchListener(this);
