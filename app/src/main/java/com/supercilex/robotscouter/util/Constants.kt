@@ -10,8 +10,6 @@ import kotlin.properties.Delegates
 
 // TODO remove all @JvmField annotations in all classes once all of RS is converted to Kotlin
 
-
-const val MANAGER_STATE = "manager_state"
 const val SINGLE_ITEM = 1
 const val TWO_ITEMS = 2
 

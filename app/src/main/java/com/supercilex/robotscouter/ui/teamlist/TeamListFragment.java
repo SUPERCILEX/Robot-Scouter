@@ -21,7 +21,8 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
 
-import static com.supercilex.robotscouter.util.ConstantsKt.MANAGER_STATE;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.restoreRecyclerViewState;
+import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.saveRecyclerViewState;
 
 /**
  * Created in {@link R.layout#activity_team_list}
@@ -58,9 +59,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
             mOnAdapterReadyTask.setResult(mAdapter);
             mOnAdapterReadyTask = new TaskCompletionSource<>();
 
-            if (mSavedInstanceState != null) {
-                mManager.onRestoreInstanceState(mSavedInstanceState.getParcelable(MANAGER_STATE));
-            }
             mMenuHelper.setAdapter(mAdapter);
             mRecyclerView.setAdapter(mAdapter);
             mMenuHelper.restoreState(mSavedInstanceState);
@@ -92,6 +90,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                 }
             }
         });
+        restoreRecyclerViewState(mSavedInstanceState, mManager);
 
         FirebaseAuth.getInstance().addAuthStateListener(this);
 
@@ -106,9 +105,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mManager != null) {
-            outState.putParcelable(MANAGER_STATE, mManager.onSaveInstanceState());
-        }
+        saveRecyclerViewState(outState, mManager);
         if (mAdapter != null) mAdapter.onSaveInstanceState(outState);
         mMenuHelper.saveState(outState);
         super.onSaveInstanceState(outState);

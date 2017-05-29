@@ -7,6 +7,8 @@ import android.support.v7.widget.SimpleItemAnimator
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.DataSnapshot
 
+private const val MANAGER_STATE = "manager_state"
+
 fun <T> getAdapterItems(adapter: FirebaseRecyclerAdapter<T, *>): List<T> =
         (0 until adapter.itemCount).map { adapter.getItem(it) }
 
