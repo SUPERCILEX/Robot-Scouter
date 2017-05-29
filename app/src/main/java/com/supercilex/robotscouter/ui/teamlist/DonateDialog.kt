@@ -164,10 +164,10 @@ class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClic
     }
 
     companion object {
-        private val TAG = "DonateDialog"
-        private val KEY_IS_PROGRESS_SHOWING = "is_progress_showing_key"
+        private const val TAG = "DonateDialog"
+        private const val KEY_IS_PROGRESS_SHOWING = "is_progress_showing_key"
 
-        private val RC_PURCHASE = 1001
+        private const val RC_PURCHASE = 1001
         private val ITEM_SKUS: List<String> = listOf(
                 "1.00_donate_single",
                 "1.00_donate_subscription",

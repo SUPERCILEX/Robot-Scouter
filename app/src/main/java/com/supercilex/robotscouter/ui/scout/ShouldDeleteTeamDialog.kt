@@ -24,7 +24,7 @@ class ShouldDeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener
     override fun onClick(dialog: DialogInterface, which: Int) = mTeamHelper.deleteTeam()
 
     companion object {
-        private val TAG = "ShouldDeleteTeamDialog"
+        private const val TAG = "ShouldDeleteTeamDialog"
 
         fun show(manager: FragmentManager, teamHelper: TeamHelper) =
                 ShouldDeleteTeamDialog().show(manager, TAG, teamHelper.toBundle())

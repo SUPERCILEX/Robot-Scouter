@@ -15,12 +15,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.deleteScout;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutIndicesRef;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUTS;
@@ -67,7 +68,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         mTabLayout = tabLayout;
         mTeamHelper = helper;
         mCurrentScoutKey = currentScoutKey;
-        mQuery = ScoutUtils.getIndicesRef(helper.getTeam().getKey());
+        mQuery = getScoutIndicesRef(helper.getTeam().getKey());
         mQuery.addValueEventListener(this);
     }
 
@@ -105,7 +106,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         if (mKeys.size() > SINGLE_ITEM) {
             newKey = mKeys.size() - 1 > index ? mKeys.get(index + 1) : mKeys.get(index - 1);
         }
-        ScoutUtils.delete(mQuery.getRef().getKey(), mCurrentScoutKey);
+        deleteScout(mQuery.getRef().getKey(), mCurrentScoutKey);
         mCurrentScoutKey = newKey;
     }
 

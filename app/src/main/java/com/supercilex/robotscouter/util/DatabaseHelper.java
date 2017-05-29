@@ -21,10 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
-import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
 
@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.supercilex.robotscouter.data.client.UploadTeamMediaJobKt.startUploadTeamMediaJob;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.METRIC_PARSER;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutIndicesRef;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.updateAnalyticsUserId;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.Constants.sFirebaseScoutTemplates;
@@ -54,13 +56,13 @@ public enum DatabaseHelper {;
         return team;
     };
     private static final SnapshotParser<Scout> SCOUT_PARSER = snapshot -> {
-        Scout scout = new Scout(snapshot.child(FIREBASE_NAME).getValue(String.class));
+        List<Metric<?>> scouts = new ArrayList<>();
 
         for (DataSnapshot metric : snapshot.child(FIREBASE_METRICS).getChildren()) {
-            scout.add(ScoutUtils.METRIC_PARSER.parseSnapshot(metric));
+            scouts.add(METRIC_PARSER.parseSnapshot(metric));
         }
 
-        return scout;
+        return new Scout(snapshot.child(FIREBASE_NAME).getValue(String.class), scouts);
     };
 
     private static final ObservableSnapshotArray<Team> TEAM_NOOP_ARRAY =
@@ -279,10 +281,9 @@ public enum DatabaseHelper {;
             for (TeamHelper teamHelper : teams) {
                 Team newTeam = teamHelper.getTeam();
 
-                DatabaseHelper.forceUpdate(ScoutUtils.getIndicesRef(newTeam.getKey()))
+                DatabaseHelper.forceUpdate(getScoutIndicesRef(newTeam.getKey()))
                         .addOnSuccessListener(query -> new FirebaseCopier(query,
-                                                                          ScoutUtils.getIndicesRef(
-                                                                                  oldTeam.getKey()))
+                                                                          getScoutIndicesRef(oldTeam.getKey()))
                                 .performTransformation()
                                 .continueWithTask(task -> task.getResult().getRef().removeValue())
                                 .addOnSuccessListener(aVoid -> newTeam.getHelper().deleteTeam()));

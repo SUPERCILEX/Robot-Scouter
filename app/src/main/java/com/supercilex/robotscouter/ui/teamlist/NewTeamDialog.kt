@@ -43,7 +43,7 @@ class NewTeamDialog : KeyboardDialogBase() {
     }
 
     companion object {
-        private val TAG = "NewTeamDialog"
+        private const val TAG = "NewTeamDialog"
 
         fun show(manager: FragmentManager) = NewTeamDialog().show(manager, TAG)
     }

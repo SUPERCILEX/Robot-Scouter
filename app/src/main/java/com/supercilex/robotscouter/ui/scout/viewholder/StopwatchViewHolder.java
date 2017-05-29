@@ -28,7 +28,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
+import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import java.lang.ref.WeakReference;
@@ -44,9 +44,9 @@ import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widg
 import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Colored;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
-public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextView>
+public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
         implements View.OnClickListener, OnSuccessListener<Void> {
-    private static final Map<StopwatchMetric, Timer> TIMERS = new ConcurrentHashMap<>();
+    private static final Map<Metric.Stopwatch, Timer> TIMERS = new ConcurrentHashMap<>();
 
     private final Button mToggleStopwatch;
     private final RecyclerView mCycles;
@@ -138,7 +138,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
         public Timer(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
             mIsRunning = true;
-            TIMERS.put((StopwatchMetric) holder.getMetric(), this);
+            TIMERS.put((Metric.Stopwatch) (Object) holder.getMetric(), this);
 
             setStyle();
 
@@ -174,7 +174,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<List<Long>, TextVie
             mIsRunning = false;
             StopwatchViewHolder holder = mHolder.get();
             if (holder != null) holder.mTimer = null;
-            for (Map.Entry<StopwatchMetric, Timer> entry : TIMERS.entrySet()) {
+            for (Map.Entry<Metric.Stopwatch, Timer> entry : TIMERS.entrySet()) {
                 if (entry.getValue().equals(this)) TIMERS.remove(entry.getKey());
             }
 

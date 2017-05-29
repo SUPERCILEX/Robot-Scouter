@@ -9,7 +9,6 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.analytics.FirebaseAnalytics.getInstance
 import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.ui.AuthHelper
 import kotlin.properties.Delegates
 
 private var analytics: FirebaseAnalytics by Delegates.notNull<FirebaseAnalytics>()
@@ -72,5 +71,5 @@ fun logLoginEvent() {
 }
 
 fun updateAnalyticsUserId() {
-    analytics.setUserId(AuthHelper.getUid())
+    analytics.setUserId(getUid())
 }

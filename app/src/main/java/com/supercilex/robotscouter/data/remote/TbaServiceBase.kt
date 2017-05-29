@@ -37,7 +37,7 @@ abstract class TbaServiceBase<out T>(team: Team,
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-        private val ERROR_404 = 404
+        private const val ERROR_404 = 404
 
         @JvmStatic
         protected fun executeAsync(service: TbaServiceBase<*>): Task<Team> =

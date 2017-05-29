@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetExporter;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
@@ -36,6 +35,7 @@ import java.util.List;
 
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
+import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateColorChange;
 
@@ -298,7 +298,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
             ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                     .setTitle(R.string.app_name);
 
-            if (AuthHelper.isFullUser()) {
+            if (isFullUser()) {
                 mSignInItem.setVisible(false);
                 mSignOutItem.setVisible(true);
             } else {

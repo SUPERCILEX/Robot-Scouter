@@ -28,7 +28,7 @@ class UpdateDialog : DialogFragment(), DialogInterface.OnClickListener {
     override fun onCancel(dialog: DialogInterface?) = activity.finish()
 
     companion object {
-        private val TAG = "UpdateDialog"
+        private const val TAG = "UpdateDialog"
         private val STORE_LISTING_URI: Uri = Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID)
         private val LATEST_APK_URI: Uri = Uri.parse("https://github.com/SUPERCILEX/app-version-history/blob/master/" + "Robot-Scouter/app-release.apk")
 

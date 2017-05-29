@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
-import com.supercilex.robotscouter.data.util.ScoutUtils;
 import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutKey;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutKeyBundle;
 import static com.supercilex.robotscouter.util.ConstantsKt.getScoutMetrics;
 
 public class ScoutFragment extends Fragment {
@@ -24,14 +25,14 @@ public class ScoutFragment extends Fragment {
 
     public static ScoutFragment newInstance(String scoutKey) {
         ScoutFragment fragment = new ScoutFragment();
-        fragment.setArguments(ScoutUtils.getScoutKeyBundle(scoutKey));
+        fragment.setArguments(getScoutKeyBundle(scoutKey));
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScoutKey = ScoutUtils.getScoutKey(getArguments());
+        mScoutKey = getScoutKey(getArguments());
     }
 
     @Override

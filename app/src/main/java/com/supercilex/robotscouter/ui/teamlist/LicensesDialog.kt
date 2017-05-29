@@ -54,7 +54,7 @@ class LicensesDialog : DialogFragment() {
     }
 
     companion object {
-        private val TAG = "LicensesDialog"
+        private const val TAG = "LicensesDialog"
 
         fun show(manager: FragmentManager) = LicensesDialog().show(manager, TAG)
     }

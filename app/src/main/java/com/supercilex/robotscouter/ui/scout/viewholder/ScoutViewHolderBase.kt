@@ -8,17 +8,18 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
+import com.supercilex.robotscouter.data.model.Metric
 
-abstract class ScoutViewHolderBase<TMetric, out VView : TextView>(itemView: View) :
+abstract class ScoutViewHolderBase<FMetric : Metric<TMetric>, TMetric, out VView : TextView>(
+        itemView: View) :
         RecyclerView.ViewHolder(itemView) {
     @Suppress("UNCHECKED_CAST")
     protected val name: VView = itemView.findViewById(R.id.name)
-    protected lateinit var metric: ScoutMetric<TMetric>
+    protected lateinit var metric: FMetric
     protected lateinit var manager: FragmentManager
     private lateinit var animator: SimpleItemAnimator
 
-    fun bind(metric: ScoutMetric<TMetric>, manager: FragmentManager, animator: SimpleItemAnimator) {
+    fun bind(metric: FMetric, manager: FragmentManager, animator: SimpleItemAnimator) {
         this.metric = metric
         this.manager = manager
         this.animator = animator
@@ -34,14 +35,14 @@ abstract class ScoutViewHolderBase<TMetric, out VView : TextView>(itemView: View
     protected fun updateMetricName(name: String) {
         if (!TextUtils.equals(metric.name, name)) {
             disableAnimations()
-            metric.updateName(name)
+            metric.name = name
         }
     }
 
     protected fun updateMetricValue(value: TMetric) {
         if (value != metric.value) {
             disableAnimations()
-            metric.updateValue(value)
+            metric.value = value
         }
     }
 

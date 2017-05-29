@@ -18,7 +18,6 @@ import com.google.firebase.appindexing.builders.Indexables;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
@@ -28,6 +27,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.startDownloadTeamDataJob;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.deleteAllScouts;
+import static com.supercilex.robotscouter.util.AuthUtilsKt.getUid;
 import static com.supercilex.robotscouter.util.ConstantsKt.APP_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
@@ -63,7 +64,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public static DatabaseReference getIndicesRef() {
-        return FIREBASE_TEAM_INDICES.child(AuthHelper.getUid());
+        return FIREBASE_TEAM_INDICES.child(getUid());
     }
 
     public static TeamHelper parse(Intent intent) {
@@ -215,7 +216,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public void deleteTeam() {
-        ScoutUtils.deleteAll(mTeam.getKey()).addOnSuccessListener(aVoid -> {
+        deleteAllScouts(mTeam.getKey()).addOnSuccessListener(aVoid -> {
             getRef().removeValue();
             getIndicesRef().child(mTeam.getKey()).removeValue();
             FirebaseAppIndex.getInstance().remove(getDeepLink());

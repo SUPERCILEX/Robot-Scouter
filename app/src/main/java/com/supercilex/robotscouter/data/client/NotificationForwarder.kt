@@ -20,9 +20,9 @@ class NotificationForwarder : BroadcastReceiver() {
     }
 
     companion object {
-        private val KEY_COMPONENT = "component"
-        private val KEY_CANCEL = "cancel"
-        private val KEY_NOTIFICATION_ID = "notification_id"
+        private const val KEY_COMPONENT = "component"
+        private const val KEY_CANCEL = "cancel"
+        private const val KEY_NOTIFICATION_ID = "notification_id"
 
         fun getCancelIntent(context: Context, id: Int, intent: Intent): Intent =
                 intent.putExtra(KEY_COMPONENT, intent.component)

@@ -25,7 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.remote.TbaDownloader;
-import com.supercilex.robotscouter.data.util.ScoutUtils;
+import com.supercilex.robotscouter.data.util.ScoutUtilsKt;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
@@ -37,6 +37,8 @@ import com.supercilex.robotscouter.util.Constants;
 import java.util.Collections;
 
 import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.cancelAllDownloadTeamDataJobs;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.addScout;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutKeyBundle;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTemplateEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
@@ -59,7 +61,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     public static Bundle getBundle(Team team, boolean addScout, String scoutKey) {
         Bundle args = team.getHelper().toBundle();
         args.putBoolean(KEY_ADD_SCOUT, addScout);
-        args.putAll(ScoutUtils.getScoutKeyBundle(scoutKey));
+        args.putAll(getScoutKeyBundle(scoutKey));
         return args;
     }
 
@@ -138,7 +140,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         if (mPagerAdapter != null) {
-            outState.putAll(ScoutUtils.getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
+            outState.putAll(getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         }
         mHolder.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
@@ -171,7 +173,7 @@ public abstract class ScoutListFragmentBase extends Fragment
         String teamNumber = mTeamHelper.getTeam().getNumber();
         switch (item.getItemId()) {
             case R.id.action_new_scout:
-                mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+                mPagerAdapter.setCurrentScoutKey(addScout(mTeamHelper.getTeam()));
                 break;
             case R.id.action_add_media:
                 ShouldUploadMediaToTbaDialog.Companion.show(this);
@@ -260,7 +262,7 @@ public abstract class ScoutListFragmentBase extends Fragment
 
         if (getArguments().getBoolean(KEY_ADD_SCOUT, false)) {
             getArguments().remove(KEY_ADD_SCOUT);
-            mPagerAdapter.setCurrentScoutKey(ScoutUtils.add(mTeamHelper.getTeam()));
+            mPagerAdapter.setCurrentScoutKey(addScout(mTeamHelper.getTeam()));
         }
     }
 
@@ -268,8 +270,8 @@ public abstract class ScoutListFragmentBase extends Fragment
         String scoutKey;
 
         if (mPagerAdapter != null) scoutKey = mPagerAdapter.getCurrentScoutKey(); // NOPMD
-        else if (mSavedState != null) scoutKey = ScoutUtils.getScoutKey(mSavedState); // NOPMD
-        else scoutKey = ScoutUtils.getScoutKey(getArguments());
+        else if (mSavedState != null) scoutKey = ScoutUtilsKt.getScoutKey(mSavedState); // NOPMD
+        else scoutKey = ScoutUtilsKt.getScoutKey(getArguments());
 
         return scoutKey;
     }

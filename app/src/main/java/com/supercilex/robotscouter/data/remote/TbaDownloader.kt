@@ -84,11 +84,11 @@ class TbaDownloader private constructor(team: Team, context: Context) : TbaServi
     }
 
     companion object {
-        private val TEAM_NICKNAME = "nickname"
-        private val TEAM_WEBSITE = "website"
-        private val IMGUR = "imgur"
-        private val CHIEF_DELPHI = "cdphotothread"
-        private val MAX_HISTORY = 2000
+        private const val TEAM_NICKNAME = "nickname"
+        private const val TEAM_WEBSITE = "website"
+        private const val IMGUR = "imgur"
+        private const val CHIEF_DELPHI = "cdphotothread"
+        private const val MAX_HISTORY = 2000
 
         fun load(team: Team, context: Context): Task<Team> =
                 TbaServiceBase.executeAsync(TbaDownloader(team, context))

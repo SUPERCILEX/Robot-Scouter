@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
+import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.util.TeamCache;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
@@ -37,7 +37,7 @@ public final class SpreadsheetCache extends TeamCache {
     private final int mProgressMax;
     private int mCurrentProgress;
 
-    private final Map<Cell, ScoutMetric<?>> mKeyMetrics = new HashMap<>();
+    private final Map<Cell, Metric<?>> mKeyMetrics = new HashMap<>();
     private final Map<String, Short> mFormatStyles = new HashMap<>();
 
     private CellStyle mRowHeaderStyle;
@@ -142,7 +142,7 @@ public final class SpreadsheetCache extends TeamCache {
         cell.setCellStyle(style);
     }
 
-    public void putKeyMetric(Cell cell, ScoutMetric<?> key) {
+    public void putKeyMetric(Cell cell, Metric<?> key) {
         mKeyMetrics.put(cell, key);
     }
 
@@ -151,10 +151,10 @@ public final class SpreadsheetCache extends TeamCache {
     }
 
     public String getMetricKey(Cell cell) {
-        return getKeyMetric(cell).getKey();
+        return getKeyMetric(cell).getRef().getKey();
     }
 
-    public ScoutMetric<?> getKeyMetric(Cell cell) {
+    public Metric<?> getKeyMetric(Cell cell) {
         return mKeyMetrics.get(cell);
     }
 

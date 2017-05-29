@@ -45,7 +45,7 @@ class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
     }
 
     companion object {
-        private val TAG = "DeleteTeamDialog"
+        private const val TAG = "DeleteTeamDialog"
 
         fun show(manager: FragmentManager, teamHelpers: List<TeamHelper>) =
                 DeleteTeamDialog().show(manager, TAG, TeamHelper.toBundle(teamHelpers))

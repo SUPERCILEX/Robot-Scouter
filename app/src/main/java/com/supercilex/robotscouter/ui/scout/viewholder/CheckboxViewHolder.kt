@@ -3,9 +3,10 @@ package com.supercilex.robotscouter.ui.scout.viewholder
 import android.support.annotation.CallSuper
 import android.view.View
 import android.widget.CheckBox
+import com.supercilex.robotscouter.data.model.Metric
 
 open class CheckboxViewHolder(itemView: View) :
-        ScoutViewHolderBase<Boolean, CheckBox>(itemView),
+        ScoutViewHolderBase<Metric.Boolean, Boolean, CheckBox>(itemView),
         View.OnClickListener {
     public override fun bind() {
         super.bind()

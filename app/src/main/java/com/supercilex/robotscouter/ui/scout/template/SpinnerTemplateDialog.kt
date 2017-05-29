@@ -119,12 +119,12 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         val itemCount: Int = adapter.itemCount
         ref.push().setValue(
                 "item " + (itemCount + 1),
-                FirebaseAdapterUtils.getHighestIntPriority(adapter.snapshots))
+                FirebaseAdapterUtils.getHighestIntPriority(adapter.snapshots) + 1)
         itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 
     companion object {
-        private val TAG = "SpinnerTemplateDialog"
+        private const val TAG = "SpinnerTemplateDialog"
 
         fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueIndex: String) =
                 SpinnerTemplateDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {

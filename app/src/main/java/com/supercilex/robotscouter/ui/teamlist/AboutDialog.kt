@@ -37,7 +37,7 @@ class AboutDialog : DialogFragment(), DialogInterface.OnClickListener {
     }
 
     companion object {
-        private val TAG = "AboutDialog"
+        private const val TAG = "AboutDialog"
 
         fun show(manager: FragmentManager) = AboutDialog().show(manager, TAG)
     }

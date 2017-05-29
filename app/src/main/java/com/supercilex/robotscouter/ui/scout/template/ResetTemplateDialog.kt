@@ -57,8 +57,8 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     }
 
     companion object {
-        private val TAG = "ResetTemplateDialog"
-        private val RESET_ALL_KEY = "reset_all_key"
+        private const val TAG = "ResetTemplateDialog"
+        private const val RESET_ALL_KEY = "reset_all_key"
 
         fun show(manager: FragmentManager, helper: TeamHelper, shouldResetAll: Boolean) =
                 ResetTemplateDialog().show(manager, TAG, helper.toBundle()) {

@@ -6,7 +6,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.firebase.database.Query
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.metrics.MetricType
+import com.supercilex.robotscouter.data.model.BOOLEAN
+import com.supercilex.robotscouter.data.model.HEADER
+import com.supercilex.robotscouter.data.model.LIST
+import com.supercilex.robotscouter.data.model.MetricType
+import com.supercilex.robotscouter.data.model.NUMBER
+import com.supercilex.robotscouter.data.model.STOPWATCH
+import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.viewholder.CheckboxViewHolder
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder
@@ -21,20 +27,20 @@ class ScoutAdapter(query: Query, manager: FragmentManager, recyclerView: Recycle
     override val cardListHelper: CardListHelper = ListHelper(true)
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
-            ScoutViewHolderBase<*, *> {
+            ScoutViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
-            MetricType.BOOLEAN -> return CheckboxViewHolder(
+            BOOLEAN -> return CheckboxViewHolder(
                     inflater.inflate(R.layout.scout_checkbox, parent, false))
-            MetricType.NUMBER -> return CounterViewHolder(
+            NUMBER -> return CounterViewHolder(
                     inflater.inflate(R.layout.scout_counter, parent, false))
-            MetricType.TEXT -> return EditTextViewHolder(
+            TEXT -> return EditTextViewHolder(
                     inflater.inflate(R.layout.scout_notes, parent, false))
-            MetricType.LIST -> return SpinnerViewHolder(
+            LIST -> return SpinnerViewHolder(
                     inflater.inflate(R.layout.scout_spinner, parent, false))
-            MetricType.STOPWATCH -> return StopwatchViewHolder(
+            STOPWATCH -> return StopwatchViewHolder(
                     inflater.inflate(R.layout.scout_stopwatch, parent, false))
-            MetricType.HEADER -> return HeaderViewHolder(
+            HEADER -> return HeaderViewHolder(
                     inflater.inflate(R.layout.scout_header, parent, false))
             else -> throw IllegalStateException()
         }

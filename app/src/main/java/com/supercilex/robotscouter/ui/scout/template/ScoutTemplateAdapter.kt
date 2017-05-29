@@ -8,8 +8,14 @@ import com.firebase.ui.database.ChangeEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Query
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.metrics.MetricType
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric
+import com.supercilex.robotscouter.data.model.BOOLEAN
+import com.supercilex.robotscouter.data.model.HEADER
+import com.supercilex.robotscouter.data.model.LIST
+import com.supercilex.robotscouter.data.model.Metric
+import com.supercilex.robotscouter.data.model.MetricType
+import com.supercilex.robotscouter.data.model.NUMBER
+import com.supercilex.robotscouter.data.model.STOPWATCH
+import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.ScoutAdapterBase
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
@@ -31,28 +37,28 @@ class ScoutTemplateAdapter(query: Query,
         callback.setCardListHelper(cardListHelper)
     }
 
-    override fun populateViewHolder(viewHolder: ScoutViewHolderBase<*, *>,
-                                    metric: ScoutMetric<Any>,
+    override fun populateViewHolder(viewHolder: ScoutViewHolderBase<*, *, *>,
+                                    metric: Metric<*>,
                                     position: Int) {
         super.populateViewHolder(viewHolder, metric, position)
         callback.onBind(viewHolder, position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
-            ScoutViewHolderBase<*, *> {
+            ScoutViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
-            MetricType.BOOLEAN -> return CheckboxTemplateViewHolder(
+            BOOLEAN -> return CheckboxTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_checkbox, parent, false))
-            MetricType.NUMBER -> return CounterTemplateViewHolder(
+            NUMBER -> return CounterTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_counter, parent, false))
-            MetricType.TEXT -> return EditTextTemplateViewHolder(
+            TEXT -> return EditTextTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_notes, parent, false))
-            MetricType.LIST -> return SpinnerTemplateViewHolder(
+            LIST -> return SpinnerTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_spinner, parent, false))
-            MetricType.STOPWATCH -> return StopwatchTemplateViewHolder(
+            STOPWATCH -> return StopwatchTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_stopwatch, parent, false))
-            MetricType.HEADER -> return HeaderTemplateViewHolder(
+            HEADER -> return HeaderTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_header, parent, false))
             else -> throw IllegalStateException()
         }

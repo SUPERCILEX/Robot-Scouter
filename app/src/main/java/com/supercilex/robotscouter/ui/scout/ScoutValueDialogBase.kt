@@ -42,6 +42,6 @@ abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
     }
 
     protected companion object {
-        @JvmStatic val CURRENT_VALUE = "current_value"
+        const val CURRENT_VALUE = "current_value"
     }
 }

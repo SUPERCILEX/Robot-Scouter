@@ -24,7 +24,7 @@ class RemoveAllMetricsDialog : DialogFragment(), DialogInterface.OnClickListener
     }
 
     companion object {
-        private val TAG = "RemoveAllMetricsDialog"
+        private const val TAG = "RemoveAllMetricsDialog"
 
         fun show(manager: FragmentManager, templateRef: DatabaseReference) =
                 RemoveAllMetricsDialog().show(manager, TAG, DatabaseHelper.getRefBundle(templateRef))

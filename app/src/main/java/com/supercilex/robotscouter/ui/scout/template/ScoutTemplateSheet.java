@@ -22,10 +22,8 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
+import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.model.metrics.ListMetric;
-import com.supercilex.robotscouter.data.model.metrics.MetricType;
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
@@ -35,6 +33,7 @@ import com.supercilex.robotscouter.util.FirebaseAdapterUtils;
 import java.util.Collections;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
         implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
@@ -220,24 +219,27 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         DatabaseReference metricRef = templateRef.push();
         switch (id) {
             case R.id.add_checkbox:
-                metricRef.setValue(new ScoutMetric<>("", false, MetricType.BOOLEAN), priority);
+                metricRef.setValue(new Metric.Boolean("", false), priority);
                 break;
             case R.id.add_counter:
-                metricRef.setValue(new ScoutMetric<>("", 0, MetricType.NUMBER), priority);
+                metricRef.setValue(new Metric.Number("", 0, null), priority);
                 break;
             case R.id.add_spinner:
-                metricRef.setValue(ListMetric.init(), priority);
+                metricRef.setValue(
+                        new Metric.List("", Collections.singletonMap("a", "Item 1"), "a"),
+                        priority);
+                metricRef.child(FIREBASE_VALUE).child("a").setPriority(0);
                 break;
             case R.id.add_note:
-                metricRef.setValue(new ScoutMetric<>("", "", MetricType.TEXT), priority);
+                metricRef.setValue(new Metric.Text("", ""), priority);
                 break;
             case R.id.add_stopwatch:
                 metricRef.setValue(
-                        new ScoutMetric<>("", Collections.<Long>emptyList(), MetricType.STOPWATCH),
+                        new Metric.Stopwatch("", Collections.emptyList()),
                         priority);
                 break;
             case R.id.add_header:
-                metricRef.setValue(new ScoutMetric<Void>("", null, MetricType.HEADER), priority);
+                metricRef.setValue(new Metric.Header("", null), priority);
                 break;
             default:
                 throw new IllegalStateException("Unknown id: " + id);

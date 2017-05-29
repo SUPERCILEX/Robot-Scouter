@@ -5,8 +5,8 @@ import android.text.TextUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.supercilex.robotscouter.data.model.User;
-import com.supercilex.robotscouter.ui.AuthHelper;
 
+import static com.supercilex.robotscouter.util.AuthUtilsKt.getUid;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_USERS;
 import static com.supercilex.robotscouter.util.ConstantsKt.SCOUT_TEMPLATE_INDICES;
@@ -19,7 +19,7 @@ public class UserHelper {
     }
 
     public static DatabaseReference getScoutTemplateIndicesRef() {
-        return getScoutTemplateIndicesRef(AuthHelper.getUid());
+        return getScoutTemplateIndicesRef(getUid());
     }
 
     private static DatabaseReference getScoutTemplateIndicesRef(String uid) {

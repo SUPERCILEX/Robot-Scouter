@@ -26,12 +26,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.perf.metrics.AddTrace;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.NotificationForwarder;
+import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
-import com.supercilex.robotscouter.data.model.metrics.ListMetric;
-import com.supercilex.robotscouter.data.model.metrics.MetricType;
-import com.supercilex.robotscouter.data.model.metrics.NumberMetric;
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
-import com.supercilex.robotscouter.data.model.metrics.StopwatchMetric;
 import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
@@ -93,6 +89,12 @@ import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUti
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.setChartAxisTitle;
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.showError;
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.showToast;
+import static com.supercilex.robotscouter.data.model.MetricTypeKt.BOOLEAN;
+import static com.supercilex.robotscouter.data.model.MetricTypeKt.HEADER;
+import static com.supercilex.robotscouter.data.model.MetricTypeKt.LIST;
+import static com.supercilex.robotscouter.data.model.MetricTypeKt.NUMBER;
+import static com.supercilex.robotscouter.data.model.MetricTypeKt.STOPWATCH;
+import static com.supercilex.robotscouter.data.model.MetricTypeKt.TEXT;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logExportTeamsEvent;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
@@ -391,9 +393,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         Row header = teamSheet.createRow(0);
         header.createCell(0); // Create empty top left corner cell
-        List<ScoutMetric> orderedMetrics = scouts.get(scouts.size() - 1).getMetrics();
+        List<Metric<?>> orderedMetrics = scouts.get(scouts.size() - 1).getMetrics();
         for (int i = 0; i < orderedMetrics.size(); i++) {
-            ScoutMetric metric = orderedMetrics.get(i);
+            Metric metric = orderedMetrics.get(i);
             Row row = teamSheet.createRow(i + 1);
 
             setupRow(row, teamHelper, metric);
@@ -401,7 +403,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         for (int i = 0, column = 1; i < scouts.size(); i++, column++) {
             Scout scout = scouts.get(i);
-            List<ScoutMetric> metrics = scout.getMetrics();
+            List<Metric<?>> metrics = scout.getMetrics();
 
             Cell cell = header.getCell(column, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             String name = scout.getName();
@@ -410,7 +412,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
             columnIterator:
             for (int j = 0, rowNum = 1; j < metrics.size(); j++, rowNum++) {
-                ScoutMetric metric = metrics.get(j);
+                Metric metric = metrics.get(j);
 
                 Row row = teamSheet.getRow(rowNum);
                 if (row == null) {
@@ -420,7 +422,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                     for (Row row1 : rows) {
                         Cell cell1 = row1.getCell(0);
-                        if (TextUtils.equals(mCache.getMetricKey(row1), metric.getKey())) {
+                        if (TextUtils.equals(mCache.getMetricKey(row1), metric.getRef().getKey())) {
                             setRowValue(column, metric, row1);
 
                             if (TextUtils.isEmpty(cell1.getStringCellValue())) {
@@ -445,7 +447,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
-    private void setupRowAndSetValue(Row row, TeamHelper helper, ScoutMetric metric, int column) {
+    private void setupRowAndSetValue(Row row, TeamHelper helper, Metric metric, int column) {
         setupRow(row, helper, metric);
         setRowValue(column, metric, row);
     }
@@ -459,7 +461,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
 
         Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData = new HashMap<>();
-        Map<ScoutMetric<Void>, Chart> chartPool = new HashMap<>();
+        Map<Metric<Void>, Chart> chartPool = new HashMap<>();
 
         Iterator<Row> rowIterator = sheet.rowIterator();
         for (int i = 0; rowIterator.hasNext(); i++) {
@@ -474,18 +476,18 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             Cell first = row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             cell.setCellStyle(first.getCellStyle());
 
-            @MetricType int type = getMetricForScouts(mScouts.get(teamHelper),
-                                                      mCache.getMetricKey(row)).getType();
+            int type = getMetricForScouts(mScouts.get(teamHelper),
+                                          mCache.getMetricKey(row)).getType();
 
             String rangeAddress = getCellRangeAddress(
                     first,
                     row.getCell(cell.getColumnIndex() - 1, MissingCellPolicy.CREATE_NULL_AS_BLANK));
             switch (type) {
-                case MetricType.BOOLEAN:
+                case BOOLEAN:
                     cell.setCellFormula("COUNTIF(" + rangeAddress + ", TRUE) / COUNTA(" + rangeAddress + ")");
                     mCache.setCellFormat(cell, "0.00%");
                     break;
-                case MetricType.NUMBER:
+                case NUMBER:
                     cell.setCellFormula(
                             "SUM(" + rangeAddress + ")" +
                                     " / " +
@@ -493,7 +495,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                     buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
-                case MetricType.STOPWATCH:
+                case STOPWATCH:
                     String excludeZeros = "\"<>0\"";
                     cell.setCellFormula(
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
@@ -501,7 +503,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
                     buildTeamChart(row, teamHelper, chartData, chartPool);
                     break;
-                case MetricType.LIST:
+                case LIST:
                     sheet.setArrayFormula(
                             "INDEX(" + rangeAddress + ", " +
                                     "MATCH(" +
@@ -515,8 +517,8 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                                                  cell.getColumnIndex(),
                                                  cell.getColumnIndex()));
                     break;
-                case MetricType.HEADER:
-                case MetricType.TEXT:
+                case HEADER:
+                case TEXT:
                     // Nothing to average
                     break;
                 default:
@@ -546,7 +548,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void buildTeamChart(Row row,
                                 TeamHelper teamHelper,
                                 Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
-                                Map<ScoutMetric<Void>, Chart> chartPool) {
+                                Map<Metric<Void>, Chart> chartPool) {
         if (isUnsupportedDevice()) return;
 
         Sheet sheet = row.getSheet();
@@ -554,14 +556,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         int lastDataCellNum = row.getSheet().getRow(0).getLastCellNum() - 2;
 
         Chart chart = null;
-        Pair<Integer, ScoutMetric<Void>> nearestHeader = null;
+        Pair<Integer, Metric<Void>> nearestHeader = null;
 
         List<Row> rows = getAdjustedList(row.getSheet());
         for (int i = row.getRowNum() - 1; i >= 0; i--) {
-            ScoutMetric metric = getMetricForScouts(mScouts.get(teamHelper),
-                                                    mCache.getMetricKey(rows.get(i)));
+            Metric metric = getMetricForScouts(mScouts.get(teamHelper),
+                                               mCache.getMetricKey(rows.get(i)));
 
-            if (metric.getType() == MetricType.HEADER) {
+            if (metric.getType() == HEADER) {
                 nearestHeader = Pair.create(i, metric);
 
                 Chart cachedChart = chartPool.get(metric);
@@ -583,7 +585,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 }
             }
 
-            nearestHeader = Pair.create(0, new ScoutMetric<>(null, null, MetricType.HEADER));
+            nearestHeader = Pair.create(0, new Metric.Header("", null));
         }
 
         LineChartData data;
@@ -625,12 +627,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 .setTitle(row.getCell(0).getStringCellValue());
     }
 
-    private void setupRow(Row row, TeamHelper teamHelper, ScoutMetric metric) {
+    private void setupRow(Row row, TeamHelper teamHelper, Metric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
         mCache.putKeyMetric(headerCell, metric);
 
-        if (metric.getType() == MetricType.HEADER) {
+        if (metric.getType() == HEADER) {
             headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
 
             int numOfScouts = mScouts.get(teamHelper).size();
@@ -644,16 +646,16 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
     }
 
-    private void setRowValue(int column, ScoutMetric metric, Row row) {
+    private void setRowValue(int column, Metric metric, Row row) {
         row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).setCellValue(metric.getName());
 
         Cell valueCell = row.getCell(column, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         switch (metric.getType()) {
-            case MetricType.BOOLEAN:
+            case BOOLEAN:
                 valueCell.setCellValue((boolean) metric.getValue());
                 break;
-            case MetricType.NUMBER:
-                NumberMetric numberMetric = (NumberMetric) metric;
+            case NUMBER:
+                Metric.Number numberMetric = (Metric.Number) metric;
                 valueCell.setCellValue(numberMetric.getValue());
 
                 String unit = numberMetric.getUnit();
@@ -661,19 +663,19 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                     mCache.setCellFormat(valueCell, "#0\"" + unit + "\"");
                 }
                 break;
-            case MetricType.LIST:
-                ListMetric listMetric = (ListMetric) metric;
+            case LIST:
+                Metric.List listMetric = (Metric.List) metric;
                 String selectedItem =
                         listMetric.getValue().get(listMetric.getSelectedValueKey());
                 valueCell.setCellValue(selectedItem);
                 break;
-            case MetricType.TEXT:
+            case TEXT:
                 RichTextString note = mCache.getCreationHelper()
                         .createRichTextString(String.valueOf(metric.getValue()));
                 valueCell.setCellValue(note);
                 break;
-            case MetricType.STOPWATCH:
-                List<Long> cycles = ((StopwatchMetric) metric).getValue();
+            case STOPWATCH:
+                List<? extends Long> cycles = ((Metric.Stopwatch) metric).getValue();
 
                 long sum = 0;
                 for (Long duration : cycles) sum += duration;
@@ -682,7 +684,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 valueCell.setCellValue(TimeUnit.MILLISECONDS.toSeconds(average));
                 mCache.setCellFormat(valueCell, "#0\"s\"");
                 break;
-            case MetricType.HEADER:
+            case HEADER:
                 // Headers are skipped because they don't contain any data
                 break;
             default:
@@ -708,15 +710,16 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
             rowIterator:
             for (Row averageRow : metricsRows) {
                 Cell averageCell = averageRow.getCell(averageRow.getLastCellNum() - 1);
-                ScoutMetric<?> keyMetric = mCache.getKeyMetric(averageRow.getCell(0));
+                Metric<?> keyMetric = mCache.getKeyMetric(averageRow.getCell(0));
 
                 if (TextUtils.isEmpty(getStringForCell(averageCell))
-                        || keyMetric.getType() == MetricType.TEXT) {
+                        || keyMetric.getType() == TEXT) {
                     continue;
                 }
 
                 for (Cell keyCell : getAdjustedList(headerRow)) {
-                    if (TextUtils.equals(keyMetric.getKey(), mCache.getMetricKey(keyCell))) {
+                    if (TextUtils.equals(keyMetric.getRef().getKey(),
+                                         mCache.getMetricKey(keyCell))) {
                         setAverageFormula(scoutSheet,
                                           row.createCell(keyCell.getColumnIndex()),
                                           averageCell);

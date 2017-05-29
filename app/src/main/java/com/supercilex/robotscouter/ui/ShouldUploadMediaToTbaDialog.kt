@@ -41,7 +41,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
     }
 
     companion object {
-        private val TAG = "ShouldUploadMediaToTbaD"
+        private const val TAG = "ShouldUploadMediaToTbaD"
 
         fun show(fragment: Fragment) {
             val uploadMediaToTbaPair: Pair<Boolean, Boolean> = shouldAskToUploadMediaToTba(fragment.context)

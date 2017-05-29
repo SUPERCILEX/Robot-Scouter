@@ -34,7 +34,7 @@ class ScoutCounterValueDialog : ScoutValueDialogBase<Int>() {
     }
 
     companion object {
-        private val TAG = "ScoutCounterValueDialog"
+        private const val TAG = "ScoutCounterValueDialog"
 
         fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) =
                 ScoutCounterValueDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {

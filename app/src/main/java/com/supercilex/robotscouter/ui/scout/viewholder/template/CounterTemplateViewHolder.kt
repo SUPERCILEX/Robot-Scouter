@@ -6,31 +6,33 @@ import android.widget.EditText
 import android.widget.LinearLayout
 
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.metrics.NumberMetric
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder
 
 class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), ScoutTemplateViewHolder {
-    private val mUnit: EditText = itemView.findViewById<EditText>(R.id.unit)
+    private val unit: EditText = itemView.findViewById<EditText>(R.id.unit)
 
     init {
         itemView as LinearLayout
-        itemView.removeView(mUnit)
-        itemView.addView(mUnit, itemView.childCount - 1)
-        (mCount.layoutParams as LinearLayout.LayoutParams).rightMargin = 0
+        itemView.removeView(unit)
+        itemView.addView(unit, itemView.childCount - 1)
+        (count.layoutParams as LinearLayout.LayoutParams).rightMargin = 0
     }
 
     override fun bind() {
         super.bind()
-        mCount.text = metric.value.toString()
-        mUnit.setText((metric as NumberMetric).unit)
+        unit.setText(metric.unit)
 
         name.onFocusChangeListener = this
-        mUnit.onFocusChangeListener = this
+        unit.onFocusChangeListener = this
     }
 
     override fun onClick(v: View) {
         super.onClick(v)
         if (name.hasFocus()) updateMetricName(name.text.toString())
+    }
+
+    override fun setValue(value: Int) {
+        count.text = metric.value.toString()
     }
 
     override fun requestFocus() {
@@ -43,14 +45,13 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), S
         if (v.id == R.id.name) {
             updateMetricName(name.text.toString())
         } else if (v.id == R.id.unit) {
-            val numberMetric = metric as NumberMetric
-            var newUnit: String? = mUnit.text.toString()
+            var newUnit: String? = unit.text.toString()
 
             if (TextUtils.isEmpty(newUnit)) newUnit = null
 
-            if (!TextUtils.equals(numberMetric.unit, newUnit)) {
+            if (!TextUtils.equals(metric.unit, newUnit)) {
                 disableAnimations()
-                numberMetric.updateUnit(newUnit)
+                metric.unit = newUnit
             }
         }
     }

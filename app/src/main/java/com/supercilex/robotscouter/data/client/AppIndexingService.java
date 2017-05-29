@@ -14,12 +14,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.ui.AuthHelper;
 import com.supercilex.robotscouter.util.Constants;
 import com.supercilex.robotscouter.util.DatabaseHelper.ChangeEventListenerBase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.supercilex.robotscouter.util.AuthUtilsKt.onSignedIn;
 
 public class AppIndexingService extends IntentService implements OnSuccessListener<FirebaseAuth>, ValueEventListener {
     private static final String TAG = "AppIndexingService";
@@ -36,7 +37,7 @@ public class AppIndexingService extends IntentService implements OnSuccessListen
                 .isGooglePlayServicesAvailable(getApplicationContext());
 
         if (result == ConnectionResult.SUCCESS) {
-            AuthHelper.onSignedIn().addOnSuccessListener(this);
+            onSignedIn().addOnSuccessListener(this);
         } else {
             GoogleApiAvailability.getInstance().showErrorNotification(this, result);
         }

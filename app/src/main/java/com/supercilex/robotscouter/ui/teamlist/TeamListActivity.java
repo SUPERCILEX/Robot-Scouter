@@ -29,6 +29,7 @@ import static com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCO
 import static com.supercilex.robotscouter.ui.teamlist.TutorialUtilsKt.showCreateFirstTeamPrompt;
 import static com.supercilex.robotscouter.ui.teamlist.TutorialUtilsKt.showSignInPrompt;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logSelectTeamEvent;
+import static com.supercilex.robotscouter.util.AuthUtilsKt.isSignedIn;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setHasShownAddTeamTutorial;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setHasShownSignInTutorial;
@@ -143,7 +144,7 @@ public class TeamListActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.fab) {
-            if (AuthHelper.isSignedIn()) {
+            if (isSignedIn()) {
                 NewTeamDialog.Companion.show(getSupportFragmentManager());
             } else {
                 mAuthHelper.showSignInResolution();

@@ -88,9 +88,9 @@ class IntentForwarder(private val activity: FragmentActivity) : ResultCallback<A
             ScoutListFragmentBase.getBundle(team, false, null))
 
     companion object {
-        private val ADD_SCOUT_INTENT = "add_scout"
+        private const val ADD_SCOUT_INTENT = "add_scout"
 
-        private val DONATE = "donate"
-        private val UPDATE = "update"
+        private const val DONATE = "donate"
+        private const val UPDATE = "update"
     }
 }

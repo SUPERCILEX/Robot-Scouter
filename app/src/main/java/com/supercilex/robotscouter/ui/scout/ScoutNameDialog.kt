@@ -26,7 +26,7 @@ class ScoutNameDialog : ScoutValueDialogBase<String>() {
     }
 
     companion object {
-        private val TAG = "ScoutNameDialog"
+        private const val TAG = "ScoutNameDialog"
 
         fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) =
                 ScoutNameDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {

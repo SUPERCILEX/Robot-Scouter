@@ -8,27 +8,28 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.metrics.NumberMetric
+import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 
-open class CounterViewHolder(itemView: View) : ScoutViewHolderBase<Int, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
-    protected val mCount: TextView = itemView.findViewById<TextView>(R.id.count)
-    private val mIncrement: ImageButton = itemView.findViewById<ImageButton>(R.id.increment_counter)
-    private val mDecrement: ImageButton = itemView.findViewById<ImageButton>(R.id.decrement_counter)
+open class CounterViewHolder(itemView: View) :
+        ScoutViewHolderBase<Metric.Number, Int, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
+    protected val count: TextView = itemView.findViewById<TextView>(R.id.count)
+    private val increment: ImageButton = itemView.findViewById<ImageButton>(R.id.increment_counter)
+    private val decrement: ImageButton = itemView.findViewById<ImageButton>(R.id.decrement_counter)
 
     private val stringWithoutUnit: String get() {
-        val unit: String? = (metric as NumberMetric).unit
-        val count = mCount.text.toString()
+        val unit: String? = metric.unit
+        val count = count.text.toString()
         return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
     }
 
     public override fun bind() {
         super.bind()
         setValue(metric.value)
-        mIncrement.setOnClickListener(this)
-        mIncrement.setOnLongClickListener(this)
-        mDecrement.setOnClickListener(this)
-        mDecrement.setOnLongClickListener(this)
+        increment.setOnClickListener(this)
+        increment.setOnLongClickListener(this)
+        decrement.setOnClickListener(this)
+        decrement.setOnLongClickListener(this)
     }
 
     @CallSuper
@@ -42,6 +43,11 @@ open class CounterViewHolder(itemView: View) : ScoutViewHolderBase<Int, TextView
         }
     }
 
+    protected open fun setValue(value: Int) {
+        val unit: String? = metric.unit
+        count.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
+    }
+
     private fun updateValue(value: Int) {
         TransitionManager.beginDelayedTransition(itemView as ViewGroup)
         setValue(value)
@@ -51,10 +57,5 @@ open class CounterViewHolder(itemView: View) : ScoutViewHolderBase<Int, TextView
     override fun onLongClick(v: View): Boolean {
         ScoutCounterValueDialog.show(manager, metric.ref.child(FIREBASE_VALUE), stringWithoutUnit)
         return true
-    }
-
-    private fun setValue(value: Int) {
-        val unit: String? = (metric as NumberMetric).unit
-        mCount.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
     }
 }

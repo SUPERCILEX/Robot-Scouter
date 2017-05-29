@@ -11,8 +11,8 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.perf.metrics.AddTrace;
 import com.supercilex.robotscouter.R;
+import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
-import com.supercilex.robotscouter.data.model.metrics.ScoutMetric;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
@@ -161,10 +161,10 @@ public enum SpreadsheetUtils {;
         return copy;
     }
 
-    public static ScoutMetric getMetricForScouts(List<Scout> scouts, String key) {
+    public static Metric getMetricForScouts(List<Scout> scouts, String key) {
         for (Scout scout : scouts) {
-            for (ScoutMetric metric : scout.getMetrics()) {
-                if (TextUtils.equals(key, metric.getKey())) {
+            for (Metric metric : scout.getMetrics()) {
+                if (TextUtils.equals(key, metric.getRef().getKey())) {
                     return metric;
                 }
             }
@@ -173,9 +173,9 @@ public enum SpreadsheetUtils {;
         throw new IllegalStateException("Key not found: " + key);
     }
 
-    public static ScoutMetric<Void> getMetricForChart(Chart chart,
-                                                      Map<ScoutMetric<Void>, Chart> pool) {
-        for (ScoutMetric<Void> metric : pool.keySet()) {
+    public static Metric<Void> getMetricForChart(Chart chart,
+                                                 Map<Metric<Void>, Chart> pool) {
+        for (Metric<Void> metric : pool.keySet()) {
             if (pool.get(metric) == chart) {
                 return metric;
             }
