@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="night_black">@android:color/white</color>
+
+    <color name="light_grey">#757575</color>
+    <color name="light_grey_text">#bdbdbd</color>
+
+    <color name="list_item_normal">#424242</color>
+    <color name="list_divider">#757575</color>
+    <color name="selected_list_item">#46264CAC</color>
+    <color name="selected_icon">#424242</color>
+</resources>

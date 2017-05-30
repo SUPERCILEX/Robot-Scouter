@@ -13,6 +13,7 @@
         android:drawableLeft="@drawable/ic_timer_white_24dp"
         android:drawablePadding="4dp"
         android:stateListAnimator="@null"
+        android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

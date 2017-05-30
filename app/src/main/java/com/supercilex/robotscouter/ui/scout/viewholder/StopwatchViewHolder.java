@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -40,8 +39,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Borderless_Colored;
-import static android.support.v7.appcompat.R.style.TextAppearance_AppCompat_Widget_Button_Colored;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
@@ -228,7 +225,6 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
             if (holder != null) holder.setText(id, formatArgs);
         }
 
-        @SuppressLint("PrivateResource")
         private void setStyle() {
             StopwatchViewHolder holder = mHolder.get();
             if (holder == null) return;
@@ -238,16 +234,9 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
 
             TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                stopwatch.setTextAppearance(
-                        mIsRunning ?
-                                TextAppearance_AppCompat_Widget_Button_Borderless_Colored :
-                                TextAppearance_AppCompat_Widget_Button_Colored);
-            } else {
-                stopwatch.setTextColor(
-                        mIsRunning ?
-                                ContextCompat.getColor(context, R.color.colorAccent) : Color.WHITE);
-            }
+            stopwatch.setTextColor(
+                    mIsRunning ?
+                            ContextCompat.getColor(context, R.color.colorAccent) : Color.WHITE);
 
             stopwatch.setActivated(mIsRunning);
 

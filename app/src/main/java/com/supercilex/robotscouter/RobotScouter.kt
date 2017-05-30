@@ -36,8 +36,7 @@ class RobotScouter : MultiDexApplication() {
 
     companion object {
         init {
-            // TODO change to MODE_NIGHT_AUTO
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
         }
 
         fun getRefWatcher(context: Context): RefWatcher = (context.applicationContext as RobotScouter).refWatcher
