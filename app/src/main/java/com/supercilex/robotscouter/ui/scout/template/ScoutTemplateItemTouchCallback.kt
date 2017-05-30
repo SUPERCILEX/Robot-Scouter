@@ -71,7 +71,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
         } else if (type == ChangeEventListener.EventType.REMOVED && index == deletedPosition) {
             recyclerView.post {
                 val viewHolder: RecyclerView.ViewHolder? =
-                        recyclerView.findViewHolderForLayoutPosition(index)
+                        recyclerView.findViewHolderForLayoutPosition(index - 1)
                 if (viewHolder != null) cardListHelper?.onBind(viewHolder)
                 deletedPosition = RecyclerView.NO_POSITION
             }
