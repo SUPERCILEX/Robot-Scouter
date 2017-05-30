@@ -253,13 +253,13 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        mIsRunning ? R.drawable.ic_alarm_off_color_accent_24dp : R.drawable.ic_add_alarm_white_24dp,
+                        mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
                         0,
                         0,
                         0);
             } else {
                 stopwatch.setCompoundDrawablesWithIntrinsicBounds(
-                        mIsRunning ? R.drawable.ic_alarm_off_color_accent_24dp : R.drawable.ic_add_alarm_white_24dp,
+                        mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
                         0,
                         0,
                         0);
