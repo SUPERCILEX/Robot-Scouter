@@ -16,6 +16,8 @@ open class CardListHelper(private val adapter: FirebaseRecyclerAdapter<*, *>,
         if (hasSafeCorners) return
 
         recyclerView.post {
+            if (position > adapter.itemCount - 1) return@post
+
             // Update the items above and below to ensure the correct corner configuration is shown
             val abovePos = position - 1
             val belowPos = position + 1
