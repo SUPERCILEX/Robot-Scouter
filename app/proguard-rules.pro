@@ -1,7 +1,5 @@
 # Optimize
 -optimizations !field/propagation/value,!class/merging/*,*
--repackageclasses com.supercilex.robotscouter
--mergeinterfacesaggressively
 
 # Keeps line numbers and file name obfuscation
 -renamesourcefileattribute SourceFile
