@@ -29,8 +29,8 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     private val rootView = activity.findViewById(R.id.root)
 
     private val linkReceiver by lazy { IntentForwarder(activity) }
-    private lateinit var actionSignIn: MenuItem
-    private lateinit var actionSignOut: MenuItem
+    private var actionSignIn: MenuItem? = null
+    private var actionSignOut: MenuItem? = null
 
     init {
         if (isSignedIn()) initDeepLinkReceiver()
@@ -117,8 +117,8 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     }
 
     private fun toggleMenuSignIn(isSignedIn: Boolean) {
-        actionSignIn.isVisible = !isSignedIn
-        actionSignOut.isVisible = isSignedIn
+        actionSignIn?.isVisible = !isSignedIn
+        actionSignOut?.isVisible = isSignedIn
     }
 
     override fun onClick(v: View) = signIn()
