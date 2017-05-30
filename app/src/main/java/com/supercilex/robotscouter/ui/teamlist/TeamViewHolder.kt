@@ -1,28 +1,34 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.graphics.drawable.Drawable
 import android.support.annotation.Keep
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.animateCircularReveal
-import de.hdodenhof.circleimageview.CircleImageView
 
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-    private val mediaImageView: CircleImageView = itemView.findViewById<CircleImageView>(R.id.media)
-    private val numberTextView: TextView = itemView.findViewById<TextView>(R.id.number)
-    private val nameTextView: TextView = itemView.findViewById<TextView>(R.id.name)
-    private val newScoutButton: ImageButton = itemView.findViewById<ImageButton>(R.id.new_scout)
+    private val mediaImageView: ImageView = itemView.findViewById(R.id.media)
+    private val mediaLoadProgress: ProgressBar = itemView.findViewById(R.id.progress)
+    private val numberTextView: TextView = itemView.findViewById(R.id.number)
+    private val nameTextView: TextView = itemView.findViewById(R.id.name)
+    private val newScoutButton: ImageButton = itemView.findViewById(R.id.new_scout)
 
     private lateinit var team: Team
     private lateinit var fragment: Fragment
@@ -30,6 +36,12 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private var isItemSelected: Boolean = false
     private var couldItemBeSelected: Boolean = false
     private var isScouting: Boolean = false
+
+    private var isMediaLoaded: Boolean = false
+        set(value) {
+            field = value
+            mediaLoadProgress.visibility = if (field) View.GONE else View.VISIBLE
+        }
 
     fun bind(team: Team,
              fragment: Fragment,
@@ -56,11 +68,11 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     private fun updateItemStatus() {
+        isMediaLoaded = isItemSelected
         if (isItemSelected) {
-            Glide.with(itemView.context)
-                    .load("")
-                    .placeholder(ContextCompat.getDrawable(
-                            itemView.context, R.drawable.ic_check_circle_grey_144dp))
+            Glide.with(fragment)
+                    .load(null)
+                    .apply(RequestOptions.placeholderOf(R.drawable.ic_check_circle_grey_144dp))
                     .into(mediaImageView)
         } else {
             setTeamMedia()
@@ -81,10 +93,29 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         nameTextView.text = team.name
     }
 
-    private fun setTeamMedia() = Glide.with(itemView.context)
+    private fun setTeamMedia() = Glide.with(fragment)
             .load(team.media)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .error(R.drawable.ic_memory_grey_48dp)
+            .apply(RequestOptions.circleCropTransform()
+                    .error(R.drawable.ic_memory_grey_48dp)
+                    .fallback(R.drawable.ic_memory_grey_48dp))
+            .listener(object : RequestListener<Drawable> {
+                override fun onResourceReady(resource: Drawable?,
+                                             model: Any?,
+                                             target: Target<Drawable>,
+                                             dataSource: DataSource,
+                                             isFirstResource: Boolean): Boolean {
+                    isMediaLoaded = true
+                    return false
+                }
+
+                override fun onLoadFailed(e: GlideException?,
+                                          model: Any?,
+                                          target: Target<Drawable>,
+                                          isFirstResource: Boolean): Boolean {
+                    isMediaLoaded = true
+                    return false
+                }
+            })
             .into(mediaImageView)
 
     override fun onClick(v: View) {

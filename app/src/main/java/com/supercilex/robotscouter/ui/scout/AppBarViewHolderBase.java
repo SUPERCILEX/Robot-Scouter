@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -16,10 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +40,7 @@ public abstract class AppBarViewHolderBase
     protected final Toolbar mToolbar;
     protected final CollapsingToolbarLayout mHeader;
     private final ImageView mBackdrop;
+    private final ProgressBar mMediaLoadProgress;
 
     private final TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
     private final Task mOnScoutingReadyTask;
@@ -65,6 +70,7 @@ public abstract class AppBarViewHolderBase
         mToolbar = rootView.findViewById(R.id.toolbar);
         mHeader = rootView.findViewById(R.id.header);
         mBackdrop = rootView.findViewById(R.id.backdrop);
+        mMediaLoadProgress = rootView.findViewById(R.id.progress);
         mOnScoutingReadyTask = onScoutingReadyTask;
         mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
 
@@ -88,27 +94,24 @@ public abstract class AppBarViewHolderBase
     }
 
     private void loadImages() {
+        mMediaLoadProgress.setVisibility(View.VISIBLE);
+
         String media = mTeamHelper.getTeam().getMedia();
         Glide.with(mFragment)
-                .load(media)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.ic_memory_grey_144dp)
-                .listener(new RequestListener<String, Bitmap>() {
-                    @Override
-                    public boolean onException(Exception e,
-                                               String model,
-                                               Target<Bitmap> target,
-                                               boolean isFirstResource) {
-                        return false;
-                    }
-
+                .load(media)
+                .apply(RequestOptions.centerCropTransform()
+                               .error(R.drawable.ic_memory_grey_48dp)
+                               .fallback(R.drawable.ic_memory_grey_48dp))
+                .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onResourceReady(Bitmap resource,
-                                                   String model,
+                                                   Object model,
                                                    Target<Bitmap> target,
-                                                   boolean isFromMemoryCache,
+                                                   DataSource dataSource,
                                                    boolean isFirstResource) {
+                        mMediaLoadProgress.setVisibility(View.GONE);
+
                         if (resource != null && !resource.isRecycled()) {
                             Palette.from(resource).generate(palette -> {
                                 Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
@@ -123,6 +126,15 @@ public abstract class AppBarViewHolderBase
                                 }
                             });
                         }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e,
+                                                Object model,
+                                                Target<Bitmap> target,
+                                                boolean isFirstResource) {
+                        mMediaLoadProgress.setVisibility(View.GONE);
                         return false;
                     }
                 })

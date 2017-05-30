@@ -33,8 +33,15 @@
                 android:contentDescription="@string/accessibility_robot_icon"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax"
-                app:srcCompat="@drawable/ic_memory_grey_144dp" />
+                app:layout_collapseMode="parallax" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@style/Base.Widget.AppCompat.ProgressBar"
+                android:layout_width="@dimen/fab_size"
+                android:layout_height="@dimen/fab_size"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

@@ -30,7 +30,6 @@ class LicensesDialog : DialogFragment() {
             add(Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"))
             add(Licenses.fromGitHubApacheV2("GoogleSamples/EasyPermissions"))
             add(Licenses.fromGitHub("Bumptech/Glide", "Glide license", Licenses.FILE_AUTO))
-            add(Licenses.fromGitHubApacheV2("Hdodenhof/CircleImageView"))
             add(Licenses.fromGitHub("Apache/POI", Licenses.LICENSE_APACHE_V2))
             add(Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"))
             add(Licenses.fromGitHubApacheV2("Sjwall/MaterialTapTargetPrompt"))

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,10 +17,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
@@ -33,8 +40,6 @@ import com.supercilex.robotscouter.util.Constants;
 
 import java.io.File;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
@@ -44,7 +49,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     private TeamHelper mTeamHelper;
     private TeamMediaCreator mMediaCapture;
 
-    private CircleImageView mMedia;
+    private ImageView mMedia;
+    private ProgressBar mMediaLoadProgress;
     private TextView mName;
     private ImageButton mEditNameButton;
 
@@ -81,6 +87,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
 
         mMedia = rootView.findViewById(R.id.media);
+        mMediaLoadProgress = rootView.findViewById(R.id.progress);
         mName = rootView.findViewById(R.id.name);
         mEditNameButton = rootView.findViewById(R.id.edit_name_button);
 
@@ -130,10 +137,32 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 && mWebsiteEditText != null) {
             Team team = mTeamHelper.getTeam();
 
+            mMediaLoadProgress.setVisibility(View.VISIBLE);
             Glide.with(getContext())
                     .load(team.getMedia())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.ic_memory_grey_48dp)
+                    .apply(RequestOptions.circleCropTransform()
+                                   .error(R.drawable.ic_memory_grey_48dp)
+                                   .fallback(R.drawable.ic_memory_grey_48dp))
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onResourceReady(Drawable resource,
+                                                       Object model,
+                                                       Target<Drawable> target,
+                                                       DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            mMediaLoadProgress.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e,
+                                                    Object model,
+                                                    Target<Drawable> target,
+                                                    boolean isFirstResource) {
+                            mMediaLoadProgress.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(mMedia);
             mName.setText(team.toString());
 

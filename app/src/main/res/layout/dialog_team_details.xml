@@ -13,13 +13,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/media"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
+                android:contentDescription="@string/accessibility_robot_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_memory_grey_144dp" />
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@style/Base.Widget.AppCompat.ProgressBar"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:indeterminate="true"
+                app:layout_constraintStart_toStartOf="@+id/media"
+                app:layout_constraintEnd_toEndOf="@+id/media"
+                app:layout_constraintTop_toTopOf="@+id/media"
+                app:layout_constraintBottom_toBottomOf="@+id/media" />
 
             <ImageView
                 android:layout_width="24dp"
