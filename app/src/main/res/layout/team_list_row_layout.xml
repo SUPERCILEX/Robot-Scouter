@@ -16,45 +16,43 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/ic_memory_grey_144dp" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginLeft="@dimen/spacing_large"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_marginBottom="2dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textIsSelectable="false"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
         app:layout_constraintStart_toEndOf="@id/media"
         app:layout_constraintEnd_toStartOf="@+id/new_scout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/name"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        tools:text="2521" />
 
-        <TextView
-            android:id="@+id/number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_large"
-            android:layout_marginEnd="@dimen/spacing_normal"
-            android:layout_marginLeft="@dimen/spacing_large"
-            android:layout_marginRight="@dimen/spacing_normal"
-            android:layout_marginBottom="2dp"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textIsSelectable="false"
-            android:textSize="18sp"
-            android:textStyle="normal|bold"
-            tools:text="2521" />
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_large"
-            android:layout_marginEnd="@dimen/spacing_normal"
-            android:layout_marginLeft="@dimen/spacing_large"
-            android:layout_marginRight="@dimen/spacing_normal"
-            android:layout_marginTop="2dp"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textIsSelectable="false"
-            android:textSize="@dimen/text_size_normal"
-            tools:text="SERT" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginLeft="@dimen/spacing_large"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_marginTop="2dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/text_size_normal"
+        app:layout_constraintStart_toEndOf="@id/media"
+        app:layout_constraintEnd_toStartOf="@+id/new_scout"
+        app:layout_constraintTop_toBottomOf="@+id/number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="SERT" />
 
     <ImageButton
         android:id="@+id/new_scout"
