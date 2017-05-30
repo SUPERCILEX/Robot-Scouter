@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentActivity
-import android.view.View
 import com.firebase.ui.auth.util.GoogleApiHelper
 import com.google.android.gms.appinvite.AppInvite
 import com.google.android.gms.appinvite.AppInviteInvitationResult
@@ -43,7 +42,7 @@ class IntentForwarder(private val activity: FragmentActivity) : ResultCallback<A
             if (teams.size == SINGLE_ITEM) {
                 launchTeam(teams[0])
             } else {
-                Snackbar.make(activity.findViewById<View>(R.id.root),
+                Snackbar.make(activity.findViewById(R.id.root),
                         R.string.teams_imported,
                         Snackbar.LENGTH_LONG)
                         .show()

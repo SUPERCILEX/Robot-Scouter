@@ -13,9 +13,9 @@ import com.supercilex.robotscouter.util.FIREBASE_VALUE
 
 open class CounterViewHolder(itemView: View) :
         ScoutViewHolderBase<Metric.Number, Int, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
-    protected val count: TextView = itemView.findViewById<TextView>(R.id.count)
-    private val increment: ImageButton = itemView.findViewById<ImageButton>(R.id.increment_counter)
-    private val decrement: ImageButton = itemView.findViewById<ImageButton>(R.id.decrement_counter)
+    protected val count: TextView = itemView.findViewById(R.id.count)
+    private val increment: ImageButton = itemView.findViewById(R.id.increment_counter)
+    private val decrement: ImageButton = itemView.findViewById(R.id.decrement_counter)
 
     private val stringWithoutUnit: String get() {
         val unit: String? = metric.unit

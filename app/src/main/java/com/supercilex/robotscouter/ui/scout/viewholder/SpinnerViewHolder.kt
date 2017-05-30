@@ -13,7 +13,7 @@ import java.util.*
 
 open class SpinnerViewHolder(itemView: View) :
         ScoutViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView), AdapterView.OnItemSelectedListener {
-    protected var spinner: Spinner = itemView.findViewById<Spinner>(R.id.spinner)
+    protected var spinner: Spinner = itemView.findViewById(R.id.spinner)
     private val keys: List<String> get() = ArrayList(metric.value.keys)
 
     public override fun bind() {

@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.viewholder.CounterViewHolder
 
 class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), ScoutTemplateViewHolder {
-    private val unit: EditText = itemView.findViewById<EditText>(R.id.unit)
+    private val unit: EditText = itemView.findViewById(R.id.unit)
 
     init {
         itemView as LinearLayout

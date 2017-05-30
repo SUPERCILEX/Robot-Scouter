@@ -2,10 +2,8 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
-
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.crash.FirebaseCrash
@@ -15,7 +13,6 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.util.Constants
-
 import com.supercilex.robotscouter.util.getAdapterItems
 
 class TeamListAdapter(private val fragment: Fragment,
@@ -25,7 +22,7 @@ class TeamListAdapter(private val fragment: Fragment,
                 Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java) {
     private val cardListHelper: CardListHelper = CardListHelper(
             this,
-            fragment.view!!.findViewById<RecyclerView>(R.id.list))
+            fragment.view!!.findViewById(R.id.list))
     private var noTeamsHint: View? = null
 
     private var selectedTeamKey: String? =
@@ -96,7 +93,7 @@ class TeamListAdapter(private val fragment: Fragment,
     private fun showNoTeamsHint() {
         if (noTeamsHint == null) {
             @Suppress("UNNECESSARY_SAFE_CALL")
-            noTeamsHint = fragment?.view?.findViewById<View>(R.id.no_content_hint)
+            noTeamsHint = fragment?.view?.findViewById(R.id.no_content_hint)
         }
 
         noTeamsHint?.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
