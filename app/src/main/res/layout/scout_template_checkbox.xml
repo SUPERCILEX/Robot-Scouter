@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
-    <include layout="@layout/scout_template_base_reorder" />
+    <include layout="@layout/template_base_reorder" />
 
     <include layout="@layout/scout_base_checkbox" />
 
@@ -17,9 +17,9 @@
         android:layout_marginLeft="@dimen/spacing_normal"
         android:hint="@string/checkbox_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@id/name"
+        app:layout_constraintStart_toEndOf="@+id/name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/name"
+        app:layout_constraintTop_toTopOf="@+id/name"
         app:layout_constraintBottom_toBottomOf="@+id/name"
         tools:ignore="UnknownIdInLayout"
         tools:text="Name" />

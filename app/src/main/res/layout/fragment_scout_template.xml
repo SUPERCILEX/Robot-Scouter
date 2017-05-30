@@ -38,7 +38,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/reset_template_team"
-                    app:layout_constraintStart_toEndOf="@id/reset_template_all"
+                    app:layout_constraintStart_toEndOf="@+id/reset_template_all"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toTopOf="@+id/remove_metrics" />
@@ -50,7 +50,7 @@
                     android:text="@string/remove_metrics"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/reset_template_team"
+                    app:layout_constraintTop_toBottomOf="@+id/reset_template_team"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
             </android.support.constraint.ConstraintLayout>

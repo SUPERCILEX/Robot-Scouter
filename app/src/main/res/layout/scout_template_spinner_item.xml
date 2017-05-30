@@ -6,7 +6,7 @@
     tools:ignore="UnusedResources">
     <!-- TODO remove ignore once the Gradle plugin is fixed -->
 
-    <include layout="@layout/scout_template_base_reorder" />
+    <include layout="@layout/template_base_reorder" />
 
     <EditText
         android:id="@+id/name"
