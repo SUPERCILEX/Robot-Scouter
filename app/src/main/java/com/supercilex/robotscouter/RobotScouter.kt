@@ -2,6 +2,7 @@ package com.supercilex.robotscouter
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
+import android.support.v7.app.AppCompatDelegate
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
@@ -34,6 +35,11 @@ class RobotScouter : MultiDexApplication() {
     }
 
     companion object {
+        init {
+            // TODO change to MODE_NIGHT_AUTO
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         fun getRefWatcher(context: Context): RefWatcher = (context.applicationContext as RobotScouter).refWatcher
     }
 }
