@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_normal"
                 android:layout_marginLeft="@dimen/spacing_normal"
-                android:background="@android:color/white"
+                android:background="?android:attr/selectableItemBackground"
                 android:contentDescription="@string/accessibility_edit_team_name"
                 app:layout_constraintStart_toEndOf="@+id/name"
                 app:layout_constraintEnd_toEndOf="parent"
