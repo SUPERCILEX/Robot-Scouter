@@ -4,8 +4,6 @@ import android.content.Context
 import android.os.Handler
 import android.text.TextUtils
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.tasks.Task
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
@@ -74,13 +72,7 @@ class TbaDownloader private constructor(team: Team, context: Context) :
     private fun setAndCacheMedia(url: String, year: Int) {
         team.media = url
         team.mediaYear = year
-        Handler(context.mainLooper).post {
-            Glide.with(context)
-                    .load(url)
-                    .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.ALL)
-                            .encodeQuality(MAX_QUALITY))
-                    .preload()
-        }
+        Handler(context.mainLooper).post { Glide.with(context).load(url).preload() }
     }
 
     companion object {
@@ -89,7 +81,6 @@ class TbaDownloader private constructor(team: Team, context: Context) :
         private const val IMGUR = "imgur"
         private const val CHIEF_DELPHI = "cdphotothread"
         private const val MAX_HISTORY = 2000
-        private const val MAX_QUALITY = 100
 
         fun load(team: Team, context: Context): Task<Team> =
                 TbaServiceBase.executeAsync(TbaDownloader(team, context))
