@@ -43,6 +43,31 @@ task pmd(type: Pmd) {
     }
 }
 
+task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
+    ignoreFailures = false
+    effort = "max"
+    reportLevel = "high"
+    classes = files("${project.rootDir}/app/build/intermediates/classes")
+
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    excludeFilter = file("$configDir/findbugs-filter.xml")
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        xml {
+            destination file("$reportsDir/findbugs.xml")
+        }
+        html {
+            destination file("$reportsDir/findbugs.html")
+        }
+    }
+
+    classpath = files()
+}
+
 android {
     lintOptions {
         disable 'InvalidPackage', // Needed because of Okio
