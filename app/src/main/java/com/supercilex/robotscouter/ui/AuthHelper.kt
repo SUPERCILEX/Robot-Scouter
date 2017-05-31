@@ -49,7 +49,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
             AuthUI.getInstance().createSignInIntentBuilder()
                     .setAvailableProviders(ALL_PROVIDERS)
                     .setLogo(R.drawable.ic_logo)
-                    .setTosUrl("https://supercilex.github.io/privacy-policy/")
+                    .setPrivacyPolicyUrl("https://supercilex.github.io/Robot-Scouter/privacy-policy/")
                     .setIsAccountLinkingEnabled(true)
                     .build(),
             RC_SIGN_IN)
