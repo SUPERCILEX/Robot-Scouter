@@ -52,7 +52,7 @@
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
-    <string name="write_storage_rationale_spreadsheet">Robot Scouter needs access to your storage to create the XLSX file.</string>
+    <string name="write_storage_rationale_spreadsheet">Robot Scouter needs access to your storage to create the spreadsheet file.</string>
     <string name="never_again">Don’t show again</string>
     <string name="exporting_spreadsheet_hint">Export started; view progress in the notification drawer.</string>
     <string name="exporting_spreadsheet_complete_title">Spreadsheet exporting complete</string>
