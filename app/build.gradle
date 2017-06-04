@@ -80,60 +80,60 @@ if (isReleaseBuild) {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
 
     // Support libraries
-    compile 'com.android.support:multidex:1.0.1'
-    compile "com.android.support:design:$supportLibVersion"
-    compile "com.android.support:customtabs:$supportLibVersion"
-    compile "com.android.support:palette-v7:$supportLibVersion"
-    compile "com.android.support:support-vector-drawable:$supportLibVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:customtabs:$supportLibVersion"
+    implementation "com.android.support:palette-v7:$supportLibVersion"
+    implementation "com.android.support:support-vector-drawable:$supportLibVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
     // Firebase UI
     // Auth
-//    compile 'com.firebaseui:firebase-ui-auth:2.0.0'
-    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:0f7fc902c62fdc09e1c5812dd4dec2e6f5b4083d'
-    compile "com.google.firebase:firebase-auth:$playServicesVersion"
-    compile "com.google.android.gms:play-services-auth:$playServicesVersion"
-    compile "com.android.support:cardview-v7:$supportLibVersion"
+//    implementation 'com.firebaseui:firebase-ui-auth:2.0.0'
+    implementation 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:0f7fc902c62fdc09e1c5812dd4dec2e6f5b4083d'
+    implementation "com.google.firebase:firebase-auth:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
     // Database
-//    compile 'com.firebaseui:firebase-ui-database:2.0.0'
-    compile 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:0f7fc902c62fdc09e1c5812dd4dec2e6f5b4083d'
-    compile "com.google.firebase:firebase-database:$playServicesVersion"
+//    implementation 'com.firebaseui:firebase-ui-database:2.0.0'
+    implementation 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:0f7fc902c62fdc09e1c5812dd4dec2e6f5b4083d'
+    implementation "com.google.firebase:firebase-database:$playServicesVersion"
 
-    compile 'com.firebase:firebase-jobdispatcher:0.6.0'
+    implementation 'com.firebase:firebase-jobdispatcher:0.6.0'
 
     // Firebase core
-    compile "com.google.firebase:firebase-core:$playServicesVersion"
-    compile "com.google.firebase:firebase-crash:$playServicesVersion"
-    compile "com.google.firebase:firebase-perf:$playServicesVersion"
-    compile "com.google.firebase:firebase-invites:$playServicesVersion"
-    compile "com.google.firebase:firebase-appindexing:$playServicesVersion"
-    compile "com.google.firebase:firebase-config:$playServicesVersion"
-    compile "com.google.firebase:firebase-messaging:$playServicesVersion"
+    implementation "com.google.firebase:firebase-core:$playServicesVersion"
+    implementation "com.google.firebase:firebase-crash:$playServicesVersion"
+    implementation "com.google.firebase:firebase-perf:$playServicesVersion"
+    implementation "com.google.firebase:firebase-invites:$playServicesVersion"
+    implementation "com.google.firebase:firebase-appindexing:$playServicesVersion"
+    implementation "com.google.firebase:firebase-config:$playServicesVersion"
+    implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    compile 'pub.devrel:easypermissions:0.3.1'
-    compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
+    implementation 'pub.devrel:easypermissions:0.3.1'
+    implementation 'com.github.bumptech.glide:glide:4.0.0-RC0'
 
     // Third party
-    compile 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
-    compile 'com.github.clans:fab:1.6.4'
-    compile 'uk.co.samuelwall:material-tap-target-prompt:1.10.0'
+    implementation 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:1.10.0'
 
     // Apache Poi - to update, use https://github.com/SUPERCILEX/poi-on-android
-    provided 'org.apache.poi:poi-ooxml:3.16-beta2' // Used for documentation
+    compileOnly 'org.apache.poi:poi-ooxml:3.16-beta2' // Used for documentation
 
     // Leak canary
-    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     // Retrofit
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

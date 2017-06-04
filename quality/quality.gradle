@@ -7,7 +7,7 @@ def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
 
 checkstyle {
-    toolVersion = '7.7'
+    toolVersion = '7.8'
 }
 
 pmd {
@@ -71,9 +71,7 @@ task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
 android {
     lintOptions {
         disable 'InvalidPackage', // Needed because of Okio
-                'GradleDependency', 'NewerVersionAvailable', // For build reproducibility
-                'UnusedIds', 'UnusedResources', // TODO remove once the Gradle plugin understands Kotlin
-                'GradleCompatible', 'ClickableViewAccessibility' // TODO remove once https://issuetracker.google.com/issues/38509650 is fixed
+                'GradleDependency', 'NewerVersionAvailable' // For build reproducibility
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true

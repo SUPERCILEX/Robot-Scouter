@@ -11,10 +11,6 @@
 # In-app billing
 -keep class com.android.vending.billing.**
 
-# Work around proguard bug https://sourceforge.net/p/proguard/bugs/643/
--keep enum com.supercilex.robotscouter.util.AnalyticsUtils { public static void init(...); }
--keep enum com.supercilex.robotscouter.util.ViewUtils { public static void init(...); }
-
 # Retrofit
 -dontnote retrofit2.Platform
 -dontwarn retrofit2.**
