@@ -111,7 +111,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
 
     override fun onClick(v: View) {
         if (v.id == R.id.fab) {
-            if (isSignedIn()) {
+            if (isSignedIn) {
                 NewTeamDialog.show(supportFragmentManager)
             } else {
                 authHelper.showSignInResolution()

@@ -63,5 +63,5 @@ fun initConstants(context: Context) {
 
 fun getDebugInfo(): String = "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
         "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
-        "* User id: " + getUid() + "\n" +
+        "* User id: " + uid + "\n" +
         "* Scout template keys: " + sFirebaseScoutTemplates.toString()

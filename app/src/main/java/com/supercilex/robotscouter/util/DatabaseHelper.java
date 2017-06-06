@@ -26,7 +26,6 @@ import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.data.util.UserHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import java.util.List;
 import static com.supercilex.robotscouter.data.client.UploadTeamMediaJobKt.startUploadTeamMediaJob;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.METRIC_PARSER;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutIndicesRef;
+import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndicesRef;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.updateAnalyticsUserId;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.Constants.sFirebaseScoutTemplates;
@@ -187,7 +187,7 @@ public enum DatabaseHelper {;
     private static void setScoutTemplatesListener() {
         sFirebaseScoutTemplates.removeAllListeners();
         sFirebaseScoutTemplates = new FirebaseIndexArray<>(
-                UserHelper.getScoutTemplateIndicesRef(),
+                getTemplateIndicesRef(),
                 FIREBASE_SCOUT_TEMPLATES,
                 SCOUT_PARSER);
 

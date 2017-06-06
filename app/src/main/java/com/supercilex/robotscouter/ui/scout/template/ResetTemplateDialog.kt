@@ -11,7 +11,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.data.util.UserHelper
+import com.supercilex.robotscouter.data.util.templateIndicesRef
 import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
@@ -47,7 +47,7 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
                     .filter { TextUtils.equals(templateKey, it.getValue(String::class.java)) }
                     .forEach { it.ref.removeValue() }
 
-            UserHelper.getScoutTemplateIndicesRef().child(templateKey).removeValue()
+            templateIndicesRef.child(templateKey).removeValue()
             FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue()
         } else {
             team.helper.ref.child(FIREBASE_TEMPLATE_KEY).removeValue()

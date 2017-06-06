@@ -28,11 +28,11 @@ import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.data.util.UserHelper;
 import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
+import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndicesRef;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
@@ -130,7 +130,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
             FirebaseCopier.copyTo(Constants.sDefaultTemplate, newTemplateRef);
             teamHelper.updateTemplateKey(mTemplateKey);
-            UserHelper.getScoutTemplateIndicesRef().child(mTemplateKey).setValue(true);
+            getTemplateIndicesRef().child(mTemplateKey).setValue(true);
 
             for (int i = 0; i < Constants.sFirebaseTeams.size(); i++) {
                 Team team = Constants.sFirebaseTeams.getObject(i);

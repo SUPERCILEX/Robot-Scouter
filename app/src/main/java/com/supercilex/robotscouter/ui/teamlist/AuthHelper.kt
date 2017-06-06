@@ -17,13 +17,13 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.data.model.helper
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
-import com.supercilex.robotscouter.util.getUid
-import com.supercilex.robotscouter.util.getUser
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
 import com.supercilex.robotscouter.util.signInAnonymouslyInitBasic
+import com.supercilex.robotscouter.util.uid
+import com.supercilex.robotscouter.util.user
 
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener {
     private val rootView: View = activity.findViewById(R.id.root)
@@ -32,12 +32,12 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     private var actionSignOut: MenuItem? = null
 
     fun init(): Task<Nothing> =
-            if (isSignedIn()) Tasks.forResult(null) else signInAnonymously().continueWith { null }
+            if (isSignedIn) Tasks.forResult(null) else signInAnonymously().continueWith { null }
 
     fun initMenu(menu: Menu) {
         actionSignIn = menu.findItem(R.id.action_sign_in)
         actionSignOut = menu.findItem(R.id.action_sign_out)
-        toggleMenuSignIn(isFullUser())
+        toggleMenuSignIn(isFullUser)
     }
 
     fun signIn() = activity.startActivityForResult(
@@ -80,9 +80,9 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                         .show()
                 toggleMenuSignIn(true)
 
-                val user: FirebaseUser = getUser()!!
+                val user: FirebaseUser = user!!
                 val userHelper =
-                        User(getUid()!!, user.email, user.displayName, user.photoUrl).helper
+                        User(uid!!, user.email, user.displayName, user.photoUrl).helper
                 userHelper.add()
                 response?.let { userHelper.transferData(it.prevUid) }
 
@@ -115,7 +115,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
 
     override fun onClick(v: View) = signIn()
 
-    companion object {
-        private const val RC_SIGN_IN = 100
+    private companion object {
+        const val RC_SIGN_IN = 100
     }
 }
