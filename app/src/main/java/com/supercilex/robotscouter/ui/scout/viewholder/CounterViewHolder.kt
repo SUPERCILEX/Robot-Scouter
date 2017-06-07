@@ -17,7 +17,7 @@ open class CounterViewHolder(itemView: View) :
     private val increment: ImageButton = itemView.findViewById(R.id.increment_counter)
     private val decrement: ImageButton = itemView.findViewById(R.id.decrement_counter)
 
-    private val stringWithoutUnit: String get() {
+    private val valueWithoutUnit: String get() {
         val unit: String? = metric.unit
         val count = count.text.toString()
         return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
@@ -35,10 +35,10 @@ open class CounterViewHolder(itemView: View) :
     @CallSuper
     override fun onClick(v: View) {
         val id = v.id
-        var value = stringWithoutUnit.toInt()
+        var value = valueWithoutUnit.toInt()
         if (id == R.id.increment_counter) {
             updateValue(++value)
-        } else if (id == R.id.decrement_counter && value > 0) { // no negative values
+        } else if (id == R.id.decrement_counter) {
             updateValue(--value)
         }
     }
@@ -46,6 +46,8 @@ open class CounterViewHolder(itemView: View) :
     protected open fun setValue(value: Int) {
         val unit: String? = metric.unit
         count.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
+
+        decrement.isEnabled = value > 0 // No negative values
     }
 
     private fun updateValue(value: Int) {
@@ -55,7 +57,7 @@ open class CounterViewHolder(itemView: View) :
     }
 
     override fun onLongClick(v: View): Boolean {
-        ScoutCounterValueDialog.show(manager, metric.ref.child(FIREBASE_VALUE), stringWithoutUnit)
+        ScoutCounterValueDialog.show(manager, metric.ref.child(FIREBASE_VALUE), valueWithoutUnit)
         return true
     }
 }
