@@ -47,7 +47,7 @@ val SCOUT_KEY = "scout_key"
         NUMBER -> {
             metric = Metric.Number(
                     name,
-                    value.getValue(object : GenericTypeIndicator<Int>() {}),
+                    value.getValue(object : GenericTypeIndicator<Long>() {}),
                     snapshot.child(FIREBASE_UNIT).getValue(String::class.java))
         }
         TEXT -> metric = Metric.Text(name, value.getValue(String::class.java))

@@ -17,8 +17,8 @@ sealed class Metric<T>(name: String, value: T) {
         override val type = BOOLEAN
     }
 
-    class Number(name: String, value: Int = 0, unit: String? = null) :
-            Metric<Int>(name, value) {
+    class Number(name: String, value: Long = 0, unit: String? = null) :
+            Metric<Long>(name, value) {
         @Exclude
         override val type = NUMBER
 

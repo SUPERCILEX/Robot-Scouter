@@ -7,30 +7,23 @@ import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.ScoutValueDialogBase
 import com.supercilex.robotscouter.util.DatabaseHelper
+import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.show
-import java.math.BigDecimal
 
-class ScoutCounterValueDialog : ScoutValueDialogBase<Int>() {
-    override val value: Int get() = Integer.valueOf(lastEditText.text.toString())
-    override val title: Int = R.string.edit_value
-    override val hint: Int = R.string.value
+class ScoutCounterValueDialog : ScoutValueDialogBase<Long>() {
+    override val value get() = lastEditText.text.toString().toLong()
+    override val title = R.string.edit_value
+    override val hint = R.string.value
 
     override fun onShow(dialog: AlertDialog) {
         super.onShow(dialog)
         lastEditText.inputType = InputType.TYPE_CLASS_NUMBER
     }
 
-    override fun onClick(): Boolean {
-        try {
-            BigDecimal(lastEditText.text.toString()).intValueExact() // Checking for failure
-            return super.onClick()
-        } catch (e: NumberFormatException) {
-            inputLayout.error = getString(R.string.invalid_team_number)
-            return false
-        } catch (e: ArithmeticException) {
-            inputLayout.error = getString(R.string.invalid_team_number)
-            return false
-        }
+    override fun onClick() = if (lastEditText.text.toString().isNumber()) {
+        super.onClick()
+    } else {
+        inputLayout.error = getString(R.string.number_too_big_error); false
     }
 
     companion object {

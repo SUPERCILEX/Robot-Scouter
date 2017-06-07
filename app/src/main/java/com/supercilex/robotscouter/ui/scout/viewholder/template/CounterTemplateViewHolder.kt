@@ -31,7 +31,7 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), S
         if (name.hasFocus()) updateMetricName(name.text.toString())
     }
 
-    override fun setValue(value: Int) {
+    override fun setValue(value: Long) {
         count.text = metric.value.toString()
     }
 

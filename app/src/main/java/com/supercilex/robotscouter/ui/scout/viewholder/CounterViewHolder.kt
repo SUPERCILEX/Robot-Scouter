@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 
 open class CounterViewHolder(itemView: View) :
-        ScoutViewHolderBase<Metric.Number, Int, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
+        ScoutViewHolderBase<Metric.Number, Long, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
     protected val count: TextView = itemView.findViewById(R.id.count)
     private val increment: ImageButton = itemView.findViewById(R.id.increment_counter)
     private val decrement: ImageButton = itemView.findViewById(R.id.decrement_counter)
@@ -25,7 +25,7 @@ open class CounterViewHolder(itemView: View) :
 
     public override fun bind() {
         super.bind()
-        setValue(metric.value)
+        updateValue(metric.value)
         increment.setOnClickListener(this)
         increment.setOnLongClickListener(this)
         decrement.setOnClickListener(this)
@@ -35,25 +35,25 @@ open class CounterViewHolder(itemView: View) :
     @CallSuper
     override fun onClick(v: View) {
         val id = v.id
-        var value = valueWithoutUnit.toInt()
+        var value = valueWithoutUnit.toLong()
+
+        TransitionManager.beginDelayedTransition(itemView as ViewGroup)
         if (id == R.id.increment_counter) {
             updateValue(++value)
         } else if (id == R.id.decrement_counter) {
             updateValue(--value)
         }
+        updateMetricValue(value)
     }
 
-    protected open fun setValue(value: Int) {
+    protected open fun setValue(value: Long) {
         val unit: String? = metric.unit
         count.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
-
-        decrement.isEnabled = value > 0 // No negative values
     }
 
-    private fun updateValue(value: Int) {
-        TransitionManager.beginDelayedTransition(itemView as ViewGroup)
+    private fun updateValue(value: Long) {
         setValue(value)
-        updateMetricValue(value)
+        decrement.isEnabled = value > 0 // No negative values
     }
 
     override fun onLongClick(v: View): Boolean {

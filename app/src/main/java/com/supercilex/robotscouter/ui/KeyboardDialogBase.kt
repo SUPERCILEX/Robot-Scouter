@@ -27,7 +27,7 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
     }
 
-    protected fun createDialog(rootView: View, @StringRes title: Int): AlertDialog =
+    protected fun createDialog(rootView: View, @StringRes title: Int) =
             AlertDialog.Builder(context)
                     .setView(rootView)
                     .setTitle(title)
@@ -42,7 +42,8 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    @CallSuper open fun onShow(dialog: AlertDialog) =
+    @CallSuper
+    open fun onShow(dialog: AlertDialog) =
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this)
 
     override fun onDestroy() {
@@ -55,7 +56,7 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
     }
 
     override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
-        if (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
+        if (event?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
             onClick(lastEditText)
             return true
         }
