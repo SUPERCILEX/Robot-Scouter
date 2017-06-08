@@ -55,7 +55,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         return new Scouts(teamHelpers, appContext).build();
     }
 
-    public Task<Map<TeamHelper, List<Scout>>> build() {
+    private Task<Map<TeamHelper, List<Scout>>> build() {
         List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
         for (TeamHelper helper : mTeamHelpers) {
             TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();

@@ -25,8 +25,7 @@ class TeamListAdapter(private val fragment: Fragment,
             fragment.view!!.findViewById(R.id.list))
     private var noTeamsHint: View? = null
 
-    private var selectedTeamKey: String? =
-            if (savedInstanceState == null) null else savedInstanceState.getString(TEAM_KEY)
+    private var selectedTeamKey: String? = savedInstanceState?.getString(TEAM_KEY)
 
     fun updateSelection(teamKey: String?) {
         if (TextUtils.isEmpty(teamKey)) {

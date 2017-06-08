@@ -36,10 +36,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public enum SpreadsheetUtils {;
@@ -79,18 +77,12 @@ public enum SpreadsheetUtils {;
         }
     };
 
-    private static final String DEVICE_MODEL = (Build.MANUFACTURER.toUpperCase(Locale.ROOT) + "-" +
-            Build.MODEL.toUpperCase(Locale.ROOT)).replace(' ', '-');
-    private static final List<String> UNSUPPORTED_DEVICES =
-            Collections.unmodifiableList(Arrays.asList("SAMSUNG-SM-N900A"));
-
     private static final int MAX_SHEET_LENGTH = 31;
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
 
     public static boolean isUnsupportedDevice() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
-                || UNSUPPORTED_DEVICES.contains(DEVICE_MODEL);
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
     }
 
     public static String getStringForCell(Cell cell) {
@@ -173,9 +165,9 @@ public enum SpreadsheetUtils {;
         throw new IllegalStateException("Key not found: " + key);
     }
 
-    public static Metric<Void> getMetricForChart(Chart chart,
-                                                 Map<Metric<Void>, Chart> pool) {
-        for (Metric<Void> metric : pool.keySet()) {
+    public static Metric<?> getMetricForChart(Chart chart,
+                                              Map<Metric<?>, Chart> pool) {
+        for (Metric<?> metric : pool.keySet()) {
             if (pool.get(metric) == chart) {
                 return metric;
             }

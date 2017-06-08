@@ -9,7 +9,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
-import java.util.*
+import java.util.ArrayList
 
 open class SpinnerViewHolder(itemView: View) :
         ScoutViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView), AdapterView.OnItemSelectedListener {

@@ -10,7 +10,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.show
-import java.util.*
+import java.util.Collections
 
 class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
     private val teamHelpers: List<TeamHelper> by lazy { TeamHelper.parseList(arguments) }

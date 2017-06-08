@@ -134,7 +134,6 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     /**
      * @return true if an export was attempted, false otherwise
      */
-    @SuppressWarnings("MissingPermission")
     public static boolean writeAndShareTeams(Fragment fragment,
                                              PermissionRequestHandler permHandler,
                                              @Size(min = 1) List<TeamHelper> teamHelpers) {
@@ -463,7 +462,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         }
 
         Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData = new HashMap<>();
-        Map<Metric<Void>, Chart> chartPool = new HashMap<>();
+        Map<Metric<?>, Chart> chartPool = new HashMap<>();
 
         Iterator<Row> rowIterator = sheet.rowIterator();
         for (int i = 0; rowIterator.hasNext(); i++) {
@@ -550,7 +549,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private void buildTeamChart(Row row,
                                 TeamHelper teamHelper,
                                 Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
-                                Map<Metric<Void>, Chart> chartPool) {
+                                Map<Metric<?>, Chart> chartPool) {
         if (isUnsupportedDevice()) return;
 
         Sheet sheet = row.getSheet();
@@ -558,12 +557,12 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         int lastDataCellNum = row.getSheet().getRow(0).getLastCellNum() - 2;
 
         Chart chart = null;
-        Pair<Integer, Metric<Void>> nearestHeader = null;
+        Pair<Integer, Metric<?>> nearestHeader = null;
 
         List<Row> rows = getAdjustedList(row.getSheet());
         for (int i = row.getRowNum() - 1; i >= 0; i--) {
-            Metric metric = getMetricForScouts(mScouts.get(teamHelper),
-                                               mCache.getMetricKey(rows.get(i)));
+            Metric<?> metric = getMetricForScouts(mScouts.get(teamHelper),
+                                                  mCache.getMetricKey(rows.get(i)));
 
             if (metric.getType() == HEADER) {
                 nearestHeader = Pair.create(i, metric);

@@ -87,13 +87,14 @@ public enum DatabaseHelper {;
     public static Task<Query> forceUpdate(final Query query) {
         final TaskCompletionSource<Query> updateTask = new TaskCompletionSource<>();
 
+        //noinspection MismatchedQueryAndUpdateOfCollection
         final FirebaseArray updater = new FirebaseArray<>(query, Object.class);
         updater.addChangeEventListener(new ChangeEventListener() {
             @Override
             public void onChildChanged(EventType type,
                                        DataSnapshot snapshot,
-                                       int i,
-                                       int i1) {
+                                       int index,
+                                       int oldIndex) {
                 setResult();
             }
 

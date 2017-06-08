@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.data.util
 
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Collections
 
 open class TeamCache(teamHelpers: Collection<TeamHelper>) {
     val teamHelpers: List<TeamHelper> by lazy {

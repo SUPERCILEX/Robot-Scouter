@@ -8,7 +8,7 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.*
+import java.util.Calendar
 import java.util.concurrent.Callable
 
 abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<T>) :

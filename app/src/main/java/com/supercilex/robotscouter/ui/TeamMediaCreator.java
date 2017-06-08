@@ -119,7 +119,6 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         startCapture(mShouldUploadMediaToTba);
     }
 
-    @SuppressWarnings("MissingPermission") // TODO remove once Google fixes their plugin
     public void startCapture(boolean shouldUploadMediaToTba) {
         mShouldUploadMediaToTba = shouldUploadMediaToTba;
 
@@ -133,6 +132,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
             File photoFile = null;
             try {
+                //noinspection MissingPermission
                 photoFile = createImageFile(getMediaFolder());
             } catch (IOException e) {
                 FirebaseCrash.report(e);

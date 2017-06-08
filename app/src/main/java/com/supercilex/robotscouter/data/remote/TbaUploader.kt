@@ -10,7 +10,7 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
-import java.util.*
+import java.util.Arrays
 
 class TbaUploader private constructor(team: Team, context: Context) :
         TbaServiceBase<TbaTeamMediaApi>(team, context, TbaTeamMediaApi::class.java) {

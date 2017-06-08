@@ -8,12 +8,11 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import com.google.android.gms.common.GoogleApiAvailability
 import com.supercilex.robotscouter.R
 import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.LicenseEntry
 import net.yslibrary.licenseadapter.Licenses
-import java.util.*
+import java.util.ArrayList
 
 class LicensesDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -22,10 +21,8 @@ class LicensesDialog : DialogFragment() {
         val licenses: MutableList<LicenseEntry> = ArrayList()
         licenses.apply {
             add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
-            add(Licenses.noLink(
-                    "Google Play Services",
-                    "Google Inc.",
-                    GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context)))
+            add(Licenses.noContent(
+                    "Google Play Services", "Google Inc.", "https://developers.google.com/terms/"))
             add(Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"))
             add(Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"))
             add(Licenses.fromGitHubApacheV2("GoogleSamples/EasyPermissions"))

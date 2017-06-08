@@ -39,28 +39,28 @@ val SCOUT_KEY = "scout_key"
             return@SnapshotParser Metric.Header("Sanity check failed. Please report: bit.ly/RSGitHub.")
 
 
-    val name = snapshot.child(FIREBASE_NAME).getValue(String::class.java)
+    val name = snapshot.child(FIREBASE_NAME).getValue(String::class.java) ?: ""
     val value = snapshot.child(FIREBASE_VALUE)
 
     when (type) {
-        BOOLEAN -> metric = Metric.Boolean(name, value.getValue(Boolean::class.java))
+        BOOLEAN -> metric = Metric.Boolean(name, value.getValue(Boolean::class.java)!!)
         NUMBER -> {
             metric = Metric.Number(
                     name,
-                    value.getValue(object : GenericTypeIndicator<Long>() {}),
+                    value.getValue(object : GenericTypeIndicator<Long>() {})!!,
                     snapshot.child(FIREBASE_UNIT).getValue(String::class.java))
         }
         TEXT -> metric = Metric.Text(name, value.getValue(String::class.java))
         LIST -> {
             metric = Metric.List(
                     name,
-                    value.children.associateBy({ it.key }, { it.getValue(String::class.java) }),
+                    value.children.associateBy({ it.key }, { it.getValue(String::class.java) ?: "" }),
                     snapshot.child(FIREBASE_SELECTED_VALUE_KEY).getValue(String::class.java))
         }
         STOPWATCH -> {
             metric = Metric.Stopwatch(
                     name,
-                    value.children.map { it.getValue(Long::class.java) })
+                    value.children.map { it.getValue(Long::class.java)!! })
         }
         HEADER -> metric = Metric.Header(name, null)
         else -> throw IllegalStateException("Unknown metric type: " + type)
