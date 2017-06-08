@@ -22,8 +22,33 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.animateCircularReveal
 
+private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE
+
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    private val scrollStateListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) =
+                setProgressVisibility()
+    }
+    private val mediaLoadProgressListener = object : RequestListener<Drawable> {
+        override fun onResourceReady(resource: Drawable?,
+                                     model: Any?,
+                                     target: Target<Drawable>,
+                                     dataSource: DataSource,
+                                     isFirstResource: Boolean): Boolean {
+            isMediaLoaded = true
+            return false
+        }
+
+        override fun onLoadFailed(e: GlideException?,
+                                  model: Any?,
+                                  target: Target<Drawable>,
+                                  isFirstResource: Boolean): Boolean {
+            isMediaLoaded = true
+            return false
+        }
+    }
+
     private val mediaImageView: ImageView = itemView.findViewById(R.id.media)
     private val mediaLoadProgress: ProgressBar = itemView.findViewById(R.id.progress)
     private val numberTextView: TextView = itemView.findViewById(R.id.number)
@@ -32,6 +57,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
 
     private lateinit var team: Team
     private lateinit var fragment: Fragment
+    private lateinit var recyclerView: RecyclerView
     private lateinit var menuManager: TeamMenuManager
     private var isItemSelected: Boolean = false
     private var couldItemBeSelected: Boolean = false
@@ -40,17 +66,19 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private var isMediaLoaded: Boolean = false
         set(value) {
             field = value
-            mediaLoadProgress.visibility = if (field) View.GONE else View.VISIBLE
+            setProgressVisibility(field)
         }
 
     fun bind(team: Team,
              fragment: Fragment,
+             recyclerView: RecyclerView,
              menuManager: TeamMenuManager,
              isItemSelected: Boolean,
              couldItemBeSelected: Boolean,
              isScouting: Boolean) {
         this.team = team
         this.fragment = fragment
+        this.recyclerView = recyclerView
         this.menuManager = menuManager
         this.isItemSelected = isItemSelected
         this.couldItemBeSelected = couldItemBeSelected
@@ -59,6 +87,8 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         setTeamNumber()
         setTeamName()
         updateItemStatus()
+        recyclerView.removeOnScrollListener(scrollStateListener)
+        recyclerView.addOnScrollListener(scrollStateListener)
 
         mediaImageView.setOnClickListener(this)
         mediaImageView.setOnLongClickListener(this)
@@ -69,6 +99,8 @@ class TeamViewHolder @Keep constructor(itemView: View) :
 
     private fun updateItemStatus() {
         isMediaLoaded = isItemSelected
+        setProgressVisibility()
+
         if (isItemSelected) {
             Glide.with(fragment)
                     .load(null)
@@ -98,25 +130,12 @@ class TeamViewHolder @Keep constructor(itemView: View) :
             .apply(RequestOptions.circleCropTransform()
                     .error(R.drawable.ic_memory_grey_48dp)
                     .fallback(R.drawable.ic_memory_grey_48dp))
-            .listener(object : RequestListener<Drawable> {
-                override fun onResourceReady(resource: Drawable?,
-                                             model: Any?,
-                                             target: Target<Drawable>,
-                                             dataSource: DataSource,
-                                             isFirstResource: Boolean): Boolean {
-                    isMediaLoaded = true
-                    return false
-                }
-
-                override fun onLoadFailed(e: GlideException?,
-                                          model: Any?,
-                                          target: Target<Drawable>,
-                                          isFirstResource: Boolean): Boolean {
-                    isMediaLoaded = true
-                    return false
-                }
-            })
+            .listener(mediaLoadProgressListener)
             .into(mediaImageView)
+
+    private fun setProgressVisibility(isMediaLoaded: Boolean = recyclerView.isScrolling || this.isMediaLoaded) {
+        mediaLoadProgress.visibility = if (isMediaLoaded) View.GONE else View.VISIBLE
+    }
 
     override fun onClick(v: View) {
         if (v.id == R.id.media || isItemSelected || couldItemBeSelected) {
@@ -145,5 +164,5 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         menuManager.onTeamContextMenuRequested(team.helper)
     }
 
-    override fun toString(): String = team.toString()
+    override fun toString() = team.toString()
 }

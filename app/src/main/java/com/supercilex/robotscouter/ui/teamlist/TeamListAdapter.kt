@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
 import com.firebase.ui.database.ChangeEventListener
@@ -20,9 +21,8 @@ class TeamListAdapter(private val fragment: Fragment,
                       savedInstanceState: Bundle?) :
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(
                 Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java) {
-    private val cardListHelper: CardListHelper = CardListHelper(
-            this,
-            fragment.view!!.findViewById(R.id.list))
+    private val recyclerView = fragment.view!!.findViewById<RecyclerView>(R.id.list)
+    private val cardListHelper: CardListHelper = CardListHelper(this, recyclerView)
     private var noTeamsHint: View? = null
 
     private var selectedTeamKey: String? = savedInstanceState?.getString(TEAM_KEY)
@@ -53,8 +53,10 @@ class TeamListAdapter(private val fragment: Fragment,
 
     public override fun populateViewHolder(teamHolder: TeamViewHolder, team: Team, position: Int) {
         cardListHelper.onBind(teamHolder)
-        teamHolder.bind(team,
+        teamHolder.bind(
+                team,
                 fragment,
+                recyclerView,
                 menuManager,
                 menuManager.selectedTeams.contains(team.helper),
                 !menuManager.selectedTeams.isEmpty(),

@@ -22,6 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:indeterminate="true"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/media"
         app:layout_constraintEnd_toEndOf="@+id/media"
         app:layout_constraintTop_toTopOf="@+id/media"
