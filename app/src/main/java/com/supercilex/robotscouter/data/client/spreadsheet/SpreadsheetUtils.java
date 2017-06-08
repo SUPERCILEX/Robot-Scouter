@@ -1,10 +1,12 @@
 package com.supercilex.robotscouter.data.client.spreadsheet;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityManagerCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -81,8 +83,15 @@ public enum SpreadsheetUtils {;
     private static final int COLUMN_WIDTH_SCALE_FACTOR = 46;
     private static final int CELL_WIDTH_CEILING = 7500;
 
+    private static boolean sIsLowRamDevice;
+
+    public static void init(Context context) {
+        sIsLowRamDevice = ActivityManagerCompat.isLowRamDevice(
+                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE));
+    }
+
     public static boolean isUnsupportedDevice() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP;
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || sIsLowRamDevice;
     }
 
     public static String getStringForCell(Cell cell) {
