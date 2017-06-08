@@ -22,10 +22,14 @@ class TeamListAdapter(private val fragment: Fragment,
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(
                 Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java) {
     private val recyclerView = fragment.view!!.findViewById<RecyclerView>(R.id.list)
-    private val cardListHelper: CardListHelper = CardListHelper(this, recyclerView)
-    private var noTeamsHint: View? = null
+    private val cardListHelper = CardListHelper(this, recyclerView)
+    private val noTeamsHint: View = fragment.view!!.findViewById(R.id.no_content_hint)
 
     private var selectedTeamKey: String? = savedInstanceState?.getString(TEAM_KEY)
+
+    init {
+        onDataChanged()
+    }
 
     fun updateSelection(teamKey: String?) {
         if (TextUtils.isEmpty(teamKey)) {
@@ -61,16 +65,12 @@ class TeamListAdapter(private val fragment: Fragment,
                 menuManager.selectedTeams.contains(team.helper),
                 !menuManager.selectedTeams.isEmpty(),
                 TextUtils.equals(selectedTeamKey, team.key))
-
-        showNoTeamsHint()
     }
 
     override fun onChildChanged(type: ChangeEventListener.EventType,
                                 snapshot: DataSnapshot?,
                                 index: Int,
                                 oldIndex: Int) {
-        showNoTeamsHint()
-
         if (type == ChangeEventListener.EventType.CHANGED) {
             for (oldTeam in menuManager.selectedTeams) {
                 val team = getItem(index)
@@ -91,12 +91,14 @@ class TeamListAdapter(private val fragment: Fragment,
         super.onChildChanged(type, snapshot, index, oldIndex)
     }
 
-    private fun showNoTeamsHint() {
-        if (noTeamsHint == null) {
-            @Suppress("UNNECESSARY_SAFE_CALL")
-            noTeamsHint = fragment?.view?.findViewById(R.id.no_content_hint)
-        }
-
+    override fun onDataChanged() {
+        // There's quite a bit of funkiness going on here.
+        // When the class is initialized, if `Constants.sFirebaseTeams` has already been initialized
+        // then `onDataChanged` will be called synchronously. This causes problems because the
+        // super class will be initialized before we are meaning all our fields will be null
+        // including `noTeamsHint`. To get around this we check for nullability and then call
+        // `onDataChanged` in our constructor so we can handle the state correctly
+        @Suppress("UNNECESSARY_SAFE_CALL")
         noTeamsHint?.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
     }
 

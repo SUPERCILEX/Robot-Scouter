@@ -95,18 +95,18 @@ dependencies {
     // Firebase UI
     // Auth
 //    implementation 'com.firebaseui:firebase-ui-auth:2.0.0'
-    implementation 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:0f7fc902c62fdc09e1c5812dd4dec2e6f5b4083d'
+    implementation 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:d722041296'
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
     // Database
 //    implementation 'com.firebaseui:firebase-ui-database:2.0.0'
-    implementation 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:0f7fc902c62fdc09e1c5812dd4dec2e6f5b4083d'
+    implementation 'com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:d722041296'
     implementation "com.google.firebase:firebase-database:$playServicesVersion"
 
     implementation 'com.firebase:firebase-jobdispatcher:0.6.0'
 
-    // Firebase core
+    // Firebase
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-crash:$playServicesVersion"
     implementation "com.google.firebase:firebase-perf:$playServicesVersion"
@@ -124,7 +124,7 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'uk.co.samuelwall:material-tap-target-prompt:1.10.0'
 
-    // Apache Poi - to update, use https://github.com/SUPERCILEX/poi-on-android
+    // Apache POI - to update, use https://github.com/SUPERCILEX/poi-on-android
     compileOnly 'org.apache.poi:poi-ooxml:3.16-beta2' // Used for documentation
 
     // Leak canary
