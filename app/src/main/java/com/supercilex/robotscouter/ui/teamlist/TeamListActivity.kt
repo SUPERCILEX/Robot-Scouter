@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -42,10 +41,10 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_team_list)
-        setSupportActionBar(findViewById(R.id.toolbar) as Toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         authHelper; addTeamPrompt
-        findViewById(R.id.fab).setOnClickListener(this)
+        findViewById<View>(R.id.fab).setOnClickListener(this)
     }
 
     override fun onStart() {

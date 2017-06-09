@@ -3,7 +3,7 @@ jdk: oraclejdk8
 # See https://github.com/travis-ci/travis-ci/issues/5582
 sudo: required
 env:
-  - BUILD_TOOLS_VERSION=26.0.0-rc2
+  - BUILD_TOOLS_VERSION=26.0.0
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

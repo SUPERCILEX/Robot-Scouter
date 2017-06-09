@@ -208,7 +208,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         int exportId = (int) System.currentTimeMillis();
         Intent baseIntent = new Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (Build.VERSION.SDK_INT >= 26) { // NOPMD TODO Build.VERSION_CODES.O
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             baseIntent.putStringArrayListExtra(
                     Intent.EXTRA_CONTENT_ANNOTATIONS,
                     new ArrayList<>(Collections.singletonList("document")));

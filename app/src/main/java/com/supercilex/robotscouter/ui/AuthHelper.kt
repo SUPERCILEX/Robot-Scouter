@@ -26,7 +26,7 @@ import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
 import com.supercilex.robotscouter.util.signInAnonymouslyInitBasic
 
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener {
-    private val rootView = activity.findViewById(R.id.root)
+    private val rootView: View = activity.findViewById(R.id.root)
 
     private val linkReceiver by lazy { IntentForwarder(activity) }
     private var actionSignIn: MenuItem? = null

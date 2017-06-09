@@ -30,7 +30,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
             .create {
-                (findViewById(android.R.id.message) as TextView).movementMethod =
+                findViewById<TextView>(android.R.id.message)!!.movementMethod =
                         LinkMovementMethod.getInstance()
             }
 

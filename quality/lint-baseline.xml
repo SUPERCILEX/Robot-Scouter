@@ -2,57 +2,6 @@
 <issues format="4" by="lint 2.4.0-alpha7">
 
     <issue
-        errorLine1="    &lt;string name=&quot;google_crash_reporting_api_key&quot; translatable=&quot;false&quot;>AIzaSyDnknBjdqVfDqGmQnT9ecLV-HtBbBy1QxM&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        id="UnusedResources"
-        message="The resource `R.string.google_crash_reporting_api_key` appears to be unused">
-        <location
-            column="13"
-            file="build/generated/res/google-services/release/values/values.xml"
-            line="8"/>
-        <location
-            column="13"
-            file="build/generated/res/google-services/debug/values/values.xml"
-            line="8"/>
-    </issue>
-
-    <!-- TODO see if these can be removed in newer Android Gradle plugin versions -->
-
-    <issue
-        id="IconXmlAndPng"
-        message="The following images appear both as density independent `.xml` files and as bitmap files: src/main/res/mipmap-anydpi/ic_launcher.xml, src/main/res/mipmap-hdpi/ic_launcher.png">
-        <location
-            file="src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
-        <location
-            file="src/main/res/mipmap-xxhdpi/ic_launcher.png" />
-        <location
-            file="src/main/res/mipmap-xhdpi/ic_launcher.png" />
-        <location
-            file="src/main/res/mipmap-mdpi/ic_launcher.png" />
-        <location
-            file="src/main/res/mipmap-hdpi/ic_launcher.png" />
-        <location
-            file="src/main/res/mipmap-anydpi/ic_launcher.xml" />
-    </issue>
-
-    <issue
-        id="IconXmlAndPng"
-        message="The following images appear both as density independent `.xml` files and as bitmap files: src/main/res/mipmap-anydpi/ic_launcher_round.xml, src/main/res/mipmap-hdpi/ic_launcher_round.png">
-        <location
-            file="src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" />
-        <location
-            file="src/main/res/mipmap-xxhdpi/ic_launcher_round.png" />
-        <location
-            file="src/main/res/mipmap-xhdpi/ic_launcher_round.png" />
-        <location
-            file="src/main/res/mipmap-mdpi/ic_launcher_round.png" />
-        <location
-            file="src/main/res/mipmap-hdpi/ic_launcher_round.png" />
-        <location
-            file="src/main/res/mipmap-anydpi/ic_launcher_round.xml" />
-    </issue>
-
-    <issue
         id="IconExpectedSize"
         message="Incorrect icon size for `mipmap-hdpi/ic_launcher_foreground.png`: expected 72x72, but was 162x162">
         <location
@@ -85,15 +34,6 @@
         message="Incorrect icon size for `mipmap-xxxhdpi/ic_launcher_foreground.png`: expected 192x192, but was 432x432">
         <location
             file="src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" />
-    </issue>
-
-    <issue
-        id="IconDuplicates"
-        message="The following unrelated icon files have identical contents: ic_launch_logo.png, ic_launcher.png">
-        <location
-            file="src/main/res/mipmap-xxhdpi/ic_launcher.png" />
-        <location
-            file="src/main/res/drawable-mdpi/ic_launch_logo.png" />
     </issue>
 
 </issues>

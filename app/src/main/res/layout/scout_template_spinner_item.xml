@@ -2,9 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/RobotScouter.ListItem"
-    tools:ignore="UnusedResources">
-    <!-- TODO remove ignore once the Gradle plugin is fixed -->
+    style="@style/RobotScouter.ListItem">
 
     <include layout="@layout/template_base_reorder" />
 

@@ -13,8 +13,8 @@ build.dependsOn 'updateReleasePlayVersion'
 apply from: '../quality/quality.gradle'
 
 android {
-    compileSdkVersion 'android-O'
-    buildToolsVersion '26.0.0-rc2' // Note: remember to update travis.yml and upload.sh versions too
+    compileSdkVersion 26
+    buildToolsVersion '26.0.0' // Note: remember to update travis.yml and upload.sh versions too
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
@@ -89,7 +89,6 @@ dependencies {
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:customtabs:$supportLibVersion"
     implementation "com.android.support:palette-v7:$supportLibVersion"
-    implementation "com.android.support:support-vector-drawable:$supportLibVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
     // Firebase UI
@@ -116,13 +115,14 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    implementation 'pub.devrel:easypermissions:0.3.1'
+    implementation 'pub.devrel:easypermissions:0.4.0'
     implementation 'com.github.bumptech.glide:glide:4.0.0-RC0'
 
     // Third party
     implementation 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
     implementation 'com.github.clans:fab:1.6.4'
-    implementation 'uk.co.samuelwall:material-tap-target-prompt:1.10.0'
+//    implementation 'uk.co.samuelwall:material-tap-target-prompt:1.10.0'
+    implementation 'com.github.SUPERCILEX:MaterialTapTargetPrompt:5fbbfdd7ba'
 
     // Apache POI - to update, use https://github.com/SUPERCILEX/poi-on-android
     compileOnly 'org.apache.poi:poi-ooxml:3.16-beta2' // Used for documentation
