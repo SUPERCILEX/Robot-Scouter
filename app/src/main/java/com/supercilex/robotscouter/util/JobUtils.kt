@@ -115,18 +115,10 @@ private fun toRawBundle(teamHelper: TeamHelper): Bundle = Bundle().apply {
     putString(NAME, team.name)
     putString(MEDIA, team.media)
     putString(WEBSITE, team.website)
-    if (team.hasCustomName != null) {
-        putBoolean(CUSTOM_NAME, team.hasCustomName!!)
-    }
-    if (team.hasCustomMedia != null) {
-        putBoolean(CUSTOM_MEDIA, team.hasCustomMedia!!)
-    }
-    if (team.hasCustomWebsite != null) {
-        putBoolean(CUSTOM_WEBSITE, team.hasCustomWebsite!!)
-    }
-    if (team.shouldUploadMediaToTba != null) {
-        putBoolean(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba!!)
-    }
+    team.hasCustomName?.let { putBoolean(CUSTOM_NAME, it) }
+    team.hasCustomMedia?.let { putBoolean(CUSTOM_MEDIA, it) }
+    team.hasCustomWebsite?.let { putBoolean(CUSTOM_WEBSITE, it) }
+    team.shouldUploadMediaToTba?.let { putBoolean(SHOULD_UPLOAD_MEDIA, it) }
     putInt(MEDIA_YEAR, team.mediaYear)
     putLong(TIMESTAMP, team.timestamp)
 }
@@ -141,18 +133,10 @@ private fun toRawPersistableBundle(teamHelper: TeamHelper): PersistableBundle = 
     putString(NAME, team.name)
     putString(MEDIA, team.media)
     putString(WEBSITE, team.website)
-    if (team.hasCustomName != null) {
-        putInt(CUSTOM_NAME, if (team.hasCustomName!!) 1 else 0)
-    }
-    if (team.hasCustomMedia != null) {
-        putInt(CUSTOM_MEDIA, if (team.hasCustomMedia!!) 1 else 0)
-    }
-    if (team.hasCustomWebsite != null) {
-        putInt(CUSTOM_WEBSITE, if (team.hasCustomWebsite!!) 1 else 0)
-    }
-    if (team.shouldUploadMediaToTba != null) {
-        putInt(SHOULD_UPLOAD_MEDIA, if (team.shouldUploadMediaToTba!!) 1 else 0)
-    }
+    team.hasCustomName?.let { putInt(CUSTOM_NAME, if (it) 1 else 0) }
+    team.hasCustomMedia?.let { putInt(CUSTOM_MEDIA, if (it) 1 else 0) }
+    team.hasCustomWebsite?.let { putInt(CUSTOM_WEBSITE, if (it) 1 else 0) }
+    team.shouldUploadMediaToTba?.let { putInt(SHOULD_UPLOAD_MEDIA, if (it) 1 else 0) }
     putInt(MEDIA_YEAR, team.mediaYear)
     putLong(TIMESTAMP, team.timestamp)
 }

@@ -92,7 +92,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                 val userHelper =
                         User(getUid()!!, user.email, user.displayName, user.photoUrl).helper
                 userHelper.add()
-                if (response != null) userHelper.transferData(response.prevUid)
+                response?.let { userHelper.transferData(it.prevUid) }
 
                 logLoginEvent()
 

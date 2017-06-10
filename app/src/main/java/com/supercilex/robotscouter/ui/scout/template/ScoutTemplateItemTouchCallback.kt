@@ -72,7 +72,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
             recyclerView.post {
                 val viewHolder: RecyclerView.ViewHolder? =
                         recyclerView.findViewHolderForLayoutPosition(index - 1)
-                if (viewHolder != null) cardListHelper?.onBind(viewHolder)
+                viewHolder?.let { cardListHelper?.onBind(it) }
                 deletedPosition = RecyclerView.NO_POSITION
             }
         }
@@ -124,7 +124,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         val startViewHolder: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(startScrollPosition)
-        if (startViewHolder != null) cardListHelper?.onBind(startViewHolder)
+        startViewHolder?.let { cardListHelper?.onBind(it) }
         cardListHelper?.onBind(viewHolder)
 
         isItemMoving = false

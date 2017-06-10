@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentActivity
 import com.firebase.ui.auth.util.GoogleApiHelper
@@ -50,20 +49,18 @@ class IntentForwarder(private val activity: FragmentActivity) : ResultCallback<A
         } else { // Received normal intent
             val intent = activity.intent
 
-            val extras: Bundle? = intent.extras
-            if (extras != null) {
-                if (extras.containsKey(DONATE)) {
+            intent.extras?.let {
+                if (it.containsKey(DONATE)) {
                     DonateDialog.show(activity.supportFragmentManager)
-                } else if (extras.containsKey(UPDATE)) {
+                } else if (it.containsKey(UPDATE)) {
                     UpdateDialog.showStoreListing(activity)
                 }
             }
 
-            val deepLink: Uri? = intent.data
-            if (deepLink != null) {
-                if (deepLink.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD https://github.com/pmd/pmd/issues/278
-                    launchTeam(getTeams(deepLink)[0])
-                } else if (deepLink.toString() == ADD_SCOUT_INTENT) {
+            intent.data?.let {
+                if (it.getQueryParameter(TEAM_QUERY_KEY) != null) { // NOPMD https://github.com/pmd/pmd/issues/278
+                    launchTeam(getTeams(it)[0])
+                } else if (it.toString() == ADD_SCOUT_INTENT) {
                     NewTeamDialog.show(activity.supportFragmentManager)
                 }
             }

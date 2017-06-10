@@ -24,8 +24,8 @@ open class CardListHelper(private val adapter: FirebaseRecyclerAdapter<*, *>,
             val above: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(abovePos)
             val below: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(belowPos)
 
-            if (above != null) setBackground(above, abovePos)
-            if (below != null) setBackground(below, belowPos)
+            above?.let { setBackground(it, abovePos) }
+            below?.let { setBackground(it, belowPos) }
         }
     }
 
