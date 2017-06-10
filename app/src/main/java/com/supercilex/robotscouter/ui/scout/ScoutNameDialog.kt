@@ -17,12 +17,12 @@ class ScoutNameDialog : ScoutValueDialogBase<String>() {
             else -> name
         }
     }
-    override val title: Int = R.string.edit_scout_name
-    override val hint: Int = R.string.scout_name
+    override val title = R.string.edit_scout_name
+    override val hint = R.string.scout_name
 
     override fun onShow(dialog: AlertDialog) {
         super.onShow(dialog)
-        lastEditText.inputType = InputType.TYPE_TEXT_FLAG_CAP_WORDS
+        lastEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
     }
 
     companion object {
