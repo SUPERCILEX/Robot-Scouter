@@ -10,6 +10,7 @@ buildscript {
         kotlinVersion = '1.1.2-4'
         supportLibVersion = '26.0.0-beta2'
         playServicesVersion = '11.0.0'
+        firebaseUiVersion = 'd5945791cb'
         leakCanaryVersion = '1.5.1'
         retrofitVersion = '2.3.0'
     }
@@ -30,7 +31,6 @@ allprojects {
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
     }
 }

@@ -17,11 +17,12 @@ const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/?"
 const val TEAM_QUERY_KEY = "team"
 
 /** The list of all supported authentication providers in Firebase Auth UI.  */
-@JvmField val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
+val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
         AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
         AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
-        AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())
+        AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+        AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build())
 
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
