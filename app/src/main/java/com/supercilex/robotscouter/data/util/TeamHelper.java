@@ -29,14 +29,14 @@ import java.util.concurrent.TimeUnit;
 import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.startDownloadTeamDataJob;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.deleteAllScouts;
 import static com.supercilex.robotscouter.util.AuthUtilsKt.getUid;
-import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
-import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEMPLATE_KEY;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TIMESTAMP;
 import static com.supercilex.robotscouter.util.ConstantsKt.KEY_QUERY;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.ConstantsKt.TEAMS_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.TWO_ITEMS;
+import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_TEAMS;
+import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_TEAM_INDICES;
 import static com.supercilex.robotscouter.util.CustomTabsUtilsKt.launchUrl;
 import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
 
@@ -64,7 +64,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public static DatabaseReference getIndicesRef() {
-        return FIREBASE_TEAM_INDICES.child(getUid());
+        return getFIREBASE_TEAM_INDICES().child(getUid());
     }
 
     public static TeamHelper parse(Intent intent) {
@@ -129,7 +129,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     public DatabaseReference getRef() {
-        return FIREBASE_TEAMS.child(mTeam.getKey());
+        return getFIREBASE_TEAMS().child(mTeam.getKey());
     }
 
     public Team getTeam() {

@@ -32,7 +32,7 @@ import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val SCOUT_KEY = "scout_key"
-@JvmField val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
+val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
     val metric: Metric<*>
     val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
             // This appears to happen in the in-between state when the metric has been half copied.
@@ -63,7 +63,7 @@ val SCOUT_KEY = "scout_key"
                     value.children.map { it.getValue(Long::class.java)!! })
         }
         HEADER -> metric = Metric.Header(name)
-        else -> throw IllegalStateException("Unknown metric type: " + type)
+        else -> throw IllegalStateException("Unknown metric type: $type")
     }
 
     metric.ref = snapshot.ref

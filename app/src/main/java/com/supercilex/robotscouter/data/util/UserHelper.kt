@@ -11,14 +11,11 @@ import com.supercilex.robotscouter.util.uid
 
 val templateIndicesRef: DatabaseReference get() = getTemplateIndicesRef(uid!!)
 
-private fun getTemplateIndicesRef(uid: String): DatabaseReference {
-    return FIREBASE_USERS.child(uid).child(SCOUT_TEMPLATE_INDICES)
-}
+private fun getTemplateIndicesRef(uid: String): DatabaseReference =
+        FIREBASE_USERS.child(uid).child(SCOUT_TEMPLATE_INDICES)
 
 data class UserHelper(private val user: User) {
-    fun add() {
-        FIREBASE_USERS.child(user.uid).setValue(user)
-    }
+    fun add() = FIREBASE_USERS.child(user.uid).setValue(user).continueWith { null }
 
     fun transferData(prevUid: String?) {
         if (TextUtils.isEmpty(prevUid)) return

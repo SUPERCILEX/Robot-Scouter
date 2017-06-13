@@ -34,18 +34,18 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.supercilex.robotscouter.data.client.UploadTeamMediaJobKt.startUploadTeamMediaJob;
-import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.METRIC_PARSER;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getMETRIC_PARSER;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutIndicesRef;
 import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndicesRef;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.updateAnalyticsUserId;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.Constants.sFirebaseScoutTemplates;
 import static com.supercilex.robotscouter.util.Constants.sFirebaseTeams;
-import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_DEFAULT_TEMPLATE;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_METRICS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
-import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUT_TEMPLATES;
-import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
+import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_DEFAULT_TEMPLATE;
+import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_TEAMS;
 
 public enum DatabaseHelper {;
     private static final String QUERY_KEY = "query_key";
@@ -59,7 +59,7 @@ public enum DatabaseHelper {;
         List<Metric<?>> scouts = new ArrayList<>();
 
         for (DataSnapshot metric : snapshot.child(FIREBASE_METRICS).getChildren()) {
-            scouts.add(METRIC_PARSER.parseSnapshot(metric));
+            scouts.add(getMETRIC_PARSER().parseSnapshot(metric));
         }
 
         return new Scout(snapshot.child(FIREBASE_NAME).getValue(String.class), scouts);
@@ -136,7 +136,7 @@ public enum DatabaseHelper {;
             }
         });
 
-        FIREBASE_DEFAULT_TEMPLATE.addValueEventListener(new ValueEventListener() {
+        getFIREBASE_DEFAULT_TEMPLATE().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Constants.sDefaultTemplate = snapshot;
@@ -153,7 +153,7 @@ public enum DatabaseHelper {;
         sFirebaseTeams.removeAllListeners();
         sFirebaseTeams = new FirebaseIndexArray<>(
                 TeamHelper.getIndicesRef().orderByValue(),
-                FIREBASE_TEAMS,
+                getFIREBASE_TEAMS(),
                 TEAM_PARSER);
 
         sFirebaseTeams.addChangeEventListener(new ChangeEventListenerBase() {
@@ -188,7 +188,7 @@ public enum DatabaseHelper {;
         sFirebaseScoutTemplates.removeAllListeners();
         sFirebaseScoutTemplates = new FirebaseIndexArray<>(
                 getTemplateIndicesRef(),
-                FIREBASE_SCOUT_TEMPLATES,
+                getFIREBASE_SCOUT_TEMPLATES(),
                 SCOUT_PARSER);
 
         sFirebaseScoutTemplates.addChangeEventListener(new ChangeEventListenerBase());

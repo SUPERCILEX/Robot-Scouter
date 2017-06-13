@@ -20,7 +20,7 @@ import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.isOffline
-import java.util.*
+import java.util.ArrayList
 
 class ScoutPagerAdapter(private val fragment: Fragment,
                         private val appBarViewHolder: AppBarViewHolderBase,
