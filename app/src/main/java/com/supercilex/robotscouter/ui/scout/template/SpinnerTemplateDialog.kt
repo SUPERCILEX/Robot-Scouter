@@ -116,7 +116,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         val itemCount: Int = adapter.itemCount
-        ref.push().setValue("item " + (itemCount + 1), getHighestIntPriority(adapter.snapshots) + 1)
+        ref.push().setValue("item ${itemCount + 1}", getHighestIntPriority(adapter.snapshots) + 1)
         itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 

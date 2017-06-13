@@ -32,7 +32,7 @@ import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val SCOUT_KEY = "scout_key"
-@JvmField val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
+val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
     val metric: Metric<*>
     val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
             // This appears to happen in the in-between state when the metric has been half copied.
@@ -63,7 +63,7 @@ val SCOUT_KEY = "scout_key"
                     value.children.map { it.getValue(Long::class.java)!! })
         }
         HEADER -> metric = Metric.Header(name)
-        else -> throw IllegalStateException("Unknown metric type: " + type)
+        else -> throw IllegalStateException("Unknown metric type: $type")
     }
 
     metric.ref = snapshot.ref
@@ -73,19 +73,11 @@ val SCOUT_KEY = "scout_key"
 fun getScoutMetricsRef(key: String): DatabaseReference =
         FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS)
 
-fun getScoutKeyBundle(key: String?): Bundle {
-    val args = Bundle()
-    args.putString(SCOUT_KEY, key)
-    return args
-}
+fun getScoutKeyBundle(key: String?) = Bundle().apply { putString(SCOUT_KEY, key) }
 
-fun getScoutKey(bundle: Bundle): String? {
-    return bundle.getString(SCOUT_KEY)
-}
+fun getScoutKey(bundle: Bundle): String? = bundle.getString(SCOUT_KEY)
 
-fun getScoutIndicesRef(teamKey: String): DatabaseReference {
-    return FIREBASE_SCOUT_INDICES.child(teamKey)
-}
+fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
 fun addScout(team: Team): String {
     logAddScoutEvent(team.number)

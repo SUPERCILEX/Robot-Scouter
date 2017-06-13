@@ -6,7 +6,7 @@ import android.support.annotation.RequiresPermission
 import java.io.File
 import java.io.IOException
 
-@JvmField val IO_PERMS = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+val IO_PERMS = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 private val ROOT_FOLDER = File(Environment.getExternalStorageDirectory(), "Robot Scouter")
 private val MEDIA_FOLDER = File(ROOT_FOLDER, "Media")
@@ -37,7 +37,7 @@ fun hideFile(fileName: String): String = ".$fileName"
 fun unhideFile(file: File): File {
     val unhidden = File(file.parentFile, file.name.substring(1))
     if (!file.renameTo(unhidden)) {
-        throw IOException("Failed to rename file: " + file)
+        throw IOException("Failed to rename file: $file")
     }
     return unhidden
 }

@@ -14,7 +14,7 @@ private fun CustomTabsIntent.Builder.buildWithReferrer(context: Context): Custom
         // Add referrer intent
         customTabsIntent.intent.putExtra(
                 Intent.EXTRA_REFERRER,
-                Uri.parse(Intent.URI_ANDROID_APP_SCHEME.toString() + "//" + context.packageName))
+                Uri.parse("${Intent.URI_ANDROID_APP_SCHEME}//${context.packageName}"))
     }
     return customTabsIntent
 }
