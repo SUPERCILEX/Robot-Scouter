@@ -586,7 +586,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                 }
             }
 
-            nearestHeader = Pair.create(0, new Metric.Header("", null));
+            nearestHeader = Pair.create(0, new Metric.Header(""));
         }
 
         LineChartData data;

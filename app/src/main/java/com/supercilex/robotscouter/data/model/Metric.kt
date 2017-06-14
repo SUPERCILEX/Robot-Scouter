@@ -58,7 +58,7 @@ sealed class Metric<T>(name: String, value: T) {
             }
     }
 
-    class Header(name: String, value: Nothing? = null) : Metric<Nothing?>(name, value) {
+    class Header(name: String) : Metric<Nothing?>(name, null) {
         @Exclude
         override val type = HEADER
     }

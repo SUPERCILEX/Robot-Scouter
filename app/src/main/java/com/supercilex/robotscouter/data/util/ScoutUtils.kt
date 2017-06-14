@@ -62,7 +62,7 @@ val SCOUT_KEY = "scout_key"
                     name,
                     value.children.map { it.getValue(Long::class.java)!! })
         }
-        HEADER -> metric = Metric.Header(name, null)
+        HEADER -> metric = Metric.Header(name)
         else -> throw IllegalStateException("Unknown metric type: " + type)
     }
 

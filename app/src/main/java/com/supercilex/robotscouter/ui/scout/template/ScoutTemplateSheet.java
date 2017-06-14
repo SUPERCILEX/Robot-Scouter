@@ -79,7 +79,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     @Override
     public void onShow(DialogInterface dialog) {
         BottomSheetDialog d = (BottomSheetDialog) dialog;
-        FrameLayout bottomSheet = (FrameLayout) d.findViewById(android.support.design.R.id.design_bottom_sheet);
+        FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
         int parentHeight = getActivity().findViewById(android.R.id.content).getHeight();
         BottomSheetBehavior.from(bottomSheet).setPeekHeight(parentHeight);
     }
@@ -255,7 +255,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                         priority);
                 break;
             case R.id.add_header:
-                metricRef.setValue(new Metric.Header("", null), priority);
+                metricRef.setValue(new Metric.Header(""), priority);
                 break;
             default:
                 throw new IllegalStateException("Unknown id: " + id);
