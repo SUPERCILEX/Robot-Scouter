@@ -34,7 +34,7 @@ scouting simple and collaborative.
 ## Contributing
 
 Want to add features, fix bugs, or just poke around the code? No problem! Just make sure to read
-the [contribution guidelines](CONTRIBUTING.md) before getting in too deep.
+the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too deep.
 
 ### Learning 📚
  - Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter
@@ -43,7 +43,7 @@ the [contribution guidelines](CONTRIBUTING.md) before getting in too deep.
 
 ## Environment setup 💻
 
-1. [Move the dummy files](setup.sh#L13-L17) into position
+1. [Move the dummy files](building/setup.sh#L19-L23) into position
 1. If you are working with the database or need access to other Firebase technologies,
 [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
 and replace the dummy [google-services.json](travis-dummies/google-services.json)
