@@ -5,6 +5,9 @@
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
+# TODO remove once the Gradle plugin is fixed
+-dontwarn android.**
+
 # Kotlin
 -dontwarn kotlin.**
 
