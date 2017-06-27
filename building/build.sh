@@ -1,8 +1,7 @@
 #!/bin/bash -xe
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
-#  ./gradlew clean build publishApkRelease TODO figure out auto incrementing version code
-  ./gradlew clean build
+  ./gradlew clean build publishApkRelease
 
   cd firebase
   firebase deploy

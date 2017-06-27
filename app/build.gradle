@@ -8,7 +8,9 @@ if (isReleaseBuild) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 apply plugin: 'com.github.triplet.play'
-build.dependsOn 'updateReleasePlayVersion'
+tasks.whenTaskAdded { task ->
+    if (task.name == "assembleRelease") task.dependsOn 'updateReleasePlayVersion'
+}
 
 apply from: '../quality/quality.gradle'
 
@@ -69,14 +71,6 @@ play {
     track = 'alpha'
     serviceAccountEmail = 'google-play-auto-publisher@robot-scouter-app.iam.gserviceaccount.com'
     jsonFile = file('google-play-auto-publisher.json')
-}
-
-if (isReleaseBuild) {
-    android.applicationVariants.all { variant ->
-        variant.preBuild.doLast {
-            variant.mergedFlavor.versionName = "${android.defaultConfig.versionName}.$variant.versionCode"
-        }
-    }
 }
 
 dependencies {

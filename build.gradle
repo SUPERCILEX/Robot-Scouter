@@ -21,7 +21,7 @@ buildscript {
         classpath('com.google.firebase:firebase-plugins:1.1.0') {
             exclude group: 'com.google.guava', module: 'guava-jdk5'
         }
-        classpath 'com.github.SUPERCILEX:gradle-play-publisher:76b2f63634'
+        classpath 'com.github.SUPERCILEX:gradle-play-publisher:013f54c874'
     }
 }
 
