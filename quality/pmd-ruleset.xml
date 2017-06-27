@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <ruleset
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Android Application Rules"
-    xmlns="http://pmd.sf.net/ruleset/5.7.0"
+    xmlns="http://pmd.sf.net/ruleset/5.8.0"
     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
-    xsi:schemaLocation="http://pmd.sf.net/ruleset/5.7.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/5.8.0 http://pmd.sf.net/ruleset_xml_schema.xsd">
 
     <exclude-pattern>.*/R.java</exclude-pattern>
 
@@ -88,10 +88,7 @@
 
     <rule ref="rulesets/java/sunsecure.xml"/>
 
-    <rule ref="rulesets/java/strictexception.xml">
-        <!-- TODO remove once PMD fixes the bug: https://github.com/pmd/pmd/issues/350 -->
-        <exclude name="SignatureDeclareThrowsException"/>
-    </rule>
+    <rule ref="rulesets/java/strictexception.xml" />
 
     <rule ref="rulesets/java/strings.xml"/>
 
