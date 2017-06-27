@@ -98,7 +98,7 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
-    implementation 'com.facebook.android:facebook-android-sdk:4.23.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.24.0'
     implementation("com.twitter.sdk.android:twitter-core:3.0.0@aar") { transitive = true }
     // Database
 //    implementation 'com.firebaseui:firebase-ui-database:2.0.0'
@@ -118,7 +118,7 @@ dependencies {
 
     // From Google-ish
     implementation 'pub.devrel:easypermissions:0.4.1'
-    implementation 'com.github.bumptech.glide:glide:4.0.0-RC0'
+    implementation 'com.github.bumptech.glide:glide:4.0.0-RC1'
 
     // Third party
     implementation 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'

@@ -102,7 +102,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         setProgressVisibility()
 
         if (isItemSelected) {
-            Glide.with(fragment)
+            Glide.with(mediaImageView)
                     .load(null)
                     .apply(RequestOptions.placeholderOf(R.drawable.ic_check_circle_grey_144dp))
                     .into(mediaImageView)
@@ -125,11 +125,9 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         nameTextView.text = team.name
     }
 
-    private fun setTeamMedia() = Glide.with(fragment)
+    private fun setTeamMedia() = Glide.with(mediaImageView)
             .load(team.media)
-            .apply(RequestOptions.circleCropTransform()
-                    .error(R.drawable.ic_memory_grey_48dp)
-                    .fallback(R.drawable.ic_memory_grey_48dp))
+            .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_memory_grey_48dp))
             .listener(mediaLoadProgressListener)
             .into(mediaImageView)
 

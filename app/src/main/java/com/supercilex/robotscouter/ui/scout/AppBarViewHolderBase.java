@@ -97,12 +97,10 @@ public abstract class AppBarViewHolderBase
         mMediaLoadProgress.setVisibility(View.VISIBLE);
 
         String media = mTeamHelper.getTeam().getMedia();
-        Glide.with(mFragment)
+        Glide.with(mBackdrop)
                 .asBitmap()
                 .load(media)
-                .apply(RequestOptions.centerCropTransform()
-                               .error(R.drawable.ic_memory_grey_48dp)
-                               .fallback(R.drawable.ic_memory_grey_48dp))
+                .apply(RequestOptions.centerCropTransform().error(R.drawable.ic_memory_grey_48dp))
                 .listener(new RequestListener<Bitmap>() {
                     @Override
                     public boolean onResourceReady(Bitmap resource,
