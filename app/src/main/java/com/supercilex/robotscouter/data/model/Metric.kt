@@ -14,12 +14,13 @@ import com.supercilex.robotscouter.util.FIREBASE_VALUE
 sealed class Metric<T>(name: String, value: T) {
     class Boolean(name: String, value: kotlin.Boolean = false) :
             Metric<kotlin.Boolean>(name, value) {
+        @Exclude @get:Keep
         override val type = BOOLEAN
     }
 
     class Number(name: String, value: Long = 0, unit: String? = null) :
             Metric<Long>(name, value) {
-        @Exclude
+        @Exclude @get:Keep
         override val type = NUMBER
 
         @Exclude @get:Keep @set:Keep
@@ -34,18 +35,18 @@ sealed class Metric<T>(name: String, value: T) {
 
     class Stopwatch(name: String, value: kotlin.collections.List<Long>? = null) :
             Metric<kotlin.collections.List<Long>?>(name, value) {
-        @Exclude
+        @Exclude @get:Keep
         override val type = STOPWATCH
     }
 
     class Text(name: String, value: String? = null) : Metric<String?>(name, value) {
-        @Exclude
+        @Exclude @get:Keep
         override val type = TEXT
     }
 
     class List(name: String, value: Map<String, String>, selectedValueKey: String? = null) :
             Metric<Map<String, String>>(name, value) {
-        @Exclude
+        @Exclude @get:Keep
         override val type = LIST
 
         @Exclude @get:Keep @set:Keep
@@ -59,15 +60,14 @@ sealed class Metric<T>(name: String, value: T) {
     }
 
     class Header(name: String) : Metric<Nothing?>(name, null) {
-        @Exclude
+        @Exclude @get:Keep
         override val type = HEADER
     }
 
 
-    @get:Keep
     abstract val type: Int
 
-    @Exclude @get:Exclude
+    @Exclude @get:Exclude @set:Exclude
     lateinit var ref: DatabaseReference
 
     @Exclude @get:Keep @set:Keep
