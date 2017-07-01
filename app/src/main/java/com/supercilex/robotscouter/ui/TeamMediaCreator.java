@@ -31,6 +31,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava;
 import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
+import static com.supercilex.robotscouter.util.IoUtilsKt.createFile;
 import static com.supercilex.robotscouter.util.IoUtilsKt.getMediaFolder;
 import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
 import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
@@ -181,9 +182,10 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        return File.createTempFile(hideFile(mTeamHelper + "_" + System.currentTimeMillis()),
-                                   ".jpg",
-                                   mediaFolder);
+        return createFile(hideFile(mTeamHelper.toString()),
+                          "jpg",
+                          mediaFolder,
+                          String.valueOf(System.currentTimeMillis()));
     }
 
     @Override

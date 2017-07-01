@@ -11,6 +11,18 @@ import java.io.IOException
 private val ROOT_FOLDER = File(Environment.getExternalStorageDirectory(), "Robot Scouter")
 private val MEDIA_FOLDER = File(ROOT_FOLDER, "Media")
 
+fun createFile(prefix: String,
+               suffix: String,
+               parent: File,
+               randomSeparator: String? = System.currentTimeMillis().toString()): File {
+    val tempFile = File(parent, "$prefix${if (randomSeparator == null) "" else "_$randomSeparator"}.$suffix")
+    if (tempFile.createNewFile()) {
+        return tempFile
+    } else {
+        throw IOException("Unable to create temporary file")
+    }
+}
+
 @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 fun getRootFolder(): File? =
         if (isExternalStorageMounted() && (ROOT_FOLDER.exists() || ROOT_FOLDER.mkdirs())) ROOT_FOLDER else null
