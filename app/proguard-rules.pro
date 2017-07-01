@@ -8,6 +8,9 @@
 # Kotlin
 -dontwarn kotlin.**
 
+# TODO remove once the Gradle plugin is fixed
+-keep class com.supercilex.**
+
 # In-app billing
 -keep class com.android.vending.billing.**
 
