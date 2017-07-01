@@ -4,16 +4,15 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import java.util.concurrent.Callable
 import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 enum class AsyncTaskExecutor : Executor {
     INSTANCE;
 
-    private val mService: ExecutorService = Executors.newCachedThreadPool()
+    private val service = Executors.newCachedThreadPool()
 
     override fun execute(runnable: Runnable) {
-        mService.submit(runnable)
+        service.submit(runnable)
     }
 
     companion object {

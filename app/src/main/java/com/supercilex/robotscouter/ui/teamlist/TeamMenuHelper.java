@@ -132,7 +132,7 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
                 exportTeams();
                 break;
             case R.id.action_share:
-                if (TeamSharer.launchInvitationIntent(mFragment.getActivity(), mSelectedTeams)) {
+                if (TeamSharer.Companion.shareTeams(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
                 logShareTeamEvent(teamHelper.getTeam().getNumber());

@@ -57,10 +57,6 @@ android {
         }
     }
 
-    dexOptions {
-        jumboMode true
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -105,6 +101,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-crash:$playServicesVersion"
     implementation "com.google.firebase:firebase-perf:$playServicesVersion"
+    implementation "com.google.firebase:firebase-storage:$playServicesVersion"
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
     implementation "com.google.firebase:firebase-appindexing:$playServicesVersion"
     implementation "com.google.firebase:firebase-config:$playServicesVersion"

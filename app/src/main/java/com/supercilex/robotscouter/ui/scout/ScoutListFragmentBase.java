@@ -179,8 +179,8 @@ public abstract class ScoutListFragmentBase extends Fragment
                 ShouldUploadMediaToTbaDialog.Companion.show(this);
                 break;
             case R.id.action_share:
-                TeamSharer.launchInvitationIntent(getActivity(),
-                                                  Collections.singletonList(mTeamHelper));
+                TeamSharer.Companion.shareTeams(getActivity(),
+                                                Collections.singletonList(mTeamHelper));
                 logShareTeamEvent(teamNumber);
                 break;
             case R.id.action_visit_tba_website:

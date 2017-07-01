@@ -1,0 +1,12 @@
+service firebase.storage {
+  match /b/robot-scouter-app.appspot.com/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    match /share_template.html {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
