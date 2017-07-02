@@ -86,18 +86,11 @@
     <string name="debug_info_name">Robot Scouter debug info</string>
     <string name="debug_info_copied">Debug info copied to clipboard</string>
 
-    <string-array name="donate_items">
-        <item>$1.00 - One time donation</item>
-        <item>$1.00 - Monthly donation</item>
-        <item>$2.00 - One time donation</item>
-        <item>$2.00 - Monthly donation</item>
-        <item>$5.00 - One time donation</item>
-        <item>$5.00 - Monthly donation</item>
-        <item>$10.00 - One time donation</item>
-        <item>$10.00 - Monthly donation</item>
-    </string-array>
-
     <string name="developed_with_love">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a> and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!</string>
+
+    <string name="donate_amount">$%d</string>
+    <string name="donate_monthly">Automatically donate monthly</string>
+    <string name="donate_cancel_message">Are you sure you don\'t want to donate? We really appreciate any donation, no matter how small!</string>
 
     <string name="teams_imported">Teams successfully imported</string>
 

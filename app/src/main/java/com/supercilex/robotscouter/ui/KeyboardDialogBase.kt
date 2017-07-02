@@ -1,9 +1,7 @@
 package com.supercilex.robotscouter.ui
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
 import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -13,13 +11,10 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
-import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.create
 
-abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, TextView.OnEditorActionListener {
+abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActionListener {
     protected abstract val lastEditText: EditText
-
-    protected abstract fun onClick(): Boolean
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -42,22 +37,9 @@ abstract class KeyboardDialogBase : DialogFragment(), View.OnClickListener, Text
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    @CallSuper
-    open fun onShow(dialog: AlertDialog) =
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(this)
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RobotScouter.getRefWatcher(activity).watch(this)
-    }
-
-    override fun onClick(v: View) {
-        if (onClick()) dialog.dismiss()
-    }
-
     override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
         if (event?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
-            onClick(lastEditText)
+            handleOnAttemptDismiss()
             return true
         }
         return false

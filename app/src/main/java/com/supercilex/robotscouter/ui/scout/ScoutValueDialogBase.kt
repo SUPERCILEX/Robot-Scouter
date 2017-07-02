@@ -36,7 +36,7 @@ abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 
-    override fun onClick(): Boolean {
+    override fun onAttemptDismiss(): Boolean {
         DatabaseHelper.getRef(arguments).setValue(value)
         return true
     }
