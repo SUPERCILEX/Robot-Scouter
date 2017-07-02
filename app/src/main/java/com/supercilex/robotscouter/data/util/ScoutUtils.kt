@@ -109,8 +109,8 @@ fun deleteScout(teamKey: String, scoutKey: String) {
     getScoutIndicesRef(teamKey).child(scoutKey).removeValue()
 }
 
-fun deleteAllScouts(teamKey: String): Task<Void> {
-    val deleteTask = TaskCompletionSource<Void>()
+fun deleteAllScouts(teamKey: String): Task<Nothing> {
+    val deleteTask = TaskCompletionSource<Nothing>()
     getScoutIndicesRef(teamKey).addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             for (keySnapshot in snapshot.children) {

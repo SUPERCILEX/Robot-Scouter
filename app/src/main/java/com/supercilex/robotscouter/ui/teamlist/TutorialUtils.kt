@@ -32,6 +32,7 @@ fun showCreateFirstTeamPrompt(activity: Activity): MaterialTapTargetPrompt? {
     return null
 }
 
+// TODO maybe make a BottomSheet that explains why the user should sign in
 fun showSignInPrompt(activity: Activity) {
     val appContext = activity.applicationContext
     if (hasShownAddTeamTutorial(appContext) && !hasShownSignInTutorial(appContext)) {

@@ -2,8 +2,6 @@ package com.supercilex.robotscouter.ui
 
 import android.content.Intent
 import android.support.design.widget.Snackbar
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
@@ -19,7 +17,6 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
 import com.supercilex.robotscouter.util.getUid
 import com.supercilex.robotscouter.util.getUser
-import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
@@ -29,18 +26,10 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     private val rootView: View = activity.findViewById(R.id.root)
 
     private val linkReceiver by lazy { IntentForwarder(activity) }
-    private var actionSignIn: MenuItem? = null
-    private var actionSignOut: MenuItem? = null
 
     init {
         if (isSignedIn()) initDeepLinkReceiver()
         else signInAnonymously()
-    }
-
-    fun initMenu(menu: Menu) {
-        actionSignIn = menu.findItem(R.id.action_sign_in)
-        actionSignOut = menu.findItem(R.id.action_sign_out)
-        toggleMenuSignIn(isFullUser())
     }
 
     private fun initDeepLinkReceiver() = linkReceiver
@@ -68,7 +57,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                 signInAnonymouslyInitBasic()
                 FirebaseAppIndex.getInstance().removeAll()
             }
-            .addOnSuccessListener(activity) { toggleMenuSignIn(false) }
 
     fun showSignInResolution() =
             Snackbar.make(rootView, R.string.sign_in_required, Snackbar.LENGTH_LONG)
@@ -84,7 +72,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                         R.string.signed_in,
                         Snackbar.LENGTH_LONG)
                         .show()
-                toggleMenuSignIn(true)
 
                 initDeepLinkReceiver()
 
@@ -114,11 +101,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
         }
 
         return false
-    }
-
-    private fun toggleMenuSignIn(isSignedIn: Boolean) {
-        actionSignIn?.isVisible = !isSignedIn
-        actionSignOut?.isVisible = isSignedIn
     }
 
     override fun onClick(v: View) = signIn()

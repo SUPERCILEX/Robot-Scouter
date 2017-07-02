@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.auth.util.PlayServicesHelper
@@ -26,22 +29,36 @@ import com.supercilex.robotscouter.util.isTabletMode
 import com.supercilex.robotscouter.util.logSelectTeamEvent
 import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.setHasShownSignInTutorial
-import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
+
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectionListener, OnSuccessListener<Void> {
-    private val teamListFragment: TeamListFragment by lazy {
+class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectionListener, OnSuccessListener<Nothing>, NavigationView.OnNavigationItemSelectedListener {
+    private val teamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
-    private val authHelper: AuthHelper by lazy { AuthHelper(this) }
-    private val addTeamPrompt: MaterialTapTargetPrompt? by lazy { showCreateFirstTeamPrompt(this) }
+    private val authHelper by lazy { AuthHelper(this) }
+    private val addTeamPrompt by lazy { showCreateFirstTeamPrompt(this) }
+
+    private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.RobotScouter_NoActionBar)
+        setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_team_list)
-        setSupportActionBar(findViewById(R.id.toolbar))
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val toggle = ActionBarDrawerToggle(this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        val drawer = findViewById<NavigationView>(R.id.drawer)
+        drawer.setNavigationItemSelectedListener(this)
 
         authHelper; addTeamPrompt
         findViewById<View>(R.id.fab).setOnClickListener(this)
@@ -56,30 +73,11 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         fetchAndActivate().addOnSuccessListener(this, this)
     }
 
-    override fun onSuccess(aVoid: Void?) {
+    override fun onSuccess(nothing: Nothing?) {
         val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
         if (BuildConfig.VERSION_CODE < minimum && !isOffline(this)) {
             UpdateDialog.show(supportFragmentManager)
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.team_list, menu)
-        authHelper.initMenu(menu)
-        Handler().post { showSignInPrompt(this) }
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_sign_in -> authHelper.signIn()
-            R.id.action_sign_out -> authHelper.signOut()
-            R.id.action_donate -> DonateDialog.show(supportFragmentManager)
-            R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
-            R.id.action_about -> AboutDialog.show(supportFragmentManager)
-            else -> return false
-        }
-        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -94,10 +92,6 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         }
     }
 
-    override fun onBackPressed() {
-        if (!teamListFragment.onBackPressed()) super.onBackPressed()
-    }
-
     override fun onClick(v: View) {
         if (v.id == R.id.fab) {
             if (isSignedIn()) {
@@ -105,6 +99,28 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
             } else {
                 authHelper.showSignInResolution()
             }
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_sign_in -> authHelper.signIn()
+            R.id.action_sign_out -> authHelper.signOut()
+            R.id.action_donate -> DonateDialog.show(supportFragmentManager)
+            R.id.action_about -> AboutDialog.show(supportFragmentManager)
+            R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
+            else -> throw IllegalStateException()
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return false
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            if (!teamListFragment.onBackPressed()) super.onBackPressed()
         }
     }
 

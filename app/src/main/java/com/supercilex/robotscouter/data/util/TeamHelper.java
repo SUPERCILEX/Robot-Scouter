@@ -122,10 +122,6 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         return teamName;
     }
 
-    public Intent toIntent() {
-        return new Intent().putExtra(TEAM_HELPER_KEY, this);
-    }
-
     public Bundle toBundle() {
         Bundle args = new Bundle();
         args.putParcelable(TEAM_HELPER_KEY, this);
@@ -225,7 +221,7 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
 
     public void fetchLatestData(Context context) {
         Context appContext = context.getApplicationContext();
-        fetchAndActivate().addOnSuccessListener(aVoid -> {
+        fetchAndActivate().addOnSuccessListener(nothing -> {
             long differenceDays =
                     TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - mTeam.getTimestamp());
             double freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS);

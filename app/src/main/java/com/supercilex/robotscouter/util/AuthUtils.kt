@@ -43,13 +43,13 @@ fun signInAnonymouslyDbInit(): Task<AuthResult> = signInAnonymouslyInitBasic().a
     DatabaseInitializer()
 }
 
-private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Void> {
+private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Nothing> {
     init {
         fetchAndActivate().addOnSuccessListener(this)
         FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this)
     }
 
-    override fun onSuccess(aVoid: Void?) {
+    override fun onSuccess(nothing: Nothing?) {
         if (FirebaseRemoteConfig.getInstance().getBoolean(SHOULD_CACHE_DB)) {
             FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this)
         }

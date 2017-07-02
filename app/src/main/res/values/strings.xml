@@ -22,6 +22,9 @@
     <string name="save_response">Save response</string>
 
     <!-- Team List Activity -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <string name="hint_team_number">Team number</string>
 
     <string name="unknown_team">Unknown</string>
