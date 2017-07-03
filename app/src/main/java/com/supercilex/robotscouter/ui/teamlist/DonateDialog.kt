@@ -157,6 +157,12 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
     private fun updateProgress(isDoingAsyncWork: Boolean) {
         content.visibility = if (isDoingAsyncWork) View.GONE else View.VISIBLE
         progress.visibility = if (isDoingAsyncWork) View.VISIBLE else View.GONE
+
+        if (dialog != null) {
+            val dialog = dialog as AlertDialog
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !isDoingAsyncWork
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = !isDoingAsyncWork
+        }
     }
 
     private fun showError() {
