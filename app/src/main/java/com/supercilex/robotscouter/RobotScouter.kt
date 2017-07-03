@@ -2,6 +2,9 @@ package com.supercilex.robotscouter
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
+import android.support.text.emoji.EmojiCompat
+import android.support.text.emoji.FontRequestEmojiCompatConfig
+import android.support.v4.provider.FontRequest
 import android.support.v7.app.AppCompatDelegate
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -34,6 +37,12 @@ class RobotScouter : MultiDexApplication() {
                     .setDeveloperModeEnabled(BuildConfig.DEBUG)
                     .build())
         }
+
+        EmojiCompat.init(FontRequestEmojiCompatConfig(this, FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                R.array.com_google_android_gms_fonts_certs)))
     }
 
     companion object {

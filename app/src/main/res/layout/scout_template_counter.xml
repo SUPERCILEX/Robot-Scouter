@@ -6,7 +6,7 @@
 
     <include layout="@layout/template_base_reorder" />
 
-    <EditText
+    <android.support.text.emoji.widget.EmojiAppCompatEditText
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
 
     <include layout="@layout/scout_base_counter" />
 
-    <EditText
+    <android.support.text.emoji.widget.EmojiAppCompatEditText
         android:id="@+id/unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
