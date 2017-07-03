@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/content"
         style="@style/RobotScouter.Dialog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,5 +35,14 @@
             android:text="@string/donate_monthly" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/Base.Widget.AppCompat.ProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>
