@@ -75,13 +75,9 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     override fun onDestroy() {
         super.onDestroy()
+        if (isRemoving) purchaseListenerHolder = null
         billingClient.endConnection()
         RobotScouter.getRefWatcher(activity).watch(this)
-    }
-
-    override fun onDismiss(dialog: DialogInterface?) {
-        super.onDismiss(dialog)
-        purchaseListenerHolder = null
     }
 
     override fun onAttemptDismiss(): Boolean {
