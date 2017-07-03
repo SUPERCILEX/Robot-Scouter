@@ -16,6 +16,7 @@
             android:id="@+id/amount_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
             android:textIsSelectable="false"
             android:textSize="@dimen/text_size_normal"
             android:textStyle="bold" />
