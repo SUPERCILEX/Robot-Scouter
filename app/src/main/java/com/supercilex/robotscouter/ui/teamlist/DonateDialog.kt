@@ -127,6 +127,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
         val consumptions: MutableList<Task<String>> = ArrayList()
 
         for (purchase in purchases) {
+            if (!purchase.sku.contains("single")) continue
+
             val consumption = TaskCompletionSource<String>()
             billingClient.consumeAsync(purchase.purchaseToken) { purchaseToken, resultCode ->
                 if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
