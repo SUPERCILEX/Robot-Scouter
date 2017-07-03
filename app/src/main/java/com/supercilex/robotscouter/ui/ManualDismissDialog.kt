@@ -28,6 +28,6 @@ abstract class ManualDismissDialog : DialogFragment(), DialogInterface.OnShowLis
     }
 
     protected fun handleOnAttemptDismiss() {
-        if (onAttemptDismiss()) dialog.dismiss()
+        if (onAttemptDismiss()) dismiss()
     }
 }
