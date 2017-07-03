@@ -19,18 +19,18 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.getUid
 
-
 class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, PurchasesUpdatedListener, BillingClientStateListener {
-    private val root by lazy { dialog.findViewById<View>(R.id.root) }
-    private val amountTextView by lazy { dialog.findViewById<TextView>(R.id.amount_textview) }
-    private val amountSeekBar by lazy { dialog.findViewById<SeekBar>(R.id.amount) }
-    private val monthlyCheckBox by lazy { dialog.findViewById<CheckBox>(R.id.monthly) }
+    private val root by lazy { View.inflate(context, R.layout.dialog_donate, null) }
+    private val amountTextView by lazy { root.findViewById<TextView>(R.id.amount_textview) }
+    private val amountSeekBar by lazy { root.findViewById<SeekBar>(R.id.amount) }
+    private val monthlyCheckBox by lazy { root.findViewById<CheckBox>(R.id.monthly) }
 
     private val billingClient by lazy { BillingClient.Builder(context).setListener(this).build() }
     private val billingClientReadyTask = TaskCompletionSource<@BillingClient.BillingResponse Int>()
@@ -42,7 +42,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.donate)
-            .setView(R.layout.dialog_donate)
+            .setView(root)
             .setPositiveButton(R.string.donate, null)
             .setNegativeButton(android.R.string.cancel, null)
             .create { onShow(this) }
@@ -69,13 +69,18 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
     }
 
     override fun onAttemptDismiss(): Boolean {
-        val result = billingClient.launchBillingFlow(activity, BillingFlowParams.Builder()
-                .setSku("${amountSeekBar.progress + 1}$SKU_BASE${if (monthlyCheckBox.isChecked) "monthly" else "single"}")
-                .setType(if (monthlyCheckBox.isChecked) BillingClient.SkuType.SUBS else BillingClient.SkuType.INAPP)
-                .setAccountId(getUid()?.hashCode().toString())
-                .build())
+        billingClientReadyTask.task.addOnSuccessListener(activity) {
+            val result = billingClient.launchBillingFlow(activity, BillingFlowParams.Builder()
+                    .setSku("${amountSeekBar.progress + 1}$SKU_BASE${if (monthlyCheckBox.isChecked) "monthly" else "single"}")
+                    .setType(if (monthlyCheckBox.isChecked) BillingClient.SkuType.SUBS else BillingClient.SkuType.INAPP)
+                    .setAccountId(getUid()?.hashCode().toString())
+                    .build())
 
-        if (result != BillingClient.BillingResponse.OK) showError()
+            if (result != BillingClient.BillingResponse.OK) {
+                FirebaseCrash.report(IllegalStateException("Unknonwn puchase error: $result"))
+                showError()
+            }
+        }
 
         return false
     }
@@ -102,6 +107,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
         } else if (responseCode == BillingResponse.USER_CANCELED) {
             Snackbar.make(root, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
         } else {
+            FirebaseCrash.report(IllegalStateException("Unknonwn puchase error: $responseCode"))
             showError()
         }
     }
