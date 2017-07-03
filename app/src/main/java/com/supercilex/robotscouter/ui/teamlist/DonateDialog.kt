@@ -116,6 +116,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
                     .addOnSuccessListener { dismiss() }
                     .addOnFailureListener { showError() }
         } else if (responseCode == BillingResponse.USER_CANCELED) {
+            updateProgress(false)
             Snackbar.make(root, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
         } else {
             FirebaseCrash.report(IllegalStateException("Unknown purchase error: $responseCode"))
