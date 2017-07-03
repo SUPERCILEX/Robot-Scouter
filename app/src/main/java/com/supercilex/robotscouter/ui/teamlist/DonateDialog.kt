@@ -28,8 +28,9 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.getUid
+import java.lang.ref.WeakReference
 
-class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, PurchasesUpdatedListener, BillingClientStateListener {
+class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
     private val root by lazy { View.inflate(context, R.layout.dialog_donate, null) }
     private val content by lazy { root.findViewById<View>(R.id.content) }
     private val progress by lazy { root.findViewById<ProgressBar>(R.id.progress) }
@@ -37,7 +38,12 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
     private val amountSeekBar by lazy { root.findViewById<SeekBar>(R.id.amount) }
     private val monthlyCheckBox by lazy { root.findViewById<CheckBox>(R.id.monthly) }
 
-    private val billingClient by lazy { BillingClient.Builder(context).setListener(this).build() }
+    private val billingClient by lazy {
+        if (purchaseListenerHolder == null) {
+            purchaseListenerHolder = PurchaseListenerHolder(this)
+        }
+        BillingClient.Builder(context).setListener(purchaseListenerHolder).build()
+    }
     private val billingClientReadyTask = TaskCompletionSource<@BillingClient.BillingResponse Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +77,11 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
         super.onDestroy()
         billingClient.endConnection()
         RobotScouter.getRefWatcher(activity).watch(this)
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+        purchaseListenerHolder = null
     }
 
     override fun onAttemptDismiss(): Boolean {
@@ -109,20 +120,6 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
         }
 
         return false
-    }
-
-    override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
-        if (responseCode == BillingResponse.OK && purchases != null) {
-            getConsumePurchasesTask(purchases)
-                    .addOnSuccessListener { dismiss() }
-                    .addOnFailureListener { showError() }
-        } else if (responseCode == BillingResponse.USER_CANCELED) {
-            updateProgress(false)
-            Snackbar.make(root, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
-        } else {
-            FirebaseCrash.report(IllegalStateException("Unknown purchase error: $responseCode"))
-            showError()
-        }
     }
 
     private fun getConsumePurchasesTask(purchases: List<Purchase>): Task<Nothing> {
@@ -171,7 +168,10 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
         Snackbar.make(root, R.string.general_error, Snackbar.LENGTH_LONG).show()
     }
 
-    override fun onBillingSetupFinished(resultCode: Int) = billingClientReadyTask.setResult(resultCode)
+    override fun onBillingSetupFinished(resultCode: Int) {
+        billingClientReadyTask.setResult(resultCode)
+        purchaseListenerHolder!!.continuePurchase(this)
+    }
 
     override fun onBillingServiceDisconnected() = billingClient.startConnection(this)
 
@@ -179,9 +179,43 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Pur
 
     override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
 
+    private class PurchaseListenerHolder(dialog: DonateDialog) : PurchasesUpdatedListener {
+        private var dialog = WeakReference(dialog)
+        private var savedState: Pair<Int, List<Purchase>?>? = null
+
+        fun continuePurchase(dialog: DonateDialog) {
+            this.dialog = WeakReference(dialog)
+            if (savedState != null) onPurchasesUpdated(savedState!!.first, savedState!!.second)
+        }
+
+        override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
+            val dialog = this.dialog.get()
+            if (dialog == null) {
+                savedState = responseCode to purchases
+                return
+            } else {
+                savedState = null
+            }
+
+            if (responseCode == BillingResponse.OK && purchases != null) {
+                dialog.getConsumePurchasesTask(purchases)
+                        .addOnSuccessListener { dialog.dismiss() }
+                        .addOnFailureListener { dialog.showError() }
+            } else if (responseCode == BillingResponse.USER_CANCELED) {
+                dialog.updateProgress(false)
+                Snackbar.make(dialog.root, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
+            } else {
+                FirebaseCrash.report(IllegalStateException("Unknown purchase error: $responseCode"))
+                dialog.showError()
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "DonateDialog"
         private const val SKU_BASE = "_donate_"
+
+        private var purchaseListenerHolder: PurchaseListenerHolder? = null
 
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
     }
