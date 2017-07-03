@@ -12,12 +12,6 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.BillingClient.BillingResponse
-import com.android.billingclient.api.BillingClientStateListener
-import com.android.billingclient.api.BillingFlowParams
-import com.android.billingclient.api.Purchase
-import com.android.billingclient.api.PurchasesUpdatedListener
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -31,12 +25,12 @@ import com.supercilex.robotscouter.util.getUid
 import java.lang.ref.WeakReference
 
 class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
-    private val root by lazy { View.inflate(context, R.layout.dialog_donate, null) }
-    private val content by lazy { root.findViewById<View>(R.id.content) }
-    private val progress by lazy { root.findViewById<ProgressBar>(R.id.progress) }
-    private val amountTextView by lazy { root.findViewById<TextView>(R.id.amount_textview) }
-    private val amountSeekBar by lazy { root.findViewById<SeekBar>(R.id.amount) }
-    private val monthlyCheckBox by lazy { root.findViewById<CheckBox>(R.id.monthly) }
+    private val rootView by lazy { View.inflate(context, R.layout.dialog_donate, null) }
+    private val content by lazy { rootView.findViewById<View>(R.id.content) }
+    private val progress by lazy { rootView.findViewById<ProgressBar>(R.id.progress) }
+    private val amountTextView by lazy { rootView.findViewById<TextView>(R.id.amount_textview) }
+    private val amountSeekBar by lazy { rootView.findViewById<SeekBar>(R.id.amount) }
+    private val monthlyCheckBox by lazy { rootView.findViewById<CheckBox>(R.id.monthly) }
 
     private val billingClient by lazy {
         if (purchaseListenerHolder == null) {
@@ -53,7 +47,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.donate)
-            .setView(root)
+            .setView(rootView)
             .setPositiveButton(R.string.donate, null)
             .setNegativeButton(android.R.string.cancel, null)
             .create { onShow(this) }
@@ -161,7 +155,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun showError() {
         updateProgress(false)
-        Snackbar.make(root, R.string.general_error, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(rootView, R.string.general_error, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {
@@ -202,7 +196,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                         .addOnFailureListener { dialog.showError() }
             } else if (responseCode == BillingResponse.USER_CANCELED) {
                 dialog.updateProgress(false)
-                Snackbar.make(dialog.root, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(dialog.rootView, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
             } else {
                 FirebaseCrash.report(IllegalStateException("Unknown purchase error: $responseCode"))
                 dialog.showError()
