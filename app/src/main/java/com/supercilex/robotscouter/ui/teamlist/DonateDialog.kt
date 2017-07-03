@@ -22,8 +22,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
-import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.android.gms.tasks.Tasks
+import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.ManualDismissDialog
