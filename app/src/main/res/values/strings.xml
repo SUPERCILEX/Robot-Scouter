@@ -91,6 +91,7 @@
     <string name="donate_amount">$%d</string>
     <string name="donate_monthly">Automatically donate monthly</string>
     <string name="donate_cancel_message">Are you sure you don\'t want to donate? We really appreciate any donation, no matter how small!</string>
+    <string name="donate_thanks">Thank you!!! Any and all help is greatly appreciated!</string>
 
     <string name="teams_imported">Teams successfully imported</string>
 

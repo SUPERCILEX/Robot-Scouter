@@ -11,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponse
 import com.android.billingclient.api.BillingClientStateListener
@@ -195,7 +196,10 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
             if (responseCode == BillingResponse.OK && purchases != null) {
                 dialog.getConsumePurchasesTask(purchases)
-                        .addOnSuccessListener { dialog.dismiss() }
+                        .addOnSuccessListener {
+                            Toast.makeText(dialog.context, R.string.donate_thanks, Toast.LENGTH_LONG).show()
+                            dialog.dismiss()
+                        }
                         .addOnFailureListener { dialog.showError() }
             } else if (responseCode == BillingResponse.USER_CANCELED) {
                 dialog.updateProgress(false)
