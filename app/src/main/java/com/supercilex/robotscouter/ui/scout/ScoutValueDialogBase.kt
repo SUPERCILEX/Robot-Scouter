@@ -23,7 +23,7 @@ abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
         inputLayout.hint = getString(hint)
         lastEditText.apply {
             setText(arguments.getString(CURRENT_VALUE))
-            post { selectAll() }
+            if (savedInstanceState == null) post { selectAll() }
         }
 
         return createDialog(rootView, title)
