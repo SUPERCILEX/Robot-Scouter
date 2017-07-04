@@ -1,184 +1,231 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.app.Activity
 import android.app.Dialog
-import android.app.PendingIntent
-import android.app.ProgressDialog
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentSender
-import android.content.ServiceConnection
+import android.content.DialogInterface
 import android.os.Bundle
-import android.os.IBinder
-import android.os.RemoteException
-import android.support.v4.app.DialogFragment
+import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.View
-import android.widget.AdapterView
+import android.widget.CheckBox
+import android.widget.ProgressBar
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
-import com.android.vending.billing.IInAppBillingService
-import com.google.android.gms.tasks.OnCompleteListener
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClient.BillingResponse
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchasesUpdatedListener
+import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.create
-import com.supercilex.robotscouter.util.show
-import org.json.JSONException
-import org.json.JSONObject
-import java.util.concurrent.Callable
+import com.supercilex.robotscouter.ui.ManualDismissDialog
+import com.supercilex.robotscouter.util.getUid
+import java.lang.ref.WeakReference
 
-class DonateDialog : DialogFragment(), ServiceConnection, AdapterView.OnItemClickListener, OnCompleteListener<Void> {
-    private var service: IInAppBillingService? = null
-    private var progressDialog: ProgressDialog? = null
+class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
+    private val rootView by lazy { View.inflate(context, R.layout.dialog_donate, null) }
+    private val content by lazy { rootView.findViewById<View>(R.id.content) }
+    private val progress by lazy { rootView.findViewById<ProgressBar>(R.id.progress) }
+    private val amountTextView by lazy { rootView.findViewById<TextView>(R.id.amount_textview) }
+    private val amountSeekBar by lazy { rootView.findViewById<SeekBar>(R.id.amount) }
+    private val monthlyCheckBox by lazy { rootView.findViewById<CheckBox>(R.id.monthly) }
+
+    private val billingClient by lazy {
+        BillingClient.Builder(context).setListener(purchaseListener).build()
+    }
+    private val billingClientReadyTask = TaskCompletionSource<@BillingResponse Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val serviceIntent = Intent("com.android.vending.billing.InAppBillingService.BIND")
-        serviceIntent.`package` = "com.android.vending"
-        context.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE)
+        billingClient.startConnection(this)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.donate)
-            .setItems(R.array.donate_items, null)
+            .setView(rootView)
+            .setPositiveButton(R.string.donate, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .create {
-                listView.onItemClickListener = this@DonateDialog
-                if (arguments.getBoolean(KEY_IS_PROGRESS_SHOWING)) initProgressDialog()
-            }
+            .createAndSetup()
+
+    override fun onShow(dialog: DialogInterface) {
+        super.onShow(dialog)
+        amountSeekBar.setOnSeekBarChangeListener(this)
+        onProgressChanged(amountSeekBar, 0, false) // Init state
+    }
+
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+        amountTextView.text = getString(R.string.donate_amount, progress + 1)
+
+        val width = seekBar.width - (seekBar.paddingLeft + seekBar.paddingRight)
+        val thumbPos = seekBar.paddingLeft + (width * progress / seekBar.max)
+        val offset = seekBar.thumbOffset - if (progress == seekBar.max) 2 * seekBar.max else seekBar.max
+        amountTextView.x = (thumbPos + offset).toFloat()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (service != null) context.unbindService(this)
-        destroyProgressDialog()
-        RobotScouter.getRefWatcher(activity).watch(this)
+        billingClient.endConnection()
     }
 
-    private fun initProgressDialog() {
-        progressDialog = ProgressDialog.show(
-                context,
-                "",
-                getString(R.string.progress_dialog_loading),
-                true)
+    override fun onAttemptDismiss(): Boolean {
+        updateProgress(true)
 
-        arguments.putBoolean(KEY_IS_PROGRESS_SHOWING, true)
+        val sku = "${amountSeekBar.progress + 1}${DonateDialog.SKU_BASE}${if (monthlyCheckBox.isChecked) "monthly" else "single"}"
+        val type = if (monthlyCheckBox.isChecked) BillingClient.SkuType.SUBS else BillingClient.SkuType.INAPP
+        purchaseItem(sku, type).addOnFailureListener { showError() }
+
+        return false
     }
 
-    private fun destroyProgressDialog() {
-        progressDialog?.dismiss()
-        progressDialog = null
+    private fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
+        updateProgress(false)
+    }.addOnSuccessListener {
+        Toast.makeText(context, R.string.donate_thanks, Toast.LENGTH_LONG).show()
+        dismiss()
+    }.addOnFailureListener {
+        it as PurchaseException
+        if (it.errorCode == BillingResponse.USER_CANCELED) {
+            Snackbar.make(rootView, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
+        } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED) { // User owns subscription
+            FirebaseCrash.report(it)
+            showError()
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_PURCHASE && resultCode == Activity.RESULT_OK) {
-            try {
-                val purchaseData = JSONObject(data!!.getStringExtra("INAPP_PURCHASE_DATA"))
-                val sku = purchaseData.getString("productId")
-                if (sku.contains("donate_single")) {
-                    initProgressDialog()
+    private fun purchaseItem(sku: String, type: String):
+            Task<Nothing> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Nothing>> {
+        val purchaseStartTask = TaskCompletionSource<Nothing>()
 
-                    val purchaseToken = purchaseData.getString("purchaseToken")
-                    AsyncTaskExecutor.execute(PurchaseConsumer(
-                            service!!,
-                            dialog,
-                            context.packageName,
-                            purchaseToken))
-                            .addOnCompleteListener(this)
+        val result = billingClient.launchBillingFlow(activity, BillingFlowParams.Builder()
+                .setSku(sku)
+                .setType(type)
+                .setAccountId(getUid()?.hashCode().toString())
+                .build())
+
+        if (result != BillingResponse.OK) {
+            if (result == BillingResponse.ITEM_ALREADY_OWNED) {
+                billingClient.queryPurchaseHistoryAsync(type) {
+                    if (it.responseCode != BillingResponse.OK) {
+                        val ex = PurchaseException(
+                                it.responseCode, "Purchase fetch failed with code ${it.responseCode}")
+                        FirebaseCrash.report(ex)
+                        purchaseStartTask.setException(ex)
+                        return@queryPurchaseHistoryAsync
+                    }
+
+                    getConsumePurchasesTask(it.purchasesList)
+                            .continueWithTask { purchaseItem(sku, type) }
+                            .addOnSuccessListener { purchaseStartTask.setResult(null) }
                 }
-            } catch (e: JSONException) {
-                FirebaseCrash.report(e)
+            } else {
+                val ex = PurchaseException(result)
+                FirebaseCrash.report(ex)
+                purchaseStartTask.setException(ex)
             }
+        }
 
+        return@Continuation purchaseStartTask.task
+    })
+
+    private fun getConsumePurchasesTask(purchases: List<Purchase>): Task<Nothing> {
+        val consumptions: MutableList<Task<String>> = ArrayList()
+
+        for (purchase in purchases) {
+            if (!purchase.sku.contains("single")) continue
+
+            val consumption = TaskCompletionSource<String>()
+            billingClient.consumeAsync(purchase.purchaseToken) { purchaseToken, resultCode ->
+                if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
+                    consumption.setResult(purchaseToken)
+                } else {
+                    val ex = PurchaseException(resultCode, "Consumption failed with code $resultCode")
+                    FirebaseCrash.report(ex)
+                    consumption.setException(ex)
+                }
+            }
+            consumptions.add(consumption.task)
+        }
+
+        return Tasks.whenAll(consumptions).continueWithTask(Continuation<Void, Task<Nothing>> {
+            val unsuccessfulConsumption = consumptions.find { !it.isSuccessful }
+
+            return@Continuation if (unsuccessfulConsumption == null) {
+                Tasks.forResult(null)
+            } else {
+                Tasks.forException(unsuccessfulConsumption.exception!!)
+            }
+        })
+    }
+
+    private fun updateProgress(isDoingAsyncWork: Boolean) {
+        content.visibility = if (isDoingAsyncWork) View.GONE else View.VISIBLE
+        progress.visibility = if (isDoingAsyncWork) View.VISIBLE else View.GONE
+
+        if (dialog != null) {
+            val dialog = dialog as AlertDialog
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !isDoingAsyncWork
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = !isDoingAsyncWork
         }
     }
 
-    override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        if (service == null) {
-            showError()
-            return
-        }
-
-        val buyIntentBundle: Bundle
-        try {
-            buyIntentBundle = service!!.getBuyIntent(
-                    3,
-                    context.packageName,
-                    ITEM_SKUS[position],
-                    if (ITEM_SKUS[position].contains("subscription")) "subs" else "inapp",
-                    null)
-        } catch (e: RemoteException) {
-            showError()
-            return
-        }
-
-        val pendingIntent: PendingIntent? = buyIntentBundle.getParcelable<PendingIntent>("BUY_INTENT")
-
-        if (pendingIntent == null) {
-            showError()
-            return
-        }
-
-        try {
-            startIntentSenderForResult(
-                    pendingIntent.intentSender,
-                    RC_PURCHASE,
-                    Intent(),
-                    0,
-                    0,
-                    0,
-                    null)
-        } catch (e: IntentSender.SendIntentException) {
-            FirebaseCrash.report(e)
-        }
+    private fun showError() {
+        updateProgress(false)
+        Snackbar.make(rootView, R.string.general_error, Snackbar.LENGTH_LONG).show()
     }
 
-    private fun showError() =
-            Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT).show()
-
-    override fun onServiceConnected(name: ComponentName, service: IBinder) {
-        this.service = IInAppBillingService.Stub.asInterface(service)
+    override fun onBillingSetupFinished(resultCode: Int) {
+        purchaseListener.continuePurchase(this)
+        billingClientReadyTask.setResult(resultCode)
     }
 
-    override fun onServiceDisconnected(name: ComponentName) {
-        service = null
-    }
+    override fun onBillingServiceDisconnected() = billingClient.startConnection(this)
 
-    override fun onComplete(task: Task<Void>) = destroyProgressDialog()
+    override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
 
-    private class PurchaseConsumer(
-            private val mService: IInAppBillingService,
-            private val mDialog: Dialog,
-            private val mPackageName: String,
-            private val mPurchaseToken: String) : Callable<Void> {
-        @Throws(Exception::class)
-        override fun call(): Void? {
-            mService.consumePurchase(3, mPackageName, mPurchaseToken)
-            mDialog.dismiss()
-            return null
-        }
-    }
+    override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
 
     companion object {
         private const val TAG = "DonateDialog"
-        private const val KEY_IS_PROGRESS_SHOWING = "is_progress_showing_key"
+        private const val SKU_BASE = "_donate_"
 
-        private const val RC_PURCHASE = 1001
-        private val ITEM_SKUS: List<String> = listOf(
-                "1.00_donate_single",
-                "1.00_donate_subscription",
-                "2.00_donate_single",
-                "2.00_donate_subscription",
-                "5.00_donate_single",
-                "5.00_donate_subscription",
-                "10.00_donate_single",
-                "10.00_donate_subscription")
+        private val purchaseListener = object : PurchasesUpdatedListener {
+            private var dialog = WeakReference<DonateDialog>(null)
+            private var savedSate: Pair<Int, List<Purchase>?>? = null
 
-        fun show(manager: FragmentManager) =
-                DonateDialog().show(manager, TAG) { putBoolean(KEY_IS_PROGRESS_SHOWING, false) }
+            fun continuePurchase(dialog: DonateDialog) {
+                this.dialog = WeakReference(dialog)
+                if (savedSate != null) onPurchasesUpdated(savedSate!!.first, savedSate!!.second)
+            }
+
+            override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
+                val dialog = dialog.get()
+                if (dialog == null) {
+                    savedSate = responseCode to purchases
+                    return
+                } else {
+                    savedSate = null
+                    dialog.updateProgress(true)
+                }
+
+                if (responseCode == BillingResponse.OK && purchases != null) {
+                    dialog.handlePurchaseResponse(
+                            dialog.getConsumePurchasesTask(purchases).continueWith { responseCode })
+                } else {
+                    dialog.handlePurchaseResponse(Tasks.forException(PurchaseException(responseCode)))
+                }
+            }
+        }
+
+        fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
     }
 }
+
+private class PurchaseException(val errorCode: Int,
+                                message: String = "Purchase failed with error code $errorCode") :
+        Exception(message)

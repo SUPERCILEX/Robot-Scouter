@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.ui.scout
 
+import android.content.DialogInterface
 import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.text.TextUtils
 import com.google.firebase.database.DatabaseReference
@@ -20,7 +20,7 @@ class ScoutNameDialog : ScoutValueDialogBase<String>() {
     override val title = R.string.edit_scout_name
     override val hint = R.string.scout_name
 
-    override fun onShow(dialog: AlertDialog) {
+    override fun onShow(dialog: DialogInterface) {
         super.onShow(dialog)
         lastEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
     }

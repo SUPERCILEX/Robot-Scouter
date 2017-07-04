@@ -20,7 +20,7 @@ class NewTeamDialog : KeyboardDialogBase() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
             createDialog(rootView, R.string.add_scout)
 
-    public override fun onClick(): Boolean {
+    public override fun onAttemptDismiss(): Boolean {
         val teamNumber: String = lastEditText.text.toString()
         if (teamNumber.isNumber()) {
             (activity as TeamSelectionListener).onTeamSelected(ScoutListFragmentBase.getBundle(
