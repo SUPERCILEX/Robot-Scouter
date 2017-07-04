@@ -24,9 +24,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.ManualDismissDialog
-import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.getUid
 import java.lang.ref.WeakReference
 
@@ -53,7 +51,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
             .setView(rootView)
             .setPositiveButton(R.string.donate, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .create { onShow(this) }
+            .createAndSetup()
 
     override fun onShow(dialog: DialogInterface) {
         super.onShow(dialog)
@@ -73,7 +71,6 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     override fun onDestroy() {
         super.onDestroy()
         billingClient.endConnection()
-        RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     override fun onAttemptDismiss(): Boolean {
@@ -86,7 +83,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         return false
     }
 
-    fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
+    private fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
         updateProgress(false)
     }.addOnSuccessListener {
         Toast.makeText(context, R.string.donate_thanks, Toast.LENGTH_LONG).show()
@@ -136,7 +133,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         return@Continuation purchaseStartTask.task
     })
 
-    internal fun getConsumePurchasesTask(purchases: List<Purchase>): Task<Nothing> {
+    private fun getConsumePurchasesTask(purchases: List<Purchase>): Task<Nothing> {
         val consumptions: MutableList<Task<String>> = ArrayList()
 
         for (purchase in purchases) {
@@ -166,7 +163,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         })
     }
 
-    internal fun updateProgress(isDoingAsyncWork: Boolean) {
+    private fun updateProgress(isDoingAsyncWork: Boolean) {
         content.visibility = if (isDoingAsyncWork) View.GONE else View.VISIBLE
         progress.visibility = if (isDoingAsyncWork) View.VISIBLE else View.GONE
 
@@ -197,37 +194,35 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         private const val TAG = "DonateDialog"
         private const val SKU_BASE = "_donate_"
 
-        private val purchaseListener = PurchaseListener()
+        private val purchaseListener = object : PurchasesUpdatedListener {
+            private var dialog = WeakReference<DonateDialog>(null)
+            private var savedSate: Pair<Int, List<Purchase>?>? = null
+
+            fun continuePurchase(dialog: DonateDialog) {
+                this.dialog = WeakReference(dialog)
+                if (savedSate != null) onPurchasesUpdated(savedSate!!.first, savedSate!!.second)
+            }
+
+            override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
+                val dialog = dialog.get()
+                if (dialog == null) {
+                    savedSate = responseCode to purchases
+                    return
+                } else {
+                    savedSate = null
+                    dialog.updateProgress(true)
+                }
+
+                if (responseCode == BillingResponse.OK && purchases != null) {
+                    dialog.handlePurchaseResponse(
+                            dialog.getConsumePurchasesTask(purchases).continueWith { responseCode })
+                } else {
+                    dialog.handlePurchaseResponse(Tasks.forException(PurchaseException(responseCode)))
+                }
+            }
+        }
 
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
-    }
-}
-
-private class PurchaseListener : PurchasesUpdatedListener {
-    private var dialog = WeakReference<DonateDialog>(null)
-    private var savedSate: Pair<Int, List<Purchase>?>? = null
-
-    fun continuePurchase(dialog: DonateDialog) {
-        this.dialog = WeakReference(dialog)
-        if (savedSate != null) onPurchasesUpdated(savedSate!!.first, savedSate!!.second)
-    }
-
-    override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
-        val dialog = dialog.get()
-        if (dialog == null) {
-            savedSate = responseCode to purchases
-            return
-        } else {
-            savedSate = null
-            dialog.updateProgress(true)
-        }
-
-        if (responseCode == BillingResponse.OK && purchases != null) {
-            dialog.handlePurchaseResponse(
-                    dialog.getConsumePurchasesTask(purchases).continueWith { responseCode })
-        } else {
-            dialog.handlePurchaseResponse(Tasks.forException(PurchaseException(responseCode)))
-        }
     }
 }
 

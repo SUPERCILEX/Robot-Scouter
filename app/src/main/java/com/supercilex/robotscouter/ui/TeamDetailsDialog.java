@@ -43,7 +43,8 @@ import java.io.File;
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
-        implements View.OnClickListener, View.OnFocusChangeListener, OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
+        implements View.OnClickListener, View.OnFocusChangeListener,
+        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;

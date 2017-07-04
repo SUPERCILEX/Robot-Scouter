@@ -11,7 +11,6 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
-import com.supercilex.robotscouter.util.create
 
 abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActionListener {
     protected abstract val lastEditText: EditText
@@ -28,7 +27,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActi
                     .setTitle(title)
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .create { onShow(this) }
+                    .createAndSetup()
 
     override fun onCreateView(inflater: LayoutInflater?,
                               container: ViewGroup?,

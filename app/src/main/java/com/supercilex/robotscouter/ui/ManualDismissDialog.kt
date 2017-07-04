@@ -5,6 +5,7 @@ import android.support.annotation.CallSuper
 import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.util.create
 
 /**
  * Enables choosing whether or not to dismiss the dialog when the positive button is clicked.
@@ -15,6 +16,8 @@ import com.supercilex.robotscouter.RobotScouter
 abstract class ManualDismissDialog : DialogFragment(), DialogInterface.OnShowListener {
     /** @return true if the dialog should be dismissed, false otherwise */
     protected abstract fun onAttemptDismiss(): Boolean
+
+    protected fun AlertDialog.Builder.createAndSetup() = create { onShow(this) }
 
     @CallSuper
     override fun onShow(dialog: DialogInterface) {
