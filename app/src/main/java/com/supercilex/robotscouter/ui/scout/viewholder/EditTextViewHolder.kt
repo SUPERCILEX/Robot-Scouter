@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.viewholder
 
+import android.os.Build
 import android.support.annotation.CallSuper
 import android.support.design.widget.TextInputLayout
 import android.view.View
@@ -17,6 +18,13 @@ open class EditTextViewHolder(itemView: View) :
         name.text = metric.value
         textLayout.hint = metric.name
         name.onFocusChangeListener = this
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && metric.name.toUpperCase().contains(View.AUTOFILL_HINT_NAME.toUpperCase())) {
+            itemView.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_AUTO
+            name.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+            name.setAutofillHints(View.AUTOFILL_HINT_NAME)
+        }
     }
 
     @CallSuper
