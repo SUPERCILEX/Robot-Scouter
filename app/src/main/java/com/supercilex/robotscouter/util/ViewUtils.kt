@@ -8,9 +8,15 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.support.annotation.ColorRes
+import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
+import android.support.text.emoji.widget.EmojiAppCompatEditText
 import android.support.v4.content.ContextCompat
+import android.util.AttributeSet
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
 
 fun isTabletMode(context: Context): Boolean {
     val config: Configuration = context.resources.configuration
@@ -77,5 +83,36 @@ fun animateCircularReveal(view: View,
     } else {
         view.visibility = if (visible) View.VISIBLE else View.GONE
         return null
+    }
+}
+
+/**
+ * Wrapper emoji compat class to support showing hint when phone is in landscape mode i.e. when IME
+ * is in 'extract' mode.
+ */
+class EmojiCompatTextInputEditText : EmojiAppCompatEditText {
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
+            super(context, attrs, defStyleAttr)
+
+    /** Copied from [TextInputEditText] */
+    override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
+        val ic = super.onCreateInputConnection(outAttrs)
+        if (ic != null && outAttrs.hintText == null) {
+            // If we don't have a hint and our parent is a TextInputLayout, use it's hint for the
+            // EditorInfo. This allows us to display a hint in 'extract mode'.
+            var parent = parent
+            while (parent is View) {
+                if (parent is TextInputLayout) {
+                    outAttrs.hintText = parent.hint
+                    break
+                }
+                parent = parent.getParent()
+            }
+        }
+        return ic
     }
 }

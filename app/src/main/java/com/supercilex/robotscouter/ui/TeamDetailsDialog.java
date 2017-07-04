@@ -43,7 +43,8 @@ import java.io.File;
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
-        implements View.OnFocusChangeListener, OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
+        implements View.OnClickListener, View.OnFocusChangeListener,
+        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;
@@ -192,40 +193,36 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.edit_name_button) {
-            Animator editNameAnimator = animateCircularReveal(
-                    mEditNameButton,
-                    false,
-                    0,
-                    mEditNameButton.getHeight() / 2,
-                    mEditNameButton.getWidth());
-            Animator nameAnimator = animateCircularReveal(
-                    mName,
-                    false,
-                    0,
-                    mName.getHeight() / 2,
-                    mName.getWidth());
+        Animator editNameAnimator = animateCircularReveal(
+                mEditNameButton,
+                false,
+                0,
+                mEditNameButton.getHeight() / 2,
+                mEditNameButton.getWidth());
+        Animator nameAnimator = animateCircularReveal(
+                mName,
+                false,
+                0,
+                mName.getHeight() / 2,
+                mName.getWidth());
 
-            int buttonCenterX = mEditNameButton.getLeft() + (mEditNameButton.getWidth() / 2);
-            Animator nameLayoutAnimator = animateCircularReveal(
-                    mNameInputLayout,
-                    true,
-                    buttonCenterX,
-                    0,
-                    (float) Math.hypot(buttonCenterX, mNameInputLayout.getHeight()));
+        int buttonCenterX = mEditNameButton.getLeft() + (mEditNameButton.getWidth() / 2);
+        Animator nameLayoutAnimator = animateCircularReveal(
+                mNameInputLayout,
+                true,
+                buttonCenterX,
+                0,
+                (float) Math.hypot(buttonCenterX, mNameInputLayout.getHeight()));
 
-            if (editNameAnimator != null && nameAnimator != null && nameLayoutAnimator != null) {
-                AnimatorSet animator = new AnimatorSet();
-                animator.playTogether(editNameAnimator, nameAnimator, nameLayoutAnimator);
-                animator.start();
-            }
-        } else {
-            super.onClick(v);
+        if (editNameAnimator != null && nameAnimator != null && nameLayoutAnimator != null) {
+            AnimatorSet animator = new AnimatorSet();
+            animator.playTogether(editNameAnimator, nameAnimator, nameLayoutAnimator);
+            animator.start();
         }
     }
 
     @Override
-    public boolean onClick() {
+    public boolean onAttemptDismiss() {
         boolean isMediaValid = validateUrl(mMediaEditText.getText().toString(), mMediaInputLayout);
         boolean isWebsiteValid = validateUrl(mWebsiteEditText.getText().toString(),
                                              mWebsiteInputLayout);

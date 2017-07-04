@@ -9,7 +9,7 @@
 
     <include layout="@layout/scout_base_checkbox" />
 
-    <EditText
+    <android.support.text.emoji.widget.EmojiAppCompatEditText
         android:id="@+id/checkbox_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

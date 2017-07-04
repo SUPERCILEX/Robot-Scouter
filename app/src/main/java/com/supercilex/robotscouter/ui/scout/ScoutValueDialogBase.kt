@@ -6,9 +6,7 @@ import android.support.annotation.StringRes
 import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.EditText
-
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.util.DatabaseHelper
 
@@ -25,18 +23,13 @@ abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
         inputLayout.hint = getString(hint)
         lastEditText.apply {
             setText(arguments.getString(CURRENT_VALUE))
-            post { selectAll() }
+            if (savedInstanceState == null) post { selectAll() }
         }
 
         return createDialog(rootView, title)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        RobotScouter.getRefWatcher(activity).watch(this)
-    }
-
-    override fun onClick(): Boolean {
+    override fun onAttemptDismiss(): Boolean {
         DatabaseHelper.getRef(arguments).setValue(value)
         return true
     }

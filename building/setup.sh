@@ -1,10 +1,10 @@
 #!/bin/bash
 
-if [ $TRAVIS_PULL_REQUEST = "false" ]; then
-  ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 \
+${ANDROID_HOME}tools/bin/sdkmanager --channel=3 \
     "tools" "platform-tools" "build-tools;${BUILD_TOOLS_VERSION}" "platforms;android-26" \
     "extras;google;m2repository"
 
+if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   cd app
   openssl aes-256-cbc -K $encrypted_8e2b28f9b71e_key -iv $encrypted_8e2b28f9b71e_iv -in secrets.tar.enc -out secrets.tar -d &> /dev/null
   tar -xvf secrets.tar

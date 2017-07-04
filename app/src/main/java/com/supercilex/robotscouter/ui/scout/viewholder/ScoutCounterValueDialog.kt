@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.ui.scout.viewholder
 
+import android.content.DialogInterface
 import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
 import android.text.InputType
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
@@ -15,13 +15,13 @@ class ScoutCounterValueDialog : ScoutValueDialogBase<Long>() {
     override val title = R.string.edit_value
     override val hint = R.string.value
 
-    override fun onShow(dialog: AlertDialog) {
+    override fun onShow(dialog: DialogInterface) {
         super.onShow(dialog)
         lastEditText.inputType = InputType.TYPE_CLASS_NUMBER
     }
 
-    override fun onClick() = if (lastEditText.text.toString().isNumber()) {
-        super.onClick()
+    override fun onAttemptDismiss() = if (lastEditText.text.toString().isNumber()) {
+        super.onAttemptDismiss()
     } else {
         inputLayout.error = getString(R.string.number_too_big_error); false
     }
