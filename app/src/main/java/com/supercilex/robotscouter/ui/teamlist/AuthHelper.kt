@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui
+package com.supercilex.robotscouter.ui.teamlist
 
 import android.content.Intent
 import android.support.design.widget.Snackbar
@@ -12,8 +12,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.data.model.helper
-import com.supercilex.robotscouter.ui.teamlist.IntentForwarder
-import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
 import com.supercilex.robotscouter.util.getUid
 import com.supercilex.robotscouter.util.getUser
@@ -28,11 +26,8 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     private val linkReceiver by lazy { IntentForwarder(activity) }
 
     init {
-        if (isSignedIn()) initDeepLinkReceiver()
-        else signInAnonymously()
+        if (isSignedIn()) linkReceiver else signInAnonymously()
     }
-
-    private fun initDeepLinkReceiver() = linkReceiver
 
     fun signIn() = activity.startActivityForResult(
             AuthUI.getInstance().createSignInIntentBuilder()
@@ -44,7 +39,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
             RC_SIGN_IN)
 
     private fun signInAnonymously() = signInAnonymouslyDbInit()
-            .addOnSuccessListener(activity) { initDeepLinkReceiver() }
+            .addOnSuccessListener(activity) { linkReceiver }
             .addOnFailureListener(activity) {
                 Snackbar.make(rootView, R.string.anonymous_sign_in_failed, Snackbar.LENGTH_LONG)
                         .setAction(R.string.sign_in, this)
@@ -73,7 +68,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                         Snackbar.LENGTH_LONG)
                         .show()
 
-                initDeepLinkReceiver()
+                linkReceiver
 
                 val user: FirebaseUser = getUser()!!
                 val userHelper =
@@ -106,6 +101,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     override fun onClick(v: View) = signIn()
 
     companion object {
-        private val RC_SIGN_IN = 100
+        private const val RC_SIGN_IN = 100
     }
 }

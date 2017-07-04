@@ -5,6 +5,12 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.crash.FirebaseCrash
@@ -15,12 +21,21 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.getAdapterItems
+import java.util.Collections
 
 class TeamListAdapter(private val fragment: Fragment,
                       private val menuManager: TeamMenuManager,
                       savedInstanceState: Bundle?) :
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(
-                Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java) {
+                Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java),
+        ListPreloader.PreloadModelProvider<Team> {
+    private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
+    private val preloader = RecyclerViewPreloader<Team>(
+            Glide.with(fragment),
+            this,
+            viewSizeProvider,
+            5)
+
     private val recyclerView = fragment.view!!.findViewById<RecyclerView>(R.id.list)
     private val cardListHelper = CardListHelper(this, recyclerView)
     private val noTeamsHint: View = fragment.view!!.findViewById(R.id.no_content_hint)
@@ -29,6 +44,7 @@ class TeamListAdapter(private val fragment: Fragment,
 
     init {
         onDataChanged()
+        recyclerView.addOnScrollListener(preloader)
     }
 
     fun updateSelection(teamKey: String?) {
@@ -55,6 +71,11 @@ class TeamListAdapter(private val fragment: Fragment,
 
     fun onSaveInstanceState(outState: Bundle) = outState.putString(TEAM_KEY, selectedTeamKey)
 
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TeamViewHolder =
+            super.onCreateViewHolder(parent, viewType).also {
+                viewSizeProvider.setView(it.mediaImageView)
+            }
+
     public override fun populateViewHolder(teamHolder: TeamViewHolder, team: Team, position: Int) {
         cardListHelper.onBind(teamHolder)
         teamHolder.bind(
@@ -62,10 +83,17 @@ class TeamListAdapter(private val fragment: Fragment,
                 fragment,
                 recyclerView,
                 menuManager,
-                menuManager.selectedTeams.contains(team.helper),
+                isTeamSelected(team),
                 !menuManager.selectedTeams.isEmpty(),
                 TextUtils.equals(selectedTeamKey, team.key))
     }
+
+    private fun isTeamSelected(team: Team) = menuManager.selectedTeams.contains(team.helper)
+
+    override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
+            TeamViewHolder.getTeamMediaRequestBuilder(isTeamSelected(team), fragment.context, team)
+
+    override fun getPreloadItems(position: Int): List<Team> = Collections.singletonList(getItem(position))
 
     override fun onChildChanged(type: ChangeEventListener.EventType,
                                 snapshot: DataSnapshot?,
@@ -102,9 +130,14 @@ class TeamListAdapter(private val fragment: Fragment,
         noTeamsHint?.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
     }
 
+    override fun cleanup() {
+        super.cleanup()
+        recyclerView.removeOnScrollListener(preloader)
+    }
+
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
 
-    companion object {
-        private const val TEAM_KEY = "team_key"
+    private companion object {
+        const val TEAM_KEY = "team_key"
     }
 }
