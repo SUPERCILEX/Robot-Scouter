@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.annotation.Keep
 import android.support.v4.app.Fragment
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -49,7 +51,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         }
     }
 
-    private val mediaImageView: ImageView = itemView.findViewById(R.id.media)
+    internal val mediaImageView: ImageView = itemView.findViewById(R.id.media)
     private val mediaLoadProgress: ProgressBar = itemView.findViewById(R.id.progress)
     private val numberTextView: TextView = itemView.findViewById(R.id.number)
     private val nameTextView: TextView = itemView.findViewById(R.id.name)
@@ -100,15 +102,9 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private fun updateItemStatus() {
         isMediaLoaded = isItemSelected
         setProgressVisibility()
-
-        if (isItemSelected) {
-            Glide.with(mediaImageView)
-                    .load(null)
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_check_circle_grey_144dp))
-                    .into(mediaImageView)
-        } else {
-            setTeamMedia()
-        }
+        getTeamMediaRequestBuilder(isItemSelected, mediaImageView.context, team)
+                .listener(mediaLoadProgressListener)
+                .into(mediaImageView)
 
         animateCircularReveal(newScoutButton, !couldItemBeSelected)
         itemView.isActivated = !isItemSelected && !couldItemBeSelected && isScouting
@@ -124,12 +120,6 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     } else {
         nameTextView.text = team.name
     }
-
-    private fun setTeamMedia() = Glide.with(mediaImageView)
-            .load(team.media)
-            .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_memory_grey_48dp))
-            .listener(mediaLoadProgressListener)
-            .into(mediaImageView)
 
     private fun setProgressVisibility(isMediaLoaded: Boolean = recyclerView.isScrolling || this.isMediaLoaded) {
         mediaLoadProgress.visibility = if (isMediaLoaded) View.GONE else View.VISIBLE
@@ -163,4 +153,18 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     override fun toString() = team.toString()
+
+    companion object {
+        fun getTeamMediaRequestBuilder(isItemSelected: Boolean,
+                                       context: Context,
+                                       team: Team): RequestBuilder<Drawable> = if (isItemSelected) {
+            Glide.with(context)
+                    .load(null)
+                    .apply(RequestOptions.placeholderOf(R.drawable.ic_check_circle_grey_144dp))
+        } else {
+            Glide.with(context)
+                    .load(team.media)
+                    .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_memory_grey_48dp))
+        }
+    }
 }
