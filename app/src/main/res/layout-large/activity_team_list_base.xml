@@ -42,6 +42,7 @@
         android:id="@+id/no_team_selected_hint"
         style="@style/RobotScouter.Tutorial.NoContentHint"
         android:text="@string/no_team_selected"
+        android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
