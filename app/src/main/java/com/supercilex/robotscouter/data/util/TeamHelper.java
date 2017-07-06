@@ -29,13 +29,13 @@ import java.util.concurrent.TimeUnit;
 import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.startDownloadTeamDataJob;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.deleteAllScouts;
 import static com.supercilex.robotscouter.util.AuthUtilsKt.getUid;
-import static com.supercilex.robotscouter.util.ConstantsKt.APP_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAMS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEAM_INDICES;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEMPLATE_KEY;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TIMESTAMP;
+import static com.supercilex.robotscouter.util.ConstantsKt.KEY_QUERY;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
-import static com.supercilex.robotscouter.util.ConstantsKt.TEAM_QUERY_KEY;
+import static com.supercilex.robotscouter.util.ConstantsKt.TEAMS_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.TWO_ITEMS;
 import static com.supercilex.robotscouter.util.CustomTabsUtilsKt.launchUrl;
 import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
@@ -120,10 +120,6 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         }
 
         return teamName;
-    }
-
-    public Intent toIntent() {
-        return new Intent().putExtra(TEAM_HELPER_KEY, this);
     }
 
     public Bundle toBundle() {
@@ -260,11 +256,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
     }
 
     private String getDeepLink() {
-        return APP_LINK_BASE + getLinkKeyNumberPair();
+        return TEAMS_LINK_BASE + "?" + getLinkKeyNumberPair();
     }
 
     public String getLinkKeyNumberPair() {
-        return "&" + TEAM_QUERY_KEY + "=" + mTeam.getKey() + ":" + mTeam.getNumber();
+        return "&" + KEY_QUERY + "=" + mTeam.getKey() + ":" + mTeam.getNumber();
     }
 
     public Action getViewAction() {

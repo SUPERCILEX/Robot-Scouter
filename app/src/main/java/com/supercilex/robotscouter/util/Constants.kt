@@ -13,8 +13,9 @@ import kotlin.properties.Delegates
 const val SINGLE_ITEM = 1
 const val TWO_ITEMS = 2
 
-const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/?"
-const val TEAM_QUERY_KEY = "team"
+const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
+const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
+const val KEY_QUERY = "key"
 
 /** The list of all supported authentication providers in Firebase Auth UI.  */
 val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(

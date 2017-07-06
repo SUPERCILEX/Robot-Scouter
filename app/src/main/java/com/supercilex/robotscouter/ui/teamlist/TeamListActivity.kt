@@ -42,8 +42,17 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         setContentView(R.layout.activity_team_list)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        authHelper; addTeamPrompt
         findViewById<View>(R.id.fab).setOnClickListener(this)
+        addTeamPrompt
+        authHelper.init().addOnSuccessListener(this) {
+            handleIntent(intent)
+            intent = Intent() // Consume Intent
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
     }
 
     override fun onStart() {
@@ -128,9 +137,27 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         logSelectTeamEvent(team.number)
     }
 
-    companion object {
-        private const val RC_SCOUT = 744
-        private const val API_AVAILABILITY_RC = 65
-        private const val MINIMUM_APP_VERSION_KEY = "minimum_app_version"
+    private fun handleIntent(intent: Intent) {
+        intent.extras?.let {
+            when {
+                it.containsKey(KEY_SCOUT_ARGS) -> onTeamSelected(it.getBundle(KEY_SCOUT_ARGS), true)
+                it.containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
+                it.containsKey(UPDATE_EXTRA) -> UpdateDialog.showStoreListing(this)
+            }
+        }
+
+        intent.data?.let {
+            if (it.toString() == ADD_SCOUT_INTENT) NewTeamDialog.show(supportFragmentManager)
+        }
+    }
+
+    private companion object {
+        const val RC_SCOUT = 744
+        const val API_AVAILABILITY_RC = 65
+        const val MINIMUM_APP_VERSION_KEY = "minimum_app_version"
+
+        const val DONATE_EXTRA = "donate_extra"
+        const val UPDATE_EXTRA = "update_extra"
+        const val ADD_SCOUT_INTENT = "add_scout"
     }
 }

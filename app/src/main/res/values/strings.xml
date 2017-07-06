@@ -94,6 +94,7 @@
     <string name="donate_thanks">Thank you!!! Any and all help is greatly appreciated!</string>
 
     <string name="teams_imported">Teams successfully imported</string>
+    <string name="uri_parse_error">Error: couldn\'t parse URL</string>
 
     <string name="update">Update</string>
     <string name="update_required_title">Update Robot Scouter</string>

@@ -14,15 +14,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.util.TeamCache
 import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.util.APP_LINK_BASE
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
 import com.supercilex.robotscouter.util.createFile
 import com.supercilex.robotscouter.util.isOffline
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
-
 
 class TeamSharer private constructor(private val activity: FragmentActivity,
                                      @Size(min = 1) teamHelpers: List<TeamHelper>) {
@@ -82,7 +81,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                 return to.readText()
             }
         }).continueWith(AsyncTaskExecutor.INSTANCE, Continuation<String, Intent> {
-            val deepLinkBuilder = StringBuilder(APP_LINK_BASE)
+            val deepLinkBuilder = StringBuilder("$TEAMS_LINK_BASE?")
             for (teamHelper in cache.teamHelpers) {
                 deepLinkBuilder.append(teamHelper.linkKeyNumberPair)
             }
