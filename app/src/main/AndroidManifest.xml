@@ -101,7 +101,7 @@
 
         </activity>
 
-        <service android:name=".data.client.spreadsheet.SpreadsheetExporter" />
+        <service android:name=".data.client.spreadsheet.ExportService" />
 
         <service
             android:name=".data.client.DownloadTeamDataJob21"

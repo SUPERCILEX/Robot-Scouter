@@ -61,7 +61,7 @@ fun startInternetJob14(context: Context,
             .buildAndSchedule(dispatcher)
 }
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun startInternetJob21(context: Context,
                        teamHelper: TeamHelper,
                        jobId: Int,
@@ -90,7 +90,7 @@ fun parseRawBundle(args: Bundle): TeamHelper = Team.Builder(args.getString(NUMBE
         .build()
         .helper
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun parseRawBundle(args: PersistableBundle): TeamHelper = Team.Builder(args.getString(NUMBER))
         .setKey(args.getString(KEY))
         .setTemplateKey(args.getString(TEMPLATE_KEY))
@@ -123,7 +123,7 @@ private fun toRawBundle(teamHelper: TeamHelper): Bundle = Bundle().apply {
     putLong(TIMESTAMP, team.timestamp)
 }
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun toRawPersistableBundle(teamHelper: TeamHelper): PersistableBundle = PersistableBundle().apply {
     val team: Team = teamHelper.team
 

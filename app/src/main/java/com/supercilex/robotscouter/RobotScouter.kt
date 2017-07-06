@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils
 import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.initAnalytics
 import com.supercilex.robotscouter.util.initConstants
+import com.supercilex.robotscouter.util.initNotifications
 
 class RobotScouter : MultiDexApplication() {
     private val refWatcher: RefWatcher by lazy { LeakCanary.install(this) }
@@ -30,6 +31,7 @@ class RobotScouter : MultiDexApplication() {
         DatabaseHelper.init(this)
         initAnalytics(this)
         SpreadsheetUtils.init(this)
+        initNotifications(this)
 
         FirebaseRemoteConfig.getInstance().apply {
             setDefaults(R.xml.remote_config_defaults)

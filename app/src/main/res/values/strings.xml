@@ -48,28 +48,28 @@
 
     <!-- Spreadsheet exporting -->
     <string name="export_spreadsheet">Export spreadsheet</string>
-    <plurals name="share_spreadsheet_title">
+    <plurals name="export_share_title">
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
     <string name="write_storage_rationale_spreadsheet">Robot Scouter needs access to your storage to create the spreadsheet file.</string>
     <string name="never_again">Don’t show again</string>
-    <string name="exporting_spreadsheet_hint">Export started; view progress in the notification drawer.</string>
-    <string name="exporting_spreadsheet_complete_title">Spreadsheet exporting complete</string>
-    <plurals name="exporting_spreadsheet_complete_summary">
+    <string name="export_hint">Export started; view progress in the notification drawer.</string>
+    <string name="export_complete_title">Spreadsheet exporting complete</string>
+    <plurals name="export_complete_summary">
         <item quantity="one">1 team exported</item>
         <item quantity="other">%d teams exported</item>
     </plurals>
-    <plurals name="exporting_spreadsheet_complete_message">
+    <plurals name="export_complete_message">
         <item quantity="one">Exported team %s.</item>
         <item quantity="other">Exported teams %s.</item>
     </plurals>
-    <string name="exporting_spreadsheet_title">Exporting spreadsheet</string>
-    <string name="exporting_spreadsheet_loading">Loading teams</string>
-    <string name="exporting_spreadsheet_team">Exporting team %s’s sheet</string>
-    <string name="exporting_spreadsheet_average">Exporting average sheet</string>
-    <string name="exporting_spreadsheet_cleanup">Cleanup</string>
-    <string name="exporting_offline">Exporting spreadsheet while offline may yield incomplete results.</string>
+    <string name="export_in_progress_title">Exporting spreadsheet</string>
+    <string name="exporting_status_loading">Loading teams</string>
+    <string name="exporting_status_team">Exporting team %s’s sheet</string>
+    <string name="exporting_status_average">Exporting average sheet</string>
+    <string name="exporting_status_cleanup">Cleanup</string>
+    <string name="export_warning_offline">Exporting spreadsheet while offline may yield incomplete results.</string>
     <string name="unsupported_device">WARNING: you are using an unsupported device</string>
 
     <string name="sign_in">Sign in</string>
@@ -156,6 +156,13 @@
     <string name="stop_stopwatch">Stop (%s)</string>
     <string name="cycle_item">Cycle %d</string>
     <string name="average">Average</string>
+
+    <!-- Notifications -->
+    <string name="export_group_name">Spreadsheet exporting</string>
+    <string name="export_channel_name">Completed exports</string>
+    <string name="export_channel_description">Displays an actionable notification to manage the completed export.</string>
+    <string name="export_in_progress_channel_name">In-progress exports</string>
+    <string name="export_in_progress_channel_description">Displays the status of an in-progress export.</string>
 
     <!-- Accessibility -->
     <string name="accessibility_edit_team_name">Edit the team name</string>
