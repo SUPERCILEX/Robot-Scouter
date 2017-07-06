@@ -9,9 +9,12 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.firebase.ui.auth.util.PlayServicesHelper
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
@@ -149,6 +152,20 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         intent.data?.let {
             if (it.toString() == ADD_SCOUT_INTENT) NewTeamDialog.show(supportFragmentManager)
         }
+
+        // When the app is installed through a dynamic link, we can only get it from the launcher
+        // activity so we have to check to see if there are any pending links and then forward those
+        // along to the LinkReceiverActivity
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(intent)
+                .addOnSuccessListener(this) {
+                    val link = it?.link
+                    if (link != null) startActivity(Intent(Intent.ACTION_VIEW, link))
+                }
+                .addOnFailureListener { FirebaseCrash.report(it) }
+                .addOnFailureListener(this) {
+                    Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
+                }
     }
 
     private companion object {
