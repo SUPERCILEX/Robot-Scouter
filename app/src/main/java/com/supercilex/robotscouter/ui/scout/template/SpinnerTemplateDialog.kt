@@ -105,10 +105,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             .setPositiveButton(android.R.string.ok, null)
             .create { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        saveRecyclerViewState(outState, manager)
-        super.onSaveInstanceState(outState)
-    }
+    override fun onSaveInstanceState(outState: Bundle) = saveRecyclerViewState(outState, manager)
 
     override fun onDestroy() {
         super.onDestroy()

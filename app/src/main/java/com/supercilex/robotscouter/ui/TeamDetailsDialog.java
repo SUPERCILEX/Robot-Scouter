@@ -121,7 +121,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putAll(mMediaCapture.toBundle());
-        super.onSaveInstanceState(outState);
     }
 
     @Override

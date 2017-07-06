@@ -108,7 +108,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         saveRecyclerViewState(outState, mManager);
         if (mAdapter != null) mAdapter.onSaveInstanceState(outState);
         mMenuHelper.saveState(outState);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
