@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scout.template
 
 import android.support.design.widget.Snackbar
-import android.support.v4.view.MotionEventCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.MotionEvent
@@ -44,7 +43,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
         viewHolder.itemView.findViewById<View>(R.id.reorder)
                 .setOnTouchListener(View.OnTouchListener { v, event ->
-                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    if (event.action == MotionEvent.ACTION_DOWN) {
                         viewHolder.itemView.clearFocus() // Saves data
                         itemTouchHelper.startDrag(viewHolder)
                         v.performClick()
