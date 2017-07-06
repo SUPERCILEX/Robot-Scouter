@@ -18,7 +18,7 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.addNewDocumentFlags
-import com.supercilex.robotscouter.util.isTabletMode
+import com.supercilex.robotscouter.util.isInTabletMode
 import com.supercilex.robotscouter.util.onSignedIn
 
 @SuppressLint("GoogleAppIndexingApiWarning")
@@ -58,7 +58,7 @@ class LinkReceiverActivity : AppCompatActivity() {
         }
 
         val data = ScoutListFragmentBase.getBundle(teams[0], false, null)
-        if (isTabletMode(this)) {
+        if (isInTabletMode(this)) {
             startActivity(Intent(this, TeamListActivity::class.java)
                     .putExtra(KEY_SCOUT_ARGS, data)
                     .addNewDocumentFlags())

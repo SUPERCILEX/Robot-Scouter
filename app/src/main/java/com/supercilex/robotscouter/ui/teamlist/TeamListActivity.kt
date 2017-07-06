@@ -19,9 +19,9 @@ import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.ui.scout.ScoutActivity
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 import com.supercilex.robotscouter.util.fetchAndActivate
+import com.supercilex.robotscouter.util.isInTabletMode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
-import com.supercilex.robotscouter.util.isTabletMode
 import com.supercilex.robotscouter.util.logSelectTeamEvent
 import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.setHasShownSignInTutorial
@@ -119,7 +119,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
         val team = TeamHelper.parse(args).team
 
-        if (isTabletMode(this)) {
+        if (isInTabletMode(this)) {
             teamListFragment.selectTeam(null)
             teamListFragment.selectTeam(team)
             supportFragmentManager.beginTransaction()
