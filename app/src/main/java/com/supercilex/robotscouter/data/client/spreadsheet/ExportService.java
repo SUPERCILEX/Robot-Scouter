@@ -101,12 +101,13 @@ import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava
 import static com.supercilex.robotscouter.util.IoUtilsKt.getRootFolder;
 import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
 import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
+import static com.supercilex.robotscouter.util.NotificationUtilsKt.EXPORT_CHANNEL;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setShouldShowExportHint;
 import static com.supercilex.robotscouter.util.PreferencesUtilsKt.shouldShowExportHint;
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
-public class SpreadsheetExporter extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
-    private static final String TAG = "SpreadsheetExporter";
+public class ExportService extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
+    private static final String TAG = "ExportService";
 
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
     private static final String MIME_TYPE_ALL = "*/*";
@@ -126,7 +127,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     private Map<TeamHelper, List<Scout>> mScouts;
     private SpreadsheetCache mCache;
 
-    public SpreadsheetExporter() {
+    public ExportService() {
         super(TAG);
         setIntentRedelivery(true);
     }
@@ -134,9 +135,9 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
     /**
      * @return true if an export was attempted, false otherwise
      */
-    public static boolean writeAndShareTeams(Fragment fragment,
-                                             PermissionRequestHandler permHandler,
-                                             @Size(min = 1) List<TeamHelper> teamHelpers) {
+    public static boolean exportAndShareSpreadSheet(Fragment fragment,
+                                                    PermissionRequestHandler permHandler,
+                                                    @Size(min = 1) List<TeamHelper> teamHelpers) {
         if (teamHelpers.isEmpty()) return false;
 
         Context context = fragment.getContext();
@@ -148,14 +149,14 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         if (shouldShowExportHint(context)) {
             Snackbar.make(fragment.getView(),
-                          R.string.exporting_spreadsheet_hint,
+                          R.string.export_hint,
                           Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.never_again, v -> setShouldShowExportHint(context, false))
                     .show();
         }
 
         fragment.getActivity()
-                .startService(new Intent(context, SpreadsheetExporter.class)
+                .startService(new Intent(context, ExportService.class)
                                       .putExtras(TeamHelper.toIntent(teamHelpers)));
 
         return true;
@@ -169,18 +170,18 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         logExportTeamsEvent(mCache.getTeamHelpers());
 
-        startForeground(R.string.exporting_spreadsheet_title,
-                        mCache.getExportNotification(getString(R.string.exporting_spreadsheet_loading)));
+        startForeground(R.string.export_in_progress_title,
+                        mCache.getExportNotification(getString(R.string.exporting_status_loading)));
 
         if (isOffline(this)) {
-            showToast(this, getString(R.string.exporting_offline));
+            showToast(this, getString(R.string.export_warning_offline));
         }
 
         try {
             // Force a refresh
             Tasks.await(Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES);
 
-            mCache.updateNotification(getString(R.string.exporting_spreadsheet_loading));
+            mCache.updateNotification(getString(R.string.exporting_status_loading));
 
             onSuccess(Tasks.await(
                     Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES));
@@ -196,7 +197,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         if (mScouts.size() != mCache.getTeamHelpers().size()) {
             // Some error occurred, let's try again
-            startService(new Intent(this, SpreadsheetExporter.class)
+            startService(new Intent(this, ExportService.class)
                                  .putExtras(TeamHelper.toIntent(mCache.getTeamHelpers())));
             return;
         }
@@ -229,7 +230,7 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
                     .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, new Intent[]{viewIntent});
 
             shareIntent = Intent.createChooser(typeIntent,
-                                               getPluralTeams(R.plurals.share_spreadsheet_title))
+                                               getPluralTeams(R.plurals.export_share_title))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         } else {
@@ -239,26 +240,23 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
         PendingIntent sharePendingIntent = PendingIntent.getActivity(
                 this, exportId, shareIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, EXPORT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_done_white_48dp)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                                  .setBigContentTitle(getString(R.string.exporting_spreadsheet_complete_title))
-                                  .setSummaryText(getPluralTeams(
-                                          R.plurals.exporting_spreadsheet_complete_summary,
-                                          mCache.getTeamHelpers().size()))
-                                  .bigText(getPluralTeams(R.plurals.exporting_spreadsheet_complete_message)))
+                .setContentTitle(getString(R.string.export_complete_title))
+                .setSubText(getPluralTeams(
+                        R.plurals.export_complete_summary,
+                        mCache.getTeamHelpers().size()))
+                .setContentText(getPluralTeams(R.plurals.export_complete_message))
                 .setContentIntent(sharePendingIntent)
                 .addAction(R.drawable.ic_share_white_24dp,
                            getString(R.string.share),
                            PendingIntent.getBroadcast(
                                    this,
                                    exportId,
-                                   NotificationForwarder.Companion.getCancelIntent(this,
-                                                                                   exportId,
-                                                                                   shareIntent),
+                                   NotificationForwarder.Companion
+                                           .getCancelIntent(this, exportId, shareIntent),
                                    PendingIntent.FLAG_ONE_SHOT))
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH);
@@ -366,17 +364,17 @@ public class SpreadsheetExporter extends IntentService implements OnSuccessListe
 
         List<TeamHelper> teamHelpers = mCache.getTeamHelpers();
         for (TeamHelper teamHelper : teamHelpers) {
-            mCache.updateNotification(getString(R.string.exporting_spreadsheet_team, teamHelper));
+            mCache.updateNotification(getString(R.string.exporting_status_team, teamHelper));
 
             Sheet teamSheet = workbook.createSheet(getSafeSheetName(workbook, teamHelper));
             teamSheet.createFreezePane(1, 1);
             buildTeamSheet(teamHelper, teamSheet);
         }
 
-        mCache.updateNotification(getString(R.string.exporting_spreadsheet_average));
+        mCache.updateNotification(getString(R.string.exporting_status_average));
         if (averageSheet != null) buildTeamAveragesSheet(averageSheet);
 
-        mCache.updateNotification(getString(R.string.exporting_spreadsheet_cleanup));
+        mCache.updateNotification(getString(R.string.exporting_status_cleanup));
         autoFitColumnWidths(workbook);
 
         return workbook;

@@ -12,9 +12,12 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.firebase.ui.auth.util.PlayServicesHelper
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
@@ -22,9 +25,9 @@ import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.ui.scout.ScoutActivity
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 import com.supercilex.robotscouter.util.fetchAndActivate
+import com.supercilex.robotscouter.util.isInTabletMode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
-import com.supercilex.robotscouter.util.isTabletMode
 import com.supercilex.robotscouter.util.logSelectTeamEvent
 import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.setHasShownSignInTutorial
@@ -59,8 +62,17 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         val drawer = findViewById<NavigationView>(R.id.drawer)
         drawer.setNavigationItemSelectedListener(this)
 
-        authHelper; addTeamPrompt
         findViewById<View>(R.id.fab).setOnClickListener(this)
+        addTeamPrompt
+        authHelper.init().addOnSuccessListener(this) {
+            handleIntent(intent)
+            intent = Intent() // Consume Intent
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
     }
 
     override fun onStart() {
@@ -126,7 +138,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
         val team = TeamHelper.parse(args).team
 
-        if (isTabletMode(this)) {
+        if (isInTabletMode(this)) {
             teamListFragment.selectTeam(null)
             teamListFragment.selectTeam(team)
             supportFragmentManager.beginTransaction()
@@ -144,9 +156,41 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         logSelectTeamEvent(team.number)
     }
 
-    companion object {
-        private const val RC_SCOUT = 744
-        private const val API_AVAILABILITY_RC = 65
-        private const val MINIMUM_APP_VERSION_KEY = "minimum_app_version"
+    private fun handleIntent(intent: Intent) {
+        intent.extras?.let {
+            when {
+                it.containsKey(KEY_SCOUT_ARGS) -> onTeamSelected(it.getBundle(KEY_SCOUT_ARGS), true)
+                it.containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
+                it.containsKey(UPDATE_EXTRA) -> UpdateDialog.showStoreListing(this)
+            }
+        }
+
+        intent.data?.let {
+            if (it.toString() == ADD_SCOUT_INTENT) NewTeamDialog.show(supportFragmentManager)
+        }
+
+        // When the app is installed through a dynamic link, we can only get it from the launcher
+        // activity so we have to check to see if there are any pending links and then forward those
+        // along to the LinkReceiverActivity
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(intent)
+                .addOnSuccessListener(this) {
+                    val link = it?.link
+                    if (link != null) startActivity(Intent(Intent.ACTION_VIEW, link))
+                }
+                .addOnFailureListener { FirebaseCrash.report(it) }
+                .addOnFailureListener(this) {
+                    Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
+                }
+    }
+
+    private companion object {
+        const val RC_SCOUT = 744
+        const val API_AVAILABILITY_RC = 65
+        const val MINIMUM_APP_VERSION_KEY = "minimum_app_version"
+
+        const val DONATE_EXTRA = "donate_extra"
+        const val UPDATE_EXTRA = "update_extra"
+        const val ADD_SCOUT_INTENT = "add_scout"
     }
 }

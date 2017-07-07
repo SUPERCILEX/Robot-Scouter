@@ -7,6 +7,8 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.firebase.ui.auth.ResultCodes
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
@@ -23,11 +25,8 @@ import com.supercilex.robotscouter.util.signInAnonymouslyInitBasic
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener {
     private val rootView: View = activity.findViewById(R.id.root)
 
-    private val linkReceiver by lazy { IntentForwarder(activity) }
-
-    init {
-        if (isSignedIn()) linkReceiver else signInAnonymously()
-    }
+    fun init(): Task<Nothing> =
+            if (isSignedIn()) Tasks.forResult(null) else signInAnonymously().continueWith { null }
 
     fun signIn() = activity.startActivityForResult(
             AuthUI.getInstance().createSignInIntentBuilder()
@@ -39,7 +38,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
             RC_SIGN_IN)
 
     private fun signInAnonymously() = signInAnonymouslyDbInit()
-            .addOnSuccessListener(activity) { linkReceiver }
             .addOnFailureListener(activity) {
                 Snackbar.make(rootView, R.string.anonymous_sign_in_failed, Snackbar.LENGTH_LONG)
                         .setAction(R.string.sign_in, this)
@@ -67,8 +65,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                         R.string.signed_in,
                         Snackbar.LENGTH_LONG)
                         .show()
-
-                linkReceiver
 
                 val user: FirebaseUser = getUser()!!
                 val userHelper =

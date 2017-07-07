@@ -63,20 +63,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <intent-filter
-                android:label="@string/app_name"
-                android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="supercilex.github.io"
-                    android:pathPrefix="/Robot-Scouter"
-                    android:scheme="https" />
-            </intent-filter>
-
         </activity>
 
         <activity
@@ -92,7 +78,30 @@
 
         </activity>
 
-        <service android:name=".data.client.spreadsheet.SpreadsheetExporter" />
+        <activity
+            android:name=".data.client.LinkReceiverActivity"
+            android:label=""
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:excludeFromRecents="true"
+            android:theme="@style/FirebaseUI.Transparent">
+
+            <intent-filter
+                android:label="@string/app_name"
+                android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="supercilex.github.io"
+                    android:pathPrefix="/Robot-Scouter/data"
+                    android:scheme="https" />
+            </intent-filter>
+
+        </activity>
+
+        <service android:name=".data.client.spreadsheet.ExportService" />
 
         <service
             android:name=".data.client.DownloadTeamDataJob21"

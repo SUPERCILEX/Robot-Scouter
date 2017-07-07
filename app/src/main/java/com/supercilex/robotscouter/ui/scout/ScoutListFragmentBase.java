@@ -143,7 +143,6 @@ public abstract class ScoutListFragmentBase extends Fragment
             outState.putAll(getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         }
         mHolder.onSaveInstanceState(outState);
-        super.onSaveInstanceState(outState);
     }
 
     /**

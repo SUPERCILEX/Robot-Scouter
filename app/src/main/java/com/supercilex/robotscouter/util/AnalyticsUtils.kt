@@ -7,14 +7,13 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_CATEGORY
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
-import com.google.firebase.analytics.FirebaseAnalytics.getInstance
 import com.supercilex.robotscouter.data.util.TeamHelper
 import kotlin.properties.Delegates
 
-private var analytics: FirebaseAnalytics by Delegates.notNull<FirebaseAnalytics>()
+private var analytics: FirebaseAnalytics by Delegates.notNull()
 
 fun initAnalytics(context: Context) {
-    analytics = getInstance(context)
+    analytics = FirebaseAnalytics.getInstance(context)
 }
 
 fun logSelectTeamEvent(teamNumber: String) {
@@ -70,6 +69,4 @@ fun logLoginEvent() {
     updateAnalyticsUserId()
 }
 
-fun updateAnalyticsUserId() {
-    analytics.setUserId(getUid())
-}
+fun updateAnalyticsUserId() = analytics.setUserId(getUid())

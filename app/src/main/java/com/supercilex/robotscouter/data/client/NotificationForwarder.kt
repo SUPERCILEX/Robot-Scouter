@@ -14,7 +14,7 @@ class NotificationForwarder : BroadcastReceiver() {
             context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
         }
 
-        intent.component = intent.getParcelableExtra<ComponentName>(KEY_COMPONENT)
+        intent.component = intent.getParcelableExtra(KEY_COMPONENT)
 
         context.startActivity(intent)
     }
@@ -25,7 +25,7 @@ class NotificationForwarder : BroadcastReceiver() {
         private const val KEY_NOTIFICATION_ID = "notification_id"
 
         fun getCancelIntent(context: Context, id: Int, intent: Intent): Intent =
-                intent.putExtra(KEY_COMPONENT, intent.component)
+                Intent(intent).putExtra(KEY_COMPONENT, intent.component)
                         .setComponent(ComponentName(context, NotificationForwarder::class.java))
                         .putExtra(KEY_NOTIFICATION_ID, id)
                         .putExtra(KEY_CANCEL, true)

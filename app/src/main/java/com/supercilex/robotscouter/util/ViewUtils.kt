@@ -18,7 +18,7 @@ import android.view.ViewAnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 
-fun isTabletMode(context: Context): Boolean {
+fun isInTabletMode(context: Context): Boolean {
     val config: Configuration = context.resources.configuration
     val size: Int = config.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
     return size == Configuration.SCREENLAYOUT_SIZE_LARGE && config.orientation == Configuration.ORIENTATION_LANDSCAPE

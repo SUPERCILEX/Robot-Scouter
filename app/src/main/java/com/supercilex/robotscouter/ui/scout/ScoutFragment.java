@@ -59,7 +59,6 @@ public class ScoutFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         saveRecyclerViewState(outState, mManager);
-        super.onSaveInstanceState(outState);
     }
 
     @Override

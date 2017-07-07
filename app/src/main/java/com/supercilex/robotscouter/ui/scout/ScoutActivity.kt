@@ -2,11 +2,11 @@ package com.supercilex.robotscouter.ui.scout
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
+import com.supercilex.robotscouter.util.addNewDocumentFlags
 
 class ScoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,19 +22,10 @@ class ScoutActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context, args: Bundle): Intent {
-            val starter: Intent =
-                    Intent(context, ScoutActivity::class.java).putExtra(KEY_SCOUT_ARGS, args)
-
-            starter.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                starter.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                starter.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT)
-            }
-
-            return starter
-        }
+        fun createIntent(context: Context, args: Bundle): Intent =
+                Intent(context, ScoutActivity::class.java)
+                        .putExtra(KEY_SCOUT_ARGS, args)
+                        .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                        .addNewDocumentFlags()
     }
 }

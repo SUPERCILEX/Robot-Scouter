@@ -103,7 +103,6 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         saveRecyclerViewState(outState, mManager);
-        super.onSaveInstanceState(outState);
     }
 
     @Override

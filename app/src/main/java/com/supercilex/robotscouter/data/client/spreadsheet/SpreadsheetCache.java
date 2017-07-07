@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.isUnsupportedDevice;
+import static com.supercilex.robotscouter.util.NotificationUtilsKt.EXPORT_IN_PROGRESS_CHANNEL;
 
 public final class SpreadsheetCache extends TeamCache {
     private static final Object ROW_HEADER_STYLE_LOCK = new Object();
@@ -50,15 +51,14 @@ public final class SpreadsheetCache extends TeamCache {
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         mProgressMax = getTeamHelpers().size() + EXTRA_OPS;
-        mProgressNotification = new NotificationCompat.Builder(context)
+        mProgressNotification = new NotificationCompat.Builder(context, EXPORT_IN_PROGRESS_CHANNEL)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentTitle(context.getString(R.string.exporting_spreadsheet_title))
+                .setContentTitle(context.getString(R.string.export_in_progress_title))
                 .setProgress(mProgressMax, mCurrentProgress, false)
                 .setSubText("0%")
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setWhen(System.currentTimeMillis())
                 .setOngoing(true)
-                .setPriority(Notification.PRIORITY_MIN);
+                .setPriority(NotificationCompat.PRIORITY_LOW);
     }
 
     public Notification getExportNotification(String text) {
@@ -71,7 +71,7 @@ public final class SpreadsheetCache extends TeamCache {
 
         mProgressNotification.setProgress(mProgressMax, mCurrentProgress, false);
         mProgressNotification.setSubText(percentage + "%");
-        updateNotification(R.string.exporting_spreadsheet_title, getExportNotification(text));
+        updateNotification(R.string.export_in_progress_title, getExportNotification(text));
     }
 
     public void updateNotification(int id, Notification notification) {
@@ -80,7 +80,7 @@ public final class SpreadsheetCache extends TeamCache {
 
     public void onExportStarted() {
         mProgressNotification.setSmallIcon(android.R.drawable.stat_sys_upload);
-        updateNotification(R.string.exporting_spreadsheet_title, mProgressNotification.build());
+        updateNotification(R.string.export_in_progress_title, mProgressNotification.build());
     }
 
     public void setWorkbook(Workbook workbook) {

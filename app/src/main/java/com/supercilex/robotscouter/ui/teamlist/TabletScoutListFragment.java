@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.AppBarViewHolderBase;
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase;
 
-import static com.supercilex.robotscouter.util.ViewUtilsKt.isTabletMode;
+import static com.supercilex.robotscouter.util.ViewUtilsKt.isInTabletMode;
 
 public class TabletScoutListFragment extends ScoutListFragmentBase {
     private View mHint;
@@ -42,7 +42,7 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (isTabletMode(getContext())) {
+        if (isInTabletMode(getContext())) {
             super.onAuthStateChanged(auth);
         } else {
             TeamSelectionListener listener = (TeamSelectionListener) getActivity();
