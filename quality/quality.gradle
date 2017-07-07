@@ -7,7 +7,7 @@ def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
 
 checkstyle {
-    toolVersion = '7.8'
+    toolVersion = '8.0'
 }
 
 pmd {
