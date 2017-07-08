@@ -8,7 +8,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   firebase database:set --confirm /default-template default-template.json
   cd ..
 else
-  ./gradlew clean
+  ./gradlew clean assembleDebug check
 fi
 
 set +xe
