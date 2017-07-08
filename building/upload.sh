@@ -23,7 +23,6 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
 
   sed -i "s/\(FirebaseCrashVersionCode=\).*\$/\1${VERSION_CODE}/" gradle.properties
   ./gradlew firebaseUploadArchivedProguardMapping
-  # TODO this is broken because of https://stackoverflow.com/q/44390794/4548500
 
   wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-155.0.0-linux-x86_64.tar.gz
   tar xf google-cloud-sdk-155.0.0-linux-x86_64.tar.gz
