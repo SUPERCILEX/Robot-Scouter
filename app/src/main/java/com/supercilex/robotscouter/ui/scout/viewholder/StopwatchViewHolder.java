@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.scout.viewholder;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -240,18 +242,31 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
 
             stopwatch.setActivated(mIsRunning);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
                         0,
                         0,
                         0);
             } else {
-                stopwatch.setCompoundDrawablesWithIntrinsicBounds(
-                        mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
-                        0,
-                        0,
-                        0);
+                Drawable timer = AppCompatResources.getDrawable(
+                        context, R.drawable.ic_timer_white_24dp);
+                Drawable timerOff = AppCompatResources.getDrawable(
+                        context, R.drawable.ic_timer_off_color_accent_24dp);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            mIsRunning ? timerOff : timer,
+                            null,
+                            null,
+                            null);
+                } else {
+                    stopwatch.setCompoundDrawablesWithIntrinsicBounds(
+                            mIsRunning ? timerOff : timer,
+                            null,
+                            null,
+                            null);
+                }
             }
         }
     }
