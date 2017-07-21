@@ -7,8 +7,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.content.res.AppCompatResources;
@@ -26,7 +24,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
@@ -44,7 +41,7 @@ import java.util.concurrent.TimeoutException;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
 public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
-        implements View.OnClickListener, OnSuccessListener<Void> {
+        implements View.OnClickListener {
     private static final Map<Metric.Stopwatch, Timer> TIMERS = new ConcurrentHashMap<>();
 
     private final Button mToggleStopwatch;
@@ -65,8 +62,6 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
         super.bind();
         mToggleStopwatch.setOnClickListener(this);
         setText(R.string.start_stopwatch);
-        Tasks.whenAll(getOnViewReadyTask(getName()), getOnViewReadyTask(mToggleStopwatch))
-                .addOnSuccessListener(this);
 
         LinearLayoutManager manager =
                 new LinearLayoutManager(itemView.getContext(),
@@ -100,34 +95,12 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
         mToggleStopwatch.setText(itemView.getResources().getString(id, formatArgs));
     }
 
-    private Task<Void> getOnViewReadyTask(View view) {
-        final TaskCompletionSource<Void> onReadTask = new TaskCompletionSource<>();
-        view.post(() -> onReadTask.setResult(null));
-        return onReadTask.getTask();
-    }
-
-    @Override
-    public void onSuccess(Void aVoid) {
-        ConstraintLayout layout = (ConstraintLayout) itemView;
-        ConstraintSet set = new ConstraintSet();
-        set.clone(layout);
-
-        set.connect(R.id.list,
-                    ConstraintSet.TOP,
-                    mToggleStopwatch.getBottom() < getName().getBottom() ? R.id.name : R.id.stopwatch,
-                    ConstraintSet.BOTTOM,
-                    0);
-
-        set.applyTo(layout);
-    }
-
     private static class Timer implements OnSuccessListener<Void>, OnFailureListener {
         private static final int GAME_TIME = 3;
         private static final String COLON = ":";
         private static final String LEADING_ZERO = "0";
 
-        /** In milliseconds */
-        private final long mStartTime = System.currentTimeMillis();
+        private final long mStartTimeMillis = System.currentTimeMillis();
 
         private TaskCompletionSource<Void> mTimerTask;
         private boolean mIsRunning;
@@ -219,7 +192,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
 
         /** @return the time since this class was instantiated in milliseconds */
         private long getElapsedTime() {
-            return System.currentTimeMillis() - mStartTime;
+            return System.currentTimeMillis() - mStartTimeMillis;
         }
 
         private void setText(@StringRes int id, Object... formatArgs) {
