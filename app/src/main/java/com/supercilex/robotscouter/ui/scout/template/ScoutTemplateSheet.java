@@ -8,6 +8,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -197,12 +198,18 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         note.setOnClickListener(this);
         counter.setOnClickListener(this);
         spinner.setOnClickListener(this);
-        header.setImageResource(R.drawable.ic_title_white_24dp);
-        checkbox.setImageResource(R.drawable.ic_done_white_24dp);
-        stopwatch.setImageResource(R.drawable.ic_timer_white_24dp);
-        note.setImageResource(R.drawable.ic_note_white_24dp);
-        counter.setImageResource(R.drawable.ic_count_white_24dp);
-        spinner.setImageResource(R.drawable.ic_list_white_24dp);
+        header.setImageDrawable(
+                AppCompatResources.getDrawable(getContext(), R.drawable.ic_title_white_24dp));
+        checkbox.setImageDrawable(
+                AppCompatResources.getDrawable(getContext(), R.drawable.ic_done_white_24dp));
+        stopwatch.setImageDrawable(
+                AppCompatResources.getDrawable(getContext(), R.drawable.ic_timer_white_24dp));
+        note.setImageDrawable(
+                AppCompatResources.getDrawable(getContext(), R.drawable.ic_note_white_24dp));
+        counter.setImageDrawable(
+                AppCompatResources.getDrawable(getContext(), R.drawable.ic_count_white_24dp));
+        spinner.setImageDrawable(
+                AppCompatResources.getDrawable(getContext(), R.drawable.ic_list_white_24dp));
 
         // This lets us close the fam when the recyclerview it touched
         mRecyclerView.addOnItemTouchListener(this);

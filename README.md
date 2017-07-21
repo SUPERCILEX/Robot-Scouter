@@ -12,7 +12,7 @@ scouting simple and collaborative.
 ## Features
 
   - **Full offline support** 📡
-  - **No setup required e.g. no databases** 🗄️ (managing databases = 💩)
+  - **No setup required i.e. no databases** 🗄️ (managing databases = 💩)
   - Easy sharing between users 🔗
   - Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
  Android N and use split screen mode to scout several teams at once.
@@ -31,7 +31,7 @@ scouting simple and collaborative.
     - **Charts!** 📈
   - And more!
 
-## Contributing
+## Contributing 💗
 
 Want to add features, fix bugs, or just poke around the code? No problem! Just make sure to read
 the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too deep.
@@ -43,13 +43,13 @@ the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too dee
 
 ## Environment setup 💻
 
-1. [Move the dummy files](building/setup.sh#L19-L23) into position
+1. [Move the dummy files](building/setup.sh#L17-L21) into position
 1. If you are working with the database or need access to other Firebase technologies,
 [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
 and replace the dummy [google-services.json](travis-dummies/google-services.json)
 with the one created in your Firebase project
 1. Run `./gradlew check` to make sure the Travis build will pass
-1. That's it! :rocket:
+1. That's it! 🚀
 
 **Note:** to improve build performance, pass in the `devBuild` flag to Gradle by searching for
 `Gradle-Android Compiler` in Intellij and adding `-PdevBuild` to the CLI options.
