@@ -1,15 +1,12 @@
 package com.supercilex.robotscouter.ui.scout.viewholder;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -112,7 +109,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
             mIsRunning = true;
             TIMERS.put((Metric.Stopwatch) (Object) holder.getMetric(), this);
 
-            setStyle();
+            updateStyle();
 
             TaskCompletionSource<Void> start = new TaskCompletionSource<>();
             start.getTask().addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
@@ -134,7 +131,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
 
         public void setHolder(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
-            setStyle();
+            updateStyle();
         }
 
         public void updateButtonTime() {
@@ -151,7 +148,7 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
             }
 
             mTimerTask.trySetException(new CancellationException());
-            setStyle();
+            updateStyle();
             setText(R.string.start_stopwatch);
 
             return getElapsedTime();
@@ -200,47 +197,26 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
             if (holder != null) holder.setText(id, formatArgs);
         }
 
-        private void setStyle() {
+        private void updateStyle() {
             StopwatchViewHolder holder = mHolder.get();
             if (holder == null) return;
 
-            Context context = holder.itemView.getContext();
-            Button stopwatch = holder.mToggleStopwatch;
-
             TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
 
-            stopwatch.setTextColor(
-                    mIsRunning ?
-                            ContextCompat.getColor(context, R.color.colorAccent) : Color.WHITE);
+            // There's a bug pre-L where changing the view state doesn't update the vector drawable.
+            // Because of that, calling View#setActivated(isRunning) doesn't update the background
+            // color and we end up with unreadable text.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
 
+            Button stopwatch = holder.mToggleStopwatch;
+            stopwatch.setTextColor(mIsRunning ? ContextCompat.getColor(
+                    stopwatch.getContext(), R.color.colorAccent) : Color.WHITE);
             stopwatch.setActivated(mIsRunning);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
-                        0,
-                        0,
-                        0);
-            } else {
-                Drawable timer = AppCompatResources.getDrawable(
-                        context, R.drawable.ic_timer_white_24dp);
-                Drawable timerOff = AppCompatResources.getDrawable(
-                        context, R.drawable.ic_timer_off_color_accent_24dp);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                            mIsRunning ? timerOff : timer,
-                            null,
-                            null,
-                            null);
-                } else {
-                    stopwatch.setCompoundDrawablesWithIntrinsicBounds(
-                            mIsRunning ? timerOff : timer,
-                            null,
-                            null,
-                            null);
-                }
-            }
+            stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
+                    0,
+                    0,
+                    0);
         }
     }
 
