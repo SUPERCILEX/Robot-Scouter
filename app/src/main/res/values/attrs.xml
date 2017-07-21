@@ -2,8 +2,8 @@
 <resources>
 
     <declare-styleable name="SupportVectorDrawablesTextView">
-        <attr name="drawableLeftCompat" format="reference" />
-        <attr name="drawableRightCompat" format="reference" />
+        <attr name="drawableStartCompat" format="reference" />
+        <attr name="drawableEndCompat" format="reference" />
         <attr name="drawableTopCompat" format="reference" />
         <attr name="drawableBottomCompat" format="reference" />
     </declare-styleable>
