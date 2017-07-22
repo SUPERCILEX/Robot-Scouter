@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog
 
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.show
 
 class RemoveAllMetricsDialog : DialogFragment(), DialogInterface.OnClickListener {

@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,19 +18,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
 
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.restoreRecyclerViewState;
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.saveRecyclerViewState;
-
 /**
  * Created in {@link R.layout#activity_team_list}
  */
-public class TeamListFragment extends Fragment implements FirebaseAuth.AuthStateListener, OnBackPressedListener {
+public class TeamListFragment extends LifecycleFragment implements OnBackPressedListener {
     public static final String TAG = "TeamListFragment";
+
+    private TeamListHolder mHolder;
 
     private Bundle mSavedInstanceState;
 
@@ -45,24 +45,8 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mMenuHelper = new TeamMenuHelper(this);
-    }
 
-    @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        cleanup();
-        if (mFab != null) mFab.show();
-        if (auth.getCurrentUser() == null) {
-            View view = getView();
-            if (view != null) view.findViewById(R.id.no_content_hint).setVisibility(View.VISIBLE);
-        } else {
-            mAdapter = new TeamListAdapter(this, mMenuHelper, mSavedInstanceState);
-            mOnAdapterReadyTask.setResult(mAdapter);
-            mOnAdapterReadyTask = new TaskCompletionSource<>();
-
-            mMenuHelper.setAdapter(mAdapter);
-            mRecyclerView.setAdapter(mAdapter);
-            mMenuHelper.restoreState(mSavedInstanceState);
-        }
+        mHolder = ViewModelProviders.of(this).get(TeamListHolder.class);
     }
 
     @Nullable
@@ -90,9 +74,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
                 }
             }
         });
-        restoreRecyclerViewState(mSavedInstanceState, mManager);
-
-        FirebaseAuth.getInstance().addAuthStateListener(this);
 
         return rootView;
     }
@@ -105,7 +86,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        saveRecyclerViewState(outState, mManager);
         if (mAdapter != null) mAdapter.onSaveInstanceState(outState);
         mMenuHelper.saveState(outState);
     }
@@ -113,7 +93,6 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FirebaseAuth.getInstance().removeAuthStateListener(this);
         cleanup();
     }
 
@@ -135,13 +114,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     public void selectTeam(@Nullable Team team) {
-        String teamKey = team == null ? null : team.getKey();
-        if (mAdapter == null) {
-            mOnAdapterReadyTask.getTask()
-                    .addOnSuccessListener(adapter -> adapter.updateSelection(teamKey));
-        } else {
-            mAdapter.updateSelection(teamKey);
-        }
+        mHolder.selectTeam(team);
     }
 
     private void cleanup() {
@@ -153,7 +126,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     /**
-     * @see MenuManager#onBackPressed()
+     * @see TeamMenuHelper#onBackPressed()
      */
     @Override
     public boolean onBackPressed() {
@@ -161,7 +134,7 @@ public class TeamListFragment extends Fragment implements FirebaseAuth.AuthState
     }
 
     /**
-     * @see MenuManager#resetMenu()
+     * @see TeamMenuHelper#resetMenu()
      */
     public void resetMenu() {
         mMenuHelper.resetMenu();

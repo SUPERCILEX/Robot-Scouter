@@ -223,9 +223,9 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         }
 
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
+
+        private class PurchaseException(val errorCode: Int,
+                                        message: String = "Purchase failed with error code $errorCode") :
+                Exception(message)
     }
 }
-
-private class PurchaseException(val errorCode: Int,
-                                message: String = "Purchase failed with error code $errorCode") :
-        Exception(message)

@@ -69,7 +69,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
 
     override fun onSuccess(aVoid: Void?) {
         val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
-        if (BuildConfig.VERSION_CODE < minimum && !isOffline(this)) {
+        if (BuildConfig.VERSION_CODE < minimum && !isOffline()) {
             UpdateDialog.show(supportFragmentManager)
         }
     }

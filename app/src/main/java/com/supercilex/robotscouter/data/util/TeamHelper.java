@@ -18,7 +18,6 @@ import com.google.firebase.appindexing.builders.Indexables;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -10,6 +10,7 @@ buildscript {
         kotlinVersion = '1.2-M1'
         supportLibVersion = '26.0.0-beta2'
         playServicesVersion = '11.0.2'
+        archVersion = '1.0.0-alpha5'
         firebaseUiVersion = '164165ed92'
         leakCanaryVersion = '1.5.1'
         retrofitVersion = '2.3.0'

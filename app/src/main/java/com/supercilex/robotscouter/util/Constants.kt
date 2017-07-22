@@ -5,7 +5,6 @@ import android.os.Build
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
-import com.supercilex.robotscouter.util.Constants.sFirebaseScoutTemplates
 import kotlin.properties.Delegates
 
 // TODO remove all @JvmField annotations in all classes once all of RS is converted to Kotlin
@@ -27,16 +26,16 @@ val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
 
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
-@JvmField val FIREBASE_USERS: DatabaseReference = DatabaseHelper.getRef().child("users")
+@JvmField val FIREBASE_USERS: DatabaseReference = ref.child("users")
 
 // Team
-@JvmField val FIREBASE_TEAMS: DatabaseReference = DatabaseHelper.getRef().child("teams")
-@JvmField val FIREBASE_TEAM_INDICES: DatabaseReference = DatabaseHelper.getRef().child("team-indices")
+@JvmField val FIREBASE_TEAMS: DatabaseReference = ref.child("teamsListener")
+@JvmField val FIREBASE_TEAM_INDICES: DatabaseReference = ref.child("team-indices")
 const val FIREBASE_TIMESTAMP = "timestamp"
 
 // Scout
-@JvmField val FIREBASE_SCOUTS: DatabaseReference = DatabaseHelper.getRef().child("scouts")
-@JvmField val FIREBASE_SCOUT_INDICES: DatabaseReference = DatabaseHelper.getRef().child("scout-indices")
+@JvmField val FIREBASE_SCOUTS: DatabaseReference = ref.child("scouts")
+@JvmField val FIREBASE_SCOUT_INDICES: DatabaseReference = ref.child("scout-indices")
 const val FIREBASE_METRICS = "metrics"
 
 // Scout views
@@ -47,13 +46,18 @@ const val FIREBASE_UNIT = "unit"
 const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
 
 // Scout template
-@JvmField val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = DatabaseHelper.getRef().child("default-template")
-@JvmField val FIREBASE_SCOUT_TEMPLATES: DatabaseReference = DatabaseHelper.getRef().child("scout-templates")
+@JvmField val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
+@JvmField val FIREBASE_SCOUT_TEMPLATES: DatabaseReference = ref.child("scout-templates")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
 const val SCOUT_TEMPLATE_INDICES = "scoutTemplateIndices"
 // [END FIREBASE CHILD NAMES]
 
-var providerAuthority: String by Delegates.notNull<String>()
+@JvmField val teamsListener = TeamsLiveData()
+@JvmField val defaultTemplateListener = DefaultTemplateLiveData()
+@JvmField val templatesListener = TemplatesLiveData()
+
+var providerAuthority: String by Delegates.notNull()
+    private set
 @JvmField var providerAuthorityJava: String? = null // TODO remove
 
 fun initConstants(context: Context) {
@@ -63,5 +67,4 @@ fun initConstants(context: Context) {
 
 fun getDebugInfo(): String = "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
         "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
-        "* User id: " + getUid() + "\n" +
-        "* Scout template keys: " + sFirebaseScoutTemplates.toString()
+        "* User id: " + getUid() + "\n"

@@ -20,12 +20,9 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder
-import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.getHighestIntPriority
-import com.supercilex.robotscouter.util.restoreRecyclerViewState
-import com.supercilex.robotscouter.util.saveRecyclerViewState
 import com.supercilex.robotscouter.util.show
 
 class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {

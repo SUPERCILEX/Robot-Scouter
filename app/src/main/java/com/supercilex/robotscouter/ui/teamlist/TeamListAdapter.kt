@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
@@ -19,16 +19,14 @@ import com.google.firebase.database.DatabaseError
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.CardListHelper
-import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.getAdapterItems
 import java.util.Collections
 
-class TeamListAdapter(private val fragment: Fragment,
-                      private val menuManager: TeamMenuManager,
-                      savedInstanceState: Bundle?) :
+class TeamListAdapter(private val menuManager: TeamMenuHelper,
+                      private val selectedTeamKeyListener: LiveData<String?>) :
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(
                 Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java),
-        ListPreloader.PreloadModelProvider<Team> {
+        ListPreloader.PreloadModelProvider<Team>, Observer<String?> {
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(
             Glide.with(fragment),
@@ -40,14 +38,15 @@ class TeamListAdapter(private val fragment: Fragment,
     private val cardListHelper = CardListHelper(this, recyclerView)
     private val noTeamsHint: View = fragment.view!!.findViewById(R.id.no_content_hint)
 
-    private var selectedTeamKey: String? = savedInstanceState?.getString(TEAM_KEY)
+    private var selectedTeamKey: String? = null
 
     init {
         onDataChanged()
         recyclerView.addOnScrollListener(preloader)
+        selectedTeamKeyListener.observeForever(this)
     }
 
-    fun updateSelection(teamKey: String?) {
+    override fun onChanged(teamKey: String?) {
         if (TextUtils.isEmpty(teamKey)) {
             if (!TextUtils.isEmpty(selectedTeamKey)) {
                 for (i in 0 until itemCount) {
@@ -68,8 +67,6 @@ class TeamListAdapter(private val fragment: Fragment,
 
         selectedTeamKey = teamKey
     }
-
-    fun onSaveInstanceState(outState: Bundle) = outState.putString(TEAM_KEY, selectedTeamKey)
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TeamViewHolder =
             super.onCreateViewHolder(parent, viewType).also {
@@ -133,11 +130,8 @@ class TeamListAdapter(private val fragment: Fragment,
     override fun cleanup() {
         super.cleanup()
         recyclerView.removeOnScrollListener(preloader)
+        selectedTeamKeyListener.removeObserver(this)
     }
 
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
-
-    private companion object {
-        const val TEAM_KEY = "team_key"
-    }
 }

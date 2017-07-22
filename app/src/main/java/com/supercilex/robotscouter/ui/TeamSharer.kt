@@ -134,7 +134,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
          */
         fun shareTeams(activity: FragmentActivity,
                        @Size(min = 1) teamHelpers: List<TeamHelper>): Boolean {
-            if (isOffline(activity)) {
+            if (isOffline()) {
                 Snackbar.make(activity.findViewById<View>(R.id.root),
                         R.string.no_connection,
                         Snackbar.LENGTH_LONG)

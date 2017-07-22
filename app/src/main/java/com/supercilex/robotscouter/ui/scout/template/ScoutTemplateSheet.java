@@ -29,7 +29,6 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.data.util.UserHelper;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
@@ -128,7 +127,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
             DatabaseReference newTemplateRef = FIREBASE_SCOUT_TEMPLATES.push();
             mTemplateKey = newTemplateRef.getKey();
 
-            FirebaseCopier.copyTo(Constants.sDefaultTemplate, newTemplateRef);
+            FirebaseCopier.Companion.copyTo(Constants.sDefaultTemplate, newTemplateRef);
             teamHelper.updateTemplateKey(mTemplateKey);
             UserHelper.getScoutTemplateIndicesRef().child(mTemplateKey).setValue(true);
 

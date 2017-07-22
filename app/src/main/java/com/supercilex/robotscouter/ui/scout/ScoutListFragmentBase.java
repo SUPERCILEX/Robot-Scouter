@@ -32,7 +32,6 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.util.Collections;
 
@@ -99,7 +98,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     }
 
     private void showOfflineReassurance() {
-        if (mSavedState == null && isOffline(getContext())) {
+        if (mSavedState == null && isOffline()) {
             Snackbar.make(mRootView,
                           R.string.offline_reassurance,
                           Snackbar.LENGTH_LONG)

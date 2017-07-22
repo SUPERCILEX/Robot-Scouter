@@ -11,8 +11,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils
-import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.initAnalytics
+import com.supercilex.robotscouter.util.initConnectivity
 import com.supercilex.robotscouter.util.initConstants
 import com.supercilex.robotscouter.util.initNotifications
 
@@ -27,8 +27,8 @@ class RobotScouter : MultiDexApplication() {
             return
         }
 
+        initConnectivity(this)
         initConstants(this)
-        DatabaseHelper.init(this)
         initAnalytics(this)
         SpreadsheetUtils.init(this)
         initNotifications(this)

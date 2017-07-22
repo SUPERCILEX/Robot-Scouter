@@ -39,7 +39,7 @@ import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.notifyAllI
 import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateColorChange;
 
-public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
+public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
     private final Fragment mFragment;
@@ -92,7 +92,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         return mSelectedTeams.isEmpty();
     }
 
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         mIsMenuReady = true;
         inflater.inflate(R.menu.team_options, menu);
@@ -124,7 +123,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         }
     }
 
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         TeamHelper teamHelper = mSelectedTeams.get(0);
         switch (item.getItemId()) {
@@ -161,7 +159,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         return true;
     }
 
-    @Override
     public boolean onBackPressed() {
         if (mSelectedTeams.isEmpty()) {
             return false;
@@ -171,7 +168,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         }
     }
 
-    @Override
     public void resetMenu() {
         setContextMenuItemsVisible(false);
         setNormalMenuItemsVisible(true);
@@ -179,13 +175,11 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         notifyItemsChanged();
     }
 
-    @Override
     public void saveState(Bundle outState) {
         outState.putParcelableArray(SELECTED_TEAMS_KEY,
                                     mSelectedTeams.toArray(new TeamHelper[mSelectedTeams.size()]));
     }
 
-    @Override
     public void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
             Parcelable[] parcelables = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
@@ -198,7 +192,6 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         if (mIsMenuReady) updateState();
     }
 
-    @Override
     public void onTeamContextMenuRequested(TeamHelper teamHelper) {
         boolean hadNormalMenu = mSelectedTeams.isEmpty();
 
@@ -243,18 +236,15 @@ public class TeamMenuHelper implements TeamMenuManager, OnSuccessListener<Void>,
         }
     }
 
-    @Override
     public List<TeamHelper> getSelectedTeams() {
         return mSelectedTeams;
     }
 
-    @Override
     public void onSelectedTeamChanged(TeamHelper oldTeamHelper, TeamHelper teamHelper) {
         mSelectedTeams.remove(oldTeamHelper);
         mSelectedTeams.add(teamHelper);
     }
 
-    @Override
     public void onSelectedTeamRemoved(TeamHelper oldTeamHelper) {
         mSelectedTeams.remove(oldTeamHelper);
         if (mSelectedTeams.isEmpty()) {

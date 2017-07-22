@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.data.util.UserHelper
-import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.create

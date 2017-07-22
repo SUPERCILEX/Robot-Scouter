@@ -14,8 +14,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.util.Constants
-import com.supercilex.robotscouter.util.DatabaseHelper.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.onSignedIn
 import java.util.ArrayList
 

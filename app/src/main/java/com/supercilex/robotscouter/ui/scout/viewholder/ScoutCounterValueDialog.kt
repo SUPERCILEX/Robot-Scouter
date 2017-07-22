@@ -6,7 +6,6 @@ import android.text.InputType
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scout.ScoutValueDialogBase
-import com.supercilex.robotscouter.util.DatabaseHelper
 import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.show
 

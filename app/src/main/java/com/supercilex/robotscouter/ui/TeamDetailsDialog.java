@@ -36,7 +36,6 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.io.File;
 

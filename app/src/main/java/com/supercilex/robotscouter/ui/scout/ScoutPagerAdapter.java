@@ -127,7 +127,7 @@ public class ScoutPagerAdapter extends FragmentStatePagerAdapter
         }
         if (hadScouts
                 && mKeys.isEmpty()
-                && !isOffline(mFragment.getContext())
+                && !isOffline()
                 && mFragment.isResumed()) {
             ShouldDeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mTeamHelper);
         }

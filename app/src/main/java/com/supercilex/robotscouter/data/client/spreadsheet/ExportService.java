@@ -173,7 +173,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
         startForeground(R.string.export_in_progress_title,
                         mCache.getExportNotification(getString(R.string.exporting_status_loading)));
 
-        if (isOffline(this)) {
+        if (isOffline()) {
             showToast(this, getString(R.string.export_warning_offline));
         }
 

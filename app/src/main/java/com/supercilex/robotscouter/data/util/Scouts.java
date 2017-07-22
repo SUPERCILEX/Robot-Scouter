@@ -155,7 +155,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         }
 
         private void resetTimeout() {
-            if (isOffline(mContext)) {
+            if (isOffline()) {
                 mTimer.cancel();
                 mTimer = new Timer();
                 mTimer.schedule(new TimerTask() {
