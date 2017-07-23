@@ -29,7 +29,7 @@ import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava;
+import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
 import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
 import static com.supercilex.robotscouter.util.IoUtilsKt.createFile;
 import static com.supercilex.robotscouter.util.IoUtilsKt.getMediaFolder;
@@ -144,7 +144,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 mPhotoPath = photoFile.getAbsolutePath();
 
                 Uri photoUri = FileProvider.getUriForFile(
-                        context, providerAuthorityJava, photoFile);
+                        context, getProviderAuthority(), photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 mFragment.get().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC);
             }

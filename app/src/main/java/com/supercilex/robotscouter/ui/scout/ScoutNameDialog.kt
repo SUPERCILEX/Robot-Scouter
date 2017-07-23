@@ -6,6 +6,7 @@ import android.text.InputType
 import android.text.TextUtils
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.getRefBundle
 import com.supercilex.robotscouter.util.show
 
 class ScoutNameDialog : ScoutValueDialogBase<String>() {
@@ -28,7 +29,7 @@ class ScoutNameDialog : ScoutValueDialogBase<String>() {
         private const val TAG = "ScoutNameDialog"
 
         fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) =
-                ScoutNameDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {
+                ScoutNameDialog().show(manager, TAG, getRefBundle(ref)) {
                     putString(CURRENT_VALUE, currentValue)
                 }
     }

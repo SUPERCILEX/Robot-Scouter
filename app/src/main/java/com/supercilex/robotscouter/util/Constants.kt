@@ -7,8 +7,6 @@ import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
 import kotlin.properties.Delegates
 
-// TODO remove all @JvmField annotations in all classes once all of RS is converted to Kotlin
-
 const val SINGLE_ITEM = 1
 const val TWO_ITEMS = 2
 
@@ -26,16 +24,16 @@ val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
 
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
-@JvmField val FIREBASE_USERS: DatabaseReference = ref.child("users")
+val FIREBASE_USERS: DatabaseReference = ref.child("users")
 
 // Team
-@JvmField val FIREBASE_TEAMS: DatabaseReference = ref.child("teamsListener")
-@JvmField val FIREBASE_TEAM_INDICES: DatabaseReference = ref.child("team-indices")
+val FIREBASE_TEAMS: DatabaseReference = ref.child("teamsListener")
+val FIREBASE_TEAM_INDICES: DatabaseReference = ref.child("team-indices")
 const val FIREBASE_TIMESTAMP = "timestamp"
 
 // Scout
-@JvmField val FIREBASE_SCOUTS: DatabaseReference = ref.child("scouts")
-@JvmField val FIREBASE_SCOUT_INDICES: DatabaseReference = ref.child("scout-indices")
+val FIREBASE_SCOUTS: DatabaseReference = ref.child("scouts")
+val FIREBASE_SCOUT_INDICES: DatabaseReference = ref.child("scout-indices")
 const val FIREBASE_METRICS = "metrics"
 
 // Scout views
@@ -46,23 +44,23 @@ const val FIREBASE_UNIT = "unit"
 const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
 
 // Scout template
-@JvmField val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
-@JvmField val FIREBASE_SCOUT_TEMPLATES: DatabaseReference = ref.child("scout-templates")
+val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
+val FIREBASE_SCOUT_TEMPLATES: DatabaseReference = ref.child("scout-templates")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
 const val SCOUT_TEMPLATE_INDICES = "scoutTemplateIndices"
 // [END FIREBASE CHILD NAMES]
 
-@JvmField val teamsListener = TeamsLiveData()
-@JvmField val defaultTemplateListener = DefaultTemplateLiveData()
-@JvmField val templatesListener = TemplatesLiveData()
+var teamsListener: TeamsLiveData by Delegates.notNull()
+    private set
+val defaultTemplateListener = DefaultTemplateLiveData()
+val templatesListener = TemplatesLiveData()
 
 var providerAuthority: String by Delegates.notNull()
     private set
-@JvmField var providerAuthorityJava: String? = null // TODO remove
 
 fun initConstants(context: Context) {
-    providerAuthority = context.packageName + ".provider"
-    providerAuthorityJava = providerAuthority
+    teamsListener = TeamsLiveData(context)
+    providerAuthority = "${context.packageName}.provider"
 }
 
 fun getDebugInfo(): String = "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +

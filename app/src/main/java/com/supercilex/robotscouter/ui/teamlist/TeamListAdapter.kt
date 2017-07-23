@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
@@ -13,6 +14,7 @@ import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -22,10 +24,12 @@ import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.util.getAdapterItems
 import java.util.Collections
 
-class TeamListAdapter(private val menuManager: TeamMenuHelper,
+class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
+                      private val fragment: Fragment,
+                      private val menuManager: TeamMenuHelper,
                       private val selectedTeamKeyListener: LiveData<String?>) :
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(
-                Constants.sFirebaseTeams, R.layout.team_list_row_layout, TeamViewHolder::class.java),
+                snapshots, R.layout.team_list_row_layout, TeamViewHolder::class.java),
         ListPreloader.PreloadModelProvider<Team>, Observer<String?> {
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(

@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog
 
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.getRef
+import com.supercilex.robotscouter.util.getRefBundle
 import com.supercilex.robotscouter.util.show
 
 class RemoveAllMetricsDialog : DialogFragment(), DialogInterface.OnClickListener {
@@ -19,13 +21,13 @@ class RemoveAllMetricsDialog : DialogFragment(), DialogInterface.OnClickListener
             .create()
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        DatabaseHelper.getRef(arguments).removeValue()
+        getRef(arguments).removeValue()
     }
 
     companion object {
         private const val TAG = "RemoveAllMetricsDialog"
 
         fun show(manager: FragmentManager, templateRef: DatabaseReference) =
-                RemoveAllMetricsDialog().show(manager, TAG, DatabaseHelper.getRefBundle(templateRef))
+                RemoveAllMetricsDialog().show(manager, TAG, getRefBundle(templateRef))
     }
 }

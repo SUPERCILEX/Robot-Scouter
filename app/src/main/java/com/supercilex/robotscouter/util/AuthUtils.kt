@@ -1,26 +1,23 @@
 package com.supercilex.robotscouter.util
 
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 
-fun getUser(): FirebaseUser? = FirebaseAuth.getInstance().currentUser
+fun getUser() = FirebaseAuth.getInstance().currentUser
 
-fun getUid(): String? = getUser()?.uid
+fun getUid() = getUser()?.uid
 
-fun isSignedIn(): Boolean = getUser() != null
+fun isSignedIn() = getUser() != null
 
-fun isFullUser(): Boolean = isSignedIn() && !getUser()!!.isAnonymous
+fun isFullUser() = isSignedIn() && !getUser()!!.isAnonymous
 
-fun onSignedIn(): Task<FirebaseAuth> = TaskCompletionSource<FirebaseAuth>().also {
+fun onSignedIn() = TaskCompletionSource<FirebaseAuth>().also {
     FirebaseAuth.getInstance().addAuthStateListener(object : FirebaseAuth.AuthStateListener {
         override fun onAuthStateChanged(auth: FirebaseAuth) {
             if (auth.currentUser == null) {
@@ -33,10 +30,7 @@ fun onSignedIn(): Task<FirebaseAuth> = TaskCompletionSource<FirebaseAuth>().also
     })
 }.task
 
-fun signInAnonymouslyInitBasic(): Task<AuthResult> = FirebaseAuth.getInstance()
-        .signInAnonymously().addOnSuccessListener { updateAnalyticsUserId() }
-
-fun signInAnonymouslyDbInit(): Task<AuthResult> = signInAnonymouslyInitBasic().addOnSuccessListener {
+fun signInAnonymouslyDbInit() = FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener {
     DatabaseInitializer()
 }
 

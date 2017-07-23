@@ -17,10 +17,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Team;
+
+import static com.supercilex.robotscouter.util.ConstantsKt.getTeamsListener;
 
 /**
  * Created in {@link R.layout#activity_team_list}
@@ -30,14 +31,10 @@ public class TeamListFragment extends LifecycleFragment implements OnBackPressed
 
     private TeamListHolder mHolder;
 
-    private Bundle mSavedInstanceState;
-
     private RecyclerView mRecyclerView;
     private TeamMenuHelper mMenuHelper;
 
     private TeamListAdapter mAdapter;
-    private TaskCompletionSource<TeamListAdapter> mOnAdapterReadyTask = new TaskCompletionSource<>();
-    private RecyclerView.LayoutManager mManager;
     private FloatingActionButton mFab;
 
     @Override
@@ -47,6 +44,7 @@ public class TeamListFragment extends LifecycleFragment implements OnBackPressed
         mMenuHelper = new TeamMenuHelper(this);
 
         mHolder = ViewModelProviders.of(this).get(TeamListHolder.class);
+        mHolder.init(savedInstanceState);
     }
 
     @Nullable
@@ -54,14 +52,11 @@ public class TeamListFragment extends LifecycleFragment implements OnBackPressed
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mSavedInstanceState = savedInstanceState;
         View rootView = inflater.inflate(R.layout.fragment_team_list, container, false);
         mRecyclerView = rootView.findViewById(R.id.list);
-        mManager = new LinearLayoutManager(getContext());
 
         mMenuHelper.setRecyclerView(mRecyclerView);
-
-        mRecyclerView.setLayoutManager(mManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -72,6 +67,17 @@ public class TeamListFragment extends LifecycleFragment implements OnBackPressed
                 } else if (dy < 0 && mMenuHelper.noItemsSelected()) {
                     mFab.show();
                 }
+            }
+        });
+
+        getTeamsListener().observe(this, snapshots -> {
+            cleanup();
+            if (snapshots != null) {
+                mAdapter = new TeamListAdapter(
+                        snapshots, this, mMenuHelper, mHolder.getSelectedTeamKeyListener());
+                mMenuHelper.setAdapter(mAdapter);
+                mRecyclerView.setAdapter(mAdapter);
+                mMenuHelper.restoreState(savedInstanceState);
             }
         });
 
@@ -86,19 +92,14 @@ public class TeamListFragment extends LifecycleFragment implements OnBackPressed
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mAdapter != null) mAdapter.onSaveInstanceState(outState);
+        mHolder.onSaveInstanceState(outState);
         mMenuHelper.saveState(outState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        cleanup();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        cleanup();
         RobotScouter.Companion.getRefWatcher(getActivity()).watch(this);
     }
 

@@ -1,6 +1,9 @@
 package com.supercilex.robotscouter.ui.scout.template
 
 import android.app.Dialog
+import android.arch.lifecycle.LifecycleRegistry
+import android.arch.lifecycle.LifecycleRegistryOwner
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.DialogFragment
@@ -23,27 +26,27 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewH
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.getHighestIntPriority
+import com.supercilex.robotscouter.util.getRefBundle
+import com.supercilex.robotscouter.util.ref
 import com.supercilex.robotscouter.util.show
 
-class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
+class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener,
+        LifecycleRegistryOwner { // TODO remove once arch components are merged into support lib
     private val rootView: View by lazy {
         View.inflate(context, R.layout.scout_template_edit_spinner_items, null)
     }
 
-    private val selectedValueKey: String by lazy { arguments.getString(FIREBASE_SELECTED_VALUE_KEY) }
-    private val ref: DatabaseReference by lazy { DatabaseHelper.getRef(arguments) }
+    private val holder by lazy { ViewModelProviders.of(this).get(SpinnerItemsHolder::class.java) }
 
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
-    private val manager: LinearLayoutManager by lazy { LinearLayoutManager(context) }
     private val itemTouchCallback: ScoutTemplateItemTouchCallback by lazy {
         ScoutTemplateItemTouchCallback(recyclerView)
     }
     private val adapter: FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> by lazy {
         object : FirebaseRecyclerAdapter<String, SpinnerItemViewHolder>(
-                String::class.java,
+                holder.spinnerItems,
                 R.layout.scout_template_spinner_item,
-                SpinnerItemViewHolder::class.java,
-                ref) {
+                SpinnerItemViewHolder::class.java) {
             override fun populateViewHolder(viewHolder: SpinnerItemViewHolder,
                                             itemText: String,
                                             position: Int) {
@@ -63,7 +66,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
                         return
                     }
 
-                    if (TextUtils.equals(selectedValueKey, snapshot.key)) {
+                    if (TextUtils.equals(holder.selectedValueKey, snapshot.key)) {
                         ref.parent.child(FIREBASE_SELECTED_VALUE_KEY).removeValue()
                     }
                 }
@@ -80,12 +83,16 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     }
     private val cardListHelper: CardListHelper by lazy { CardListHelper(adapter, recyclerView) }
 
+    private val lifecycleRegistry = LifecycleRegistry(this)
+    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        holder.init(arguments)
+
         rootView.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener(this)
 
-
-        recyclerView.layoutManager = manager
+        recyclerView.layoutManager = LinearLayoutManager(context)
         val touchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.setItemTouchHelper(touchHelper)
         touchHelper.attachToRecyclerView(recyclerView)
@@ -93,7 +100,6 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         recyclerView.adapter = adapter
         itemTouchCallback.setAdapter(adapter)
         itemTouchCallback.setCardListHelper(cardListHelper)
-        restoreRecyclerViewState(savedInstanceState, manager)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -101,8 +107,6 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
             .setView(rootView)
             .setPositiveButton(android.R.string.ok, null)
             .create { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
-
-    override fun onSaveInstanceState(outState: Bundle) = saveRecyclerViewState(outState, manager)
 
     override fun onDestroy() {
         super.onDestroy()
@@ -121,7 +125,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         private const val TAG = "SpinnerTemplateDialog"
 
         fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueIndex: String) =
-                SpinnerTemplateDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {
+                SpinnerTemplateDialog().show(manager, TAG, getRefBundle(ref)) {
                     putString(FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
                 }
     }

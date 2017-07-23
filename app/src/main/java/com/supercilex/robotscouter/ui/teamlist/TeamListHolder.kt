@@ -1,33 +1,26 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.os.Bundle
-import com.google.firebase.auth.FirebaseAuth
+import com.firebase.ui.database.ObservableSnapshotArray
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.teamsListener
 
-class TeamListHolder : ViewModel(), FirebaseAuth.AuthStateListener {
-    private val adapterListener = MutableLiveData<TeamListAdapter>()
-    private val selectedTeamKeyListener = MutableLiveData<String?>()
+class TeamListHolder : ViewModel(), Observer<ObservableSnapshotArray<Team>> {
+    val selectedTeamKeyListener = MutableLiveData<String?>()
 
     init {
-        FirebaseAuth.getInstance().addAuthStateListener(this)
+        // In theory, we should hold the FirebaseArray in this ViewModel to save it across config changes,
+        // but since it's used app-wide we instead add an observer to keep the listener alive while
+        // this ViewModel stays alive
+        teamsListener.observeForever(this)
     }
 
     fun init(savedInstanceState: Bundle?) {
         if (selectedTeamKeyListener.value == null) {
             selectedTeamKeyListener.value = savedInstanceState?.getString(TEAM_KEY)
-        }
-    }
-
-    override fun onAuthStateChanged(auth: FirebaseAuth) {
-        cleanup()
-        if (auth.currentUser != null) {
-//            adapterListener.value = TeamListAdapter()
-//
-//            mMenuHelper.setAdapter(mAdapter)
-//            mRecyclerView.setAdapter(mAdapter)
-//            mMenuHelper.restoreState(mSavedInstanceState)
         }
     }
 
@@ -37,12 +30,9 @@ class TeamListHolder : ViewModel(), FirebaseAuth.AuthStateListener {
         selectedTeamKeyListener.value = team?.key
     }
 
-    private fun cleanup() = adapterListener.value?.cleanup()
+    override fun onChanged(teams: ObservableSnapshotArray<Team>?) = Unit
 
-    override fun onCleared() {
-        FirebaseAuth.getInstance().removeAuthStateListener(this)
-        cleanup()
-    }
+    override fun onCleared() = teamsListener.removeObserver(this)
 
     private companion object {
         const val TEAM_KEY = "team_key"

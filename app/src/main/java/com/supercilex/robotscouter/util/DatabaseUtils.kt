@@ -79,6 +79,13 @@ fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also 
     }
 }.task
 
+fun <T> LiveData<T>.observeOnce(observer: Observer<T>) = observeForever(object : Observer<T> {
+    override fun onChanged(t: T?) {
+        observer.onChanged(t)
+        removeObserver(this)
+    }
+})
+
 abstract class ChangeEventListenerBase : ChangeEventListener {
     override fun onChildChanged(type: ChangeEventListener.EventType,
                                 snapshot: DataSnapshot,
@@ -90,34 +97,25 @@ abstract class ChangeEventListenerBase : ChangeEventListener {
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
 }
 
-abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotArray<T>>() {
-    abstract val items: ObservableSnapshotArray<T>
+abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotArray<T>>(),
+        FirebaseAuth.AuthStateListener {
+    protected abstract val items: ObservableSnapshotArray<T>
 
     init {
-        FirebaseAuth.getInstance().addAuthStateListener {
-            value?.removeAllListeners()
-            value = if (it.currentUser == null) null else items
-        }
+        FirebaseAuth.getInstance().addAuthStateListener(this)
+    }
+
+    override fun onAuthStateChanged(auth: FirebaseAuth) {
+        value?.removeAllListeners()
+        value = if (auth.currentUser == null) null else items
     }
 }
 
-class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveData<Team>(),
-        Observer<ObservableSnapshotArray<Team>> {
+class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
         get() = FirebaseIndexArray(TeamHelper.getIndicesRef().orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
 
-    override fun onActive() = observeForever(this)
-
-    override fun onInactive() = removeObserver(this)
-
-    override fun onChanged(teams: ObservableSnapshotArray<Team>?) {
-        teams?.apply {
-            addChangeEventListener(TeamUpdater())
-            addChangeEventListener(TeamMerger())
-        }
-    }
-
-    private inner class TeamUpdater : ChangeEventListenerBase() {
+    private val teamUpdater = object : ChangeEventListenerBase() {
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -134,8 +132,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             }
         }
     }
-
-    private inner class TeamMerger : ChangeEventListenerBase() {
+    private val teamMerger = object : ChangeEventListenerBase() {
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -178,6 +175,27 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
                             .addOnSuccessListener { _ -> it.helper.deleteTeam() }
                 }
             }
+        }
+    }
+
+    override fun onAuthStateChanged(auth: FirebaseAuth) {
+        super.onAuthStateChanged(auth)
+        if (hasActiveObservers()) onActive()
+    }
+
+    override fun onActive() {
+        value?.apply {
+            if (!isListening(teamUpdater) && !isListening(teamMerger)) {
+                addChangeEventListener(teamUpdater)
+                addChangeEventListener(teamMerger)
+            }
+        }
+    }
+
+    override fun onInactive() {
+        value?.apply {
+            removeChangeEventListener(teamUpdater)
+            removeChangeEventListener(teamMerger)
         }
     }
 }
