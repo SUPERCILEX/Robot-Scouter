@@ -5,6 +5,10 @@
         <value>-1</value>
     </entry>
     <entry>
+        <key>update_required_message</key>
+        <value>An update is required for Robot Scouter to work correctly.</value>
+    </entry>
+    <entry>
         <key>should_cache_db</key>
         <value>true</value>
     </entry>

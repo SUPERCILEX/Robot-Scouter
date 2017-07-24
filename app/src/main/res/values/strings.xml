@@ -98,7 +98,6 @@
 
     <string name="update">Update</string>
     <string name="update_required_title">Update Robot Scouter</string>
-    <string name="update_required_message">An update is required for Robot Scouter to work correctly.</string>
 
     <string name="write_storage_rationale_media">Robot Scouter needs access to your storage to save your photo.</string>
 
