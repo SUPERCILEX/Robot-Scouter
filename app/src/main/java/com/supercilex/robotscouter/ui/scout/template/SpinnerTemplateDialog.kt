@@ -1,12 +1,9 @@
 package com.supercilex.robotscouter.ui.scout.template
 
 import android.app.Dialog
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -22,6 +19,7 @@ import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.CardListHelper
+import com.supercilex.robotscouter.ui.LifecycleDialogFragment
 import com.supercilex.robotscouter.ui.scout.viewholder.template.SpinnerItemViewHolder
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.create
@@ -30,8 +28,7 @@ import com.supercilex.robotscouter.util.getRefBundle
 import com.supercilex.robotscouter.util.ref
 import com.supercilex.robotscouter.util.show
 
-class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener,
-        LifecycleRegistryOwner { // TODO remove once arch components are merged into support lib
+class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
     private val rootView: View by lazy {
         View.inflate(context, R.layout.scout_template_edit_spinner_items, null)
     }
@@ -82,9 +79,6 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener,
         }
     }
     private val cardListHelper: CardListHelper by lazy { CardListHelper(adapter, recyclerView) }
-
-    private val lifecycleRegistry = LifecycleRegistry(this)
-    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

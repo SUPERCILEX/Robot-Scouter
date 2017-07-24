@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -27,11 +28,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
@@ -43,7 +40,7 @@ import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnClickListener, View.OnFocusChangeListener,
-        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
+        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;
@@ -78,7 +75,17 @@ public class TeamDetailsDialog extends KeyboardDialogBase
             mMediaCapture = TeamMediaCreator.get(savedInstanceState, this, this);
         }
 
-        Constants.sFirebaseTeams.addChangeEventListener(this);
+        TeamHolder holder = ViewModelProviders.of(this).get(TeamHolder.class);
+        holder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
+        holder.getTeamHelperListener().observe(this, helper -> {
+            if (helper == null) {
+                dismiss();
+            } else {
+                mTeamHelper = helper;
+                mMediaCapture.setTeamHelper(mTeamHelper);
+                updateUi();
+            }
+        });
     }
 
     @NonNull
@@ -120,12 +127,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putAll(mMediaCapture.toBundle());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Constants.sFirebaseTeams.removeChangeEventListener(this);
     }
 
     private void updateUi() {
@@ -173,20 +174,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @Override
     protected EditText getLastEditText() {
         return mWebsiteEditText;
-    }
-
-    @Override
-    public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
-
-        if (type == EventType.CHANGED) {
-            mTeamHelper =
-                    new Team.Builder(Constants.sFirebaseTeams.getObject(index)).build().getHelper();
-            mMediaCapture.setTeamHelper(mTeamHelper);
-            updateUi();
-        } else if (type == EventType.REMOVED) {
-            dismiss();
-        }
     }
 
     @Override
@@ -325,15 +312,5 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         } else {
             return "http://" + trimmedUrl;
         }
-    }
-
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
-    }
-
-    @Override
-    public void onDataChanged() {
-        // Noop
     }
 }

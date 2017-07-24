@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.firebase.ui.database.ObservableSnapshotArray;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.DatabaseReference;
@@ -28,12 +29,16 @@ import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.util.DatabaseUtilsKt;
 
 import java.util.Collections;
 
 import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndicesRef;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
+import static com.supercilex.robotscouter.util.ConstantsKt.getDefaultTemplateListener;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.ConstantsKt.getTeamsListener;
+import static com.supercilex.robotscouter.util.ConstantsKt.getTemplatesListener;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
@@ -111,27 +116,32 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mTemplateKey = teamHelper.getTeam().getTemplateKey();
 
         if (TextUtils.isEmpty(mTemplateKey)) {
-            if (!Constants.sFirebaseScoutTemplates.isEmpty()) {
-                mTemplateKey = Constants.sFirebaseScoutTemplates.get(0).getKey();
-                teamHelper.updateTemplateKey(mTemplateKey);
-                return;
-            }
+            DatabaseUtilsKt.observeOnce(getTemplatesListener(), true)
+                    .addOnSuccessListener(templates -> {
+                        if (templates != null && !templates.isEmpty()) {
+                            mTemplateKey = templates.get(0).getKey();
+                            teamHelper.updateTemplateKey(mTemplateKey);
+                            return;
+                        }
 
-            DatabaseReference newTemplateRef = getFIREBASE_SCOUT_TEMPLATES().push();
-            mTemplateKey = newTemplateRef.getKey();
+                        DatabaseReference newTemplateRef = getFIREBASE_SCOUT_TEMPLATES().push();
+                        mTemplateKey = newTemplateRef.getKey();
 
-            FirebaseCopier.Companion.copyTo(Constants.sDefaultTemplate, newTemplateRef);
-            teamHelper.updateTemplateKey(mTemplateKey);
-            getTemplateIndicesRef().child(mTemplateKey).setValue(true);
+                        FirebaseCopier.Companion.copyTo(getDefaultTemplateListener().getValue(),
+                                                        newTemplateRef);
+                        teamHelper.updateTemplateKey(mTemplateKey);
+                        getTemplateIndicesRef().child(mTemplateKey).setValue(true);
 
-            for (int i = 0; i < Constants.sFirebaseTeams.size(); i++) {
-                Team team = Constants.sFirebaseTeams.getObject(i);
-                String templateKey = team.getTemplateKey();
+                        ObservableSnapshotArray<Team> teams = getTeamsListener().getValue();
+                        for (int i = 0; i < teams.size(); i++) {
+                            Team team = teams.getObject(i);
+                            String templateKey = team.getTemplateKey();
 
-                if (TextUtils.isEmpty(templateKey)) {
-                    team.getHelper().updateTemplateKey(mTemplateKey);
-                }
-            }
+                            if (TextUtils.isEmpty(templateKey)) {
+                                team.getHelper().updateTemplateKey(mTemplateKey);
+                            }
+                        }
+                    });
         }
     }
 

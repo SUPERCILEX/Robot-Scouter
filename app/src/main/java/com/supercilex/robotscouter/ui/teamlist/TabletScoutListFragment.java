@@ -1,12 +1,12 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
+import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.scout.AppBarViewHolderBase;
@@ -22,6 +22,16 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!isInTabletMode(context)) {
+            TeamSelectionListener listener = (TeamSelectionListener) context;
+            listener.onTeamSelected(getBundle(), true);
+            removeFragment();
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mHint = getActivity().findViewById(R.id.no_team_selected_hint);
@@ -29,26 +39,15 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    protected AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
+    protected AppBarViewHolderBase newAppBarViewHolder(LiveData<TeamHelper> listener,
                                                        Task<Void> onScoutingReadyTask) {
-        return new TabletAppBarViewHolder(teamHelper, onScoutingReadyTask);
+        return new TabletAppBarViewHolder(listener, onScoutingReadyTask);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         setHintVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (isInTabletMode(getContext())) {
-            super.onAuthStateChanged(auth);
-        } else {
-            TeamSelectionListener listener = (TeamSelectionListener) getActivity();
-            listener.onTeamSelected(getBundle(), true);
-            removeFragment();
-        }
     }
 
     @Override
@@ -65,7 +64,8 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     }
 
     private class TabletAppBarViewHolder extends AppBarViewHolderBase {
-        public TabletAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
+        public TabletAppBarViewHolder(LiveData<TeamHelper> teamHelper,
+                                      Task<Void> onScoutingReadyTask) {
             super(teamHelper, TabletScoutListFragment.this, mRootView, onScoutingReadyTask);
             mToolbar.inflateMenu(R.menu.scout);
             mToolbar.setOnMenuItemClickListener(TabletScoutListFragment.this::onOptionsItemSelected);

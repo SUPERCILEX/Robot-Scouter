@@ -2,12 +2,13 @@ package com.supercilex.robotscouter.ui.scout;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
@@ -19,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity;
@@ -29,6 +29,17 @@ import static com.supercilex.robotscouter.util.ViewUtilsKt.isInTabletMode;
 public class ActivityScoutListFragment extends ScoutListFragmentBase {
     public static ScoutListFragmentBase newInstance(Bundle args) {
         return setArgs(new ActivityScoutListFragment(), args);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (getActivity().getCallingActivity() != null && isInTabletMode(getContext())) {
+            FragmentActivity activity = getActivity();
+            activity.setResult(
+                    Activity.RESULT_OK, new Intent().putExtra(KEY_SCOUT_ARGS, getBundle()));
+            activity.finish();
+        }
     }
 
     @Override
@@ -46,15 +57,15 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    protected AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
+    protected AppBarViewHolderBase newAppBarViewHolder(LiveData<TeamHelper> listener,
                                                        Task<Void> onScoutingReadyTask) {
-        return new ActivityAppBarViewHolder(teamHelper, onScoutingReadyTask);
+        return new ActivityAppBarViewHolder(listener, onScoutingReadyTask);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.scout, menu);
-        mHolder.initMenu(menu);
+        mViewHolder.initMenu(menu);
     }
 
     @Override
@@ -76,25 +87,14 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (getActivity().getCallingActivity() != null && isInTabletMode(getContext())) {
-            FragmentActivity activity = getActivity();
-            activity.setResult(
-                    Activity.RESULT_OK, new Intent().putExtra(KEY_SCOUT_ARGS, getBundle()));
-            activity.finish();
-        } else {
-            super.onAuthStateChanged(auth);
-        }
-    }
-
-    @Override
     protected void onTeamDeleted() {
         getActivity().finish();
     }
 
     private class ActivityAppBarViewHolder extends AppBarViewHolderBase {
-        public ActivityAppBarViewHolder(TeamHelper teamHelper, Task<Void> onScoutingReadyTask) {
-            super(teamHelper, ActivityScoutListFragment.this, mRootView, onScoutingReadyTask);
+        public ActivityAppBarViewHolder(LiveData<TeamHelper> listener,
+                                        Task<Void> onScoutingReadyTask) {
+            super(listener, ActivityScoutListFragment.this, mRootView, onScoutingReadyTask);
         }
 
         @Override

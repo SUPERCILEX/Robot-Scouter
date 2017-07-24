@@ -1,7 +1,9 @@
 package com.supercilex.robotscouter.ui.scout;
 
 import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,27 +11,21 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.ChangeEventListener;
-import com.firebase.ui.database.ObservableSnapshotArray;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseUserActions;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.remote.TbaDownloader;
 import com.supercilex.robotscouter.data.util.ScoutUtilsKt;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
+import com.supercilex.robotscouter.ui.TeamHolder;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
@@ -43,18 +39,17 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetai
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTemplateEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
-import static com.supercilex.robotscouter.util.ConstantsKt.getTeamsListener;
 
 public abstract class ScoutListFragmentBase extends LifecycleFragment
-        implements ChangeEventListener, Observer<ObservableSnapshotArray<Team>>, TeamMediaCreator.StartCaptureListener {
+        implements Observer<TeamHelper>, TeamMediaCreator.StartCaptureListener {
     public static final String KEY_SCOUT_ARGS = "scout_args";
     private static final String KEY_ADD_SCOUT = "add_scout";
 
     protected View mRootView;
-    protected AppBarViewHolderBase mHolder;
+    protected AppBarViewHolderBase mViewHolder;
 
+    private TeamHolder mDataHolder;
     private TeamHelper mTeamHelper;
-    private ObservableSnapshotArray<Team> mTeams;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
@@ -82,8 +77,22 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamHelper = TeamHelper.parse(getArguments());
+        mDataHolder = ViewModelProviders.of(this).get(TeamHolder.class);
+        mDataHolder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
+        mDataHolder.getTeamHelperListener().observe(this, this);
         mOnScoutingReadyTask = new TaskCompletionSource<>();
+    }
+
+    @Override
+    public void onChanged(@Nullable TeamHelper helper) {
+        if (helper == null) onTeamDeleted();
+        else {
+            mTeamHelper = helper;
+            if (!mOnScoutingReadyTask.getTask().isComplete()) {
+                initScoutList();
+                mOnScoutingReadyTask.setResult(null);
+            }
+        }
     }
 
     @Nullable
@@ -94,18 +103,9 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         mRootView = inflater.inflate(R.layout.fragment_scout_list, container, false);
         mSavedState = savedInstanceState;
 
-        // TODO make ViewModel with getTeam LiveData
-        getTeamsListener().observe(this, this);
         showOfflineReassurance();
 
         return mRootView;
-    }
-
-    @Override
-    public void onChanged(@Nullable ObservableSnapshotArray<Team> teams) {
-        if (teams == null) onTeamDeleted();
-        else mTeams = teams;
-        addListeners();
     }
 
     private void showOfflineReassurance() {
@@ -120,12 +120,12 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mHolder = newAppBarViewHolder(mTeamHelper, mOnScoutingReadyTask.getTask());
-        if (savedInstanceState != null) mHolder.restoreState(savedInstanceState);
-        mHolder.bind(mTeamHelper);
+        mViewHolder = newAppBarViewHolder(
+                mDataHolder.getTeamHelperListener(), mOnScoutingReadyTask.getTask());
+        if (savedInstanceState != null) mViewHolder.restoreState(savedInstanceState);
     }
 
-    protected abstract AppBarViewHolderBase newAppBarViewHolder(TeamHelper teamHelper,
+    protected abstract AppBarViewHolderBase newAppBarViewHolder(LiveData<TeamHelper> listener,
                                                                 Task<Void> onScoutingReadyTask);
 
     @Override
@@ -143,7 +143,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        removeListeners();
+        if (mPagerAdapter != null) mPagerAdapter.cleanup();
     }
 
     @Override
@@ -151,7 +151,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         if (mPagerAdapter != null) {
             outState.putAll(getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         }
-        mHolder.onSaveInstanceState(outState);
+        mViewHolder.onSaveInstanceState(outState);
     }
 
     /**
@@ -163,17 +163,17 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        mHolder.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mViewHolder.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onStartCapture(boolean shouldUploadMediaToTba) {
-        mHolder.onStartCapture(shouldUploadMediaToTba);
+        mViewHolder.onStartCapture(shouldUploadMediaToTba);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mHolder.onActivityResult(requestCode, resultCode);
+        mViewHolder.onActivityResult(requestCode, resultCode);
     }
 
     @Override
@@ -215,54 +215,14 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         return true;
     }
 
-    private void addListeners() {
-        if (TextUtils.isEmpty(mTeamHelper.getTeam().getKey())) {
-            for (int i = 0; i < mTeams.size(); i++) {
-                Team team = mTeams.getObject(i);
-                if (team.getNumberAsLong() == mTeamHelper.getTeam().getNumberAsLong()) {
-                    mTeamHelper.getTeam().setKey(team.getKey());
-                    addListeners();
-                    return;
-                }
-            }
-
-            mTeamHelper.addTeam();
-            addListeners();
-            TbaDownloader.Companion.load(mTeamHelper.getTeam(), getContext())
-                    .addOnSuccessListener(team -> mTeamHelper.updateTeam(team));
-        } else {
-            mTeams.addChangeEventListener(this);
-        }
-    }
-
-    private void removeListeners() {
-        mTeams.removeChangeEventListener(this);
-        if (mPagerAdapter != null) mPagerAdapter.cleanup();
-    }
-
-    @Override
-    public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
-
-        if (type == EventType.REMOVED) {
-            onTeamDeleted();
-            return;
-        } else if (type == EventType.MOVED) return;
-
-
-        mTeamHelper = mTeams.getObject(index).getHelper();
-        mHolder.bind(mTeamHelper);
-
-        if (!mOnScoutingReadyTask.getTask().isComplete()) {
-            initScoutList();
-            mOnScoutingReadyTask.setResult(null);
-        }
-    }
-
     private void initScoutList() {
         TabLayout tabLayout = mRootView.findViewById(R.id.tabs);
         ViewPager viewPager = mRootView.findViewById(R.id.viewpager);
-        mPagerAdapter = new ScoutPagerAdapter(this, mHolder, tabLayout, mTeamHelper, getScoutKey());
+        mPagerAdapter = new ScoutPagerAdapter(this,
+                                              mViewHolder,
+                                              tabLayout,
+                                              mTeamHelper,
+                                              getScoutKey());
 
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -285,14 +245,4 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     }
 
     protected abstract void onTeamDeleted();
-
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
-    }
-
-    @Override
-    public void onDataChanged() { // NOPMD https://github.com/pmd/pmd/issues/347
-        // Noop
-    }
 }
