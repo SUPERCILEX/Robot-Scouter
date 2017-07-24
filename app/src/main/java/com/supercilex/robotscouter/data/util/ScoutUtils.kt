@@ -73,19 +73,11 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
 fun getScoutMetricsRef(key: String): DatabaseReference =
         FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS)
 
-fun getScoutKeyBundle(key: String?): Bundle {
-    val args = Bundle()
-    args.putString(SCOUT_KEY, key)
-    return args
-}
+fun getScoutKeyBundle(key: String?) = Bundle().apply { putString(SCOUT_KEY, key) }
 
-fun getScoutKey(bundle: Bundle): String? {
-    return bundle.getString(SCOUT_KEY)
-}
+fun getScoutKey(bundle: Bundle): String? = bundle.getString(SCOUT_KEY)
 
-fun getScoutIndicesRef(teamKey: String): DatabaseReference {
-    return FIREBASE_SCOUT_INDICES.child(teamKey)
-}
+fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
 fun addScout(team: Team): String {
     logAddScoutEvent(team.number)

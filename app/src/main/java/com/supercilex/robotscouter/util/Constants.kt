@@ -50,7 +50,7 @@ const val FIREBASE_TEMPLATE_KEY = "templateKey"
 const val SCOUT_TEMPLATE_INDICES = "scoutTemplateIndices"
 // [END FIREBASE CHILD NAMES]
 
-var providerAuthority: String by Delegates.notNull() // TODO
+var providerAuthority: String by Delegates.notNull()
     private set
 
 fun initConstants(context: Context) {
