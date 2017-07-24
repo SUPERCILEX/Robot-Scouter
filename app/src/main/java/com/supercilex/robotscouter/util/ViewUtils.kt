@@ -156,35 +156,35 @@ private fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
             attrs,
             R.styleable.SupportVectorDrawablesTextView)
 
-    var drawableLeft: Drawable? = null
-    var drawableRight: Drawable? = null
+    var drawableStart: Drawable? = null
+    var drawableEnd: Drawable? = null
     var drawableBottom: Drawable? = null
     var drawableTop: Drawable? = null
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        drawableLeft = attributeArray.getDrawable(
-                R.styleable.SupportVectorDrawablesTextView_drawableLeftCompat)
-        drawableRight = attributeArray.getDrawable(
-                R.styleable.SupportVectorDrawablesTextView_drawableRightCompat)
+        drawableStart = attributeArray.getDrawable(
+                R.styleable.SupportVectorDrawablesTextView_drawableStartCompat)
+        drawableEnd = attributeArray.getDrawable(
+                R.styleable.SupportVectorDrawablesTextView_drawableEndCompat)
         drawableBottom = attributeArray.getDrawable(
                 R.styleable.SupportVectorDrawablesTextView_drawableBottomCompat)
         drawableTop = attributeArray.getDrawable(
                 R.styleable.SupportVectorDrawablesTextView_drawableTopCompat)
     } else {
-        val drawableLeftId = attributeArray.getResourceId(
-                R.styleable.SupportVectorDrawablesTextView_drawableLeftCompat, -1)
-        val drawableRightId = attributeArray.getResourceId(
-                R.styleable.SupportVectorDrawablesTextView_drawableRightCompat, -1)
+        val drawableStartId = attributeArray.getResourceId(
+                R.styleable.SupportVectorDrawablesTextView_drawableStartCompat, -1)
+        val drawableEndId = attributeArray.getResourceId(
+                R.styleable.SupportVectorDrawablesTextView_drawableEndCompat, -1)
         val drawableBottomId = attributeArray.getResourceId(
                 R.styleable.SupportVectorDrawablesTextView_drawableBottomCompat, -1)
         val drawableTopId = attributeArray.getResourceId(
                 R.styleable.SupportVectorDrawablesTextView_drawableTopCompat, -1)
 
-        if (drawableLeftId != -1) {
-            drawableLeft = AppCompatResources.getDrawable(context, drawableLeftId)
+        if (drawableStartId != -1) {
+            drawableStart = AppCompatResources.getDrawable(context, drawableStartId)
         }
-        if (drawableRightId != -1) {
-            drawableRight = AppCompatResources.getDrawable(context, drawableRightId)
+        if (drawableEndId != -1) {
+            drawableEnd = AppCompatResources.getDrawable(context, drawableEndId)
         }
         if (drawableBottomId != -1) {
             drawableBottom = AppCompatResources.getDrawable(context, drawableBottomId)
@@ -196,10 +196,10 @@ private fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         setCompoundDrawablesRelativeWithIntrinsicBounds(
-                drawableLeft, drawableTop, drawableRight, drawableBottom)
+                drawableStart, drawableTop, drawableEnd, drawableBottom)
     } else {
         setCompoundDrawablesWithIntrinsicBounds(
-                drawableLeft, drawableTop, drawableRight, drawableBottom)
+                drawableStart, drawableTop, drawableEnd, drawableBottom)
     }
 
     attributeArray.recycle()

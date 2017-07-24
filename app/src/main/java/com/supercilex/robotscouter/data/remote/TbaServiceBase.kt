@@ -30,7 +30,7 @@ abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<
         }
     }
 
-    companion object {
+    protected companion object {
         private val TBA_RETROFIT: Retrofit = Retrofit.Builder()
                 .baseUrl("https://www.thebluealliance.com/api/v3/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -38,8 +38,7 @@ abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<
 
         private const val ERROR_404 = 404
 
-        @JvmStatic
-        protected fun executeAsync(service: TbaServiceBase<*>): Task<Team> =
+        fun executeAsync(service: TbaServiceBase<*>): Task<Team> =
                 AsyncTaskExecutor.execute(service)
     }
 }

@@ -69,4 +69,4 @@ fun logLoginEvent() {
     updateAnalyticsUserId()
 }
 
-fun updateAnalyticsUserId() = analytics.setUserId(getUid())
+fun updateAnalyticsUserId() = analytics.setUserId(uid)

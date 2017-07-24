@@ -9,6 +9,7 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_outline_colored"
         android:drawablePadding="4dp"
         android:stateListAnimator="@null"
         android:textColor="@android:color/white"
@@ -16,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/barrier"
-        app:drawableLeftCompat="@drawable/ic_timer_white_24dp"
+        app:drawableStartCompat="@drawable/ic_timer_white_24dp"
         tools:ignore="UnusedAttribute"
         tools:text="Start (0:00)" />
 

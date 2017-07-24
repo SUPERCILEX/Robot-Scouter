@@ -97,7 +97,7 @@ import static com.supercilex.robotscouter.data.model.MetricTypeKt.TEXT;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logExportTeamsEvent;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
-import static com.supercilex.robotscouter.util.ConstantsKt.providerAuthorityJava;
+import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
 import static com.supercilex.robotscouter.util.IoUtilsKt.getRootFolder;
 import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
 import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
@@ -290,7 +290,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
         File file = writeFile(rsFolder);
         if (file == null) return null;
-        else return FileProvider.getUriForFile(this, providerAuthorityJava, file);
+        else return FileProvider.getUriForFile(this, getProviderAuthority(), file);
     }
 
     @Nullable

@@ -50,8 +50,6 @@ public class StopwatchViewHolder extends ScoutViewHolderBase<Metric<List<Long>>,
         super(itemView);
         mToggleStopwatch = itemView.findViewById(R.id.stopwatch);
         mCycles = itemView.findViewById(R.id.list);
-
-        mToggleStopwatch.setBackgroundResource(R.drawable.button_outline_colored);
     }
 
     @Override

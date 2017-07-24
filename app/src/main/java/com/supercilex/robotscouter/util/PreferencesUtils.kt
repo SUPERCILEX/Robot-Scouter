@@ -4,17 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 
-private val TEAM_LIST_ACTIVITY_PREF_NAME = "com.supercilex.robotscouter.ui.teamlist.TeamListActivity"
-private val EXPORT_PREF_NAME = "spreadsheet_export"
-private val UPLOAD_MEDIA_PREF_NAME = "upload_media"
+const private val TEAM_LIST_ACTIVITY_PREF_NAME = "com.supercilex.robotscouter.ui.teamlist.TeamListActivity"
+const private val EXPORT_PREF_NAME = "spreadsheet_export"
+const private val UPLOAD_MEDIA_PREF_NAME = "upload_media"
 
 
-private val HAS_SHOWN_TUTORIAL = "has_shown_tutorial"
-private val HAS_SHOWN_ADD_TEAM_TUTORIAL = HAS_SHOWN_TUTORIAL + "_fab"
-private val HAS_SHOWN_SIGN_IN_TUTORIAL = HAS_SHOWN_TUTORIAL + "_sign_in"
+const private val HAS_SHOWN_TUTORIAL = "has_shown_tutorial"
+const private val HAS_SHOWN_ADD_TEAM_TUTORIAL = "${HAS_SHOWN_TUTORIAL}_fab"
+const private val HAS_SHOWN_SIGN_IN_TUTORIAL = "${HAS_SHOWN_TUTORIAL}_sign_in"
 
-private val SHOULD_ASK_TO_UPLOAD_MEDIA = "should_ask_to_upload_media"
-private val SHOULD_UPLOAD_MEDIA = "should_upload_media_to_tba"
+const private val SHOULD_ASK_TO_UPLOAD_MEDIA = "should_ask_to_upload_media"
+const private val SHOULD_UPLOAD_MEDIA = "should_upload_media_to_tba"
 
 @SuppressLint("CommitPrefEdits")
 private inline fun SharedPreferences.updatePrefs(transaction: SharedPreferences.Editor.() -> Unit) = edit().run {

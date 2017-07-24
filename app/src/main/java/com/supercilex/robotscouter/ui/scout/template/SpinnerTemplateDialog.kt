@@ -33,7 +33,7 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
         View.inflate(context, R.layout.scout_template_edit_spinner_items, null)
     }
 
-    private val selectedValueKey: String by lazy { arguments.getString(FIREBASE_SELECTED_VALUE_KEY) }
+    private val selectedValueKey: String? by lazy { arguments.getString(FIREBASE_SELECTED_VALUE_KEY) }
     private val ref: DatabaseReference by lazy { DatabaseHelper.getRef(arguments) }
 
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
@@ -116,16 +116,16 @@ class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         val itemCount: Int = adapter.itemCount
-        ref.push().setValue("item " + (itemCount + 1), getHighestIntPriority(adapter.snapshots) + 1)
+        ref.push().setValue("item ${itemCount + 1}", getHighestIntPriority(adapter.snapshots) + 1)
         itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 
     companion object {
         private const val TAG = "SpinnerTemplateDialog"
 
-        fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueIndex: String) =
+        fun show(manager: FragmentManager, ref: DatabaseReference, selectedValueKey: String?) =
                 SpinnerTemplateDialog().show(manager, TAG, DatabaseHelper.getRefBundle(ref)) {
-                    putString(FIREBASE_SELECTED_VALUE_KEY, selectedValueIndex)
+                    putString(FIREBASE_SELECTED_VALUE_KEY, selectedValueKey)
                 }
     }
 }
