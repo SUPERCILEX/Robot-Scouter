@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt='Logo' src='https://lh3.googleusercontent.com/YCCilGzlzbTtsDYweORoLVxPdrvHHq1RUMJ0HUxrbYmR-hHr4823oTEXogYHiSp4kg=w300-rw' />
+    <img alt="Logo" src="https://lh3.googleusercontent.com/YCCilGzlzbTtsDYweORoLVxPdrvHHq1RUMJ0HUxrbYmR-hHr4823oTEXogYHiSp4kg=w300-rw" />
 </p>
 
 <h1 align="center">
@@ -13,12 +13,6 @@
 <p align="center">
     <a href="https://travis-ci.org/SUPERCILEX/Robot-Scouter">
         <img src="https://img.shields.io/travis/SUPERCILEX/Robot-Scouter/master.svg?style=flat-square" />
-    </a>
-</p>
-
-<p align="center">
-    <a href='https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/'>
-        <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='150' />
     </a>
 </p>
 
@@ -48,6 +42,12 @@ scouting simple and collaborative.
     - Fancy formatting on devices with Android Lollipop (21) and above 🎀
     - **Charts!** 📈
   - And more!
+
+## Download
+
+<a href="https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/">
+    <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="150" />
+</a>
 
 ## Contributing 💗
 
