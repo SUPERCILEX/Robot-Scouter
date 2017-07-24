@@ -21,7 +21,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
     private val recyclerView: RecyclerView = rootView.findViewById(R.id.list)
     private lateinit var adapter: FirebaseRecyclerAdapter<*, *>
     private lateinit var itemTouchHelper: ItemTouchHelper
-    private var cardListHelper: CardListHelper? = null
+    private lateinit var cardListHelper: CardListHelper
 
     private var startScrollPosition = RecyclerView.NO_POSITION
     private var scrollToPosition = RecyclerView.NO_POSITION
@@ -71,7 +71,7 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
             recyclerView.post {
                 val viewHolder: RecyclerView.ViewHolder? =
                         recyclerView.findViewHolderForLayoutPosition(index - 1)
-                viewHolder?.let { cardListHelper?.onBind(it) }
+                viewHolder?.let { cardListHelper.onBind(it) }
                 deletedPosition = RecyclerView.NO_POSITION
             }
         }
@@ -123,8 +123,8 @@ class ScoutTemplateItemTouchCallback(private val rootView: View) :
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         val startViewHolder: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(startScrollPosition)
-        startViewHolder?.let { cardListHelper?.onBind(it) }
-        cardListHelper?.onBind(viewHolder)
+        startViewHolder?.let { cardListHelper.onBind(it) }
+        cardListHelper.onBind(viewHolder)
 
         isItemMoving = false
         startScrollPosition = RecyclerView.NO_POSITION

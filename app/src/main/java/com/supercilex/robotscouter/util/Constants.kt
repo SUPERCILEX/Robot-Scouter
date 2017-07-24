@@ -63,6 +63,8 @@ fun initConstants(context: Context) {
     providerAuthority = "${context.packageName}.provider"
 }
 
-fun getDebugInfo(): String = "* Robot Scouter version: " + BuildConfig.VERSION_NAME + "\n" +
-        "* Android OS version: " + Build.VERSION.SDK_INT + "\n" +
-        "* User id: " + getUid() + "\n"
+fun getDebugInfo(): String = """
+        |- Robot Scouter version: ${BuildConfig.VERSION_NAME}
+        |- Android OS version: ${Build.VERSION.SDK_INT}
+        |- User id: $uid
+        """.trimMargin()

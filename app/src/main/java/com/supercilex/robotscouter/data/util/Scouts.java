@@ -30,12 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.METRIC_PARSER;
+import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getMETRIC_PARSER;
 import static com.supercilex.robotscouter.data.util.ScoutUtilsKt.getScoutIndicesRef;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_METRICS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
-import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_SCOUTS;
+import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUTS;
 
 public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
     private final TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
@@ -109,7 +109,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
             TaskCompletionSource<Void> scoutMetricsTask = new TaskCompletionSource<>();
             mScoutMetricsTasks.add(scoutMetricsTask.getTask());
 
-            new ScoutListener(FIREBASE_SCOUTS.child(scoutKey), pair, scoutMetricsTask);
+            new ScoutListener(getFIREBASE_SCOUTS().child(scoutKey), pair, scoutMetricsTask);
         }
     }
 
@@ -150,7 +150,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
 
         @Override
         public void onChildAdded(DataSnapshot snapshot, String previousChildName) {
-            mMetrics.add(METRIC_PARSER.parseSnapshot(snapshot));
+            mMetrics.add(getMETRIC_PARSER().parseSnapshot(snapshot));
             resetTimeout();
         }
 

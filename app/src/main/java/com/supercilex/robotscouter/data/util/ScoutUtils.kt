@@ -65,7 +65,7 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
                     value.children.map { it.getValue(Long::class.java)!! })
         }
         HEADER -> metric = Metric.Header(name)
-        else -> throw IllegalStateException("Unknown metric type: " + type)
+        else -> throw IllegalStateException("Unknown metric type: $type")
     }
 
     metric.ref = snapshot.ref

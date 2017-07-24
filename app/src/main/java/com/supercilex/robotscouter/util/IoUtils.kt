@@ -23,13 +23,13 @@ fun createFile(prefix: String,
     }
 }
 
-@RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-fun getRootFolder(): File? =
-        if (isExternalStorageMounted() && (ROOT_FOLDER.exists() || ROOT_FOLDER.mkdirs())) ROOT_FOLDER else null
+@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+val rootFolder: File?
+    get() = if (isExternalStorageMounted() && (ROOT_FOLDER.exists() || ROOT_FOLDER.mkdirs())) ROOT_FOLDER else null
 
-@RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-fun getMediaFolder(): File? =
-        if (getRootFolder() != null && (MEDIA_FOLDER.exists() || MEDIA_FOLDER.mkdirs())) MEDIA_FOLDER else null
+@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+val mediaFolder: File?
+    get() = if (rootFolder != null && (MEDIA_FOLDER.exists() || MEDIA_FOLDER.mkdirs())) MEDIA_FOLDER else null
 
 fun hideFile(fileName: String): String = ".$fileName"
 
@@ -37,7 +37,7 @@ fun hideFile(fileName: String): String = ".$fileName"
 fun unhideFile(file: File): File {
     val unhidden = File(file.parentFile, file.name.substring(1))
     if (!file.renameTo(unhidden)) {
-        throw IOException("Failed to rename file: " + file)
+        throw IOException("Failed to rename file: $file")
     }
     return unhidden
 }

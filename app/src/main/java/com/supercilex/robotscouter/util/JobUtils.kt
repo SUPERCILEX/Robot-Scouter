@@ -72,8 +72,7 @@ fun startInternetJob21(context: Context,
             .buildAndSchedule(context, clazz.name)
 }
 
-private fun getErrorMessage(clazz: String, result: Int): String =
-        clazz + " failed with error code " + result
+private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"
 
 fun parseRawBundle(args: Bundle): TeamHelper = Team.Builder(args.getString(NUMBER))
         .setKey(args.getString(KEY))

@@ -9,13 +9,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 
-fun getUser() = FirebaseAuth.getInstance().currentUser
+val user get() = FirebaseAuth.getInstance().currentUser
 
-fun getUid() = getUser()?.uid
+val uid get() = user?.uid
 
-fun isSignedIn() = getUser() != null
+val isSignedIn get() = user != null
 
-fun isFullUser() = isSignedIn() && !getUser()!!.isAnonymous
+val isFullUser get() = isSignedIn && !user!!.isAnonymous
 
 fun onSignedIn() = TaskCompletionSource<FirebaseAuth>().also {
     FirebaseAuth.getInstance().addAuthStateListener(object : FirebaseAuth.AuthStateListener {
@@ -52,7 +52,7 @@ private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Void> 
 
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
 
-    companion object {
-        private val SHOULD_CACHE_DB = "should_cache_db"
+    private companion object {
+        const val SHOULD_CACHE_DB = "should_cache_db"
     }
 }

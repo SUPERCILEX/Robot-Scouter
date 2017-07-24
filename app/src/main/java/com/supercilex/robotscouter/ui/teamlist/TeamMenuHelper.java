@@ -36,7 +36,7 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEven
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
-import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
+import static com.supercilex.robotscouter.util.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.ViewUtilsKt.animateColorChange;
 
 public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -77,7 +77,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     public TeamMenuHelper(Fragment fragment) {
         mFragment = fragment;
-        mPermHandler = new PermissionRequestHandler(IO_PERMS, mFragment, this);
+        mPermHandler = new PermissionRequestHandler(getIO_PERMS(), mFragment, this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {

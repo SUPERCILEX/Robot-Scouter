@@ -30,8 +30,8 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
-import static com.supercilex.robotscouter.util.IoUtilsKt.IO_PERMS;
 import static com.supercilex.robotscouter.util.IoUtilsKt.createFile;
+import static com.supercilex.robotscouter.util.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.IoUtilsKt.getMediaFolder;
 import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
 import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
@@ -68,7 +68,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
     static {
         List<String> perms = new ArrayList<>();
-        perms.addAll(IO_PERMS);
+        perms.addAll(getIO_PERMS());
         perms.add(Manifest.permission.CAMERA);
         PERMS = Collections.unmodifiableList(perms);
     }
