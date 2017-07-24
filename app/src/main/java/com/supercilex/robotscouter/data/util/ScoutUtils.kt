@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.util
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.text.TextUtils
 import com.firebase.ui.database.SnapshotParser
@@ -89,7 +88,8 @@ fun addScout(team: Team): String {
     val scoutRef = getScoutMetricsRef(indexRef.key)
 
     if (TextUtils.isEmpty(team.templateKey)) {
-        defaultTemplateListener.observeOnce(Observer { FirebaseCopier.copyTo(it!!, scoutRef) })
+        defaultTemplateListener.observeOnce()
+                .addOnSuccessListener { FirebaseCopier.copyTo(it!!, scoutRef) }
     } else {
         FirebaseCopier(FIREBASE_SCOUT_TEMPLATES.child(team.templateKey), scoutRef)
                 .performTransformation()

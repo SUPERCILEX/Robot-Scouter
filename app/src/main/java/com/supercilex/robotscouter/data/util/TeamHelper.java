@@ -36,7 +36,9 @@ import static com.supercilex.robotscouter.util.ConstantsKt.TEAMS_LINK_BASE;
 import static com.supercilex.robotscouter.util.ConstantsKt.TWO_ITEMS;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_TEAMS;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_TEAM_INDICES;
+import static com.supercilex.robotscouter.util.ConstantsKt.getTemplatesListener;
 import static com.supercilex.robotscouter.util.CustomTabsUtilsKt.launchUrl;
+import static com.supercilex.robotscouter.util.DatabaseUtilsKt.observeOnce;
 import static com.supercilex.robotscouter.util.RemoteConfigUtilsKt.fetchAndActivate;
 
 public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
@@ -141,11 +143,11 @@ public class TeamHelper implements Parcelable, Comparable<TeamHelper> {
         Long number = mTeam.getNumberAsLong();
         index.setValue(number, number);
 
-        if (!Constants.sFirebaseScoutTemplates.isEmpty()) {
-            mTeam.setTemplateKey(Constants.sFirebaseScoutTemplates.get(0).getKey());
-        }
-        forceUpdateTeam();
-        forceRefresh();
+        observeOnce(getTemplatesListener(), true).addOnSuccessListener(templates -> {
+            if (!templates.isEmpty()) mTeam.setTemplateKey(templates.get(0).getKey());
+            forceUpdateTeam();
+            forceRefresh();
+        });
 
         FirebaseUserActions.getInstance()
                 .end(new Action.Builder(Action.Builder.ADD_ACTION)

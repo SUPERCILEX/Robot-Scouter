@@ -35,8 +35,6 @@ import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndi
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUT_TEMPLATES;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.restoreRecyclerViewState;
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.saveRecyclerViewState;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
         implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
@@ -91,18 +89,13 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mRootView = inflater.inflate(R.layout.fragment_scout_template, container, false);
 
         getTemplateKey();
-        setupRecyclerView(savedInstanceState);
+        setupRecyclerView();
         initFabMenu();
         mRootView.findViewById(R.id.reset_template_all).setOnClickListener(this);
         mRootView.findViewById(R.id.reset_template_team).setOnClickListener(this);
         mRootView.findViewById(R.id.remove_metrics).setOnClickListener(this);
 
         return mRootView;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        saveRecyclerViewState(outState, mManager);
     }
 
     @Override
@@ -142,7 +135,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         }
     }
 
-    private void setupRecyclerView(Bundle savedInstanceState) {
+    private void setupRecyclerView() {
         mRecyclerView = mRootView.findViewById(R.id.list);
         mManager = new LinearLayoutManager(getContext());
 
@@ -178,7 +171,6 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 mItemTouchCallback);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);
-        restoreRecyclerViewState(savedInstanceState, mManager);
     }
 
     private void initFabMenu() {

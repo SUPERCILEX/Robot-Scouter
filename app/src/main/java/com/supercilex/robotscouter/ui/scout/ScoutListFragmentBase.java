@@ -1,12 +1,13 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,10 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.ChangeEventListener;
+import com.firebase.ui.database.ObservableSnapshotArray;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseUserActions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,9 +43,10 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetai
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTemplateEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.ConstantsKt.getTeamsListener;
 
-public abstract class ScoutListFragmentBase extends Fragment
-        implements ChangeEventListener, FirebaseAuth.AuthStateListener, TeamMediaCreator.StartCaptureListener {
+public abstract class ScoutListFragmentBase extends LifecycleFragment
+        implements ChangeEventListener, Observer<ObservableSnapshotArray<Team>>, TeamMediaCreator.StartCaptureListener {
     public static final String KEY_SCOUT_ARGS = "scout_args";
     private static final String KEY_ADD_SCOUT = "add_scout";
 
@@ -52,6 +54,7 @@ public abstract class ScoutListFragmentBase extends Fragment
     protected AppBarViewHolderBase mHolder;
 
     private TeamHelper mTeamHelper;
+    private ObservableSnapshotArray<Team> mTeams;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
@@ -91,10 +94,18 @@ public abstract class ScoutListFragmentBase extends Fragment
         mRootView = inflater.inflate(R.layout.fragment_scout_list, container, false);
         mSavedState = savedInstanceState;
 
-        FirebaseAuth.getInstance().addAuthStateListener(this);
+        // TODO make ViewModel with getTeam LiveData
+        getTeamsListener().observe(this, this);
         showOfflineReassurance();
 
         return mRootView;
+    }
+
+    @Override
+    public void onChanged(@Nullable ObservableSnapshotArray<Team> teams) {
+        if (teams == null) onTeamDeleted();
+        else mTeams = teams;
+        addListeners();
     }
 
     private void showOfflineReassurance() {
@@ -132,7 +143,6 @@ public abstract class ScoutListFragmentBase extends Fragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        FirebaseAuth.getInstance().removeAuthStateListener(this);
         removeListeners();
     }
 
@@ -207,8 +217,8 @@ public abstract class ScoutListFragmentBase extends Fragment
 
     private void addListeners() {
         if (TextUtils.isEmpty(mTeamHelper.getTeam().getKey())) {
-            for (int i = 0; i < Constants.sFirebaseTeams.size(); i++) {
-                Team team = Constants.sFirebaseTeams.getObject(i);
+            for (int i = 0; i < mTeams.size(); i++) {
+                Team team = mTeams.getObject(i);
                 if (team.getNumberAsLong() == mTeamHelper.getTeam().getNumberAsLong()) {
                     mTeamHelper.getTeam().setKey(team.getKey());
                     addListeners();
@@ -221,12 +231,12 @@ public abstract class ScoutListFragmentBase extends Fragment
             TbaDownloader.Companion.load(mTeamHelper.getTeam(), getContext())
                     .addOnSuccessListener(team -> mTeamHelper.updateTeam(team));
         } else {
-            Constants.sFirebaseTeams.addChangeEventListener(this);
+            mTeams.addChangeEventListener(this);
         }
     }
 
     private void removeListeners() {
-        Constants.sFirebaseTeams.removeChangeEventListener(this);
+        mTeams.removeChangeEventListener(this);
         if (mPagerAdapter != null) mPagerAdapter.cleanup();
     }
 
@@ -240,7 +250,7 @@ public abstract class ScoutListFragmentBase extends Fragment
         } else if (type == EventType.MOVED) return;
 
 
-        mTeamHelper = Constants.sFirebaseTeams.getObject(index).getHelper();
+        mTeamHelper = mTeams.getObject(index).getHelper();
         mHolder.bind(mTeamHelper);
 
         if (!mOnScoutingReadyTask.getTask().isComplete()) {
@@ -275,12 +285,6 @@ public abstract class ScoutListFragmentBase extends Fragment
     }
 
     protected abstract void onTeamDeleted();
-
-    @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
-        if (auth.getCurrentUser() == null) onTeamDeleted();
-        else addListeners();
-    }
 
     @Override
     public void onCancelled(DatabaseError error) {

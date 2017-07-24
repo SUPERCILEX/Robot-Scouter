@@ -85,7 +85,7 @@ class ScoutPagerAdapter(private val fragment: Fragment,
             keys.add(0, key)
             getTabNameRef(key).addValueEventListener(tabNameListener)
         }
-        if (hadScouts && keys.isEmpty() && !isOffline(fragment.context) && fragment.isResumed) {
+        if (hadScouts && keys.isEmpty() && !isOffline() && fragment.isResumed) {
             ShouldDeleteTeamDialog.show(fragment.childFragmentManager, teamHelper)
         }
         fragment.view!!.findViewById<View>(R.id.no_content_hint).visibility =

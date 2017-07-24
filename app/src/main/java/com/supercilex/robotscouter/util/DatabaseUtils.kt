@@ -26,8 +26,8 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.FirebaseCopier
 import com.supercilex.robotscouter.data.util.METRIC_PARSER
 import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.data.util.UserHelper
 import com.supercilex.robotscouter.data.util.getScoutIndicesRef
+import com.supercilex.robotscouter.data.util.templateIndicesRef
 import java.io.File
 import java.util.Arrays
 import java.util.Collections
@@ -79,12 +79,14 @@ fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also 
     }
 }.task
 
-fun <T> LiveData<T>.observeOnce(observer: Observer<T>) = observeForever(object : Observer<T> {
-    override fun onChanged(t: T?) {
-        observer.onChanged(t)
-        removeObserver(this)
-    }
-})
+fun <T> LiveData<T>.observeOnce(failOnNull: Boolean = true): Task<T> = TaskCompletionSource<T>().apply {
+    observeForever(object : Observer<T> {
+        override fun onChanged(t: T?) {
+            if (t == null && failOnNull) throw NullPointerException() else setResult(t)
+            removeObserver(this)
+        }
+    })
+}.task
 
 abstract class ChangeEventListenerBase : ChangeEventListener {
     override fun onChildChanged(type: ChangeEventListener.EventType,
@@ -202,7 +204,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
 
 class TemplatesLiveData : ObservableSnapshotArrayLiveData<Scout>() {
     override val items: ObservableSnapshotArray<Scout>
-        get() = FirebaseIndexArray(UserHelper.getScoutTemplateIndicesRef(), FIREBASE_SCOUT_TEMPLATES, SCOUT_PARSER)
+        get() = FirebaseIndexArray(templateIndicesRef, FIREBASE_SCOUT_TEMPLATES, SCOUT_PARSER)
 }
 
 class DefaultTemplateLiveData : LiveData<DataSnapshot>(), ValueEventListener {
