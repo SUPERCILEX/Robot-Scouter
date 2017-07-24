@@ -18,8 +18,8 @@ fun initAnalytics(context: Context) {
     analytics = FirebaseAnalytics.getInstance(context)
     FirebaseAuth.getInstance().addAuthStateListener {
         // Log uid to help debug db crashes
-        FirebaseCrash.log("User id: ${getUid()}")
-        analytics.setUserId(getUid())
+        FirebaseCrash.log("User id: $uid")
+        analytics.setUserId(uid)
     }
 }
 
