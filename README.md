@@ -7,7 +7,7 @@
 Robot Scouter is an open-source Android app that makes FRC and other FIRST competition robot
 scouting simple and collaborative.
 
-![Robot Scouter demo](demo.gif)
+![Robot Scouter demo](docs/demo.gif)
 
 ## Features
 
