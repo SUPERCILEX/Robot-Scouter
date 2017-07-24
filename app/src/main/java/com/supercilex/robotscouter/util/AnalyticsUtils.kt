@@ -23,52 +23,40 @@ fun initAnalytics(context: Context) {
     }
 }
 
-fun logSelectTeamEvent(teamNumber: String) {
-    val args = Bundle()
-    args.putString(ITEM_ID, "select_team")
-    args.putString(ITEM_NAME, teamNumber)
-    args.putString(ITEM_CATEGORY, "team")
-    analytics.logEvent(Event.VIEW_ITEM, args)
-}
+fun logSelectTeamEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+    putString(ITEM_ID, "select_team")
+    putString(ITEM_NAME, teamNumber)
+    putString(ITEM_CATEGORY, "team")
+})
 
-fun logEditTeamDetailsEvent(teamNumber: String) {
-    val args = Bundle()
-    args.putString(ITEM_ID, "edit_team_details")
-    args.putString(ITEM_NAME, teamNumber)
-    args.putString(ITEM_CATEGORY, "team")
-    analytics.logEvent(Event.VIEW_ITEM, args)
-}
+fun logEditTeamDetailsEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+    putString(ITEM_ID, "edit_team_details")
+    putString(ITEM_NAME, teamNumber)
+    putString(ITEM_CATEGORY, "team")
+})
 
-fun logShareTeamEvent(teamNumber: String) {
-    val args = Bundle()
-    args.putString(ITEM_ID, "share_team")
-    args.putString(ITEM_NAME, teamNumber)
-    args.putString(ITEM_CATEGORY, "team")
-    analytics.logEvent(Event.SHARE, args)
-}
+fun logShareTeamEvent(teamNumber: String) = analytics.logEvent(Event.SHARE, Bundle().apply {
+    putString(ITEM_ID, "share_team")
+    putString(ITEM_NAME, teamNumber)
+    putString(ITEM_CATEGORY, "team")
+})
 
-fun logExportTeamsEvent(teamHelpers: List<TeamHelper>) {
-    val args = Bundle()
-    args.putString(ITEM_ID, "export_teams")
-    args.putString(ITEM_NAME, TeamHelper.getTeamNames(teamHelpers))
-    args.putString(ITEM_CATEGORY, "teamsListener")
-    analytics.logEvent(Event.VIEW_ITEM, args)
-}
+fun logExportTeamsEvent(teamHelpers: List<TeamHelper>) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+    putString(ITEM_ID, "export_teams")
+    putString(ITEM_NAME, TeamHelper.getTeamNames(teamHelpers))
+    putString(ITEM_CATEGORY, "teamsListener")
+})
 
-fun logAddScoutEvent(teamNumber: String) {
-    val args = Bundle()
-    args.putString(ITEM_ID, "add_scout")
-    args.putString(ITEM_NAME, teamNumber)
-    args.putString(ITEM_CATEGORY, "scout")
-    analytics.logEvent(Event.VIEW_ITEM, args)
-}
+fun logAddScoutEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+    putString(ITEM_ID, "add_scout")
+    putString(ITEM_NAME, teamNumber)
+    putString(ITEM_CATEGORY, "scout")
+})
 
-fun logEditTemplateEvent(teamNumber: String) {
-    val args = Bundle()
-    args.putString(ITEM_ID, "edit_template")
-    args.putString(ITEM_NAME, teamNumber)
-    args.putString(ITEM_CATEGORY, "scout_template")
-    analytics.logEvent(Event.VIEW_ITEM, args)
-}
+fun logEditTemplateEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+    putString(ITEM_ID, "edit_template")
+    putString(ITEM_NAME, teamNumber)
+    putString(ITEM_CATEGORY, "scout_template")
+})
 
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
