@@ -1,13 +1,31 @@
-# 🤖 Robot Scouter — FIRST Robot Scouting 📋 made simple and collaborative [![Build Status](https://img.shields.io/travis/SUPERCILEX/Robot-Scouter/master.svg?style=flat-square)](https://travis-ci.org/SUPERCILEX/Robot-Scouter)
+<p align="center">
+    <img alt="Logo" src="https://supercilex.github.io/Robot-Scouter/assets/logo.svg" width="30%" />
+</p>
 
-<a href='https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/'>
-    <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="270" height="100"/>
-</a>
+<h1 align="center">
+    Robot Scouter
+</h1>
+
+<h4 align="center">
+    FIRST Robot Scouting made simple and collaborative
+</h4>
+
+<p align="center">
+    <a href="https://travis-ci.org/SUPERCILEX/Robot-Scouter">
+        <img src="https://img.shields.io/travis/SUPERCILEX/Robot-Scouter/master.svg?style=flat-square" />
+    </a>
+</p>
+
+<p align="center">
+    <a href="https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/">
+         <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="30%" />
+    </a>
+</p>
 
 Robot Scouter is an open-source Android app that makes FRC and other FIRST competition robot
 scouting simple and collaborative.
 
-![Robot Scouter demo](demo.gif)
+![Robot Scouter demo](docs/demo.gif)
 
 ## Features
 
