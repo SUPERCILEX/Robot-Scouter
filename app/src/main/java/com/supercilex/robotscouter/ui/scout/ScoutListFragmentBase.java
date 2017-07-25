@@ -79,6 +79,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         super.onCreate(savedInstanceState);
         mDataHolder = ViewModelProviders.of(this).get(TeamHolder.class);
         mDataHolder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
+        mTeamHelper = mDataHolder.getTeamHelperListener().getValue();
         mDataHolder.getTeamHelperListener().observe(this, this);
         mOnScoutingReadyTask = new TaskCompletionSource<>();
     }

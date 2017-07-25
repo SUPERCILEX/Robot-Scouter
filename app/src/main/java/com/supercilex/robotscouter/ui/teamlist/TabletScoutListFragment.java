@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist;
 
 import android.arch.lifecycle.LiveData;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -22,10 +21,10 @@ public class TabletScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (!isInTabletMode(context)) {
-            TeamSelectionListener listener = (TeamSelectionListener) context;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!isInTabletMode(getContext())) {
+            TeamSelectionListener listener = (TeamSelectionListener) getContext();
             listener.onTeamSelected(getBundle(), true);
             removeFragment();
         }

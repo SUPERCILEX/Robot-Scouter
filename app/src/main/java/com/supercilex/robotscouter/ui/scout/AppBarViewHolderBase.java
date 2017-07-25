@@ -74,6 +74,7 @@ public abstract class AppBarViewHolderBase
         mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
 
         mBackdrop.setOnLongClickListener(this);
+        mTeamHelper = listener.getValue();
         listener.observe(fragment, helper -> {
             mTeamHelper = helper;
             bind();

@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.scout;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.arch.lifecycle.LiveData;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -32,20 +31,15 @@ public class ActivityScoutListFragment extends ScoutListFragmentBase {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getActivity().getCallingActivity() != null && isInTabletMode(getContext())) {
             FragmentActivity activity = getActivity();
             activity.setResult(
                     Activity.RESULT_OK, new Intent().putExtra(KEY_SCOUT_ARGS, getBundle()));
             activity.finish();
         }
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
