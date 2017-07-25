@@ -11,16 +11,10 @@ import com.supercilex.robotscouter.util.teamsListener
 class TeamListHolder : ViewModel(), Observer<ObservableSnapshotArray<Team>> {
     val selectedTeamKeyListener = MutableLiveData<String?>()
 
-    init {
-        // In theory, we should hold the FirebaseArray in this ViewModel to save it across config changes,
-        // but since it's used app-wide we instead add an observer to keep the listener alive while
-        // this ViewModel stays alive
-        teamsListener.observeForever(this)
-    }
-
     fun init(savedInstanceState: Bundle?) {
         if (selectedTeamKeyListener.value == null) {
             selectedTeamKeyListener.value = savedInstanceState?.getString(TEAM_KEY)
+            teamsListener.observeForever(this)
         }
     }
 

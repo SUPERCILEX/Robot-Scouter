@@ -27,7 +27,7 @@ val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
 val FIREBASE_USERS: DatabaseReference = ref.child("users")
 
 // Team
-val FIREBASE_TEAMS: DatabaseReference = ref.child("teamsListener")
+val FIREBASE_TEAMS: DatabaseReference = ref.child("teams")
 val FIREBASE_TEAM_INDICES: DatabaseReference = ref.child("team-indices")
 const val FIREBASE_TIMESTAMP = "timestamp"
 
