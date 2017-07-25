@@ -56,7 +56,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
      * @see #getFab()
      */
     private FloatingActionButton mFab;
-    private RecyclerView mRecyclerView;
+    private final RecyclerView mRecyclerView;
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
 
@@ -75,17 +75,14 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     private MenuItem mLicencesItem;
     private MenuItem mAboutItem;
 
-    public TeamMenuHelper(Fragment fragment) {
+    public TeamMenuHelper(Fragment fragment, RecyclerView recyclerView) {
         mFragment = fragment;
+        mRecyclerView = recyclerView;
         mPermHandler = new PermissionRequestHandler(getIO_PERMS(), mFragment, this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
         mAdapter = adapter;
-    }
-
-    public void setRecyclerView(RecyclerView recyclerView) {
-        mRecyclerView = recyclerView;
     }
 
     public boolean noItemsSelected() {

@@ -62,11 +62,6 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         return args;
     }
 
-    protected static ScoutListFragmentBase setArgs(ScoutListFragmentBase fragment, Bundle args) {
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     protected Bundle getBundle() {
         return ScoutListFragmentBase.getBundle(
                 mTeamHelper.getTeam(),
@@ -77,6 +72,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSavedState = savedInstanceState;
         mDataHolder = ViewModelProviders.of(this).get(TeamHolder.class);
         mDataHolder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
         mTeamHelper = mDataHolder.getTeamHelperListener().getValue();
@@ -102,10 +98,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_scout_list, container, false);
-        mSavedState = savedInstanceState;
-
         showOfflineReassurance();
-
         return mRootView;
     }
 
