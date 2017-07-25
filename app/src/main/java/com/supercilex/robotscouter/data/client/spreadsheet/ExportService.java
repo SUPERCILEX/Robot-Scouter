@@ -179,12 +179,12 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
         try {
             // Force a refresh
-            Tasks.await(Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES);
+            Tasks.await(Scouts.getAll(mCache.getTeamHelpers()), 5, TimeUnit.MINUTES);
 
             mCache.updateNotification(getString(R.string.exporting_status_loading));
 
             onSuccess(Tasks.await(
-                    Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES));
+                    Scouts.getAll(mCache.getTeamHelpers()), 5, TimeUnit.MINUTES));
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             showError(this, e);
         }
