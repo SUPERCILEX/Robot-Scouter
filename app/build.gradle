@@ -16,7 +16,7 @@ apply from: '../quality/quality.gradle'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0' // Note: remember to update travis.yml and upload.sh versions too
+    buildToolsVersion '26.0.1' // Note: remember to update travis.yml versions too
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']

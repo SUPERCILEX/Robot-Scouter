@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.SeekBar
@@ -112,8 +113,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
             if (result == BillingResponse.ITEM_ALREADY_OWNED) {
                 billingClient.queryPurchaseHistoryAsync(type) {
                     if (it.responseCode != BillingResponse.OK) {
-                        val ex = PurchaseException(
-                                it.responseCode, "Purchase fetch failed with code ${it.responseCode}")
+                        val ex = PurchaseException(it.responseCode,
+                                message = "Purchase fetch failed with code ${it.responseCode} and sku $sku")
                         FirebaseCrash.report(ex)
                         purchaseStartTask.setException(ex)
                         return@queryPurchaseHistoryAsync
@@ -124,7 +125,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                             .addOnSuccessListener { purchaseStartTask.setResult(null) }
                 }
             } else {
-                val ex = PurchaseException(result)
+                val ex = PurchaseException(result, sku)
                 FirebaseCrash.report(ex)
                 purchaseStartTask.setException(ex)
             }
@@ -144,7 +145,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                 if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
                     consumption.setResult(purchaseToken)
                 } else {
-                    val ex = PurchaseException(resultCode, "Consumption failed with code $resultCode")
+                    val ex = PurchaseException(resultCode,
+                            message = "Consumption failed with code $resultCode and sku ${purchase.sku}")
                     FirebaseCrash.report(ex)
                     consumption.setException(ex)
                 }
@@ -167,11 +169,12 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         content.visibility = if (isDoingAsyncWork) View.GONE else View.VISIBLE
         progress.visibility = if (isDoingAsyncWork) View.VISIBLE else View.GONE
 
-        if (dialog != null) {
-            val dialog = dialog as AlertDialog
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !isDoingAsyncWork
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = !isDoingAsyncWork
+        val dialog = if (dialog == null) return else dialog as AlertDialog
+        fun setEnabled(button: Button) {
+            button.isEnabled = !isDoingAsyncWork
         }
+        setEnabled(dialog.getButton(AlertDialog.BUTTON_POSITIVE))
+        setEnabled(dialog.getButton(AlertDialog.BUTTON_NEGATIVE))
     }
 
     private fun showError() {
@@ -217,7 +220,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                     dialog.handlePurchaseResponse(
                             dialog.getConsumePurchasesTask(purchases).continueWith { responseCode })
                 } else {
-                    dialog.handlePurchaseResponse(Tasks.forException(PurchaseException(responseCode)))
+                    dialog.handlePurchaseResponse(Tasks.forException(
+                            PurchaseException(responseCode, purchases?.map { it.sku }.toString())))
                 }
             }
         }
@@ -225,7 +229,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
 
         private class PurchaseException(val errorCode: Int,
-                                        message: String = "Purchase failed with error code $errorCode") :
+                                        sku: String = "",
+                                        message: String = "Purchase failed with error code $errorCode for sku $sku") :
                 Exception(message)
     }
 }
