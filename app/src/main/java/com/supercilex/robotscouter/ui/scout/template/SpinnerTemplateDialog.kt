@@ -43,7 +43,8 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
         object : FirebaseRecyclerAdapter<String, SpinnerItemViewHolder>(
                 holder.spinnerItems,
                 R.layout.scout_template_spinner_item,
-                SpinnerItemViewHolder::class.java) {
+                SpinnerItemViewHolder::class.java,
+                this) {
             override fun populateViewHolder(viewHolder: SpinnerItemViewHolder,
                                             itemText: String,
                                             position: Int) {
@@ -102,10 +103,13 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
             .setPositiveButton(android.R.string.ok, null)
             .create { window.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) }
 
+    override fun onStop() {
+        super.onStop()
+        recyclerView.clearFocus()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        adapter.cleanup()
-        recyclerView.clearFocus()
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 

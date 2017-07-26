@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.app.Dialog;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,8 +44,11 @@ import static com.supercilex.robotscouter.util.ConstantsKt.getTemplatesListener;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
-        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
+        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener,
+        LifecycleRegistryOwner {
     private static final String TAG = "ScoutTemplateSheet";
+
+    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
     private View mRootView;
     private FloatingActionMenu mFam;
@@ -60,6 +65,12 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         ScoutTemplateSheet sheet = new ScoutTemplateSheet();
         sheet.setArguments(teamHelper.toBundle());
         sheet.show(manager, TAG);
+    }
+
+
+    @Override
+    public LifecycleRegistry getLifecycle() {
+        return mLifecycleRegistry;
     }
 
     @NonNull
@@ -178,7 +189,8 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 getFIREBASE_SCOUT_TEMPLATES().child(mTemplateKey),
                 getChildFragmentManager(),
                 mRecyclerView,
-                mItemTouchCallback);
+                mItemTouchCallback,
+                this);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);
     }

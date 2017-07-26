@@ -56,7 +56,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
         })
 
         teamsListener.observe(this, Observer { snapshots ->
-            cleanup()
+            adapter?.cleanup()
             if (snapshots != null) {
                 adapter = TeamListAdapter(
                         snapshots, this, menuHelper, holder.selectedTeamKeyListener)
@@ -76,7 +76,6 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        cleanup()
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 
@@ -87,12 +86,6 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
 
     fun selectTeam(team: Team?) {
         if (activity != null) holder.selectTeam(team)
-    }
-
-    private fun cleanup() {
-        adapter?.cleanup()
-        adapter?.notifyDataSetChanged()
-        recyclerView.adapter = null
     }
 
     override fun onBackPressed(): Boolean = menuHelper.onBackPressed()

@@ -135,12 +135,6 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mPagerAdapter != null) mPagerAdapter.cleanup();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (mPagerAdapter != null) {
             outState.putAll(getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));

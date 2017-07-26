@@ -119,6 +119,7 @@ class ScoutPagerAdapter(private val fragment: LifecycleFragment,
     @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun cleanup() {
+        fragment.lifecycle.removeObserver(this)
         removeNameListeners()
         RobotScouter.getRefWatcher(fragment.activity).watch(this)
     }

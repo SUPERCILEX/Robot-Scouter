@@ -19,7 +19,7 @@ class ScoutFragment : LifecycleFragment() {
         View.inflate(context, R.layout.fragment_scout, null) as RecyclerView
     }
     private val adapter: ScoutAdapter by lazy {
-        ScoutAdapter(holder.metrics, childFragmentManager, recyclerView)
+        ScoutAdapter(holder.metrics, childFragmentManager, recyclerView, this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +44,6 @@ class ScoutFragment : LifecycleFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        adapter.cleanup()
         RobotScouter.getRefWatcher(activity).watch(this)
     }
 
