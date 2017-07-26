@@ -179,7 +179,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun showError() {
         updateProgress(false)
-        Snackbar.make(rootView, R.string.general_error, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(rootView, R.string.fui_general_error, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {

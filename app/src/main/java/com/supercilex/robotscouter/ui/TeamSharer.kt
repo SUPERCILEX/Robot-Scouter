@@ -95,7 +95,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         }.addOnFailureListener {
             FirebaseCrash.report(it)
             Snackbar.make(activity.findViewById<View>(R.id.root),
-                    R.string.general_error,
+                    R.string.fui_general_error,
                     Snackbar.LENGTH_LONG).show()
         }
     }
