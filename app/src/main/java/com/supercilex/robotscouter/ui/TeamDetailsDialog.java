@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -46,6 +48,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     private TeamHelper mTeamHelper;
     private TeamMediaCreator mMediaCapture;
 
+    private ViewGroup mRootView;
+
     private ImageView mMedia;
     private ProgressBar mMediaLoadProgress;
     private TextView mName;
@@ -76,7 +80,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         }
 
         TeamHolder holder = ViewModelProviders.of(this).get(TeamHolder.class);
-        holder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
+        holder.init(getArguments());
         holder.getTeamHelperListener().observe(this, helper -> {
             if (helper == null) {
                 dismiss();
@@ -91,19 +95,19 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
+        mRootView = (ViewGroup) View.inflate(getContext(), R.layout.dialog_team_details, null);
 
-        mMedia = rootView.findViewById(R.id.media);
-        mMediaLoadProgress = rootView.findViewById(R.id.progress);
-        mName = rootView.findViewById(R.id.name);
-        mEditNameButton = rootView.findViewById(R.id.edit_name_button);
+        mMedia = mRootView.findViewById(R.id.media);
+        mMediaLoadProgress = mRootView.findViewById(R.id.progress);
+        mName = mRootView.findViewById(R.id.name);
+        mEditNameButton = mRootView.findViewById(R.id.edit_name_button);
 
-        mNameInputLayout = rootView.findViewById(R.id.name_layout);
-        mMediaInputLayout = rootView.findViewById(R.id.media_layout);
-        mWebsiteInputLayout = rootView.findViewById(R.id.website_layout);
-        mNameEditText = rootView.findViewById(R.id.name_edit);
-        mMediaEditText = rootView.findViewById(R.id.media_edit);
-        mWebsiteEditText = rootView.findViewById(R.id.website_edit);
+        mNameInputLayout = mRootView.findViewById(R.id.name_layout);
+        mMediaInputLayout = mRootView.findViewById(R.id.media_layout);
+        mWebsiteInputLayout = mRootView.findViewById(R.id.website_layout);
+        mNameEditText = mRootView.findViewById(R.id.name_edit);
+        mMediaEditText = mRootView.findViewById(R.id.media_edit);
+        mWebsiteEditText = mRootView.findViewById(R.id.website_edit);
 
         mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.Companion.show(this));
         mEditNameButton.setOnClickListener(this);
@@ -114,7 +118,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         updateUi();
 
-        return createDialog(rootView, R.string.team_details);
+        return createDialog(mRootView, R.string.team_details);
     }
 
     @Override
@@ -135,6 +139,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 && mNameEditText != null
                 && mMediaCapture != null
                 && mWebsiteEditText != null) {
+            TransitionManager.beginDelayedTransition(mRootView);
+
             Team team = mTeamHelper.getTeam();
 
             mMediaLoadProgress.setVisibility(View.VISIBLE);
