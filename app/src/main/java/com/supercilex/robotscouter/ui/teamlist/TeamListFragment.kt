@@ -57,6 +57,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
 
         teamsListener.observe(this, Observer { snapshots ->
             adapter?.cleanup()
+            lifecycle.removeObserver(adapter)
             if (snapshots != null) {
                 adapter = TeamListAdapter(
                         snapshots, this, menuHelper, holder.selectedTeamKeyListener)

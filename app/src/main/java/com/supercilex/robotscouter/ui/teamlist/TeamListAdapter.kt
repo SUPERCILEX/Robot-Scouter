@@ -133,6 +133,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
 
     override fun cleanup() {
         super.cleanup()
+        onDataChanged()
         recyclerView.removeOnScrollListener(preloader)
         selectedTeamKeyListener.removeObserver(this)
     }

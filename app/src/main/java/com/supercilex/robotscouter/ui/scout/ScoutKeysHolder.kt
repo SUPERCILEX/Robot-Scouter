@@ -24,7 +24,10 @@ class ScoutKeysHolder(app: Application) : ViewModelBase<String>(app), ValueEvent
         keysListener.value = snapshot.children.map { it.key }.reversed()
     }
 
-    override fun onCleared() = ref.removeEventListener(this)
+    override fun onCleared() {
+        super.onCleared()
+        ref.removeEventListener(this)
+    }
 
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
 }

@@ -76,6 +76,7 @@ public abstract class AppBarViewHolderBase
         mBackdrop.setOnLongClickListener(this);
         mTeamHelper = listener.getValue();
         listener.observe(fragment, helper -> {
+            if (helper == null) return;
             mTeamHelper = helper;
             bind();
         });

@@ -11,7 +11,7 @@ buildscript {
         supportLibVersion = '26.0.0'
         playServicesVersion = '11.0.2'
         archVersion = '1.0.0-alpha5'
-        firebaseUiVersion = 'd678a132b7'
+        firebaseUiVersion = '8c4a053b9c'
         leakCanaryVersion = '1.5.1'
         retrofitVersion = '2.3.0'
         glideVersion = '4.0.0-RC1'

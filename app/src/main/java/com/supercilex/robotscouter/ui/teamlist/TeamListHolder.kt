@@ -9,12 +9,14 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ViewModelBase
 import com.supercilex.robotscouter.util.teamsListener
 
-class TeamListHolder(app: Application) : ViewModelBase<Bundle?>(app), Observer<ObservableSnapshotArray<Team>> {
+class TeamListHolder(app: Application) : ViewModelBase<Bundle?>(app) {
     val selectedTeamKeyListener = MutableLiveData<String?>()
+
+    private val listener = Observer<ObservableSnapshotArray<Team>> {}
 
     override fun onCreate(args: Bundle?) {
         selectedTeamKeyListener.value = args?.getString(TEAM_KEY)
-        teamsListener.observeForever(this)
+        teamsListener.observeForever(listener)
     }
 
     fun onSaveInstanceState(outState: Bundle) = outState.putString(TEAM_KEY, selectedTeamKeyListener.value)
@@ -23,9 +25,10 @@ class TeamListHolder(app: Application) : ViewModelBase<Bundle?>(app), Observer<O
         selectedTeamKeyListener.value = team?.key
     }
 
-    override fun onChanged(teams: ObservableSnapshotArray<Team>?) = Unit
-
-    override fun onCleared() = teamsListener.removeObserver(this)
+    override fun onCleared() {
+        super.onCleared()
+        teamsListener.removeObserver(listener)
+    }
 
     private companion object {
         const val TEAM_KEY = "team_key"

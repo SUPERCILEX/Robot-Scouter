@@ -37,7 +37,8 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
     val metric: Metric<*>
     val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
             // This appears to happen in the in-between state when the metric has been half copied.
-            return@SnapshotParser Metric.Header("Sanity check failed. Please report: bit.ly/RSGitHub.")
+            return@SnapshotParser Metric.Header(
+                    "Sanity check failed. Please report: bit.ly/RSGitHub.").apply { ref = snapshot.ref }
 
 
     val name = snapshot.child(FIREBASE_NAME).getValue(String::class.java) ?: ""
@@ -67,8 +68,7 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
         else -> throw IllegalStateException("Unknown metric type: $type")
     }
 
-    metric.ref = snapshot.ref
-    metric
+    metric.apply { ref = snapshot.ref }
 }
 
 fun getScoutMetricsRef(key: String): DatabaseReference =

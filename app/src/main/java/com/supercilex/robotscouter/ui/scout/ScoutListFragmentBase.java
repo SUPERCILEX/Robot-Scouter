@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.appindexing.FirebaseUserActions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.ScoutUtilsKt;
@@ -41,7 +42,7 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEven
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 
 public abstract class ScoutListFragmentBase extends LifecycleFragment
-        implements Observer<TeamHelper>, TeamMediaCreator.StartCaptureListener {
+        implements Observer<TeamHelper>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {
     public static final String KEY_SCOUT_ARGS = "scout_args";
     private static final String KEY_ADD_SCOUT = "add_scout";
 
@@ -73,11 +74,14 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSavedState = savedInstanceState;
+
         mDataHolder = ViewModelProviders.of(this).get(TeamHolder.class);
         mDataHolder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
         mTeamHelper = mDataHolder.getTeamHelperListener().getValue();
         mDataHolder.getTeamHelperListener().observe(this, this);
         mOnScoutingReadyTask = new TaskCompletionSource<>();
+
+        FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @Override
@@ -132,6 +136,12 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     public void onStop() {
         super.onStop();
         FirebaseUserActions.getInstance().end(mTeamHelper.getViewAction());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FirebaseAuth.getInstance().removeAuthStateListener(this);
     }
 
     @Override
@@ -202,6 +212,11 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth auth) {
+        if (auth.getCurrentUser() == null) onTeamDeleted();
     }
 
     private void initScoutList() {

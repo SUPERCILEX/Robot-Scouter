@@ -19,10 +19,11 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         Observer<ObservableSnapshotArray<Team>>, ChangeEventListener {
     val teamHelperListener = MutableLiveData<TeamHelper>()
 
+    private val teamHelper: TeamHelper by lazy { teamHelperListener.value!! }
     private lateinit var teams: ObservableSnapshotArray<Team>
 
     override fun onCreate(args: Bundle) {
-        teamHelperListener.value = TeamHelper.parse(args)
+        teamHelperListener.value = TeamHelper.parse(args); teamHelper
         teamsListener.observeForever(this)
     }
 
@@ -30,7 +31,7 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         if (teams == null) teamHelperListener.value = null
         else {
             this.teams = teams
-            val team = teamHelperListener.value!!.team
+            val team = teamHelper.team
 
             if (TextUtils.isEmpty(team.key)) {
                 for (i in teams.indices) {
@@ -73,6 +74,7 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
     }
 
     override fun onCleared() {
+        super.onCleared()
         teamsListener.removeObserver(this)
         teams.removeChangeEventListener(this)
     }

@@ -48,7 +48,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         LifecycleRegistryOwner {
     private static final String TAG = "ScoutTemplateSheet";
 
-    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
     private View mRootView;
     private FloatingActionMenu mFam;

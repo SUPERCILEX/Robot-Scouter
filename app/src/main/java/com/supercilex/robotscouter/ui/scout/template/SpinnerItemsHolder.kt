@@ -24,5 +24,8 @@ class SpinnerItemsHolder(app: Application) : ViewModelBase<Bundle>(app) {
         spinnerItems.addChangeEventListener(listener)
     }
 
-    override fun onCleared() = spinnerItems.removeChangeEventListener(listener)
+    override fun onCleared() {
+        super.onCleared()
+        spinnerItems.removeChangeEventListener(listener)
+    }
 }

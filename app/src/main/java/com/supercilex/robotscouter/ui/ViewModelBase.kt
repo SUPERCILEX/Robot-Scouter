@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.ui
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
+import android.support.annotation.CallSuper
 
 abstract class ViewModelBase<in T>(app: Application) : AndroidViewModel(app) {
     private var isInitialized = false
@@ -14,4 +15,9 @@ abstract class ViewModelBase<in T>(app: Application) : AndroidViewModel(app) {
     }
 
     protected abstract fun onCreate(args: T)
+
+    @CallSuper
+    override fun onCleared() {
+        isInitialized = false
+    }
 }

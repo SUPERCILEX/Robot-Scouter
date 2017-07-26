@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.data.util.getScoutKey
 import com.supercilex.robotscouter.data.util.getScoutKeyBundle
 
 class ScoutFragment : LifecycleFragment() {
@@ -24,12 +25,12 @@ class ScoutFragment : LifecycleFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        holder.init(savedInstanceState ?: arguments)
+        holder.init(getScoutKey(arguments)!!)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
@@ -37,8 +38,8 @@ class ScoutFragment : LifecycleFragment() {
         return recyclerView
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         recyclerView.clearFocus()
     }
 
