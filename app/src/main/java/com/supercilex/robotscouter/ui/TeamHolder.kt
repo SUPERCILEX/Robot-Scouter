@@ -69,9 +69,8 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         }
     }
 
-    fun onSaveInstanceState(outState: Bundle) {
-        outState.putAll(teamHelperListener.value?.toBundle() ?: Bundle())
-    }
+    fun onSaveInstanceState(outState: Bundle) =
+            outState.putAll(teamHelperListener.value?.toBundle() ?: Bundle())
 
     override fun onCleared() {
         super.onCleared()

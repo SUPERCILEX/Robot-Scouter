@@ -44,7 +44,7 @@ fun logShareTeamEvent(teamNumber: String) = analytics.logEvent(Event.SHARE, Bund
 fun logExportTeamsEvent(teamHelpers: List<TeamHelper>) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
     putString(ITEM_ID, "export_teams")
     putString(ITEM_NAME, TeamHelper.getTeamNames(teamHelpers))
-    putString(ITEM_CATEGORY, "teamsListener")
+    putString(ITEM_CATEGORY, "teams")
 })
 
 fun logAddScoutEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {

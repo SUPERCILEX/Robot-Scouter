@@ -222,11 +222,8 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     private void initScoutList() {
         TabLayout tabLayout = mRootView.findViewById(R.id.tabs);
         ViewPager viewPager = mRootView.findViewById(R.id.viewpager);
-        mPagerAdapter = new ScoutPagerAdapter(this,
-                                              mViewHolder,
-                                              tabLayout,
-                                              mTeamHelper,
-                                              getScoutKey());
+        mPagerAdapter = new ScoutPagerAdapter(
+                this, mViewHolder, tabLayout, mTeamHelper, getScoutKey());
 
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

@@ -33,9 +33,7 @@ import java.util.Arrays
 import java.util.Collections
 
 val TEAM_PARSER = SnapshotParser<Team> {
-    val team: Team = it.getValue(Team::class.java)!!
-    team.key = it.key
-    team
+    it.getValue(Team::class.java)!!.apply { key = it.key }
 }
 val SCOUT_PARSER = SnapshotParser<Scout> {
     Scout(it.child(FIREBASE_NAME).getValue(String::class.java),
@@ -44,9 +42,7 @@ val SCOUT_PARSER = SnapshotParser<Scout> {
 private val QUERY_KEY = "query_key"
 
 val ref: DatabaseReference by lazy {
-    val instance = FirebaseDatabase.getInstance()
-    instance.setPersistenceEnabled(true)
-    instance.reference
+    FirebaseDatabase.getInstance().apply { setPersistenceEnabled(true) }.reference
 }
 
 fun getRefBundle(ref: DatabaseReference) = Bundle().apply {

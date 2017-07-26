@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.ui.ViewModelBase
 
 class ScoutKeysHolder(app: Application) : ViewModelBase<String>(app), ValueEventListener {
     val keysListener = MutableLiveData<List<String>>()
-
     lateinit var ref: DatabaseReference
 
     override fun onCreate(args: String) {

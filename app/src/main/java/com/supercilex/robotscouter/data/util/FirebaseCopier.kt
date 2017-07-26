@@ -9,10 +9,9 @@ import com.google.firebase.database.Query
 import java.util.HashMap
 
 open class FirebaseCopier(from: Query, to: DatabaseReference) : FirebaseTransformer(from, to) {
-    public override fun transform(transformSnapshot: DataSnapshot): Task<Nothing?> {
-        return if (transformSnapshot.value == null) Tasks.forResult(null)
-        else copyTo(transformSnapshot, toRef)
-    }
+    public override fun transform(transformSnapshot: DataSnapshot): Task<Nothing?> =
+            if (transformSnapshot.value == null) Tasks.forResult(null)
+            else copyTo(transformSnapshot, toRef)
 
     companion object {
         fun copyTo(copySnapshot: DataSnapshot, to: DatabaseReference): Task<Nothing?> =

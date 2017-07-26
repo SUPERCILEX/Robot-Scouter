@@ -15,16 +15,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
-
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
-
 import com.supercilex.robotscouter.util.teamsListener
 
 class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
     private val holder: TeamListHolder by lazy {
         ViewModelProviders.of(this).get(TeamListHolder::class.java)
+                .also { onHolderReadyTask.setResult(it) }
     }
     private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
 
@@ -39,7 +38,6 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         holder.init(savedInstanceState)
-        onHolderReadyTask.setResult(holder)
     }
 
     override fun onCreateView(inflater: LayoutInflater?,
