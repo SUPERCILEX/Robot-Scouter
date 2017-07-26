@@ -7,6 +7,7 @@
 
 # Kotlin
 -dontwarn kotlin.**
+-dontwarn com.supercilex.robotscouter.util.TeamsLiveData$teamMerger$1$mergeTeams$2$1$1
 
 # TODO remove once the Gradle plugin is fixed
 -keep class com.supercilex.**
