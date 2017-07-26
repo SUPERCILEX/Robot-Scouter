@@ -7,6 +7,8 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_CATEGORY
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.data.util.TeamHelper
 import kotlin.properties.Delegates
 
@@ -14,6 +16,11 @@ private var analytics: FirebaseAnalytics by Delegates.notNull()
 
 fun initAnalytics(context: Context) {
     analytics = FirebaseAnalytics.getInstance(context)
+    FirebaseAuth.getInstance().addAuthStateListener {
+        // Log uid to help debug db crashes
+        FirebaseCrash.log("User id: $uid")
+        analytics.setUserId(uid)
+    }
 }
 
 fun logSelectTeamEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
@@ -52,9 +59,4 @@ fun logEditTemplateEvent(teamNumber: String) = analytics.logEvent(Event.VIEW_ITE
     putString(ITEM_CATEGORY, "scout_template")
 })
 
-fun logLoginEvent() {
-    analytics.logEvent(Event.LOGIN, Bundle())
-    updateAnalyticsUserId()
-}
-
-fun updateAnalyticsUserId() = analytics.setUserId(uid)
+fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())

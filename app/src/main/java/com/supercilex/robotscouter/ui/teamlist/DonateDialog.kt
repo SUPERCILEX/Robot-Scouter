@@ -179,7 +179,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun showError() {
         updateProgress(false)
-        Snackbar.make(rootView, R.string.general_error, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(rootView, R.string.fui_general_error, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {
@@ -227,10 +227,10 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         }
 
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
+
+        private class PurchaseException(val errorCode: Int,
+                                        sku: String = "",
+                                        message: String = "Purchase failed with error code $errorCode for sku $sku") :
+                Exception(message)
     }
 }
-
-private class PurchaseException(val errorCode: Int,
-                                sku: String = "",
-                                message: String = "Purchase failed with error code $errorCode for sku $sku") :
-        Exception(message)

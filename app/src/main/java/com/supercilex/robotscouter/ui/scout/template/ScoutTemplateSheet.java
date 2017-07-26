@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.ui.scout.template;
 
 import android.app.Dialog;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.firebase.ui.database.ObservableSnapshotArray;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.database.DatabaseReference;
@@ -28,20 +31,24 @@ import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
 import com.supercilex.robotscouter.data.util.TeamHelper;
-import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.DatabaseUtilsKt;
 
 import java.util.Collections;
 
 import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndicesRef;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
+import static com.supercilex.robotscouter.util.ConstantsKt.getDefaultTemplateListener;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUT_TEMPLATES;
+import static com.supercilex.robotscouter.util.ConstantsKt.getTeamsListener;
+import static com.supercilex.robotscouter.util.ConstantsKt.getTemplatesListener;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.restoreRecyclerViewState;
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.saveRecyclerViewState;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
-        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener {
+        implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener,
+        LifecycleRegistryOwner {
     private static final String TAG = "ScoutTemplateSheet";
+
+    private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
     private View mRootView;
     private FloatingActionMenu mFam;
@@ -58,6 +65,12 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         ScoutTemplateSheet sheet = new ScoutTemplateSheet();
         sheet.setArguments(teamHelper.toBundle());
         sheet.show(manager, TAG);
+    }
+
+
+    @Override
+    public LifecycleRegistry getLifecycle() {
+        return mLifecycleRegistry;
     }
 
     @NonNull
@@ -92,18 +105,13 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mRootView = inflater.inflate(R.layout.fragment_scout_template, container, false);
 
         getTemplateKey();
-        setupRecyclerView(savedInstanceState);
+        setupRecyclerView();
         initFabMenu();
         mRootView.findViewById(R.id.reset_template_all).setOnClickListener(this);
         mRootView.findViewById(R.id.reset_template_team).setOnClickListener(this);
         mRootView.findViewById(R.id.remove_metrics).setOnClickListener(this);
 
         return mRootView;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        saveRecyclerViewState(outState, mManager);
     }
 
     @Override
@@ -119,31 +127,36 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         mTemplateKey = teamHelper.getTeam().getTemplateKey();
 
         if (TextUtils.isEmpty(mTemplateKey)) {
-            if (!Constants.sFirebaseScoutTemplates.isEmpty()) {
-                mTemplateKey = Constants.sFirebaseScoutTemplates.get(0).getKey();
-                teamHelper.updateTemplateKey(mTemplateKey);
-                return;
-            }
+            DatabaseUtilsKt.observeOnce(getTemplatesListener(), true)
+                    .addOnSuccessListener(templates -> {
+                        if (templates != null && !templates.isEmpty()) {
+                            mTemplateKey = templates.get(0).getKey();
+                            teamHelper.updateTemplateKey(mTemplateKey);
+                            return;
+                        }
 
-            DatabaseReference newTemplateRef = getFIREBASE_SCOUT_TEMPLATES().push();
-            mTemplateKey = newTemplateRef.getKey();
+                        DatabaseReference newTemplateRef = getFIREBASE_SCOUT_TEMPLATES().push();
+                        mTemplateKey = newTemplateRef.getKey();
 
-            FirebaseCopier.copyTo(Constants.sDefaultTemplate, newTemplateRef);
-            teamHelper.updateTemplateKey(mTemplateKey);
-            getTemplateIndicesRef().child(mTemplateKey).setValue(true);
+                        FirebaseCopier.Companion.copyTo(getDefaultTemplateListener().getValue(),
+                                                        newTemplateRef);
+                        teamHelper.updateTemplateKey(mTemplateKey);
+                        getTemplateIndicesRef().child(mTemplateKey).setValue(true);
 
-            for (int i = 0; i < Constants.sFirebaseTeams.size(); i++) {
-                Team team = Constants.sFirebaseTeams.getObject(i);
-                String templateKey = team.getTemplateKey();
+                        ObservableSnapshotArray<Team> teams = getTeamsListener().getValue();
+                        for (int i = 0; i < teams.size(); i++) {
+                            Team team = teams.getObject(i);
+                            String templateKey = team.getTemplateKey();
 
-                if (TextUtils.isEmpty(templateKey)) {
-                    team.getHelper().updateTemplateKey(mTemplateKey);
-                }
-            }
+                            if (TextUtils.isEmpty(templateKey)) {
+                                team.getHelper().updateTemplateKey(mTemplateKey);
+                            }
+                        }
+                    });
         }
     }
 
-    private void setupRecyclerView(Bundle savedInstanceState) {
+    private void setupRecyclerView() {
         mRecyclerView = mRootView.findViewById(R.id.list);
         mManager = new LinearLayoutManager(getContext());
 
@@ -176,10 +189,10 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
                 getFIREBASE_SCOUT_TEMPLATES().child(mTemplateKey),
                 getChildFragmentManager(),
                 mRecyclerView,
-                mItemTouchCallback);
+                mItemTouchCallback,
+                this);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchCallback.setAdapter(mAdapter);
-        restoreRecyclerViewState(savedInstanceState, mManager);
     }
 
     private void initFabMenu() {

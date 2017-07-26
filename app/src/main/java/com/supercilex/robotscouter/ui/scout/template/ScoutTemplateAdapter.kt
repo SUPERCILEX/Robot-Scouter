@@ -1,10 +1,12 @@
 package com.supercilex.robotscouter.ui.scout.template
 
+import android.arch.lifecycle.LifecycleOwner
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.firebase.ui.database.ChangeEventListener
+import com.firebase.ui.database.FirebaseArray
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.Query
 import com.supercilex.robotscouter.R
@@ -16,6 +18,7 @@ import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
+import com.supercilex.robotscouter.data.util.METRIC_PARSER
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.ScoutAdapterBase
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
@@ -29,8 +32,9 @@ import com.supercilex.robotscouter.ui.scout.viewholder.template.StopwatchTemplat
 class ScoutTemplateAdapter(query: Query,
                            manager: FragmentManager,
                            recyclerView: RecyclerView,
-                           private val callback: ScoutTemplateItemTouchCallback) :
-        ScoutAdapterBase(query, manager, recyclerView) {
+                           private val callback: ScoutTemplateItemTouchCallback,
+                           owner: LifecycleOwner) :
+        ScoutAdapterBase(FirebaseArray(query, METRIC_PARSER), manager, recyclerView, owner) {
     override val cardListHelper: CardListHelper = ListHelper()
 
     init {

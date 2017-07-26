@@ -12,6 +12,7 @@ import com.firebase.ui.auth.ResultCodes
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.User
@@ -21,7 +22,6 @@ import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
-import com.supercilex.robotscouter.util.signInAnonymouslyInitBasic
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.user
 
@@ -59,7 +59,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     fun signOut() = AuthUI.getInstance()
             .signOut(activity)
             .addOnSuccessListener {
-                signInAnonymouslyInitBasic()
+                FirebaseAuth.getInstance().signInAnonymously()
                 FirebaseAppIndex.getInstance().removeAll()
             }
             .addOnSuccessListener(activity) { toggleMenuSignIn(false) }

@@ -3,17 +3,20 @@ package com.supercilex.robotscouter.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,16 +30,11 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
-import com.supercilex.robotscouter.util.Constants;
 
 import java.io.File;
 
@@ -44,11 +42,13 @@ import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnClickListener, View.OnFocusChangeListener,
-        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
+        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private TeamHelper mTeamHelper;
     private TeamMediaCreator mMediaCapture;
+
+    private ViewGroup mRootView;
 
     private ImageView mMedia;
     private ProgressBar mMediaLoadProgress;
@@ -79,25 +79,35 @@ public class TeamDetailsDialog extends KeyboardDialogBase
             mMediaCapture = TeamMediaCreator.get(savedInstanceState, this, this);
         }
 
-        Constants.sFirebaseTeams.addChangeEventListener(this);
+        TeamHolder holder = ViewModelProviders.of(this).get(TeamHolder.class);
+        holder.init(getArguments());
+        holder.getTeamHelperListener().observe(this, helper -> {
+            if (helper == null) {
+                dismiss();
+            } else {
+                mTeamHelper = helper;
+                mMediaCapture.setTeamHelper(mTeamHelper);
+                updateUi();
+            }
+        });
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
+        mRootView = (ViewGroup) View.inflate(getContext(), R.layout.dialog_team_details, null);
 
-        mMedia = rootView.findViewById(R.id.media);
-        mMediaLoadProgress = rootView.findViewById(R.id.progress);
-        mName = rootView.findViewById(R.id.name);
-        mEditNameButton = rootView.findViewById(R.id.edit_name_button);
+        mMedia = mRootView.findViewById(R.id.media);
+        mMediaLoadProgress = mRootView.findViewById(R.id.progress);
+        mName = mRootView.findViewById(R.id.name);
+        mEditNameButton = mRootView.findViewById(R.id.edit_name_button);
 
-        mNameInputLayout = rootView.findViewById(R.id.name_layout);
-        mMediaInputLayout = rootView.findViewById(R.id.media_layout);
-        mWebsiteInputLayout = rootView.findViewById(R.id.website_layout);
-        mNameEditText = rootView.findViewById(R.id.name_edit);
-        mMediaEditText = rootView.findViewById(R.id.media_edit);
-        mWebsiteEditText = rootView.findViewById(R.id.website_edit);
+        mNameInputLayout = mRootView.findViewById(R.id.name_layout);
+        mMediaInputLayout = mRootView.findViewById(R.id.media_layout);
+        mWebsiteInputLayout = mRootView.findViewById(R.id.website_layout);
+        mNameEditText = mRootView.findViewById(R.id.name_edit);
+        mMediaEditText = mRootView.findViewById(R.id.media_edit);
+        mWebsiteEditText = mRootView.findViewById(R.id.website_edit);
 
         mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.Companion.show(this));
         mEditNameButton.setOnClickListener(this);
@@ -108,7 +118,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         updateUi();
 
-        return createDialog(rootView, R.string.team_details);
+        return createDialog(mRootView, R.string.team_details);
     }
 
     @Override
@@ -123,18 +133,14 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         outState.putAll(mMediaCapture.toBundle());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Constants.sFirebaseTeams.removeChangeEventListener(this);
-    }
-
     private void updateUi() {
         if (mMedia != null
                 && mName != null
                 && mNameEditText != null
                 && mMediaCapture != null
                 && mWebsiteEditText != null) {
+            TransitionManager.beginDelayedTransition(mRootView);
+
             Team team = mTeamHelper.getTeam();
 
             mMediaLoadProgress.setVisibility(View.VISIBLE);
@@ -174,20 +180,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @Override
     protected EditText getLastEditText() {
         return mWebsiteEditText;
-    }
-
-    @Override
-    public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
-
-        if (type == EventType.CHANGED) {
-            mTeamHelper =
-                    new Team.Builder(Constants.sFirebaseTeams.getObject(index)).build().getHelper();
-            mMediaCapture.setTeamHelper(mTeamHelper);
-            updateUi();
-        } else if (type == EventType.REMOVED) {
-            dismiss();
-        }
     }
 
     @Override
@@ -326,15 +318,5 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         } else {
             return "http://" + trimmedUrl;
         }
-    }
-
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
-    }
-
-    @Override
-    public void onDataChanged() {
-        // Noop
     }
 }

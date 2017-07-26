@@ -24,8 +24,6 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.animateCircularReveal
 
-private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE
-
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
     private val scrollStateListener = object : RecyclerView.OnScrollListener() {
@@ -60,7 +58,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private lateinit var team: Team
     private lateinit var fragment: Fragment
     private lateinit var recyclerView: RecyclerView
-    private lateinit var menuManager: TeamMenuManager
+    private lateinit var menuHelper: TeamMenuHelper
     private var isItemSelected: Boolean = false
     private var couldItemBeSelected: Boolean = false
     private var isScouting: Boolean = false
@@ -74,14 +72,14 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     fun bind(team: Team,
              fragment: Fragment,
              recyclerView: RecyclerView,
-             menuManager: TeamMenuManager,
+             menuManager: TeamMenuHelper,
              isItemSelected: Boolean,
              couldItemBeSelected: Boolean,
              isScouting: Boolean) {
         this.team = team
         this.fragment = fragment
         this.recyclerView = recyclerView
-        this.menuManager = menuManager
+        this.menuHelper = menuManager
         this.isItemSelected = isItemSelected
         this.couldItemBeSelected = couldItemBeSelected
         this.isScouting = isScouting
@@ -149,7 +147,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private fun onTeamContextMenuRequested() {
         isItemSelected = !isItemSelected
         updateItemStatus()
-        menuManager.onTeamContextMenuRequested(team.helper)
+        menuHelper.onTeamContextMenuRequested(team.helper)
     }
 
     override fun toString() = team.toString()
@@ -166,5 +164,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
                     .load(team.media)
                     .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_memory_grey_48dp))
         }
+
+        private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE
     }
 }

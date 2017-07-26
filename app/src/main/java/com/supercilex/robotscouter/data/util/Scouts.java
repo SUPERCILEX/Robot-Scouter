@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.util;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Size;
 import android.util.Pair;
@@ -43,16 +42,13 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
     private final List<Task<Void>> mScoutMetricsTasks = new CopyOnWriteArrayList<>();
 
     private final List<TeamHelper> mTeamHelpers;
-    private final Context mContext;
 
-    private Scouts(@Size(min = 1) List<TeamHelper> helpers, Context appContext) {
+    private Scouts(@Size(min = 1) List<TeamHelper> helpers) {
         mTeamHelpers = helpers;
-        mContext = appContext;
     }
 
-    public static Task<Map<TeamHelper, List<Scout>>> getAll(@Size(min = 1) List<TeamHelper> teamHelpers,
-                                                            Context appContext) {
-        return new Scouts(teamHelpers, appContext).build();
+    public static Task<Map<TeamHelper, List<Scout>>> getAll(@Size(min = 1) List<TeamHelper> teamHelpers) {
+        return new Scouts(teamHelpers).build();
     }
 
     private Task<Map<TeamHelper, List<Scout>>> build() {
@@ -155,7 +151,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         }
 
         private void resetTimeout() {
-            if (isOffline(mContext)) {
+            if (isOffline()) {
                 mTimer.cancel();
                 mTimer = new Timer();
                 mTimer.schedule(new TimerTask() {

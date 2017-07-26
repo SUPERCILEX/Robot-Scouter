@@ -12,11 +12,12 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.data.util.templateIndicesRef
-import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.create
+import com.supercilex.robotscouter.util.observeOnce
 import com.supercilex.robotscouter.util.show
+import com.supercilex.robotscouter.util.teamsListener
 
 class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -42,10 +43,11 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
         val templateKey: String = team.templateKey
 
         if (arguments.getBoolean(RESET_ALL_KEY)) {
-            Constants.sFirebaseTeams
-                    .map { it.child(FIREBASE_TEMPLATE_KEY) }
-                    .filter { TextUtils.equals(templateKey, it.getValue(String::class.java)) }
-                    .forEach { it.ref.removeValue() }
+            teamsListener.observeOnce().addOnSuccessListener {
+                it.map { it.child(FIREBASE_TEMPLATE_KEY) }
+                        .filter { TextUtils.equals(templateKey, it.getValue(String::class.java)) }
+                        .forEach { it.ref.removeValue() }
+            }
 
             templateIndicesRef.child(templateKey).removeValue()
             FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue()

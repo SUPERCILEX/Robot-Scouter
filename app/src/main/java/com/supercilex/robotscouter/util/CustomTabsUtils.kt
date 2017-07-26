@@ -25,7 +25,7 @@ fun launchUrl(context: Context, url: Uri) {
             .setShowTitle(true)
             .addDefaultShareMenuItem()
             .enableUrlBarHiding()
-            .setStartAnimations(context, R.anim.slide_in_right, R.anim.slide_out_left)
+            .setStartAnimations(context, R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
             .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
             .buildWithReferrer(context)
             .launchUrl(context, url)

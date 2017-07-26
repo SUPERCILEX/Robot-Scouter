@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.KeyboardDialogBase
-import com.supercilex.robotscouter.util.DatabaseHelper
+import com.supercilex.robotscouter.util.getRef
 
 abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
     private val rootView: View by lazy { View.inflate(context, R.layout.dialog_scout_value, null) }
@@ -30,7 +30,7 @@ abstract class ScoutValueDialogBase<out T> : KeyboardDialogBase() {
     }
 
     override fun onAttemptDismiss(): Boolean {
-        DatabaseHelper.getRef(arguments).setValue(value)
+        getRef(arguments).setValue(value)
         return true
     }
 

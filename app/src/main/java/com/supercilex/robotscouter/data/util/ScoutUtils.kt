@@ -19,7 +19,6 @@ import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.Constants
 import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
@@ -29,14 +28,17 @@ import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
+import com.supercilex.robotscouter.util.defaultTemplateListener
 import com.supercilex.robotscouter.util.logAddScoutEvent
+import com.supercilex.robotscouter.util.observeOnce
 
 val SCOUT_KEY = "scout_key"
 val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
     val metric: Metric<*>
     val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
             // This appears to happen in the in-between state when the metric has been half copied.
-            return@SnapshotParser Metric.Header("Sanity check failed. Please report: bit.ly/RSGitHub.")
+            return@SnapshotParser Metric.Header(
+                    "Sanity check failed. Please report: bit.ly/RSGitHub.").apply { ref = snapshot.ref }
 
 
     val name = snapshot.child(FIREBASE_NAME).getValue(String::class.java) ?: ""
@@ -66,8 +68,7 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
         else -> throw IllegalStateException("Unknown metric type: $type")
     }
 
-    metric.ref = snapshot.ref
-    metric
+    metric.apply { ref = snapshot.ref }
 }
 
 fun getScoutMetricsRef(key: String): DatabaseReference =
@@ -87,7 +88,8 @@ fun addScout(team: Team): String {
     val scoutRef = getScoutMetricsRef(indexRef.key)
 
     if (TextUtils.isEmpty(team.templateKey)) {
-        FirebaseCopier.copyTo(Constants.sDefaultTemplate, scoutRef)
+        defaultTemplateListener.observeOnce()
+                .addOnSuccessListener { FirebaseCopier.copyTo(it!!, scoutRef) }
     } else {
         FirebaseCopier(FIREBASE_SCOUT_TEMPLATES.child(team.templateKey), scoutRef)
                 .performTransformation()

@@ -234,7 +234,7 @@ public enum SpreadsheetUtils {;
     public static void showError(Context context, Exception e) {
         FirebaseCrash.report(e);
 
-        String message = context.getString(R.string.general_error) + "\n\n" + e.getMessage();
+        String message = context.getString(R.string.fui_general_error) + "\n\n" + e.getMessage();
         showToast(context, message);
     }
 

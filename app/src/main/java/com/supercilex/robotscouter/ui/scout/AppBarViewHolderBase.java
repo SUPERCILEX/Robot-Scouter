@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.ui.scout;
 
+import android.arch.lifecycle.LifecycleFragment;
+import android.arch.lifecycle.LiveData;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -59,13 +61,10 @@ public abstract class AppBarViewHolderBase
     private MenuItem mDeleteScoutItem;
     private boolean mIsDeleteScoutItemVisible;
 
-    private boolean mInit;
-
-    protected AppBarViewHolderBase(TeamHelper teamHelper,
-                                   Fragment fragment,
+    protected AppBarViewHolderBase(LiveData<TeamHelper> listener,
+                                   LifecycleFragment fragment,
                                    View rootView,
                                    Task onScoutingReadyTask) {
-        mTeamHelper = teamHelper;
         mFragment = fragment;
         mToolbar = rootView.findViewById(R.id.toolbar);
         mHeader = rootView.findViewById(R.id.header);
@@ -75,14 +74,12 @@ public abstract class AppBarViewHolderBase
         mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
 
         mBackdrop.setOnLongClickListener(this);
-    }
-
-    public final void bind(@NonNull TeamHelper teamHelper) {
-        if (!mTeamHelper.equals(teamHelper) || !mInit) {
-            mTeamHelper = teamHelper;
+        mTeamHelper = listener.getValue();
+        listener.observe(fragment, helper -> {
+            if (helper == null) return;
+            mTeamHelper = helper;
             bind();
-        }
-        mInit = true;
+        });
     }
 
     @CallSuper

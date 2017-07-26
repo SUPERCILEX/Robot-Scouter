@@ -1,25 +1,26 @@
 package com.supercilex.robotscouter.ui.scout
 
+import android.arch.lifecycle.LifecycleOwner
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.google.firebase.database.Query
+import com.firebase.ui.database.ObservableSnapshotArray
 import com.supercilex.robotscouter.data.model.HEADER
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
-import com.supercilex.robotscouter.data.util.METRIC_PARSER
 import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
 
-abstract class ScoutAdapterBase(query: Query,
+abstract class ScoutAdapterBase(metrics: ObservableSnapshotArray<Metric<*>>,
                                 private val manager: FragmentManager,
-                                private val recyclerView: RecyclerView) :
+                                private val recyclerView: RecyclerView,
+                                owner: LifecycleOwner) :
         FirebaseRecyclerAdapter<Metric<*>, ScoutViewHolderBase<*, *, *>>(
-                METRIC_PARSER,
+                metrics,
                 0,
                 ScoutViewHolderBase::class.java,
-                query) {
+                owner) {
     protected abstract val cardListHelper: CardListHelper
     private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
 

@@ -30,10 +30,7 @@ fun onSignedIn() = TaskCompletionSource<FirebaseAuth>().also {
     })
 }.task
 
-fun signInAnonymouslyInitBasic() = FirebaseAuth.getInstance()
-        .signInAnonymously().addOnSuccessListener { updateAnalyticsUserId() }
-
-fun signInAnonymouslyDbInit() = signInAnonymouslyInitBasic().addOnSuccessListener {
+fun signInAnonymouslyDbInit() = FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener {
     DatabaseInitializer()
 }
 

@@ -1,14 +1,16 @@
 package com.supercilex.robotscouter.ui.scout
 
+import android.arch.lifecycle.LifecycleOwner
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.google.firebase.database.Query
+import com.firebase.ui.database.ObservableSnapshotArray
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.BOOLEAN
 import com.supercilex.robotscouter.data.model.HEADER
 import com.supercilex.robotscouter.data.model.LIST
+import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
@@ -22,8 +24,11 @@ import com.supercilex.robotscouter.ui.scout.viewholder.ScoutViewHolderBase
 import com.supercilex.robotscouter.ui.scout.viewholder.SpinnerViewHolder
 import com.supercilex.robotscouter.ui.scout.viewholder.StopwatchViewHolder
 
-class ScoutAdapter(query: Query, manager: FragmentManager, recyclerView: RecyclerView) :
-        ScoutAdapterBase(query, manager, recyclerView) {
+class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
+                   manager: FragmentManager,
+                   recyclerView: RecyclerView,
+                   owner: LifecycleOwner) :
+        ScoutAdapterBase(metrics, manager, recyclerView, owner) {
     override val cardListHelper: CardListHelper = ListHelper(true)
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
