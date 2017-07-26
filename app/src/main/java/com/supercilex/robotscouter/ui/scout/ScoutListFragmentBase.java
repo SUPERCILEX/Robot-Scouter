@@ -145,6 +145,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         if (mPagerAdapter != null) {
             outState.putAll(getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
         }
+        mDataHolder.onSaveInstanceState(outState);
         mViewHolder.onSaveInstanceState(outState);
     }
 

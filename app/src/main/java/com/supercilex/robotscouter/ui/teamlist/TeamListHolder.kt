@@ -1,21 +1,20 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModel
 import android.os.Bundle
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.ui.ViewModelBase
 import com.supercilex.robotscouter.util.teamsListener
 
-class TeamListHolder : ViewModel(), Observer<ObservableSnapshotArray<Team>> {
+class TeamListHolder(app: Application) : ViewModelBase<Bundle?>(app), Observer<ObservableSnapshotArray<Team>> {
     val selectedTeamKeyListener = MutableLiveData<String?>()
 
-    fun init(savedInstanceState: Bundle?) {
-        if (selectedTeamKeyListener.value == null) {
-            selectedTeamKeyListener.value = savedInstanceState?.getString(TEAM_KEY)
-            teamsListener.observeForever(this)
-        }
+    override fun onCreate(args: Bundle?) {
+        selectedTeamKeyListener.value = args?.getString(TEAM_KEY)
+        teamsListener.observeForever(this)
     }
 
     fun onSaveInstanceState(outState: Bundle) = outState.putString(TEAM_KEY, selectedTeamKeyListener.value)

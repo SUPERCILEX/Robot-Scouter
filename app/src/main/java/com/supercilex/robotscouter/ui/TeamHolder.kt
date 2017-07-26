@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
@@ -16,17 +15,15 @@ import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.util.teamsListener
 
-class TeamHolder(app: Application) : AndroidViewModel(app),
+class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         Observer<ObservableSnapshotArray<Team>>, ChangeEventListener {
     val teamHelperListener = MutableLiveData<TeamHelper>()
 
     private lateinit var teams: ObservableSnapshotArray<Team>
 
-    fun init(args: Bundle) {
-        if (teamHelperListener.value == null) {
-            teamHelperListener.value = TeamHelper.parse(args)
-            teamsListener.observeForever(this)
-        }
+    override fun onCreate(args: Bundle) {
+        teamHelperListener.value = TeamHelper.parse(args)
+        teamsListener.observeForever(this)
     }
 
     override fun onChanged(teams: ObservableSnapshotArray<Team>?) {
