@@ -14,6 +14,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.tasks.TaskCompletionSource
 
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -25,6 +26,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
     private val holder: TeamListHolder by lazy {
         ViewModelProviders.of(this).get(TeamListHolder::class.java)
     }
+    private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
 
     private val rootView: View by lazy { View.inflate(context, R.layout.fragment_team_list, null) }
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
@@ -37,6 +39,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         holder.init(savedInstanceState)
+        onHolderReadyTask.setResult(holder)
     }
 
     override fun onCreateView(inflater: LayoutInflater?,
@@ -58,7 +61,10 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
         teamsListener.observe(this, Observer { snapshots ->
             adapter?.cleanup()
             lifecycle.removeObserver(adapter)
-            if (snapshots != null) {
+            if (snapshots == null) {
+                rootView.findViewById<View>(R.id.no_content_hint).visibility = View.VISIBLE
+                selectTeam(null)
+            } else {
                 adapter = TeamListAdapter(
                         snapshots, this, menuHelper, holder.selectedTeamKeyListener)
                 menuHelper.setAdapter(adapter)
@@ -85,9 +91,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = menuHelper.onOptionsItemSelected(item)
 
-    fun selectTeam(team: Team?) {
-        if (activity != null) holder.selectTeam(team)
-    }
+    fun selectTeam(team: Team?) = onHolderReadyTask.task.addOnSuccessListener { it.selectTeam(team) }
 
     override fun onBackPressed(): Boolean = menuHelper.onBackPressed()
 
