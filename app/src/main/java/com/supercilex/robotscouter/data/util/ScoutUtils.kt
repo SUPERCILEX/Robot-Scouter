@@ -103,21 +103,19 @@ fun deleteScout(teamKey: String, scoutKey: String) {
     getScoutIndicesRef(teamKey).child(scoutKey).removeValue()
 }
 
-fun deleteAllScouts(teamKey: String): Task<Void> {
-    val deleteTask = TaskCompletionSource<Void>()
+fun deleteAllScouts(teamKey: String): Task<Nothing?> = TaskCompletionSource<Nothing?>().also {
     getScoutIndicesRef(teamKey).addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             for (keySnapshot in snapshot.children) {
                 FIREBASE_SCOUTS.child(keySnapshot.key).removeValue()
                 keySnapshot.ref.removeValue()
             }
-            deleteTask.setResult(null)
+            it.setResult(null)
         }
 
         override fun onCancelled(error: DatabaseError) {
-            deleteTask.setException(error.toException())
+            it.setException(error.toException())
             FirebaseCrash.report(error.toException())
         }
     })
-    return deleteTask.task
-}
+}.task

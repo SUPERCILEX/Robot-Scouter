@@ -18,6 +18,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import java.util.ArrayList;
@@ -36,28 +37,28 @@ import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_METRICS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUTS;
 
-public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<TeamHelper, List<String>>> {
-    private final TaskCompletionSource<Map<TeamHelper, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
-    private final Map<TeamHelper, List<Scout>> mScouts = new ConcurrentHashMap<>();
+public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<Team, List<String>>> {
+    private final TaskCompletionSource<Map<Team, List<Scout>>> mScoutsTask = new TaskCompletionSource<>();
+    private final Map<Team, List<Scout>> mScouts = new ConcurrentHashMap<>();
     private final List<Task<Void>> mScoutMetricsTasks = new CopyOnWriteArrayList<>();
 
-    private final List<TeamHelper> mTeamHelpers;
+    private final List<Team> mTeams;
 
-    private Scouts(@Size(min = 1) List<TeamHelper> helpers) {
-        mTeamHelpers = helpers;
+    private Scouts(@Size(min = 1) List<Team> teams) {
+        mTeams = teams;
     }
 
-    public static Task<Map<TeamHelper, List<Scout>>> getAll(@Size(min = 1) List<TeamHelper> teamHelpers) {
-        return new Scouts(teamHelpers).build();
+    public static Task<Map<Team, List<Scout>>> getAll(@Size(min = 1) List<Team> teams) {
+        return new Scouts(teams).build();
     }
 
-    private Task<Map<TeamHelper, List<Scout>>> build() {
-        List<Task<Pair<TeamHelper, List<String>>>> scoutIndicesTasks = new ArrayList<>();
-        for (TeamHelper helper : mTeamHelpers) {
-            TaskCompletionSource<Pair<TeamHelper, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
+    private Task<Map<Team, List<Scout>>> build() {
+        List<Task<Pair<Team, List<String>>>> scoutIndicesTasks = new ArrayList<>();
+        for (Team team : mTeams) {
+            TaskCompletionSource<Pair<Team, List<String>>> scoutIndicesTask = new TaskCompletionSource<>();
             scoutIndicesTasks.add(scoutIndicesTask.getTask());
 
-            getScoutIndicesRef(helper.getTeam().getKey())
+            getScoutIndicesRef(team.getKey())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
@@ -68,7 +69,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
                                 }
                                 return scoutKeys;
                             }).addOnSuccessListener(scoutKeys -> scoutIndicesTask.setResult(
-                                    Pair.create(helper, scoutKeys)));
+                                    Pair.create(team, scoutKeys)));
                         }
 
                         @Override
@@ -80,7 +81,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         }
 
 
-        for (Task<Pair<TeamHelper, List<String>>> scoutKeysTask : scoutIndicesTasks) {
+        for (Task<Pair<Team, List<String>>> scoutKeysTask : scoutIndicesTasks) {
             scoutKeysTask.addOnSuccessListener(this).addOnFailureListener(this);
         }
 
@@ -95,7 +96,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
     }
 
     @Override
-    public void onSuccess(Pair<TeamHelper, List<String>> pair) {
+    public void onSuccess(Pair<Team, List<String>> pair) {
         if (pair.second.isEmpty()) {
             mScouts.put(pair.first, new ArrayList<>());
             return;
@@ -119,7 +120,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
 
         private final Query mQuery;
         private final DatabaseReference mMetricsQuery;
-        private final Pair<TeamHelper, List<String>> mPair;
+        private final Pair<Team, List<String>> mPair;
         private final TaskCompletionSource<Void> mScoutMetricsTask;
 
         private String mName;
@@ -128,7 +129,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         private Timer mTimer = new Timer();
 
         public ScoutListener(Query query,
-                             Pair<TeamHelper, List<String>> pair,
+                             Pair<Team, List<String>> pair,
                              TaskCompletionSource<Void> scoutMetricsTask) {
             mQuery = query;
             mMetricsQuery = mQuery.getRef().child(FIREBASE_METRICS);

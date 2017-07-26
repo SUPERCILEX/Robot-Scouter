@@ -7,32 +7,35 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.deleteTeam
+import com.supercilex.robotscouter.util.parseTeamList
 import com.supercilex.robotscouter.util.show
+import com.supercilex.robotscouter.util.teamsToBundle
 import java.util.Collections
 
 class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
-    private val teamHelpers: List<TeamHelper> by lazy { TeamHelper.parseList(arguments) }
+    private val teams: List<Team> by lazy { parseTeamList(arguments) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Collections.sort(teamHelpers)
+        Collections.sort(teams)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val deletedTeams = StringBuilder()
-        for ((i: Int, teamHelper: TeamHelper) in teamHelpers.withIndex()) {
+        for ((i: Int, team: Team) in teams.withIndex()) {
             deletedTeams.append(i + 1)
                     .append(". ")
-                    .append(teamHelper)
+                    .append(team)
                     .append('\n')
         }
 
         return AlertDialog.Builder(context)
                 .setTitle(R.string.confirm_action)
                 .setMessage(when (SINGLE_ITEM) {
-                    teamHelpers.size -> null
+                    teams.size -> null
                     else -> getString(R.string.caution_delete, deletedTeams)
                 })
                 .setPositiveButton(R.string.delete, this)
@@ -41,13 +44,13 @@ class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        for (teamHelper: TeamHelper in teamHelpers) teamHelper.deleteTeam()
+        for (team: Team in teams) team.deleteTeam()
     }
 
     companion object {
         private const val TAG = "DeleteTeamDialog"
 
-        fun show(manager: FragmentManager, teamHelpers: List<TeamHelper>) =
-                DeleteTeamDialog().show(manager, TAG, TeamHelper.toBundle(teamHelpers))
+        fun show(manager: FragmentManager, teams: List<Team>) =
+                DeleteTeamDialog().show(manager, TAG, teamsToBundle(teams))
     }
 }

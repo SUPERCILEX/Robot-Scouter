@@ -32,9 +32,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
+import com.supercilex.robotscouter.util.TeamUtilsKt;
 
 public abstract class AppBarViewHolderBase
         implements OnSuccessListener<Void>, View.OnLongClickListener, TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -47,12 +48,12 @@ public abstract class AppBarViewHolderBase
     private final TaskCompletionSource<Void> mOnMenuReadyTask = new TaskCompletionSource<>();
     private final Task mOnScoutingReadyTask;
 
-    protected TeamHelper mTeamHelper;
+    protected Team mTeam;
 
     private TeamMediaCreator mMediaCapture;
-    private final OnSuccessListener<TeamHelper> mMediaCaptureListener = teamHelper -> {
-        mTeamHelper.copyMediaInfo(teamHelper);
-        mTeamHelper.forceUpdateTeam();
+    private final OnSuccessListener<Team> mMediaCaptureListener = team -> {
+        TeamUtilsKt.copyMediaInfo(mTeam, team);
+        TeamUtilsKt.forceUpdateTeam(mTeam);
     };
 
     private MenuItem mNewScoutItem;
@@ -61,7 +62,7 @@ public abstract class AppBarViewHolderBase
     private MenuItem mDeleteScoutItem;
     private boolean mIsDeleteScoutItemVisible;
 
-    protected AppBarViewHolderBase(LiveData<TeamHelper> listener,
+    protected AppBarViewHolderBase(LiveData<Team> listener,
                                    LifecycleFragment fragment,
                                    View rootView,
                                    Task onScoutingReadyTask) {
@@ -71,21 +72,21 @@ public abstract class AppBarViewHolderBase
         mBackdrop = rootView.findViewById(R.id.backdrop);
         mMediaLoadProgress = rootView.findViewById(R.id.progress);
         mOnScoutingReadyTask = onScoutingReadyTask;
-        mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeamHelper, mMediaCaptureListener);
+        mMediaCapture = TeamMediaCreator.newInstance(mFragment, mTeam, mMediaCaptureListener);
 
         mBackdrop.setOnLongClickListener(this);
-        mTeamHelper = listener.getValue();
-        listener.observe(fragment, helper -> {
-            if (helper == null) return;
-            mTeamHelper = helper;
+        mTeam = listener.getValue();
+        listener.observe(fragment, team -> {
+            if (team == null) return;
+            mTeam = team;
             bind();
         });
     }
 
     @CallSuper
     protected void bind() {
-        mToolbar.setTitle(mTeamHelper.toString());
-        mMediaCapture.setTeamHelper(mTeamHelper);
+        mToolbar.setTitle(mTeam.toString());
+        mMediaCapture.setTeam(mTeam);
         loadImages();
         bindMenu();
     }
@@ -93,7 +94,7 @@ public abstract class AppBarViewHolderBase
     private void loadImages() {
         mMediaLoadProgress.setVisibility(View.VISIBLE);
 
-        String media = mTeamHelper.getTeam().getMedia();
+        String media = mTeam.getMedia();
         Glide.with(mBackdrop)
                 .asBitmap()
                 .load(media)
@@ -149,9 +150,9 @@ public abstract class AppBarViewHolderBase
 
         menu.findItem(R.id.action_visit_tba_website)
                 .setTitle(mFragment.getString(R.string.visit_team_website_on_tba,
-                                              mTeamHelper.getTeam().getNumber()));
+                                              mTeam.getNumber()));
         mVisitTeamWebsiteItem.setTitle(mFragment.getString(R.string.visit_team_website,
-                                                           mTeamHelper.getTeam().getNumber()));
+                                                           mTeam.getNumber()));
         if (!mOnScoutingReadyTask.isComplete()) mNewScoutItem.setVisible(false);
 
         mOnMenuReadyTask.trySetResult(null);
@@ -168,10 +169,10 @@ public abstract class AppBarViewHolderBase
     }
 
     @Override
-    public final void onSuccess(Void aVoid) {
+    public final void onSuccess(Void nothing) {
         mNewScoutItem.setVisible(true);
-        mAddMediaItem.setVisible(mTeamHelper.isOutdatedMedia());
-        mVisitTeamWebsiteItem.setVisible(!TextUtils.isEmpty(mTeamHelper.getTeam().getWebsite()));
+        mAddMediaItem.setVisible(TeamUtilsKt.isOutdatedMedia(mTeam));
+        mVisitTeamWebsiteItem.setVisible(!TextUtils.isEmpty(mTeam.getWebsite()));
         mDeleteScoutItem.setVisible(mIsDeleteScoutItemVisible);
     }
 

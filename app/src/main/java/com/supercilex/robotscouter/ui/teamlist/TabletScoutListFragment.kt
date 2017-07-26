@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scout.AppBarViewHolderBase
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.isInTabletMode
@@ -31,7 +31,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
         hint?.visibility = View.GONE
     }
 
-    override fun newAppBarViewHolder(listener: LiveData<TeamHelper>,
+    override fun newAppBarViewHolder(listener: LiveData<Team>,
                                      onScoutingReadyTask: Task<Void>): AppBarViewHolderBase =
             object : AppBarViewHolderBase(listener, this, mRootView, onScoutingReadyTask) {
                 init {

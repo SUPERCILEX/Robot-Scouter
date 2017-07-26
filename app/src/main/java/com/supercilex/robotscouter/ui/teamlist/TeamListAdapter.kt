@@ -89,7 +89,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                 TextUtils.equals(selectedTeamKey, team.key))
     }
 
-    private fun isTeamSelected(team: Team) = menuManager.selectedTeams.contains(team.helper)
+    private fun isTeamSelected(team: Team) = menuManager.selectedTeams.contains(team)
 
     override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
             TeamViewHolder.getTeamMediaRequestBuilder(isTeamSelected(team), fragment.context, team)
@@ -103,16 +103,16 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
         if (type == ChangeEventListener.EventType.CHANGED) {
             for (oldTeam in menuManager.selectedTeams) {
                 val team = getItem(index)
-                if (TextUtils.equals(oldTeam.team.key, team.key)) {
-                    menuManager.onSelectedTeamChanged(oldTeam, team.helper)
+                if (TextUtils.equals(oldTeam.key, team.key)) {
+                    menuManager.onSelectedTeamChanged(oldTeam, team)
                     break
                 }
             }
         } else if (type == ChangeEventListener.EventType.REMOVED && !menuManager.selectedTeams.isEmpty()) {
             val tmpTeams = getAdapterItems(this)
-            for (oldTeamHelper in menuManager.selectedTeams) {
-                if (!tmpTeams.contains(oldTeamHelper.team)) { // We found the deleted item
-                    menuManager.onSelectedTeamRemoved(oldTeamHelper)
+            for (oldTeam in menuManager.selectedTeams) {
+                if (!tmpTeams.contains(oldTeam)) { // We found the deleted item
+                    menuManager.onSelectedTeamRemoved(oldTeam)
                     break
                 }
             }

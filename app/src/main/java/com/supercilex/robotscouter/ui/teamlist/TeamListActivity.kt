@@ -18,7 +18,6 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.ui.scout.ScoutActivity
 import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 import com.supercilex.robotscouter.util.fetchAndActivate
@@ -26,12 +25,13 @@ import com.supercilex.robotscouter.util.isInTabletMode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
+import com.supercilex.robotscouter.util.parseTeam
 import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.setHasShownSignInTutorial
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectionListener, OnSuccessListener<Void> {
+class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectionListener, OnSuccessListener<Nothing?> {
     private val teamListFragment: TeamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
@@ -67,7 +67,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         fetchAndActivate().addOnSuccessListener(this, this)
     }
 
-    override fun onSuccess(aVoid: Void?) {
+    override fun onSuccess(nothing: Nothing?) {
         val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
         if (BuildConfig.VERSION_CODE < minimum && !isOffline()) {
             UpdateDialog.show(supportFragmentManager)
@@ -120,7 +120,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
     }
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
-        val team = TeamHelper.parse(args).team
+        val team = parseTeam(args)
 
         if (isInTabletMode(this)) {
             teamListFragment.selectTeam(null)

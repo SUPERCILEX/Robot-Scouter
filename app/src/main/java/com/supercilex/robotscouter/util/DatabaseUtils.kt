@@ -25,9 +25,7 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.FirebaseCopier
 import com.supercilex.robotscouter.data.util.METRIC_PARSER
-import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.data.util.getScoutIndicesRef
-import com.supercilex.robotscouter.data.util.templateIndicesRef
 import java.io.File
 import java.util.Arrays
 import java.util.Collections
@@ -111,7 +109,7 @@ abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotA
 
 class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
-        get() = FirebaseIndexArray(TeamHelper.getIndicesRef().orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
+        get() = FirebaseIndexArray(teamIndicesRef.orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
 
     private val teamUpdater = object : ChangeEventListenerBase() {
         override fun onChildChanged(type: ChangeEventListener.EventType,
@@ -120,12 +118,11 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
                                     oldIndex: Int) {
             if (type == ChangeEventListener.EventType.ADDED || type == ChangeEventListener.EventType.CHANGED) {
                 val team = value!!.getObject(index)
-                val teamHelper = team.helper
 
-                teamHelper.fetchLatestData(context)
+                team.fetchLatestData(context)
                 val media = team.media
                 if (!TextUtils.isEmpty(media) && File(media).exists()) {
-                    startUploadTeamMediaJob(context, teamHelper)
+                    startUploadTeamMediaJob(context, team)
                 }
             }
         }
@@ -141,19 +138,15 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             }
 
             val teams = value!!
-            val rawTeams = ArrayList<TeamHelper>()
+            val rawTeams = ArrayList<Team>()
             for (j in 0 until teams.size) {
                 val team = teams.getObject(j)
-                val rawTeam = Team.Builder(team)
-                        .setTimestamp(0)
-                        .setKey(null)
-                        .build()
-                        .helper
+                val rawTeam = team.copy(key = "", timestamp = 0)
 
                 if (rawTeams.contains(rawTeam)) {
                     mergeTeams(ArrayList(Arrays.asList(
-                            teams.getObject(rawTeams.indexOf(rawTeam)).helper,
-                            team.helper)))
+                            teams.getObject(rawTeams.indexOf(rawTeam)),
+                            team)))
                     break
                 }
 
@@ -161,16 +154,16 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             }
         }
 
-        private fun mergeTeams(teams: MutableList<TeamHelper>) {
+        private fun mergeTeams(teams: MutableList<Team>) {
             Collections.sort(teams)
-            val oldTeam = teams.removeAt(0).team
+            val oldTeam = teams.removeAt(0)
 
-            teams.map { it.team }.forEach {
-                forceUpdate(getScoutIndicesRef(it.key)).addOnSuccessListener { query ->
+            for (team in teams) {
+                forceUpdate(getScoutIndicesRef(team.key)).addOnSuccessListener { query ->
                     FirebaseCopier(query, getScoutIndicesRef(oldTeam.key))
                             .performTransformation()
                             .continueWithTask { task -> task.result.ref.removeValue() }
-                            .addOnSuccessListener { _ -> it.helper.deleteTeam() }
+                            .addOnSuccessListener { _ -> team.deleteTeam() }
                 }
             }
         }

@@ -17,7 +17,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.isInTabletMode
 
@@ -39,7 +39,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
         super.onActivityCreated(savedInstanceState)
     }
 
-    override fun newAppBarViewHolder(listener: LiveData<TeamHelper>,
+    override fun newAppBarViewHolder(listener: LiveData<Team>,
                                      onScoutingReadyTask: Task<Void>): AppBarViewHolderBase =
             ActivityAppBarViewHolder(listener, onScoutingReadyTask)
 
@@ -63,12 +63,12 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
 
     override fun onTeamDeleted() = activity.finish()
 
-    private inner class ActivityAppBarViewHolder(listener: LiveData<TeamHelper>,
+    private inner class ActivityAppBarViewHolder(listener: LiveData<Team>,
                                                  onScoutingReadyTask: Task<Void>) :
             AppBarViewHolderBase(listener, this@ActivityScoutListFragment, mRootView, onScoutingReadyTask) {
         override fun bind() {
             super.bind()
-            (activity as AppCompatActivity).supportActionBar!!.title = mTeamHelper.toString()
+            (activity as AppCompatActivity).supportActionBar!!.title = mTeam.toString()
             setTaskDescription(null, ContextCompat.getColor(context, R.color.colorPrimary))
         }
 
@@ -83,7 +83,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
                     && (icon == null || !icon.isRecycled)
                     && activity != null) {
                 activity.setTaskDescription(
-                        ActivityManager.TaskDescription(mTeamHelper.toString(), icon, colorPrimary))
+                        ActivityManager.TaskDescription(mTeam.toString(), icon, colorPrimary))
             }
         }
     }

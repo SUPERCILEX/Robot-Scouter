@@ -15,7 +15,7 @@ import com.google.firebase.perf.metrics.AddTrace;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
-import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.model.Team;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -114,8 +114,8 @@ public enum SpreadsheetUtils {;
         return first.getAddress().toString() + ":" + last.getAddress().toString();
     }
 
-    public static String getSafeSheetName(Workbook workbook, TeamHelper teamHelper) {
-        String originalName = WorkbookUtil.createSafeSheetName(teamHelper.toString());
+    public static String getSafeSheetName(Workbook workbook, Team team) {
+        String originalName = WorkbookUtil.createSafeSheetName(team.toString());
         String safeName = originalName;
         for (int i = 1; true; i++) {
             if (workbook.getSheet(safeName) == null) {
@@ -123,7 +123,7 @@ public enum SpreadsheetUtils {;
             } else {
                 safeName = originalName + " (" + i + ")";
                 if (safeName.length() > MAX_SHEET_LENGTH) {
-                    originalName = teamHelper.getTeam().getNumber();
+                    originalName = team.getNumber();
                     safeName = originalName;
                 }
             }

@@ -23,13 +23,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.ScoutUtilsKt;
-import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamHolder;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.ui.scout.template.ScoutTemplateSheet;
+import com.supercilex.robotscouter.util.TeamUtilsKt;
 
 import java.util.Collections;
 
@@ -42,7 +42,7 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEven
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 
 public abstract class ScoutListFragmentBase extends LifecycleFragment
-        implements Observer<TeamHelper>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {
+        implements Observer<Team>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {
     public static final String KEY_SCOUT_ARGS = "scout_args";
     private static final String KEY_ADD_SCOUT = "add_scout";
 
@@ -50,14 +50,14 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     protected AppBarViewHolderBase mViewHolder;
 
     private TeamHolder mDataHolder;
-    private TeamHelper mTeamHelper;
+    private Team mTeam;
     private ScoutPagerAdapter mPagerAdapter;
 
     private TaskCompletionSource<Void> mOnScoutingReadyTask;
     private Bundle mSavedState;
 
     public static Bundle getBundle(Team team, boolean addScout, String scoutKey) {
-        Bundle args = team.getHelper().toBundle();
+        Bundle args = TeamUtilsKt.toBundle(team);
         args.putBoolean(KEY_ADD_SCOUT, addScout);
         args.putAll(getScoutKeyBundle(scoutKey));
         return args;
@@ -65,7 +65,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
 
     protected Bundle getBundle() {
         return ScoutListFragmentBase.getBundle(
-                mTeamHelper.getTeam(),
+                mTeam,
                 getArguments().getBoolean(KEY_ADD_SCOUT),
                 getScoutKey());
     }
@@ -77,18 +77,18 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
 
         mDataHolder = ViewModelProviders.of(this).get(TeamHolder.class);
         mDataHolder.init(savedInstanceState == null ? getArguments() : savedInstanceState);
-        mTeamHelper = mDataHolder.getTeamHelperListener().getValue();
-        mDataHolder.getTeamHelperListener().observe(this, this);
+        mTeam = mDataHolder.getTeamListener().getValue();
+        mDataHolder.getTeamListener().observe(this, this);
         mOnScoutingReadyTask = new TaskCompletionSource<>();
 
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @Override
-    public void onChanged(@Nullable TeamHelper helper) {
-        if (helper == null) onTeamDeleted();
+    public void onChanged(@Nullable Team team) {
+        if (team == null) onTeamDeleted();
         else {
-            mTeamHelper = helper;
+            mTeam = team;
             if (!mOnScoutingReadyTask.getTask().isComplete()) {
                 initScoutList();
                 mOnScoutingReadyTask.setResult(null);
@@ -119,23 +119,23 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewHolder = newAppBarViewHolder(
-                mDataHolder.getTeamHelperListener(), mOnScoutingReadyTask.getTask());
+                mDataHolder.getTeamListener(), mOnScoutingReadyTask.getTask());
         if (savedInstanceState != null) mViewHolder.restoreState(savedInstanceState);
     }
 
-    protected abstract AppBarViewHolderBase newAppBarViewHolder(LiveData<TeamHelper> listener,
+    protected abstract AppBarViewHolderBase newAppBarViewHolder(LiveData<Team> listener,
                                                                 Task<Void> onScoutingReadyTask);
 
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUserActions.getInstance().start(mTeamHelper.getViewAction());
+        FirebaseUserActions.getInstance().start(TeamUtilsKt.getViewAction(mTeam));
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        FirebaseUserActions.getInstance().end(mTeamHelper.getViewAction());
+        FirebaseUserActions.getInstance().end(TeamUtilsKt.getViewAction(mTeam));
     }
 
     @Override
@@ -177,32 +177,32 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String teamNumber = mTeamHelper.getTeam().getNumber();
+        String teamNumber = mTeam.getNumber();
         switch (item.getItemId()) {
             case R.id.action_new_scout:
-                mPagerAdapter.setCurrentScoutKey(addScout(mTeamHelper.getTeam()));
+                mPagerAdapter.setCurrentScoutKey(addScout(mTeam));
                 break;
             case R.id.action_add_media:
                 ShouldUploadMediaToTbaDialog.Companion.show(this);
                 break;
             case R.id.action_share:
                 TeamSharer.Companion.shareTeams(getActivity(),
-                                                Collections.singletonList(mTeamHelper));
+                                                Collections.singletonList(mTeam));
                 logShareTeamEvent(teamNumber);
                 break;
             case R.id.action_visit_tba_website:
-                mTeamHelper.visitTbaWebsite(getContext());
+                TeamUtilsKt.visitTbaWebsite(mTeam, getContext());
                 break;
             case R.id.action_visit_team_website:
-                mTeamHelper.visitTeamWebsite(getContext());
+                TeamUtilsKt.visitTeamWebsite(mTeam, getContext());
                 break;
             case R.id.action_edit_scout_templates:
                 cancelAllDownloadTeamDataJobs(getContext());
-                ScoutTemplateSheet.show(getChildFragmentManager(), mTeamHelper);
+                ScoutTemplateSheet.show(getChildFragmentManager(), mTeam);
                 logEditTemplateEvent(teamNumber);
                 break;
             case R.id.action_edit_team_details:
-                TeamDetailsDialog.show(getChildFragmentManager(), mTeamHelper);
+                TeamDetailsDialog.show(getChildFragmentManager(), mTeam);
                 logEditTeamDetailsEvent(teamNumber);
                 break;
             case R.id.action_delete:
@@ -223,7 +223,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         TabLayout tabLayout = mRootView.findViewById(R.id.tabs);
         ViewPager viewPager = mRootView.findViewById(R.id.viewpager);
         mPagerAdapter = new ScoutPagerAdapter(
-                this, mViewHolder, tabLayout, mTeamHelper, getScoutKey());
+                this, mViewHolder, tabLayout, mTeam, getScoutKey());
 
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -231,7 +231,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
 
         if (getArguments().getBoolean(KEY_ADD_SCOUT, false)) {
             getArguments().remove(KEY_ADD_SCOUT);
-            mPagerAdapter.setCurrentScoutKey(addScout(mTeamHelper.getTeam()));
+            mPagerAdapter.setCurrentScoutKey(addScout(mTeam));
         }
     }
 

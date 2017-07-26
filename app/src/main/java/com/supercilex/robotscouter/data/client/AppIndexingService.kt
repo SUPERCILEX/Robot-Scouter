@@ -14,10 +14,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.util.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.indexable
 import com.supercilex.robotscouter.util.observeOnce
 import com.supercilex.robotscouter.util.onSignedIn
+import com.supercilex.robotscouter.util.teamIndicesRef
 import com.supercilex.robotscouter.util.teamsListener
 import java.util.ArrayList
 
@@ -35,7 +36,7 @@ class AppIndexingService : IntentService(TAG),
 
         if (availability == ConnectionResult.SUCCESS) {
             onSignedIn().addOnSuccessListener {
-                TeamHelper.getIndicesRef().addListenerForSingleValueEvent(this)
+                teamIndicesRef.addListenerForSingleValueEvent(this)
             }
         } else {
             GoogleApiAvailability.getInstance().showErrorNotification(this, availability)
@@ -59,7 +60,7 @@ class AppIndexingService : IntentService(TAG),
                                         index: Int,
                                         oldIndex: Int) {
                 if (type == ChangeEventListener.EventType.ADDED) {
-                    indexables.add(teams.getObject(index).helper.indexable)
+                    indexables.add(teams.getObject(index).indexable)
                 }
 
                 if (indexables.size >= numOfExpectedTeams) {

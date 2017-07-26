@@ -30,18 +30,18 @@ import com.supercilex.robotscouter.RobotScouter;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.data.util.FirebaseCopier;
-import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.util.DatabaseUtilsKt;
+import com.supercilex.robotscouter.util.TeamUtilsKt;
 
 import java.util.Collections;
 
-import static com.supercilex.robotscouter.data.util.UserHelperKt.getTemplateIndicesRef;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_VALUE;
 import static com.supercilex.robotscouter.util.ConstantsKt.getDefaultTemplateListener;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUT_TEMPLATES;
 import static com.supercilex.robotscouter.util.ConstantsKt.getTeamsListener;
 import static com.supercilex.robotscouter.util.ConstantsKt.getTemplatesListener;
 import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.getHighestIntPriority;
+import static com.supercilex.robotscouter.util.UserUtilsKt.getTemplateIndicesRef;
 
 public class ScoutTemplateSheet extends BottomSheetDialogFragment
         implements View.OnClickListener, DialogInterface.OnShowListener, RecyclerView.OnItemTouchListener,
@@ -61,9 +61,9 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
     private String mTemplateKey;
 
-    public static void show(FragmentManager manager, TeamHelper teamHelper) {
+    public static void show(FragmentManager manager, Team team) {
         ScoutTemplateSheet sheet = new ScoutTemplateSheet();
-        sheet.setArguments(teamHelper.toBundle());
+        sheet.setArguments(TeamUtilsKt.toBundle(team));
         sheet.show(manager, TAG);
     }
 
@@ -123,15 +123,15 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
     }
 
     private void getTemplateKey() {
-        TeamHelper teamHelper = TeamHelper.parse(getArguments());
-        mTemplateKey = teamHelper.getTeam().getTemplateKey();
+        Team team = TeamUtilsKt.parseTeam(getArguments());
+        mTemplateKey = team.getTemplateKey();
 
         if (TextUtils.isEmpty(mTemplateKey)) {
             DatabaseUtilsKt.observeOnce(getTemplatesListener(), true)
                     .addOnSuccessListener(templates -> {
                         if (templates != null && !templates.isEmpty()) {
                             mTemplateKey = templates.get(0).getKey();
-                            teamHelper.updateTemplateKey(mTemplateKey);
+                            TeamUtilsKt.updateTemplateKey(team, mTemplateKey);
                             return;
                         }
 
@@ -140,16 +140,16 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
 
                         FirebaseCopier.Companion.copyTo(getDefaultTemplateListener().getValue(),
                                                         newTemplateRef);
-                        teamHelper.updateTemplateKey(mTemplateKey);
+                        TeamUtilsKt.updateTemplateKey(team, mTemplateKey);
                         getTemplateIndicesRef().child(mTemplateKey).setValue(true);
 
                         ObservableSnapshotArray<Team> teams = getTeamsListener().getValue();
                         for (int i = 0; i < teams.size(); i++) {
-                            Team team = teams.getObject(i);
-                            String templateKey = team.getTemplateKey();
+                            Team otherTeam = teams.getObject(i);
+                            String templateKey = otherTeam.getTemplateKey();
 
                             if (TextUtils.isEmpty(templateKey)) {
-                                team.getHelper().updateTemplateKey(mTemplateKey);
+                                TeamUtilsKt.updateTemplateKey(otherTeam, mTemplateKey);
                             }
                         }
                     });
@@ -242,7 +242,7 @@ public class ScoutTemplateSheet extends BottomSheetDialogFragment
         if (id == R.id.reset_template_all || id == R.id.reset_template_team) {
             mRecyclerView.clearFocus();
             ResetTemplateDialog.Companion.show(getChildFragmentManager(),
-                                               TeamHelper.parse(getArguments()),
+                                               TeamUtilsKt.parseTeam(getArguments()),
                                                id == R.id.reset_template_all);
             return;
         } else if (id == R.id.remove_metrics) {

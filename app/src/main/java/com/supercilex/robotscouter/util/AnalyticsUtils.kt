@@ -9,7 +9,7 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.data.model.Team
 import kotlin.properties.Delegates
 
 private var analytics: FirebaseAnalytics by Delegates.notNull()
@@ -41,9 +41,9 @@ fun logShareTeamEvent(teamNumber: String) = analytics.logEvent(Event.SHARE, Bund
     putString(ITEM_CATEGORY, "team")
 })
 
-fun logExportTeamsEvent(teamHelpers: List<TeamHelper>) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+fun logExportTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
     putString(ITEM_ID, "export_teams")
-    putString(ITEM_NAME, TeamHelper.getTeamNames(teamHelpers))
+    putString(ITEM_NAME, getTeamNames(teams))
     putString(ITEM_CATEGORY, "teams")
 })
 

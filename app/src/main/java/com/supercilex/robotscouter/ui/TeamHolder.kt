@@ -12,26 +12,28 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.util.addTeam
+import com.supercilex.robotscouter.util.parseTeam
 import com.supercilex.robotscouter.util.teamsListener
+import com.supercilex.robotscouter.util.toBundle
+import com.supercilex.robotscouter.util.updateTeam
 
 class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         Observer<ObservableSnapshotArray<Team>>, ChangeEventListener {
-    val teamHelperListener = MutableLiveData<TeamHelper>()
+    val teamListener = MutableLiveData<Team>()
 
-    private val teamHelper: TeamHelper by lazy { teamHelperListener.value!! }
+    private val team: Team by lazy { teamListener.value!! }
     private lateinit var teams: ObservableSnapshotArray<Team>
 
     override fun onCreate(args: Bundle) {
-        teamHelperListener.value = TeamHelper.parse(args); teamHelper
+        teamListener.value = parseTeam(args); team
         teamsListener.observeForever(this)
     }
 
     override fun onChanged(teams: ObservableSnapshotArray<Team>?) {
-        if (teams == null) teamHelperListener.value = null
+        if (teams == null) teamListener.value = null
         else {
             this.teams = teams
-            val team = teamHelper.team
 
             if (TextUtils.isEmpty(team.key)) {
                 for (i in teams.indices) {
@@ -43,10 +45,10 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
                     }
                 }
 
-                team.helper.addTeam()
+                team.addTeam()
                 onChanged(teams)
                 TbaDownloader.load(team, getApplication())
-                        .addOnSuccessListener { team.helper.updateTeam(it) }
+                        .addOnSuccessListener { team.updateTeam(it) }
             } else {
                 teams.addChangeEventListener(this)
             }
@@ -57,20 +59,20 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
                                 snapshot: DataSnapshot,
                                 index: Int,
                                 oldIndex: Int) {
-        if (!TextUtils.equals(teamHelperListener.value!!.team.key, snapshot.key)) return
+        if (!TextUtils.equals(teamListener.value!!.key, snapshot.key)) return
 
         if (type == ChangeEventListener.EventType.REMOVED) {
-            teamHelperListener.value = null; return
+            teamListener.value = null; return
         } else if (type == ChangeEventListener.EventType.MOVED) return
 
-        val newTeam = teams.getObject(index).helper
-        if (teamHelperListener.value != newTeam) {
-            teamHelperListener.value = Team.Builder(newTeam.team).build().helper
+        val newTeam = teams.getObject(index)
+        if (teamListener.value != newTeam) {
+            teamListener.value = newTeam.copy()
         }
     }
 
     fun onSaveInstanceState(outState: Bundle) =
-            outState.putAll(teamHelperListener.value?.toBundle() ?: Bundle())
+            outState.putAll(teamListener.value?.toBundle() ?: Bundle())
 
     override fun onCleared() {
         super.onCleared()

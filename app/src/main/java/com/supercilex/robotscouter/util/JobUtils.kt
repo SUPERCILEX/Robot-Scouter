@@ -15,7 +15,6 @@ import com.firebase.jobdispatcher.GooglePlayDriver
 import com.firebase.jobdispatcher.Job
 import com.firebase.jobdispatcher.Trigger
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.util.TeamHelper
 
 private val NUMBER = "number"
 private val KEY = "key"
@@ -47,7 +46,7 @@ private fun JobInfo.Builder.buildAndSchedule(context: Context, clazz: String) {
 }
 
 fun startInternetJob14(context: Context,
-                       teamHelper: TeamHelper,
+                       team: Team,
                        jobId: Int,
                        clazz: Class<out com.firebase.jobdispatcher.JobService>) {
     val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context.applicationContext))
@@ -56,86 +55,78 @@ fun startInternetJob14(context: Context,
             .setService(clazz)
             .setTag(jobId.toString())
             .setTrigger(Trigger.executionWindow(0, 0))
-            .setExtras(toRawBundle(teamHelper))
+            .setExtras(toRawBundle(team))
             .setConstraints(Constraint.ON_ANY_NETWORK)
             .buildAndSchedule(dispatcher)
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun startInternetJob21(context: Context,
-                       teamHelper: TeamHelper,
+                       team: Team,
                        jobId: Int,
                        clazz: Class<out JobService>) {
     JobInfo.Builder(jobId, ComponentName(context.packageName, clazz.name))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setExtras(toRawPersistableBundle(teamHelper))
+            .setExtras(toRawPersistableBundle(team))
             .buildAndSchedule(context, clazz.name)
 }
 
 private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"
 
-fun parseRawBundle(args: Bundle): TeamHelper = Team.Builder(args.getString(NUMBER))
-        .setKey(args.getString(KEY))
-        .setTemplateKey(args.getString(TEMPLATE_KEY))
-        .setName(args.getString(NAME))
-        .setMedia(args.getString(MEDIA))
-        .setWebsite(args.getString(WEBSITE))
-        .setHasCustomName(args.getBoolean(CUSTOM_NAME))
-        .setHasCustomMedia(args.getBoolean(CUSTOM_MEDIA))
-        .setHasCustomWebsite(args.getBoolean(CUSTOM_WEBSITE))
-        .setShouldUploadMediaToTba(args.getBoolean(SHOULD_UPLOAD_MEDIA))
-        .setMediaYear(args.getInt(MEDIA_YEAR))
-        .setTimestamp(args.getLong(TIMESTAMP))
-        .build()
-        .helper
+fun parseRawBundle(args: Bundle) = Team(args.getString(NUMBER),
+        args.getString(KEY),
+        args.getString(TEMPLATE_KEY),
+        args.getString(NAME),
+        args.getString(MEDIA),
+        args.getString(WEBSITE),
+        args.getBoolean(CUSTOM_NAME),
+        args.getBoolean(CUSTOM_MEDIA),
+        args.getBoolean(CUSTOM_WEBSITE),
+        args.getBoolean(SHOULD_UPLOAD_MEDIA),
+        args.getInt(MEDIA_YEAR),
+        args.getLong(TIMESTAMP))
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun parseRawBundle(args: PersistableBundle): TeamHelper = Team.Builder(args.getString(NUMBER))
-        .setKey(args.getString(KEY))
-        .setTemplateKey(args.getString(TEMPLATE_KEY))
-        .setName(args.getString(NAME))
-        .setMedia(args.getString(MEDIA))
-        .setWebsite(args.getString(WEBSITE))
-        .setHasCustomName(args.getInt(CUSTOM_NAME) == 1)
-        .setHasCustomMedia(args.getInt(CUSTOM_MEDIA) == 1)
-        .setHasCustomWebsite(args.getInt(CUSTOM_WEBSITE) == 1)
-        .setShouldUploadMediaToTba(args.getInt(SHOULD_UPLOAD_MEDIA) == 1)
-        .setMediaYear(args.getInt(MEDIA_YEAR))
-        .setTimestamp(args.getLong(TIMESTAMP))
-        .build()
-        .helper
+fun parseRawBundle(args: PersistableBundle) = Team(args.getString(NUMBER),
+        args.getString(KEY),
+        args.getString(TEMPLATE_KEY),
+        args.getString(NAME),
+        args.getString(MEDIA),
+        args.getString(WEBSITE),
+        args.getBooleanCompat(CUSTOM_NAME),
+        args.getBooleanCompat(CUSTOM_MEDIA),
+        args.getBooleanCompat(CUSTOM_WEBSITE),
+        args.getBooleanCompat(SHOULD_UPLOAD_MEDIA),
+        args.getInt(MEDIA_YEAR),
+        args.getLong(TIMESTAMP))
 
-private fun toRawBundle(teamHelper: TeamHelper): Bundle = Bundle().apply {
-    val team: Team = teamHelper.team
-
+private fun toRawBundle(team: Team) = Bundle().apply {
     putString(NUMBER, team.number)
     putString(KEY, team.key)
     putString(TEMPLATE_KEY, team.templateKey)
     putString(NAME, team.name)
     putString(MEDIA, team.media)
     putString(WEBSITE, team.website)
-    team.hasCustomName?.let { putBoolean(CUSTOM_NAME, it) }
-    team.hasCustomMedia?.let { putBoolean(CUSTOM_MEDIA, it) }
-    team.hasCustomWebsite?.let { putBoolean(CUSTOM_WEBSITE, it) }
-    team.shouldUploadMediaToTba?.let { putBoolean(SHOULD_UPLOAD_MEDIA, it) }
+    putBoolean(CUSTOM_NAME, team.hasCustomName)
+    putBoolean(CUSTOM_MEDIA, team.hasCustomMedia)
+    putBoolean(CUSTOM_WEBSITE, team.hasCustomWebsite)
+    putBoolean(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba)
     putInt(MEDIA_YEAR, team.mediaYear)
     putLong(TIMESTAMP, team.timestamp)
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-private fun toRawPersistableBundle(teamHelper: TeamHelper): PersistableBundle = PersistableBundle().apply {
-    val team: Team = teamHelper.team
-
+private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
     putString(NUMBER, team.number)
     putString(KEY, team.key)
     putString(TEMPLATE_KEY, team.templateKey)
     putString(NAME, team.name)
     putString(MEDIA, team.media)
     putString(WEBSITE, team.website)
-    team.hasCustomName?.let { putInt(CUSTOM_NAME, if (it) 1 else 0) }
-    team.hasCustomMedia?.let { putInt(CUSTOM_MEDIA, if (it) 1 else 0) }
-    team.hasCustomWebsite?.let { putInt(CUSTOM_WEBSITE, if (it) 1 else 0) }
-    team.shouldUploadMediaToTba?.let { putInt(SHOULD_UPLOAD_MEDIA, if (it) 1 else 0) }
+    putBooleanCompat(CUSTOM_NAME, team.hasCustomName)
+    putBooleanCompat(CUSTOM_MEDIA, team.hasCustomMedia)
+    putBooleanCompat(CUSTOM_WEBSITE, team.hasCustomWebsite)
+    putBooleanCompat(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba)
     putInt(MEDIA_YEAR, team.mediaYear)
     putLong(TIMESTAMP, team.timestamp)
 }

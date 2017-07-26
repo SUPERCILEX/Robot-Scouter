@@ -137,7 +137,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
             onTeamContextMenuRequested()
             return true
         } else if (v.id == R.id.media) {
-            TeamDetailsDialog.show(fragment.childFragmentManager, team.helper)
+            TeamDetailsDialog.show(fragment.childFragmentManager, team)
             return true
         }
 
@@ -147,7 +147,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private fun onTeamContextMenuRequested() {
         isItemSelected = !isItemSelected
         updateItemStatus()
-        menuHelper.onTeamContextMenuRequested(team.helper)
+        menuHelper.onTeamContextMenuRequested(team)
     }
 
     override fun toString() = team.toString()

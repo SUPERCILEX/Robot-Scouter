@@ -8,25 +8,28 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.deleteTeam
+import com.supercilex.robotscouter.util.parseTeam
 import com.supercilex.robotscouter.util.show
+import com.supercilex.robotscouter.util.toBundle
 
 class ShouldDeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
-    private val mTeamHelper: TeamHelper by lazy { TeamHelper.parse(arguments) }
+    private val team: Team by lazy { parseTeam(arguments) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.should_delete_team)
-            .setMessage(getString(R.string.should_delete_team_message, mTeamHelper.toString()))
+            .setMessage(getString(R.string.should_delete_team_message, team.toString()))
             .setPositiveButton(R.string.delete, this)
             .setNegativeButton(R.string.no, null)
             .create()
 
-    override fun onClick(dialog: DialogInterface, which: Int) = mTeamHelper.deleteTeam()
+    override fun onClick(dialog: DialogInterface, which: Int) = team.deleteTeam()
 
     companion object {
         private const val TAG = "ShouldDeleteTeamDialog"
 
-        fun show(manager: FragmentManager, teamHelper: TeamHelper) =
-                ShouldDeleteTeamDialog().show(manager, TAG, teamHelper.toBundle())
+        fun show(manager: FragmentManager, team: Team) =
+                ShouldDeleteTeamDialog().show(manager, TAG, team.toBundle())
     }
 }

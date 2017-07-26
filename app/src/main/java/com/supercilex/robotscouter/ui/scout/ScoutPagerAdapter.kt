@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.data.util.TeamHelper
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.deleteScout
 import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
@@ -29,7 +29,7 @@ import java.util.ArrayList
 class ScoutPagerAdapter(private val fragment: LifecycleFragment,
                         private val appBarViewHolder: AppBarViewHolderBase,
                         private val tabLayout: TabLayout,
-                        private val teamHelper: TeamHelper,
+                        private val team: Team,
                         var currentScoutKey: String?) :
         FragmentStatePagerAdapter(fragment.childFragmentManager),
         Observer<List<String>>, TabLayout.OnTabSelectedListener, View.OnLongClickListener, LifecycleObserver {
@@ -55,7 +55,7 @@ class ScoutPagerAdapter(private val fragment: LifecycleFragment,
     private var keys: List<String> = ArrayList()
 
     init {
-        holder.init(teamHelper.team.key)
+        holder.init(team.key)
         holder.keysListener.observe(fragment, this)
 
         fragment.lifecycle.addObserver(this)
@@ -92,7 +92,7 @@ class ScoutPagerAdapter(private val fragment: LifecycleFragment,
 
         for (key in keys) getTabNameRef(key).addValueEventListener(tabNameListener)
         if (hadScouts && keys.isEmpty() && !isOffline() && fragment.isResumed) {
-            ShouldDeleteTeamDialog.show(fragment.childFragmentManager, teamHelper)
+            ShouldDeleteTeamDialog.show(fragment.childFragmentManager, team)
         }
         fragment.view!!.findViewById<View>(R.id.no_content_hint).visibility =
                 if (keys.isEmpty()) View.VISIBLE else View.GONE

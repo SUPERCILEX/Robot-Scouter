@@ -23,10 +23,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
+import com.supercilex.robotscouter.util.TeamUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     private final Fragment mFragment;
     private final PermissionRequestHandler mPermHandler;
 
-    private final List<TeamHelper> mSelectedTeams = new ArrayList<>();
+    private final List<Team> mSelectedTeams = new ArrayList<>();
 
     /**
      * Do not use.
@@ -121,7 +121,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        TeamHelper teamHelper = mSelectedTeams.get(0);
+        Team team = mSelectedTeams.get(0);
         switch (item.getItemId()) {
             case R.id.action_export_spreadsheet:
                 exportTeams();
@@ -130,19 +130,19 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 if (TeamSharer.Companion.shareTeams(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
-                logShareTeamEvent(teamHelper.getTeam().getNumber());
+                logShareTeamEvent(team.getNumber());
                 break;
             case R.id.action_visit_tba_website:
-                teamHelper.visitTbaWebsite(mFragment.getContext());
+                TeamUtilsKt.visitTbaWebsite(team, mFragment.getContext());
                 resetMenu();
                 break;
             case R.id.action_visit_team_website:
-                teamHelper.visitTeamWebsite(mFragment.getContext());
+                TeamUtilsKt.visitTeamWebsite(team, mFragment.getContext());
                 resetMenu();
                 break;
             case R.id.action_edit_team_details:
-                TeamDetailsDialog.show(mFragment.getChildFragmentManager(), teamHelper);
-                logEditTeamDetailsEvent(teamHelper.getTeam().getNumber());
+                TeamDetailsDialog.show(mFragment.getChildFragmentManager(), team);
+                logEditTeamDetailsEvent(team.getNumber());
                 break;
             case R.id.action_delete:
                 DeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mSelectedTeams);
@@ -174,14 +174,14 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     public void saveState(Bundle outState) {
         outState.putParcelableArray(SELECTED_TEAMS_KEY,
-                                    mSelectedTeams.toArray(new TeamHelper[mSelectedTeams.size()]));
+                                    mSelectedTeams.toArray(new Team[mSelectedTeams.size()]));
     }
 
     public void restoreState(Bundle savedInstanceState) {
         if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
             Parcelable[] parcelables = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
             for (Parcelable parcelable : parcelables) {
-                mSelectedTeams.add((TeamHelper) parcelable);
+                mSelectedTeams.add((Team) parcelable);
             }
             notifyItemsChanged();
         }
@@ -189,14 +189,14 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         if (mIsMenuReady) updateState();
     }
 
-    public void onTeamContextMenuRequested(TeamHelper teamHelper) {
+    public void onTeamContextMenuRequested(Team team) {
         boolean hadNormalMenu = mSelectedTeams.isEmpty();
 
         int oldSize = mSelectedTeams.size();
-        if (mSelectedTeams.contains(teamHelper)) { // Team already selected
-            mSelectedTeams.remove(teamHelper);
+        if (mSelectedTeams.contains(team)) { // Team already selected
+            mSelectedTeams.remove(team);
         } else {
-            mSelectedTeams.add(teamHelper);
+            mSelectedTeams.add(team);
         }
 
         setToolbarTitle();
@@ -223,7 +223,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                         .setAction(R.string.select_all, v -> {
                             mSelectedTeams.clear();
                             for (int i = 0; i < mAdapter.getItemCount(); i++) {
-                                mSelectedTeams.add(mAdapter.getItem(i).getHelper());
+                                mSelectedTeams.add(mAdapter.getItem(i));
                             }
                             updateState();
                             notifyItemsChanged();
@@ -233,17 +233,17 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         }
     }
 
-    public List<TeamHelper> getSelectedTeams() {
+    public List<Team> getSelectedTeams() {
         return mSelectedTeams;
     }
 
-    public void onSelectedTeamChanged(TeamHelper oldTeamHelper, TeamHelper teamHelper) {
-        mSelectedTeams.remove(oldTeamHelper);
-        mSelectedTeams.add(teamHelper);
+    public void onSelectedTeamChanged(Team oldTeam, Team team) {
+        mSelectedTeams.remove(oldTeam);
+        mSelectedTeams.add(team);
     }
 
-    public void onSelectedTeamRemoved(TeamHelper oldTeamHelper) {
-        mSelectedTeams.remove(oldTeamHelper);
+    public void onSelectedTeamRemoved(Team oldTeam) {
+        mSelectedTeams.remove(oldTeam);
         if (mSelectedTeams.isEmpty()) {
             resetMenu();
         } else {
@@ -266,7 +266,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         mEditTeamDetailsItem.setVisible(visible);
 
         if (visible) {
-            Team team = mSelectedTeams.get(0).getTeam();
+            Team team = mSelectedTeams.get(0);
 
             mVisitTbaWebsiteItem.setTitle(
                     mFragment.getString(R.string.visit_team_website_on_tba, team.getNumber()));

@@ -17,7 +17,7 @@ class TbaUploader private constructor(team: Team, context: Context) :
     @Throws(Exception::class)
     override fun call(): Team {
         uploadToImgur()
-        if (team.shouldUploadMediaToTba != null) uploadToTba()
+        if (team.shouldUploadMediaToTba) uploadToTba()
         return team
     }
 

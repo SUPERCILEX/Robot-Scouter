@@ -10,14 +10,16 @@ import android.view.View
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.data.util.templateIndicesRef
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.create
 import com.supercilex.robotscouter.util.observeOnce
+import com.supercilex.robotscouter.util.parseTeam
+import com.supercilex.robotscouter.util.ref
 import com.supercilex.robotscouter.util.show
 import com.supercilex.robotscouter.util.teamsListener
+import com.supercilex.robotscouter.util.templateIndicesRef
+import com.supercilex.robotscouter.util.toBundle
 
 class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
@@ -39,8 +41,8 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        val team: Team = TeamHelper.parse(arguments).team
-        val templateKey: String = team.templateKey
+        val team: Team = parseTeam(arguments)
+        val templateKey: String = team.templateKey!!
 
         if (arguments.getBoolean(RESET_ALL_KEY)) {
             teamsListener.observeOnce().addOnSuccessListener {
@@ -52,7 +54,7 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
             templateIndicesRef.child(templateKey).removeValue()
             FIREBASE_SCOUT_TEMPLATES.child(templateKey).removeValue()
         } else {
-            team.helper.ref.child(FIREBASE_TEMPLATE_KEY).removeValue()
+            team.ref.child(FIREBASE_TEMPLATE_KEY).removeValue()
         }
 
         dismiss()
@@ -62,8 +64,8 @@ class ResetTemplateDialog : DialogFragment(), View.OnClickListener {
         private const val TAG = "ResetTemplateDialog"
         private const val RESET_ALL_KEY = "reset_all_key"
 
-        fun show(manager: FragmentManager, helper: TeamHelper, shouldResetAll: Boolean) =
-                ResetTemplateDialog().show(manager, TAG, helper.toBundle()) {
+        fun show(manager: FragmentManager, team: Team, shouldResetAll: Boolean) =
+                ResetTemplateDialog().show(manager, TAG, team.toBundle()) {
                     putBoolean(RESET_ALL_KEY, shouldResetAll)
                 }
     }

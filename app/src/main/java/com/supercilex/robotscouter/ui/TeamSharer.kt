@@ -12,19 +12,20 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.storage.FirebaseStorage
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.util.TeamCache
-import com.supercilex.robotscouter.data.util.TeamHelper
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
 import com.supercilex.robotscouter.util.createFile
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.linkKeyNumberPair
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
 class TeamSharer private constructor(private val activity: FragmentActivity,
-                                     @Size(min = 1) teamHelpers: List<TeamHelper>) {
+                                     @Size(min = 1) teams: List<Team>) {
     private val cache: Cache
 
     private val safeMessage: String
@@ -36,7 +37,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                 message = activity.resources.getQuantityString(
                         R.plurals.share_message,
                         SINGLE_ITEM,
-                        cache.teamHelpers[0].toString() + " and more")
+                        cache.teams[0].toString() + " and more")
             } else {
                 message = fullMessage
             }
@@ -45,7 +46,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         }
 
     init {
-        cache = Cache(teamHelpers)
+        cache = Cache(teams)
 
 
         AsyncTaskExecutor.execute(object : Callable<String> {
@@ -82,14 +83,14 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
             }
         }).continueWith(AsyncTaskExecutor.INSTANCE, Continuation<String, Intent> {
             val deepLinkBuilder = StringBuilder("$TEAMS_LINK_BASE?")
-            for (teamHelper in cache.teamHelpers) {
-                deepLinkBuilder.append(teamHelper.linkKeyNumberPair)
+            for (team in cache.teams) {
+                deepLinkBuilder.append(team.linkKeyNumberPair)
             }
 
             getInvitationIntent(deepLinkBuilder.toString(), String.format(
                     it.result,
                     cache.shareCta,
-                    cache.teamHelpers[0].team.media))
+                    cache.teams[0].media))
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
         }.addOnFailureListener {
@@ -108,14 +109,14 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                     .setEmailHtmlContent(shareTemplate)
                     .build()
 
-    private inner class Cache(teamHelpers: Collection<TeamHelper>) : TeamCache(teamHelpers) {
+    private inner class Cache(teams: Collection<Team>) : TeamCache(teams) {
         val shareMessage: String
         val shareCta: String
         val shareTitle: String
 
         init {
             val resources = activity.resources
-            val quantity = teamHelpers.size
+            val quantity = teams.size
 
             shareMessage = resources.getQuantityString(R.plurals.share_message, quantity, teamNames)
             shareCta = resources.getQuantityString(R.plurals.share_call_to_action, quantity, teamNames)
@@ -133,7 +134,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
          * @return true if a share intent was launched, false otherwise
          */
         fun shareTeams(activity: FragmentActivity,
-                       @Size(min = 1) teamHelpers: List<TeamHelper>): Boolean {
+                       @Size(min = 1) teams: List<Team>): Boolean {
             if (isOffline()) {
                 Snackbar.make(activity.findViewById<View>(R.id.root),
                         R.string.no_connection,
@@ -141,9 +142,9 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                         .show()
                 return false
             }
-            if (teamHelpers.isEmpty()) return false
+            if (teams.isEmpty()) return false
 
-            TeamSharer(activity, teamHelpers)
+            TeamSharer(activity, teams)
             return true
         }
     }
