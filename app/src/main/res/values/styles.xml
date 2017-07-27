@@ -64,7 +64,7 @@
         <item name="android:scrollbarStyle">outsideOverlay</item>
     </style>
 
-    <style name="RobotScouter.List.Scout">
+    <style name="RobotScouter.List.Scouting">
         <item name="android:paddingLeft">@dimen/list_item_padding_horizontal_scout</item>
         <item name="android:paddingRight">@dimen/list_item_padding_horizontal_scout</item>
         <item name="android:paddingTop">@dimen/list_item_padding_vertical_scout</item>

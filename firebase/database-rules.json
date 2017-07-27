@@ -10,9 +10,6 @@
         ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()"
       }
     },
-    "scout-templates": {
-      ".write": "auth != null"
-    },
     "scouts": {
       "$key": {
         ".write": "auth != null",
@@ -38,6 +35,16 @@
         ".write": "auth != null && root.child('team-indices').child(auth.uid).child($key).exists()",
         ".validate": "newData.child('number').exists()"
       }
+    },
+    "template-indices": {
+      "$uid": {
+        "$key": {
+          ".write": "auth != null && $uid === auth.uid"
+        }
+      }
+    },
+    "templates": {
+      ".write": "auth != null"
     },
     "users": {
       "$uid": {

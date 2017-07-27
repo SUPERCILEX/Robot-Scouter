@@ -30,7 +30,7 @@
         tools:ignore="UnusedAttribute" />
 
     <FrameLayout
-        android:id="@+id/scouts"
+        android:id="@+id/scout_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@+id/guideline"
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.supercilex.robotscouter.util.SupportVectorDrawablesTextView
+    <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
         android:id="@+id/no_team_selected_hint"
         style="@style/RobotScouter.Tutorial.NoContentHint"
         android:text="@string/no_team_selected"

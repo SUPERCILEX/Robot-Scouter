@@ -9,8 +9,8 @@ import android.support.v4.content.ContextCompat;
 
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
-import com.supercilex.robotscouter.data.util.TeamCache;
-import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.util.data.model.TeamCache;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils.isUnsupportedDevice;
-import static com.supercilex.robotscouter.util.NotificationUtilsKt.EXPORT_IN_PROGRESS_CHANNEL;
+import static com.supercilex.robotscouter.util.ui.NotificationUtilsKt.EXPORT_IN_PROGRESS_CHANNEL;
 
 public final class SpreadsheetCache extends TeamCache {
     private static final Object ROW_HEADER_STYLE_LOCK = new Object();
@@ -46,11 +46,11 @@ public final class SpreadsheetCache extends TeamCache {
 
     private Workbook mWorkbook;
 
-    public SpreadsheetCache(Collection<TeamHelper> teamHelpers, Context context) {
-        super(teamHelpers);
+    public SpreadsheetCache(Collection<Team> teams, Context context) {
+        super(teams);
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        mProgressMax = getTeamHelpers().size() + EXTRA_OPS;
+        mProgressMax = getTeams().size() + EXTRA_OPS;
         mProgressNotification = new NotificationCompat.Builder(context, EXPORT_IN_PROGRESS_CHANNEL)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentTitle(context.getString(R.string.export_in_progress_title))

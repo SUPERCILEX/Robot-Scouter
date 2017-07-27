@@ -14,7 +14,7 @@ import java.util.concurrent.Callable
 abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<T>) :
         Callable<Team> {
     protected val context: Context = context.applicationContext
-    protected val team: Team = Team.Builder(team).build()
+    protected val team: Team = team.copy()
     protected val api: T = TBA_RETROFIT.create(clazz)
 
     protected val tbaApiKey: String = context.getString(R.string.tba_api_key)

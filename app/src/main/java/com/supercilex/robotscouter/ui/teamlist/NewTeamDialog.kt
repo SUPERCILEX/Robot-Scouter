@@ -9,7 +9,7 @@ import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.KeyboardDialogBase
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.isNumber
 
 class NewTeamDialog : KeyboardDialogBase() {
@@ -24,7 +24,7 @@ class NewTeamDialog : KeyboardDialogBase() {
         val teamNumber: String = lastEditText.text.toString()
         if (teamNumber.isNumber()) {
             (activity as TeamSelectionListener).onTeamSelected(ScoutListFragmentBase.getBundle(
-                    Team.Builder(teamNumber).build(), true, null))
+                    Team(teamNumber, ""), true, null))
             return true
         } else {
             inputLayout.error = getString(R.string.number_too_big_error)

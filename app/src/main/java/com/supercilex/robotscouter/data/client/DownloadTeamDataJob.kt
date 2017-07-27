@@ -5,22 +5,22 @@ import android.content.Context
 import android.os.Build
 import com.firebase.jobdispatcher.FirebaseJobDispatcher
 import com.firebase.jobdispatcher.GooglePlayDriver
-import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.util.startInternetJob14
-import com.supercilex.robotscouter.util.startInternetJob21
+import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.data.startInternetJob14
+import com.supercilex.robotscouter.util.data.startInternetJob21
 
-fun startDownloadTeamDataJob(context: Context, teamHelper: TeamHelper) {
+fun startDownloadTeamDataJob(context: Context, team: Team) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         startInternetJob21(
                 context,
-                teamHelper,
-                teamHelper.team.numberAsLong.toInt(),
+                team,
+                team.numberAsLong.toInt(),
                 DownloadTeamDataJob21::class.java)
     } else {
         startInternetJob14(
                 context,
-                teamHelper,
-                teamHelper.team.numberAsLong.toInt(),
+                team,
+                team.numberAsLong.toInt(),
                 DownloadTeamDataJob14::class.java)
     }
 }

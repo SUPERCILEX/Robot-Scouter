@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
-import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.model.Team;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +30,11 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
-import static com.supercilex.robotscouter.util.IoUtilsKt.createFile;
-import static com.supercilex.robotscouter.util.IoUtilsKt.getIO_PERMS;
-import static com.supercilex.robotscouter.util.IoUtilsKt.getMediaFolder;
-import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
-import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.createFile;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.getMediaFolder;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.hideFile;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.unhideFile;
 
 public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     public interface StartCaptureListener {
@@ -44,7 +44,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     public static final Parcelable.Creator<TeamMediaCreator> CREATOR = new Parcelable.Creator<TeamMediaCreator>() {
         @Override
         public TeamMediaCreator createFromParcel(Parcel source) {
-            return new TeamMediaCreator(source.readParcelable(TeamHelper.class.getClassLoader()),
+            return new TeamMediaCreator(source.readParcelable(Team.class.getClassLoader()),
                                         source.readString(),
                                         source.readInt() == 1);
         }
@@ -60,9 +60,9 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     private static final String MEDIA_CREATOR_KEY = "media_creator";
 
     private WeakReference<Fragment> mFragment;
-    private TeamHelper mTeamHelper;
+    private Team mTeam;
     private PermissionRequestHandler mPermHandler;
-    private WeakReference<OnSuccessListener<TeamHelper>> mListener;
+    private WeakReference<OnSuccessListener<Team>> mListener;
     private String mPhotoPath;
     private boolean mShouldUploadMediaToTba;
 
@@ -73,25 +73,25 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         PERMS = Collections.unmodifiableList(perms);
     }
 
-    private TeamMediaCreator(TeamHelper teamHelper,
+    private TeamMediaCreator(Team team,
                              String photoPath,
                              boolean shouldUploadMediaToTba) {
-        mTeamHelper = teamHelper;
+        mTeam = team;
         mPhotoPath = photoPath;
         mShouldUploadMediaToTba = shouldUploadMediaToTba;
     }
 
     public static TeamMediaCreator newInstance(Fragment fragment,
-                                               TeamHelper teamHelper,
-                                               OnSuccessListener<TeamHelper> listener) {
-        TeamMediaCreator mediaCreator = new TeamMediaCreator(teamHelper, null, false);
+                                               Team team,
+                                               OnSuccessListener<Team> listener) {
+        TeamMediaCreator mediaCreator = new TeamMediaCreator(team, null, false);
         init(mediaCreator, fragment, listener);
         return mediaCreator;
     }
 
     public static TeamMediaCreator get(Bundle bundle,
                                        Fragment fragment,
-                                       OnSuccessListener<TeamHelper> listener) {
+                                       OnSuccessListener<Team> listener) {
         TeamMediaCreator mediaCreator = bundle.getParcelable(MEDIA_CREATOR_KEY);
         init(mediaCreator, fragment, listener);
         return mediaCreator;
@@ -99,7 +99,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
     private static void init(TeamMediaCreator mediaCreator,
                              Fragment fragment,
-                             OnSuccessListener<TeamHelper> listener) {
+                             OnSuccessListener<Team> listener) {
         mediaCreator.mFragment = new WeakReference<>(fragment);
         mediaCreator.mListener = new WeakReference<>(listener);
         mediaCreator.mPermHandler = new PermissionRequestHandler(PERMS, fragment, mediaCreator);
@@ -111,12 +111,12 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         return args;
     }
 
-    public void setTeamHelper(TeamHelper teamHelper) {
-        mTeamHelper = teamHelper;
+    public void setTeam(Team team) {
+        mTeam = team;
     }
 
     @Override
-    public void onSuccess(Void aVoid) {
+    public void onSuccess(Void nothing) {
         startCapture(mShouldUploadMediaToTba);
     }
 
@@ -166,10 +166,10 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
                 Uri contentUri = Uri.fromFile(photo);
 
-                mTeamHelper.getTeam().setHasCustomMedia(true);
-                mTeamHelper.getTeam().setShouldUploadMediaToTba(mShouldUploadMediaToTba);
-                mTeamHelper.getTeam().setMedia(contentUri.getPath());
-                mListener.get().onSuccess(mTeamHelper);
+                mTeam.setHasCustomMedia(true);
+                mTeam.setShouldUploadMediaToTba(mShouldUploadMediaToTba);
+                mTeam.setMedia(contentUri.getPath());
+                mListener.get().onSuccess(mTeam);
 
                 // Tell gallery that we have a new photo
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -182,7 +182,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        return createFile(hideFile(mTeamHelper.toString()),
+        return createFile(hideFile(mTeam.toString()),
                           "jpg",
                           mediaFolder,
                           String.valueOf(System.currentTimeMillis()));
@@ -203,7 +203,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(mTeamHelper, flags);
+        dest.writeParcelable(mTeam, flags);
         dest.writeString(mPhotoPath);
         dest.writeInt(mShouldUploadMediaToTba ? 1 : 0);
     }

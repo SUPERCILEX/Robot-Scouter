@@ -30,14 +30,11 @@ fun onSignedIn() = TaskCompletionSource<FirebaseAuth>().also {
     })
 }.task
 
-fun signInAnonymouslyInitBasic() = FirebaseAuth.getInstance()
-        .signInAnonymously().addOnSuccessListener { updateAnalyticsUserId() }
-
-fun signInAnonymouslyDbInit() = signInAnonymouslyInitBasic().addOnSuccessListener {
+fun signInAnonymouslyDbInit() = FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener {
     DatabaseInitializer()
 }
 
-private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Nothing> {
+private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Nothing?> {
     init {
         fetchAndActivate().addOnSuccessListener(this)
         FIREBASE_SCOUT_INDICES.addListenerForSingleValueEvent(this)
@@ -45,7 +42,7 @@ private class DatabaseInitializer : ValueEventListener, OnSuccessListener<Nothin
 
     override fun onSuccess(nothing: Nothing?) {
         if (FirebaseRemoteConfig.getInstance().getBoolean(SHOULD_CACHE_DB)) {
-            FIREBASE_SCOUT_TEMPLATES.addListenerForSingleValueEvent(this)
+            FIREBASE_TEMPLATES.addListenerForSingleValueEvent(this)
         }
     }
 

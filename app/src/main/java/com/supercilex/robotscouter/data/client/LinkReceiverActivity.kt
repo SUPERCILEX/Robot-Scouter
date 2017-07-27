@@ -10,16 +10,16 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.ui.scout.ScoutActivity
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
-import com.supercilex.robotscouter.util.addNewDocumentFlags
-import com.supercilex.robotscouter.util.isInTabletMode
+import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.onSignedIn
+import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
+import com.supercilex.robotscouter.util.ui.isInTabletMode
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 class LinkReceiverActivity : AppCompatActivity() {
@@ -48,7 +48,7 @@ class LinkReceiverActivity : AppCompatActivity() {
     private fun processTeams(teams: List<Team>) {
         for (team in teams) {
             val number = team.numberAsLong
-            TeamHelper.getIndicesRef().child(team.key).setValue(number, number)
+            teamIndicesRef.child(team.key).setValue(number, number)
         }
 
         if (teams.size != SINGLE_ITEM) {
@@ -73,7 +73,7 @@ class LinkReceiverActivity : AppCompatActivity() {
         val teamKey = teamPairSplit[0]
         val teamNumber = teamPairSplit[1]
 
-        Team.Builder(teamNumber).setKey(teamKey).build()
+        Team(teamNumber, teamKey)
     }
 
     private fun startTeamListActivityNoArgs() =

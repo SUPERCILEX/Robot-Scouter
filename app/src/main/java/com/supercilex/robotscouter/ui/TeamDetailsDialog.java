@@ -3,17 +3,20 @@ package com.supercilex.robotscouter.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,28 +30,25 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.firebase.ui.database.ChangeEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.util.TeamHelper;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
-import com.supercilex.robotscouter.util.Constants;
+import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import java.io.File;
 
-import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
+import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnClickListener, View.OnFocusChangeListener,
-        OnSuccessListener<TeamHelper>, TeamMediaCreator.StartCaptureListener, ChangeEventListener {
+        OnSuccessListener<Team>, TeamMediaCreator.StartCaptureListener {
     private static final String TAG = "TeamDetailsDialog";
 
-    private TeamHelper mTeamHelper;
+    private Team mTeam;
     private TeamMediaCreator mMediaCapture;
+
+    private ViewGroup mRootView;
 
     private ImageView mMedia;
     private ProgressBar mMediaLoadProgress;
@@ -62,42 +62,64 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     private EditText mMediaEditText;
     private EditText mWebsiteEditText;
 
-    public static void show(FragmentManager manager, TeamHelper teamHelper) {
+    public static void show(FragmentManager manager, Team team) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
-        dialog.setArguments(new Team.Builder(teamHelper.getTeam()).build().getHelper().toBundle());
+        dialog.setArguments(TeamUtilsKt.toBundle(new Team(
+                team.getNumber(),
+                team.getKey(),
+                team.getTemplateKey(),
+                team.getName(),
+                team.getMedia(),
+                team.getWebsite(),
+                team.getHasCustomName(),
+                team.getHasCustomMedia(),
+                team.getHasCustomWebsite(),
+                team.getShouldUploadMediaToTba(),
+                team.getMediaYear(),
+                team.getTimestamp())));
         dialog.show(manager, TAG);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeamHelper = TeamHelper.parse(getArguments());
+        mTeam = TeamUtilsKt.parseTeam(getArguments());
 
         if (savedInstanceState == null) {
-            mMediaCapture = TeamMediaCreator.newInstance(this, mTeamHelper, this);
+            mMediaCapture = TeamMediaCreator.newInstance(this, mTeam, this);
         } else {
             mMediaCapture = TeamMediaCreator.get(savedInstanceState, this, this);
         }
 
-        Constants.sFirebaseTeams.addChangeEventListener(this);
+        TeamHolder holder = ViewModelProviders.of(this).get(TeamHolder.class);
+        holder.init(getArguments());
+        holder.getTeamListener().observe(this, team -> {
+            if (team == null) {
+                dismiss();
+            } else {
+                mTeam = team;
+                mMediaCapture.setTeam(mTeam);
+                updateUi();
+            }
+        });
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        View rootView = View.inflate(getContext(), R.layout.dialog_team_details, null);
+        mRootView = (ViewGroup) View.inflate(getContext(), R.layout.dialog_team_details, null);
 
-        mMedia = rootView.findViewById(R.id.media);
-        mMediaLoadProgress = rootView.findViewById(R.id.progress);
-        mName = rootView.findViewById(R.id.name);
-        mEditNameButton = rootView.findViewById(R.id.edit_name_button);
+        mMedia = mRootView.findViewById(R.id.media);
+        mMediaLoadProgress = mRootView.findViewById(R.id.progress);
+        mName = mRootView.findViewById(R.id.name);
+        mEditNameButton = mRootView.findViewById(R.id.edit_name_button);
 
-        mNameInputLayout = rootView.findViewById(R.id.name_layout);
-        mMediaInputLayout = rootView.findViewById(R.id.media_layout);
-        mWebsiteInputLayout = rootView.findViewById(R.id.website_layout);
-        mNameEditText = rootView.findViewById(R.id.name_edit);
-        mMediaEditText = rootView.findViewById(R.id.media_edit);
-        mWebsiteEditText = rootView.findViewById(R.id.website_edit);
+        mNameInputLayout = mRootView.findViewById(R.id.name_layout);
+        mMediaInputLayout = mRootView.findViewById(R.id.media_layout);
+        mWebsiteInputLayout = mRootView.findViewById(R.id.website_layout);
+        mNameEditText = mRootView.findViewById(R.id.name_edit);
+        mMediaEditText = mRootView.findViewById(R.id.media_edit);
+        mWebsiteEditText = mRootView.findViewById(R.id.website_edit);
 
         mMedia.setOnClickListener(v -> ShouldUploadMediaToTbaDialog.Companion.show(this));
         mEditNameButton.setOnClickListener(this);
@@ -108,7 +130,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         updateUi();
 
-        return createDialog(rootView, R.string.team_details);
+        return createDialog(mRootView, R.string.team_details);
     }
 
     @Override
@@ -123,23 +145,17 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         outState.putAll(mMediaCapture.toBundle());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Constants.sFirebaseTeams.removeChangeEventListener(this);
-    }
-
     private void updateUi() {
         if (mMedia != null
                 && mName != null
                 && mNameEditText != null
                 && mMediaCapture != null
                 && mWebsiteEditText != null) {
-            Team team = mTeamHelper.getTeam();
+            TransitionManager.beginDelayedTransition(mRootView);
 
             mMediaLoadProgress.setVisibility(View.VISIBLE);
             Glide.with(getContext())
-                    .load(team.getMedia())
+                    .load(mTeam.getMedia())
                     .apply(RequestOptions.circleCropTransform()
                                    .error(R.drawable.ic_memory_grey_48dp))
                     .listener(new RequestListener<Drawable>() {
@@ -163,31 +179,17 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                         }
                     })
                     .into(mMedia);
-            mName.setText(team.toString());
+            mName.setText(mTeam.toString());
 
-            mNameEditText.setText(team.getName());
-            mMediaEditText.setText(team.getMedia());
-            mWebsiteEditText.setText(team.getWebsite());
+            mNameEditText.setText(mTeam.getName());
+            mMediaEditText.setText(mTeam.getMedia());
+            mWebsiteEditText.setText(mTeam.getWebsite());
         }
     }
 
     @Override
     protected EditText getLastEditText() {
         return mWebsiteEditText;
-    }
-
-    @Override
-    public void onChildChanged(EventType type, DataSnapshot snapshot, int index, int oldIndex) {
-        if (!TextUtils.equals(mTeamHelper.getTeam().getKey(), snapshot.getKey())) return;
-
-        if (type == EventType.CHANGED) {
-            mTeamHelper =
-                    new Team.Builder(Constants.sFirebaseTeams.getObject(index)).build().getHelper();
-            mMediaCapture.setTeamHelper(mTeamHelper);
-            updateUi();
-        } else if (type == EventType.REMOVED) {
-            dismiss();
-        }
     }
 
     @Override
@@ -227,29 +229,27 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                                              mWebsiteInputLayout);
 
         if (isWebsiteValid && isMediaValid) {
-            Team team = mTeamHelper.getTeam();
-
             String rawName = mNameEditText.getText().toString();
             String name = TextUtils.isEmpty(rawName) ? null : rawName;
-            if (!TextUtils.equals(team.getName(), name)) {
-                team.setHasCustomName(!TextUtils.isEmpty(name));
-                team.setName(name);
+            if (!TextUtils.equals(mTeam.getName(), name)) {
+                mTeam.setHasCustomName(!TextUtils.isEmpty(name));
+                mTeam.setName(name);
             }
 
             String media = formatUrl(mMediaEditText.getText().toString());
-            if (!TextUtils.equals(team.getMedia(), media)) {
-                team.setHasCustomMedia(!TextUtils.isEmpty(media));
-                team.setMedia(media);
+            if (!TextUtils.equals(mTeam.getMedia(), media)) {
+                mTeam.setHasCustomMedia(!TextUtils.isEmpty(media));
+                mTeam.setMedia(media);
             }
 
             String website = formatUrl(mWebsiteEditText.getText().toString());
-            if (!TextUtils.equals(team.getWebsite(), website)) {
-                team.setHasCustomWebsite(!TextUtils.isEmpty(website));
-                team.setWebsite(website);
+            if (!TextUtils.equals(mTeam.getWebsite(), website)) {
+                mTeam.setHasCustomWebsite(!TextUtils.isEmpty(website));
+                mTeam.setWebsite(website);
             }
 
-            mTeamHelper.forceUpdateTeam();
-            mTeamHelper.forceRefresh();
+            TeamUtilsKt.forceUpdateTeam(mTeam);
+            TeamUtilsKt.forceRefresh(mTeam);
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             Fragment fragment = getParentFragment();
@@ -281,8 +281,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     }
 
     @Override
-    public void onSuccess(TeamHelper teamHelper) {
-        mTeamHelper.copyMediaInfo(teamHelper);
+    public void onSuccess(Team team) {
+        TeamUtilsKt.copyMediaInfo(mTeam, team);
         updateUi();
     }
 
@@ -326,15 +326,5 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         } else {
             return "http://" + trimmedUrl;
         }
-    }
-
-    @Override
-    public void onCancelled(DatabaseError error) {
-        FirebaseCrash.report(error.toException());
-    }
-
-    @Override
-    public void onDataChanged() {
-        // Noop
     }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.scouting.template.TemplateEditorActivity">
+
+    <item
+        android:id="@+id/action_reset_template_all"
+        android:title="@string/reset_template_all" />
+
+    <item
+        android:id="@+id/action_reset_template_team"
+        android:title="@string/reset_template_team" />
+
+    <item
+        android:id="@+id/action_remove_metrics"
+        android:title="@string/remove_metrics" />
+
+</menu>

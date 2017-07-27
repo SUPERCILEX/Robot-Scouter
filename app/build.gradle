@@ -2,7 +2,6 @@ def isReleaseBuild = !project.hasProperty('devBuild')
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 if (isReleaseBuild) {
     apply plugin: 'com.google.firebase.firebase-crash'
     apply plugin: 'com.google.firebase.firebase-perf'
@@ -16,7 +15,7 @@ apply from: '../quality/quality.gradle'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0' // Note: remember to update travis.yml and upload.sh versions too
+    buildToolsVersion '26.0.1' // Note: remember to update travis.yml versions too
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
@@ -83,6 +82,10 @@ dependencies {
     implementation "com.android.support:support-emoji-appcompat:$supportLibVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
 
+    implementation "android.arch.lifecycle:runtime:$archVersion"
+    implementation "android.arch.lifecycle:extensions:$archVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$archVersion"
+
     implementation 'com.android.billingclient:billing:dp-1'
 
     // Firebase UI
@@ -111,7 +114,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    implementation 'pub.devrel:easypermissions:0.4.1'
+    implementation 'pub.devrel:easypermissions:0.4.3'
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
 

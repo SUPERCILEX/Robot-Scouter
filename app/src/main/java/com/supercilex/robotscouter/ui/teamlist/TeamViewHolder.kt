@@ -21,10 +21,8 @@ import com.bumptech.glide.request.target.Target
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
-import com.supercilex.robotscouter.util.animateCircularReveal
-
-private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
+import com.supercilex.robotscouter.util.ui.animateCircularReveal
 
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
@@ -60,7 +58,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private lateinit var team: Team
     private lateinit var fragment: Fragment
     private lateinit var recyclerView: RecyclerView
-    private lateinit var menuManager: TeamMenuManager
+    private lateinit var menuHelper: TeamMenuHelper
     private var isItemSelected: Boolean = false
     private var couldItemBeSelected: Boolean = false
     private var isScouting: Boolean = false
@@ -74,14 +72,14 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     fun bind(team: Team,
              fragment: Fragment,
              recyclerView: RecyclerView,
-             menuManager: TeamMenuManager,
+             menuManager: TeamMenuHelper,
              isItemSelected: Boolean,
              couldItemBeSelected: Boolean,
              isScouting: Boolean) {
         this.team = team
         this.fragment = fragment
         this.recyclerView = recyclerView
-        this.menuManager = menuManager
+        this.menuHelper = menuManager
         this.isItemSelected = isItemSelected
         this.couldItemBeSelected = couldItemBeSelected
         this.isScouting = isScouting
@@ -139,7 +137,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
             onTeamContextMenuRequested()
             return true
         } else if (v.id == R.id.media) {
-            TeamDetailsDialog.show(fragment.childFragmentManager, team.helper)
+            TeamDetailsDialog.show(fragment.childFragmentManager, team)
             return true
         }
 
@@ -149,7 +147,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private fun onTeamContextMenuRequested() {
         isItemSelected = !isItemSelected
         updateItemStatus()
-        menuManager.onTeamContextMenuRequested(team.helper)
+        menuHelper.onTeamContextMenuRequested(team)
     }
 
     override fun toString() = team.toString()
@@ -166,5 +164,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
                     .load(team.media)
                     .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_memory_grey_48dp))
         }
+
+        private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE
     }
 }

@@ -28,9 +28,10 @@ import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.NotificationForwarder;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
-import com.supercilex.robotscouter.data.util.Scouts;
-import com.supercilex.robotscouter.data.util.TeamHelper;
+import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
+import com.supercilex.robotscouter.util.data.model.Scouts;
+import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -98,15 +99,15 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logExportTeamsEv
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
-import static com.supercilex.robotscouter.util.IoUtilsKt.getRootFolder;
-import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
-import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
-import static com.supercilex.robotscouter.util.NotificationUtilsKt.EXPORT_CHANNEL;
-import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setShouldShowExportHint;
-import static com.supercilex.robotscouter.util.PreferencesUtilsKt.shouldShowExportHint;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.getRootFolder;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.hideFile;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.unhideFile;
+import static com.supercilex.robotscouter.util.data.PreferencesUtilsKt.setShouldShowExportHint;
+import static com.supercilex.robotscouter.util.data.PreferencesUtilsKt.shouldShowExportHint;
+import static com.supercilex.robotscouter.util.ui.NotificationUtilsKt.EXPORT_CHANNEL;
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
-public class ExportService extends IntentService implements OnSuccessListener<Map<TeamHelper, List<Scout>>> {
+public class ExportService extends IntentService implements OnSuccessListener<Map<Team, List<Scout>>> {
     private static final String TAG = "ExportService";
 
     private static final String MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel";
@@ -124,7 +125,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
         WorkbookEvaluator.registerFunction("AVERAGEIF", SpreadsheetUtils.AVERAGEIF);
     }
 
-    private Map<TeamHelper, List<Scout>> mScouts;
+    private Map<Team, List<Scout>> mScouts;
     private SpreadsheetCache mCache;
 
     public ExportService() {
@@ -137,8 +138,8 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
      */
     public static boolean exportAndShareSpreadSheet(Fragment fragment,
                                                     PermissionRequestHandler permHandler,
-                                                    @Size(min = 1) List<TeamHelper> teamHelpers) {
-        if (teamHelpers.isEmpty()) return false;
+                                                    @Size(min = 1) List<Team> teams) {
+        if (teams.isEmpty()) return false;
 
         Context context = fragment.getContext();
 
@@ -157,7 +158,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
         fragment.getActivity()
                 .startService(new Intent(context, ExportService.class)
-                                      .putExtras(TeamHelper.toIntent(teamHelpers)));
+                                      .putExtras(TeamUtilsKt.teamsToIntent(teams)));
 
         return true;
     }
@@ -166,25 +167,25 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
     @AddTrace(name = "onHandleIntent")
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     protected void onHandleIntent(Intent intent) {
-        mCache = new SpreadsheetCache(TeamHelper.parseList(intent), this);
+        mCache = new SpreadsheetCache(TeamUtilsKt.parseTeamList(intent), this);
 
-        logExportTeamsEvent(mCache.getTeamHelpers());
+        logExportTeamsEvent(mCache.getTeams());
 
         startForeground(R.string.export_in_progress_title,
                         mCache.getExportNotification(getString(R.string.exporting_status_loading)));
 
-        if (isOffline(this)) {
+        if (isOffline()) {
             showToast(this, getString(R.string.export_warning_offline));
         }
 
         try {
             // Force a refresh
-            Tasks.await(Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES);
+            Tasks.await(Scouts.getAll(mCache.getTeams()), 5, TimeUnit.MINUTES);
 
             mCache.updateNotification(getString(R.string.exporting_status_loading));
 
             onSuccess(Tasks.await(
-                    Scouts.getAll(mCache.getTeamHelpers(), this), 5, TimeUnit.MINUTES));
+                    Scouts.getAll(mCache.getTeams()), 5, TimeUnit.MINUTES));
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             showError(this, e);
         }
@@ -192,13 +193,13 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
     @Override
     @AddTrace(name = "onSuccess")
-    public void onSuccess(Map<TeamHelper, List<Scout>> scouts) {
+    public void onSuccess(Map<Team, List<Scout>> scouts) {
         mScouts = Collections.unmodifiableMap(scouts);
 
-        if (mScouts.size() != mCache.getTeamHelpers().size()) {
+        if (mScouts.size() != mCache.getTeams().size()) {
             // Some error occurred, let's try again
             startService(new Intent(this, ExportService.class)
-                                 .putExtras(TeamHelper.toIntent(mCache.getTeamHelpers())));
+                                 .putExtras(TeamUtilsKt.teamsToIntent(mCache.getTeams())));
             return;
         }
 
@@ -245,7 +246,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
                 .setContentTitle(getString(R.string.export_complete_title))
                 .setSubText(getPluralTeams(
                         R.plurals.export_complete_summary,
-                        mCache.getTeamHelpers().size()))
+                        mCache.getTeams().size()))
                 .setContentText(getPluralTeams(R.plurals.export_complete_message))
                 .setContentIntent(sharePendingIntent)
                 .addAction(R.drawable.ic_share_white_24dp,
@@ -279,7 +280,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
     }
 
     private String getPluralTeams(@PluralsRes int id, Object... args) {
-        return getResources().getQuantityString(id, mCache.getTeamHelpers().size(), args);
+        return getResources().getQuantityString(id, mCache.getTeams().size(), args);
     }
 
     @Nullable
@@ -357,18 +358,18 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
         mCache.setWorkbook(workbook);
 
         Sheet averageSheet = null;
-        if (mCache.getTeamHelpers().size() > SINGLE_ITEM) {
+        if (mCache.getTeams().size() > SINGLE_ITEM) {
             averageSheet = workbook.createSheet("Team Averages");
             averageSheet.createFreezePane(1, 1);
         }
 
-        List<TeamHelper> teamHelpers = mCache.getTeamHelpers();
-        for (TeamHelper teamHelper : teamHelpers) {
-            mCache.updateNotification(getString(R.string.exporting_status_team, teamHelper));
+        List<Team> teams = mCache.getTeams();
+        for (Team team : teams) {
+            mCache.updateNotification(getString(R.string.exporting_status_team, team));
 
-            Sheet teamSheet = workbook.createSheet(getSafeSheetName(workbook, teamHelper));
+            Sheet teamSheet = workbook.createSheet(getSafeSheetName(workbook, team));
             teamSheet.createFreezePane(1, 1);
-            buildTeamSheet(teamHelper, teamSheet);
+            buildTeamSheet(team, teamSheet);
         }
 
         mCache.updateNotification(getString(R.string.exporting_status_average));
@@ -381,8 +382,8 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
     }
 
     @AddTrace(name = "buildTeamSheet")
-    private void buildTeamSheet(TeamHelper teamHelper, Sheet teamSheet) {
-        List<Scout> scouts = mScouts.get(teamHelper);
+    private void buildTeamSheet(Team team, Sheet teamSheet) {
+        List<Scout> scouts = mScouts.get(team);
 
         if (scouts.isEmpty()) {
             Workbook workbook = teamSheet.getWorkbook();
@@ -397,7 +398,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
             Metric metric = orderedMetrics.get(i);
             Row row = teamSheet.createRow(i + 1);
 
-            setupRow(row, teamHelper, metric);
+            setupRow(row, team, metric);
         }
 
         for (int i = 0, column = 1; i < scouts.size(); i++, column++) {
@@ -415,7 +416,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
                 Row row = teamSheet.getRow(rowNum);
                 if (row == null) {
-                    setupRowAndSetValue(teamSheet.createRow(rowNum), teamHelper, metric, column);
+                    setupRowAndSetValue(teamSheet.createRow(rowNum), team, metric, column);
                 } else {
                     List<Row> rows = getAdjustedList(teamSheet);
 
@@ -433,7 +434,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
                     }
 
                     setupRowAndSetValue(teamSheet.createRow(teamSheet.getLastRowNum() + 1),
-                                        teamHelper,
+                                        team,
                                         metric,
                                         column);
                 }
@@ -442,17 +443,17 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
 
         if (scouts.size() > SINGLE_ITEM) {
-            buildAverageColumn(teamSheet, teamHelper);
+            buildAverageColumn(teamSheet, team);
         }
     }
 
-    private void setupRowAndSetValue(Row row, TeamHelper helper, Metric metric, int column) {
-        setupRow(row, helper, metric);
+    private void setupRowAndSetValue(Row row, Team team, Metric metric, int column) {
+        setupRow(row, team, metric);
         setRowValue(column, metric, row);
     }
 
     @AddTrace(name = "buildAverageColumn")
-    private void buildAverageColumn(Sheet sheet, TeamHelper teamHelper) {
+    private void buildAverageColumn(Sheet sheet, Team team) {
         int farthestColumn = 0;
         for (Row row : sheet) {
             int last = row.getLastCellNum();
@@ -475,7 +476,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
             Cell first = row.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK);
             cell.setCellStyle(first.getCellStyle());
 
-            int type = getMetricForScouts(mScouts.get(teamHelper),
+            int type = getMetricForScouts(mScouts.get(team),
                                           mCache.getMetricKey(row)).getType();
 
             String rangeAddress = getCellRangeAddress(
@@ -492,7 +493,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
                                     " / " +
                                     "COUNT(" + rangeAddress + ")");
 
-                    buildTeamChart(row, teamHelper, chartData, chartPool);
+                    buildTeamChart(row, team, chartData, chartPool);
                     break;
                 case STOPWATCH:
                     String excludeZeros = "\"<>0\"";
@@ -500,7 +501,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
                             "IF(COUNTIF(" + rangeAddress + ", " + excludeZeros +
                                     ") = 0, 0, AVERAGEIF(" + rangeAddress + ", " + excludeZeros + "))");
 
-                    buildTeamChart(row, teamHelper, chartData, chartPool);
+                    buildTeamChart(row, team, chartData, chartPool);
                     break;
                 case LIST:
                     sheet.setArrayFormula(
@@ -545,7 +546,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
     @AddTrace(name = "buildTeamChart")
     private void buildTeamChart(Row row,
-                                TeamHelper teamHelper,
+                                Team team,
                                 Map<Chart, Pair<LineChartData, List<ChartAxis>>> chartData,
                                 Map<Metric<?>, Chart> chartPool) {
         if (isUnsupportedDevice()) return;
@@ -559,7 +560,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
 
         List<Row> rows = getAdjustedList(row.getSheet());
         for (int i = row.getRowNum() - 1; i >= 0; i--) {
-            Metric<?> metric = getMetricForScouts(mScouts.get(teamHelper),
+            Metric<?> metric = getMetricForScouts(mScouts.get(team),
                                                   mCache.getMetricKey(rows.get(i)));
 
             if (metric.getType() == HEADER) {
@@ -626,7 +627,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
                 .setTitle(row.getCell(0).getStringCellValue());
     }
 
-    private void setupRow(Row row, TeamHelper teamHelper, Metric metric) {
+    private void setupRow(Row row, Team team, Metric metric) {
         Cell headerCell = row.getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
         mCache.putKeyMetric(headerCell, metric);
@@ -634,7 +635,7 @@ public class ExportService extends IntentService implements OnSuccessListener<Ma
         if (metric.getType() == HEADER) {
             headerCell.setCellStyle(mCache.getHeaderMetricRowHeaderStyle());
 
-            int numOfScouts = mScouts.get(teamHelper).size();
+            int numOfScouts = mScouts.get(team).size();
             if (numOfScouts > SINGLE_ITEM) {
                 int rowNum = row.getRowNum();
                 row.getSheet()

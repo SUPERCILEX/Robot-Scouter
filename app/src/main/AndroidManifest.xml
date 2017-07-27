@@ -66,7 +66,7 @@
         </activity>
 
         <activity
-            android:name=".ui.scout.ScoutActivity"
+            android:name=".ui.scouting.scout.ScoutActivity"
             android:label="@string/title_activity_scout"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
@@ -98,6 +98,19 @@
                     android:pathPrefix="/Robot-Scouter/data"
                     android:scheme="https" />
             </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".ui.scouting.template.TemplateEditorActivity"
+            android:label="@string/title_activity_template"
+            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:theme="@style/RobotScouter.Launcher"
+            android:windowSoftInputMode="adjustPan">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.teamlist.TeamListActivity" />
 
         </activity>
 

@@ -21,20 +21,21 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.util.TeamHelper
-import com.supercilex.robotscouter.ui.scout.ScoutActivity
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
+import com.supercilex.robotscouter.ui.scouting.template.TemplateEditorActivity
+import com.supercilex.robotscouter.util.data.model.parseTeam
+import com.supercilex.robotscouter.util.data.setHasShownAddTeamTutorial
+import com.supercilex.robotscouter.util.data.setHasShownSignInTutorial
 import com.supercilex.robotscouter.util.fetchAndActivate
-import com.supercilex.robotscouter.util.isInTabletMode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
-import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
-import com.supercilex.robotscouter.util.setHasShownSignInTutorial
-
+import com.supercilex.robotscouter.util.ui.isInTabletMode
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectionListener, OnSuccessListener<Nothing>, NavigationView.OnNavigationItemSelectedListener {
+class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
+        TeamSelectionListener, OnSuccessListener<Nothing?> {
     private val teamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
@@ -86,7 +87,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
 
     override fun onSuccess(nothing: Nothing?) {
         val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
-        if (BuildConfig.VERSION_CODE < minimum && !isOffline(this)) {
+        if (BuildConfig.VERSION_CODE < minimum && !isOffline()) {
             UpdateDialog.show(supportFragmentManager)
         }
     }
@@ -117,6 +118,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         when (item.itemId) {
             R.id.action_sign_in -> authHelper.signIn()
             R.id.action_sign_out -> authHelper.signOut()
+            R.id.action_edit_templates -> TemplateEditorActivity.start(this)
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             R.id.action_about -> AboutDialog.show(supportFragmentManager)
             R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
@@ -136,13 +138,13 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
     }
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
-        val team = TeamHelper.parse(args).team
+        val team = parseTeam(args)
 
         if (isInTabletMode(this)) {
             teamListFragment.selectTeam(null)
             teamListFragment.selectTeam(team)
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.scouts, TabletScoutListFragment.newInstance(args))
+                    .replace(R.id.scout_list, TabletScoutListFragment.newInstance(args))
                     .commit()
         } else {
             if (restoreOnConfigChange) {

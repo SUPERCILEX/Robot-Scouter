@@ -5,10 +5,13 @@ import android.os.Build
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
+import com.supercilex.robotscouter.util.data.DefaultTemplateLiveData
+import com.supercilex.robotscouter.util.data.TeamsLiveData
+import com.supercilex.robotscouter.util.data.TemplatesLiveData
+import com.supercilex.robotscouter.util.data.ref
 import kotlin.properties.Delegates
 
 const val SINGLE_ITEM = 1
-const val TWO_ITEMS = 2
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
@@ -24,16 +27,16 @@ val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
 
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
-val FIREBASE_USERS: DatabaseReference = DatabaseHelper.getRef().child("users")
+val FIREBASE_USERS: DatabaseReference = ref.child("users")
 
 // Team
-val FIREBASE_TEAMS: DatabaseReference = DatabaseHelper.getRef().child("teams")
-val FIREBASE_TEAM_INDICES: DatabaseReference = DatabaseHelper.getRef().child("team-indices")
+val FIREBASE_TEAMS: DatabaseReference = ref.child("teams")
+val FIREBASE_TEAM_INDICES: DatabaseReference = ref.child("team-indices")
 const val FIREBASE_TIMESTAMP = "timestamp"
 
 // Scout
-val FIREBASE_SCOUTS: DatabaseReference = DatabaseHelper.getRef().child("scouts")
-val FIREBASE_SCOUT_INDICES: DatabaseReference = DatabaseHelper.getRef().child("scout-indices")
+val FIREBASE_SCOUTS: DatabaseReference = ref.child("scouts")
+val FIREBASE_SCOUT_INDICES: DatabaseReference = ref.child("scout-indices")
 const val FIREBASE_METRICS = "metrics"
 
 // Scout views
@@ -44,16 +47,22 @@ const val FIREBASE_UNIT = "unit"
 const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
 
 // Scout template
-val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = DatabaseHelper.getRef().child("default-template")
-val FIREBASE_SCOUT_TEMPLATES: DatabaseReference = DatabaseHelper.getRef().child("scout-templates")
+val FIREBASE_TEMPLATES: DatabaseReference = ref.child("templates")
+val FIREBASE_TEMPLATE_INDICES: DatabaseReference = ref.child("template-indices")
+val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
-const val SCOUT_TEMPLATE_INDICES = "scoutTemplateIndices"
 // [END FIREBASE CHILD NAMES]
+
+var teamsListener: TeamsLiveData by Delegates.notNull()
+    private set
+val defaultTemplateListener = DefaultTemplateLiveData()
+val templatesListener = TemplatesLiveData()
 
 var providerAuthority: String by Delegates.notNull()
     private set
 
 fun initConstants(context: Context) {
+    teamsListener = TeamsLiveData(context)
     providerAuthority = "${context.packageName}.provider"
 }
 

@@ -15,6 +15,11 @@
             android:title="@string/donate" />
 
         <item
+            android:id="@+id/action_edit_templates"
+            android:icon="@drawable/ic_mode_edit_white_24dp"
+            android:title="@string/edit_templates" />
+
+        <item
             android:id="@+id/action_about"
             android:icon="@drawable/ic_info_white_24dp"
             android:title="@string/about" />
@@ -24,6 +29,7 @@
             android:id="@+id/action_sign_out"
             android:icon="@drawable/ic_sign_out_white_24dp"
             android:title="@string/sign_out" />
+
         <item
             android:id="@+id/action_licenses"
             android:title="@string/licenses" />
