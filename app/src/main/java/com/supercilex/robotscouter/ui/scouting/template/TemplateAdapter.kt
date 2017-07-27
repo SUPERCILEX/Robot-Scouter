@@ -50,18 +50,18 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
             MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
+            HEADER -> return HeaderTemplateViewHolder(
+                    inflater.inflate(R.layout.scout_template_header, parent, false))
             BOOLEAN -> return CheckboxTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_checkbox, parent, false))
             NUMBER -> return CounterTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_counter, parent, false))
+            STOPWATCH -> return StopwatchTemplateViewHolder(
+                    inflater.inflate(R.layout.scout_template_stopwatch, parent, false))
             TEXT -> return EditTextTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_notes, parent, false))
             LIST -> return SpinnerTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_spinner, parent, false))
-            STOPWATCH -> return StopwatchTemplateViewHolder(
-                    inflater.inflate(R.layout.scout_template_stopwatch, parent, false))
-            HEADER -> return HeaderTemplateViewHolder(
-                    inflater.inflate(R.layout.scout_template_header, parent, false))
             else -> throw IllegalStateException()
         }
     }
