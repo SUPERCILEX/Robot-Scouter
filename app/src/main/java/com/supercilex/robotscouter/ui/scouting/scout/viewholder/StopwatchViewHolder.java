@@ -24,7 +24,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
-import com.supercilex.robotscouter.ui.scouting.MetricsViewHolderBase;
+import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import java.lang.ref.WeakReference;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeoutException;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 
-public class StopwatchViewHolder extends MetricsViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
+public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
         implements View.OnClickListener {
     private static final Map<Metric.Stopwatch, Timer> TIMERS = new ConcurrentHashMap<>();
 

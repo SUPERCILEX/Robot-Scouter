@@ -13,7 +13,6 @@
         android:id="@+id/needed_for_CollapsingToolbarLayout_to_save_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         tools:ignore="UnusedIds">
@@ -49,10 +48,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="104dp"
                 android:gravity="top"
-                android:minHeight="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleMarginTop="14dp" />
+                app:titleMarginTop="@dimen/spacing_large" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"

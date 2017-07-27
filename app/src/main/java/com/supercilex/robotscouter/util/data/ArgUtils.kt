@@ -1,9 +1,12 @@
 package com.supercilex.robotscouter.util.data
 
 import android.os.Build
+import android.os.Bundle
 import android.os.Parcel
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
+
+const val TAB_KEY = "tab_key"
 
 fun Parcel.readBooleanCompat() = getBooleanForInt(readInt())
 
@@ -19,3 +22,7 @@ fun PersistableBundle.putBooleanCompat(key: String, value: Boolean) =
 private fun getBooleanForInt(value: Int) = value == 1
 
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
+
+fun getTabKeyBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
+
+fun getTabKey(bundle: Bundle): String? = bundle.getString(TAB_KEY)

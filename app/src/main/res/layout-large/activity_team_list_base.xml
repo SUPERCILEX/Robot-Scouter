@@ -30,7 +30,7 @@
         tools:ignore="UnusedAttribute" />
 
     <FrameLayout
-        android:id="@+id/scouts"
+        android:id="@+id/scout_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintStart_toEndOf="@+id/guideline"

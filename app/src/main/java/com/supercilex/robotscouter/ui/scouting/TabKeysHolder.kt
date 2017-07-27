@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui.scouting.scout
+package com.supercilex.robotscouter.ui.scouting
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
@@ -8,14 +8,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.ui.ViewModelBase
-import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
 
-class ScoutKeysHolder(app: Application) : ViewModelBase<String>(app), ValueEventListener {
+class TabKeysHolder(app: Application) : ViewModelBase<DatabaseReference>(app), ValueEventListener {
     val keysListener = MutableLiveData<List<String>>()
     lateinit var ref: DatabaseReference
 
-    override fun onCreate(args: String) {
-        ref = getScoutIndicesRef(args)
+    override fun onCreate(args: DatabaseReference) {
+        ref = args
         ref.addValueEventListener(this)
     }
 

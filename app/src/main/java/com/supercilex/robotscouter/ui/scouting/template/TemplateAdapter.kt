@@ -6,9 +6,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.firebase.ui.database.ChangeEventListener
-import com.firebase.ui.database.FirebaseArray
+import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.BOOLEAN
 import com.supercilex.robotscouter.data.model.HEADER
@@ -19,29 +18,28 @@ import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.ui.CardListHelper
-import com.supercilex.robotscouter.ui.scouting.MetricsAdapterBase
-import com.supercilex.robotscouter.ui.scouting.MetricsViewHolderBase
+import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
+import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.CheckboxTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.CounterTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.EditTextTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.HeaderTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.SpinnerTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.StopwatchTemplateViewHolder
-import com.supercilex.robotscouter.util.data.model.METRIC_PARSER
 
-class TemplateAdapter(query: Query,
+class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                       manager: FragmentManager,
                       recyclerView: RecyclerView,
-                      private val callback: TemplateItemTouchCallback,
-                      owner: LifecycleOwner) :
-        MetricsAdapterBase(FirebaseArray(query, METRIC_PARSER), manager, recyclerView, owner) {
+                      owner: LifecycleOwner,
+                      private val callback: TemplateItemTouchCallback) :
+        MetricListAdapterBase(metrics, manager, recyclerView, owner) {
     override val cardListHelper: CardListHelper = ListHelper()
 
     init {
         callback.setCardListHelper(cardListHelper)
     }
 
-    override fun populateViewHolder(viewHolder: MetricsViewHolderBase<*, *, *>,
+    override fun populateViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
                                     metric: Metric<*>,
                                     position: Int) {
         super.populateViewHolder(viewHolder, metric, position)
@@ -49,7 +47,7 @@ class TemplateAdapter(query: Query,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
-            MetricsViewHolderBase<*, *, *> {
+            MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
             BOOLEAN -> return CheckboxTemplateViewHolder(

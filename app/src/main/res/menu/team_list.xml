@@ -15,6 +15,12 @@
         android:title="@string/sign_out" />
 
     <item
+        android:id="@+id/action_edit_templates"
+        android:icon="@drawable/ic_mode_edit_white_24dp"
+        android:title="@string/edit_templates"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_donate"
         android:icon="@drawable/ic_donate_white_24dp"
         android:title="@string/donate"

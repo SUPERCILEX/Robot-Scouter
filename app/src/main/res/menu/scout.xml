@@ -37,7 +37,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_edit_scout_templates"
+        android:id="@+id/action_edit_template"
         android:icon="@drawable/ic_mode_edit_white_24dp"
         android:title="@string/edit_template"
         app:showAsAction="ifRoom" />

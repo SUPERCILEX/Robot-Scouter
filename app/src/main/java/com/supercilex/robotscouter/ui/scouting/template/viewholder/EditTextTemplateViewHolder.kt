@@ -5,10 +5,10 @@ import android.widget.EditText
 import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
-import com.supercilex.robotscouter.ui.scouting.MetricsViewHolderBase
+import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 
 class EditTextTemplateViewHolder(itemView: View) :
-        MetricsViewHolderBase<Metric.Text, String?, TextView>(itemView), TemplateViewHolder {
+        MetricViewHolderBase<Metric.Text, String?, TextView>(itemView), TemplateViewHolder {
     private val text: EditText = itemView.findViewById(R.id.text)
 
     override fun bind() {

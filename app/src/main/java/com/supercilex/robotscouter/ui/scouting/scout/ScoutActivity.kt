@@ -15,7 +15,7 @@ class ScoutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_scout)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.scouts, ActivityScoutListFragment.newInstance(
+                    .add(R.id.scout_list, ActivityScoutListFragment.newInstance(
                             intent.getBundleExtra(KEY_SCOUT_ARGS)))
                     .commit()
         }

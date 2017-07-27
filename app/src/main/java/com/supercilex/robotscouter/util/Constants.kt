@@ -47,10 +47,10 @@ const val FIREBASE_UNIT = "unit"
 const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
 
 // Scout template
-val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
 val FIREBASE_TEMPLATES: DatabaseReference = ref.child("templates")
+val FIREBASE_TEMPLATE_INDICES: DatabaseReference = ref.child("template-indices")
+val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
-const val FIREBASE_TEMPLATE_INDICES = "template-indices"
 // [END FIREBASE CHILD NAMES]
 
 var teamsListener: TeamsLiveData by Delegates.notNull()

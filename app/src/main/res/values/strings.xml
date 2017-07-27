@@ -15,6 +15,7 @@
     <string name="no_team_selected">Select a team to start scouting</string>
     <string name="no_teams">Teams you add appear here</string>
     <string name="no_scouts">Scouts you add appear here</string>
+    <string name="no_templates">Scout templates you add appear here</string>
 
     <!-- Media upload -->
     <string name="should_upload_media_dialog_title">Upload media to The Blue Alliance?</string>
@@ -156,6 +157,11 @@
     <string name="stop_stopwatch">Stop (%s)</string>
     <string name="cycle_item">Cycle %d</string>
     <string name="average">Average</string>
+
+    <!-- Template editor activity -->
+    <string name="title_activity_template">Template editor</string>
+    <string name="edit_templates">Edit scout templates</string>
+    <string name="title_template_tab">Template %d</string>
 
     <!-- Notifications -->
     <string name="export_group_name">Spreadsheet exporting</string>

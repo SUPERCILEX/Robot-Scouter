@@ -27,19 +27,18 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamHolder;
 import com.supercilex.robotscouter.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.ui.TeamSharer;
-import com.supercilex.robotscouter.ui.scouting.template.ScoutTemplateSheet;
-import com.supercilex.robotscouter.util.data.model.ScoutUtilsKt;
+import com.supercilex.robotscouter.ui.scouting.template.TemplateEditorActivity;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import java.util.Collections;
 
-import static com.supercilex.robotscouter.data.client.DownloadTeamDataJobKt.cancelAllDownloadTeamDataJobs;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTemplateEvent;
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
+import static com.supercilex.robotscouter.util.data.ArgUtilsKt.getTabKey;
+import static com.supercilex.robotscouter.util.data.ArgUtilsKt.getTabKeyBundle;
 import static com.supercilex.robotscouter.util.data.model.ScoutUtilsKt.addScout;
-import static com.supercilex.robotscouter.util.data.model.ScoutUtilsKt.getScoutKeyBundle;
 
 public abstract class ScoutListFragmentBase extends LifecycleFragment
         implements Observer<Team>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {
@@ -59,7 +58,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     public static Bundle getBundle(Team team, boolean addScout, String scoutKey) {
         Bundle args = TeamUtilsKt.toBundle(team);
         args.putBoolean(KEY_ADD_SCOUT, addScout);
-        args.putAll(getScoutKeyBundle(scoutKey));
+        args.putAll(getTabKeyBundle(scoutKey));
         return args;
     }
 
@@ -146,9 +145,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mPagerAdapter != null) {
-            outState.putAll(getScoutKeyBundle(mPagerAdapter.getCurrentScoutKey()));
-        }
+        if (mPagerAdapter != null) mPagerAdapter.onSaveInstanceState(outState);
         mDataHolder.onSaveInstanceState(outState);
         mViewHolder.onSaveInstanceState(outState);
     }
@@ -180,7 +177,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
         String teamNumber = mTeam.getNumber();
         switch (item.getItemId()) {
             case R.id.action_new_scout:
-                mPagerAdapter.setCurrentScoutKey(addScout(mTeam));
+                mPagerAdapter.setCurrentTabKey(addScout(mTeam));
                 break;
             case R.id.action_add_media:
                 ShouldUploadMediaToTbaDialog.Companion.show(this);
@@ -196,9 +193,10 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
             case R.id.action_visit_team_website:
                 TeamUtilsKt.visitTeamWebsite(mTeam, getContext());
                 break;
-            case R.id.action_edit_scout_templates:
-                cancelAllDownloadTeamDataJobs(getContext());
-                ScoutTemplateSheet.show(getChildFragmentManager(), mTeam);
+            case R.id.action_edit_template:
+                TemplateEditorActivity.Companion.start(
+                        getContext(),
+                        mTeam.getTemplateKey());
                 logEditTemplateEvent(teamNumber);
                 break;
             case R.id.action_edit_team_details:
@@ -206,7 +204,7 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
                 logEditTeamDetailsEvent(teamNumber);
                 break;
             case R.id.action_delete:
-                mPagerAdapter.onScoutDeleted();
+                mPagerAdapter.deleteScout();
                 break;
             default:
                 return false;
@@ -222,8 +220,8 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
     private void initScoutList() {
         TabLayout tabLayout = mRootView.findViewById(R.id.tabs);
         ViewPager viewPager = mRootView.findViewById(R.id.viewpager);
-        mPagerAdapter = new ScoutPagerAdapter(
-                this, mViewHolder, tabLayout, mTeam, getScoutKey());
+        mPagerAdapter = new ScoutPagerAdapter(this, tabLayout, mViewHolder, mTeam);
+        mPagerAdapter.setCurrentTabKey(getScoutKey());
 
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -231,16 +229,16 @@ public abstract class ScoutListFragmentBase extends LifecycleFragment
 
         if (getArguments().getBoolean(KEY_ADD_SCOUT, false)) {
             getArguments().remove(KEY_ADD_SCOUT);
-            mPagerAdapter.setCurrentScoutKey(addScout(mTeam));
+            mPagerAdapter.setCurrentTabKey(addScout(mTeam));
         }
     }
 
     private String getScoutKey() {
-        String scoutKey;
+        String scoutKey = null;
 
-        if (mPagerAdapter != null) scoutKey = mPagerAdapter.getCurrentScoutKey(); // NOPMD
-        else if (mSavedState != null) scoutKey = ScoutUtilsKt.getScoutKey(mSavedState); // NOPMD
-        else scoutKey = ScoutUtilsKt.getScoutKey(getArguments());
+        if (mPagerAdapter != null) scoutKey = mPagerAdapter.getCurrentTabKey();
+        if (mSavedState != null && scoutKey == null) scoutKey = getTabKey(mSavedState);
+        if (scoutKey == null) scoutKey = getTabKey(getArguments());
 
         return scoutKey;
     }

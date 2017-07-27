@@ -9,12 +9,12 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
-import com.supercilex.robotscouter.ui.scouting.MetricsViewHolderBase
+import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scout.CounterValueDialog
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 
 open class CounterViewHolder(itemView: View) :
-        MetricsViewHolderBase<Metric.Number, Long, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
+        MetricViewHolderBase<Metric.Number, Long, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
     protected val count: TextView = itemView.findViewById(R.id.count)
     private val increment: ImageButton = itemView.findViewById(R.id.increment_counter)
     private val decrement: ImageButton = itemView.findViewById(R.id.decrement_counter)

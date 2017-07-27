@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 
-abstract class MetricsViewHolderBase<FMetric : Metric<TMetric>, TMetric, out VView : TextView>(
+abstract class MetricViewHolderBase<FMetric : Metric<TMetric>, TMetric, out VView : TextView>(
         itemView: View) :
         RecyclerView.ViewHolder(itemView) {
     @Suppress("UNCHECKED_CAST")

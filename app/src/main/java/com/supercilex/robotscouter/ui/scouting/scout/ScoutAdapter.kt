@@ -16,8 +16,8 @@ import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.ui.CardListHelper
-import com.supercilex.robotscouter.ui.scouting.MetricsAdapterBase
-import com.supercilex.robotscouter.ui.scouting.MetricsViewHolderBase
+import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
+import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.CheckboxViewHolder
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.CounterViewHolder
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.EditTextViewHolder
@@ -29,11 +29,11 @@ class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                    manager: FragmentManager,
                    recyclerView: RecyclerView,
                    owner: LifecycleOwner) :
-        MetricsAdapterBase(metrics, manager, recyclerView, owner) {
+        MetricListAdapterBase(metrics, manager, recyclerView, owner) {
     override val cardListHelper: CardListHelper = ListHelper(true)
 
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
-            MetricsViewHolderBase<*, *, *> {
+            MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         when (viewType) {
             BOOLEAN -> return CheckboxViewHolder(

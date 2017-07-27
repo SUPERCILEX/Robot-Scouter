@@ -11,19 +11,19 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.ui.CardListHelper
 
-abstract class MetricsAdapterBase(metrics: ObservableSnapshotArray<Metric<*>>,
-                                  private val manager: FragmentManager,
-                                  private val recyclerView: RecyclerView,
-                                  owner: LifecycleOwner) :
-        FirebaseRecyclerAdapter<Metric<*>, MetricsViewHolderBase<*, *, *>>(
+abstract class MetricListAdapterBase(metrics: ObservableSnapshotArray<Metric<*>>,
+                                     private val manager: FragmentManager,
+                                     private val recyclerView: RecyclerView,
+                                     owner: LifecycleOwner) :
+        FirebaseRecyclerAdapter<Metric<*>, MetricViewHolderBase<*, *, *>>(
                 metrics,
                 0,
-                MetricsViewHolderBase::class.java,
+                MetricViewHolderBase::class.java,
                 owner) {
     protected abstract val cardListHelper: CardListHelper
     private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
 
-    override fun populateViewHolder(viewHolder: MetricsViewHolderBase<*, *, *>,
+    override fun populateViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
                                     metric: Metric<*>,
                                     position: Int) {
         animator.supportsChangeAnimations = true
@@ -31,7 +31,7 @@ abstract class MetricsAdapterBase(metrics: ObservableSnapshotArray<Metric<*>>,
         cardListHelper.onBind(viewHolder)
 
         @Suppress("UNCHECKED_CAST")
-        viewHolder as MetricsViewHolderBase<Metric<Any>, *, *>
+        viewHolder as MetricViewHolderBase<Metric<Any>, *, *>
         @Suppress("UNCHECKED_CAST")
         metric as Metric<Any>
         viewHolder.bind(metric, manager, animator)

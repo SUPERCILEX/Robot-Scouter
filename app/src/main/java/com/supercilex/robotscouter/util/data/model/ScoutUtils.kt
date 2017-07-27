@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data.model
 
-import android.os.Bundle
 import android.text.TextUtils
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.tasks.Task
@@ -24,7 +23,6 @@ import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_INDICES
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
@@ -33,7 +31,6 @@ import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.defaultTemplateListener
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
-val SCOUT_KEY = "scout_key"
 val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
     val metric: Metric<*>
     val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
@@ -75,10 +72,6 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
 fun getScoutMetricsRef(key: String): DatabaseReference =
         FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS)
 
-fun getScoutKeyBundle(key: String?) = Bundle().apply { putString(SCOUT_KEY, key) }
-
-fun getScoutKey(bundle: Bundle): String? = bundle.getString(SCOUT_KEY)
-
 fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
 fun addScout(team: Team): String {
@@ -92,7 +85,7 @@ fun addScout(team: Team): String {
         defaultTemplateListener.observeOnce()
                 .addOnSuccessListener { FirebaseCopier.copyTo(it!!, scoutRef) }
     } else {
-        FirebaseCopier(FIREBASE_TEMPLATES.child(team.templateKey), scoutRef)
+        FirebaseCopier(getTemplateMetricsRef(team.templateKey!!), scoutRef)
                 .performTransformation()
     }
 
