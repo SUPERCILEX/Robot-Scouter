@@ -6,8 +6,8 @@ import android.os.Build
 import com.firebase.jobdispatcher.FirebaseJobDispatcher
 import com.firebase.jobdispatcher.GooglePlayDriver
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.startInternetJob14
-import com.supercilex.robotscouter.util.startInternetJob21
+import com.supercilex.robotscouter.util.data.startInternetJob14
+import com.supercilex.robotscouter.util.data.startInternetJob21
 
 fun startDownloadTeamDataJob(context: Context, team: Team) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

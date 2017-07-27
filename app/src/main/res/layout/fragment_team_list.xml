@@ -27,7 +27,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.supercilex.robotscouter.util.SupportVectorDrawablesTextView
+        <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/no_teams"
             app:layout_constraintStart_toStartOf="parent"

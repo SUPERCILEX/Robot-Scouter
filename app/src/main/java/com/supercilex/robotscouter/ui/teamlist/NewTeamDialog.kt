@@ -9,7 +9,7 @@ import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.KeyboardDialogBase
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.isNumber
 
 class NewTeamDialog : KeyboardDialogBase() {

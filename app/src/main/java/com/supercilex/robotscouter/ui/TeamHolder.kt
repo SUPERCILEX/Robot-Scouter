@@ -12,11 +12,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
-import com.supercilex.robotscouter.util.addTeam
-import com.supercilex.robotscouter.util.parseTeam
+import com.supercilex.robotscouter.util.data.model.addTeam
+import com.supercilex.robotscouter.util.data.model.parseTeam
+import com.supercilex.robotscouter.util.data.model.toBundle
+import com.supercilex.robotscouter.util.data.model.updateTeam
 import com.supercilex.robotscouter.util.teamsListener
-import com.supercilex.robotscouter.util.toBundle
-import com.supercilex.robotscouter.util.updateTeam
 
 class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         Observer<ObservableSnapshotArray<Team>>, ChangeEventListener {

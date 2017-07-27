@@ -4,7 +4,7 @@ import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.parseRawBundle
+import com.supercilex.robotscouter.util.data.parseRawBundle
 
 abstract class TbaJobBase14 : JobService() {
     protected abstract val updateTeam: (team: Team, newTeam: Team) -> Unit

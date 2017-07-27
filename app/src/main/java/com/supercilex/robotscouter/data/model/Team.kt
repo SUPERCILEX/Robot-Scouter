@@ -8,8 +8,8 @@ import android.text.TextUtils
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.PropertyName
 import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
-import com.supercilex.robotscouter.util.readBooleanCompat
-import com.supercilex.robotscouter.util.writeBooleanCompat
+import com.supercilex.robotscouter.util.data.readBooleanCompat
+import com.supercilex.robotscouter.util.data.writeBooleanCompat
 
 data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: String,
                 @Exclude @get:Exclude @set:Exclude var key: String,

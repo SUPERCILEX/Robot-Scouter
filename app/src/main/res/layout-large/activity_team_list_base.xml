@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.supercilex.robotscouter.util.SupportVectorDrawablesTextView
+    <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
         android:id="@+id/no_team_selected_hint"
         style="@style/RobotScouter.Tutorial.NoContentHint"
         android:text="@string/no_team_selected"

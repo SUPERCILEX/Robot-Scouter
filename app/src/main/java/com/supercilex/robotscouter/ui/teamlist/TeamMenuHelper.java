@@ -26,7 +26,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
-import com.supercilex.robotscouter.util.TeamUtilsKt;
+import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +35,9 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetai
 import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
-import static com.supercilex.robotscouter.util.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
-import static com.supercilex.robotscouter.util.IoUtilsKt.getIO_PERMS;
-import static com.supercilex.robotscouter.util.ViewUtilsKt.animateColorChange;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
+import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
+import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
 public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";

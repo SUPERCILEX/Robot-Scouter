@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.scout.ScoutActivity">
+    tools:context=".ui.scouting.scout.ScoutActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/needed_for_CollapsingToolbarLayout_to_save_state"
@@ -70,7 +70,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.supercilex.robotscouter.util.SupportVectorDrawablesTextView
+        <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/no_scouts"
             app:layout_constraintStart_toStartOf="parent"

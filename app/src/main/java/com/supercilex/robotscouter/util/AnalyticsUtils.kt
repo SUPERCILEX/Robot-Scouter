@@ -10,6 +10,7 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.data.model.getTeamNames
 import kotlin.properties.Delegates
 
 private var analytics: FirebaseAnalytics by Delegates.notNull()

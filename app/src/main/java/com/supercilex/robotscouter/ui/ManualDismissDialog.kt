@@ -4,7 +4,7 @@ import android.content.DialogInterface
 import android.support.annotation.CallSuper
 import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.create
+import com.supercilex.robotscouter.util.ui.create
 
 /**
  * Enables choosing whether or not to dismiss the dialog when the positive button is clicked.

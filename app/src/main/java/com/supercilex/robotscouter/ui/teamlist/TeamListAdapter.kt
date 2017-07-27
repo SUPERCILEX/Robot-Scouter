@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.CardListHelper
-import com.supercilex.robotscouter.util.getAdapterItems
+import com.supercilex.robotscouter.util.ui.getAdapterItems
 import java.util.Collections
 
 class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,

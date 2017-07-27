@@ -13,13 +13,13 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.storage.FirebaseStorage
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.util.TeamCache
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
-import com.supercilex.robotscouter.util.createFile
+import com.supercilex.robotscouter.util.data.createFile
+import com.supercilex.robotscouter.util.data.model.TeamCache
+import com.supercilex.robotscouter.util.data.model.linkKeyNumberPair
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.linkKeyNumberPair
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit

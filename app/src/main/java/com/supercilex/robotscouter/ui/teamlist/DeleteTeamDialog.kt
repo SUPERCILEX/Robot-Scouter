@@ -9,10 +9,10 @@ import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
-import com.supercilex.robotscouter.util.deleteTeam
-import com.supercilex.robotscouter.util.parseTeamList
-import com.supercilex.robotscouter.util.show
-import com.supercilex.robotscouter.util.teamsToBundle
+import com.supercilex.robotscouter.util.data.model.deleteTeam
+import com.supercilex.robotscouter.util.data.model.parseTeamList
+import com.supercilex.robotscouter.util.data.model.teamsToBundle
+import com.supercilex.robotscouter.util.ui.show
 import java.util.Collections
 
 class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {

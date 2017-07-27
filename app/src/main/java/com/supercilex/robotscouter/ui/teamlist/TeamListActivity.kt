@@ -18,16 +18,16 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.scout.ScoutActivity
-import com.supercilex.robotscouter.ui.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
+import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
+import com.supercilex.robotscouter.util.data.model.parseTeam
+import com.supercilex.robotscouter.util.data.setHasShownAddTeamTutorial
+import com.supercilex.robotscouter.util.data.setHasShownSignInTutorial
 import com.supercilex.robotscouter.util.fetchAndActivate
-import com.supercilex.robotscouter.util.isInTabletMode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
-import com.supercilex.robotscouter.util.parseTeam
-import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
-import com.supercilex.robotscouter.util.setHasShownSignInTutorial
+import com.supercilex.robotscouter.util.ui.isInTabletMode
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
 @SuppressLint("GoogleAppIndexingApiWarning")

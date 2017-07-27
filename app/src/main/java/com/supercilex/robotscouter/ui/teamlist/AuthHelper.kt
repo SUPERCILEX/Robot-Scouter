@@ -17,12 +17,12 @@ import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
-import com.supercilex.robotscouter.util.add
+import com.supercilex.robotscouter.util.data.model.add
+import com.supercilex.robotscouter.util.data.model.transferUserData
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
-import com.supercilex.robotscouter.util.transferUserData
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.user
 

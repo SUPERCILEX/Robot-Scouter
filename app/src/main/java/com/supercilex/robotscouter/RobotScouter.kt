@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils
 import com.supercilex.robotscouter.util.initAnalytics
 import com.supercilex.robotscouter.util.initConnectivity
 import com.supercilex.robotscouter.util.initConstants
-import com.supercilex.robotscouter.util.initNotifications
+import com.supercilex.robotscouter.util.ui.initNotifications
 
 class RobotScouter : MultiDexApplication() {
     private val refWatcher: RefWatcher by lazy { LeakCanary.install(this) }

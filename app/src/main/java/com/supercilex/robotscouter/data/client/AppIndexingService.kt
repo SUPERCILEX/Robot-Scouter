@@ -14,11 +14,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.ChangeEventListenerBase
-import com.supercilex.robotscouter.util.indexable
-import com.supercilex.robotscouter.util.observeOnce
+import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.model.indexable
+import com.supercilex.robotscouter.util.data.model.teamIndicesRef
+import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.onSignedIn
-import com.supercilex.robotscouter.util.teamIndicesRef
 import com.supercilex.robotscouter.util.teamsListener
 import java.util.ArrayList
 

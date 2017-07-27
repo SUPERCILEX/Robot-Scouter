@@ -5,7 +5,7 @@ import android.support.annotation.RequiresApi
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaUploader
-import com.supercilex.robotscouter.util.updateMedia
+import com.supercilex.robotscouter.util.data.model.updateMedia
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class UploadTeamMediaJob21 : TbaJobBase21() {

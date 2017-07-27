@@ -4,7 +4,7 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
-import com.supercilex.robotscouter.util.updateTeam
+import com.supercilex.robotscouter.util.data.model.updateTeam
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class DownloadTeamDataJob21 : TbaJobBase21() {

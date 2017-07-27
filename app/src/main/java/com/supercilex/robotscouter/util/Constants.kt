@@ -5,10 +5,13 @@ import android.os.Build
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
+import com.supercilex.robotscouter.util.data.DefaultTemplateLiveData
+import com.supercilex.robotscouter.util.data.TeamsLiveData
+import com.supercilex.robotscouter.util.data.TemplatesLiveData
+import com.supercilex.robotscouter.util.data.ref
 import kotlin.properties.Delegates
 
 const val SINGLE_ITEM = 1
-const val TWO_ITEMS = 2
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
@@ -45,9 +48,9 @@ const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
 
 // Scout template
 val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
-val FIREBASE_SCOUT_TEMPLATES: DatabaseReference = ref.child("scout-templates")
+val FIREBASE_TEMPLATES: DatabaseReference = ref.child("templates")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
-const val SCOUT_TEMPLATE_INDICES = "scoutTemplateIndices"
+const val FIREBASE_TEMPLATE_INDICES = "template-indices"
 // [END FIREBASE CHILD NAMES]
 
 var teamsListener: TeamsLiveData by Delegates.notNull()

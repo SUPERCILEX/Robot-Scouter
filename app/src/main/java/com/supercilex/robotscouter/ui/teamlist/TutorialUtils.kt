@@ -3,10 +3,10 @@ package com.supercilex.robotscouter.ui.teamlist
 import android.app.Activity
 import android.view.MotionEvent
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.hasShownAddTeamTutorial
-import com.supercilex.robotscouter.util.hasShownSignInTutorial
-import com.supercilex.robotscouter.util.setHasShownAddTeamTutorial
-import com.supercilex.robotscouter.util.setHasShownSignInTutorial
+import com.supercilex.robotscouter.util.data.hasShownAddTeamTutorial
+import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
+import com.supercilex.robotscouter.util.data.setHasShownAddTeamTutorial
+import com.supercilex.robotscouter.util.data.setHasShownSignInTutorial
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
 private object EmptyOnHidePromptListener : MaterialTapTargetPrompt.OnHidePromptListener {

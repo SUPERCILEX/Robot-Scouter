@@ -34,11 +34,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
-import com.supercilex.robotscouter.util.TeamUtilsKt;
+import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import java.io.File;
 
-import static com.supercilex.robotscouter.util.ViewUtilsKt.animateCircularReveal;
+import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnClickListener, View.OnFocusChangeListener,

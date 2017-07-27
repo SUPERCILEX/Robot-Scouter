@@ -3,8 +3,8 @@ package com.supercilex.robotscouter.data.client
 import android.content.Context
 import android.os.Build
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.startInternetJob14
-import com.supercilex.robotscouter.util.startInternetJob21
+import com.supercilex.robotscouter.util.data.startInternetJob14
+import com.supercilex.robotscouter.util.data.startInternetJob21
 
 fun startUploadTeamMediaJob(context: Context, team: Team) {
     val mediaHash: Int = team.media!!.hashCode()

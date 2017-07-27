@@ -6,7 +6,7 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.parseRawBundle
+import com.supercilex.robotscouter.util.data.parseRawBundle
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 abstract class TbaJobBase21 : JobService() {

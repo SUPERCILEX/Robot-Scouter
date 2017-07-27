@@ -29,9 +29,9 @@ import com.supercilex.robotscouter.data.client.NotificationForwarder;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.data.model.Scout;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.data.util.Scouts;
 import com.supercilex.robotscouter.ui.PermissionRequestHandler;
-import com.supercilex.robotscouter.util.TeamUtilsKt;
+import com.supercilex.robotscouter.util.data.model.Scouts;
+import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
@@ -99,12 +99,12 @@ import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logExportTeamsEv
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
-import static com.supercilex.robotscouter.util.IoUtilsKt.getRootFolder;
-import static com.supercilex.robotscouter.util.IoUtilsKt.hideFile;
-import static com.supercilex.robotscouter.util.IoUtilsKt.unhideFile;
-import static com.supercilex.robotscouter.util.NotificationUtilsKt.EXPORT_CHANNEL;
-import static com.supercilex.robotscouter.util.PreferencesUtilsKt.setShouldShowExportHint;
-import static com.supercilex.robotscouter.util.PreferencesUtilsKt.shouldShowExportHint;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.getRootFolder;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.hideFile;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.unhideFile;
+import static com.supercilex.robotscouter.util.data.PreferencesUtilsKt.setShouldShowExportHint;
+import static com.supercilex.robotscouter.util.data.PreferencesUtilsKt.shouldShowExportHint;
+import static com.supercilex.robotscouter.util.ui.NotificationUtilsKt.EXPORT_CHANNEL;
 import static org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 public class ExportService extends IntentService implements OnSuccessListener<Map<Team, List<Scout>>> {
