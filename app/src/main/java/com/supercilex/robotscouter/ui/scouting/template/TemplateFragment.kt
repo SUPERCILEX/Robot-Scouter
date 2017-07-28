@@ -23,7 +23,6 @@ import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.data.model.parseTeam
 import com.supercilex.robotscouter.util.ui.getHighestIntPriority
-import java.util.Collections
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
     override val metricsRef: DatabaseReference by lazy { getTemplateMetricsRef(getTabKey(arguments)!!) }
@@ -113,17 +112,17 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         val priority = getHighestIntPriority(adapter.snapshots) + 1
         val metricRef = metricsRef.push()
         when (id) {
-            R.id.add_checkbox -> metricRef.setValue(Metric.Boolean("", false), priority)
-            R.id.add_counter -> metricRef.setValue(Metric.Number("", 0, null), priority)
+            R.id.add_checkbox -> metricRef.setValue(Metric.Boolean(), priority)
+            R.id.add_counter -> metricRef.setValue(Metric.Number(), priority)
+            R.id.add_stopwatch -> metricRef.setValue(Metric.Stopwatch(), priority)
+            R.id.add_note -> metricRef.setValue(Metric.Text(), priority)
             R.id.add_spinner -> {
-                metricRef.setValue(
-                        Metric.List("", Collections.singletonMap("a", "Item 1"), "a"),
-                        priority)
-                metricRef.child(FIREBASE_VALUE).child("a").setPriority(0)
+                metricRef.apply {
+                    setValue(Metric.List(), priority)
+                    child(FIREBASE_VALUE).child("a").setPriority(0)
+                }
             }
-            R.id.add_note -> metricRef.setValue(Metric.Text("", null), priority)
-            R.id.add_stopwatch -> metricRef.setValue(Metric.Stopwatch("", emptyList()), priority)
-            R.id.add_header -> metricRef.setValue(Metric.Header(""), priority)
+            R.id.add_header -> metricRef.setValue(Metric.Header(), priority)
             else -> throw IllegalStateException("Unknown id: $id")
         }
 

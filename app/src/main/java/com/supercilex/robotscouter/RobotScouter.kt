@@ -10,7 +10,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import com.supercilex.robotscouter.data.client.spreadsheet.SpreadsheetUtils
+import com.supercilex.robotscouter.data.client.spreadsheet.initSpreadsheet
 import com.supercilex.robotscouter.util.initAnalytics
 import com.supercilex.robotscouter.util.initConnectivity
 import com.supercilex.robotscouter.util.initConstants
@@ -30,7 +30,7 @@ class RobotScouter : MultiDexApplication() {
         initConnectivity(this)
         initConstants(this)
         initAnalytics(this)
-        SpreadsheetUtils.init(this)
+        initSpreadsheet(this)
         initNotifications(this)
 
         FirebaseRemoteConfig.getInstance().apply {

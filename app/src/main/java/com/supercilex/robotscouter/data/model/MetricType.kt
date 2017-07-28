@@ -2,13 +2,13 @@ package com.supercilex.robotscouter.data.model
 
 import android.support.annotation.IntDef
 
+const val HEADER = 5
 const val BOOLEAN = 0
 const val NUMBER = 1
-const val LIST = 2
-const val TEXT = 3
 const val STOPWATCH = 4
-const val HEADER = 5
+const val TEXT = 3
+const val LIST = 2
 
-@IntDef(BOOLEAN.toLong(), NUMBER.toLong(), LIST.toLong(), TEXT.toLong(), STOPWATCH.toLong(), HEADER.toLong())
+@IntDef(HEADER.toLong(), BOOLEAN.toLong(), NUMBER.toLong(), STOPWATCH.toLong(), TEXT.toLong(), LIST.toLong())
 @Retention(AnnotationRetention.SOURCE)
 annotation class MetricType

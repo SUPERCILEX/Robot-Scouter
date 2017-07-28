@@ -23,10 +23,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
+import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -349,7 +349,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     private void exportTeams() {
-        if (ExportService.exportAndShareSpreadSheet(
+        if (ExportService.Companion.exportAndShareSpreadSheet(
                 mFragment, mPermHandler, mSelectedTeams)) {
             resetMenu();
         }
