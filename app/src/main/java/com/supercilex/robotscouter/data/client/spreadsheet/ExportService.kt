@@ -285,6 +285,13 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
     private fun buildTeamSheet(team: Team, teamSheet: Sheet) {
         val scouts = scouts[team]!!
 
+        if (scouts.isEmpty()) {
+            teamSheet.workbook.apply { removeSheetAt(getSheetIndex(teamSheet)) }
+            return
+        }
+
+        val metricCache = HashMap<String, Int>()
+
 
         fun setRowValue(metric: Metric<*>, row: Row, column: Int) {
             row.getCell(0, CREATE_NULL_AS_BLANK).setCellValue(metric.name)
@@ -331,27 +338,36 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             }
         }
 
-        fun Row.createHeaderCell(metric: Metric<*>) {
-            createCell(0).apply {
-                if (metric.type == HEADER) {
-                    cellStyle = cache.headerMetricRowHeaderStyle
-                    addTitleRowMergedRegion(row)
-                } else {
-                    cellStyle = cache.rowHeaderStyle
+        fun setupRow(metric: Metric<*>, index: Int): Row {
+            metricCache[metric.ref.key] = index
+            cache.putRootMetric(team, index, metric.let {
+                return@let when (metric.type) {
+                    HEADER -> Metric.Header(it.name)
+                    BOOLEAN -> Metric.Boolean(it.name)
+                    NUMBER -> Metric.Number(it.name)
+                    STOPWATCH -> Metric.Stopwatch(it.name)
+                    TEXT -> Metric.Text(it.name)
+                    LIST -> Metric.List(it.name)
+                    else -> throw IllegalStateException("Unknown metric type ${metric.type}")
+                }.apply { ref = it.ref }
+            })
+
+            return teamSheet.createRow(index).apply {
+                createCell(0).apply {
+                    if (metric.type == HEADER) {
+                        cellStyle = cache.headerMetricRowHeaderStyle
+                        addTitleRowMergedRegion(row)
+                    } else {
+                        cellStyle = cache.rowHeaderStyle
+                    }
                 }
             }
         }
 
 
-        if (scouts.isEmpty()) {
-            teamSheet.workbook.apply { removeSheetAt(getSheetIndex(teamSheet)) }
-            return
-        }
-
         val header = teamSheet.createRow(0)
         header.createCell(0) // Create empty top left corner cell
 
-        val metricCache = HashMap<String, Int>()
         var hasOutdatedMetrics = false
         for ((i, scout) in scouts.withIndex()) {
             header.createCell(i + 1).apply {
@@ -361,21 +377,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
             for ((j, metric) in scout.metrics.withIndex()) {
                 if (i == 0) { // Initialize the metric list
-                    metricCache[metric.ref.key] = j + 1
-                    cache.putRootMetric(team, j + 1, metric.let {
-                        return@let when (metric.type) {
-                            HEADER -> Metric.Header(it.name)
-                            BOOLEAN -> Metric.Boolean(it.name)
-                            NUMBER -> Metric.Number(it.name)
-                            STOPWATCH -> Metric.Stopwatch(it.name)
-                            TEXT -> Metric.Text(it.name)
-                            LIST -> Metric.List(it.name)
-                            else -> throw IllegalStateException("Unknown metric type ${metric.type}")
-                        }.apply { ref = it.ref }
-                    })
-
-                    val row = teamSheet.createRow(j + 1).apply { createHeaderCell(metric) }
-                    setRowValue(metric, row, i + 1)
+                    setupRow(metric, j + 1).also { setRowValue(metric, it, i + 1) }
                 } else {
                     val metricIndex = metricCache[metric.ref.key]
                     if (metricIndex == null) {
@@ -389,10 +391,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                             }
                         }
 
-                        val row = teamSheet.createRow(teamSheet.lastRowNum + 1)
-                                .apply { createHeaderCell(metric) }
-                        setRowValue(metric, row, i + 1)
-                        metricCache[metric.ref.key] = row.rowNum
+                        setupRow(metric, teamSheet.lastRowNum + 1)
+                                .also { setRowValue(metric, it, i + 1) }
 
                         hasOutdatedMetrics = true
                     } else {
