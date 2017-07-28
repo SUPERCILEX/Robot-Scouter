@@ -297,7 +297,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                     valueCell.setCellValue(numberMetric.value.toDouble())
 
                     val unit = numberMetric.unit
-                    if (!TextUtils.isEmpty(unit)) cache.setCellFormat(valueCell, "#0\"$unit\"")
+                    if (TextUtils.isEmpty(unit)) cache.setCellFormat(valueCell, "0.00")
+                    else cache.setCellFormat(valueCell, "#0\"$unit\"")
                 }
                 STOPWATCH -> {
                     val cycles = (metric as Metric.Stopwatch).value ?: return
@@ -326,6 +327,17 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             if (numOfScouts > SINGLE_ITEM) {
                 row.rowNum.also {
                     teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, numOfScouts))
+                }
+            }
+        }
+
+        fun Row.createHeaderCell(metric: Metric<*>) {
+            createCell(0).apply {
+                if (metric.type == HEADER) {
+                    cellStyle = cache.headerMetricRowHeaderStyle
+                    addTitleRowMergedRegion(row)
+                } else {
+                    cellStyle = cache.rowHeaderStyle
                 }
             }
         }
@@ -362,32 +374,25 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                         }.apply { ref = it.ref }
                     })
 
-                    val row = teamSheet.createRow(j + 1)
-                    row.createCell(0).apply {
-                        if (metric.type == HEADER) {
-                            cellStyle = cache.headerMetricRowHeaderStyle
-                            addTitleRowMergedRegion(row)
-                        } else {
-                            cellStyle = cache.rowHeaderStyle
-                        }
-                    }
-
+                    val row = teamSheet.createRow(j + 1).apply { createHeaderCell(metric) }
                     setRowValue(metric, row, i + 1)
                 } else {
                     val metricIndex = metricCache[metric.ref.key]
                     if (metricIndex == null) {
-                        val row = teamSheet.createRow(teamSheet.lastRowNum + 2)
-                        metricCache[metric.ref.key] = row.rowNum
-
                         if (!hasOutdatedMetrics) {
-                            row.createCell(0).apply {
-                                setCellValue("Outdated metrics")
-                                cellStyle = cache.headerMetricRowHeaderStyle
-                                addTitleRowMergedRegion(row)
+                            teamSheet.createRow(teamSheet.lastRowNum + 2).also {
+                                it.createCell(0).apply {
+                                    setCellValue("Outdated metrics")
+                                    cellStyle = cache.headerMetricRowHeaderStyle
+                                    addTitleRowMergedRegion(this.row)
+                                }
                             }
                         }
 
+                        val row = teamSheet.createRow(teamSheet.lastRowNum + 1)
+                                .apply { createHeaderCell(metric) }
                         setRowValue(metric, row, i + 1)
+                        metricCache[metric.ref.key] = row.rowNum
 
                         hasOutdatedMetrics = true
                     } else {
@@ -412,7 +417,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         val chartPool = HashMap<Metric<*>, Chart>()
 
         for (i in 1..sheet.lastRowNum) {
-            val type = (cache.getRootMetric(team, i) ?: return).type
+            val type = (cache.getRootMetric(team, i) ?: continue).type
             val row = sheet.getRow(i)
             val first = row.getCell(1, CREATE_NULL_AS_BLANK)
 
@@ -428,7 +433,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 }
                 NUMBER -> {
                     cell.cellFormula = "SUM($rangeAddress) / COUNT($rangeAddress)"
-                    cache.setCellFormat(cell, "0.00")
                     buildTeamChart(row, team, chartData, chartPool)
                 }
                 STOPWATCH -> {
