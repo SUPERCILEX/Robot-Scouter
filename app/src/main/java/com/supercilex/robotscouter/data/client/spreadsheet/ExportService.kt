@@ -100,12 +100,11 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             cache.updateNotification(getString(R.string.exporting_status_loading))
 
             onSuccess(Tasks.await(Scouts.getAll(cache.teams), 5, TimeUnit.MINUTES))
-        } catch (e: ExecutionException) {
-            showError(this, e)
-        } catch (e: InterruptedException) {
-            showError(this, e)
-        } catch (e: TimeoutException) {
-            showError(this, e)
+        } catch (e: Exception) {
+            when (e) {
+                is ExecutionException, is InterruptedException, is TimeoutException -> showError(this, e)
+                else -> throw e
+            }
         }
     }
 
@@ -197,7 +196,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
     private fun writeFile(rsFolder: File): File? {
         var stream: FileOutputStream? = null
-        var absoluteFile = File(rsFolder, getFullyQualifiedFileName(null))
+        var absoluteFile = File(rsFolder, getFullyQualifiedFileName())
         try {
             var i = 1
             while (true) {
@@ -241,7 +240,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         return null
     }
 
-    private fun getFullyQualifiedFileName(middleMan: String?): String {
+    private fun getFullyQualifiedFileName(middleMan: String? = null): String {
         val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
 
         return if (middleMan == null) "${cache.teamNames}$extension"
@@ -259,18 +258,17 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         }
         cache.setWorkbook(workbook)
 
-        var averageSheet: Sheet? = null
-        if (cache.teams.size > SINGLE_ITEM) {
-            averageSheet = workbook.createSheet("Team Averages")
-            averageSheet!!.createFreezePane(1, 1)
-        }
+        val averageSheet = fun(): Sheet? {
+            return if (cache.teams.size > SINGLE_ITEM) {
+                workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
+            } else null
+        }.invoke()
 
         for (team in cache.teams) {
             cache.updateNotification(getString(R.string.exporting_status_team, team))
-
-            val teamSheet = workbook.createSheet(getSafeSheetName(workbook, team))
-            teamSheet.createFreezePane(1, 1)
-            buildTeamSheet(team, teamSheet)
+            buildTeamSheet(team, workbook.createSheet(getSafeSheetName(workbook, team)).apply {
+                createFreezePane(1, 1)
+            })
         }
 
         cache.updateNotification(getString(R.string.exporting_status_average))
@@ -298,7 +296,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
             val valueCell = row.getCell(column, CREATE_NULL_AS_BLANK)
             when (metric.type) {
-                BOOLEAN -> valueCell.setCellValue(metric.value as Boolean)
+                BOOLEAN -> valueCell.setCellValue((metric as Metric.Boolean).value)
                 NUMBER -> {
                     val numberMetric = metric as Metric.Number
                     valueCell.setCellValue(numberMetric.value.toDouble())
@@ -321,7 +319,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 }
                 TEXT -> {
                     valueCell.setCellValue(
-                            cache.creationHelper.createRichTextString(metric.value.toString()))
+                            cache.creationHelper.createRichTextString((metric as Metric.Text).value))
                 }
                 HEADER -> { // No data
                 }
@@ -332,9 +330,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         fun addTitleRowMergedRegion(row: Row) {
             val numOfScouts = scouts.size
             if (numOfScouts > SINGLE_ITEM) {
-                row.rowNum.also {
-                    teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, numOfScouts))
-                }
+                row.rowNum.also { teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, numOfScouts)) }
             }
         }
 
@@ -406,7 +402,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
     }
 
     private fun buildTeamAverageColumn(sheet: Sheet, team: Team) {
-        val farthestColumn = sheet.map { it.lastCellNum.toInt() }.max() ?: 0
+        val farthestColumn = sheet.map { it.lastCellNum.toInt() }.max()!!
 
         sheet.getRow(0).getCell(farthestColumn, CREATE_NULL_AS_BLANK).apply {
             setCellValue(getString(R.string.average))
@@ -474,8 +470,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                                team: Team,
                                chartData: MutableMap<Chart, Pair<LineChartData, List<ChartAxis>>>,
                                chartPool: MutableMap<Metric<*>, Chart>) {
-        if (isUnsupportedDevice) return
-
         fun getChartRowIndex(defaultIndex: Int, charts: List<Chart>): Int {
             if (charts.isEmpty()) return defaultIndex
 
@@ -496,6 +490,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             return if (defaultIndex > lastRow) defaultIndex else lastRow
         }
 
+
+        if (isUnsupportedDevice) return
 
         val lastDataCellNum = row.sheet.getRow(0).lastCellNum - 2
 
@@ -534,8 +530,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
             data = chart.chartDataFactory.createLineChartData()
 
-            val bottomAxis = chart.chartAxisFactory
-                    .createCategoryAxis(AxisPosition.BOTTOM)
+            val bottomAxis = chart.chartAxisFactory.createCategoryAxis(AxisPosition.BOTTOM)
             val leftAxis = chart.chartAxisFactory.createValueAxis(AxisPosition.LEFT)
             leftAxis.crosses = AxisCrosses.AUTO_ZERO
 
@@ -638,8 +633,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                         .setTitle(it.getCell(0).stringCellValue)
             }
 
-            val bottomAxis = chart.chartAxisFactory
-                    .createCategoryAxis(AxisPosition.BOTTOM)
+            val bottomAxis = chart.chartAxisFactory.createCategoryAxis(AxisPosition.BOTTOM)
             val leftAxis = chart.chartAxisFactory.createValueAxis(AxisPosition.LEFT)
             leftAxis.crosses = AxisCrosses.AUTO_ZERO
             chart.plot(data, bottomAxis, leftAxis)
