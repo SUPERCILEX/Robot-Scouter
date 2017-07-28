@@ -117,8 +117,10 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             R.id.add_stopwatch -> metricRef.setValue(Metric.Stopwatch(), priority)
             R.id.add_note -> metricRef.setValue(Metric.Text(), priority)
             R.id.add_spinner -> {
-                metricRef.setValue(Metric.List(), priority)
-                metricRef.child(FIREBASE_VALUE).child("a").setPriority(0)
+                metricRef.apply {
+                    setValue(Metric.List(), priority)
+                    child(FIREBASE_VALUE).child("a").setPriority(0)
+                }
             }
             R.id.add_header -> metricRef.setValue(Metric.Header(), priority)
             else -> throw IllegalStateException("Unknown id: $id")

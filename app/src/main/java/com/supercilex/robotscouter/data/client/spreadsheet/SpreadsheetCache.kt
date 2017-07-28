@@ -21,9 +21,9 @@ import java.util.HashMap
 
 class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(teams) {
     private val progressMax = teams.size + EXTRA_OPS
-    private var currentProgress: Int = 0
+    private var currentProgress = 0
 
-    private val notificationManager: NotificationManager =
+    private val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val progressNotification: NotificationCompat.Builder =
             NotificationCompat.Builder(context, EXPORT_IN_PROGRESS_CHANNEL)
@@ -39,7 +39,7 @@ class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(te
     private val formatStyles = HashMap<String, Short>()
 
     private lateinit var workbook: Workbook
-    val creationHelper: CreationHelper get() = workbook.creationHelper
+    val creationHelper: CreationHelper by lazy { workbook.creationHelper }
 
     val columnHeaderStyle: CellStyle? by lazy {
         if (isUnsupportedDevice) null else createColumnHeaderStyle()
@@ -80,7 +80,7 @@ class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(te
         updateNotification(R.string.export_in_progress_title, progressNotification.build())
     }
 
-    fun getRootMetric(team: Team, index: Int) = metricCache[team]!![index]
+    fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
 
     fun putRootMetric(team: Team, index: Int, metric: Metric<*>) {
         (metricCache[team] ?: HashMap<Int, Metric<*>>().also { metricCache.put(team, it) })[index] = metric

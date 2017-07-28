@@ -40,8 +40,7 @@ val AVERAGEIF_FUNCTION: FreeRefFunction = object : FreeRefFunction {
                 while (i < args.size) {
                     val firstArg = args[i]
                     val secondArg = args[i + 1]
-                    val evaluate = evaluate(
-                            context.rowIndex, context.columnIndex, firstArg, secondArg)
+                    val evaluate = evaluate(context.rowIndex, context.columnIndex, firstArg, secondArg)
 
                     result = evaluate.numberValue
                     i += 2
@@ -63,11 +62,11 @@ val AVERAGEIF_FUNCTION: FreeRefFunction = object : FreeRefFunction {
     }
 }
 
-private val MAX_SHEET_LENGTH = 31
-private val COLUMN_WIDTH_SCALE_FACTOR = 46
-private val CELL_WIDTH_CEILING = 7500
+private const val MAX_SHEET_LENGTH = 31
+private const val COLUMN_WIDTH_SCALE_FACTOR = 46
+private const val CELL_WIDTH_CEILING = 7500
 
-val isUnsupportedDevice get() = VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || isLowRamDevice
+val isUnsupportedDevice by lazy { VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || isLowRamDevice }
 private var isLowRamDevice: Boolean by Delegates.notNull()
 
 fun initSpreadsheet(context: Context) {
@@ -149,9 +148,7 @@ fun Drawing<*>.createChartAnchor(startRow: Int, startColumn: Int, endColumn: Int
 
 fun showError(context: Context, e: Exception) {
     FirebaseCrash.report(e)
-
-    val message = "${context.getString(R.string.fui_general_error)}\n\n${e.message}"
-    showToast(context, message)
+    showToast(context, "${context.getString(R.string.fui_general_error)}\n\n${e.message}")
 }
 
 fun showToast(context: Context, message: String) =
