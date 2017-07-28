@@ -38,6 +38,7 @@ import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import java.io.File;
 
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
@@ -78,6 +79,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 team.getMediaYear(),
                 team.getTimestamp())));
         dialog.show(manager, TAG);
+
+        logEditTeamDetailsEvent(team.getNumber());
     }
 
     @Override

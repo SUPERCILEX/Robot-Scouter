@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.data.createFile
 import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.data.model.linkKeyNumberPair
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.logShareTeamEvent
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
@@ -145,6 +146,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
             if (teams.isEmpty()) return false
 
             TeamSharer(activity, teams)
+            for ((number) in teams) logShareTeamEvent(number)
             return true
         }
     }

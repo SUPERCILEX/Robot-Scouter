@@ -96,9 +96,7 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
         }
     }
 
-    fun onSaveInstanceState(outState: Bundle) {
-        outState.putAll(getTabKeyBundle(currentTabKey))
-    }
+    fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabKeyBundle(currentTabKey))
 
     private fun selectTab(index: Int) = tabLayout.getTabAt(index)?.select()
 

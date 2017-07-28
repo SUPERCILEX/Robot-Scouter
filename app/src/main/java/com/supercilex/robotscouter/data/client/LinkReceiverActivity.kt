@@ -11,11 +11,11 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
-import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
-import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
+import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.onSignedIn
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
@@ -57,10 +57,10 @@ class LinkReceiverActivity : AppCompatActivity() {
             return
         }
 
-        val data = ScoutListFragmentBase.getBundle(teams[0], false, null)
+        val data = getScoutBundle(teams[0])
         if (isInTabletMode(this)) {
             startActivity(Intent(this, TeamListActivity::class.java)
-                    .putExtra(KEY_SCOUT_ARGS, data)
+                    .putExtra(SCOUT_ARGS_KEY, data)
                     .addNewDocumentFlags())
         } else {
             startActivity(ScoutActivity.createIntent(this, data))

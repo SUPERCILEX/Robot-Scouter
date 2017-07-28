@@ -19,33 +19,33 @@ import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
+import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 
 class ActivityScoutListFragment : ScoutListFragmentBase() {
+    override val viewHolder: AppBarViewHolderBase by lazy {
+        ActivityAppBarViewHolder(dataHolder.teamListener, onScoutingReadyTask.task)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         if (activity.callingActivity != null && isInTabletMode(context)) {
-            activity.setResult(
-                    Activity.RESULT_OK, Intent().putExtra(ScoutListFragmentBase.KEY_SCOUT_ARGS, bundle))
+            activity.setResult(Activity.RESULT_OK, Intent().putExtra(SCOUT_ARGS_KEY, bundle))
             activity.finish()
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val activity = activity as AppCompatActivity
-        activity.setSupportActionBar(mRootView.findViewById(R.id.toolbar))
+        activity.setSupportActionBar(rootView.findViewById(R.id.toolbar))
         activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         super.onActivityCreated(savedInstanceState)
     }
 
-    override fun newAppBarViewHolder(listener: LiveData<Team>,
-                                     onScoutingReadyTask: Task<Void>): AppBarViewHolderBase =
-            ActivityAppBarViewHolder(listener, onScoutingReadyTask)
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.scout, menu)
-        mViewHolder.initMenu(menu)
+        viewHolder.initMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = if (item.itemId == android.R.id.home) {
@@ -64,17 +64,17 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
     override fun onTeamDeleted() = activity.finish()
 
     private inner class ActivityAppBarViewHolder(listener: LiveData<Team>,
-                                                 onScoutingReadyTask: Task<Void>) :
-            AppBarViewHolderBase(listener, this@ActivityScoutListFragment, mRootView, onScoutingReadyTask) {
+                                                 onScoutingReadyTask: Task<Nothing?>) :
+            AppBarViewHolderBase(this@ActivityScoutListFragment, rootView, listener, onScoutingReadyTask) {
         override fun bind() {
             super.bind()
-            (activity as AppCompatActivity).supportActionBar!!.title = mTeam.toString()
+            (activity as AppCompatActivity).supportActionBar!!.title = team.toString()
             setTaskDescription(null, ContextCompat.getColor(context, R.color.colorPrimary))
         }
 
-        override fun updateScrim(color: Int, bitmap: Bitmap) {
+        override fun updateScrim(color: Int, bitmap: Bitmap?) {
             super.updateScrim(color, bitmap)
-            mHeader.setStatusBarScrimColor(color)
+            header.setStatusBarScrimColor(color)
             setTaskDescription(bitmap, color)
         }
 
@@ -83,7 +83,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
                     && (icon == null || !icon.isRecycled)
                     && activity != null) {
                 activity.setTaskDescription(
-                        ActivityManager.TaskDescription(mTeam.toString(), icon, colorPrimary))
+                        ActivityManager.TaskDescription(team.toString(), icon, colorPrimary))
             }
         }
     }
