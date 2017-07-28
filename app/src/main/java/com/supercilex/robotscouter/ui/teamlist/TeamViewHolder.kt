@@ -21,7 +21,7 @@ import com.bumptech.glide.request.target.Target
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
-import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
+import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
 
 class TeamViewHolder @Keep constructor(itemView: View) :
@@ -127,8 +127,8 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         if (v.id == R.id.media || isItemSelected || couldItemBeSelected) {
             onTeamContextMenuRequested()
         } else {
-            (itemView.context as TeamSelectionListener).onTeamSelected(
-                    ScoutListFragmentBase.getBundle(team, v.id == R.id.new_scout, null), false)
+            (itemView.context as TeamSelectionListener)
+                    .onTeamSelected(getScoutBundle(team, v.id == R.id.new_scout), false)
         }
     }
 

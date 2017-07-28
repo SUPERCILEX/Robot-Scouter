@@ -32,7 +32,6 @@ import com.supercilex.robotscouter.util.defaultTemplateListener
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
-    val metric: Metric<*>
     val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
             // This appears to happen in the in-between state when the metric has been half copied.
             return@SnapshotParser Metric.Header(
@@ -43,30 +42,28 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
     val value = snapshot.child(FIREBASE_VALUE)
 
     when (type) {
-        BOOLEAN -> metric = Metric.Boolean(name, value.getValue(Boolean::class.java)!!)
+        HEADER -> Metric.Header(name)
+        BOOLEAN -> Metric.Boolean(name, value.getValue(Boolean::class.java)!!)
         NUMBER -> {
-            metric = Metric.Number(
+            Metric.Number(
                     name,
                     value.getValue(object : GenericTypeIndicator<Long>() {})!!,
                     snapshot.child(FIREBASE_UNIT).getValue(String::class.java))
         }
-        TEXT -> metric = Metric.Text(name, value.getValue(String::class.java))
+        STOPWATCH -> {
+            Metric.Stopwatch(
+                    name,
+                    value.children.map { it.getValue(Long::class.java)!! })
+        }
+        TEXT -> Metric.Text(name, value.getValue(String::class.java))
         LIST -> {
-            metric = Metric.List(
+            Metric.List(
                     name,
                     value.children.associateBy({ it.key }, { it.getValue(String::class.java) ?: "" }),
                     snapshot.child(FIREBASE_SELECTED_VALUE_KEY).getValue(String::class.java))
         }
-        STOPWATCH -> {
-            metric = Metric.Stopwatch(
-                    name,
-                    value.children.map { it.getValue(Long::class.java)!! })
-        }
-        HEADER -> metric = Metric.Header(name)
         else -> throw IllegalStateException("Unknown metric type: $type")
-    }
-
-    metric.apply { ref = snapshot.ref }
+    }.apply { ref = snapshot.ref }
 }
 
 fun getScoutMetricsRef(key: String): DatabaseReference =

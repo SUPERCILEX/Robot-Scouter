@@ -8,18 +8,14 @@ import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 
-sealed class Metric<T>(name: String, value: T) {
-    class Boolean(name: String, value: kotlin.Boolean) :
-            Metric<kotlin.Boolean>(name, value) {
-        @Exclude @get:Keep
-        override val type = BOOLEAN
-    }
+sealed class Metric<T>(@Exclude @get:Keep val type: Int, name: String, value: T) {
+    class Header(name: String = "") : Metric<Nothing?>(HEADER, name, null)
 
-    class Number(name: String, value: Long, unit: String?) :
-            Metric<Long>(name, value) {
-        @Exclude @get:Keep
-        override val type = NUMBER
+    class Boolean(name: String = "", value: kotlin.Boolean = false) :
+            Metric<kotlin.Boolean>(BOOLEAN, name, value)
 
+    class Number(name: String = "", value: Long = 0, unit: String? = null) :
+            Metric<Long>(NUMBER, name, value) {
         @Exclude @get:Keep @set:Keep
         var unit = unit
             set(value) {
@@ -28,24 +24,35 @@ sealed class Metric<T>(name: String, value: T) {
                     ref.child(FIREBASE_UNIT).setValue(field)
                 }
             }
+
+        override fun equals(other: Any?): kotlin.Boolean {
+            if (this === other) return true
+            if (other?.javaClass != javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as Number
+
+            return unit == other.unit
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + (unit?.hashCode() ?: 0)
+            return result
+        }
+
+        override fun toString(): String = "${super.toString()}, unit=$unit"
     }
 
-    class Stopwatch(name: String, value: kotlin.collections.List<Long>?) :
-            Metric<kotlin.collections.List<Long>?>(name, value) {
-        @Exclude @get:Keep
-        override val type = STOPWATCH
-    }
+    class Stopwatch(name: String = "", value: kotlin.collections.List<Long>? = emptyList()) :
+            Metric<kotlin.collections.List<Long>?>(STOPWATCH, name, value)
 
-    class Text(name: String, value: String?) : Metric<String?>(name, value) {
-        @Exclude @get:Keep
-        override val type = TEXT
-    }
+    class Text(name: String = "", value: String? = null) : Metric<String?>(TEXT, name, value)
 
-    class List(name: String, value: Map<String, String>, selectedValueKey: String?) :
-            Metric<Map<String, String>>(name, value) {
-        @Exclude @get:Keep
-        override val type = LIST
-
+    class List(name: String = "",
+               value: Map<String, String> = mapOf("a" to "Item 1"),
+               selectedValueKey: String? = "a") :
+            Metric<Map<String, String>>(LIST, name, value) {
         @Exclude @get:Keep @set:Keep
         var selectedValueKey = selectedValueKey
             set(value) {
@@ -54,15 +61,26 @@ sealed class Metric<T>(name: String, value: T) {
                     ref.child(FIREBASE_SELECTED_VALUE_KEY).setValue(field)
                 }
             }
+
+        override fun equals(other: Any?): kotlin.Boolean {
+            if (this === other) return true
+            if (other?.javaClass != javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as List
+
+            return selectedValueKey == other.selectedValueKey
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + (selectedValueKey?.hashCode() ?: 0)
+            return result
+        }
+
+        override fun toString(): String = "${super.toString()}, selectedValueKey=$selectedValueKey"
     }
 
-    class Header(name: String) : Metric<Nothing?>(name, null) {
-        @Exclude @get:Keep
-        override val type = HEADER
-    }
-
-
-    abstract val type: Int
 
     @Exclude @get:Exclude @set:Exclude
     lateinit var ref: DatabaseReference
@@ -90,18 +108,16 @@ sealed class Metric<T>(name: String, value: T) {
 
         other as Metric<*>
 
-        return if (ref != other.ref) false
-        else if (name != other.name) false
-        else value == other.value
-
+        return type == other.type && ref == other.ref && name == other.name && value == other.value
     }
 
     override fun hashCode(): Int {
-        var result = ref.hashCode()
+        var result = type
+        result = 31 * result + ref.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + (value?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String = "Metric.${javaClass.name}(ref=$ref, name='$name', value=$value)"
+    override fun toString(): String = "${javaClass.simpleName}: ref=$ref, name=\"$name\", value=$value"
 }

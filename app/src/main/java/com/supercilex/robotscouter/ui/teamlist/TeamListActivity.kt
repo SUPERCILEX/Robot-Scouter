@@ -22,8 +22,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
-import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase.KEY_SCOUT_ARGS
 import com.supercilex.robotscouter.ui.scouting.template.TemplateEditorActivity
+import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.model.parseTeam
 import com.supercilex.robotscouter.util.data.setHasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.data.setHasShownSignInTutorial
@@ -100,7 +100,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
             setHasShownSignInTutorial(this, true)
         }
         if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
-            onTeamSelected(data!!.getBundleExtra(KEY_SCOUT_ARGS), true)
+            onTeamSelected(data!!.getBundleExtra(SCOUT_ARGS_KEY), true)
         }
     }
 
@@ -161,7 +161,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
     private fun handleIntent(intent: Intent) {
         intent.extras?.let {
             when {
-                it.containsKey(KEY_SCOUT_ARGS) -> onTeamSelected(it.getBundle(KEY_SCOUT_ARGS), true)
+                it.containsKey(SCOUT_ARGS_KEY) -> onTeamSelected(it.getBundle(SCOUT_ARGS_KEY), true)
                 it.containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
                 it.containsKey(UPDATE_EXTRA) -> UpdateDialog.showStoreListing(this)
             }

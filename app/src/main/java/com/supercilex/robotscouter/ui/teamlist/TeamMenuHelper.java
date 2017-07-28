@@ -23,16 +23,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
+import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
-import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logShareTeamEvent;
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
@@ -130,7 +128,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 if (TeamSharer.Companion.shareTeams(mFragment.getActivity(), mSelectedTeams)) {
                     resetMenu();
                 }
-                logShareTeamEvent(team.getNumber());
                 break;
             case R.id.action_visit_tba_website:
                 TeamUtilsKt.visitTbaWebsite(team, mFragment.getContext());
@@ -142,10 +139,10 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 break;
             case R.id.action_edit_team_details:
                 TeamDetailsDialog.show(mFragment.getChildFragmentManager(), team);
-                logEditTeamDetailsEvent(team.getNumber());
                 break;
             case R.id.action_delete:
-                DeleteTeamDialog.Companion.show(mFragment.getChildFragmentManager(), mSelectedTeams);
+                DeleteTeamDialog.Companion.show(
+                        mFragment.getChildFragmentManager(), mSelectedTeams);
                 break;
             case android.R.id.home:
                 resetMenu();
@@ -349,7 +346,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     private void exportTeams() {
-        if (ExportService.exportAndShareSpreadSheet(
+        if (ExportService.Companion.exportAndShareSpreadSheet(
                 mFragment, mPermHandler, mSelectedTeams)) {
             resetMenu();
         }
