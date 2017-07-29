@@ -25,6 +25,7 @@ android {
         versionCode 1 // The version code is updated on each Travis build
         versionName '1.1.2'
         multiDexEnabled true
+        resConfigs "en"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -49,10 +50,14 @@ android {
         }
 
         release {
-            shrinkResources true
-            minifyEnabled true
-            proguardFiles 'proguard-rules.pro', getDefaultProguardFile('proguard-android-optimize.txt')
             signingConfig signingConfigs.release
+            postprocessing {
+                removeUnusedCode = true
+                removeUnusedResources = true
+                obfuscate = true
+                optimizeCode = true
+                proguardFile 'proguard-rules.pro'
+            }
         }
     }
 
