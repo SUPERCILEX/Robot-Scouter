@@ -365,14 +365,16 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         header.createCell(0) // Create empty top left corner cell
 
         var hasOutdatedMetrics = false
-        for ((i, scout) in scouts.withIndex()) {
+        for (i in scouts.lastIndex downTo 0) {
+            val scout = scouts[i]
+
             header.createCell(i + 1).apply {
                 setCellValue(scout.name.let { if (TextUtils.isEmpty(it)) "Scout ${i + 1}" else it })
                 cellStyle = cache.columnHeaderStyle
             }
 
             for ((j, metric) in scout.metrics.withIndex()) {
-                if (i == 0) { // Initialize the metric list
+                if (i == scouts.lastIndex) { // Initialize the metric list
                     setupRow(metric, j + 1).also { setRowValue(metric, it, i + 1) }
                 } else {
                     val metricIndex = metricCache[metric.ref.key]
@@ -486,7 +488,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 if (endRow1 == endRow2) 0 else if (endRow1 > endRow2) 1 else -1
             }
 
-            val lastRow = anchors[anchors.size - 1].row2
+            val lastRow = anchors[anchors.lastIndex].row2
             return if (defaultIndex > lastRow) defaultIndex else lastRow
         }
 

@@ -85,7 +85,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                 recyclerView,
                 menuManager,
                 isTeamSelected(team),
-                !menuManager.selectedTeams.isEmpty(),
+                menuManager.selectedTeams.isNotEmpty(),
                 TextUtils.equals(selectedTeamKey, team.key))
     }
 

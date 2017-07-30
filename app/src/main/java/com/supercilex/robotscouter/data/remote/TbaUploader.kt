@@ -63,7 +63,7 @@ class TbaUploader private constructor(team: Team, context: Context) :
      */
     private fun getFileExtension(url: String): String {
         val splitUrl: List<String> = Arrays.asList(*url.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        return ".${splitUrl[splitUrl.size - 1]}"
+        return ".${splitUrl[splitUrl.lastIndex]}"
     }
 
     companion object {
