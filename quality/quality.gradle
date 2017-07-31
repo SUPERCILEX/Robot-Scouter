@@ -1,10 +1,18 @@
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
-check.dependsOn 'checkstyle', 'pmd'
+check.dependsOn 'ktlint', 'checkstyle', 'pmd'
 
 def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
+
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint 'com.github.shyiko:ktlint:0.9.0'
+}
 
 checkstyle {
     toolVersion = '8.0'
@@ -12,6 +20,12 @@ checkstyle {
 
 pmd {
     toolVersion = '5.8.0'
+}
+
+task ktlint(type: JavaExec) {
+    main = "com.github.shyiko.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
 }
 
 task checkstyle(type: Checkstyle) {

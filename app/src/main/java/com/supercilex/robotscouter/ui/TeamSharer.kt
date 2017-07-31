@@ -49,7 +49,6 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
     init {
         cache = Cache(teams)
 
-
         AsyncTaskExecutor.execute(object : Callable<String> {
             private val tempShareTemplateFile: File
                 get() {
@@ -82,7 +81,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                         .getFile(to))
                 return to.readText()
             }
-        }).continueWith(AsyncTaskExecutor.INSTANCE, Continuation<String, Intent> {
+        }).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
             val deepLinkBuilder = StringBuilder("$TEAMS_LINK_BASE?")
             for (team in cache.teams) {
                 deepLinkBuilder.append(team.linkKeyNumberPair)

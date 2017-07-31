@@ -39,7 +39,7 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), T
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (hasFocus) return  // Only save data when the user is done
+        if (hasFocus) return // Only save data when the user is done
 
         if (v.id == R.id.name) {
             updateMetricName(name.text.toString())

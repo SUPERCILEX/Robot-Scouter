@@ -41,7 +41,7 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int, name: String, value: T)
             return result
         }
 
-        override fun toString(): String = "${super.toString()}, unit=$unit"
+        override fun toString(): String = "${super.toString()}, unit=$unit" // ktlint-disable
     }
 
     class Stopwatch(name: String = "", value: kotlin.collections.List<Long>? = emptyList()) :
@@ -78,9 +78,8 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int, name: String, value: T)
             return result
         }
 
-        override fun toString(): String = "${super.toString()}, selectedValueKey=$selectedValueKey"
+        override fun toString(): String = "${super.toString()}, selectedValueKey=$selectedValueKey" // ktlint-disable
     }
-
 
     @Exclude @get:Exclude @set:Exclude
     lateinit var ref: DatabaseReference

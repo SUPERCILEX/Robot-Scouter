@@ -62,7 +62,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-                            AsyncTaskExecutor.Companion.execute(() -> {
+                            AsyncTaskExecutor.INSTANCE.execute(() -> {
                                 List<String> scoutKeys = new ArrayList<>();
                                 for (DataSnapshot scoutKeyTemplate : snapshot.getChildren()) {
                                     scoutKeys.add(scoutKeyTemplate.getKey());

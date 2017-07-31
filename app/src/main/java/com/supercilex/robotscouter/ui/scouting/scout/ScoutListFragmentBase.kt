@@ -154,7 +154,6 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
 
-
         if (arguments.getBoolean(KEY_ADD_SCOUT, false)) {
             arguments.remove(KEY_ADD_SCOUT)
             pagerAdapter!!.currentTabKey = addScout(team)

@@ -290,7 +290,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
         val metricCache = HashMap<String, Int>()
 
-
         fun setRowValue(metric: Metric<*>, row: Row, column: Int) {
             row.getCell(0, CREATE_NULL_AS_BLANK).setCellValue(metric.name)
 
@@ -359,7 +358,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 }
             }
         }
-
 
         val header = teamSheet.createRow(0)
         header.createCell(0) // Create empty top left corner cell
@@ -492,7 +490,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             return if (defaultIndex > lastRow) defaultIndex else lastRow
         }
 
-
         if (isUnsupportedDevice) return
 
         val lastDataCellNum = row.sheet.getRow(0).lastCellNum - 2
@@ -568,7 +565,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 cache.setCellFormat(valueCell, "0.00%")
             }
         }
-
 
         val workbook = averageSheet.workbook
         val headerRow = averageSheet.createRow(0)
