@@ -68,6 +68,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
                 menuHelper.setAdapter(adapter)
                 recyclerView.adapter = adapter
                 menuHelper.restoreState(savedInstanceState)
+                savedInstanceState?.clear()
             }
         })
 

@@ -175,7 +175,8 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     public void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null && mSelectedTeams.isEmpty()) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_TEAMS_KEY)
+                && mSelectedTeams.isEmpty()) {
             Parcelable[] parcelables = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
             for (Parcelable parcelable : parcelables) {
                 mSelectedTeams.add((Team) parcelable);
