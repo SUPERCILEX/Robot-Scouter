@@ -31,7 +31,6 @@ import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
@@ -67,16 +66,23 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     private MenuItem mEditTeamDetailsItem;
     private MenuItem mDeleteItem;
 
-    private MenuItem mSignInItem;
-    private MenuItem mSignOutItem;
-    private MenuItem mDonateItem;
-    private MenuItem mLicencesItem;
-    private MenuItem mAboutItem;
+    private final Snackbar mSelectAllSnackBar;
 
     public TeamMenuHelper(Fragment fragment, RecyclerView recyclerView) {
         mFragment = fragment;
         mRecyclerView = recyclerView;
         mPermHandler = new PermissionRequestHandler(getIO_PERMS(), mFragment, this);
+
+        mSelectAllSnackBar = Snackbar.make(
+                mFragment.getView(), R.string.multiple_teams_selected, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.select_all, v -> {
+                    mSelectedTeams.clear();
+                    for (int i = 0; i < mAdapter.getItemCount(); i++) {
+                        mSelectedTeams.add(mAdapter.getItem(i));
+                    }
+                    updateState();
+                    notifyItemsChanged();
+                });
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
@@ -97,12 +103,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         mVisitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website);
         mEditTeamDetailsItem = menu.findItem(R.id.action_edit_team_details);
         mDeleteItem = menu.findItem(R.id.action_delete);
-
-        mSignInItem = menu.findItem(R.id.action_sign_in);
-        mSignOutItem = menu.findItem(R.id.action_sign_out);
-        mDonateItem = menu.findItem(R.id.action_donate);
-        mLicencesItem = menu.findItem(R.id.action_licenses);
-        mAboutItem = menu.findItem(R.id.action_about);
 
         updateState();
     }
@@ -189,7 +189,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     public void onTeamContextMenuRequested(Team team) {
         boolean hadNormalMenu = mSelectedTeams.isEmpty();
 
-        int oldSize = mSelectedTeams.size();
         if (mSelectedTeams.contains(team)) { // Team already selected
             mSelectedTeams.remove(team);
         } else {
@@ -211,21 +210,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 setTeamSpecificItemsVisible(true);
             } else {
                 setTeamSpecificItemsVisible(false);
-            }
-
-            if (newSize > oldSize && newSize > SINGLE_ITEM && mAdapter.getItemCount() > newSize) {
-                Snackbar.make(mFragment.getView(),
-                              R.string.multiple_teams_selected,
-                              Snackbar.LENGTH_LONG)
-                        .setAction(R.string.select_all, v -> {
-                            mSelectedTeams.clear();
-                            for (int i = 0; i < mAdapter.getItemCount(); i++) {
-                                mSelectedTeams.add(mAdapter.getItem(i));
-                            }
-                            updateState();
-                            notifyItemsChanged();
-                        })
-                        .show();
+                mSelectAllSnackBar.show();
             }
         }
     }
@@ -269,30 +254,18 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                     mFragment.getString(R.string.visit_team_website_on_tba, team.getNumber()));
             mVisitTeamWebsiteItem.setTitle(
                     mFragment.getString(R.string.visit_team_website, team.getNumber()));
+
+            mSelectAllSnackBar.dismiss();
         }
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
-        mDonateItem.setVisible(visible);
-        mLicencesItem.setVisible(visible);
-        mAboutItem.setVisible(visible);
-
         if (visible) {
             getFab().show();
             ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
                     .setTitle(R.string.app_name);
 
-            if (isFullUser()) {
-                mSignInItem.setVisible(false);
-                mSignOutItem.setVisible(true);
-            } else {
-                mSignInItem.setVisible(true);
-                mSignOutItem.setVisible(false);
-            }
             setTeamSpecificItemsVisible(false);
-        } else {
-            mSignInItem.setVisible(false);
-            mSignOutItem.setVisible(false);
         }
 
         updateToolbarColor(visible);

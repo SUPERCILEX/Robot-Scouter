@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group>
+    <!-- The group ids are needed for the line separator to appear. -->
+    <group android:id="@+id/one">
         <item
             android:id="@+id/action_sign_in"
             android:icon="@drawable/ic_sign_in_white_24dp"
             android:title="@string/sign_in" />
     </group>
 
-    <group>
+    <group android:id="@+id/two">
         <item
             android:id="@+id/action_donate"
             android:icon="@drawable/ic_donate_white_24dp"
