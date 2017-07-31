@@ -24,8 +24,8 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
   sed -i "s/\(FirebaseCrashVersionCode=\).*\$/\1${VERSION_CODE}/" gradle.properties
   ./gradlew firebaseUploadArchivedProguardMapping
 
-  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-155.0.0-linux-x86_64.tar.gz
-  tar xf google-cloud-sdk-155.0.0-linux-x86_64.tar.gz
+  wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-164.0.0-linux-x86_64.tar.gz
+  tar xf google-cloud-sdk-164.0.0-linux-x86_64.tar.gz
   echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
   ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
   ./google-cloud-sdk/bin/gcloud alpha firebase test android run --project robot-scouter-app --app app-release.apk \
