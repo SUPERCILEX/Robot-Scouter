@@ -41,7 +41,7 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int, name: String, value: T)
             return result
         }
 
-        override fun toString(): String = "${super.toString()}, unit=$unit" // ktlint-disable
+        override fun toString(): String = "${super.toString()}, unit=$unit"
     }
 
     class Stopwatch(name: String = "", value: kotlin.collections.List<Long>? = emptyList()) :
@@ -78,7 +78,7 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int, name: String, value: T)
             return result
         }
 
-        override fun toString(): String = "${super.toString()}, selectedValueKey=$selectedValueKey" // ktlint-disable
+        override fun toString(): String = "${super.toString()}, selectedValueKey=$selectedValueKey"
     }
 
     @Exclude @get:Exclude @set:Exclude
