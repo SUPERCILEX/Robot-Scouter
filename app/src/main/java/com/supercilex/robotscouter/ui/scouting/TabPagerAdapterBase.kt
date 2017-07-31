@@ -87,7 +87,7 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
         notifyDataSetChanged()
         tabLayout.addOnTabSelectedListener(this)
 
-        if (!keys.isEmpty()) {
+        if (keys.isNotEmpty()) {
             if (TextUtils.isEmpty(currentTabKey)) {
                 currentTabKey = keys[0]
             } else {

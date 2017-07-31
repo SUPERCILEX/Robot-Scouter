@@ -37,7 +37,6 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
             return@SnapshotParser Metric.Header(
                     "Sanity check failed. Please report: bit.ly/RSGitHub.").apply { ref = snapshot.ref }
 
-
     val name = snapshot.child(FIREBASE_NAME).getValue(String::class.java) ?: ""
     val value = snapshot.child(FIREBASE_VALUE)
 

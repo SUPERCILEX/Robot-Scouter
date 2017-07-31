@@ -6,18 +6,12 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-enum class AsyncTaskExecutor : Executor {
-    INSTANCE;
-
+object AsyncTaskExecutor : Executor {
     private val service = Executors.newCachedThreadPool()
+
+    fun <TResult> execute(callable: Callable<TResult>): Task<TResult> = Tasks.call(this, callable)
 
     override fun execute(runnable: Runnable) {
         service.submit(runnable)
-    }
-
-    companion object {
-        fun <TResult> execute(callable: Callable<TResult>): Task<TResult> {
-            return Tasks.call(INSTANCE, callable)
-        }
     }
 }

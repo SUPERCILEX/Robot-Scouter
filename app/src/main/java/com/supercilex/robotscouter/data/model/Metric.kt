@@ -81,7 +81,6 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int, name: String, value: T)
         override fun toString(): String = "${super.toString()}, selectedValueKey=$selectedValueKey"
     }
 
-
     @Exclude @get:Exclude @set:Exclude
     lateinit var ref: DatabaseReference
 

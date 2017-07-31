@@ -12,7 +12,6 @@ open class CardListHelper(private val adapter: FirebaseRecyclerAdapter<*, *>,
 
         setBackground(viewHolder, position)
 
-
         if (hasSafeCorners) return
 
         recyclerView.post {

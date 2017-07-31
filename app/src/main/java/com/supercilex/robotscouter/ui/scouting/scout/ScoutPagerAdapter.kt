@@ -25,19 +25,19 @@ class ScoutPagerAdapter(fragment: LifecycleFragment,
             fragment.getString(R.string.title_scout_tab, count - position)
 
     override fun onChanged(newKeys: List<String>?) {
-        val hadTabs = !keys.isEmpty()
+        val hadTabs = keys.isNotEmpty()
         super.onChanged(newKeys)
         if (hadTabs && keys.isEmpty() && !isOffline() && fragment.isResumed) {
             ShouldDeleteTeamDialog.show(fragment.childFragmentManager, team)
         }
-        appBarViewHolder.setDeleteScoutMenuItemVisible(!keys.isEmpty())
+        appBarViewHolder.setDeleteScoutMenuItemVisible(keys.isNotEmpty())
     }
 
     fun deleteScout() {
         val index = keys.indexOf(currentTabKey)
         var newKey: String? = null
         if (keys.size > SINGLE_ITEM) {
-            newKey = if (keys.size - 1 > index) keys[index + 1] else keys[index - 1]
+            newKey = if (keys.lastIndex > index) keys[index + 1] else keys[index - 1]
         }
         com.supercilex.robotscouter.util.data.model.deleteScout(holder.ref.key, currentTabKey!!)
         currentTabKey = newKey

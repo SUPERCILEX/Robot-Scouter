@@ -83,7 +83,7 @@ fun Team.addTeam() {
     index.setValue(number, number)
 
     templatesListener.observeOnce(true).addOnSuccessListener { templates ->
-        if (!templates.isEmpty()) templateKey = templates[0].key
+        if (templates.isNotEmpty()) templateKey = templates[0].key
         forceUpdateTeam()
         forceRefresh()
     }
