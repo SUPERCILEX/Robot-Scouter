@@ -44,7 +44,8 @@ import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.getAdap
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
-public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
+public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback,
+        View.OnClickListener {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
     private final Fragment mFragment;
@@ -58,7 +59,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     private final DrawerLayout mDrawerLayout;
     private final Toolbar mToolbar;
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
-
 
     private boolean mIsMenuReady;
 
@@ -112,11 +112,8 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     @Override
     public void onClick(View view) {
-        if (areTeamsSelected()) {
-            resetMenu();
-        } else {
-            mDrawerLayout.openDrawer(GravityCompat.START);
-        }
+        if (areTeamsSelected()) resetMenu();
+        else mDrawerLayout.openDrawer(GravityCompat.START);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -286,11 +283,11 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
 
-        setUpIcon(visible);
+        setupIcon(visible);
         updateToolbarColor(visible);
     }
 
-    private void setUpIcon(boolean visible) {
+    private void setupIcon(boolean visible) {
         ActionBarDrawerToggle toggle = ((TeamListActivity) mActivity).getDrawerToggle();
         if (visible) {
             toggle.setDrawerIndicatorEnabled(true);

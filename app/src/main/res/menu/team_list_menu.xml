@@ -9,7 +9,6 @@
         android:id="@+id/action_sign_in"
         android:icon="@drawable/ic_sign_in_white_24dp"
         android:title="@string/sign_in"
-        android:visible="false"
         app:showAsAction="ifRoom" />
 
 </menu>

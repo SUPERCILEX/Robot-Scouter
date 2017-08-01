@@ -61,8 +61,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        val drawer = findViewById<NavigationView>(R.id.drawer)
-        drawer.setNavigationItemSelectedListener(this)
+        findViewById<NavigationView>(R.id.drawer).setNavigationItemSelectedListener(this)
 
         findViewById<View>(R.id.fab).setOnClickListener(this)
         addTeamPrompt
