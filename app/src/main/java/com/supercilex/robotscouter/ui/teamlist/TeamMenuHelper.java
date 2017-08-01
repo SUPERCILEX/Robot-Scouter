@@ -9,7 +9,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -36,24 +39,19 @@ import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
-public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
+public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback, View.OnClickListener {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
     private final Fragment mFragment;
+    private final AppCompatActivity mActivity;
     private final PermissionRequestHandler mPermHandler;
 
     private final List<Team> mSelectedTeams = new ArrayList<>();
 
-    /**
-     * Do not use.
-     * <p>
-     * When TeamMenuHelper is initialized, {@link View#findViewById(int)} returns null because
-     * setContentView has not yet been called in the Fragment's activity.
-     *
-     * @see #getFab()
-     */
-    private FloatingActionButton mFab;
+    private final FloatingActionButton mFab;
     private final RecyclerView mRecyclerView;
+    private final DrawerLayout mDrawerLayout;
+    private final Toolbar mToolbar;
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
 
@@ -70,9 +68,12 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     public TeamMenuHelper(Fragment fragment, RecyclerView recyclerView) {
         mFragment = fragment;
+        mActivity = ((AppCompatActivity) mFragment.getActivity());
         mRecyclerView = recyclerView;
+        mFab = mActivity.findViewById(R.id.fab);
+        mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
+        mToolbar = mFragment.getView().findViewById(R.id.toolbar);
         mPermHandler = new PermissionRequestHandler(getIO_PERMS(), mFragment, this);
-
         mSelectAllSnackBar = Snackbar.make(
                 mFragment.getView(), R.string.multiple_teams_selected, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.select_all, v -> {
@@ -83,14 +84,25 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                     updateState();
                     notifyItemsChanged();
                 });
+
+        mToolbar.setNavigationOnClickListener(this);
     }
 
     public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
         mAdapter = adapter;
     }
 
-    public boolean noItemsSelected() {
-        return mSelectedTeams.isEmpty();
+    public boolean areTeamsSelected() {
+        return !mSelectedTeams.isEmpty();
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (areTeamsSelected()) {
+            resetMenu();
+        } else {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -108,14 +120,16 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     private void updateState() {
-        if (!mSelectedTeams.isEmpty()) {
-            setNormalMenuItemsVisible(false);
-            setContextMenuItemsVisible(true);
-            if (mSelectedTeams.size() == SINGLE_ITEM) {
-                setTeamSpecificItemsVisible(true);
-            }
-            setToolbarTitle();
-        }
+        setNormalMenuItemsVisible(!areTeamsSelected());
+        setContextMenuItemsVisible(areTeamsSelected());
+        setTeamSpecificItemsVisible(mSelectedTeams.size() == SINGLE_ITEM);
+        updateToolbarTitle();
+    }
+
+    public void resetMenu() {
+        mSelectedTeams.clear();
+        updateState();
+        notifyItemsChanged();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -125,16 +139,16 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 exportTeams();
                 break;
             case R.id.action_share:
-                if (TeamSharer.Companion.shareTeams(mFragment.getActivity(), mSelectedTeams)) {
+                if (TeamSharer.Companion.shareTeams(mActivity, mSelectedTeams)) {
                     resetMenu();
                 }
                 break;
             case R.id.action_visit_tba_website:
-                TeamUtilsKt.visitTbaWebsite(team, mFragment.getContext());
+                TeamUtilsKt.visitTbaWebsite(team, mActivity);
                 resetMenu();
                 break;
             case R.id.action_visit_team_website:
-                TeamUtilsKt.visitTeamWebsite(team, mFragment.getContext());
+                TeamUtilsKt.visitTeamWebsite(team, mActivity);
                 resetMenu();
                 break;
             case R.id.action_edit_team_details:
@@ -144,9 +158,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 DeleteTeamDialog.Companion.show(
                         mFragment.getChildFragmentManager(), mSelectedTeams);
                 break;
-            case android.R.id.home:
-                resetMenu();
-                break;
             default:
                 return false;
         }
@@ -154,19 +165,12 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     public boolean onBackPressed() {
-        if (mSelectedTeams.isEmpty()) {
-            return false;
-        } else {
+        if (areTeamsSelected()) {
             resetMenu();
             return true;
+        } else {
+            return false;
         }
-    }
-
-    public void resetMenu() {
-        setContextMenuItemsVisible(false);
-        setNormalMenuItemsVisible(true);
-        mSelectedTeams.clear();
-        notifyItemsChanged();
     }
 
     public void saveState(Bundle outState) {
@@ -175,8 +179,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     public void restoreState(Bundle savedInstanceState) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_TEAMS_KEY)
-                && mSelectedTeams.isEmpty()) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_TEAMS_KEY)) {
             Parcelable[] parcelables = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY);
             for (Parcelable parcelable : parcelables) {
                 mSelectedTeams.add((Team) parcelable);
@@ -188,7 +191,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     public void onTeamContextMenuRequested(Team team) {
-        boolean hadNormalMenu = mSelectedTeams.isEmpty();
+        boolean hadNormalMenu = !areTeamsSelected();
 
         if (mSelectedTeams.contains(team)) { // Team already selected
             mSelectedTeams.remove(team);
@@ -196,16 +199,14 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
             mSelectedTeams.add(team);
         }
 
-        setToolbarTitle();
+        updateToolbarTitle();
 
         int newSize = mSelectedTeams.size();
         if (hadNormalMenu) {
-            setNormalMenuItemsVisible(false);
-            setContextMenuItemsVisible(true);
-            setTeamSpecificItemsVisible(true);
+            updateState();
             notifyItemsChanged();
         } else {
-            if (mSelectedTeams.isEmpty()) {
+            if (!areTeamsSelected()) {
                 resetMenu();
             } else if (newSize == SINGLE_ITEM) {
                 setTeamSpecificItemsVisible(true);
@@ -227,10 +228,10 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     public void onSelectedTeamRemoved(Team oldTeam) {
         mSelectedTeams.remove(oldTeam);
-        if (mSelectedTeams.isEmpty()) {
-            resetMenu();
+        if (areTeamsSelected()) {
+            updateState();
         } else {
-            setToolbarTitle();
+            resetMenu();
         }
     }
 
@@ -238,9 +239,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         mExportItem.setVisible(visible);
         mShareItem.setVisible(visible);
         mDeleteItem.setVisible(visible);
-        ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
-                .setDisplayHomeAsUpEnabled(visible);
-        if (visible) getFab().hide();
     }
 
     private void setTeamSpecificItemsVisible(boolean visible) {
@@ -252,9 +250,9 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
             Team team = mSelectedTeams.get(0);
 
             mVisitTbaWebsiteItem.setTitle(
-                    mFragment.getString(R.string.visit_team_website_on_tba, team.getNumber()));
+                    mActivity.getString(R.string.visit_team_website_on_tba, team.getNumber()));
             mVisitTeamWebsiteItem.setTitle(
-                    mFragment.getString(R.string.visit_team_website, team.getNumber()));
+                    mActivity.getString(R.string.visit_team_website, team.getNumber()));
 
             mSelectAllSnackBar.dismiss();
         }
@@ -262,56 +260,63 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     private void setNormalMenuItemsVisible(boolean visible) {
         if (visible) {
-            getFab().show();
-            ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
-                    .setTitle(R.string.app_name);
-
-            setTeamSpecificItemsVisible(false);
+            mFab.show();
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+            updateToolbarTitle();
+        } else {
+            mFab.hide();
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
 
+        setUpIcon(visible);
         updateToolbarColor(visible);
     }
 
-    private void updateToolbarColor(boolean visible) {
-        FragmentActivity activity = mFragment.getActivity();
+    private void setUpIcon(boolean visible) {
+        ActionBarDrawerToggle toggle = ((TeamListActivity) mActivity).getDrawerToggle();
+        if (visible) {
+            toggle.setDrawerIndicatorEnabled(true);
+        } else {
+            ActionBar actionBar = mActivity.getSupportActionBar();
 
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            toggle.setDrawerIndicatorEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void updateToolbarColor(boolean visible) {
         @ColorRes int oldColorPrimary = visible ? R.color.selected_toolbar : R.color.colorPrimary;
         @ColorRes int newColorPrimary = visible ? R.color.colorPrimary : R.color.selected_toolbar;
 
-        Toolbar toolbar = activity.findViewById(R.id.toolbar);
         animateColorChange(
-                mFragment.getContext(),
+                mActivity,
                 oldColorPrimary,
                 newColorPrimary,
-                animator -> toolbar.setBackgroundColor((int) animator.getAnimatedValue()));
+                animator -> mToolbar.setBackgroundColor((int) animator.getAnimatedValue()));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             @ColorRes int oldColorPrimaryDark = visible ? R.color.selected_status_bar : R.color.colorPrimaryDark;
             @ColorRes int newColorPrimaryDark = visible ? R.color.colorPrimaryDark : R.color.selected_status_bar;
 
             animateColorChange(
-                    mFragment.getContext(),
+                    mActivity,
                     oldColorPrimaryDark,
                     newColorPrimaryDark,
-                    animator -> activity.getWindow()
-                            .setStatusBarColor((int) animator.getAnimatedValue()));
+                    animator -> mDrawerLayout
+                            .setStatusBarBackgroundColor((int) animator.getAnimatedValue()));
         }
     }
 
-    private void setToolbarTitle() {
-        ((AppCompatActivity) mFragment.getActivity()).getSupportActionBar()
-                .setTitle(String.valueOf(mSelectedTeams.size()));
+    private void updateToolbarTitle() {
+        mActivity.getSupportActionBar().setTitle(
+                areTeamsSelected() ?
+                        String.valueOf(mSelectedTeams.size()) :
+                        mActivity.getString(R.string.app_name));
     }
 
     private void notifyItemsChanged() {
         notifyAllItemsChangedNoAnimation(mRecyclerView, mAdapter);
-    }
-
-    private FloatingActionButton getFab() {
-        if (mFab == null) {
-            mFab = mFragment.getActivity().findViewById(R.id.fab);
-        }
-        return mFab;
     }
 
     @Override

@@ -50,7 +50,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
                 if (dy > 0) {
                     // User scrolled down -> hide the FAB
                     fab.hide()
-                } else if (dy < 0 && menuHelper.noItemsSelected()) {
+                } else if (dy < 0 && !menuHelper.areTeamsSelected()) {
                     fab.show()
                 }
             }
@@ -65,10 +65,9 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
             } else {
                 adapter = TeamListAdapter(
                         snapshots, this, menuHelper, holder.selectedTeamKeyListener)
-                menuHelper.setAdapter(adapter)
                 recyclerView.adapter = adapter
-                menuHelper.restoreState(savedInstanceState)
-                savedInstanceState?.clear()
+                menuHelper.setAdapter(adapter)
+                menuHelper.restoreState(savedInstanceState); savedInstanceState?.clear()
             }
         })
 

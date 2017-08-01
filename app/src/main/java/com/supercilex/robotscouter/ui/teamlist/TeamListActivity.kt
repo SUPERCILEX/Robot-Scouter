@@ -9,7 +9,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -42,23 +41,23 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
     private val authHelper by lazy { AuthHelper(this) }
     private val addTeamPrompt by lazy { showCreateFirstTeamPrompt(this) }
 
+    val drawerToggle: ActionBarDrawerToggle by lazy {
+        ActionBarDrawerToggle(this,
+                drawerLayout,
+                findViewById(R.id.toolbar),
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close)
+    }
     private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_list)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        val toggle = ActionBarDrawerToggle(this,
-                drawerLayout,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
 
         val drawer = findViewById<NavigationView>(R.id.drawer)
         drawer.setNavigationItemSelectedListener(this)
