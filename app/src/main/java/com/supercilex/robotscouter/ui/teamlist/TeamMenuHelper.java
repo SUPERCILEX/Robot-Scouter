@@ -220,7 +220,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
             updateState();
             notifyItemsChanged();
         } else {
-            if (!areTeamsSelected()) {
+            if (!areTeamsSelected()) { // NOPMD
                 resetMenu();
             } else if (newSize == SINGLE_ITEM) {
                 setTeamSpecificItemsVisible(true);
