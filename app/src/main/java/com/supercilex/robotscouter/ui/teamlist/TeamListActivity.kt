@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -91,6 +93,17 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.team_list_menu, menu)
+        authHelper.initMenu(menu)
+        Handler().post { showSignInPrompt(this) }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_sign_in) {
+        authHelper.signIn(); true
+    } else false
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (authHelper.onActivityResult(requestCode, resultCode, data) && addTeamPrompt != null) {
@@ -115,10 +128,10 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_sign_in -> authHelper.signIn()
-            R.id.action_sign_out -> authHelper.signOut()
+            R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
             R.id.action_edit_templates -> TemplateEditorActivity.start(this)
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
+            R.id.action_sign_out -> authHelper.signOut()
             R.id.action_about -> AboutDialog.show(supportFragmentManager)
             R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
             else -> throw IllegalStateException()

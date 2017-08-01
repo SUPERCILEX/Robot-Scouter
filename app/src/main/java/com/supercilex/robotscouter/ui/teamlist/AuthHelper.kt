@@ -2,6 +2,8 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.content.Intent
 import android.support.design.widget.Snackbar
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
@@ -17,6 +19,7 @@ import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.transferUserData
+import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
@@ -26,8 +29,15 @@ import com.supercilex.robotscouter.util.user
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener {
     private val rootView: View = activity.findViewById(R.id.root)
 
+    private lateinit var signInMenuItem: MenuItem
+
     fun init(): Task<Nothing> =
             if (isSignedIn) Tasks.forResult(null) else signInAnonymously().continueWith { null }
+
+    fun initMenu(menu: Menu) {
+        signInMenuItem = menu.findItem(R.id.action_sign_in)
+        updateMenuState()
+    }
 
     fun signIn() = activity.startActivityForResult(
             AuthUI.getInstance().createSignInIntentBuilder()
@@ -51,6 +61,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                 FirebaseAuth.getInstance().signInAnonymously()
                 FirebaseAppIndex.getInstance().removeAll()
             }
+            .addOnSuccessListener(activity) { updateMenuState() }
 
     fun showSignInResolution() =
             Snackbar.make(rootView, R.string.sign_in_required, Snackbar.LENGTH_LONG)
@@ -62,10 +73,8 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
             val response: IdpResponse? = IdpResponse.fromResultIntent(data)
 
             if (resultCode == ResultCodes.OK) {
-                Snackbar.make(rootView,
-                        R.string.signed_in,
-                        Snackbar.LENGTH_LONG)
-                        .show()
+                Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
+                updateMenuState()
 
                 val firebaseUser: FirebaseUser = user!!
                 val user = User(
@@ -96,6 +105,10 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     }
 
     override fun onClick(v: View) = signIn()
+
+    private fun updateMenuState() {
+        signInMenuItem.isVisible = !isFullUser
+    }
 
     private companion object {
         const val RC_SIGN_IN = 100

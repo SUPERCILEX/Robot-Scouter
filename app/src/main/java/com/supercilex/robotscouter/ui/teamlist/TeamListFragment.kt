@@ -95,6 +95,8 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
 
     fun resetMenu() = menuHelper.resetMenu()
 
+    fun exportAllTeams() = menuHelper.exportAllTeams()
+
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) =

@@ -4,9 +4,14 @@
     <!-- The group ids are needed for the line separator to appear. -->
     <group android:id="@+id/one">
         <item
-            android:id="@+id/action_sign_in"
-            android:icon="@drawable/ic_sign_in_white_24dp"
-            android:title="@string/sign_in" />
+            android:id="@+id/action_export_all_teams"
+            android:icon="@drawable/ic_import_export_white_24dp"
+            android:title="@string/export_all_teams" />
+
+        <item
+            android:id="@+id/action_edit_templates"
+            android:icon="@drawable/ic_mode_edit_white_24dp"
+            android:title="@string/edit_templates" />
     </group>
 
     <group android:id="@+id/two">
@@ -15,17 +20,12 @@
             android:icon="@drawable/ic_donate_white_24dp"
             android:title="@string/donate" />
 
-        <item
-            android:id="@+id/action_edit_templates"
-            android:icon="@drawable/ic_mode_edit_white_24dp"
-            android:title="@string/edit_templates" />
-
+        <!-- TODO move everything below to settings -->
         <item
             android:id="@+id/action_about"
             android:icon="@drawable/ic_info_white_24dp"
             android:title="@string/about" />
 
-        <!-- TODO move to settings -->
         <item
             android:id="@+id/action_sign_out"
             android:icon="@drawable/ic_sign_out_white_24dp"

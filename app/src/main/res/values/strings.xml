@@ -51,7 +51,8 @@
     </plurals>
 
     <!-- Spreadsheet exporting -->
-    <string name="export_spreadsheet">Export spreadsheet</string>
+    <string name="export_teams">Export teams to spreadsheet</string>
+    <string name="export_all_teams">Export all teams</string>
     <plurals name="export_share_title">
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>
@@ -77,6 +78,7 @@
     <string name="unsupported_device">WARNING: you are using an unsupported device</string>
 
     <string name="sign_in">Sign in</string>
+    <string name="sign_in_rationale">Signing in lets you easily sync your data with other devices across your team.</string>
     <string name="sign_out">Sign out</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="anonymous_sign_in_failed">Anonymous sign in failed</string>

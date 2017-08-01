@@ -32,13 +32,13 @@ fun showCreateFirstTeamPrompt(activity: Activity): MaterialTapTargetPrompt? {
     return null
 }
 
-// TODO maybe make a BottomSheet that explains why the user should sign in
 fun showSignInPrompt(activity: Activity) {
     val appContext = activity.applicationContext
     if (hasShownAddTeamTutorial(appContext) && !hasShownSignInTutorial(appContext)) {
         MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
                 .setTarget(R.id.action_sign_in)
                 .setPrimaryText(R.string.sign_in)
+                .setSecondaryText(R.string.sign_in_rationale)
                 .setOnHidePromptListener(object : MaterialTapTargetPrompt.OnHidePromptListener by EmptyOnHidePromptListener {
                     override fun onHidePrompt(event: MotionEvent, tappedTarget: Boolean) {
                         setHasShownSignInTutorial(appContext, tappedTarget)
