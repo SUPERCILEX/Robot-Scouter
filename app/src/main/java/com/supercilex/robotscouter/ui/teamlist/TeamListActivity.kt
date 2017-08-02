@@ -37,7 +37,7 @@ import com.supercilex.robotscouter.util.ui.isInTabletMode
 @SuppressLint("GoogleAppIndexingApiWarning")
 class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, OnSuccessListener<Nothing?> {
-    private val teamListFragment by lazy {
+    val teamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
     private val authHelper by lazy { AuthHelper(this) }
@@ -152,8 +152,6 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
         val team = parseTeam(args)
 
         if (isInTabletMode(this)) {
-            teamListFragment.selectTeam(null)
-            teamListFragment.selectTeam(team)
             supportFragmentManager.beginTransaction()
                     .replace(R.id.scout_list, TabletScoutListFragment.newInstance(args))
                     .commit()
@@ -163,7 +161,6 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
             } else {
                 startActivity(ScoutActivity.createIntent(this, args))
             }
-            teamListFragment.selectTeam(null)
         }
 
         logSelectTeamEvent(team.number)

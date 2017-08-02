@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist
 import android.os.Bundle
 import android.view.View
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scout.AppBarViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scout.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.isInTabletMode
@@ -12,9 +13,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
         object : AppBarViewHolderBase(this, rootView, dataHolder.teamListener, onScoutingReadyTask.task) {
             init {
                 toolbar.inflateMenu(R.menu.scout)
-                toolbar.setOnMenuItemClickListener {
-                    this@TabletScoutListFragment.onOptionsItemSelected(it)
-                }
+                toolbar.setOnMenuItemClickListener { onOptionsItemSelected(it) }
                 initMenu(toolbar.menu)
             }
         }
@@ -34,6 +33,11 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
         }
     }
 
+    override fun onChanged(team: Team?) {
+        super.onChanged(team)
+        (activity as TeamListActivity).teamListFragment.selectTeam(team ?: return)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         hint?.visibility = View.GONE
@@ -41,6 +45,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
 
     override fun onDestroy() {
         super.onDestroy()
+        (activity as TeamListActivity).teamListFragment.selectTeam(null)
         hint?.visibility = View.VISIBLE
     }
 

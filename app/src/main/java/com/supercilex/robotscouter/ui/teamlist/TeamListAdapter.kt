@@ -50,25 +50,15 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     }
 
     override fun onChanged(teamKey: String?) {
-        if (TextUtils.isEmpty(teamKey)) {
-            if (!TextUtils.isEmpty(selectedTeamKey)) {
-                for (i in 0 until itemCount) {
-                    if (TextUtils.equals(selectedTeamKey, getItem(i).key)) {
-                        notifyItemChanged(i)
-                        break
-                    }
-                }
-            }
-        } else {
-            for (i in 0 until itemCount) {
-                if (TextUtils.equals(teamKey, getItem(i).key)) {
-                    notifyItemChanged(i)
-                    break
-                }
+        val oldKey = selectedTeamKey
+        selectedTeamKey = teamKey
+
+        for (i in 0 until itemCount) {
+            val key = getItem(i).key
+            if (TextUtils.equals(key, selectedTeamKey) || TextUtils.equals(key, oldKey)) {
+                notifyItemChanged(i)
             }
         }
-
-        selectedTeamKey = teamKey
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TeamViewHolder =
