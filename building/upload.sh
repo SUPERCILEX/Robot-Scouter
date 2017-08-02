@@ -32,5 +32,6 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH == 'master' ]; then
     --async --timeout=30m --max-depth 100 \
     --device model=sailfish,version=26 --device model=m0,version=18 \
     --device model=Nexus9,version=25 --device model=NexusLowRes,version=25 \
-    --robo-directives click:action_sign_in=,click:google_button=,team_number=2521
+    --robo-directives click:action_sign_in= --robo-directives click:google_button= \
+    --robo-directives text:team_number=2521
 fi
