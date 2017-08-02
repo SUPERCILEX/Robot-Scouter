@@ -5,6 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.NavigationView
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -29,22 +33,35 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
 import com.supercilex.robotscouter.util.ui.isInTabletMode
-import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectionListener, OnSuccessListener<Nothing?> {
-    private val teamListFragment: TeamListFragment by lazy {
+class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
+        TeamSelectionListener, OnSuccessListener<Nothing?> {
+    private val teamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
-    private val authHelper: AuthHelper by lazy { AuthHelper(this) }
-    private val addTeamPrompt: MaterialTapTargetPrompt? by lazy { showCreateFirstTeamPrompt(this) }
+    private val authHelper by lazy { AuthHelper(this) }
+    private val addTeamPrompt by lazy { showCreateFirstTeamPrompt(this) }
+
+    val drawerToggle: ActionBarDrawerToggle by lazy {
+        ActionBarDrawerToggle(this,
+                drawerLayout,
+                findViewById(R.id.toolbar),
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close)
+    }
+    private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.RobotScouter_NoActionBar)
+        setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_team_list)
         setSupportActionBar(findViewById(R.id.toolbar))
+
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+
+        findViewById<NavigationView>(R.id.drawer).setNavigationItemSelectedListener(this)
 
         findViewById<View>(R.id.fab).setOnClickListener(this)
         addTeamPrompt
@@ -76,24 +93,15 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.team_list, menu)
+        menuInflater.inflate(R.menu.team_list_menu, menu)
         authHelper.initMenu(menu)
         Handler().post { showSignInPrompt(this) }
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_sign_in -> authHelper.signIn()
-            R.id.action_sign_out -> authHelper.signOut()
-            R.id.action_edit_templates -> TemplateEditorActivity.start(this)
-            R.id.action_donate -> DonateDialog.show(supportFragmentManager)
-            R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
-            R.id.action_about -> AboutDialog.show(supportFragmentManager)
-            else -> return false
-        }
-        return true
-    }
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_sign_in) {
+        authHelper.signIn(); true
+    } else false
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -107,10 +115,6 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
         }
     }
 
-    override fun onBackPressed() {
-        if (!teamListFragment.onBackPressed()) super.onBackPressed()
-    }
-
     override fun onClick(v: View) {
         if (v.id == R.id.fab) {
             if (isSignedIn) {
@@ -118,6 +122,29 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, TeamSelectio
             } else {
                 authHelper.showSignInResolution()
             }
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
+            R.id.action_edit_templates -> TemplateEditorActivity.start(this)
+            R.id.action_donate -> DonateDialog.show(supportFragmentManager)
+            R.id.action_sign_out -> authHelper.signOut()
+            R.id.action_about -> AboutDialog.show(supportFragmentManager)
+            R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
+            else -> throw IllegalStateException()
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return false
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            if (!teamListFragment.onBackPressed()) super.onBackPressed()
         }
     }
 

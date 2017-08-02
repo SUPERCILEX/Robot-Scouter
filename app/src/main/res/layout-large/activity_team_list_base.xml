@@ -1,66 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.teamlist.TeamListActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".ui.teamlist.TeamListActivity"
+    tools:openDrawer="start">
 
-    <fragment
-        android:id="@+id/root"
-        android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:tag="TeamListFragment"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:elevation="@dimen/card_elevation"
-        android:outlineProvider="bounds"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/padding"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="UnusedAttribute" />
+        <fragment
+            android:id="@+id/root"
+            android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:tag="TeamListFragment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/scout_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="@dimen/card_elevation"
+            android:outlineProvider="bounds"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/padding"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="UnusedAttribute" />
 
-    <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
-        android:id="@+id/no_team_selected_hint"
-        style="@style/RobotScouter.Tutorial.NoContentHint"
-        android:text="@string/no_team_selected"
-        android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <FrameLayout
+            android:id="@+id/scout_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.33" />
+        <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
+            android:id="@+id/no_team_selected_hint"
+            style="@style/RobotScouter.Tutorial.NoContentHint"
+            android:text="@string/no_team_selected"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    <View
-        android:id="@+id/padding"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/card_elevation"
-        android:layout_marginLeft="@dimen/card_elevation"
-        app:layout_constraintStart_toEndOf="@+id/guideline" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.33" />
 
-</android.support.constraint.ConstraintLayout>
+        <View
+            android:id="@+id/padding"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/card_elevation"
+            android:layout_marginLeft="@dimen/card_elevation"
+            app:layout_constraintStart_toEndOf="@+id/guideline" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/team_list_drawer" />
+
+</android.support.v4.widget.DrawerLayout>

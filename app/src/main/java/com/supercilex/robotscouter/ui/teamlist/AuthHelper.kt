@@ -29,16 +29,14 @@ import com.supercilex.robotscouter.util.user
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener {
     private val rootView: View = activity.findViewById(R.id.root)
 
-    private var actionSignIn: MenuItem? = null
-    private var actionSignOut: MenuItem? = null
+    private lateinit var signInMenuItem: MenuItem
 
     fun init(): Task<Nothing> =
             if (isSignedIn) Tasks.forResult(null) else signInAnonymously().continueWith { null }
 
     fun initMenu(menu: Menu) {
-        actionSignIn = menu.findItem(R.id.action_sign_in)
-        actionSignOut = menu.findItem(R.id.action_sign_out)
-        toggleMenuSignIn(isFullUser)
+        signInMenuItem = menu.findItem(R.id.action_sign_in)
+        updateMenuState()
     }
 
     fun signIn() = activity.startActivityForResult(
@@ -63,7 +61,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                 FirebaseAuth.getInstance().signInAnonymously()
                 FirebaseAppIndex.getInstance().removeAll()
             }
-            .addOnSuccessListener(activity) { toggleMenuSignIn(false) }
+            .addOnSuccessListener(activity) { updateMenuState() }
 
     fun showSignInResolution() =
             Snackbar.make(rootView, R.string.sign_in_required, Snackbar.LENGTH_LONG)
@@ -75,11 +73,8 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
             val response: IdpResponse? = IdpResponse.fromResultIntent(data)
 
             if (resultCode == ResultCodes.OK) {
-                Snackbar.make(rootView,
-                        R.string.signed_in,
-                        Snackbar.LENGTH_LONG)
-                        .show()
-                toggleMenuSignIn(true)
+                Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
+                updateMenuState()
 
                 val firebaseUser: FirebaseUser = user!!
                 val user = User(
@@ -109,12 +104,11 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
         return false
     }
 
-    private fun toggleMenuSignIn(isSignedIn: Boolean) {
-        actionSignIn?.isVisible = !isSignedIn
-        actionSignOut?.isVisible = isSignedIn
-    }
-
     override fun onClick(v: View) = signIn()
+
+    private fun updateMenuState() {
+        signInMenuItem.isVisible = !isFullUser
+    }
 
     private companion object {
         const val RC_SIGN_IN = 100

@@ -38,6 +38,7 @@ fun showSignInPrompt(activity: Activity) {
         MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
                 .setTarget(R.id.action_sign_in)
                 .setPrimaryText(R.string.sign_in)
+                .setSecondaryText(R.string.sign_in_rationale)
                 .setOnHidePromptListener(object : MaterialTapTargetPrompt.OnHidePromptListener by EmptyOnHidePromptListener {
                     override fun onHidePrompt(event: MotionEvent, tappedTarget: Boolean) {
                         setHasShownSignInTutorial(appContext, tappedTarget)

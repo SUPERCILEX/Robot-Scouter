@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_export_spreadsheet"
+        android:id="@+id/action_export_teams"
         android:icon="@drawable/ic_import_export_white_24dp"
-        android:title="@string/export_spreadsheet"
+        android:title="@string/export_teams"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
