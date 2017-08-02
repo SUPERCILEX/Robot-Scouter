@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
 import org.apache.poi.ss.usermodel.Cell
@@ -20,7 +21,8 @@ import org.apache.poi.ss.usermodel.Workbook
 import java.util.HashMap
 
 class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(teams) {
-    private val progressMax = teams.size + EXTRA_OPS
+    private val progressMax =
+            teams.size + if (teams.size == SINGLE_ITEM) EXTRA_OPS_SINGLE else EXTRA_OPS_POLY
     private var currentProgress = 0
 
     private val notificationManager =
@@ -109,6 +111,9 @@ class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(te
     private fun createBaseHeaderFont(): Font = workbook.createFont().apply { bold = true }
 
     private companion object {
-        const val EXTRA_OPS = 4
+        /** Accounts for two load steps and one cleanup step. */
+        const val EXTRA_OPS_SINGLE = 3
+        /** Accounts for [EXTRA_OPS_SINGLE] and the average sheet step. */
+        const val EXTRA_OPS_POLY = 4
     }
 }
