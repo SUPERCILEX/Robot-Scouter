@@ -45,7 +45,6 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     private var selectedTeamKey: String? = null
 
     init {
-        onDataChanged()
         recyclerView.addOnScrollListener(preloader)
         selectedTeamKeyListener.observeForever(this)
     }
@@ -97,7 +96,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     override fun getPreloadItems(position: Int): List<Team> = Collections.singletonList(getItem(position))
 
     override fun onChildChanged(type: ChangeEventListener.EventType,
-                                snapshot: DataSnapshot?,
+                                snapshot: DataSnapshot,
                                 index: Int,
                                 oldIndex: Int) {
         if (type == ChangeEventListener.EventType.CHANGED) {
@@ -121,14 +120,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     }
 
     override fun onDataChanged() {
-        // There's quite a bit of funkiness going on here.
-        // When the class is initialized, if `Constants.sFirebaseTeams` has already been initialized
-        // then `onDataChanged` will be called synchronously. This causes problems because the
-        // super class will be initialized before we are meaning all our fields will be null
-        // including `noTeamsHint`. To get around this we check for nullability and then call
-        // `onDataChanged` in our constructor so we can handle the state correctly
-        @Suppress("UNNECESSARY_SAFE_CALL")
-        noTeamsHint?.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
+        noTeamsHint.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
     }
 
     override fun cleanup() {
