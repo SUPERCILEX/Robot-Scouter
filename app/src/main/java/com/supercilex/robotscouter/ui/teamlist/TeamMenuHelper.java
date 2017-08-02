@@ -38,6 +38,7 @@ import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.getAdapterItems;
@@ -61,6 +62,8 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
     private boolean mIsMenuReady;
+
+    private MenuItem mSignInItem;
 
     private MenuItem mExportItem;
     private MenuItem mShareItem;
@@ -89,9 +92,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
                 mFragment.getView(), R.string.multiple_teams_selected, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.select_all, v -> {
                     mSelectedTeams.clear();
-                    for (int i = 0; i < mAdapter.getItemCount(); i++) {
-                        mSelectedTeams.add(mAdapter.getItem(i));
-                    }
+                    mSelectedTeams.addAll(getAdapterItems(mAdapter));
                     updateState();
                     notifyItemsChanged();
                 });
@@ -120,6 +121,8 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         mIsMenuReady = true;
         inflater.inflate(R.menu.team_options, menu);
 
+        mSignInItem = menu.findItem(R.id.action_sign_in);
+
         mExportItem = menu.findItem(R.id.action_export_teams);
         mShareItem = menu.findItem(R.id.action_share);
         mVisitTbaWebsiteItem = menu.findItem(R.id.action_visit_tba_website);
@@ -131,15 +134,20 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     private void updateState() {
-        setNormalMenuItemsVisible(!areTeamsSelected());
-        setContextMenuItemsVisible(areTeamsSelected());
-        setTeamSpecificItemsVisible(mSelectedTeams.size() == SINGLE_ITEM);
-        updateToolbarTitle();
+        if (areTeamsSelected()) {
+            setNormalMenuItemsVisible(false);
+            setContextMenuItemsVisible(true);
+            setTeamSpecificItemsVisible(mSelectedTeams.size() == SINGLE_ITEM);
+            updateToolbarTitle();
+        }
     }
 
     public void resetMenu() {
         mSelectedTeams.clear();
-        updateState();
+        setNormalMenuItemsVisible(true);
+        setContextMenuItemsVisible(false);
+        setTeamSpecificItemsVisible(false);
+        updateToolbarTitle();
         mSelectAllSnackBar.dismiss();
         initSnackBar();
         notifyItemsChanged();
@@ -274,6 +282,8 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     private void setNormalMenuItemsVisible(boolean visible) {
+        mSignInItem.setVisible(visible && !isFullUser());
+
         if (visible) {
             mFab.show();
             mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
