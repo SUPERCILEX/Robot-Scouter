@@ -10,15 +10,15 @@ buildscript {
         kotlinVersion = '1.2-M1'
         supportLibVersion = '26.0.0'
         playServicesVersion = '11.0.4'
-        archVersion = '1.0.0-alpha5'
-        firebaseUiVersion = '64aa90eee6'
+        archVersion = '1.0.0-alpha8'
+        firebaseUiVersion = '928a074e67'
         leakCanaryVersion = '1.5.1'
         retrofitVersion = '2.3.0'
-        glideVersion = '4.0.0-RC1'
+        glideVersion = '4.0.0'
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha8'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha9'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.1.0'
         classpath('com.google.firebase:firebase-plugins:1.1.0-alpha1') {

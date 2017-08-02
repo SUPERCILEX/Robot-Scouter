@@ -18,11 +18,9 @@
 -dontwarn okio.**
 -dontwarn okhttp3.**
 
-# Play services
--dontnote com.google.android.gms.internal.**
-
 # Other
--dontnote com.twitter.sdk.android.**
+-dontnote com.google.**
+-dontnote com.facebook.**
 
 # Apache POI
 -dontwarn org.apache.**

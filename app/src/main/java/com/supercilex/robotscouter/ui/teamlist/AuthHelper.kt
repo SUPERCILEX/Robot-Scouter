@@ -15,10 +15,10 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.client.AccountMergeService
 import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
 import com.supercilex.robotscouter.util.data.model.add
-import com.supercilex.robotscouter.util.data.model.transferUserData
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
@@ -44,7 +44,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                     .setAvailableProviders(ALL_PROVIDERS)
                     .setLogo(R.drawable.ic_logo)
                     .setPrivacyPolicyUrl("https://supercilex.github.io/Robot-Scouter/privacy-policy/")
-                    .setIsAccountLinkingEnabled(true)
+                    .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
                     .build(),
             RC_SIGN_IN)
 
@@ -76,11 +76,8 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                 Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
                 updateMenuState()
 
-                val firebaseUser: FirebaseUser = user!!
-                val user = User(
-                        uid!!, firebaseUser.email, firebaseUser.displayName, firebaseUser.photoUrl)
-                user.add()
-                response?.let { transferUserData(it.prevUid) }
+                val user: FirebaseUser = user!!
+                User(uid!!, user.email, user.displayName, user.photoUrl).add()
 
                 logLoginEvent()
 

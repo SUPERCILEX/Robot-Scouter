@@ -116,6 +116,8 @@
 
         <service android:name=".data.client.spreadsheet.ExportService" />
 
+        <service android:name=".data.client.AccountMergeService" />
+
         <service
             android:name=".data.client.DownloadTeamDataJob21"
             android:permission="android.permission.BIND_JOB_SERVICE" />
