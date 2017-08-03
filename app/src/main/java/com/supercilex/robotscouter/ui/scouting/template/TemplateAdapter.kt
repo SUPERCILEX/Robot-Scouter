@@ -17,7 +17,6 @@ import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
-import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.CheckboxTemplateViewHolder
@@ -26,6 +25,7 @@ import com.supercilex.robotscouter.ui.scouting.template.viewholder.EditTextTempl
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.HeaderTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.SpinnerTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.StopwatchTemplateViewHolder
+import com.supercilex.robotscouter.util.ui.CardListHelper
 
 class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                       manager: FragmentManager,

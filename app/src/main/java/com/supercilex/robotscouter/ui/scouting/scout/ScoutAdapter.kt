@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.TEXT
-import com.supercilex.robotscouter.ui.CardListHelper
 import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.CheckboxViewHolder
@@ -24,6 +23,7 @@ import com.supercilex.robotscouter.ui.scouting.scout.viewholder.EditTextViewHold
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.HeaderViewHolder
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.SpinnerViewHolder
 import com.supercilex.robotscouter.ui.scouting.scout.viewholder.StopwatchViewHolder
+import com.supercilex.robotscouter.util.ui.CardListHelper
 
 class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                    manager: FragmentManager,

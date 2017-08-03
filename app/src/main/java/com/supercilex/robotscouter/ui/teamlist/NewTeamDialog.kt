@@ -8,9 +8,9 @@ import android.view.View
 import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.isNumber
+import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
 
 class NewTeamDialog : KeyboardDialogBase() {
     private val rootView: View by lazy { View.inflate(context, R.layout.dialog_new_team, null) }

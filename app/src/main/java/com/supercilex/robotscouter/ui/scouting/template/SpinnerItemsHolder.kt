@@ -5,9 +5,9 @@ import android.os.Bundle
 import com.firebase.ui.database.ClassSnapshotParser
 import com.firebase.ui.database.FirebaseArray
 import com.firebase.ui.database.ObservableSnapshotArray
-import com.supercilex.robotscouter.ui.ViewModelBase
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getRef
 
 class SpinnerItemsHolder(app: Application) : ViewModelBase<Bundle>(app) {

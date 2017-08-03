@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui
+package com.supercilex.robotscouter.util.data.model
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
@@ -12,10 +12,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
-import com.supercilex.robotscouter.util.data.model.addTeam
-import com.supercilex.robotscouter.util.data.model.parseTeam
-import com.supercilex.robotscouter.util.data.model.toBundle
-import com.supercilex.robotscouter.util.data.model.updateTeam
+import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.teamsListener
 
 class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),

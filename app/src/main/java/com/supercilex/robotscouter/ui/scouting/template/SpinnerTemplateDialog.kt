@@ -18,12 +18,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.ui.CardListHelper
-import com.supercilex.robotscouter.ui.LifecycleDialogFragment
 import com.supercilex.robotscouter.ui.scouting.template.viewholder.SpinnerItemViewHolder
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.data.getRefBundle
 import com.supercilex.robotscouter.util.data.ref
+import com.supercilex.robotscouter.util.ui.CardListHelper
+import com.supercilex.robotscouter.util.ui.LifecycleDialogFragment
 import com.supercilex.robotscouter.util.ui.create
 import com.supercilex.robotscouter.util.ui.getHighestIntPriority
 import com.supercilex.robotscouter.util.ui.show

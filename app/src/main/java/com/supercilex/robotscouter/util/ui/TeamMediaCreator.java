@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui;
+package com.supercilex.robotscouter.util.ui;
 
 import android.Manifest;
 import android.app.Activity;
@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 
 import java.io.File;
 import java.io.IOException;

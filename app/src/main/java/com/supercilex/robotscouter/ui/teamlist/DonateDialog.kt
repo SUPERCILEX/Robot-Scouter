@@ -25,7 +25,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.ManualDismissDialog
+import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.uid
 import java.lang.ref.WeakReference
 

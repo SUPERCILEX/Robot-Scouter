@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui
+package com.supercilex.robotscouter.util.ui
 
 import android.support.v7.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerAdapter

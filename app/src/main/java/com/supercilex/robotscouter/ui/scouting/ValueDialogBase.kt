@@ -8,8 +8,8 @@ import android.view.View
 import android.widget.EditText
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.util.data.getRef
+import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
 
 abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
     private val rootView: View by lazy { View.inflate(context, R.layout.dialog_value, null) }

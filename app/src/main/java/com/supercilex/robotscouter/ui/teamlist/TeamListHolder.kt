@@ -6,7 +6,7 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.ui.ViewModelBase
+import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.teamsListener
 
 class TeamListHolder(app: Application) : ViewModelBase<Bundle?>(app) {

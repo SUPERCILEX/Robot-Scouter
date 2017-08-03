@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.ui
+package com.supercilex.robotscouter.util.data
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel

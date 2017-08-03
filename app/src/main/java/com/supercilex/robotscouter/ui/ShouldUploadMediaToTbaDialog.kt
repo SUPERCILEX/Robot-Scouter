@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.setShouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.util.data.shouldAskToUploadMediaToTba
+import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.create
 
 class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickListener {

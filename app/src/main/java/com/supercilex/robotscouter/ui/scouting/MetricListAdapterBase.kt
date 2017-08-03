@@ -9,7 +9,7 @@ import com.firebase.ui.database.ObservableSnapshotArray
 import com.supercilex.robotscouter.data.model.HEADER
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
-import com.supercilex.robotscouter.ui.CardListHelper
+import com.supercilex.robotscouter.util.ui.CardListHelper
 
 abstract class MetricListAdapterBase(metrics: ObservableSnapshotArray<Metric<*>>,
                                      private val manager: FragmentManager,

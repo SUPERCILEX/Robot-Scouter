@@ -19,19 +19,19 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
-import com.supercilex.robotscouter.ui.TeamHolder
-import com.supercilex.robotscouter.ui.TeamMediaCreator
 import com.supercilex.robotscouter.ui.TeamSharer
 import com.supercilex.robotscouter.ui.scouting.template.TemplateEditorActivity
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabKey
+import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.viewAction
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logEditTemplateEvent
+import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 
 abstract class ScoutListFragmentBase : LifecycleFragment(),
         Observer<Team>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {

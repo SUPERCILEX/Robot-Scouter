@@ -31,10 +31,10 @@ import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
-import com.supercilex.robotscouter.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdateTeam
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
+import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 
 abstract class AppBarViewHolderBase protected constructor(private val fragment: LifecycleFragment,
                                                           rootView: View,

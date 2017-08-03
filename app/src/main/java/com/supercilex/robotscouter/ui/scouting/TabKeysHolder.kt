@@ -7,7 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import com.supercilex.robotscouter.ui.ViewModelBase
+import com.supercilex.robotscouter.util.data.ViewModelBase
 
 class TabKeysHolder(app: Application) : ViewModelBase<DatabaseReference>(app), ValueEventListener {
     val keysListener = MutableLiveData<List<String>>()
