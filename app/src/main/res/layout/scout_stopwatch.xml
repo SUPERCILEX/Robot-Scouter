@@ -7,10 +7,11 @@
 
     <android.support.text.emoji.widget.EmojiAppCompatTextView
         android:id="@+id/name"
-        style="@style/RobotScouter.Text"
+        style="@style/TextAppearance.AppCompat"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textIsSelectable="false"
+        android:textSize="@dimen/text_size_normal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/stopwatch"
         app:layout_constraintTop_toTopOf="parent"

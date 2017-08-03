@@ -6,11 +6,12 @@
 
     <CheckBox
         android:id="@+id/name"
-        style="@style/RobotScouter.Text"
+        style="@style/TextAppearance.AppCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-7dp"
         android:layout_marginLeft="-7dp"
+        android:textSize="@dimen/text_size_normal"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="NegativeMargin"
         tools:text="Example" />

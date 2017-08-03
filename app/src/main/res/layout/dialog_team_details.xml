@@ -50,7 +50,7 @@
 
             <android.support.text.emoji.widget.EmojiAppCompatTextView
                 android:id="@+id/name"
-                style="@style/RobotScouter.Text"
+                style="@style/TextAppearance.AppCompat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/spacing_large"

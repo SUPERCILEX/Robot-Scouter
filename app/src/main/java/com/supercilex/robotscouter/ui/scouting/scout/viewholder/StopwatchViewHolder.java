@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -65,6 +67,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                                         false);
         manager.setInitialPrefetchItemCount(5);
         mCycles.setLayoutManager(manager);
+        new GravitySnapHelper(Gravity.START).attachToRecyclerView(mCycles);
         mCycles.setAdapter(new Adapter());
 
         Timer timer = TIMERS.get(getMetric());

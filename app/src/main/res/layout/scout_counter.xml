@@ -6,7 +6,7 @@
 
     <android.support.text.emoji.widget.EmojiAppCompatTextView
         android:id="@+id/name"
-        style="@style/RobotScouter.MainListItemView"
+        style="@style/RobotScouter.ListItemNameInLinearLayout"
         android:textIsSelectable="false"
         android:textSize="@dimen/text_size_normal"
         tools:text="Example" />
