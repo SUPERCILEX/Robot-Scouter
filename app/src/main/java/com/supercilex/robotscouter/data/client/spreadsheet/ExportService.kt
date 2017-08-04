@@ -256,7 +256,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         } else {
             workbook = XSSFWorkbook()
         }
-        cache.setWorkbook(workbook)
+        cache.workbook = workbook
 
         val averageSheet = fun(): Sheet? {
             return if (cache.teams.size > SINGLE_ITEM) {

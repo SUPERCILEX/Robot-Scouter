@@ -35,7 +35,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 this,
                 itemTouchCallback)
     }
-    private val itemTouchCallback by lazy { TemplateItemTouchCallback(recyclerView) }
+    private val itemTouchCallback by lazy { TemplateItemTouchCallback<Metric<*>>(recyclerView) }
     private val fam: FloatingActionMenu by lazy {
         parentFragment.view!!.findViewById<FloatingActionMenu>(R.id.fab_menu)
     }
@@ -53,8 +53,8 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
-        itemTouchCallback.setItemTouchHelper(itemTouchHelper)
-        itemTouchCallback.setAdapter(adapter)
+        itemTouchCallback.itemTouchHelper = itemTouchHelper
+        itemTouchCallback.adapter = adapter
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

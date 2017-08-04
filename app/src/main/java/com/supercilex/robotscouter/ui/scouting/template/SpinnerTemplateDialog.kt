@@ -36,15 +36,17 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
     private val holder by lazy { ViewModelProviders.of(this).get(SpinnerItemsHolder::class.java) }
 
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
-    private val itemTouchCallback: TemplateItemTouchCallback by lazy {
-        TemplateItemTouchCallback(recyclerView)
-    }
+    private val itemTouchCallback by lazy { TemplateItemTouchCallback<String>(recyclerView) }
     private val adapter: FirebaseRecyclerAdapter<String, SpinnerItemViewHolder> by lazy {
         object : FirebaseRecyclerAdapter<String, SpinnerItemViewHolder>(
                 holder.spinnerItems,
                 R.layout.scout_template_spinner_item,
                 SpinnerItemViewHolder::class.java,
                 this) {
+            override fun getItem(position: Int): String = itemTouchCallback.getItem(position)
+
+            override fun getRef(position: Int): DatabaseReference = itemTouchCallback.getRef(position)
+
             override fun populateViewHolder(viewHolder: SpinnerItemViewHolder,
                                             itemText: String,
                                             position: Int) {
@@ -94,12 +96,11 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         val touchHelper = ItemTouchHelper(itemTouchCallback)
-        itemTouchCallback.setItemTouchHelper(touchHelper)
+        itemTouchCallback.itemTouchHelper = touchHelper
         touchHelper.attachToRecyclerView(recyclerView)
 
         recyclerView.adapter = adapter
-        itemTouchCallback.setAdapter(adapter)
-        itemTouchCallback.setCardListHelper(cardListHelper)
+        itemTouchCallback.adapter = adapter
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)

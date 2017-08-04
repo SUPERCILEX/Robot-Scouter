@@ -40,7 +40,7 @@ class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(te
     private val metricCache = HashMap<Team, HashMap<Int, Metric<*>>>()
     private val formatStyles = HashMap<String, Short>()
 
-    private lateinit var workbook: Workbook
+    lateinit var workbook: Workbook
     val creationHelper: CreationHelper by lazy { workbook.creationHelper }
 
     val columnHeaderStyle: CellStyle? by lazy {
@@ -56,10 +56,6 @@ class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(te
                 fontHeightInPoints = 14.toShort()
             })
         }
-    }
-
-    fun setWorkbook(workbook: Workbook) {
-        this.workbook = workbook
     }
 
     fun getExportNotification(text: String): Notification =
