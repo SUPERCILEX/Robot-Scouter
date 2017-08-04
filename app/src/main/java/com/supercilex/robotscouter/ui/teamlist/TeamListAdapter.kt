@@ -74,7 +74,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                 recyclerView,
                 menuManager,
                 isTeamSelected(team),
-                menuManager.selectedTeams.isNotEmpty(),
+                menuManager.areTeamsSelected(),
                 TextUtils.equals(selectedTeamKey, team.key))
     }
 
@@ -89,6 +89,8 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                                 snapshot: DataSnapshot,
                                 index: Int,
                                 oldIndex: Int) {
+        super.onChildChanged(type, snapshot, index, oldIndex)
+        cardListHelper.onChildChanged(type, index)
         if (type == ChangeEventListener.EventType.CHANGED) {
             for (oldTeam in menuManager.selectedTeams) {
                 val team = getItem(index)
@@ -97,7 +99,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                     break
                 }
             }
-        } else if (type == ChangeEventListener.EventType.REMOVED && !menuManager.selectedTeams.isEmpty()) {
+        } else if (type == ChangeEventListener.EventType.REMOVED && menuManager.areTeamsSelected()) {
             val tmpTeams = getAdapterItems(this)
             for (oldTeam in menuManager.selectedTeams) {
                 if (!tmpTeams.contains(oldTeam)) { // We found the deleted item
@@ -106,7 +108,6 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                 }
             }
         }
-        super.onChildChanged(type, snapshot, index, oldIndex)
     }
 
     override fun onDataChanged() {

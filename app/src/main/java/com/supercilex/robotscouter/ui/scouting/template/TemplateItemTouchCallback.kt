@@ -25,7 +25,6 @@ class TemplateItemTouchCallback(private val rootView: View) :
 
     private var startScrollPosition = RecyclerView.NO_POSITION
     private var scrollToPosition = RecyclerView.NO_POSITION
-    private var deletedPosition = RecyclerView.NO_POSITION
     private var isItemMoving = false
 
     fun setItemTouchHelper(itemTouchHelper: ItemTouchHelper) {
@@ -67,13 +66,6 @@ class TemplateItemTouchCallback(private val rootView: View) :
             return type == ChangeEventListener.EventType.MOVED
         } else if (type == ChangeEventListener.EventType.ADDED && index == scrollToPosition) {
             recyclerView.scrollToPosition(scrollToPosition)
-        } else if (type == ChangeEventListener.EventType.REMOVED && index == deletedPosition) {
-            recyclerView.post {
-                val viewHolder: RecyclerView.ViewHolder? =
-                        recyclerView.findViewHolderForLayoutPosition(index - 1)
-                viewHolder?.let { cardListHelper.onBind(it) }
-                deletedPosition = RecyclerView.NO_POSITION
-            }
         }
         return true
     }
@@ -100,7 +92,6 @@ class TemplateItemTouchCallback(private val rootView: View) :
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
-        deletedPosition = position
         val deletedRef: DatabaseReference = adapter.getRef(position)
 
         viewHolder.itemView.clearFocus() // Needed to prevent the item from being re-added
@@ -109,10 +100,7 @@ class TemplateItemTouchCallback(private val rootView: View) :
                 deletedRef.removeValue()
 
                 Snackbar.make(rootView, R.string.deleted, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.undo) {
-                            deletedRef.setValue(snapshot.value, position)
-                            deletedPosition = RecyclerView.NO_POSITION
-                        }
+                        .setAction(R.string.undo) { deletedRef.setValue(snapshot.value, position) }
                         .show()
             }
 
@@ -122,9 +110,9 @@ class TemplateItemTouchCallback(private val rootView: View) :
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
-        val startViewHolder: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(startScrollPosition)
-        startViewHolder?.let { cardListHelper.onBind(it) }
-        cardListHelper.onBind(viewHolder)
+        // We can't directly update the background because the header metric needs to update its padding
+        adapter.notifyItemChanged(startScrollPosition)
+        adapter.notifyItemChanged(viewHolder.layoutPosition)
 
         isItemMoving = false
         startScrollPosition = RecyclerView.NO_POSITION

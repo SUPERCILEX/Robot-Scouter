@@ -76,6 +76,8 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
                 if (itemTouchCallback.onChildChanged(type, index)) {
                     super.onChildChanged(type, snapshot, index, oldIndex)
                 }
+
+                cardListHelper.onChildChanged(type, index)
             }
         }
     }

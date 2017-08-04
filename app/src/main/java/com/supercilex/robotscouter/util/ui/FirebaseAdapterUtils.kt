@@ -11,11 +11,13 @@ fun <T> getAdapterItems(adapter: FirebaseRecyclerAdapter<T, *>): List<T> =
 fun getHighestIntPriority(snapshots: List<DataSnapshot>): Int =
         snapshots.map { ((it.priority ?: return@map 0) as Double).toInt() }.max() ?: 0
 
-fun notifyAllItemsChangedNoAnimation(recyclerView: RecyclerView, adapter: RecyclerView.Adapter<*>) {
+fun notifyItemsChangedNoAnimation(recyclerView: RecyclerView,
+                                  position: Int,
+                                  itemCount: Int = 1) {
     val animator = recyclerView.itemAnimator as SimpleItemAnimator
 
     animator.supportsChangeAnimations = false
-    adapter.notifyItemRangeChanged(0, adapter.itemCount + 1)
+    recyclerView.adapter.notifyItemRangeChanged(position, itemCount)
 
     recyclerView.post { animator.supportsChangeAnimations = true }
 }

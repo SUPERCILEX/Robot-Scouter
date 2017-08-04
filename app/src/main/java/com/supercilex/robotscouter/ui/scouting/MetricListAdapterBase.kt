@@ -4,8 +4,10 @@ import android.arch.lifecycle.LifecycleOwner
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
+import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.ObservableSnapshotArray
+import com.google.firebase.database.DataSnapshot
 import com.supercilex.robotscouter.data.model.HEADER
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
@@ -39,6 +41,14 @@ abstract class MetricListAdapterBase(metrics: ObservableSnapshotArray<Metric<*>>
 
     @MetricType
     override fun getItemViewType(position: Int): Int = getItem(position).type
+
+    override fun onChildChanged(type: ChangeEventListener.EventType,
+                                snapshot: DataSnapshot,
+                                index: Int,
+                                oldIndex: Int) {
+        super.onChildChanged(type, snapshot, index, oldIndex)
+        cardListHelper.onChildChanged(type, index)
+    }
 
     protected inner class ListHelper(hasSafeCorners: Boolean = false) :
             CardListHelper(this, recyclerView, hasSafeCorners) {

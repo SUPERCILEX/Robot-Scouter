@@ -1,12 +1,19 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.support.v7.widget.RecyclerView
+import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.supercilex.robotscouter.R
 
 open class CardListHelper(private val adapter: FirebaseRecyclerAdapter<*, *>,
                           private val recyclerView: RecyclerView,
                           private val hasSafeCorners: Boolean = false) {
+    fun onChildChanged(type: ChangeEventListener.EventType, index: Int) {
+        if (type == ChangeEventListener.EventType.REMOVED) {
+            notifyItemsChangedNoAnimation(recyclerView, index + if (index != 0) -1 else 0)
+        }
+    }
+
     fun onBind(viewHolder: RecyclerView.ViewHolder) {
         val position: Int = viewHolder.layoutPosition
 

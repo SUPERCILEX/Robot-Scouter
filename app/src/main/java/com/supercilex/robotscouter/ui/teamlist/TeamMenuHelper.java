@@ -42,7 +42,7 @@ import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.getAdapterItems;
-import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyAllItemsChangedNoAnimation;
+import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
 public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback,
@@ -352,7 +352,7 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
     }
 
     private void notifyItemsChanged() {
-        notifyAllItemsChangedNoAnimation(mRecyclerView, mAdapter);
+        notifyItemsChangedNoAnimation(mRecyclerView, 0, mRecyclerView.getAdapter().getItemCount());
     }
 
     @Override

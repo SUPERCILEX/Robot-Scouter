@@ -67,7 +67,7 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
     }
 
     override fun onChildChanged(type: ChangeEventListener.EventType,
-                                snapshot: DataSnapshot?,
+                                snapshot: DataSnapshot,
                                 index: Int,
                                 oldIndex: Int) {
         if (callback.onChildChanged(type, index)) {
