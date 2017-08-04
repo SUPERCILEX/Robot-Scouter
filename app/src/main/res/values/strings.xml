@@ -110,8 +110,8 @@
     <string name="title_activity_scout">Scout</string>
     <string name="title_scout_tab">Scout %d</string>
     <string name="offline_reassurance">Offline. Data will be saved</string>
-    <string name="should_delete_team">Delete team?</string>
     <string name="should_delete_team_message">You have deleted the last scout for team %s.</string>
+    <string name="should_delete_team_action">Delete team</string>
 
     <string name="add_scout">Add scout/team</string>
     <string name="add_media">Add media</string>

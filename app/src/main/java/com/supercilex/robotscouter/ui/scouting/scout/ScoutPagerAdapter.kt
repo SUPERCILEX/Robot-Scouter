@@ -1,12 +1,14 @@
 package com.supercilex.robotscouter.ui.scouting.scout
 
 import android.arch.lifecycle.LifecycleFragment
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.model.deleteTeam
 import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
 import com.supercilex.robotscouter.util.isOffline
 
@@ -28,7 +30,11 @@ class ScoutPagerAdapter(fragment: LifecycleFragment,
         val hadTabs = keys.isNotEmpty()
         super.onChanged(newKeys)
         if (hadTabs && keys.isEmpty() && !isOffline() && fragment.isResumed) {
-            ShouldDeleteTeamDialog.show(fragment.childFragmentManager, team)
+            Snackbar.make(fragment.view!!,
+                          fragment.getString(R.string.should_delete_team_message, team),
+                          Snackbar.LENGTH_LONG)
+                    .setAction(R.string.should_delete_team_action) { team.deleteTeam() }
+                    .show()
         }
         appBarViewHolder.setDeleteScoutMenuItemVisible(keys.isNotEmpty())
     }
