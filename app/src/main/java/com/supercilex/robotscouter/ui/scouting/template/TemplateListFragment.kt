@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
+import com.github.clans.fab.FloatingActionMenu
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
 import com.supercilex.robotscouter.util.data.getTabKey
@@ -19,10 +20,17 @@ import com.supercilex.robotscouter.util.data.getTabKeyBundle
 
 class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPressedListener {
     private val rootView by lazy { View.inflate(context, R.layout.fragment_template_list, null) }
+    val fam: FloatingActionMenu by lazy { rootView.findViewById<FloatingActionMenu>(R.id.fab_menu) }
     private val pagerAdapter by lazy {
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
         val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
-        val adapter = TemplatePagerAdapter(this, tabLayout)
+        val adapter = object : TemplatePagerAdapter(this, tabLayout) {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                super.onTabSelected(tab)
+                fam.close(true)
+                fam.showMenuButton(true)
+            }
+        }
 
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
@@ -61,7 +69,7 @@ class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPr
 
     override fun onClick(v: View) = childFragmentManager.fragments
             .filterIsInstance<TemplateFragment>()
-            .filter { it.userVisibleHint }
+            .filter { pagerAdapter.currentTabKey == it.metricsRef.parent.key }
             .forEach { it.onClick(v) }
 
     override fun onBackPressed(): Boolean =

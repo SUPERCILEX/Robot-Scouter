@@ -7,7 +7,7 @@ import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 
-class TemplatePagerAdapter(fragment: LifecycleFragment, tabLayout: TabLayout) :
+open class TemplatePagerAdapter(fragment: LifecycleFragment, tabLayout: TabLayout) :
         TabPagerAdapterBase(fragment, tabLayout, templateIndicesRef, FIREBASE_TEMPLATES) {
     init {
         init()

@@ -25,7 +25,9 @@ import com.supercilex.robotscouter.util.data.model.parseTeam
 import com.supercilex.robotscouter.util.ui.getHighestIntPriority
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
-    override val metricsRef: DatabaseReference by lazy { getTemplateMetricsRef(getTabKey(arguments)!!) }
+    public override val metricsRef: DatabaseReference by lazy {
+        getTemplateMetricsRef(getTabKey(arguments)!!)
+    }
 
     override val adapter by lazy {
         TemplateAdapter(
@@ -36,9 +38,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 itemTouchCallback)
     }
     private val itemTouchCallback by lazy { TemplateItemTouchCallback<Metric<*>>(recyclerView) }
-    private val fam: FloatingActionMenu by lazy {
-        parentFragment.view!!.findViewById<FloatingActionMenu>(R.id.fab_menu)
-    }
+    private val fam: FloatingActionMenu by lazy { (parentFragment as TemplateListFragment).fam }
 
     private var hasAddedItem: Boolean = false
 
