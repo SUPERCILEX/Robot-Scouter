@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.annotation.Keep
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
@@ -158,11 +159,13 @@ class TeamViewHolder @Keep constructor(itemView: View) :
                                        team: Team): RequestBuilder<Drawable> = if (isItemSelected) {
             Glide.with(context)
                     .load(null)
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_check_circle_grey_144dp))
+                    .apply(RequestOptions.placeholderOf(ContextCompat.getDrawable(
+                            context, R.drawable.ic_check_circle_grey_56dp)))
         } else {
             Glide.with(context)
                     .load(team.media)
-                    .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_memory_grey_48dp))
+                    .apply(RequestOptions.circleCropTransform().error(ContextCompat.getDrawable(
+                            context, R.drawable.ic_memory_grey_48dp)))
         }
 
         private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE
