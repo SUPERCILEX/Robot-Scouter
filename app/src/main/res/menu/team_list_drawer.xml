@@ -11,7 +11,7 @@
         <item
             android:id="@+id/action_edit_templates"
             android:icon="@drawable/ic_mode_edit_white_24dp"
-            android:title="@string/edit_templates" />
+            android:title="@string/title_activity_template" />
     </group>
 
     <group android:id="@+id/two">
