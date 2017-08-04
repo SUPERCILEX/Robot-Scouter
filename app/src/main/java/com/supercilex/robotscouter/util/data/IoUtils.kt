@@ -15,7 +15,8 @@ fun createFile(prefix: String,
                suffix: String,
                parent: File,
                randomSeparator: String? = System.currentTimeMillis().toString()): File {
-    val tempFile = File(parent, "$prefix${if (randomSeparator == null) "" else "_$randomSeparator"}.$suffix")
+    val tempFile = File(
+            parent, "$prefix${if (randomSeparator == null) "" else "_$randomSeparator"}.$suffix")
     if (tempFile.createNewFile()) {
         return tempFile
     } else {

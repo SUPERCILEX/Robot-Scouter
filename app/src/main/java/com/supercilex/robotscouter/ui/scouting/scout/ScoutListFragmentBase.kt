@@ -35,7 +35,9 @@ import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 
 abstract class ScoutListFragmentBase : LifecycleFragment(),
         Observer<Team>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {
-    protected val rootView: View by lazy { View.inflate(context, R.layout.fragment_scout_list, null) }
+    protected val rootView: View by lazy {
+        View.inflate(context, R.layout.fragment_scout_list, null)
+    }
     protected abstract val viewHolder: AppBarViewHolderBase
 
     protected val dataHolder: TeamHolder by lazy { ViewModelProviders.of(this).get(TeamHolder::class.java) }

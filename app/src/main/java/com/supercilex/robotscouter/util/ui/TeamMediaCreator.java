@@ -59,19 +59,19 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     private static final List<String> PERMS;
     private static final String MEDIA_CREATOR_KEY = "media_creator";
 
-    private WeakReference<Fragment> mFragment;
-    private Team mTeam;
-    private PermissionRequestHandler mPermHandler;
-    private WeakReference<OnSuccessListener<Team>> mListener;
-    private String mPhotoPath;
-    private boolean mShouldUploadMediaToTba;
-
     static {
         List<String> perms = new ArrayList<>();
         perms.addAll(getIO_PERMS());
         perms.add(Manifest.permission.CAMERA);
         PERMS = Collections.unmodifiableList(perms);
     }
+
+    private WeakReference<Fragment> mFragment;
+    private Team mTeam;
+    private PermissionRequestHandler mPermHandler;
+    private WeakReference<OnSuccessListener<Team>> mListener;
+    private String mPhotoPath;
+    private boolean mShouldUploadMediaToTba;
 
     private TeamMediaCreator(Team team,
                              String photoPath,

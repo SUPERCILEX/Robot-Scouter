@@ -35,9 +35,9 @@ class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
         return AlertDialog.Builder(context)
                 .setTitle(R.string.confirm_action)
                 .setMessage(when (SINGLE_ITEM) {
-                    teams.size -> null
-                    else -> getString(R.string.caution_delete, deletedTeams)
-                })
+                                teams.size -> null
+                                else -> getString(R.string.caution_delete, deletedTeams)
+                            })
                 .setPositiveButton(R.string.delete, this)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()

@@ -60,8 +60,8 @@ class LinkReceiverActivity : AppCompatActivity() {
         val data = getScoutBundle(teams[0])
         if (isInTabletMode(this)) {
             startActivity(Intent(this, TeamListActivity::class.java)
-                    .putExtra(SCOUT_ARGS_KEY, data)
-                    .addNewDocumentFlags())
+                                  .putExtra(SCOUT_ARGS_KEY, data)
+                                  .addNewDocumentFlags())
         } else {
             startActivity(ScoutActivity.createIntent(this, data))
         }
@@ -79,5 +79,6 @@ class LinkReceiverActivity : AppCompatActivity() {
     private fun startTeamListActivityNoArgs() =
             startActivity(Intent(this, TeamListActivity::class.java).addNewDocumentFlags())
 
-    private fun showError() = Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
+    private fun showError() =
+            Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
 }

@@ -45,7 +45,7 @@ val TEAM_PARSER = SnapshotParser<Team> {
 }
 val SCOUT_PARSER = SnapshotParser<Scout> {
     Scout(it.child(FIREBASE_NAME).getValue(String::class.java),
-            it.child(FIREBASE_METRICS).children.map { METRIC_PARSER.parseSnapshot(it) })
+          it.child(FIREBASE_METRICS).children.map { METRIC_PARSER.parseSnapshot(it) })
 }
 private val QUERY_KEY = "query_key"
 

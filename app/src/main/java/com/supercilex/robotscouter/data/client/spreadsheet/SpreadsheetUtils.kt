@@ -40,7 +40,8 @@ val AVERAGEIF_FUNCTION: FreeRefFunction = object : FreeRefFunction {
                 while (i < args.size) {
                     val firstArg = args[i]
                     val secondArg = args[i + 1]
-                    val evaluate = evaluate(context.rowIndex, context.columnIndex, firstArg, secondArg)
+                    val evaluate =
+                            evaluate(context.rowIndex, context.columnIndex, firstArg, secondArg)
 
                     result = evaluate.numberValue
                     i += 2
@@ -151,5 +152,6 @@ fun showError(context: Context, e: Exception) {
     showToast(context, "${context.getString(R.string.fui_general_error)}\n\n${e.message}")
 }
 
-fun showToast(context: Context, message: String) =
-        Handler(Looper.getMainLooper()).post { Toast.makeText(context, message, Toast.LENGTH_LONG).show() }
+fun showToast(context: Context, message: String) = Handler(Looper.getMainLooper()).post {
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+}

@@ -83,7 +83,8 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
             TeamViewHolder.getTeamMediaRequestBuilder(isTeamSelected(team), fragment.context, team)
 
-    override fun getPreloadItems(position: Int): List<Team> = Collections.singletonList(getItem(position))
+    override fun getPreloadItems(position: Int): List<Team> =
+            Collections.singletonList(getItem(position))
 
     override fun onChildChanged(type: ChangeEventListener.EventType,
                                 snapshot: DataSnapshot,

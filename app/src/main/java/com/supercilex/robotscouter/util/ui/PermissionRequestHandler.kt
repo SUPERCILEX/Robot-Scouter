@@ -33,7 +33,8 @@ class PermissionRequestHandler(perms: List<String>,
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        if (requestCode == WRITE_RC && EasyPermissions.somePermissionPermanentlyDenied(fragment, perms)) {
+        if (requestCode == WRITE_RC
+                && EasyPermissions.somePermissionPermanentlyDenied(fragment, perms)) {
             AppSettingsDialog.Builder(fragment).build().show()
         }
     }

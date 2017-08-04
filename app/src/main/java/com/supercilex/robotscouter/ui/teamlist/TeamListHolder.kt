@@ -19,7 +19,8 @@ class TeamListHolder(app: Application) : ViewModelBase<Bundle?>(app) {
         teamsListener.observeForever(listener)
     }
 
-    fun onSaveInstanceState(outState: Bundle) = outState.putString(TEAM_KEY, selectedTeamKeyListener.value)
+    fun onSaveInstanceState(outState: Bundle) =
+            outState.putString(TEAM_KEY, selectedTeamKeyListener.value)
 
     fun selectTeam(team: Team?) {
         selectedTeamKeyListener.value = team?.key

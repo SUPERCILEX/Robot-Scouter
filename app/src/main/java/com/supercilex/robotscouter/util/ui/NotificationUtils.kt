@@ -18,7 +18,8 @@ fun initNotifications(context: Context) {
 
     context.getSystemService(NotificationManager::class.java).apply {
         createNotificationChannelGroups(Arrays.asList(
-                NotificationChannelGroup(EXPORT_GROUP, context.getString(R.string.export_group_name))))
+                NotificationChannelGroup(
+                        EXPORT_GROUP, context.getString(R.string.export_group_name))))
 
         createNotificationChannels(Arrays.asList(
                 getExportChannel(context),

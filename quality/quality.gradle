@@ -1,7 +1,8 @@
 apply plugin: 'checkstyle'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
-check.dependsOn 'ktlint', 'checkstyle', 'pmd'
+check.dependsOn 'checkstyle', 'pmd'
+// TODO add 'ktlint' once https://github.com/shyiko/ktlint/issues/70 is resolved
 
 def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"

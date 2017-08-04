@@ -10,7 +10,8 @@ import com.supercilex.robotscouter.util.ui.isInTabletMode
 
 class TabletScoutListFragment : ScoutListFragmentBase() {
     override val viewHolder: AppBarViewHolderBase by lazy {
-        object : AppBarViewHolderBase(this, rootView, dataHolder.teamListener, onScoutingReadyTask.task) {
+        object : AppBarViewHolderBase(
+                this, rootView, dataHolder.teamListener, onScoutingReadyTask.task) {
             init {
                 toolbar.inflateMenu(R.menu.scout)
                 toolbar.setOnMenuItemClickListener { onOptionsItemSelected(it) }

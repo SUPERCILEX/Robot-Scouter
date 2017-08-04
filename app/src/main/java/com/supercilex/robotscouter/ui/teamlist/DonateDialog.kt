@@ -113,7 +113,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
             if (result == BillingResponse.ITEM_ALREADY_OWNED) {
                 billingClient.queryPurchaseHistoryAsync(type) {
                     if (it.responseCode != BillingResponse.OK) {
-                        val ex = PurchaseException(it.responseCode,
+                        val ex = PurchaseException(
+                                it.responseCode,
                                 message = "Purchase fetch failed with code ${it.responseCode} and sku $sku")
                         FirebaseCrash.report(ex)
                         purchaseStartTask.setException(ex)
@@ -145,7 +146,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                 if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
                     consumption.setResult(purchaseToken)
                 } else {
-                    val ex = PurchaseException(resultCode,
+                    val ex = PurchaseException(
+                            resultCode,
                             message = "Consumption failed with code $resultCode and sku ${purchase.sku}")
                     FirebaseCrash.report(ex)
                     consumption.setException(ex)

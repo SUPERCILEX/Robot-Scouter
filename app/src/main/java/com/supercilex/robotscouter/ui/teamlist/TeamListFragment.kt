@@ -87,7 +87,7 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             menuHelper.onCreateOptionsMenu(menu, inflater)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = menuHelper.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
 
     fun selectTeam(team: Team?) = onHolderReadyTask.task.addOnSuccessListener { it.selectTeam(team) }
 

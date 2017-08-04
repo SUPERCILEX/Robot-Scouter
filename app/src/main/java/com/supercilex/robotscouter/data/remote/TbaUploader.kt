@@ -25,7 +25,8 @@ class TbaUploader private constructor(team: Team, context: Context) :
     private fun uploadToImgur() {
         val response: Response<JsonObject> = TbaTeamMediaApi.IMGUR_RETROFIT
                 .create(TbaTeamMediaApi::class.java)
-                .postToImgur(context.getString(R.string.imgur_client_id),
+                .postToImgur(
+                        context.getString(R.string.imgur_client_id),
                         team.toString(),
                         RequestBody.create(MediaType.parse("image/*"), File(team.media)))
                 .execute()

@@ -89,9 +89,7 @@ fun Team.addTeam() {
     }
 
     FirebaseUserActions.getInstance()
-            .end(Action.Builder(Action.Builder.ADD_ACTION)
-                    .setObject(toString(), deepLink)
-                    .build())
+            .end(Action.Builder(Action.Builder.ADD_ACTION).setObject(toString(), deepLink).build())
 }
 
 fun Team.updateTeam(newTeam: Team) {

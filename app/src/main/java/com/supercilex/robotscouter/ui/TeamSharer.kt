@@ -76,9 +76,9 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
 
             private fun getShareTemplateFromServer(to: File): String {
                 Tasks.await(FirebaseStorage.getInstance()
-                        .reference
-                        .child(SHARE_TEMPLATE_FILE_NAME)
-                        .getFile(to))
+                                    .reference
+                                    .child(SHARE_TEMPLATE_FILE_NAME)
+                                    .getFile(to))
                 return to.readText()
             }
         }).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
@@ -96,8 +96,9 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         }.addOnFailureListener {
             FirebaseCrash.report(it)
             Snackbar.make(activity.findViewById<View>(R.id.root),
-                    R.string.fui_general_error,
-                    Snackbar.LENGTH_LONG).show()
+                          R.string.fui_general_error,
+                          Snackbar.LENGTH_LONG)
+                    .show()
         }
     }
 
@@ -119,7 +120,8 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
             val quantity = teams.size
 
             shareMessage = resources.getQuantityString(R.plurals.share_message, quantity, teamNames)
-            shareCta = resources.getQuantityString(R.plurals.share_call_to_action, quantity, teamNames)
+            shareCta = resources.getQuantityString(
+                    R.plurals.share_call_to_action, quantity, teamNames)
             shareTitle = resources.getQuantityString(R.plurals.share_title, quantity, teamNames)
         }
     }
@@ -137,8 +139,8 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                        @Size(min = 1) teams: List<Team>): Boolean {
             if (isOffline()) {
                 Snackbar.make(activity.findViewById<View>(R.id.root),
-                        R.string.no_connection,
-                        Snackbar.LENGTH_LONG)
+                              R.string.no_connection,
+                              Snackbar.LENGTH_LONG)
                         .show()
                 return false
             }

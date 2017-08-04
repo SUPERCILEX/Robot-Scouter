@@ -73,7 +73,8 @@ fun startInternetJob21(context: Context,
 
 private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"
 
-fun parseRawBundle(args: Bundle) = Team(args.getString(NUMBER),
+fun parseRawBundle(args: Bundle) = Team(
+        args.getString(NUMBER),
         args.getString(KEY),
         args.getString(TEMPLATE_KEY),
         args.getString(NAME),
@@ -87,7 +88,8 @@ fun parseRawBundle(args: Bundle) = Team(args.getString(NUMBER),
         args.getLong(TIMESTAMP))
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun parseRawBundle(args: PersistableBundle) = Team(args.getString(NUMBER),
+fun parseRawBundle(args: PersistableBundle) = Team(
+        args.getString(NUMBER),
         args.getString(KEY),
         args.getString(TEMPLATE_KEY),
         args.getString(NAME),

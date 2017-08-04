@@ -13,7 +13,9 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 
 abstract class MetricListFragment : LifecycleFragment() {
-    protected val holder: MetricListHolder by lazy { ViewModelProviders.of(this).get(MetricListHolder::class.java) }
+    protected val holder: MetricListHolder by lazy {
+        ViewModelProviders.of(this).get(MetricListHolder::class.java)
+    }
     protected abstract val metricsRef: DatabaseReference
 
     protected val recyclerView: RecyclerView by lazy {

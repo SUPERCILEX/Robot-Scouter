@@ -42,7 +42,8 @@ open class SpinnerViewHolder(itemView: View) :
     }
 
     protected open fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> {
-        return ArrayAdapter(itemView.context,
+        return ArrayAdapter(
+                itemView.context,
                 android.R.layout.simple_spinner_item,
                 ArrayList(listMetric.value.values))
     }

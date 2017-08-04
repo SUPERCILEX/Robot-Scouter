@@ -36,8 +36,8 @@ class RobotScouter : MultiDexApplication() {
         FirebaseRemoteConfig.getInstance().apply {
             setDefaults(R.xml.remote_config_defaults)
             setConfigSettings(FirebaseRemoteConfigSettings.Builder()
-                    .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                    .build())
+                                      .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                                      .build())
         }
 
         EmojiCompat.init(FontRequestEmojiCompatConfig(this, FontRequest(

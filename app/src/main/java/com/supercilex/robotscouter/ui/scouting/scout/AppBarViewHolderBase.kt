@@ -53,7 +53,8 @@ abstract class AppBarViewHolderBase protected constructor(private val fragment: 
         team.copyMediaInfo(it)
         team.forceUpdateTeam()
     }
-    private var mediaCapture: TeamMediaCreator = TeamMediaCreator.newInstance(fragment, team, mediaCaptureListener)
+    private var mediaCapture: TeamMediaCreator =
+            TeamMediaCreator.newInstance(fragment, team, mediaCaptureListener)
 
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()
     private lateinit var newScoutItem: MenuItem
@@ -153,11 +154,11 @@ abstract class AppBarViewHolderBase protected constructor(private val fragment: 
         deleteScoutItem.isVisible = isDeleteScoutItemVisible
     }
 
-    private fun getTransparentColor(@ColorInt opaque: Int): Int =
-            Color.argb(Math.round(Color.alpha(opaque) * 0.6f),
-                    Color.red(opaque),
-                    Color.green(opaque),
-                    Color.blue(opaque))
+    private fun getTransparentColor(@ColorInt opaque: Int): Int = Color.argb(
+            Math.round(Color.alpha(opaque) * 0.6f),
+            Color.red(opaque),
+            Color.green(opaque),
+            Color.blue(opaque))
 
     override fun onLongClick(v: View): Boolean = if (v.id == R.id.backdrop) {
         ShouldUploadMediaToTbaDialog.show(fragment)

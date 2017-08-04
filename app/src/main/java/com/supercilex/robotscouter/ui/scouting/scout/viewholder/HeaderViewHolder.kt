@@ -7,7 +7,8 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 
-open class HeaderViewHolder(itemView: View) : MetricViewHolderBase<Metric.Header, Nothing?, TextView>(itemView) {
+open class HeaderViewHolder(itemView: View) :
+        MetricViewHolderBase<Metric.Header, Nothing?, TextView>(itemView) {
     private val topMargin =
             itemView.resources.getDimension(R.dimen.list_item_padding_vertical_within).toInt()
 

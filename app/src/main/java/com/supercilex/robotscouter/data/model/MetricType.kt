@@ -9,6 +9,11 @@ const val STOPWATCH = 4
 const val TEXT = 3
 const val LIST = 2
 
-@IntDef(HEADER.toLong(), BOOLEAN.toLong(), NUMBER.toLong(), STOPWATCH.toLong(), TEXT.toLong(), LIST.toLong())
+@IntDef(HEADER.toLong(),
+        BOOLEAN.toLong(),
+        NUMBER.toLong(),
+        STOPWATCH.toLong(),
+        TEXT.toLong(),
+        LIST.toLong())
 @Retention(AnnotationRetention.SOURCE)
 annotation class MetricType

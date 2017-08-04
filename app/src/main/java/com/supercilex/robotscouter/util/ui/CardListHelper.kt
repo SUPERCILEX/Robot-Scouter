@@ -27,11 +27,13 @@ open class CardListHelper(private val adapter: FirebaseRecyclerAdapter<*, *>,
             // Update the items above and below to ensure the correct corner configuration is shown
             val abovePos = position - 1
             val belowPos = position + 1
-            val above: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(abovePos)
-            val below: RecyclerView.ViewHolder? = recyclerView.findViewHolderForLayoutPosition(belowPos)
 
-            above?.let { setBackground(it, abovePos) }
-            below?.let { setBackground(it, belowPos) }
+            recyclerView.findViewHolderForLayoutPosition(abovePos)?.let {
+                setBackground(it, abovePos)
+            }
+            recyclerView.findViewHolderForLayoutPosition(belowPos)?.let {
+                setBackground(it, belowPos)
+            }
         }
     }
 

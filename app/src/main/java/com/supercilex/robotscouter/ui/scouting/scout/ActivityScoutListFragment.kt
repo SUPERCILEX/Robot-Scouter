@@ -65,7 +65,8 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
 
     private inner class ActivityAppBarViewHolder(listener: LiveData<Team>,
                                                  onScoutingReadyTask: Task<Nothing?>) :
-            AppBarViewHolderBase(this@ActivityScoutListFragment, rootView, listener, onScoutingReadyTask) {
+            AppBarViewHolderBase(
+                    this@ActivityScoutListFragment, rootView, listener, onScoutingReadyTask) {
         override fun bind() {
             super.bind()
             (activity as AppCompatActivity).supportActionBar!!.title = team.toString()

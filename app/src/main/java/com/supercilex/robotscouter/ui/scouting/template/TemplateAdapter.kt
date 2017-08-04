@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.BOOLEAN
 import com.supercilex.robotscouter.data.model.HEADER
@@ -36,9 +35,9 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
         MetricListAdapterBase(metrics, manager, recyclerView, owner) {
     override val cardListHelper: CardListHelper = ListHelper()
 
-    override fun getItem(position: Int): Metric<*> = callback.getItem(position)
+    override fun getItem(position: Int) = callback.getItem(position)
 
-    override fun getRef(position: Int): DatabaseReference = callback.getRef(position)
+    override fun getRef(position: Int) = callback.getRef(position)
 
     override fun populateViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
                                     metric: Metric<*>,

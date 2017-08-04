@@ -23,8 +23,8 @@ class TemplateEditorActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .add(R.id.template_list,
-                            TemplateListFragment.newInstance(intent.getStringExtra(TAB_KEY)),
-                            TemplateListFragment.TAG)
+                         TemplateListFragment.newInstance(intent.getStringExtra(TAB_KEY)),
+                         TemplateListFragment.TAG)
                     .commit()
         }
     }
@@ -47,6 +47,6 @@ class TemplateEditorActivity : AppCompatActivity() {
     companion object {
         fun start(context: Context, templateKey: String? = null) =
                 context.startActivity(Intent(context, TemplateEditorActivity::class.java)
-                        .putExtra(TAB_KEY, templateKey))
+                                              .putExtra(TAB_KEY, templateKey))
     }
 }

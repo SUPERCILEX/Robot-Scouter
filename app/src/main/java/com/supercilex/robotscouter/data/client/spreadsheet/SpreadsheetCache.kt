@@ -81,15 +81,18 @@ class SpreadsheetCache(teams: Collection<Team>, context: Context) : TeamCache(te
     fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
 
     fun putRootMetric(team: Team, index: Int, metric: Metric<*>) {
-        (metricCache[team] ?: HashMap<Int, Metric<*>>().also { metricCache.put(team, it) })[index] = metric
+        (metricCache[team] ?: HashMap<Int, Metric<*>>().also {
+            metricCache.put(team, it)
+        })[index] = metric
     }
 
     fun setCellFormat(cell: Cell, format: String) {
         if (isUnsupportedDevice) return
 
         cell.cellStyle = workbook.createCellStyle().apply {
-            dataFormat = formatStyles[format] ?:
-                    workbook.createDataFormat().getFormat(format).also { formatStyles.put(format, it) }
+            dataFormat = formatStyles[format] ?: workbook.createDataFormat().getFormat(format).also {
+                formatStyles.put(format, it)
+            }
         }
     }
 

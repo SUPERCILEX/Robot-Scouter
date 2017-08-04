@@ -43,9 +43,9 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
                 R.layout.scout_template_spinner_item,
                 SpinnerItemViewHolder::class.java,
                 this) {
-            override fun getItem(position: Int): String = itemTouchCallback.getItem(position)
+            override fun getItem(position: Int) = itemTouchCallback.getItem(position)
 
-            override fun getRef(position: Int): DatabaseReference = itemTouchCallback.getRef(position)
+            override fun getRef(position: Int) = itemTouchCallback.getRef(position)
 
             override fun populateViewHolder(viewHolder: SpinnerItemViewHolder,
                                             itemText: String,
@@ -121,7 +121,8 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         val itemCount: Int = adapter.itemCount
-        holder.ref.push().setValue("item ${itemCount + 1}", getHighestIntPriority(adapter.snapshots) + 1)
+        holder.ref.push()
+                .setValue("item ${itemCount + 1}", getHighestIntPriority(adapter.snapshots) + 1)
         itemTouchCallback.addItemToScrollQueue(itemCount)
     }
 

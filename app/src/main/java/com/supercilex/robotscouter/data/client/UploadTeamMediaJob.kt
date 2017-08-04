@@ -10,14 +10,8 @@ fun startUploadTeamMediaJob(context: Context, team: Team) {
     val mediaHash: Int = team.media!!.hashCode()
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        startInternetJob21(context,
-                team,
-                mediaHash,
-                UploadTeamMediaJob21::class.java)
+        startInternetJob21(context, team, mediaHash, UploadTeamMediaJob21::class.java)
     } else {
-        startInternetJob14(context,
-                team,
-                mediaHash,
-                UploadTeamMediaJob14::class.java)
+        startInternetJob14(context, team, mediaHash, UploadTeamMediaJob14::class.java)
     }
 }

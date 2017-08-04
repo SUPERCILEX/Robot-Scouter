@@ -17,7 +17,8 @@ import com.supercilex.robotscouter.ui.scouting.template.viewholder.TemplateViewH
 import java.util.Collections
 
 class TemplateItemTouchCallback<T>(private val rootView: View) :
-        ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+        ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
     private val recyclerView: RecyclerView = rootView.findViewById(R.id.list)
     lateinit var adapter: FirebaseRecyclerAdapter<T, *>
     lateinit var itemTouchHelper: ItemTouchHelper

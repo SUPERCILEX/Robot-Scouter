@@ -44,7 +44,8 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
     private val addTeamPrompt by lazy { showCreateFirstTeamPrompt(this) }
 
     val drawerToggle: ActionBarDrawerToggle by lazy {
-        ActionBarDrawerToggle(this,
+        ActionBarDrawerToggle(
+                this,
                 drawerLayout,
                 findViewById(R.id.toolbar),
                 R.string.navigation_drawer_open,

@@ -67,17 +67,17 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
         val CREATOR: Parcelable.Creator<Team> = object : Parcelable.Creator<Team> {
             override fun createFromParcel(source: Parcel): Team = source.run {
                 Team(readString(),
-                        readString(),
-                        readString(),
-                        readString(),
-                        readString(),
-                        readString(),
-                        readBooleanCompat(),
-                        readBooleanCompat(),
-                        readBooleanCompat(),
-                        readBooleanCompat(),
-                        readInt(),
-                        readLong())
+                     readString(),
+                     readString(),
+                     readString(),
+                     readString(),
+                     readString(),
+                     readBooleanCompat(),
+                     readBooleanCompat(),
+                     readBooleanCompat(),
+                     readBooleanCompat(),
+                     readInt(),
+                     readLong())
             }
 
             override fun newArray(size: Int): Array<Team?> = arrayOfNulls(size)

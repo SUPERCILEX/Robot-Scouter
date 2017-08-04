@@ -58,7 +58,8 @@ val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
         LIST -> {
             Metric.List(
                     name,
-                    value.children.associateBy({ it.key }, { it.getValue(String::class.java) ?: "" }),
+                    value.children.associateBy(
+                            { it.key }, { it.getValue(String::class.java) ?: "" }),
                     snapshot.child(FIREBASE_SELECTED_VALUE_KEY).getValue(String::class.java))
         }
         else -> throw IllegalStateException("Unknown metric type: $type")

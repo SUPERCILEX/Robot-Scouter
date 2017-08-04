@@ -88,7 +88,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
         logExportTeamsEvent(cache.teams)
 
-        startForeground(R.string.export_in_progress_title,
+        startForeground(
+                R.string.export_in_progress_title,
                 cache.getExportNotification(getString(R.string.exporting_status_loading)))
 
         if (isOffline()) showToast(this, getString(R.string.export_warning_offline))
@@ -102,7 +103,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             onSuccess(Tasks.await(Scouts.getAll(cache.teams), 5, TimeUnit.MINUTES))
         } catch (e: Exception) {
             when (e) {
-                is ExecutionException, is InterruptedException, is TimeoutException -> showError(this, e)
+                is ExecutionException, is InterruptedException, is TimeoutException ->
+                    showError(this, e)
                 else -> throw e
             }
         }
@@ -113,7 +115,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
         if (scouts.size != cache.teams.size) {
             // Some error occurred, let's try again
-            startService(Intent(this, ExportService::class.java).putExtras(teamsToIntent(cache.teams)))
+            startService(
+                    Intent(this, ExportService::class.java).putExtras(teamsToIntent(cache.teams)))
             return
         }
 
@@ -143,7 +146,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                     .putExtra(Intent.EXTRA_STREAM, spreadsheetUri)
                     .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, arrayOf(viewIntent))
 
-            shareIntent = Intent.createChooser(typeIntent, getPluralTeams(R.plurals.export_share_title))
+            shareIntent = Intent.createChooser(typeIntent,
+                                               getPluralTeams(R.plurals.export_share_title))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
         } else {
@@ -159,7 +163,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 .setSubText(getPluralTeams(R.plurals.export_complete_summary, cache.teams.size))
                 .setContentText(getPluralTeams(R.plurals.export_complete_message))
                 .setContentIntent(sharePendingIntent)
-                .addAction(R.drawable.ic_share_white_24dp,
+                .addAction(
+                        R.drawable.ic_share_white_24dp,
                         getString(R.string.share),
                         PendingIntent.getBroadcast(
                                 this,
@@ -172,9 +177,11 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.addAction(R.drawable.ic_launch_white_24dp,
+            builder.addAction(
+                    R.drawable.ic_launch_white_24dp,
                     getString(R.string.open),
-                    PendingIntent.getActivity(this,
+                    PendingIntent.getActivity(
+                            this,
                             exportId,
                             viewIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT))
@@ -329,7 +336,9 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         fun addTitleRowMergedRegion(row: Row) {
             val numOfScouts = scouts.size
             if (numOfScouts > SINGLE_ITEM) {
-                row.rowNum.also { teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, numOfScouts)) }
+                row.rowNum.also {
+                    teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, numOfScouts))
+                }
             }
         }
 
@@ -443,7 +452,10 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                             "INDEX($rangeAddress, MATCH(MAX(COUNTIF($rangeAddress, $rangeAddress)), " +
                                     "COUNTIF($rangeAddress, $rangeAddress), 0))",
                             CellRangeAddress(
-                                    cell.rowIndex, cell.rowIndex, cell.columnIndex, cell.columnIndex))
+                                    cell.rowIndex,
+                                    cell.rowIndex,
+                                    cell.columnIndex,
+                                    cell.columnIndex))
                 }
                 HEADER, TEXT -> { // Nothing to average
                 }
@@ -596,7 +608,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                     }
 
                     metricCache[rootMetric.ref.key] = headerCell.columnIndex
-                    setAverageFormula(scoutSheet, row.createCell(headerCell.columnIndex), averageCell)
+                    setAverageFormula(
+                            scoutSheet, row.createCell(headerCell.columnIndex), averageCell)
                 } else {
                     setAverageFormula(scoutSheet, row.createCell(metricIndex), averageCell)
                 }
@@ -616,7 +629,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             val columnIndex = cell.columnIndex
             val headerName = cell.stringCellValue
 
-            val anchor = drawing.createChartAnchor(sheet.lastRowNum + 3, columnIndex, columnIndex + 1)
+            val anchor =
+                    drawing.createChartAnchor(sheet.lastRowNum + 3, columnIndex, columnIndex + 1)
             anchor.row2 = anchor.row2 + 30
             val chart = drawing.createChart(anchor)
             chart.orCreateLegend.position = LegendPosition.BOTTOM
@@ -625,9 +639,10 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             val data = chart.chartDataFactory.createScatterChartData()
             (1..sheet.lastRowNum).map { sheet.getRow(it) }.forEach {
                 data.addSerie(categorySource,
-                        DataSources.fromNumericCellRange(
-                                sheet,
-                                CellRangeAddress(it.rowNum, it.rowNum, columnIndex, columnIndex)))
+                              DataSources.fromNumericCellRange(
+                                      sheet,
+                                      CellRangeAddress(
+                                              it.rowNum, it.rowNum, columnIndex, columnIndex)))
                         .setTitle(it.getCell(0).stringCellValue)
             }
 
@@ -684,8 +699,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                         .show()
             }
 
-            fragment.activity.startService(Intent(context, ExportService::class.java)
-                    .putExtras(teamsToIntent(teams)))
+            fragment.activity.startService(
+                    Intent(context, ExportService::class.java).putExtras(teamsToIntent(teams)))
 
             return true
         }
