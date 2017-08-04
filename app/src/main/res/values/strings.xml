@@ -135,8 +135,10 @@
     <string name="value">Value</string>
 
     <string name="edit_template">Edit next scout template</string>
-    <string name="edit_spinner_items">Edit items</string>
-    <string name="deleted">Deleted</string>
+    <string name="edit_spinner_items_short">Edit items</string>
+    <string name="edit_spinner_items_long">Edit selector items</string>
+    <string name="item_deleted">Item deleted</string>
+    <string name="delete_spinner">Delete item selector?</string>
     <string name="undo">Undo</string>
     <string name="reset_template_all">Reset scouting template for all teams</string>
     <string name="reset_template_team">Reset scouting template for this team only</string>
