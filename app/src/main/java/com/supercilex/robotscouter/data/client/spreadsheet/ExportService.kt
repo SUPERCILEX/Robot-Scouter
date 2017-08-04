@@ -680,7 +680,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
             if (shouldShowExportHint(context)) {
                 Snackbar.make(fragment.view!!, R.string.export_hint, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.never_again) { setShouldShowExportHint(context, false) }
+                        .setAction(android.R.string.ok) { setShouldShowExportHint(context, false) }
                         .show()
             }
 
