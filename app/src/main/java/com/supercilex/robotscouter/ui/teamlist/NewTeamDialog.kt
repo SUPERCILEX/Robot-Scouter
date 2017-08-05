@@ -18,17 +18,17 @@ class NewTeamDialog : KeyboardDialogBase() {
     override val lastEditText: EditText by lazy { inputLayout.findViewById<EditText>(R.id.team_number) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-            createDialog(rootView, R.string.add_scout)
+            createDialog(rootView, R.string.new_scout_or_team)
 
     public override fun onAttemptDismiss(): Boolean {
         val teamNumber: String = lastEditText.text.toString()
-        if (teamNumber.isNumber()) {
+        return if (teamNumber.isNumber()) {
             (activity as TeamSelectionListener)
                     .onTeamSelected(getScoutBundle(Team(teamNumber, ""), true))
-            return true
+            true
         } else {
             inputLayout.error = getString(R.string.number_too_big_error)
-            return false
+            false
         }
     }
 

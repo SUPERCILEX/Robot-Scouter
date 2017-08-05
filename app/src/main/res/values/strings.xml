@@ -113,7 +113,8 @@
     <string name="should_delete_team_message">You have deleted the last scout for team %s.</string>
     <string name="should_delete_team_action">Delete team</string>
 
-    <string name="add_scout">Add scout/team</string>
+    <string name="new_scout_or_team">New scout/team</string>
+    <string name="add_scout">Add scout</string>
     <string name="add_media">Add media</string>
     <string name="add_scout_long">Add a new scout or team</string>
 
