@@ -27,6 +27,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
     @get:Exclude
     val numberAsLong get() = number.toLong()
 
+    // Empty no-arg constructor for Firebase
     constructor() : this("0", "")
 
     @Keep

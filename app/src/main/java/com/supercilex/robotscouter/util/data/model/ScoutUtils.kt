@@ -80,7 +80,7 @@ fun addScout(team: Team): String {
 
     if (TextUtils.isEmpty(team.templateKey)) {
         defaultTemplateListener.observeOnce()
-                .addOnSuccessListener { FirebaseCopier.copyTo(it!!, scoutRef) }
+                .addOnSuccessListener { FirebaseCopier.copyTo(it, scoutRef) }
     } else {
         FirebaseCopier(getTemplateMetricsRef(team.templateKey!!), scoutRef)
                 .performTransformation()

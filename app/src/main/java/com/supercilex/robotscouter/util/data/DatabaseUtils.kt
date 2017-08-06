@@ -83,10 +83,10 @@ fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also 
     }
 }.task
 
-fun <T> LiveData<T>.observeOnce(failOnNull: Boolean = true): Task<T> = TaskCompletionSource<T>().apply {
+fun <T> LiveData<T>.observeOnce(isNullable: Boolean = false): Task<T> = TaskCompletionSource<T>().apply {
     observeForever(object : Observer<T> {
         override fun onChanged(t: T?) {
-            if (t == null && failOnNull) throw NullPointerException() else setResult(t)
+            setResult(t ?: if (isNullable) null else return)
             removeObserver(this)
         }
     })

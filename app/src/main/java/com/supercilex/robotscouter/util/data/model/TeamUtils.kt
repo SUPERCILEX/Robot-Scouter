@@ -10,6 +10,7 @@ import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.appindexing.Indexable
+import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -82,14 +83,17 @@ fun Team.addTeam() {
     val number = numberAsLong
     index.setValue(number, number)
 
-    templatesListener.observeOnce(true).addOnSuccessListener { templates ->
+    templatesListener.observeOnce().addOnSuccessListener { templates ->
         if (templates.isNotEmpty()) templateKey = templates[0].key
         forceUpdateTeam()
         forceRefresh()
     }
 
-    FirebaseUserActions.getInstance()
-            .end(Action.Builder(Action.Builder.ADD_ACTION).setObject(toString(), deepLink).build())
+    FirebaseUserActions.getInstance().end(
+            Action.Builder(Action.Builder.ADD_ACTION)
+                    .setObject(toString(), deepLink)
+                    .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
+                    .build())
 }
 
 fun Team.updateTeam(newTeam: Team) {
@@ -169,14 +173,12 @@ fun Team.visitTeamWebsite(context: Context) = launchUrl(context, Uri.parse(websi
 val Team.indexable: Indexable get() = Indexables.digitalDocumentBuilder()
         .setUrl(deepLink)
         .setName(toString())
+        .apply { setImage(media ?: return@apply) }
         .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
-        .apply { if (media != null) setImage(media!!) }
         .build()
 
 private val Team.deepLink: String get() = "$TEAMS_LINK_BASE?$linkKeyNumberPair"
 
 val Team.linkKeyNumberPair: String get() = "&$KEY_QUERY=$key:$number"
 
-val Team.viewAction: Action get() = Action.Builder(Action.Builder.VIEW_ACTION)
-        .setObject(toString(), deepLink)
-        .build()
+val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)
