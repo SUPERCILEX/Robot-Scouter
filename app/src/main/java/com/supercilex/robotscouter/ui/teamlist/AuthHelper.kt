@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.app.Activity
 import android.content.Intent
 import android.support.design.widget.Snackbar
 import android.view.Menu
@@ -8,7 +9,6 @@ import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.firebase.ui.auth.ResultCodes
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
@@ -72,7 +72,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
         if (requestCode == RC_SIGN_IN) {
             val response: IdpResponse? = IdpResponse.fromResultIntent(data)
 
-            if (resultCode == ResultCodes.OK) {
+            if (resultCode == Activity.RESULT_OK) {
                 Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
                 updateMenuState()
 
