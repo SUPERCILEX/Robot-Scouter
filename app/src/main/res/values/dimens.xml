@@ -13,9 +13,10 @@
     <dimen name="spacing_xxlarge">64dp</dimen>
     <dimen name="spacing_dialog_layout">20dp</dimen>
 
-    <dimen name="fab_size">56dp</dimen>
+    <dimen name="square_view_hw">56dp</dimen>
 
     <dimen name="card_elevation">2dp</dimen>
+    <dimen name="corner_radius">2dp</dimen>
 
     <dimen name="text_size_normal">16sp</dimen>
 </resources>

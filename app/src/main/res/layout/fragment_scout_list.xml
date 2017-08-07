@@ -37,8 +37,8 @@
             <ProgressBar
                 android:id="@+id/progress"
                 style="@style/Base.Widget.AppCompat.ProgressBar"
-                android:layout_width="@dimen/fab_size"
-                android:layout_height="@dimen/fab_size"
+                android:layout_width="@dimen/square_view_hw"
+                android:layout_height="@dimen/square_view_hw"
                 android:layout_gravity="center"
                 android:indeterminate="true"
                 app:layout_collapseMode="parallax" />

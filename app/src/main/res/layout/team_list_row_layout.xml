@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/media"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
         android:contentDescription="@string/accessibility_robot_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -68,8 +68,8 @@
 
     <ImageButton
         android:id="@+id/new_scout"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/add_scout"
         app:layout_constraintEnd_toEndOf="parent"

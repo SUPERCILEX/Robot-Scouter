@@ -7,8 +7,8 @@
     <ImageButton
         android:id="@+id/decrement_counter"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_decrement_counter"
         android:stateListAnimator="@null"
@@ -30,8 +30,8 @@
     <ImageButton
         android:id="@+id/increment_counter"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_increment_counter"
         android:stateListAnimator="@null"
