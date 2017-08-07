@@ -1,6 +1,3 @@
-# Optimize
--optimizations !field/propagation/value,!class/merging/*,*
-
 # Keeps line numbers and file name obfuscation
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
