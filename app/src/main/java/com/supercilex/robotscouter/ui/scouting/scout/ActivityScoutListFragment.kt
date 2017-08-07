@@ -48,14 +48,12 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
         viewHolder.initMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = if (item.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {
         if (NavUtils.shouldUpRecreateTask(
                 activity, Intent(context, TeamListActivity::class.java))) {
             TaskStackBuilder.create(context).addParentStack(activity).startActivities()
-            activity.finish()
-        } else {
-            NavUtils.navigateUpFromSameTask(activity)
         }
+        activity.finish()
         true
     } else {
         super.onOptionsItemSelected(item)

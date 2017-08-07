@@ -11,8 +11,6 @@
     tools:openDrawer="start">
 
     <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/root"
         android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
         android:layout_width="match_parent"

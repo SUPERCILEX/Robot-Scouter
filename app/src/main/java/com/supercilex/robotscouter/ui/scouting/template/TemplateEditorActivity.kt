@@ -29,9 +29,8 @@ class TemplateEditorActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = if (item.itemId == android.R.id.home) {
-        if (NavUtils.shouldUpRecreateTask(
-                this, Intent(this, TeamListActivity::class.java))) {
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {
+        if (NavUtils.shouldUpRecreateTask(this, Intent(this, TeamListActivity::class.java))) {
             TaskStackBuilder.create(this).addParentStack(this).startActivities()
         }
         finish()
