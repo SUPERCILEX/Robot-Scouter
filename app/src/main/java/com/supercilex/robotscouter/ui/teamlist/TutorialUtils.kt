@@ -14,7 +14,6 @@ fun showCreateFirstTeamPrompt(activity: Activity): MaterialTapTargetPrompt? {
         return MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
                 .setTarget(R.id.fab)
                 .setPrimaryText(R.string.create_first_team)
-                // TODO Fix https://github.com/sjwall/MaterialTapTargetPrompt/pull/81 before official release
                 .setAutoDismiss(false)
                 .setPromptStateChangeListener { _, state ->
                     if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
