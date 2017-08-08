@@ -14,6 +14,14 @@
 
     <style name="RobotScouter.NoActionBar.TransparentStatusBar" />
 
+    <style name="RobotScouter.Translucent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
     <style name="RobotScouter.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>

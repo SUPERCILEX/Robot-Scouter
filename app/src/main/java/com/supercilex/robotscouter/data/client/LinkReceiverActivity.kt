@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.util.ui.isInTabletMode
 class LinkReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_link_receiver)
         onSignedIn().continueWithTask { FirebaseDynamicLinks.getInstance().getDynamicLink(intent) }
                 .addOnSuccessListener {
                     val teams = getTeams(it?.link ?: intent.data ?: Uri.Builder().build())

@@ -68,7 +68,6 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
         addTeamPrompt
         authHelper.init().addOnSuccessListener(this) {
             handleIntent(intent)
-            intent = Intent() // Consume Intent
         }
     }
 
@@ -193,6 +192,8 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
                 .addOnFailureListener(this) {
                     Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
                 }
+
+        this.intent = Intent() // Consume Intent
     }
 
     private companion object {

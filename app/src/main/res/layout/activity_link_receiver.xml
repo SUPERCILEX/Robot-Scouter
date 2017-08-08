@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProgressBar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Base.Widget.AppCompat.ProgressBar"
+    android:layout_width="@dimen/square_view_hw"
+    android:layout_height="@dimen/square_view_hw"
+    android:gravity="center"
+    android:indeterminate="true" />

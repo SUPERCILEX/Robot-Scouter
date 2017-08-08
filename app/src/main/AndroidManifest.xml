@@ -50,6 +50,7 @@
         <activity
             android:name=".ui.teamlist.TeamListActivity"
             android:label="${appName}"
+            android:launchMode="singleTask"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan">
 
@@ -77,7 +78,8 @@
             android:label=""
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:excludeFromRecents="true"
-            android:theme="@style/FirebaseUI.Transparent">
+            android:taskAffinity=""
+            android:theme="@style/RobotScouter.Translucent">
 
             <intent-filter
                 android:label="@string/app_name"
