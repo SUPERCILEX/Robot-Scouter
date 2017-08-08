@@ -7,6 +7,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.util.data.DefaultTemplateLiveData
+import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.TemplatesLiveData
 import com.supercilex.robotscouter.util.data.ref
@@ -52,12 +53,21 @@ val FIREBASE_TEMPLATES: DatabaseReference = ref.child("templates")
 val FIREBASE_TEMPLATE_INDICES: DatabaseReference = ref.child("template-indices")
 val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
+
+// Prefs
+const val FIREBASE_PREFS = "prefs"
+const val FIREBASE_PREF_NIGHT_MODE = "nightMode"
+const val FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"
+const val FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
+const val FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
+const val FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT = "hasShownExportHint"
 // [END FIREBASE CHILD NAMES]
 
 var teamsListener: TeamsLiveData by Delegates.notNull()
     private set
 val defaultTemplateListener = DefaultTemplateLiveData()
 val templatesListener = TemplatesLiveData()
+val prefsListener = PrefsLiveData()
 
 var providerAuthority: String by Delegates.notNull()
     private set

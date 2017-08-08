@@ -11,8 +11,8 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.data.setShouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.util.data.shouldAskToUploadMediaToTba
+import com.supercilex.robotscouter.util.data.shouldUploadMediaToTba
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.create
 
@@ -37,7 +37,8 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
 
     override fun onClick(dialog: DialogInterface, which: Int) {
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
-        setShouldAskToUploadMediaToTba(context, !saveResponseCheckbox.isChecked to isYes)
+
+        if (saveResponseCheckbox.isChecked) shouldUploadMediaToTba = true
         (parentFragment as TeamMediaCreator.StartCaptureListener).onStartCapture(isYes)
     }
 
@@ -45,11 +46,11 @@ class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickLi
         private const val TAG = "ShouldUploadMediaToTbaD"
 
         fun show(fragment: Fragment) {
-            val (shouldAsk, shouldUpload) = shouldAskToUploadMediaToTba(fragment.context)
-            if (shouldAsk) {
+            if (shouldAskToUploadMediaToTba) {
                 ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
             } else {
-                (fragment as TeamMediaCreator.StartCaptureListener).onStartCapture(shouldUpload)
+                (fragment as TeamMediaCreator.StartCaptureListener)
+                        .onStartCapture(shouldUploadMediaToTba)
             }
         }
     }

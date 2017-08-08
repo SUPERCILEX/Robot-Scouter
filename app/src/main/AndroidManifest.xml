@@ -104,6 +104,13 @@
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan" />
 
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:theme="@style/RobotScouter.Launcher"
+            android:windowSoftInputMode="adjustPan" />
+
         <service android:name=".data.client.spreadsheet.ExportService" />
 
         <service android:name=".data.client.AccountMergeService" />

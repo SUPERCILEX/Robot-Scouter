@@ -2,14 +2,13 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,24 +23,28 @@ import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
 import com.supercilex.robotscouter.ui.scouting.template.TemplateEditorActivity
+import com.supercilex.robotscouter.ui.settings.SettingsActivity
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.model.parseTeam
-import com.supercilex.robotscouter.util.data.setHasShownAddTeamTutorial
-import com.supercilex.robotscouter.util.data.setHasShownSignInTutorial
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
+import com.supercilex.robotscouter.util.ui.LifecycleActivity
 import com.supercilex.robotscouter.util.ui.isInTabletMode
+import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
+import com.supercilex.robotscouter.util.ui.showSignInTutorial
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
+class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, OnSuccessListener<Nothing?> {
     val teamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
     private val authHelper by lazy { AuthHelper(this) }
-    private val addTeamPrompt by lazy { showCreateFirstTeamPrompt(this) }
+    private val tutorialHelper: TutorialHelper by lazy {
+        ViewModelProviders.of(this).get(TutorialHelper::class.java)
+    }
 
     val drawerToggle: ActionBarDrawerToggle by lazy {
         ActionBarDrawerToggle(
@@ -65,7 +68,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
         findViewById<NavigationView>(R.id.drawer).setNavigationItemSelectedListener(this)
 
         findViewById<View>(R.id.fab).setOnClickListener(this)
-        addTeamPrompt
+        showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
         authHelper.init().addOnSuccessListener(this) {
             handleIntent(intent)
         }
@@ -95,7 +98,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.team_list_menu, menu)
         authHelper.initMenu(menu)
-        Handler().post { showSignInPrompt(this) }
+        showSignInTutorial(tutorialHelper, this)
         return true
     }
 
@@ -105,11 +108,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (authHelper.onActivityResult(requestCode, resultCode, data) && addTeamPrompt != null) {
-            addTeamPrompt!!.dismiss()
-            setHasShownAddTeamTutorial(this, true)
-            setHasShownSignInTutorial(this, true)
-        }
+        authHelper.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
             onTeamSelected(data!!.getBundleExtra(SCOUT_ARGS_KEY), true)
         }
@@ -130,6 +129,7 @@ class TeamListActivity : AppCompatActivity(), View.OnClickListener, NavigationVi
             R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
             R.id.action_edit_templates -> TemplateEditorActivity.start(this)
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
+            R.id.action_settings -> SettingsActivity.show(this)
             R.id.action_sign_out -> authHelper.signOut()
             R.id.action_about -> AboutDialog.show(supportFragmentManager)
             R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)

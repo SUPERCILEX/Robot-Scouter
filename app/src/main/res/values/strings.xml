@@ -78,7 +78,7 @@
 
     <string name="sign_in">Sign in</string>
     <string name="sign_in_rationale">Signing in lets you easily sync data with other devices across your team.</string>
-    <string name="sign_out">Sign out</string>
+    <string name="sign_out">Sign out and reset Robot Scouter</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="anonymous_sign_in_failed">Anonymous sign in failed</string>
     <string name="sign_in_failed">Sign in failed</string>
@@ -169,6 +169,9 @@
     <!-- Template editor activity -->
     <string name="title_activity_template">Scout template editor</string>
     <string name="title_template_tab">Template %d</string>
+
+    <!-- Settings activity -->
+    <string name="title_activity_settings">Settings</string>
 
     <!-- Notifications -->
     <string name="export_group_name">Spreadsheet exporting</string>

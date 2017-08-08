@@ -19,7 +19,7 @@ class SpinnerItemsHolder(app: Application) : ViewModelBase<Bundle>(app) {
     lateinit var spinnerItems: ObservableSnapshotArray<String>
         private set
 
-    private val listener = object : ChangeEventListenerBase() {}
+    private val listener = object : ChangeEventListenerBase {}
 
     override fun onCreate(args: Bundle) {
         ref = getRef(args)

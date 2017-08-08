@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.AccountMergeService
 import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
+import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isInTestMode
@@ -71,28 +72,27 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                     .setAction(R.string.sign_in, this)
                     .show()
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             val response: IdpResponse? = IdpResponse.fromResultIntent(data)
 
             if (resultCode == Activity.RESULT_OK) {
                 Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
+                hasShownSignInTutorial = true
                 updateMenuState()
 
                 val user: FirebaseUser = user!!
                 User(uid!!, user.email, user.displayName, user.photoUrl).add()
 
                 logLoginEvent()
-
-                return true
             } else {
-                if (response == null) return false // User cancelled sign in
+                if (response == null) return // User cancelled sign in
 
                 if (response.errorCode == ErrorCodes.NO_NETWORK) {
                     Snackbar.make(rootView, R.string.no_connection, Snackbar.LENGTH_LONG)
                             .setAction(R.string.try_again, this)
                             .show()
-                    return false
+                    return
                 }
 
                 Snackbar.make(rootView, R.string.sign_in_failed, Snackbar.LENGTH_LONG)
@@ -100,8 +100,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                         .show()
             }
         }
-
-        return false
     }
 
     override fun onClick(v: View) = signIn()

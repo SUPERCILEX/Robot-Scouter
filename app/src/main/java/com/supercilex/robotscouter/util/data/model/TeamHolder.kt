@@ -7,16 +7,15 @@ import android.os.Bundle
 import android.text.TextUtils
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.ObservableSnapshotArray
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
+import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.teamsListener
 
 class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
-        Observer<ObservableSnapshotArray<Team>>, ChangeEventListener {
+        Observer<ObservableSnapshotArray<Team>>, ChangeEventListenerBase {
     val teamListener = MutableLiveData<Team>()
 
     private val team: Team by lazy { teamListener.value!! }
@@ -76,8 +75,4 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
         teamsListener.removeObserver(this)
         teams.removeChangeEventListener(this)
     }
-
-    override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
-
-    override fun onDataChanged() = Unit
 }

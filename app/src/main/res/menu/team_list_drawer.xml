@@ -20,6 +20,11 @@
             android:icon="@drawable/ic_donate_white_24dp"
             android:title="@string/donate" />
 
+        <item
+            android:id="@+id/action_settings"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:title="@string/title_activity_settings" />
+
         <!-- TODO move everything below to settings -->
         <item
             android:id="@+id/action_about"

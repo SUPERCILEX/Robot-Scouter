@@ -26,6 +26,11 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.FIREBASE_DEFAULT_TEMPLATE
 import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
+import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
+import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
+import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
+import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIREBASE_TEAMS
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.data.model.METRIC_PARSER
@@ -34,6 +39,7 @@ import com.supercilex.robotscouter.util.data.model.fetchLatestData
 import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
 import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
+import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.defaultTemplateListener
 import com.supercilex.robotscouter.util.isOffline
 import java.io.File
@@ -92,7 +98,7 @@ fun <T> LiveData<T>.observeOnce(isNullable: Boolean = false): Task<T> = TaskComp
     })
 }.task
 
-abstract class ChangeEventListenerBase : ChangeEventListener {
+interface ChangeEventListenerBase : ChangeEventListener {
     override fun onChildChanged(type: ChangeEventListener.EventType,
                                 snapshot: DataSnapshot,
                                 index: Int,
@@ -121,7 +127,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
     override val items: ObservableSnapshotArray<Team>
         get() = FirebaseIndexArray(teamIndicesRef.orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
 
-    private val teamUpdater = object : ChangeEventListenerBase() {
+    private val teamUpdater = object : ChangeEventListenerBase {
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -137,7 +143,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             }
         }
     }
-    private val teamMerger = object : ChangeEventListenerBase() {
+    private val teamMerger = object : ChangeEventListenerBase {
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -216,4 +222,25 @@ class DefaultTemplateLiveData : LiveData<DataSnapshot>(), ValueEventListener {
     }
 
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
+}
+
+class PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
+    override val items: ObservableSnapshotArray<Any> get() = FirebaseArray<Any>(userPrefs, PARSER)
+
+    companion object {
+        val PARSER = SnapshotParser<Any> {
+            when (it.key) {
+                FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
+                FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
+                FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
+                -> it.getValue(Boolean::class.java)
+
+                FIREBASE_PREF_NIGHT_MODE,
+                FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
+                -> it.getValue(String::class.java)
+
+                else -> throw IllegalStateException("Unknown pref key: ${it.key}")
+            }
+        }
+    }
 }

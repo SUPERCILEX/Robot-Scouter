@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.util.data.model.METRIC_PARSER
 class MetricListHolder(app: Application) : ViewModelBase<DatabaseReference>(app) {
     lateinit var metrics: ObservableSnapshotArray<Metric<*>>
 
-    private val listener = object : ChangeEventListenerBase() {}
+    private val listener = object : ChangeEventListenerBase {}
 
     override fun onCreate(args: DatabaseReference) {
         metrics = FirebaseArray(args, METRIC_PARSER)

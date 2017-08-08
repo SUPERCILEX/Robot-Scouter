@@ -33,10 +33,9 @@ class AppIndexingService : IntentService(TAG),
     }
 
     override fun onSuccess(teams: ObservableSnapshotArray<Team>) {
-        teams.addChangeEventListener(object : ChangeEventListenerBase() {
+        teams.addChangeEventListener(object : ChangeEventListenerBase {
             override fun onDataChanged() {
-                FirebaseAppIndex.getInstance().update(*teams.mapIndexed {
-                    index, _ ->
+                FirebaseAppIndex.getInstance().update(*teams.mapIndexed { index, _ ->
                     teams.getObject(index).indexable
                 }.toTypedArray())
                 teams.removeChangeEventListener(this)

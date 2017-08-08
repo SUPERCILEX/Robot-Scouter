@@ -32,13 +32,12 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.hasShownExportHint
 import com.supercilex.robotscouter.util.data.hideFile
 import com.supercilex.robotscouter.util.data.model.Scouts
 import com.supercilex.robotscouter.util.data.model.parseTeamList
 import com.supercilex.robotscouter.util.data.model.teamsToIntent
 import com.supercilex.robotscouter.util.data.rootFolder
-import com.supercilex.robotscouter.util.data.setShouldShowExportHint
-import com.supercilex.robotscouter.util.data.shouldShowExportHint
 import com.supercilex.robotscouter.util.data.unhideFile
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExportTeamsEvent
@@ -686,9 +685,9 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 return false
             }
 
-            if (shouldShowExportHint(context)) {
+            if (!hasShownExportHint) {
                 Snackbar.make(fragment.view!!, R.string.export_hint, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok) { setShouldShowExportHint(context, false) }
+                        .setAction(android.R.string.ok) { hasShownExportHint = true }
                         .show()
             }
 
