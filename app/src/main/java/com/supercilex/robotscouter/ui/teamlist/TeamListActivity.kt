@@ -130,9 +130,6 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
             R.id.action_edit_templates -> TemplateEditorActivity.start(this)
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             R.id.action_settings -> SettingsActivity.show(this)
-            R.id.action_sign_out -> authHelper.signOut()
-            R.id.action_about -> AboutDialog.show(supportFragmentManager)
-            R.id.action_licenses -> LicensesDialog.show(supportFragmentManager)
             else -> throw IllegalStateException()
         }
 

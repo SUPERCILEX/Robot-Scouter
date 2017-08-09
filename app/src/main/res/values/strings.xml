@@ -18,7 +18,7 @@
     <string name="no_templates">Scout templates you add appear here</string>
 
     <!-- Media upload -->
-    <string name="should_upload_media_dialog_title">Upload media to The Blue Alliance?</string>
+    <string name="should_upload_media_dialog_title">Upload media to The Blue Alliance</string>
     <string name="should_upload_media_rationale">If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a> to help other Robot Scouter users and the greater TBA community.</string>
     <string name="save_response">Save response</string>
 
@@ -78,21 +78,12 @@
 
     <string name="sign_in">Sign in</string>
     <string name="sign_in_rationale">Signing in lets you easily sync data with other devices across your team.</string>
-    <string name="sign_out">Sign out and reset Robot Scouter</string>
     <string name="signed_in">Successfully signed in!</string>
     <string name="anonymous_sign_in_failed">Anonymous sign in failed</string>
     <string name="sign_in_failed">Sign in failed</string>
     <string name="try_again">Try again</string>
 
     <string name="donate">Donate</string>
-    <string name="about">About</string>
-    <string name="licenses">Licenses</string>
-    <string name="copy_debug_info">Copy debug info</string>
-    <string name="debug_info_name">Robot Scouter debug info</string>
-    <string name="debug_info_copied">Debug info copied to clipboard</string>
-
-    <string name="developed_with_love">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a> and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!</string>
-
     <string name="donate_amount">$%d</string>
     <string name="donate_monthly">Automatically donate each month</string>
     <string name="donate_cancel_message">Are you sure you don\'t want to donate? We appreciate any donation no matter how small!</string>
@@ -172,6 +163,49 @@
 
     <!-- Settings activity -->
     <string name="title_activity_settings">Settings</string>
+    <string name="title_category_ui">User interface</string>
+    <string name="title_category_general">General</string>
+    <string name="title_category_about">About</string>
+
+    <string name="title_pref_night_mode">Night mode</string>
+    <string-array name="entries_pref_night_mode">
+        <item>Auto</item>
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+    <string-array name="entry_values_pref_night_mode">
+        <item>auto</item>
+        <item>yes</item>
+        <item>no</item>
+    </string-array>
+
+    <string name="title_pref_should_upload_to_tba">@string/should_upload_media_dialog_title</string>
+    <string name="summary_pref_should_upload_to_tba">%s\nChoose what happens when you take a picture with Robot Scouter</string>
+    <string-array name="entries_pref_should_upload_to_tba">
+        <item>Ask every time</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string-array name="entry_values_pref_should_upload_to_tba">
+        <item>ask</item>
+        <item>yes</item>
+        <item>no</item>
+    </string-array>
+
+    <string name="title_pref_reset_tutorials">Reset tutorials</string>
+
+    <string name="title_pref_sign_out">Sign out and reset Robot Scouter</string>
+
+    <string name="summary_pref_about">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a> and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!</string>
+
+    <string name="title_pref_release_notes">Release notes</string>
+    <string name="summary_pref_release_notes">View the latest release notes</string>
+
+    <string name="title_pref_version">Version</string>
+    <string name="debug_info_name">Robot Scouter debug info</string>
+    <string name="debug_info_copied">Debug info copied to clipboard!</string>
+
+    <string name="title_pref_licenses">Licenses</string>
 
     <!-- Notifications -->
     <string name="export_group_name">Spreadsheet exporting</string>

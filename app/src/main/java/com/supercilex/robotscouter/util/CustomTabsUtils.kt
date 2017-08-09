@@ -8,6 +8,16 @@ import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
 import com.supercilex.robotscouter.R
 
+fun launchUrl(context: Context, url: Uri) = CustomTabsIntent.Builder()
+        .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        .setShowTitle(true)
+        .addDefaultShareMenuItem()
+        .enableUrlBarHiding()
+        .setStartAnimations(context, R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
+        .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
+        .buildWithReferrer(context)
+        .launchUrl(context, url)
+
 private fun CustomTabsIntent.Builder.buildWithReferrer(context: Context): CustomTabsIntent {
     val customTabsIntent: CustomTabsIntent = build()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -18,13 +28,3 @@ private fun CustomTabsIntent.Builder.buildWithReferrer(context: Context): Custom
     }
     return customTabsIntent
 }
-
-fun launchUrl(context: Context, url: Uri) = CustomTabsIntent.Builder()
-        .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-        .setShowTitle(true)
-        .addDefaultShareMenuItem()
-        .enableUrlBarHiding()
-        .setStartAnimations(context, R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
-        .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
-        .buildWithReferrer(context)
-        .launchUrl(context, url)

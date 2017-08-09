@@ -44,7 +44,7 @@ class LicensesDialog : DialogFragment() {
 
         return AlertDialog.Builder(context)
                 .setView(rootView)
-                .setTitle(R.string.licenses)
+                .setTitle(R.string.title_pref_licenses)
                 .setPositiveButton(android.R.string.ok, null)
                 .create()
     }

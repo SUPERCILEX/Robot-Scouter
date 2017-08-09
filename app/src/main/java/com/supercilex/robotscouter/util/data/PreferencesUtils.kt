@@ -88,9 +88,23 @@ fun initPrefs(context: Context) {
                     localPrefs.updatePrefs { remove(key) }
                 }
             }
-        }) ?: localPrefs.updatePrefs { clear() }
+        }) ?: clearLocalPrefs()
     }
 }
+
+fun clearPrefs() {
+    for ((key, value) in localPrefs.all.entries) {
+        when (value) {
+            is Boolean -> prefs.putBoolean(key, false)
+            is String -> prefs.putString(key, null)
+            else -> throw IllegalStateException(
+                    "Unknown value type: ${if (value == null) "null" else value::class.java}")
+        }
+    }
+    clearLocalPrefs()
+}
+
+private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
 
 @SuppressLint("CommitPrefEdits")
 private inline fun SharedPreferences.updatePrefs(transaction: SharedPreferences.Editor.() -> Unit) = edit().run {

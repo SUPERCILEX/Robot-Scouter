@@ -1,28 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="Category 1">
+    <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_ui">
 
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="key1"
-            android:summary="Switch Summary"
-            android:title="Switch Preference" />
+        <!-- TODO actually do something with this pref -->
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="auto"
+            android:entries="@array/entries_pref_night_mode"
+            android:entryValues="@array/entry_values_pref_night_mode"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:key="nightMode"
+            android:summary="%s"
+            android:title="@string/title_pref_night_mode" />
 
-        <android.support.v7.preference.EditTextPreference
-            android:defaultValue="Default value"
-            android:dialogMessage="Dialog Message"
-            android:key="key2"
-            android:summary="EditText Summary"
-            android:title="EditText Preference" />
+    </android.support.v7.preference.PreferenceCategory>
 
-        <android.support.v7.preference.CheckBoxPreference
-            android:defaultValue="true"
-            android:key="key3"
-            android:summary="CheckBox Summary"
-            android:title="CheckBox Preference" />
+    <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_general">
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="ask"
+            android:entries="@array/entries_pref_should_upload_to_tba"
+            android:entryValues="@array/entry_values_pref_should_upload_to_tba"
+            android:icon="@android:drawable/stat_sys_upload_done"
+            android:key="uploadMediaToTba"
+            android:summary="@string/summary_pref_should_upload_to_tba"
+            android:title="@string/title_pref_should_upload_to_tba" />
+
+        <android.support.v7.preference.Preference
+            android:icon="@drawable/ic_replay_white_24dp"
+            android:key="reset_tutorials"
+            android:title="@string/title_pref_reset_tutorials" />
+
+        <android.support.v7.preference.Preference
+            android:icon="@drawable/ic_sign_out_white_24dp"
+            android:key="sign_out"
+            android:title="@string/title_pref_sign_out" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_about">
+
+        <android.support.v7.preference.Preference android:key="about">
+
+            <aapt:attr name="android:layout">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.text.emoji.widget.EmojiAppCompatTextView
+                        android:id="@+id/about"
+                        style="@style/TextAppearance.AppCompat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/summary_pref_about" />
+
+                </LinearLayout>
+
+            </aapt:attr>
+
+        </android.support.v7.preference.Preference>
+
+        <android.support.v7.preference.Preference
+            android:key="release_notes"
+            android:summary="@string/summary_pref_release_notes"
+            android:title="@string/title_pref_release_notes" />
+
+        <android.support.v7.preference.Preference
+            android:key="version"
+            android:title="@string/title_pref_version" />
+
+        <android.support.v7.preference.Preference
+            android:key="licenses"
+            android:title="@string/title_pref_licenses" />
 
     </android.support.v7.preference.PreferenceCategory>
 

@@ -1,6 +1,10 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.app.Activity
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Intent
 import android.support.design.widget.Snackbar
 import android.view.Menu
@@ -11,7 +15,6 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
@@ -28,10 +31,15 @@ import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.user
 
-class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener {
+class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
+        LifecycleObserver, FirebaseAuth.AuthStateListener {
     private val rootView: View = activity.findViewById(R.id.root)
 
-    private lateinit var signInMenuItem: MenuItem
+    private var signInMenuItem: MenuItem? = null
+
+    init {
+        activity.lifecycle.addObserver(this)
+    }
 
     fun init(): Task<Nothing> =
             if (isSignedIn) Tasks.forResult(null) else signInAnonymously().continueWith { null }
@@ -40,6 +48,18 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
         signInMenuItem = menu.findItem(R.id.action_sign_in)
         updateMenuState()
     }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
+    fun onStateChange(source: LifecycleOwner, event: Lifecycle.Event) {
+        @Suppress("NON_EXHAUSTIVE_WHEN")
+        when (event) {
+            Lifecycle.Event.ON_START -> FirebaseAuth.getInstance().addAuthStateListener(this)
+            Lifecycle.Event.ON_STOP -> FirebaseAuth.getInstance().removeAuthStateListener(this)
+            Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
+        }
+    }
+
+    override fun onAuthStateChanged(auth: FirebaseAuth) = updateMenuState()
 
     fun signIn() = activity.startActivityForResult(
             AuthUI.getInstance().createSignInIntentBuilder()
@@ -59,14 +79,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
                         .show()
             }
 
-    fun signOut() = AuthUI.getInstance()
-            .signOut(activity)
-            .addOnSuccessListener {
-                FirebaseAuth.getInstance().signInAnonymously()
-                FirebaseAppIndex.getInstance().removeAll()
-            }
-            .addOnSuccessListener(activity) { updateMenuState() }
-
     fun showSignInResolution() =
             Snackbar.make(rootView, R.string.sign_in_required, Snackbar.LENGTH_LONG)
                     .setAction(R.string.sign_in, this)
@@ -79,7 +91,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
             if (resultCode == Activity.RESULT_OK) {
                 Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
                 hasShownSignInTutorial = true
-                updateMenuState()
 
                 val user: FirebaseUser = user!!
                 User(uid!!, user.email, user.displayName, user.photoUrl).add()
@@ -105,7 +116,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
     override fun onClick(v: View) = signIn()
 
     private fun updateMenuState() {
-        signInMenuItem.isVisible = !isFullUser
+        signInMenuItem?.isVisible = !isFullUser
     }
 
     private companion object {
