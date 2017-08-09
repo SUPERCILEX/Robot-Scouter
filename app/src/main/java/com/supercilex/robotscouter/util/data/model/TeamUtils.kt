@@ -18,7 +18,6 @@ import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.FIREBASE_TEAMS
 import com.supercilex.robotscouter.util.FIREBASE_TEAM_INDICES
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
@@ -56,22 +55,24 @@ fun getTeamNames(teams: List<Team>): String {
     val sortedTeams = ArrayList(teams)
     Collections.sort(sortedTeams)
 
-    return if (sortedTeams.size == SINGLE_ITEM) sortedTeams[0].toString()
-    else if (sortedTeams.size == 2) "${sortedTeams[0]} and ${sortedTeams[1]}"
-    else {
-        val teamsMaxedOut = sortedTeams.size > 10
-        val size = if (teamsMaxedOut) 10 else sortedTeams.size
+    return when {
+        sortedTeams.size == SINGLE_ITEM -> sortedTeams[0].toString()
+        sortedTeams.size == 2 -> "${sortedTeams[0]} and ${sortedTeams[1]}"
+        else -> {
+            val teamsMaxedOut = sortedTeams.size > 10
+            val size = if (teamsMaxedOut) 10 else sortedTeams.size
 
-        val names = StringBuilder(4 * size)
-        for (i in 0 until size) {
-            names.append(sortedTeams[i].number)
-            if (i < size - 1) names.append(", ")
-            if (i == size - 2 && !teamsMaxedOut) names.append("and ")
+            val names = StringBuilder(4 * size)
+            for (i in 0 until size) {
+                names.append(sortedTeams[i].number)
+                if (i < size - 1) names.append(", ")
+                if (i == size - 2 && !teamsMaxedOut) names.append("and ")
+            }
+
+            if (teamsMaxedOut) names.append(" and more")
+
+            names.toString()
         }
-
-        if (teamsMaxedOut) names.append(" and more")
-
-        names.toString()
     }
 }
 
@@ -138,11 +139,6 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = Calendar.getInstance().get(Calendar.YEAR)
 }
 
-fun Team.updateTemplateKey(key: String) {
-    templateKey = key
-    ref.child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
-}
-
 fun Team.deleteTeam() {
     deleteAllScouts(key).addOnSuccessListener {
         ref.removeValue()
@@ -164,9 +160,8 @@ fun Team.fetchLatestData(context: Context) {
 val Team.isOutdatedMedia: Boolean
     get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || TextUtils.isEmpty(media)
 
-fun Team.visitTbaWebsite(context: Context) {
-    launchUrl(context, Uri.parse("https://www.thebluealliance.com/team/$number"))
-}
+fun Team.visitTbaWebsite(context: Context) =
+        launchUrl(context, Uri.parse("https://www.thebluealliance.com/team/$number"))
 
 fun Team.visitTeamWebsite(context: Context) = launchUrl(context, Uri.parse(website))
 

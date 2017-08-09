@@ -37,13 +37,9 @@ open class CardListHelper(private val adapter: FirebaseRecyclerAdapter<*, *>,
         }
     }
 
-    protected open fun isFirstItem(position: Int): Boolean {
-        return position == 0
-    }
+    protected open fun isFirstItem(position: Int) = position == 0
 
-    protected open fun isLastItem(position: Int): Boolean {
-        return position == adapter.itemCount - 1
-    }
+    protected open fun isLastItem(position: Int) = position == adapter.itemCount - 1
 
     private fun setBackground(viewHolder: RecyclerView.ViewHolder, position: Int) {
         val itemView = viewHolder.itemView

@@ -10,4 +10,4 @@ fun initConnectivity(context: Context) {
     connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 }
 
-fun isOffline(): Boolean = !(connectivityManager.activeNetworkInfo?.isConnected ?: false)
+fun isOffline() = connectivityManager.activeNetworkInfo?.isConnected == false

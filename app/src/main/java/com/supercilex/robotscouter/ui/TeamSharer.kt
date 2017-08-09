@@ -31,19 +31,15 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
 
     private val safeMessage: String
         get() {
-            val message: String
-
             val fullMessage = cache.shareMessage
-            if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
-                message = activity.resources.getQuantityString(
+            return if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
+                activity.resources.getQuantityString(
                         R.plurals.share_message,
                         SINGLE_ITEM,
                         cache.teams[0].toString() + " and more")
             } else {
-                message = fullMessage
+                fullMessage
             }
-
-            return message
         }
 
     init {

@@ -22,12 +22,10 @@ abstract class TbaServiceBase<out T>(team: Team, context: Context, clazz: Class<
     protected val year: Int get() = Calendar.getInstance().get(Calendar.YEAR)
 
     @Throws(IllegalStateException::class)
-    protected fun cannotContinue(response: Response<*>): Boolean {
-        when {
-            response.isSuccessful -> return false
-            response.code() == ERROR_404 -> return true
-            else -> throw IllegalStateException(response.toString())
-        }
+    protected fun cannotContinue(response: Response<*>): Boolean = when {
+        response.isSuccessful -> false
+        response.code() == ERROR_404 -> true
+        else -> throw IllegalStateException(response.toString())
     }
 
     protected companion object {

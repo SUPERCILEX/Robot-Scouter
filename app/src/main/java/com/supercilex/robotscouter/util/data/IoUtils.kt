@@ -17,11 +17,8 @@ fun createFile(prefix: String,
                randomSeparator: String? = System.currentTimeMillis().toString()): File {
     val tempFile = File(
             parent, "$prefix${if (randomSeparator == null) "" else "_$randomSeparator"}.$suffix")
-    if (tempFile.createNewFile()) {
-        return tempFile
-    } else {
-        throw IOException("Unable to create temporary file")
-    }
+    return if (tempFile.createNewFile()) tempFile
+    else throw IOException("Unable to create temporary file")
 }
 
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)

@@ -139,19 +139,17 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL)
         }
 
-        var shareIntent = Intent(baseIntent)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val typeIntent = shareIntent.setAction(Intent.ACTION_SEND)
+        val shareIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val typeIntent = Intent(baseIntent).setAction(Intent.ACTION_SEND)
                     .setType(MIME_TYPE_MS_EXCEL)
                     .putExtra(Intent.EXTRA_STREAM, spreadsheetUri)
                     .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, arrayOf(viewIntent))
 
-            shareIntent = Intent.createChooser(typeIntent,
-                                               getPluralTeams(R.plurals.export_share_title))
+            Intent.createChooser(typeIntent, getPluralTeams(R.plurals.export_share_title))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
         } else {
-            shareIntent = Intent(viewIntent)
+            Intent(viewIntent)
         }
 
         val sharePendingIntent = PendingIntent.getActivity(
@@ -222,15 +220,12 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             }
 
             stream = FileOutputStream(absoluteFile)
-            val workbook: Workbook
             try {
-                workbook = getWorkbook()
+                getWorkbook()
             } catch (e: Exception) {
                 absoluteFile.delete()
                 throw e
-            }
-
-            workbook.write(stream)
+            }.write(stream)
 
             return unhideFile(absoluteFile)
         } catch (e: IOException) {
@@ -265,11 +260,9 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         }
         cache.workbook = workbook
 
-        val averageSheet = fun(): Sheet? {
-            return if (cache.teams.size > SINGLE_ITEM) {
-                workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
-            } else null
-        }.invoke()
+        val averageSheet = (fun(): Sheet? = if (cache.teams.size > SINGLE_ITEM) {
+            workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
+        } else null).invoke()
 
         for (team in cache.teams) {
             cache.updateNotification(getString(R.string.exporting_status_team, team))

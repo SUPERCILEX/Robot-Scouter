@@ -37,18 +37,13 @@ open class SpinnerViewHolder(itemView: View) :
         }
     }
 
-    protected open fun indexOfKey(key: String?): Int {
-        return keys.indices.firstOrNull { TextUtils.equals(key, keys[it]) } ?: 0
-    }
+    protected open fun indexOfKey(key: String?): Int =
+            keys.indices.firstOrNull { TextUtils.equals(key, keys[it]) } ?: 0
 
-    protected open fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> {
-        return ArrayAdapter(
-                itemView.context,
-                android.R.layout.simple_spinner_item,
-                ArrayList(listMetric.value.values))
-    }
+    protected open fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> = ArrayAdapter(
+            itemView.context,
+            android.R.layout.simple_spinner_item,
+            ArrayList(listMetric.value.values))
 
-    override fun onNothingSelected(view: AdapterView<*>) {
-        // Cancel
-    }
+    override fun onNothingSelected(view: AdapterView<*>) = Unit
 }

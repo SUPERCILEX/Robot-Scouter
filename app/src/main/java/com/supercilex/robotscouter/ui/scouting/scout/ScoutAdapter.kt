@@ -35,18 +35,18 @@ class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
             MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-        when (viewType) {
-            HEADER -> return HeaderViewHolder(
+        return when (viewType) {
+            HEADER -> HeaderViewHolder(
                     inflater.inflate(R.layout.scout_header, parent, false))
-            BOOLEAN -> return CheckboxViewHolder(
+            BOOLEAN -> CheckboxViewHolder(
                     inflater.inflate(R.layout.scout_checkbox, parent, false))
-            NUMBER -> return CounterViewHolder(
+            NUMBER -> CounterViewHolder(
                     inflater.inflate(R.layout.scout_counter, parent, false))
-            STOPWATCH -> return StopwatchViewHolder(
+            STOPWATCH -> StopwatchViewHolder(
                     inflater.inflate(R.layout.scout_stopwatch, parent, false))
-            TEXT -> return EditTextViewHolder(
+            TEXT -> EditTextViewHolder(
                     inflater.inflate(R.layout.scout_notes, parent, false))
-            LIST -> return SpinnerViewHolder(
+            LIST -> SpinnerViewHolder(
                     inflater.inflate(R.layout.scout_spinner, parent, false))
             else -> throw IllegalStateException()
         }

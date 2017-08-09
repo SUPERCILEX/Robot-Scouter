@@ -20,14 +20,13 @@ class FabMenuBehavior : CoordinatorLayout.Behavior<FloatingActionMenu> {
 
     override fun onDependentViewChanged(parent: CoordinatorLayout,
                                         child: FloatingActionMenu,
-                                        dependency: View): Boolean {
-        if (dependency is Snackbar.SnackbarLayout) {
-            child.translationY = Math.min(0f, dependency.translationY - dependency.height)
-            return true
-        } else {
-            return super.onDependentViewChanged(parent, child, dependency)
-        }
-    }
+                                        dependency: View): Boolean =
+            if (dependency is Snackbar.SnackbarLayout) {
+                child.translationY = Math.min(0f, dependency.translationY - dependency.height)
+                true
+            } else {
+                super.onDependentViewChanged(parent, child, dependency)
+            }
 
     override fun onDependentViewRemoved(parent: CoordinatorLayout,
                                         child: FloatingActionMenu,
