@@ -49,6 +49,6 @@ class PermissionRequestHandler(perms: List<String>,
                     this)
 
     private companion object {
-        val WRITE_RC = 8653
+        const val WRITE_RC = 8653
     }
 }

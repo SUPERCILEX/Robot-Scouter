@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.util
 
 import android.content.Context
 import android.os.Build
+import android.provider.Settings
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
@@ -61,9 +62,13 @@ val templatesListener = TemplatesLiveData()
 var providerAuthority: String by Delegates.notNull()
     private set
 
+var isInTestMode: Boolean by Delegates.notNull()
+    private set
+
 fun initConstants(context: Context) {
     teamsListener = TeamsLiveData(context)
     providerAuthority = "${context.packageName}.provider"
+    isInTestMode = Settings.System.getString(context.contentResolver, "firebase.test.lab") == "true"
 }
 
 fun getDebugInfo(): String = """

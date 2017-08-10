@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.ALL_PROVIDERS
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.isFullUser
+import com.supercilex.robotscouter.util.isInTestMode
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
@@ -41,7 +42,9 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener 
 
     fun signIn() = activity.startActivityForResult(
             AuthUI.getInstance().createSignInIntentBuilder()
-                    .setAvailableProviders(ALL_PROVIDERS)
+                    .setAvailableProviders(
+                            if (isInTestMode) listOf(AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build())
+                            else ALL_PROVIDERS)
                     .setLogo(R.drawable.ic_logo)
                     .setPrivacyPolicyUrl("https://supercilex.github.io/Robot-Scouter/privacy-policy/")
                     .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)

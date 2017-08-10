@@ -38,7 +38,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     private val monthlyCheckBox by lazy { rootView.findViewById<CheckBox>(R.id.monthly) }
 
     private val billingClient by lazy {
-        BillingClient.Builder(context).setListener(purchaseListener).build()
+        BillingClient.Builder(context).setListener(PURCHASE_LISTENER).build()
     }
     private val billingClientReadyTask = TaskCompletionSource<@BillingResponse Int>()
 
@@ -185,7 +185,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {
-        purchaseListener.continuePurchase(this)
+        PURCHASE_LISTENER.continuePurchase(this)
         billingClientReadyTask.setResult(resultCode)
     }
 
@@ -199,7 +199,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         private const val TAG = "DonateDialog"
         private const val SKU_BASE = "_donate_"
 
-        private val purchaseListener = object : PurchasesUpdatedListener {
+        private val PURCHASE_LISTENER = object : PurchasesUpdatedListener {
             private var dialog = WeakReference<DonateDialog>(null)
             private var savedSate: Pair<Int, List<Purchase>?>? = null
 
