@@ -33,6 +33,12 @@
             android:title="@string/title_pref_reset_tutorials" />
 
         <android.support.v7.preference.Preference
+            android:icon="@drawable/ic_link_white_24dp"
+            android:key="link_account"
+            android:summary="@string/summary_pref_link_account"
+            android:title="@string/title_pref_link_account" />
+
+        <android.support.v7.preference.Preference
             android:icon="@drawable/ic_sign_out_white_24dp"
             android:key="sign_out"
             android:title="@string/title_pref_sign_out" />
