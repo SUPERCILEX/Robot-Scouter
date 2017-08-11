@@ -55,12 +55,12 @@
                         style="@style/TextAppearance.AppCompat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginRight="25dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="15dp"
+                        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+                        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
                         android:text="@string/summary_pref_about" />
 
                 </LinearLayout>

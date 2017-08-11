@@ -11,9 +11,12 @@ import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.PreferenceGroup
+import android.support.v7.preference.PreferenceGroupAdapter
+import android.support.v7.preference.PreferenceScreen
+import android.support.v7.preference.PreferenceViewHolder
+import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
@@ -35,16 +38,15 @@ class SettingsFragment : PreferenceFragmentCompat(),
         onPreferenceChange(preferenceScreen, null)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        listView.post {
-            listView.findViewHolderForItemId(
-                    Preference::class.java.getDeclaredField("mId")
-                            .apply { isAccessible = true }
-                            .get(findPreference("about")) as Long)
-                    .itemView
-                    .findViewById<TextView>(R.id.about)
-                    .movementMethod = LinkMovementMethod.getInstance()
+    override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
+        return object : PreferenceGroupAdapter(preferenceScreen) {
+            override fun onBindViewHolder(holder: PreferenceViewHolder, position: Int) {
+                super.onBindViewHolder(holder, position)
+                if (getItem(position).key == "about") {
+                    (holder.findViewById(R.id.about) as TextView).movementMethod =
+                            LinkMovementMethod.getInstance()
+                }
+            }
         }
     }
 
