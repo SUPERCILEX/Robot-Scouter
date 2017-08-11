@@ -24,7 +24,7 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.teamlist.LicensesDialog
+import com.supercilex.robotscouter.ui.teamlist.LicensesFragment
 import com.supercilex.robotscouter.util.data.clearPrefs
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.getDebugInfo
@@ -104,9 +104,23 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         ClipData.newPlainText(getString(R.string.debug_info_name), getDebugInfo())
                 Toast.makeText(context, R.string.debug_info_copied, Toast.LENGTH_SHORT).show()
             }
-            "licenses" -> LicensesDialog.show(childFragmentManager) // TODO make second fragment
+            "licenses" -> fragmentManager.beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in,
+                            R.anim.fade_out,
+                            R.anim.fade_in,
+                            R.anim.fade_out)
+                    .replace(R.id.settings, LicensesFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
             else -> return false
         }
         return true
+    }
+
+    companion object {
+        const val TAG = "SettingsFragment"
+
+        fun newInstance() = SettingsFragment()
     }
 }
