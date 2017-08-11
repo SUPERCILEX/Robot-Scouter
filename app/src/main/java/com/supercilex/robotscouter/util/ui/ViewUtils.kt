@@ -4,15 +4,20 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Bundle
 import android.support.annotation.ColorRes
 import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.support.text.emoji.widget.EmojiAppCompatEditText
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDelegate
 import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.AppCompatButton
 import android.support.v7.widget.AppCompatTextView
@@ -23,6 +28,49 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.TextView
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.nightMode
+import com.supercilex.robotscouter.util.prefsListener
+import java.util.concurrent.CopyOnWriteArrayList
+
+private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
+
+fun initUi(app: Application) {
+    AppCompatDelegate.setDefaultNightMode(nightMode)
+    prefsListener.observeForever {
+        it?.addChangeEventListener(object : ChangeEventListenerBase {
+            override fun onDataChanged() {
+                AppCompatDelegate.setDefaultNightMode(nightMode)
+                visibleActivities.filterIsInstance<AppCompatActivity>()
+                        .forEach { it.delegate.setLocalNightMode(nightMode) }
+            }
+        })
+    }
+
+    app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+
+        override fun onActivityStarted(activity: Activity) {
+            visibleActivities.add(activity)
+        }
+
+        override fun onActivityResumed(activity: Activity) {
+            activity.findViewById<View>(android.R.id.content).post {
+                (activity as? AppCompatActivity ?: return@post).delegate.setLocalNightMode(nightMode)
+            }
+        }
+
+        override fun onActivityPaused(activity: Activity) = Unit
+
+        override fun onActivityStopped(activity: Activity) {
+            visibleActivities.remove(activity)
+        }
+
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+
+        override fun onActivityDestroyed(activity: Activity) = Unit
+    })
+}
 
 fun isInTabletMode(context: Context): Boolean {
     val config: Configuration = context.resources.configuration

@@ -3,8 +3,10 @@ package com.supercilex.robotscouter.util.data
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.v7.app.AppCompatDelegate
 import android.support.v7.preference.PreferenceDataStore
 import com.firebase.ui.database.ChangeEventListener
+import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.database.DataSnapshot
 import com.supercilex.robotscouter.util.FIREBASE_PREFS
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
@@ -38,6 +40,24 @@ val prefs = object : PreferenceDataStore() {
             localPrefs.getBoolean(key, defValue)
 }
 
+@get:AppCompatDelegate.NightMode
+val nightMode: Int get() {
+    val mode = prefs.getString(FIREBASE_PREF_NIGHT_MODE, "auto")
+    return when (mode) {
+        "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
+        "yes" -> AppCompatDelegate.MODE_NIGHT_YES
+        "no" -> AppCompatDelegate.MODE_NIGHT_NO
+        else -> throw IllegalStateException("Unknown night mode value: $mode")
+    }
+}
+
+val shouldAskToUploadMediaToTba: Boolean
+    get() = prefs.getString(FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "ask"
+
+var shouldUploadMediaToTba: Boolean
+    get() = prefs.getString(FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "yes"
+    set(value) = prefs.putString(FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA, if (value) "yes" else "no")
+
 var hasShownAddTeamTutorial: Boolean
     get() = prefs.getBoolean(FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false)
     set(value) = prefs.putBoolean(FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, value)
@@ -49,13 +69,6 @@ var hasShownSignInTutorial: Boolean
 var hasShownExportHint: Boolean
     get() = prefs.getBoolean(FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT, false)
     set(value) = prefs.putBoolean(FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT, value)
-
-val shouldAskToUploadMediaToTba: Boolean
-    get() = prefs.getString(FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "ask"
-
-var shouldUploadMediaToTba: Boolean
-    get() = prefs.getString(FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "yes"
-    set(value) = prefs.putString(FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA, if (value) "yes" else "no")
 
 fun initPrefs(context: Context) {
     localPrefs = context.getSharedPreferences(FIREBASE_PREFS, Context.MODE_PRIVATE)
@@ -90,6 +103,14 @@ fun initPrefs(context: Context) {
             }
         }) ?: clearLocalPrefs()
     }
+}
+
+fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(key: String, defValue: T): T {
+    for ((index, snapshot) in this.withIndex()) {
+        @Suppress("UNCHECKED_CAST")
+        if (snapshot.key == key) return getObject(index) as T
+    }
+    return defValue
 }
 
 fun clearPrefs() {

@@ -17,22 +17,20 @@ import com.supercilex.robotscouter.util.initAnalytics
 import com.supercilex.robotscouter.util.initConnectivity
 import com.supercilex.robotscouter.util.initConstants
 import com.supercilex.robotscouter.util.ui.initNotifications
+import com.supercilex.robotscouter.util.ui.initUi
 
 class RobotScouter : MultiDexApplication() {
     private val refWatcher: RefWatcher by lazy { LeakCanary.install(this) }
 
     override fun onCreate() {
         super.onCreate()
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return
-        }
+        if (LeakCanary.isInAnalyzerProcess(this)) return
 
         initAnalytics(this)
         initConnectivity(this)
         initConstants(this)
         initPrefs(this)
+        initUi(this)
         initSpreadsheet(this)
         initNotifications(this)
 
@@ -58,9 +56,8 @@ class RobotScouter : MultiDexApplication() {
     companion object {
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
         }
 
-        fun getRefWatcher(context: Context): RefWatcher = (context.applicationContext as RobotScouter).refWatcher
+        fun getRefWatcher(context: Context) = (context.applicationContext as RobotScouter).refWatcher
     }
 }

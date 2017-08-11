@@ -5,7 +5,6 @@
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_ui">
 
-        <!-- TODO actually do something with this pref -->
         <android.support.v7.preference.ListPreference
             android:defaultValue="auto"
             android:entries="@array/entries_pref_night_mode"

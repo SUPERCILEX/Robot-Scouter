@@ -7,6 +7,7 @@ import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIA
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ViewModelBase
+import com.supercilex.robotscouter.util.data.getPrefOrDefault
 import com.supercilex.robotscouter.util.prefsListener
 import com.supercilex.robotscouter.util.ui.UniqueMutableLiveData
 
@@ -31,17 +32,9 @@ class TutorialHelper(app: Application) : ViewModelBase<Nothing?>(app),
 
     override fun onDataChanged() {
         hasShownAddTeamTutorial.setValue(
-                prefs!!.getOrDefault(FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
+                prefs!!.getPrefOrDefault(FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
         hasShownSignInTutorial.setValue(
-                prefs!!.getOrDefault(FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
-    }
-
-    private fun <T> ObservableSnapshotArray<*>.getOrDefault(key: String, defValue: T): T {
-        for ((index, snapshot) in this.withIndex()) {
-            @Suppress("UNCHECKED_CAST")
-            if (snapshot.key == key) return getObject(index) as T
-        }
-        return defValue
+                prefs!!.getPrefOrDefault(FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
     }
 
     override fun onCleared() {
