@@ -26,6 +26,7 @@ abstract class MetricListFragment : LifecycleFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         holder.init(metricsRef)
     }
 

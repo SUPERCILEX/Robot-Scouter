@@ -42,11 +42,6 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
 
     private var hasAddedItem: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View {

@@ -12,8 +12,6 @@ import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.R
@@ -29,7 +27,6 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         if (activity.callingActivity != null && isInTabletMode(context)) {
             activity.setResult(Activity.RESULT_OK, Intent().putExtra(SCOUT_ARGS_KEY, bundle))
             activity.finish()
@@ -41,11 +38,6 @@ class ActivityScoutListFragment : ScoutListFragmentBase() {
         activity.setSupportActionBar(rootView.findViewById(R.id.toolbar))
         activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         super.onActivityCreated(savedInstanceState)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.scout, menu)
-        viewHolder.initMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {

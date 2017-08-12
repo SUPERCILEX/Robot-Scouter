@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -36,10 +35,10 @@ import com.supercilex.robotscouter.util.data.model.forceUpdateTeam
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 
-abstract class AppBarViewHolderBase protected constructor(private val fragment: LifecycleFragment,
-                                                          rootView: View,
-                                                          listener: LiveData<Team>,
-                                                          private val onScoutingReadyTask: Task<*>) :
+open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
+                                rootView: View,
+                                listener: LiveData<Team>,
+                                private val onScoutingReadyTask: Task<*>) :
         OnSuccessListener<Void?>, View.OnLongClickListener,
         TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     protected var team: Team = listener.value!!
@@ -60,8 +59,6 @@ abstract class AppBarViewHolderBase protected constructor(private val fragment: 
     private lateinit var newScoutItem: MenuItem
     private lateinit var addMediaItem: MenuItem
     private lateinit var visitTeamWebsiteItem: MenuItem
-    private lateinit var deleteScoutItem: MenuItem
-    private var isDeleteScoutItemVisible: Boolean = false
 
     init {
         backdrop.setOnLongClickListener(this)
@@ -124,11 +121,14 @@ abstract class AppBarViewHolderBase protected constructor(private val fragment: 
     protected open fun updateScrim(@ColorInt color: Int, bitmap: Bitmap?) =
             header.setContentScrimColor(getTransparentColor(color))
 
-    fun initMenu(menu: Menu) {
+    fun initMenu() {
+        toolbar.menu.clear()
+        toolbar.inflateMenu(R.menu.scout_list_menu)
+        val menu = toolbar.menu
+
         newScoutItem = menu.findItem(R.id.action_new_scout)
         addMediaItem = menu.findItem(R.id.action_add_media)
         visitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website)
-        deleteScoutItem = menu.findItem(R.id.action_delete)
 
         menu.findItem(R.id.action_visit_tba_website).title =
                 fragment.getString(R.string.visit_team_website_on_tba, team.number)
@@ -139,11 +139,6 @@ abstract class AppBarViewHolderBase protected constructor(private val fragment: 
         bindMenu()
     }
 
-    fun setDeleteScoutMenuItemVisible(visible: Boolean) {
-        isDeleteScoutItemVisible = visible
-        bindMenu()
-    }
-
     private fun bindMenu() =
             Tasks.whenAll(onMenuReadyTask.task, onScoutingReadyTask).addOnSuccessListener(this)
 
@@ -151,7 +146,6 @@ abstract class AppBarViewHolderBase protected constructor(private val fragment: 
         newScoutItem.isVisible = true
         addMediaItem.isVisible = team.isOutdatedMedia
         visitTeamWebsiteItem.isVisible = !TextUtils.isEmpty(team.website)
-        deleteScoutItem.isVisible = isDeleteScoutItemVisible
     }
 
     private fun getTransparentColor(@ColorInt opaque: Int): Int = Color.argb(

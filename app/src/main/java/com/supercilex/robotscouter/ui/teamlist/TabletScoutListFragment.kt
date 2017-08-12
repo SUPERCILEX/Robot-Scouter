@@ -1,7 +1,10 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scoutlist.AppBarViewHolderBase
@@ -13,17 +16,22 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
         object : AppBarViewHolderBase(
                 this, rootView, dataHolder.teamListener, onScoutingReadyTask.task) {
             init {
-                toolbar.inflateMenu(R.menu.scout)
-                toolbar.setOnMenuItemClickListener { onOptionsItemSelected(it) }
-                initMenu(toolbar.menu)
+                toolbar.setOnMenuItemClickListener {
+                    // We need to be able to guarantee that our `onOptionsItemSelected`s are called
+                    // before that of TeamListActivity because of duplicate menu item ids
+                    Fragment::class.java
+                            .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)
+                            .apply { isAccessible = true }
+                            .invoke(this@TabletScoutListFragment, it) as Boolean
+                            || activity.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, it)
+                }
             }
         }
     }
-    private var hint: View? = null
-        get() {
-            if (field == null) field = activity.findViewById(R.id.no_team_selected_hint)
-            return field
-        }
+    private var hint: View? = null; get() {
+        if (field == null) field = activity.findViewById(R.id.no_team_selected_hint)
+        return field
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

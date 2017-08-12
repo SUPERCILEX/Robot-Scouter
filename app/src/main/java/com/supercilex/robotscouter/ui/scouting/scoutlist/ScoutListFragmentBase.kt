@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +60,7 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         savedState = savedInstanceState
 
         dataHolder.init(savedInstanceState ?: arguments)
@@ -92,6 +95,8 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
         viewHolder
         if (savedInstanceState != null) viewHolder.restoreState(savedInstanceState)
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) = viewHolder.initMenu()
 
     override fun onStart() {
         super.onStart()
@@ -137,7 +142,6 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
                 logEditTemplateEvent(team.number)
             }
             R.id.action_edit_team_details -> TeamDetailsDialog.show(childFragmentManager, team)
-            R.id.action_delete -> pagerAdapter!!.deleteScout()
             else -> return false
         }
         return true
@@ -150,7 +154,7 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
     private fun initScoutList() {
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
         val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
-        pagerAdapter = ScoutPagerAdapter(this, tabLayout, viewHolder, team)
+        pagerAdapter = ScoutPagerAdapter(this, tabLayout, team)
         pagerAdapter!!.currentTabKey = scoutKey
 
         viewPager.adapter = pagerAdapter

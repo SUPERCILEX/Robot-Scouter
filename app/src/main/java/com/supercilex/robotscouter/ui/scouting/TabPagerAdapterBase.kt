@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.FIREBASE_NAME
+import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import java.util.ArrayList
 
@@ -54,7 +55,7 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
             keys.indexOf(field).let { if (it != -1) selectTab(it) }
         }
 
-    protected val holder: TabKeysHolder = ViewModelProviders.of(fragment).get(TabKeysHolder::class.java)
+    private val holder: TabKeysHolder = ViewModelProviders.of(fragment).get(TabKeysHolder::class.java)
     protected var keys: List<String> = ArrayList()
 
     init {
@@ -77,6 +78,8 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
     override fun onChanged(newKeys: List<String>?) {
         removeNameListeners()
 
+        val oldKeys = keys
+        val prevTabKey = currentTabKey
         keys = newKeys!!
 
         for (key in keys) getTabNameRef(key).addValueEventListener(tabNameListener)
@@ -88,10 +91,19 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
         tabLayout.addOnTabSelectedListener(this)
 
         if (keys.isNotEmpty()) {
-            if (TextUtils.isEmpty(currentTabKey)) {
+            if (TextUtils.isEmpty(prevTabKey)) {
                 currentTabKey = keys[0]
             } else {
-                selectTab(keys.indexOf(currentTabKey))
+                if (keys.contains(prevTabKey)) {
+                    selectTab(keys.indexOf(currentTabKey))
+                } else {
+                    val index = oldKeys.indexOf(prevTabKey)
+                    var newKey: String? = null
+                    if (oldKeys.size > SINGLE_ITEM) {
+                        newKey = if (oldKeys.lastIndex > index) oldKeys[index + 1] else oldKeys[index - 1]
+                    }
+                    currentTabKey = newKey
+                }
             }
         }
     }
