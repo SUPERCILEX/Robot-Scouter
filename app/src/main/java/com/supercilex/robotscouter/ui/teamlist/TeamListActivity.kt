@@ -21,8 +21,8 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
-import com.supercilex.robotscouter.ui.scouting.template.TemplateEditorActivity
+import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
+import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.model.parseTeam
@@ -127,7 +127,7 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
-            R.id.action_edit_templates -> TemplateEditorActivity.start(this)
+            R.id.action_edit_templates -> TemplateListActivity.start(this)
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             R.id.action_settings -> SettingsActivity.show(this)
             else -> throw IllegalStateException()
@@ -154,9 +154,9 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
                     .commit()
         } else {
             if (restoreOnConfigChange) {
-                startActivityForResult(ScoutActivity.createIntent(this, args), RC_SCOUT)
+                startActivityForResult(ScoutListActivity.createIntent(this, args), RC_SCOUT)
             } else {
-                startActivity(ScoutActivity.createIntent(this, args))
+                startActivity(ScoutListActivity.createIntent(this, args))
             }
         }
 

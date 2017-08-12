@@ -10,7 +10,7 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.ui.scouting.scout.ScoutActivity
+import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
@@ -64,7 +64,7 @@ class LinkReceiverActivity : AppCompatActivity() {
                                   .putExtra(SCOUT_ARGS_KEY, data)
                                   .addNewDocumentFlags())
         } else {
-            startActivity(ScoutActivity.createIntent(this, data))
+            startActivity(ScoutListActivity.createIntent(this, data))
         }
     }
 

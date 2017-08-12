@@ -67,8 +67,8 @@
         </activity>
 
         <activity
-            android:name=".ui.scouting.scout.ScoutActivity"
-            android:label="@string/title_activity_scout"
+            android:name=".ui.scouting.scoutlist.ScoutListActivity"
+            android:label="@string/title_activity_scout_list"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan" />
@@ -98,8 +98,8 @@
         </activity>
 
         <activity
-            android:name=".ui.scouting.template.TemplateEditorActivity"
-            android:label="@string/title_activity_template"
+            android:name=".ui.scouting.templatelist.TemplateListActivity"
+            android:label="@string/title_activity_template_list"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan" />

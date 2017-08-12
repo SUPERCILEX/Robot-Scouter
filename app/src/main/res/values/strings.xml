@@ -22,7 +22,7 @@
     <string name="should_upload_media_rationale">If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a> to help other Robot Scouter users and the greater TBA community.</string>
     <string name="save_response">Save response</string>
 
-    <!-- Team List Activity -->
+    <!-- Team list activity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -97,17 +97,17 @@
 
     <string name="write_storage_rationale_media">Robot Scouter needs access to your storage to save your photo.</string>
 
-    <!-- Scout Activity -->
-    <string name="title_activity_scout">Scout</string>
+    <!-- Scout editor activity -->
+    <string name="title_activity_scout_list">Scout editor</string>
     <string name="title_scout_tab">Scout %d</string>
     <string name="offline_reassurance">Offline. Data will be saved</string>
     <string name="should_delete_team_message">You have deleted the last scout for team %s.</string>
     <string name="should_delete_team_action">Delete team</string>
 
     <string name="new_scout_or_team">New scout/team</string>
+    <string name="new_scout_or_team_long">Add a new scout or team</string>
     <string name="add_scout">Add scout</string>
     <string name="add_media">Add media</string>
-    <string name="add_scout_long">Add a new scout or team</string>
 
     <string name="visit_team_website">Visit team %s’s website</string>
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
@@ -158,7 +158,7 @@
     <string name="average">Average</string>
 
     <!-- Template editor activity -->
-    <string name="title_activity_template">Scout template editor</string>
+    <string name="title_activity_template_list">Scout template editor</string>
     <string name="title_template_tab">Template %d</string>
 
     <!-- Settings activity -->

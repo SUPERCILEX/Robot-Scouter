@@ -4,7 +4,7 @@
         android:enabled="true"
         android:icon="@drawable/shortcut_add_scout"
         android:shortcutId="add_scout"
-        android:shortcutLongLabel="@string/add_scout_long"
+        android:shortcutLongLabel="@string/new_scout_or_team_long"
         android:shortcutShortLabel="@string/add_scout">
         <intent
             android:action="android.intent.action.VIEW"
