@@ -5,15 +5,11 @@
     tools:context=".ui.scouting.templatelist.TemplateListActivity">
 
     <item
-        android:id="@+id/action_reset_template_all"
-        android:title="@string/reset_template_all" />
-
-    <item
-        android:id="@+id/action_reset_template_team"
-        android:title="@string/reset_template_team" />
-
-    <item
         android:id="@+id/action_remove_metrics"
         android:title="@string/remove_metrics" />
+
+    <item
+        android:id="@+id/action_delete_template"
+        android:title="@string/delete_template" />
 
 </menu>

@@ -5,6 +5,7 @@
     <!-- Common -->
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="undo">Undo</string>
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
     <string name="open">Open</string>
@@ -130,12 +131,7 @@
     <string name="edit_spinner_items_short">Edit items</string>
     <string name="edit_spinner_items_long">Edit selector items</string>
     <string name="delete_spinner">Delete item selector?</string>
-    <string name="undo">Undo</string>
     <string name="move_cancelled">Move cancelled: another user updated the template while you were reordering items.</string>
-    <string name="reset_template_all">Reset scouting template for all teams</string>
-    <string name="reset_template_team">Reset scouting template for this team only</string>
-    <string name="remove_metrics">Remove all metrics</string>
-    <string name="reset">Reset</string>
 
     <string name="add_checkbox">Add checkbox</string>
     <string name="add_counter">Add counter</string>
@@ -160,6 +156,13 @@
     <!-- Template editor activity -->
     <string name="title_activity_template_list">Scout template editor</string>
     <string name="title_template_tab">Template %d</string>
+
+    <string name="remove_metrics">Remove all metrics</string>
+    <string name="delete_template">Delete template</string>
+    <string name="delete_template_warning">
+        This template will be permanently removed and all teams using it will instead begin using the
+        default template for future scouts. Any existing scouts won\'t be affected.
+    </string>
 
     <!-- Settings activity -->
     <string name="title_activity_settings">Settings</string>

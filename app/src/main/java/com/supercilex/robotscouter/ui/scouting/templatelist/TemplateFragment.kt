@@ -26,7 +26,6 @@ import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
-import com.supercilex.robotscouter.util.data.model.parseTeam
 import com.supercilex.robotscouter.util.ui.getHighestIntPriority
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
@@ -90,12 +89,9 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         when (id) {
-            R.id.action_reset_template_all, R.id.action_reset_template_team -> {
+            R.id.action_delete_template -> {
                 recyclerView.clearFocus()
-                ResetTemplateDialog.show(
-                        childFragmentManager,
-                        parseTeam(arguments),
-                        id == R.id.action_reset_template_all)
+                DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)
             }
             R.id.action_remove_metrics -> {
                 metricsRef.addListenerForSingleValueEvent(object : ValueEventListener {
