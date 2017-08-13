@@ -49,6 +49,15 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
         selectedTeamKeyListener.observeForever(this)
     }
 
+    override fun startListening() {
+        super.startListening()
+
+        // More annoying constructor bugs: this will be called before we can assign our fields,
+        // thus the NPE
+        @Suppress("UNNECESSARY_SAFE_CALL")
+        selectedTeamKeyListener?.observeForever(this)
+    }
+
     override fun onChanged(teamKey: String?) {
         val oldKey = selectedTeamKey
         selectedTeamKey = teamKey
