@@ -90,8 +90,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) :
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val position = viewHolder.adapterPosition
-        val deletedRef: DatabaseReference = adapter.getRef(position)
+        val deletedRef: DatabaseReference = adapter.getRef(viewHolder.adapterPosition)
 
         viewHolder.itemView.clearFocus() // Needed to prevent the item from being re-added
         deletedRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -99,7 +98,9 @@ class TemplateItemTouchCallback<T>(private val rootView: View) :
                 deletedRef.removeValue()
 
                 Snackbar.make(rootView, R.string.item_deleted, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.undo) { deletedRef.setValue(snapshot.value, position) }
+                        .setAction(R.string.undo) {
+                            deletedRef.setValue(snapshot.value, snapshot.priority)
+                        }
                         .show()
             }
 
