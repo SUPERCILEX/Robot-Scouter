@@ -139,8 +139,10 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
         bindMenu()
     }
 
-    private fun bindMenu() =
-            Tasks.whenAll(onMenuReadyTask.task, onScoutingReadyTask).addOnSuccessListener(this)
+    private fun bindMenu() {
+        val onReady = Tasks.whenAll(onMenuReadyTask.task, onScoutingReadyTask)
+        if (onReady.isSuccessful) onSuccess(null) else onReady.addOnSuccessListener(this)
+    }
 
     override fun onSuccess(void: Void?) {
         newScoutItem.isVisible = true
