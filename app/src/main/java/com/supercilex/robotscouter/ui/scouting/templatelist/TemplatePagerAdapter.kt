@@ -9,6 +9,8 @@ import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 
 open class TemplatePagerAdapter(fragment: LifecycleFragment, tabLayout: TabLayout) :
         TabPagerAdapterBase(fragment, tabLayout, templateIndicesRef, FIREBASE_TEMPLATES) {
+    override val editTabNameRes = R.string.title_edit_template_name
+
     init {
         init()
     }

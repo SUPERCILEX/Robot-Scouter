@@ -13,6 +13,8 @@ import com.supercilex.robotscouter.util.isOffline
 
 class ScoutPagerAdapter(fragment: LifecycleFragment, tabLayout: TabLayout, private val team: Team) :
         TabPagerAdapterBase(fragment, tabLayout, getScoutIndicesRef(team.key), FIREBASE_SCOUTS) {
+    override val editTabNameRes = R.string.edit_scout_name
+
     init {
         init()
     }

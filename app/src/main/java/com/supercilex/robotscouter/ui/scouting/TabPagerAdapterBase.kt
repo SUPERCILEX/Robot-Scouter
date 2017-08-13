@@ -7,6 +7,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.OnLifecycleEvent
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.annotation.StringRes
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
@@ -49,14 +50,14 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
         override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
     }
 
-    var currentTabKey: String? = null
-        set(value) {
-            field = value
-            keys.indexOf(field).let { if (it != -1) selectTab(it) }
-        }
-
     private val holder: TabKeysHolder = ViewModelProviders.of(fragment).get(TabKeysHolder::class.java)
+    @get:StringRes protected abstract val editTabNameRes: Int
+
     protected var keys: List<String> = ArrayList()
+    var currentTabKey: String? = null; set(value) {
+        field = value
+        keys.indexOf(field).let { if (it != -1) selectTab(it) }
+    }
 
     init {
         holder.init(keysRef)
@@ -130,6 +131,7 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
         TabNameDialog.show(
                 fragment.childFragmentManager,
                 dataRef.child(keys[v.id]).child(FIREBASE_NAME),
+                editTabNameRes,
                 tabLayout.getTabAt(v.id)!!.text!!.toString())
         return true
     }

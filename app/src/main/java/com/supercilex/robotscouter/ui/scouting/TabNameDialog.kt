@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting
 
 import android.content.DialogInterface
+import android.support.annotation.StringRes
 import android.support.v4.app.FragmentManager
 import android.text.InputType
 import android.text.TextUtils
@@ -17,7 +18,7 @@ class TabNameDialog : ValueDialogBase<String>() {
             else -> name
         }
     }
-    override val title = R.string.edit_scout_name
+    override val title by lazy { arguments.getInt(TITLE_KEY) }
     override val hint = R.string.scout_name
 
     override fun onShow(dialog: DialogInterface) {
@@ -27,10 +28,14 @@ class TabNameDialog : ValueDialogBase<String>() {
 
     companion object {
         private const val TAG = "TabNameDialog"
+        private const val TITLE_KEY = "title_key"
 
-        fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) =
-                TabNameDialog().show(manager, TAG, getRefBundle(ref)) {
-                    putString(CURRENT_VALUE, currentValue)
-                }
+        fun show(manager: FragmentManager,
+                 ref: DatabaseReference,
+                 @StringRes title: Int,
+                 currentValue: String) = TabNameDialog().show(manager, TAG, getRefBundle(ref)) {
+            putInt(TITLE_KEY, title)
+            putString(CURRENT_VALUE, currentValue)
+        }
     }
 }
