@@ -21,7 +21,10 @@
 
     <!-- Media upload -->
     <string name="should_upload_media_dialog_title">Upload media to The Blue Alliance</string>
-    <string name="should_upload_media_rationale">If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a> to help other Robot Scouter users and the greater TBA community.</string>
+    <string name="should_upload_media_rationale">
+        If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a>
+        to help other Robot Scouter users and the greater TBA community.
+    </string>
     <string name="save_response">Save response</string>
 
     <!-- Team list activity -->
@@ -110,9 +113,9 @@
     <string name="new_scout_or_team_long">Add a new scout or team</string>
     <string name="add_scout">Add scout</string>
     <string name="add_media">Add media</string>
-
     <string name="visit_team_website">Visit team %s’s website</string>
     <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
+    <string name="edit_template">Edit next scout template</string>
 
     <string name="edit_team_details">Edit team details</string>
     <string name="team_details">Team details</string>
@@ -127,35 +130,38 @@
     <string name="edit_value">Edit value</string>
     <string name="value">Value</string>
 
-    <string name="edit_template">Edit next scout template</string>
-    <string name="edit_spinner_items_short">Edit items</string>
-    <string name="edit_spinner_items_long">Edit selector items</string>
-    <string name="delete_spinner">Delete item selector?</string>
+    <!-- Template editor activity -->
+    <string name="title_activity_template_list">Scout template editor</string>
+    <string name="title_template_tab">Template %d</string>
+
     <string name="move_cancelled">Move cancelled: another user updated the template while you were reordering items.</string>
 
-    <string name="add_checkbox">Add checkbox</string>
-    <string name="add_counter">Add counter</string>
-    <string name="add_spinner">Add item selector</string>
-    <string name="add_note">Add note</string>
-    <string name="add_stopwatch">Add stopwatch</string>
     <string name="add_header">Add header</string>
-    <string name="hint_notes">Text</string>
-    <string name="checkbox_name">Checkbox name</string>
-    <string name="counter_name">Counter name</string>
-    <string name="spinner_name">Item selector name</string>
-    <string name="note_name">Note name</string>
-    <string name="stopwatch_name">Stopwatch name</string>
     <string name="header_name">Header name</string>
 
+    <string name="add_checkbox">Add checkbox</string>
+    <string name="checkbox_name">Checkbox name</string>
+
+    <string name="add_counter">Add counter</string>
+    <string name="counter_name">Counter name</string>
     <string name="unit">Unit</string>
+
+    <string name="add_stopwatch">Add stopwatch</string>
+    <string name="stopwatch_name">Stopwatch name</string>
     <string name="start_stopwatch">Start</string>
     <string name="stop_stopwatch">Stop (%s)</string>
     <string name="cycle_item">Cycle %d</string>
     <string name="average">Average</string>
 
-    <!-- Template editor activity -->
-    <string name="title_activity_template_list">Scout template editor</string>
-    <string name="title_template_tab">Template %d</string>
+    <string name="add_note">Add note</string>
+    <string name="hint_notes">Text</string>
+    <string name="note_name">Note name</string>
+
+    <string name="add_spinner">Add item selector</string>
+    <string name="spinner_name">Item selector name</string>
+    <string name="edit_spinner_items_short">Edit items</string>
+    <string name="edit_spinner_items_long">Edit selector items</string>
+    <string name="delete_spinner">Delete item selector?</string>
 
     <string name="remove_metrics">Remove all metrics</string>
     <string name="delete_template">Delete template</string>
@@ -202,7 +208,14 @@
 
     <string name="title_pref_sign_out">Sign out and reset Robot Scouter</string>
 
-    <string name="summary_pref_about">Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a> and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf you want to try out new features before everyone else, feel free to join <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso, Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!</string>
+    <string name="summary_pref_about">
+        Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>
+        and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf
+        you want to try out new features before everyone else, feel free to join
+        <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso,
+        Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a>
+        so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!
+    </string>
 
     <string name="title_pref_release_notes">Release notes</string>
     <string name="summary_pref_release_notes">View the latest release notes</string>
@@ -228,5 +241,7 @@
     <string name="accessibility_reorder">The reorder icon. It can be used to change the order of scout metrics.</string>
 
     <!-- Other -->
-    <string name="asset_statements" translatable="false">[{\n  \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n  \"target\": {\n    \"namespace\": \"web\",\n    \"site\": \"https://supercilex.github.io\",\n  }\n}]</string>
+    <string name="asset_statements" translatable="false">
+        [{\n \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n \"target\": {\n \"namespace\": \"web\",\n \"site\": \"https://supercilex.github.io\",\n }\n}]
+    </string>
 </resources>
