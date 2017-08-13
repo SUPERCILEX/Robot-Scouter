@@ -16,8 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
@@ -36,7 +36,7 @@ import com.supercilex.robotscouter.util.logEditTemplateEvent
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 
 abstract class ScoutListFragmentBase : LifecycleFragment(),
-        Observer<Team>, TeamMediaCreator.StartCaptureListener, FirebaseAuth.AuthStateListener {
+        Observer<Team>, TeamMediaCreator.StartCaptureListener {
     protected val rootView: View by lazy {
         View.inflate(context, R.layout.fragment_scout_list, null)
     }
@@ -66,8 +66,6 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
         dataHolder.init(savedInstanceState ?: arguments)
         team = dataHolder.teamListener.value!!
         dataHolder.teamListener.observe(this, this)
-
-        FirebaseAuth.getInstance().addAuthStateListener(this)
     }
 
     override fun onChanged(team: Team?) {
@@ -110,7 +108,7 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
 
     override fun onDestroy() {
         super.onDestroy()
-        FirebaseAuth.getInstance().removeAuthStateListener(this)
+        RobotScouter.getRefWatcher(context).watch(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -145,10 +143,6 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
             else -> return false
         }
         return true
-    }
-
-    override fun onAuthStateChanged(auth: FirebaseAuth) {
-        if (auth.currentUser == null) onTeamDeleted()
     }
 
     private fun initScoutList() {
