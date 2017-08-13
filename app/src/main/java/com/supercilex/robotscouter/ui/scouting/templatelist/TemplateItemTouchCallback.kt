@@ -97,7 +97,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) :
             override fun onDataChange(snapshot: DataSnapshot) {
                 deletedRef.removeValue()
 
-                Snackbar.make(rootView, R.string.item_deleted, Snackbar.LENGTH_LONG)
+                Snackbar.make(rootView, R.string.deleted, Snackbar.LENGTH_LONG)
                         .setAction(R.string.undo) {
                             deletedRef.setValue(snapshot.value, snapshot.priority)
                         }

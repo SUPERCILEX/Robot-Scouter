@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.util.FIREBASE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.data.FirebaseCopier
+import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.defaultTemplateListener
 import com.supercilex.robotscouter.util.logAddScoutEvent
@@ -80,7 +81,7 @@ fun addScout(team: Team): String {
 
     if (TextUtils.isEmpty(team.templateKey)) {
         defaultTemplateListener.observeOnce()
-                .addOnSuccessListener { FirebaseCopier.copyTo(it, scoutRef) }
+                .addOnSuccessListener { copySnapshots(it, scoutRef) }
     } else {
         FirebaseCopier(getTemplateMetricsRef(team.templateKey!!), scoutRef)
                 .performTransformation()

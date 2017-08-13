@@ -45,6 +45,7 @@ import com.supercilex.robotscouter.util.isOffline
 import java.io.File
 import java.util.Arrays
 import java.util.Collections
+import java.util.HashMap
 
 val TEAM_PARSER = SnapshotParser<Team> {
     it.getValue(Team::class.java)!!.apply { key = it.key }
@@ -68,6 +69,12 @@ fun getRefBundle(ref: DatabaseReference) = Bundle().apply {
 
 fun getRef(args: Bundle): DatabaseReference
         = FirebaseDatabase.getInstance().getReference(args.getString(QUERY_KEY))
+
+fun copySnapshots(copySnapshot: DataSnapshot, to: DatabaseReference): Task<Nothing?> =
+        HashMap<String, Any?>().let {
+            deepCopy(it, copySnapshot)
+            to.updateChildren(it).continueWith { null }
+        }
 
 fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also {
     FirebaseArray(query, Any::class.java).apply {
@@ -97,6 +104,21 @@ fun <T> LiveData<T>.observeOnce(isNullable: Boolean = false): Task<T> = TaskComp
         }
     })
 }.task
+
+private fun deepCopy(values: MutableMap<String, Any?>, from: DataSnapshot) {
+    val children = from.children
+    if (children.iterator().hasNext()) {
+        for (snapshot in children) {
+            val data = HashMap<String, Any?>()
+            data.put(".priority", snapshot.priority)
+            values.put(snapshot.key, data)
+
+            deepCopy(data, snapshot)
+        }
+    } else {
+        values.put(".value", from.value)
+    }
+}
 
 interface ChangeEventListenerBase : ChangeEventListener {
     override fun onChildChanged(type: ChangeEventListener.EventType,

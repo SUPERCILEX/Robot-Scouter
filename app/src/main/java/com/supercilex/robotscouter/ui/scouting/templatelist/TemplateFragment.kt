@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -11,13 +12,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionMenu
+import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
 import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
+import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
@@ -93,8 +98,19 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                         id == R.id.action_reset_template_all)
             }
             R.id.action_remove_metrics -> {
-                RemoveAllMetricsDialog.show(
-                        childFragmentManager, FIREBASE_TEMPLATES.child(metricsRef.parent.key))
+                metricsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        metricsRef.removeValue()
+                        Snackbar.make(activity.findViewById(R.id.root),
+                                      R.string.deleted,
+                                      Snackbar.LENGTH_LONG)
+                                .setAction(R.string.undo) { copySnapshots(snapshot, snapshot.ref) }
+                                .show()
+                    }
+
+                    override fun onCancelled(error: DatabaseError) =
+                            FirebaseCrash.report(error.toException())
+                })
             }
             else -> return false
         }
