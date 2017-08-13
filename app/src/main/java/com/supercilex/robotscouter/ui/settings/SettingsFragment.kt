@@ -81,7 +81,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 }
             }
             else -> when (preference.key) {
-                "link_account" -> preference.isVisible = isFullUser
+                "link_account", "sign_out" -> preference.isVisible = isFullUser
                 "version" -> preference.summary = BuildConfig.VERSION_NAME
             }
         }
