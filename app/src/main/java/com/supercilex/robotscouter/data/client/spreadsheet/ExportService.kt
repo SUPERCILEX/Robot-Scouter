@@ -85,8 +85,6 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
     override fun onHandleIntent(intent: Intent) {
         cache = SpreadsheetCache(parseTeamList(intent), this)
 
-        logExportTeamsEvent(cache.teams)
-
         startForeground(
                 R.string.export_in_progress_title,
                 cache.getExportNotification(getString(R.string.exporting_status_loading)))
@@ -691,7 +689,9 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                         .show()
             }
 
-            fragment.activity.startService(
+            logExportTeamsEvent(teams)
+            ContextCompat.startForegroundService(
+                    fragment.activity,
                     Intent(context, ExportService::class.java).putExtras(teamsToIntent(teams)))
 
             return true
