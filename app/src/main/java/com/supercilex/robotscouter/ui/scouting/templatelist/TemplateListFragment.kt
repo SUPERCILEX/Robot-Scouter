@@ -4,17 +4,23 @@ import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.IdRes
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.content.res.AppCompatResources
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
+import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 
@@ -36,6 +42,11 @@ class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPr
         tabLayout.setupWithViewPager(viewPager)
 
         adapter
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -65,12 +76,37 @@ class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPr
         activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
+            inflater.inflate(R.menu.template_list_menu, menu)
+
     override fun onSaveInstanceState(outState: Bundle) = pagerAdapter.onSaveInstanceState(outState)
 
-    override fun onClick(v: View) = childFragmentManager.fragments
-            .filterIsInstance<TemplateFragment>()
-            .filter { pagerAdapter.currentTabKey == it.metricsRef.parent.key }
-            .forEach { it.onClick(v) }
+    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_new_template) {
+        NewTemplateDialog.show(childFragmentManager)
+        true
+    } else false
+
+    override fun onClick(v: View) {
+        childFragmentManager.fragments
+                .filterIsInstance<TemplateFragment>()
+                .filter { pagerAdapter.currentTabKey == it.metricsRef.parent.key }
+                .also {
+                    if (it.size > SINGLE_ITEM) {
+                        throw IllegalStateException(
+                                "Multiple fragments found with key ${it[0].metricsRef.parent.key}")
+                    }
+
+                    it[0].onClick(v)
+                }
+    }
+
+    fun onTemplateCreated(key: String) {
+        pagerAdapter.currentTabKey = key
+
+        Snackbar.make(rootView, R.string.title_template_added, Snackbar.LENGTH_LONG)
+                .setAction(R.string.title_set_default_template) { defaultTemplateKey = key }
+                .show()
+    }
 
     override fun onBackPressed(): Boolean =
             childFragmentManager.fragments.any { it is OnBackPressedListener && it.onBackPressed() }

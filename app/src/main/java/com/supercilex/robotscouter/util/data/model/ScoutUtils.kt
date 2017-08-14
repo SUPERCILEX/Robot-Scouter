@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data.model
 
-import android.text.TextUtils
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -16,6 +15,7 @@ import com.supercilex.robotscouter.data.model.LIST
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
+import com.supercilex.robotscouter.data.model.TEMPLATE_TYPES
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.FIREBASE_METRICS
@@ -29,7 +29,8 @@ import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.data.FirebaseCopier
 import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.observeOnce
-import com.supercilex.robotscouter.util.defaultTemplateListener
+import com.supercilex.robotscouter.util.defaultTemplatesListener
+import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
@@ -72,31 +73,31 @@ fun getScoutMetricsRef(key: String): DatabaseReference =
 
 fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
-fun addScout(team: Team): String {
-    logAddScoutEvent(team.number)
+fun Team.addScout(): String {
+    logAddScoutEvent(number)
 
-    val indexRef = getScoutIndicesRef(team.key).push()
+    val indexRef = getScoutIndicesRef(key).push()
     indexRef.setValue(System.currentTimeMillis())
     val scoutRef = getScoutMetricsRef(indexRef.key)
 
-    if (TextUtils.isEmpty(team.templateKey)) {
-        defaultTemplateListener.observeOnce()
-                .addOnSuccessListener { copySnapshots(it, scoutRef) }
+    if (templateKey.isNumber() && TEMPLATE_TYPES.contains(templateKey.toInt())) {
+        defaultTemplatesListener.observeOnce()
+                .addOnSuccessListener { copySnapshots(it[templateKey.toInt()], scoutRef) }
     } else {
-        FirebaseCopier(getTemplateMetricsRef(team.templateKey!!), scoutRef)
+        FirebaseCopier(getTemplateMetricsRef(templateKey), scoutRef)
                 .performTransformation()
     }
 
     return indexRef.key
 }
 
-fun deleteScout(teamKey: String, scoutKey: String) {
+fun Team.deleteScout(scoutKey: String) {
     FIREBASE_SCOUTS.child(scoutKey).removeValue()
-    getScoutIndicesRef(teamKey).child(scoutKey).removeValue()
+    getScoutIndicesRef(key).child(scoutKey).removeValue()
 }
 
-fun deleteAllScouts(teamKey: String): Task<Nothing?> = TaskCompletionSource<Nothing?>().also {
-    getScoutIndicesRef(teamKey).addListenerForSingleValueEvent(object : ValueEventListener {
+fun Team.deleteAllScouts(): Task<Nothing?> = TaskCompletionSource<Nothing?>().also {
+    getScoutIndicesRef(key).addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             for (keySnapshot in snapshot.children) {
                 FIREBASE_SCOUTS.child(keySnapshot.key).removeValue()

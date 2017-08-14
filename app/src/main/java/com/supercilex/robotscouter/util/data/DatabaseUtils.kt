@@ -23,9 +23,10 @@ import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.FIREBASE_DEFAULT_TEMPLATE
+import com.supercilex.robotscouter.util.FIREBASE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
+import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
@@ -40,7 +41,7 @@ import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
 import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 import com.supercilex.robotscouter.util.data.model.userPrefs
-import com.supercilex.robotscouter.util.defaultTemplateListener
+import com.supercilex.robotscouter.util.defaultTemplatesListener
 import com.supercilex.robotscouter.util.isOffline
 import java.io.File
 import java.util.Arrays
@@ -234,13 +235,13 @@ class TemplatesLiveData : ObservableSnapshotArrayLiveData<Scout>() {
         get() = FirebaseIndexArray(templateIndicesRef, FIREBASE_TEMPLATES, SCOUT_PARSER)
 }
 
-class DefaultTemplateLiveData : LiveData<DataSnapshot>(), ValueEventListener {
+class DefaultTemplatesLiveData : LiveData<List<DataSnapshot>>(), ValueEventListener {
     init {
-        FIREBASE_DEFAULT_TEMPLATE.addValueEventListener(this)
+        FIREBASE_DEFAULT_TEMPLATES.addValueEventListener(this)
     }
 
     override fun onDataChange(snapshot: DataSnapshot) {
-        defaultTemplateListener.value = snapshot
+        defaultTemplatesListener.value = Collections.unmodifiableList(snapshot.children.toList())
     }
 
     override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
@@ -257,6 +258,7 @@ class PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
                 FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
                 -> it.getValue(Boolean::class.java)
 
+                FIREBASE_PREF_DEFAULT_TEMPLATE_KEY,
                 FIREBASE_PREF_NIGHT_MODE,
                 FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
                 -> it.getValue(String::class.java)

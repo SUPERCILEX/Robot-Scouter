@@ -130,7 +130,7 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_new_scout -> pagerAdapter!!.currentTabKey = addScout(team)
+            R.id.action_new_scout -> pagerAdapter!!.currentTabKey = team.addScout()
             R.id.action_add_media -> ShouldUploadMediaToTbaDialog.show(this)
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
@@ -156,7 +156,7 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
 
         if (arguments.getBoolean(KEY_ADD_SCOUT, false)) {
             arguments.remove(KEY_ADD_SCOUT)
-            pagerAdapter!!.currentTabKey = addScout(team)
+            pagerAdapter!!.currentTabKey = team.addScout()
         }
     }
 

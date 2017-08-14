@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.util.data.writeBooleanCompat
 
 data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: String,
                 @Exclude @get:Exclude @set:Exclude var key: String,
-                @Exclude @get:Keep @set:Keep var templateKey: String? = null,
+                @Exclude @get:Keep @set:Keep var templateKey: String = DEFAULT_TEMPLATE_TYPE,
                 @Exclude @get:Keep @set:Keep var name: String? = null,
                 @Exclude @get:Keep @set:Keep var media: String? = null,
                 @Exclude @get:Keep @set:Keep var website: String? = null,

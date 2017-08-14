@@ -6,7 +6,7 @@ import android.provider.Settings
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.BuildConfig
-import com.supercilex.robotscouter.util.data.DefaultTemplateLiveData
+import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.TemplatesLiveData
@@ -48,14 +48,15 @@ const val FIREBASE_NAME = "name"
 const val FIREBASE_UNIT = "unit"
 const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
 
-// Scout template
+// Templates
 val FIREBASE_TEMPLATES: DatabaseReference = ref.child("templates")
 val FIREBASE_TEMPLATE_INDICES: DatabaseReference = ref.child("template-indices")
-val FIREBASE_DEFAULT_TEMPLATE: DatabaseReference = ref.child("default-template")
+val FIREBASE_DEFAULT_TEMPLATES: DatabaseReference = ref.child("default-templates")
 const val FIREBASE_TEMPLATE_KEY = "templateKey"
 
 // Prefs
 const val FIREBASE_PREFS = "prefs"
+const val FIREBASE_PREF_DEFAULT_TEMPLATE_KEY = "defaultTemplateKey"
 const val FIREBASE_PREF_NIGHT_MODE = "nightMode"
 const val FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"
 const val FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
@@ -65,7 +66,7 @@ const val FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT = "hasShownExportHint"
 
 var teamsListener: TeamsLiveData by Delegates.notNull()
     private set
-val defaultTemplateListener = DefaultTemplateLiveData()
+val defaultTemplatesListener = DefaultTemplatesLiveData()
 val templatesListener = TemplatesLiveData()
 val prefsListener = PrefsLiveData()
 

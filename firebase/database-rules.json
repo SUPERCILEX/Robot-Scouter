@@ -3,6 +3,10 @@
     ".read": "auth != null",
     ".write": false,
     "default-template": {
+      // TODO remove once v2.0 is released
+      ".read": true
+    },
+    "default-templates": {
       ".read": true
     },
     "scout-indices": {
@@ -44,6 +48,10 @@
       }
     },
     "templates": {
+      ".write": "auth != null"
+    },
+    "scout-templates": {
+      // TODO remove once v2.0 is released
       ".write": "auth != null"
     },
     "users": {

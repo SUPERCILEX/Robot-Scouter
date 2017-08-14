@@ -7,8 +7,10 @@ import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
+import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.getRefBundle
 import com.supercilex.robotscouter.util.data.model.ref
@@ -34,6 +36,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
                     .filter { TextUtils.equals(templateKey, it.templateKey) }
                     .forEach { it.ref.child(FIREBASE_TEMPLATE_KEY).removeValue() }
 
+            if (templateKey == defaultTemplateKey) defaultTemplateKey = DEFAULT_TEMPLATE_TYPE
             templateIndicesRef.child(templateKey).removeValue()
             FIREBASE_TEMPLATES.child(templateKey).removeValue()
         }

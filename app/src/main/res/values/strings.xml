@@ -132,8 +132,17 @@
 
     <!-- Template editor activity -->
     <string name="title_activity_template_list">Scout template editor</string>
+    <string name="title_new_template">New template</string>
+    <string name="title_set_default_template">"Set as default template"</string>
     <string name="title_template_tab">Template %d</string>
     <string name="title_edit_template_name">Edit template name</string>
+    <string name="title_template_added">Template added</string>
+
+    <string-array name="new_template_options">
+        <item>Match scouting</item>
+        <item>Pit scouting</item>
+        <item>Empty</item>
+    </string-array>
 
     <string name="move_cancelled">Move cancelled: another user updated the template while you were reordering items.</string>
 

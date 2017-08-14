@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.FIREBASE_TEAMS
 import com.supercilex.robotscouter.util.FIREBASE_TEAM_INDICES
+import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
@@ -120,6 +121,11 @@ private fun checkForMatchingTeamDetails(team: Team, newTeam: Team) {
 
 }
 
+fun Team.updateTemplateKey(key: String) {
+    templateKey = key
+    ref.child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
+}
+
 fun Team.updateMedia(newTeam: Team) {
     media = newTeam.media
     shouldUploadMediaToTba = false
@@ -140,7 +146,7 @@ fun Team.copyMediaInfo(newTeam: Team) {
 }
 
 fun Team.deleteTeam() {
-    deleteAllScouts(key).addOnSuccessListener {
+    deleteAllScouts().addOnSuccessListener {
         ref.removeValue()
         teamIndicesRef.child(key).removeValue()
         FirebaseAppIndex.getInstance().remove(deepLink)

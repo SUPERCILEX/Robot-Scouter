@@ -8,14 +8,18 @@ import android.support.v7.preference.PreferenceDataStore
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.database.DataSnapshot
+import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_PREFS
+import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
+import com.supercilex.robotscouter.util.data.model.updateTemplateKey
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.prefsListener
+import com.supercilex.robotscouter.util.teamsListener
 import kotlin.properties.Delegates
 
 private var localPrefs: SharedPreferences by Delegates.notNull()
@@ -39,6 +43,17 @@ val prefs = object : PreferenceDataStore() {
     override fun getBoolean(key: String, defValue: Boolean): Boolean =
             localPrefs.getBoolean(key, defValue)
 }
+
+var defaultTemplateKey: String
+    get() = prefs.getString(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY, DEFAULT_TEMPLATE_TYPE)!!
+    set(value) {
+        prefs.putString(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY, value)
+        teamsListener.observeOnce().addOnSuccessListener {
+            it.mapIndexed { index, _ -> it.getObject(index) }.forEach {
+                it.updateTemplateKey(value)
+            }
+        }
+    }
 
 @get:AppCompatDelegate.NightMode
 val nightMode: Int get() {
@@ -90,6 +105,7 @@ fun initPrefs(context: Context) {
                             FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
                             -> putBoolean(key, it.getObject(index) as Boolean)
 
+                            FIREBASE_PREF_DEFAULT_TEMPLATE_KEY,
                             FIREBASE_PREF_NIGHT_MODE,
                             FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
                             -> putString(key, it.getObject(index) as String)
