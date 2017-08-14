@@ -1,8 +1,11 @@
 package com.supercilex.robotscouter.util.data.model
 
 import android.app.Application
+import android.arch.core.util.Function
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import android.text.TextUtils
 import com.firebase.ui.database.ChangeEventListener
@@ -15,55 +18,55 @@ import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.teamsListener
 
 class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
-        Observer<ObservableSnapshotArray<Team>>, ChangeEventListenerBase {
-    val teamListener = MutableLiveData<Team>()
+        Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
+    val teamListener: LiveData<Team> = Transformations.switchMap(teamsListener, this)
 
+    private val keepAliveListener = Observer<Team> {}
     private val team: Team by lazy { teamListener.value!! }
-    private lateinit var teams: ObservableSnapshotArray<Team>
 
     override fun onCreate(args: Bundle) {
-        teamListener.value = parseTeam(args); team
-        teamsListener.observeForever(this)
+        (teamListener as MutableLiveData).value = parseTeam(args); team
+        teamListener.observeForever(keepAliveListener)
     }
 
-    override fun onChanged(teams: ObservableSnapshotArray<Team>?) {
-        if (teams == null) teamListener.value = null
-        else {
-            this.teams = teams
+    override fun apply(teams: ObservableSnapshotArray<Team>?): LiveData<Team> {
+        if (teams == null) return MutableLiveData()
 
-            if (TextUtils.isEmpty(team.key)) {
-                for (i in teams.indices) {
-                    val candidate = teams.getObject(i)
-                    if (candidate.numberAsLong == team.numberAsLong) {
-                        team.key = candidate.key
-                        onChanged(teams)
-                        return
-                    }
+        if (TextUtils.isEmpty(team.key)) {
+            for (i in teams.indices) {
+                val candidate = teams.getObject(i)
+                if (candidate.numberAsLong == team.numberAsLong) {
+                    team.key = candidate.key
+                    return apply(teams)
                 }
+            }
 
-                team.addTeam()
-                onChanged(teams)
-                TbaDownloader.load(team, getApplication())
-                        .addOnSuccessListener { team.updateTeam(it) }
-            } else {
+            team.addTeam()
+            TbaDownloader.load(team, getApplication()).addOnSuccessListener { team.updateTeam(it) }
+        }
+
+        return object : MutableLiveData<Team>(), ChangeEventListenerBase {
+            override fun onActive() {
                 teams.addChangeEventListener(this)
             }
-        }
-    }
 
-    override fun onChildChanged(type: ChangeEventListener.EventType,
-                                snapshot: DataSnapshot,
-                                index: Int,
-                                oldIndex: Int) {
-        if (!TextUtils.equals(teamListener.value!!.key, snapshot.key)) return
+            override fun onInactive() {
+                teams.removeChangeEventListener(this)
+            }
 
-        if (type == ChangeEventListener.EventType.REMOVED) {
-            teamListener.value = null; return
-        } else if (type == ChangeEventListener.EventType.MOVED) return
+            override fun onChildChanged(type: ChangeEventListener.EventType,
+                                        snapshot: DataSnapshot,
+                                        index: Int,
+                                        oldIndex: Int) {
+                if (!TextUtils.equals(teamListener.value?.key, snapshot.key)) return
 
-        val newTeam = teams.getObject(index)
-        if (teamListener.value != newTeam) {
-            teamListener.value = newTeam.copy()
+                if (type == ChangeEventListener.EventType.REMOVED) {
+                    value = null; return
+                } else if (type == ChangeEventListener.EventType.MOVED) return
+
+                val newTeam = teams.getObject(index)
+                if (value != newTeam) value = newTeam.copy()
+            }
         }
     }
 
@@ -72,7 +75,6 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
 
     override fun onCleared() {
         super.onCleared()
-        teamsListener.removeObserver(this)
-        teams.removeChangeEventListener(this)
+        teamListener.removeObserver(keepAliveListener)
     }
 }
