@@ -109,8 +109,6 @@ fun initPrefs(context: Context) {
                             FIREBASE_PREF_NIGHT_MODE,
                             FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
                             -> putString(key, it.getObject(index) as String)
-
-                            else -> throw IllegalStateException("Unknown pref key: $key")
                         }
                     }
                 } else if (type == ChangeEventListener.EventType.REMOVED) {

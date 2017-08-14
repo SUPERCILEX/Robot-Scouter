@@ -263,7 +263,7 @@ class PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
                 FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
                 -> it.getValue(String::class.java)
 
-                else -> throw IllegalStateException("Unknown pref key: ${it.key}")
+                else -> it
             }
         }
     }
