@@ -31,6 +31,11 @@ class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPr
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
         val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
         val adapter = object : TemplatePagerAdapter(this, tabLayout) {
+            override fun onChanged(newKeys: List<String>?) {
+                super.onChanged(newKeys)
+                if (newKeys!!.isEmpty()) fam.hideMenuButton(true) else fam.showMenuButton(true)
+            }
+
             override fun onTabSelected(tab: TabLayout.Tab) {
                 super.onTabSelected(tab)
                 fam.close(true)
