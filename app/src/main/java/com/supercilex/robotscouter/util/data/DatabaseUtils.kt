@@ -1,7 +1,9 @@
 package com.supercilex.robotscouter.util.data
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
@@ -21,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
+import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.FIREBASE_DEFAULT_TEMPLATES
@@ -40,9 +43,10 @@ import com.supercilex.robotscouter.util.data.model.fetchLatestData
 import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
 import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
+import com.supercilex.robotscouter.util.data.model.updateTemplateKey
 import com.supercilex.robotscouter.util.data.model.userPrefs
-import com.supercilex.robotscouter.util.defaultTemplatesListener
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.templateIndicesListener
 import java.io.File
 import java.util.Arrays
 import java.util.Collections
@@ -101,10 +105,27 @@ fun <T> LiveData<T>.observeOnce(isNullable: Boolean = false): Task<T> = TaskComp
     observeForever(object : Observer<T> {
         override fun onChanged(t: T?) {
             setResult(t ?: if (isNullable) null else return)
-            removeObserver(this)
+            task.addOnCompleteListener { removeObserver(this) }
         }
     })
 }.task
+
+fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<ObservableSnapshotArray<T>> =
+        Transformations.switchMap(this) {
+            object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
+                override fun onDataChanged() {
+                    value = it
+                }
+
+                override fun onActive() {
+                    it.addChangeEventListener(this)
+                }
+
+                override fun onInactive() {
+                    it.removeChangeEventListener(this)
+                }
+            }
+        }
 
 private fun deepCopy(values: MutableMap<String, Any?>, from: DataSnapshot) {
     val children = from.children
@@ -150,7 +171,49 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
     override val items: ObservableSnapshotArray<Team>
         get() = FirebaseIndexArray(teamIndicesRef.orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
 
-    private val teamUpdater = object : ChangeEventListenerBase {
+    val templateKeyUpdater = object : ChangeEventListenerBase {
+        override fun onChildChanged(type: ChangeEventListener.EventType,
+                                    snapshot: DataSnapshot,
+                                    index: Int,
+                                    oldIndex: Int) {
+            if (type != ChangeEventListener.EventType.ADDED
+                    && type != ChangeEventListener.EventType.CHANGED) return
+
+            val team = value!!.getObject(index)
+            val templateKey = team.templateKey
+
+            if (templateKey == DEFAULT_TEMPLATE_TYPE) team.updateTemplateKey(defaultTemplateKey)
+            else if (templateKey != defaultTemplateKey) {
+                templateIndicesListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
+                    if (it.map { it.key }.contains(templateKey)) {
+                        team.updateTemplateKey(defaultTemplateKey)
+                    } else {
+                        // If we don't own the template and its data == null, we need to update it
+                        // to the default to guarantee data consistency when other devices are
+                        // offline or the team is shared with another user. For example, say an
+                        // online device deletes a template, but an offline one continues adding
+                        // teams with the deleted template. When everything is synced up, we will
+                        // end up with teams that have template keys pointing to non-existent
+                        // templates. The same thing will happen if another user deletes a template
+                        // since that user won’t have access to the other user’s teams to update them.
+
+                        FIREBASE_TEMPLATES.child(templateKey)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        if (snapshot.value == null) {
+                                            team.updateTemplateKey(defaultTemplateKey)
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) =
+                                            FirebaseCrash.report(error.toException())
+                                })
+                    }
+                }
+            }
+        }
+    }
+    private val updater = object : ChangeEventListenerBase {
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -166,7 +229,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             }
         }
     }
-    private val teamMerger = object : ChangeEventListenerBase {
+    private val merger = object : ChangeEventListenerBase {
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -208,6 +271,8 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
         }
     }
 
+    private val keepAliveListener = Observer<ObservableSnapshotArray<String>> {}
+
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         super.onAuthStateChanged(auth)
         if (hasActiveObservers()) onActive()
@@ -215,42 +280,41 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
 
     override fun onActive() {
         value?.apply {
-            if (!isListening(teamUpdater) && !isListening(teamMerger)) {
-                addChangeEventListener(teamUpdater)
-                addChangeEventListener(teamMerger)
-            }
+            templateIndicesListener.observeForever(keepAliveListener)
+
+            if (!isListening(templateKeyUpdater)) addChangeEventListener(templateKeyUpdater)
+            if (!isListening(updater)) addChangeEventListener(updater)
+            if (!isListening(merger)) addChangeEventListener(merger)
         }
     }
 
     override fun onInactive() {
         value?.apply {
-            removeChangeEventListener(teamUpdater)
-            removeChangeEventListener(teamMerger)
+            removeChangeEventListener(templateKeyUpdater)
+            removeChangeEventListener(updater)
+            removeChangeEventListener(merger)
+
+            templateIndicesListener.removeObserver(keepAliveListener)
         }
     }
 }
 
-class TemplatesLiveData : ObservableSnapshotArrayLiveData<Scout>() {
-    override val items: ObservableSnapshotArray<Scout>
-        get() = FirebaseIndexArray(templateIndicesRef, FIREBASE_TEMPLATES, SCOUT_PARSER)
+class TemplateIndicesLiveData : ObservableSnapshotArrayLiveData<String>() {
+    override val items: ObservableSnapshotArray<String>
+        get() = FirebaseArray(templateIndicesRef, String::class.java)
 }
 
-class DefaultTemplatesLiveData : LiveData<List<DataSnapshot>>(), ValueEventListener {
+class DefaultTemplatesLiveData : LiveData<ObservableSnapshotArray<Scout>>() {
     init {
-        FIREBASE_DEFAULT_TEMPLATES.addValueEventListener(this)
+        value = FirebaseArray(FIREBASE_DEFAULT_TEMPLATES, SCOUT_PARSER)
+                .apply { addChangeEventListener(object : ChangeEventListenerBase {}) }
     }
-
-    override fun onDataChange(snapshot: DataSnapshot) {
-        defaultTemplatesListener.value = Collections.unmodifiableList(snapshot.children.toList())
-    }
-
-    override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
 }
 
 class PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
     override val items: ObservableSnapshotArray<Any> get() = FirebaseArray<Any>(userPrefs, PARSER)
 
-    companion object {
+    private companion object {
         val PARSER = SnapshotParser<Any> {
             when (it.key) {
                 FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,

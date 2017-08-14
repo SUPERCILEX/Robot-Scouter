@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_INDICES
 import com.supercilex.robotscouter.util.data.copySnapshots
+import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.defaultTemplatesListener
 import com.supercilex.robotscouter.util.uid
@@ -26,7 +27,7 @@ fun addTemplate(@TemplateType type: Int): String {
 
     when (type) {
         EMPTY -> indicesRef.setValue(true)
-        MATCH, PIT -> defaultTemplatesListener.observeOnce().addOnSuccessListener {
+        MATCH, PIT -> defaultTemplatesListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
             copySnapshots(it[type], getTemplateMetricsRef(key))
             indicesRef.setValue(true)
         }

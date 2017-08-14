@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.getRefBundle
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
+import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.teamsListener
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
@@ -30,7 +31,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
 
     override fun onAttemptDismiss(): Boolean {
         val templateKey = getRef(arguments).key
-        teamsListener.observeOnce().addOnSuccessListener { teams ->
+        teamsListener.observeOnDataChanged().observeOnce().addOnSuccessListener { teams ->
             (0 until teams.size)
                     .map { teams.getObject(it) }
                     .filter { TextUtils.equals(templateKey, it.templateKey) }

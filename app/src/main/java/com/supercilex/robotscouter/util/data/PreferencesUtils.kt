@@ -16,7 +16,6 @@ import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
-import com.supercilex.robotscouter.util.data.model.updateTemplateKey
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.prefsListener
 import com.supercilex.robotscouter.util.teamsListener
@@ -46,14 +45,7 @@ val prefs = object : PreferenceDataStore() {
 
 var defaultTemplateKey: String
     get() = prefs.getString(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY, DEFAULT_TEMPLATE_TYPE)!!
-    set(value) {
-        prefs.putString(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY, value)
-        teamsListener.observeOnce().addOnSuccessListener {
-            it.mapIndexed { index, _ -> it.getObject(index) }.forEach {
-                it.updateTemplateKey(value)
-            }
-        }
-    }
+    set(value) = prefs.putString(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY, value)
 
 @get:AppCompatDelegate.NightMode
 val nightMode: Int get() {
@@ -108,7 +100,16 @@ fun initPrefs(context: Context) {
                             FIREBASE_PREF_DEFAULT_TEMPLATE_KEY,
                             FIREBASE_PREF_NIGHT_MODE,
                             FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
-                            -> putString(key, it.getObject(index) as String)
+                            -> {
+                                val value = it.getObject(index) as String
+
+                                if (key == FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
+                                        && defaultTemplateKey != value) {
+                                    updateTeamTemplateKeys()
+                                }
+
+                                putString(key, value)
+                            }
                         }
                     }
                 } else if (type == ChangeEventListener.EventType.REMOVED) {
@@ -140,6 +141,14 @@ fun clearPrefs() {
 }
 
 private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
+
+private fun updateTeamTemplateKeys() {
+    teamsListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
+        val listener = teamsListener.templateKeyUpdater
+        it.addChangeEventListener(listener)
+        it.removeChangeEventListener(listener)
+    }
+}
 
 @SuppressLint("CommitPrefEdits")
 private inline fun SharedPreferences.updatePrefs(transaction: SharedPreferences.Editor.() -> Unit) = edit().run {

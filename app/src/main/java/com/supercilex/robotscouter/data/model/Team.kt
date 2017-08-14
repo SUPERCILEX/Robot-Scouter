@@ -8,12 +8,13 @@ import android.text.TextUtils
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.PropertyName
 import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
+import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.readBooleanCompat
 import com.supercilex.robotscouter.util.data.writeBooleanCompat
 
 data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: String,
                 @Exclude @get:Exclude @set:Exclude var key: String,
-                @Exclude @get:Keep @set:Keep var templateKey: String = DEFAULT_TEMPLATE_TYPE,
+                @Exclude @get:Keep @set:Keep var templateKey: String = defaultTemplateKey,
                 @Exclude @get:Keep @set:Keep var name: String? = null,
                 @Exclude @get:Keep @set:Keep var media: String? = null,
                 @Exclude @get:Keep @set:Keep var website: String? = null,

@@ -8,8 +8,8 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.model.indexable
+import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.onSignedIn
 import com.supercilex.robotscouter.util.teamsListener
@@ -25,7 +25,7 @@ class AppIndexingService : IntentService(TAG),
 
         if (availability == ConnectionResult.SUCCESS) {
             onSignedIn().addOnSuccessListener {
-                teamsListener.observeOnce().addOnSuccessListener(this)
+                teamsListener.observeOnDataChanged().observeOnce().addOnSuccessListener(this)
             }
         } else {
             GoogleApiAvailability.getInstance().showErrorNotification(this, availability)
@@ -33,14 +33,9 @@ class AppIndexingService : IntentService(TAG),
     }
 
     override fun onSuccess(teams: ObservableSnapshotArray<Team>) {
-        teams.addChangeEventListener(object : ChangeEventListenerBase {
-            override fun onDataChanged() {
-                FirebaseAppIndex.getInstance().update(*teams.mapIndexed { index, _ ->
-                    teams.getObject(index).indexable
-                }.toTypedArray())
-                teams.removeChangeEventListener(this)
-            }
-        })
+        FirebaseAppIndex.getInstance().apply {
+            update(*teams.mapIndexed { index, _ -> teams.getObject(index).indexable }.toTypedArray())
+        }
     }
 
     companion object {

@@ -23,10 +23,8 @@ import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
-import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.launchUrl
-import com.supercilex.robotscouter.util.templatesListener
 import com.supercilex.robotscouter.util.uid
 import java.util.ArrayList
 import java.util.Calendar
@@ -85,11 +83,8 @@ fun Team.addTeam() {
     val number = numberAsLong
     index.setValue(number, number)
 
-    templatesListener.observeOnce().addOnSuccessListener { templates ->
-        if (templates.isNotEmpty()) templateKey = templates[0].key
-        forceUpdateTeam()
-        forceRefresh()
-    }
+    forceUpdateTeam()
+    forceRefresh()
 
     FirebaseUserActions.getInstance().end(
             Action.Builder(Action.Builder.ADD_ACTION)
@@ -122,6 +117,8 @@ private fun checkForMatchingTeamDetails(team: Team, newTeam: Team) {
 }
 
 fun Team.updateTemplateKey(key: String) {
+    if (key == templateKey) return
+
     templateKey = key
     ref.child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
 }

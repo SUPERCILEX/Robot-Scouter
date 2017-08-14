@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.data.FirebaseCopier
 import com.supercilex.robotscouter.util.data.copySnapshots
+import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.defaultTemplatesListener
 import com.supercilex.robotscouter.util.isNumber
@@ -81,7 +82,7 @@ fun Team.addScout(): String {
     val scoutRef = getScoutMetricsRef(indexRef.key)
 
     if (templateKey.isNumber() && TEMPLATE_TYPES.contains(templateKey.toInt())) {
-        defaultTemplatesListener.observeOnce()
+        defaultTemplatesListener.observeOnDataChanged().observeOnce()
                 .addOnSuccessListener { copySnapshots(it[templateKey.toInt()], scoutRef) }
     } else {
         FirebaseCopier(getTemplateMetricsRef(templateKey), scoutRef)

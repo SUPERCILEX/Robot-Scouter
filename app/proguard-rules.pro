@@ -4,7 +4,7 @@
 
 # Kotlin
 -dontwarn kotlin.**
--dontwarn com.supercilex.robotscouter.util.data.TeamsLiveData$teamMerger$1$mergeTeams$2$1$1
+-dontwarn com.supercilex.robotscouter.util.data.TeamsLiveData$merger$1$mergeTeams$2$1$1
 
 # In-app billing
 -keep class com.android.vending.billing.**

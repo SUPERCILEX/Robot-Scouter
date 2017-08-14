@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.TeamsLiveData
-import com.supercilex.robotscouter.util.data.TemplatesLiveData
+import com.supercilex.robotscouter.util.data.TemplateIndicesLiveData
 import com.supercilex.robotscouter.util.data.ref
 import kotlin.properties.Delegates
 
@@ -67,7 +67,7 @@ const val FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT = "hasShownExportHint"
 var teamsListener: TeamsLiveData by Delegates.notNull()
     private set
 val defaultTemplatesListener = DefaultTemplatesLiveData()
-val templatesListener = TemplatesLiveData()
+val templateIndicesListener = TemplateIndicesLiveData()
 val prefsListener = PrefsLiveData()
 
 var providerAuthority: String by Delegates.notNull()
