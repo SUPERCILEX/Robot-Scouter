@@ -81,10 +81,14 @@ class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPr
 
     override fun onSaveInstanceState(outState: Bundle) = pagerAdapter.onSaveInstanceState(outState)
 
-    override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_new_template) {
-        NewTemplateDialog.show(childFragmentManager)
-        true
-    } else false
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
+            R.id.action_set_default_template -> defaultTemplateKey = pagerAdapter.currentTabKey!!
+            else -> return false
+        }
+        return true
+    }
 
     override fun onClick(v: View) {
         childFragmentManager.fragments
