@@ -34,6 +34,7 @@ class AppIndexingService : IntentService(TAG),
 
     override fun onSuccess(teams: ObservableSnapshotArray<Team>) {
         FirebaseAppIndex.getInstance().apply {
+            removeAll()
             update(*teams.mapIndexed { index, _ -> teams.getObject(index).indexable }.toTypedArray())
         }
     }
