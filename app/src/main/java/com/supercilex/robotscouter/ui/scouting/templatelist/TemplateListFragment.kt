@@ -69,6 +69,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
         initFab(R.id.add_counter, R.drawable.ic_count_white_24dp)
         initFab(R.id.add_spinner, R.drawable.ic_list_white_24dp)
 
+        fam.hideMenuButton(false)
         pagerAdapter.currentTabKey = getTabKey(savedInstanceState ?: arguments)
 
         return rootView
