@@ -34,13 +34,14 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
-            <ProgressBar
+            <com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
                 android:id="@+id/progress"
                 style="@style/Base.Widget.AppCompat.ProgressBar"
                 android:layout_width="@dimen/square_view_hw"
                 android:layout_height="@dimen/square_view_hw"
                 android:layout_gravity="center"
                 android:indeterminate="true"
+                android:visibility="gone"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar

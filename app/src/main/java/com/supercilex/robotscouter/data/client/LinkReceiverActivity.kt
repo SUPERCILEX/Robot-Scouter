@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.onSignedIn
+import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 
@@ -26,6 +27,8 @@ class LinkReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_receiver)
+        findViewById<ContentLoadingProgressBar>(R.id.progress).show()
+
         onSignedIn().continueWithTask { FirebaseDynamicLinks.getInstance().getDynamicLink(intent) }
                 .addOnSuccessListener {
                     val teams = getTeams(it?.link ?: intent.data ?: Uri.Builder().build())

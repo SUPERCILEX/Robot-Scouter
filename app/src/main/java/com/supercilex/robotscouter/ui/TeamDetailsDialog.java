@@ -21,7 +21,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +35,7 @@ import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
 import com.supercilex.robotscouter.util.data.model.TeamHolder;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
+import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar;
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase;
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator;
 
@@ -55,7 +55,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     private ViewGroup mRootView;
 
     private ImageView mMedia;
-    private ProgressBar mMediaLoadProgress;
+    private ContentLoadingProgressBar mMediaLoadProgress;
     private TextView mName;
     private ImageButton mEditNameButton;
 
@@ -159,7 +159,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 && mWebsiteEditText != null) {
             TransitionManager.beginDelayedTransition(mRootView);
 
-            mMediaLoadProgress.setVisibility(View.VISIBLE);
+            mMediaLoadProgress.show(null);
             Glide.with(getContext())
                     .load(mTeam.getMedia())
                     .apply(RequestOptions.circleCropTransform()
@@ -171,7 +171,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                                                        Target<Drawable> target,
                                                        DataSource dataSource,
                                                        boolean isFirstResource) {
-                            mMediaLoadProgress.setVisibility(View.GONE);
+                            mMediaLoadProgress.hide(true, null);
                             return false;
                         }
 
@@ -180,7 +180,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                                                     Object model,
                                                     Target<Drawable> target,
                                                     boolean isFirstResource) {
-                            mMediaLoadProgress.setVisibility(View.GONE);
+                            mMediaLoadProgress.hide(true, null);
                             return false;
                         }
                     })

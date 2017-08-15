@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +24,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.uid
 import java.lang.ref.WeakReference
@@ -32,7 +32,7 @@ import java.lang.ref.WeakReference
 class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
     private val rootView by lazy { View.inflate(context, R.layout.dialog_donate, null) }
     private val content by lazy { rootView.findViewById<View>(R.id.content) }
-    private val progress by lazy { rootView.findViewById<ProgressBar>(R.id.progress) }
+    private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
     private val amountTextView by lazy { rootView.findViewById<TextView>(R.id.amount_textview) }
     private val amountSeekBar by lazy { rootView.findViewById<SeekBar>(R.id.amount) }
     private val monthlyCheckBox by lazy { rootView.findViewById<CheckBox>(R.id.monthly) }
@@ -168,8 +168,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     }
 
     private fun updateProgress(isDoingAsyncWork: Boolean) {
-        content.visibility = if (isDoingAsyncWork) View.GONE else View.VISIBLE
-        progress.visibility = if (isDoingAsyncWork) View.VISIBLE else View.GONE
+        if (isDoingAsyncWork) progress.show(Runnable { content.visibility = View.GONE })
+        else progress.hide(callback = Runnable { content.visibility = View.VISIBLE })
 
         val dialog = if (dialog == null) return else dialog as AlertDialog
         fun setEnabled(button: Button) {

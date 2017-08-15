@@ -16,7 +16,6 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -33,6 +32,7 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdateTeam
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
+import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 
@@ -47,7 +47,7 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
     protected val toolbar: Toolbar = rootView.findViewById(R.id.toolbar)
     protected val header: CollapsingToolbarLayout = rootView.findViewById(R.id.header)
     private val backdrop: ImageView = rootView.findViewById(R.id.backdrop)
-    private val mediaLoadProgress: ProgressBar = rootView.findViewById(R.id.progress)
+    private val mediaLoadProgress: ContentLoadingProgressBar = rootView.findViewById(R.id.progress)
 
     private val mediaCaptureListener = OnSuccessListener<Team> {
         team.copyMediaInfo(it)
@@ -79,7 +79,7 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
     }
 
     private fun loadImages() {
-        mediaLoadProgress.visibility = View.VISIBLE
+        mediaLoadProgress.show()
 
         val media = team.media
         Glide.with(backdrop)
@@ -92,7 +92,7 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
                                                  target: Target<Bitmap>,
                                                  dataSource: DataSource,
                                                  isFirstResource: Boolean): Boolean {
-                        mediaLoadProgress.visibility = View.GONE
+                        mediaLoadProgress.hide(true)
 
                         if (resource != null && !resource.isRecycled) {
                             Palette.from(resource).generate { palette ->
@@ -111,7 +111,7 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
                                               model: Any?,
                                               target: Target<Bitmap>,
                                               isFirstResource: Boolean): Boolean {
-                        mediaLoadProgress.visibility = View.GONE
+                        mediaLoadProgress.hide(true)
                         return false
                     }
                 })

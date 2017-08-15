@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <ProgressBar
+    <com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
         android:id="@+id/progress"
         style="@style/Base.Widget.AppCompat.ProgressBar"
         android:layout_width="0dp"

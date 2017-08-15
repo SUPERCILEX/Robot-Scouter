@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -23,6 +22,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.util.data.getScoutBundle
+import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
 
@@ -52,7 +52,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     internal val mediaImageView: ImageView = itemView.findViewById(R.id.media)
-    private val mediaLoadProgress: ProgressBar = itemView.findViewById(R.id.progress)
+    private val mediaLoadProgress: ContentLoadingProgressBar = itemView.findViewById(R.id.progress)
     private val numberTextView: TextView = itemView.findViewById(R.id.number)
     private val nameTextView: TextView = itemView.findViewById(R.id.name)
     private val newScoutButton: ImageButton = itemView.findViewById(R.id.new_scout)
@@ -123,7 +123,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     private fun setProgressVisibility(isMediaLoaded: Boolean = recyclerView.isScrolling || this.isMediaLoaded) {
-        mediaLoadProgress.visibility = if (isMediaLoaded) View.GONE else View.VISIBLE
+        if (isMediaLoaded) mediaLoadProgress.hide(true) else mediaLoadProgress.show()
     }
 
     override fun onClick(v: View) {

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v4.widget.ContentLoadingProgressBar
+    <com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
         android:id="@+id/progress"
         style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"

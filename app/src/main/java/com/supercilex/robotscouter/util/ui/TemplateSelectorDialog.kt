@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
-import android.support.v4.widget.ContentLoadingProgressBar
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.content.res.AppCompatResources
@@ -49,8 +48,6 @@ class TemplateSelectorDialog : LifecycleDialogFragment() {
                 R.layout.select_dialog_item_material,
                 ItemViewHolder::class.java,
                 this) {
-            var hasDataChanged: Boolean = false
-
             override fun getItem(position: Int): String? = when (position) {
                 MATCH, PIT -> resources.getStringArray(R.array.new_template_options)[position]
                 else -> super.getItem(position - EXTRA_ITEMS)
@@ -64,10 +61,7 @@ class TemplateSelectorDialog : LifecycleDialogFragment() {
                                         oldIndex: Int) = super.onChildChanged(
                     type, snapshot, index + EXTRA_ITEMS, oldIndex + EXTRA_ITEMS)
 
-            override fun onDataChanged() {
-                hasDataChanged = true
-                progress.hide()
-            }
+            override fun onDataChanged() = progress.hide()
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder =
                     ItemViewHolder(
@@ -84,6 +78,7 @@ class TemplateSelectorDialog : LifecycleDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         holder.init(templateIndicesRef to FIREBASE_TEMPLATES)
+        progress.show()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
@@ -128,7 +123,7 @@ class TemplateSelectorDialog : LifecycleDialogFragment() {
             .setTitle(R.string.title_template_selector)
             .setView(rootView)
             .setNegativeButton(android.R.string.cancel, null)
-            .create { if (!adapter.hasDataChanged) progress.show() }
+            .create()
 
     fun onItemSelected(key: String) {
         when {
