@@ -9,7 +9,7 @@ buildscript {
     ext {
         kotlinVersion = '1.2-M2'
         supportLibVersion = '26.0.0'
-        playServicesVersion = '11.0.4'
+        playServicesVersion = '11.2.0'
         archVersion = '1.0.0-alpha8'
         firebaseUiVersion = '4517d2487c'
         leakCanaryVersion = '1.5.1'

@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.util.data
 
+import android.arch.core.executor.AppToolkitTaskExecutor
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
@@ -102,19 +103,25 @@ fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also 
 }.task
 
 fun <T> LiveData<T>.observeOnce(isNullable: Boolean = false): Task<T> = TaskCompletionSource<T>().apply {
-    observeForever(object : Observer<T> {
-        override fun onChanged(t: T?) {
-            setResult(t ?: if (isNullable) null else return)
-            task.addOnCompleteListener { removeObserver(this) }
-        }
-    })
+    val observe = {
+        observeForever(object : Observer<T> {
+            override fun onChanged(t: T?) {
+                setResult(t ?: if (isNullable) null else return)
+                task.addOnCompleteListener { removeObserver(this) }
+            }
+        })
+    }
+
+    if (AppToolkitTaskExecutor.getInstance().isMainThread) observe()
+    else AppToolkitTaskExecutor.getInstance().postToMainThread { observe() }
 }.task
 
 fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<ObservableSnapshotArray<T>> =
         Transformations.switchMap(this) {
             object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
                 override fun onDataChanged() {
-                    value = it
+                    if (AppToolkitTaskExecutor.getInstance().isMainThread) value = it
+                    else postValue(it)
                 }
 
                 override fun onActive() {

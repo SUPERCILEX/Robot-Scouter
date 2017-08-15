@@ -15,6 +15,7 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -141,12 +142,7 @@
 
         <service
             android:name=".data.client.AppIndexingService"
-            android:exported="true"
-            android:permission="com.google.android.gms.permission.APPINDEXING">
-            <intent-filter>
-                <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
-            </intent-filter>
-        </service>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -157,6 +153,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <receiver
+            android:name=".data.client.AppIndexingUpdateReceiver"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.APPINDEXING">
+            <intent-filter>
+                <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".data.client.NotificationForwarder" />
 
