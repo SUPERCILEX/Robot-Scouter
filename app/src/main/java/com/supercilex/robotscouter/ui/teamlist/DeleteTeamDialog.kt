@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.teamlist
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
@@ -12,10 +11,11 @@ import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.model.deleteTeam
 import com.supercilex.robotscouter.util.data.model.parseTeamList
 import com.supercilex.robotscouter.util.data.model.teamsToBundle
+import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
 import java.util.Collections
 
-class DeleteTeamDialog : DialogFragment(), DialogInterface.OnClickListener {
+class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     private val teams: List<Team> by lazy { parseTeamList(arguments) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

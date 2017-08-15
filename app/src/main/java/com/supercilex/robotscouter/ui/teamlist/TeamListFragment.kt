@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -16,11 +15,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.teamsListener
+import com.supercilex.robotscouter.util.ui.FragmentBase
 
-class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
+class TeamListFragment : FragmentBase(), OnBackPressedListener {
     private val holder: TeamListHolder by lazy {
         ViewModelProviders.of(this).get(TeamListHolder::class.java)
                 .also { onHolderReadyTask.setResult(it) }
@@ -77,11 +76,6 @@ class TeamListFragment : LifecycleFragment(), OnBackPressedListener {
     override fun onSaveInstanceState(outState: Bundle) {
         holder.onSaveInstanceState(outState)
         menuHelper.saveState(outState)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =

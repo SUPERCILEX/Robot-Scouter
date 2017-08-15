@@ -17,7 +17,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
-import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.util.refWatcher
 
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
         create().apply { setOnShowListener { (it as AlertDialog).listener() } }
@@ -30,8 +30,15 @@ fun DialogFragment.show(manager: FragmentManager,
     show(manager, tag)
 }
 
+abstract class DialogFragmentBase : DialogFragment() {
+    override fun onDestroy() {
+        super.onDestroy()
+        refWatcher.watch(this)
+    }
+}
+
 // TODO remove once arch components are merged into support lib
-abstract class LifecycleDialogFragment : DialogFragment(), LifecycleRegistryOwner {
+abstract class LifecycleDialogFragment : DialogFragmentBase(), LifecycleRegistryOwner {
     private val lifecycleRegistry = LifecycleRegistry(this)
 
     override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry
@@ -53,11 +60,6 @@ abstract class ManualDismissDialog : LifecycleDialogFragment(), DialogInterface.
     override fun onShow(dialog: DialogInterface) {
         dialog as AlertDialog
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { handleOnAttemptDismiss() }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     protected fun handleOnAttemptDismiss() {

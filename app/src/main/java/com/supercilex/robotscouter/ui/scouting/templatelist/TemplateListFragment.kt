@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
-import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.IdRes
@@ -23,8 +22,9 @@ import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.ui.FragmentBase
 
-class TemplateListFragment : LifecycleFragment(), View.OnClickListener, OnBackPressedListener {
+class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressedListener {
     private val rootView by lazy { View.inflate(context, R.layout.fragment_template_list, null) }
     val fam: FloatingActionMenu by lazy { rootView.findViewById<FloatingActionMenu>(R.id.fab_menu) }
     private val pagerAdapter by lazy {

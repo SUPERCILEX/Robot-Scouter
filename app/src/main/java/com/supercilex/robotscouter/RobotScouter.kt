@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter
 
-import android.content.Context
 import android.support.multidex.MultiDexApplication
 import android.support.text.emoji.EmojiCompat
 import android.support.text.emoji.FontRequestEmojiCompatConfig
@@ -10,7 +9,6 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 import com.supercilex.robotscouter.data.client.spreadsheet.initSpreadsheet
 import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
@@ -20,11 +18,9 @@ import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
 
 class RobotScouter : MultiDexApplication() {
-    private val refWatcher: RefWatcher by lazy { LeakCanary.install(this) }
-
     override fun onCreate() {
         super.onCreate()
-        if (LeakCanary.isInAnalyzerProcess(this)) return else refWatcher
+        if (LeakCanary.isInAnalyzerProcess(this)) return
 
         initAnalytics(this)
         initConnectivity(this)
@@ -57,7 +53,5 @@ class RobotScouter : MultiDexApplication() {
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
-
-        fun getRefWatcher(context: Context) = (context.applicationContext as RobotScouter).refWatcher
     }
 }

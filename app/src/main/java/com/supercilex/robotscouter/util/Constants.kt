@@ -5,7 +5,10 @@ import android.os.Build
 import android.provider.Settings
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
+import com.squareup.leakcanary.LeakCanary
+import com.squareup.leakcanary.RefWatcher
 import com.supercilex.robotscouter.BuildConfig
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.TeamsLiveData
@@ -73,12 +76,16 @@ val prefsListener = PrefsLiveData()
 var providerAuthority: String by Delegates.notNull()
     private set
 
+var refWatcher: RefWatcher by Delegates.notNull()
+    private set
+
 var isInTestMode: Boolean by Delegates.notNull()
     private set
 
 fun initConstants(context: Context) {
     teamsListener = TeamsLiveData(context)
     providerAuthority = "${context.packageName}.provider"
+    refWatcher = LeakCanary.install(context as RobotScouter)
     isInTestMode = Settings.System.getString(context.contentResolver, "firebase.test.lab") == "true"
 }
 

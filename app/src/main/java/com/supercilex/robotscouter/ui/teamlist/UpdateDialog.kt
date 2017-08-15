@@ -8,15 +8,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.Html
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 
-class UpdateDialog : DialogFragment(), DialogInterface.OnClickListener {
+class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.update_required_title)
             .setMessage(fun(): CharSequence {

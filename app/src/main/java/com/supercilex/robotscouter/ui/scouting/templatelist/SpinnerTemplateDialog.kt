@@ -18,7 +18,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.SpinnerItemViewHolder
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.data.getRefBundle
@@ -112,11 +111,6 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
     override fun onStop() {
         super.onStop()
         recyclerView.clearFocus()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RobotScouter.getRefWatcher(activity).watch(this)
     }
 
     override fun onClick(v: View) {

@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
-import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -17,7 +16,6 @@ import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
@@ -33,9 +31,10 @@ import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logEditTemplateEvent
+import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 
-abstract class ScoutListFragmentBase : LifecycleFragment(),
+abstract class ScoutListFragmentBase : FragmentBase(),
         Observer<Team>, TeamMediaCreator.StartCaptureListener {
     protected val rootView: View by lazy {
         View.inflate(context, R.layout.fragment_scout_list, null)
@@ -104,11 +103,6 @@ abstract class ScoutListFragmentBase : LifecycleFragment(),
     override fun onStop() {
         super.onStop()
         FirebaseUserActions.getInstance().end(team.viewAction)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        RobotScouter.getRefWatcher(context).watch(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.text.method.LinkMovementMethod
@@ -13,10 +12,11 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.shouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.util.data.shouldUploadMediaToTba
+import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.create
 
-class ShouldUploadMediaToTbaDialog : DialogFragment(), DialogInterface.OnClickListener {
+class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     private val rootView: View by lazy {
         View.inflate(context, R.layout.dialog_should_upload_media, null)
     }
