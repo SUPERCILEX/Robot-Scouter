@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.ui.scouting.MetricListFragment
 import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.data.copySnapshots
+import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
@@ -89,6 +90,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         when (id) {
+            R.id.action_set_default_template -> defaultTemplateKey = metricsRef.parent.key
             R.id.action_delete_template -> {
                 recyclerView.clearFocus()
                 DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)

@@ -89,7 +89,6 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
-            R.id.action_set_default_template -> defaultTemplateKey = pagerAdapter.currentTabKey!!
             else -> return false
         }
         return true

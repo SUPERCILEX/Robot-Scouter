@@ -11,8 +11,4 @@
         android:title="@string/title_new_template"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/action_set_default_template"
-        android:title="@string/title_set_default_template" />
-
 </menu>

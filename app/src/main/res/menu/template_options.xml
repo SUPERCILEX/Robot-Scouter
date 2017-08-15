@@ -5,6 +5,10 @@
     tools:context=".ui.scouting.templatelist.TemplateListActivity">
 
     <item
+        android:id="@+id/action_set_default_template"
+        android:title="@string/title_set_default_template" />
+
+    <item
         android:id="@+id/action_remove_metrics"
         android:title="@string/remove_metrics" />
 
