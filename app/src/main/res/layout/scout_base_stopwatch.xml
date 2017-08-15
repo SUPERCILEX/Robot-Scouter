@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button_outline_colored"
-        android:drawablePadding="4dp"
+        android:drawablePadding="@dimen/spacing_mini"
         android:stateListAnimator="@null"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/name"

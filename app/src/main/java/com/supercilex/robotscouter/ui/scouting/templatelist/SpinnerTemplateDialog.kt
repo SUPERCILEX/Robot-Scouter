@@ -42,6 +42,8 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
                 R.layout.scout_template_spinner_item,
                 SpinnerItemViewHolder::class.java,
                 this) {
+            private val cardListHelper by lazy { CardListHelper(this, recyclerView) }
+
             override fun getItem(position: Int) = itemTouchCallback.getItem(position)
 
             override fun getRef(position: Int) = itemTouchCallback.getRef(position)
@@ -85,7 +87,6 @@ class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
             }
         }
     }
-    private val cardListHelper: CardListHelper by lazy { CardListHelper(adapter, recyclerView) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -16,6 +16,7 @@ import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.support.text.emoji.widget.EmojiAppCompatEditText
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.TextViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.content.res.AppCompatResources
@@ -242,13 +243,8 @@ private fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
         }
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        setCompoundDrawablesRelativeWithIntrinsicBounds(
-                drawableStart, drawableTop, drawableEnd, drawableBottom)
-    } else {
-        setCompoundDrawablesWithIntrinsicBounds(
-                drawableStart, drawableTop, drawableEnd, drawableBottom)
-    }
+    TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            this, drawableStart, drawableTop, drawableEnd, drawableBottom)
 
     attributeArray.recycle()
 }

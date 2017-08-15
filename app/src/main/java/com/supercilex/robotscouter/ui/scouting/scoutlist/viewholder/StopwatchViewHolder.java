@@ -215,7 +215,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                     stopwatch.getContext(), R.color.colorAccent) : Color.WHITE);
             stopwatch.setActivated(mIsRunning);
             stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    mIsRunning ? R.drawable.ic_timer_off_color_accent_24dp : R.drawable.ic_timer_white_24dp,
+                    mIsRunning ? R.drawable.ic_timer_off_accent_24dp : R.drawable.ic_timer_white_24dp,
                     0,
                     0,
                     0);

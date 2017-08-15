@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.util.data.getScoutBundle
+import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
 
 class TeamViewHolder @Keep constructor(itemView: View) :
@@ -94,6 +95,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         mediaImageView.setOnClickListener(this)
         mediaImageView.setOnLongClickListener(this)
         newScoutButton.setOnClickListener(this)
+        newScoutButton.setOnLongClickListener(this)
         itemView.setOnClickListener(this)
         itemView.setOnLongClickListener(this)
     }
@@ -134,15 +136,14 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     override fun onLongClick(v: View): Boolean {
-        if (isItemSelected || couldItemBeSelected || v.id == R.id.root) {
-            onTeamContextMenuRequested()
-            return true
-        } else if (v.id == R.id.media) {
-            TeamDetailsDialog.show(fragment.childFragmentManager, team)
-            return true
+        when {
+            isItemSelected || couldItemBeSelected || v.id == R.id.root -> onTeamContextMenuRequested()
+            v.id == R.id.media -> TeamDetailsDialog.show(fragment.childFragmentManager, team)
+            v.id == R.id.new_scout -> TemplateSelectorDialog.show(
+                    fragment.childFragmentManager, team)
+            else -> return false
         }
-
-        return false
+        return true
     }
 
     private fun onTeamContextMenuRequested() {

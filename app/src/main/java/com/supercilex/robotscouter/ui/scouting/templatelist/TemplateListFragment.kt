@@ -127,4 +127,3 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
                 TemplateListFragment().apply { arguments = getTabKeyBundle(templateKey) }
     }
 }
-

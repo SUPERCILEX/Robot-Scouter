@@ -22,6 +22,7 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
+import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.model.TeamHolder
@@ -139,6 +140,10 @@ abstract class ScoutListFragmentBase : FragmentBase(),
         return true
     }
 
+    fun onAddScout(overrideTemplateKey: String) {
+        pagerAdapter!!.currentTabKey = team.addScout(overrideTemplateKey)
+    }
+
     private fun initScoutList() {
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
         val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
@@ -150,7 +155,8 @@ abstract class ScoutListFragmentBase : FragmentBase(),
 
         if (arguments.getBoolean(KEY_ADD_SCOUT, false)) {
             arguments.remove(KEY_ADD_SCOUT)
-            pagerAdapter!!.currentTabKey = team.addScout()
+            pagerAdapter!!.currentTabKey =
+                    team.addScout(arguments.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))
         }
     }
 

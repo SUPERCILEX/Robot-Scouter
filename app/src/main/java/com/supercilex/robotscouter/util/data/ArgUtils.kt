@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.util.data.model.toBundle
 const val TAB_KEY = "tab_key"
 const val SCOUT_ARGS_KEY = "scout_args"
 const val KEY_ADD_SCOUT = "add_scout"
+const val KEY_OVERRIDE_TEMPLATE_KEY = "override_template_key"
 
 fun Parcel.readBooleanCompat() = getBooleanForInt(readInt())
 
@@ -31,8 +32,17 @@ fun getTabKeyBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
 
 fun getTabKey(bundle: Bundle): String? = bundle.getString(TAB_KEY)
 
-fun getScoutBundle(team: Team, addScout: Boolean = false, scoutKey: String? = null) =
-        team.toBundle().apply {
-            putBoolean(KEY_ADD_SCOUT, addScout)
-            putAll(getTabKeyBundle(scoutKey))
-        }
+fun getScoutBundle(team: Team,
+                   addScout: Boolean = false,
+                   overrideTemplateKey: String? = null,
+                   scoutKey: String? = null): Bundle {
+    if (!addScout && overrideTemplateKey != null) {
+        throw IllegalArgumentException("Can't use an override key without adding a scout.")
+    }
+
+    return team.toBundle().apply {
+        putBoolean(KEY_ADD_SCOUT, addScout)
+        putString(KEY_OVERRIDE_TEMPLATE_KEY, overrideTemplateKey)
+        putAll(getTabKeyBundle(scoutKey))
+    }
+}

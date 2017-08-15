@@ -74,18 +74,23 @@ fun getScoutMetricsRef(key: String): DatabaseReference =
 
 fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
-fun Team.addScout(): String {
+fun Team.addScout(overrideKey: String? = null): String {
+    fun isNativeTemplateType(key: String?): Boolean =
+            key?.isNumber() == true && TEMPLATE_TYPES.contains(key.toInt())
+
     logAddScoutEvent(number)
 
     val indexRef = getScoutIndicesRef(key).push()
     indexRef.setValue(System.currentTimeMillis())
     val scoutRef = getScoutMetricsRef(indexRef.key)
 
-    if (templateKey.isNumber() && TEMPLATE_TYPES.contains(templateKey.toInt())) {
-        defaultTemplatesListener.observeOnDataChanged().observeOnce()
-                .addOnSuccessListener { copySnapshots(it[templateKey.toInt()], scoutRef) }
+    if (isNativeTemplateType(overrideKey) ||
+            overrideKey == null && isNativeTemplateType(templateKey)) {
+        defaultTemplatesListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
+            copySnapshots(it[overrideKey?.toInt() ?: templateKey.toInt()], scoutRef)
+        }
     } else {
-        FirebaseCopier(getTemplateMetricsRef(templateKey), scoutRef)
+        FirebaseCopier(getTemplateMetricsRef(overrideKey ?: templateKey), scoutRef)
                 .performTransformation()
     }
 

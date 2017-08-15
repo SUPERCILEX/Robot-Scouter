@@ -6,6 +6,7 @@
     <dimen name="list_item_padding_horizontal_scout">@dimen/list_item_padding_horizontal</dimen>
     <dimen name="list_item_padding_vertical_scout">@dimen/list_item_padding_vertical</dimen>
 
+    <dimen name="spacing_mini">4dp</dimen>
     <dimen name="spacing_normal">8dp</dimen>
     <dimen name="spacing_large">16dp</dimen>
     <dimen name="spacing_large_medium">24dp</dimen>

@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.app.Application
 import android.os.Bundle
-import com.firebase.ui.database.ClassSnapshotParser
 import com.firebase.ui.database.FirebaseArray
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.database.DatabaseReference
@@ -24,7 +23,7 @@ class SpinnerItemsHolder(app: Application) : ViewModelBase<Bundle>(app) {
     override fun onCreate(args: Bundle) {
         ref = getRef(args)
         selectedValueKey = args.getString(FIREBASE_SELECTED_VALUE_KEY)
-        spinnerItems = FirebaseArray(ref, ClassSnapshotParser(String::class.java))
+        spinnerItems = FirebaseArray(ref, String::class.java)
         spinnerItems.addChangeEventListener(listener)
     }
 

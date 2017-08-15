@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdateTeam
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
+import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 
 open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
                                 rootView: View,
@@ -134,6 +135,9 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
                 fragment.getString(R.string.visit_team_website_on_tba, team.number)
         visitTeamWebsiteItem.title = fragment.getString(R.string.visit_team_website, team.number)
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
+        toolbar.post {
+            fragment.view!!.findViewById<View>(R.id.action_new_scout).setOnLongClickListener(this)
+        }
 
         onMenuReadyTask.trySetResult(null)
         bindMenu()
@@ -156,10 +160,14 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
             Color.green(opaque),
             Color.blue(opaque))
 
-    override fun onLongClick(v: View): Boolean = if (v.id == R.id.backdrop) {
-        ShouldUploadMediaToTbaDialog.show(fragment)
-        true
-    } else false
+    override fun onLongClick(v: View): Boolean {
+        when {
+            v.id == R.id.backdrop -> ShouldUploadMediaToTbaDialog.show(fragment)
+            v.id == R.id.action_new_scout -> TemplateSelectorDialog.show(fragment.childFragmentManager)
+            else -> return false
+        }
+        return true
+    }
 
     override fun onStartCapture(shouldUploadMediaToTba: Boolean) =
             mediaCapture.startCapture(shouldUploadMediaToTba)
