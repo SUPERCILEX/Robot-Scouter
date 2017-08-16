@@ -15,9 +15,9 @@ import com.supercilex.robotscouter.data.model.LIST
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.NUMBER
 import com.supercilex.robotscouter.data.model.STOPWATCH
-import com.supercilex.robotscouter.data.model.TEMPLATE_TYPES
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
@@ -31,7 +31,6 @@ import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.defaultTemplatesListener
-import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
@@ -75,9 +74,6 @@ fun getScoutMetricsRef(key: String): DatabaseReference =
 fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
 fun Team.addScout(overrideKey: String? = null): String {
-    fun isNativeTemplateType(key: String?): Boolean =
-            key?.isNumber() == true && TEMPLATE_TYPES.contains(key.toInt())
-
     logAddScoutEvent(number)
 
     val indexRef = getScoutIndicesRef(key).push()

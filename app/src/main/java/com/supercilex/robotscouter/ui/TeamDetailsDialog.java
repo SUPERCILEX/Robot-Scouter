@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
+import com.supercilex.robotscouter.util.data.ArgUtilsKt;
 import com.supercilex.robotscouter.util.data.model.TeamHolder;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar;
@@ -68,7 +69,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
     public static void show(FragmentManager manager, Team team) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
-        dialog.setArguments(TeamUtilsKt.toBundle(new Team(
+        dialog.setArguments(ArgUtilsKt.toBundle(new Team(
                 team.getNumber(),
                 team.getKey(),
                 team.getTemplateKey(),
@@ -89,7 +90,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeam = TeamUtilsKt.parseTeam(getArguments());
+        mTeam = ArgUtilsKt.getTeam(getArguments());
 
         if (savedInstanceState == null) {
             mMediaCapture = TeamMediaCreator.newInstance(this, mTeam, this);

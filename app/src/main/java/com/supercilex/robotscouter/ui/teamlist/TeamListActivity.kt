@@ -25,7 +25,7 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
-import com.supercilex.robotscouter.util.data.model.parseTeam
+import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
@@ -147,8 +147,6 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
     }
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
-        val team = parseTeam(args)
-
         if (isInTabletMode(this)) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.scout_list, TabletScoutListFragment.newInstance(args))
@@ -161,7 +159,7 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
             }
         }
 
-        logSelectTeamEvent(team.number)
+        logSelectTeamEvent(args.getTeam().number)
     }
 
     private fun handleIntent(intent: Intent) {

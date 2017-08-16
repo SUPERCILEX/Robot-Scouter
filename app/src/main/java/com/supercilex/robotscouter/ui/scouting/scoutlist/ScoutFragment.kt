@@ -11,10 +11,10 @@ import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.deleteScout
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
-import com.supercilex.robotscouter.util.data.model.parseTeam
-import com.supercilex.robotscouter.util.data.model.toBundle
+import com.supercilex.robotscouter.util.data.toBundle
 
 class ScoutFragment : MetricListFragment() {
     override val metricsRef: DatabaseReference by lazy { getScoutMetricsRef(getTabKey(arguments)!!) }
@@ -28,7 +28,7 @@ class ScoutFragment : MetricListFragment() {
             toolbar.inflateMenu(R.menu.scout_options)
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
-        parseTeam(arguments).deleteScout(metricsRef.parent.key)
+        arguments.getTeam().deleteScout(metricsRef.parent.key)
         metricsRef.parent.removeValue()
         true
     } else super.onOptionsItemSelected(item)

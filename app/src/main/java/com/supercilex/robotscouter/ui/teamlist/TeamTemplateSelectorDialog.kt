@@ -4,8 +4,8 @@ import android.support.v4.app.FragmentManager
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getScoutBundle
-import com.supercilex.robotscouter.util.data.model.parseTeam
-import com.supercilex.robotscouter.util.data.model.toBundle
+import com.supercilex.robotscouter.util.data.getTeam
+import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 import com.supercilex.robotscouter.util.ui.show
@@ -15,7 +15,7 @@ class TeamTemplateSelectorDialog : TemplateSelectorDialog() {
 
     override fun onItemSelected(key: String) {
         (context as TeamSelectionListener).onTeamSelected(getScoutBundle(
-                parseTeam(arguments), true, key), false)
+                arguments.getTeam(), true, key), false)
     }
 
     companion object {

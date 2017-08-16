@@ -17,10 +17,15 @@ import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.TEAM_KEY
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
-import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.data.getTeam
+import com.supercilex.robotscouter.util.data.model.addTemplate
+import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
@@ -70,9 +75,29 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
         initFab(R.id.add_spinner, R.drawable.ic_list_white_24dp)
 
         fam.hideMenuButton(false)
-        pagerAdapter.currentTabKey = getTabKey(savedInstanceState ?: arguments)
+        pagerAdapter
+        handleArgs(savedInstanceState)
 
         return rootView
+    }
+
+    private fun handleArgs(savedInstanceState: Bundle?) {
+        if (arguments.containsKey(TEAM_KEY)) {
+            val team = arguments.getTeam()
+
+            pagerAdapter.currentTabKey = if (isNativeTemplateType(team.templateKey)) {
+                Snackbar.make(rootView,
+                              R.string.title_template_added_as_default,
+                              Snackbar.LENGTH_LONG)
+                        .show()
+
+                addTemplate(team.templateKey.toInt()).also { defaultTemplateKey = it }
+            } else {
+                team.templateKey
+            }
+        } else {
+            savedInstanceState?.let { pagerAdapter.currentTabKey = getTabKey(it) }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -123,7 +148,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     companion object {
         const val TAG = "TemplateListFragment"
 
-        fun newInstance(templateKey: String?) =
-                TemplateListFragment().apply { arguments = getTabKeyBundle(templateKey) }
+        fun newInstance(team: Team?) =
+                TemplateListFragment().apply { arguments = team?.toBundle() ?: Bundle() }
     }
 }

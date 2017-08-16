@@ -32,11 +32,11 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.hasShownExportHint
 import com.supercilex.robotscouter.util.data.hideFile
 import com.supercilex.robotscouter.util.data.model.Scouts
-import com.supercilex.robotscouter.util.data.model.parseTeamList
-import com.supercilex.robotscouter.util.data.model.teamsToIntent
+import com.supercilex.robotscouter.util.data.putExtra
 import com.supercilex.robotscouter.util.data.rootFolder
 import com.supercilex.robotscouter.util.data.unhideFile
 import com.supercilex.robotscouter.util.isOffline
@@ -83,7 +83,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
     override fun onHandleIntent(intent: Intent) {
-        cache = SpreadsheetCache(parseTeamList(intent), this)
+        cache = SpreadsheetCache(intent.getTeamListExtra(), this)
 
         startForeground(
                 R.string.export_in_progress_title,
@@ -112,8 +112,8 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
         if (scouts.size != cache.teams.size) {
             // Some error occurred, let's try again
-            startService(
-                    Intent(this, ExportService::class.java).putExtras(teamsToIntent(cache.teams)))
+            startService(Intent(this, ExportService::class.java)
+                                 .putExtra(cache.teams))
             return
         }
 
@@ -692,7 +692,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             logExportTeamsEvent(teams)
             ContextCompat.startForegroundService(
                     fragment.activity,
-                    Intent(context, ExportService::class.java).putExtras(teamsToIntent(teams)))
+                    Intent(context, ExportService::class.java).putExtra(teams))
 
             return true
         }

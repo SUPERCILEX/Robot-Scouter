@@ -8,15 +8,15 @@ import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.data.getTeamList
 import com.supercilex.robotscouter.util.data.model.deleteTeam
-import com.supercilex.robotscouter.util.data.model.parseTeamList
-import com.supercilex.robotscouter.util.data.model.teamsToBundle
+import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
 import java.util.Collections
 
 class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val teams: List<Team> by lazy { parseTeamList(arguments) }
+    private val teams: List<Team> by lazy { arguments.getTeamList() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +51,6 @@ class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
         private const val TAG = "DeleteTeamDialog"
 
         fun show(manager: FragmentManager, teams: List<Team>) =
-                DeleteTeamDialog().show(manager, TAG, teamsToBundle(teams))
+                DeleteTeamDialog().show(manager, TAG, teams.toBundle())
     }
 }

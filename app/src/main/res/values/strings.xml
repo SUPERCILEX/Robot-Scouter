@@ -138,6 +138,7 @@
     <string name="title_template_tab">Template %d</string>
     <string name="title_edit_template_name">Edit template name</string>
     <string name="title_template_added">Template added</string>
+    <string name="title_template_added_as_default">Template added and set as default</string>
 
     <string-array name="new_template_options">
         <item>Match scouting</item>

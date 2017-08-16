@@ -1,13 +1,16 @@
 package com.supercilex.robotscouter.util.data
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcel
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.data.model.toBundle
+import java.util.ArrayList
 
+const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
+const val TEAMS_KEY = "com.supercilex.robotscouter.data.util.Teams"
 const val TAB_KEY = "tab_key"
 const val SCOUT_ARGS_KEY = "scout_args"
 const val KEY_ADD_SCOUT = "add_scout"
@@ -27,6 +30,23 @@ fun PersistableBundle.putBooleanCompat(key: String, value: Boolean) =
 private fun getBooleanForInt(value: Int) = value == 1
 
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
+
+fun Intent.putExtra(team: Team): Intent = putExtra(TEAM_KEY, team)
+
+fun Team.toBundle() = Bundle().apply { putParcelable(TEAM_KEY, this@toBundle) }
+
+fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(teams))
+
+fun List<Team>.toBundle() =
+        Bundle().apply { putParcelableArrayList(TEAMS_KEY, ArrayList(this@toBundle)) }
+
+fun Intent.getTeamExtra(): Team = getParcelableExtra(TEAM_KEY)
+
+fun Bundle.getTeam(): Team = getParcelable(TEAM_KEY)
+
+fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra(TEAMS_KEY)
+
+fun Bundle.getTeamList(): List<Team> = getParcelableArrayList(TEAMS_KEY)
 
 fun getTabKeyBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
 

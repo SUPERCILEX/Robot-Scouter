@@ -15,6 +15,8 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ViewModelBase
+import com.supercilex.robotscouter.util.data.getTeam
+import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.teamsListener
 
 class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
@@ -25,7 +27,7 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
     private val team: Team by lazy { teamListener.value!! }
 
     override fun onCreate(args: Bundle) {
-        (teamListener as MutableLiveData).value = parseTeam(args); team
+        (teamListener as MutableLiveData).value = args.getTeam(); team
         teamListener.observeForever(keepAliveListener)
     }
 

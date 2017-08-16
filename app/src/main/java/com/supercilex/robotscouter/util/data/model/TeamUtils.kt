@@ -1,9 +1,7 @@
 package com.supercilex.robotscouter.util.data.model
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.text.TextUtils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
@@ -31,24 +29,11 @@ import java.util.Calendar
 import java.util.Collections
 import java.util.concurrent.TimeUnit
 
-private const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
-private const val TEAMS_KEY = "com.supercilex.robotscouter.data.util.Teams"
 private const val FRESHNESS_DAYS = "team_freshness"
 
 val teamIndicesRef: DatabaseReference get() = FIREBASE_TEAM_INDICES.child(uid!!)
 
 val Team.ref: DatabaseReference get() = FIREBASE_TEAMS.child(key)
-
-fun parseTeam(args: Bundle): Team = args.getParcelable(TEAM_KEY)
-
-fun parseTeamList(intent: Intent): List<Team> = intent.getParcelableArrayListExtra(TEAMS_KEY)
-
-fun parseTeamList(args: Bundle): List<Team> = args.getParcelableArrayList(TEAMS_KEY)
-
-fun teamsToIntent(teams: List<Team>): Intent = Intent().putExtra(TEAMS_KEY, ArrayList(teams))
-
-fun teamsToBundle(teams: List<Team>) =
-        Bundle().apply { putParcelableArrayList(TEAMS_KEY, ArrayList(teams)) }
 
 fun getTeamNames(teams: List<Team>): String {
     val sortedTeams = ArrayList(teams)
@@ -74,8 +59,6 @@ fun getTeamNames(teams: List<Team>): String {
         }
     }
 }
-
-fun Team.toBundle() = Bundle().apply { putParcelable(TEAM_KEY, this@toBundle) }
 
 fun Team.addTeam() {
     val index = teamIndicesRef.push()

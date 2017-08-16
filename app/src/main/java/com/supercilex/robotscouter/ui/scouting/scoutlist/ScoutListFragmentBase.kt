@@ -132,7 +132,7 @@ abstract class ScoutListFragmentBase : FragmentBase(),
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
             R.id.action_edit_template -> {
-                TemplateListActivity.start(context, team.templateKey)
+                TemplateListActivity.start(context, team)
                 logEditTemplateEvent(team.number)
             }
             R.id.action_edit_team_details -> TeamDetailsDialog.show(childFragmentManager, team)

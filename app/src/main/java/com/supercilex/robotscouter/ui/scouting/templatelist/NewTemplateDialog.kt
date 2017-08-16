@@ -12,13 +12,11 @@ import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 
 class NewTemplateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(context)
-                .setTitle(R.string.title_new_template)
-                .setItems(R.array.new_template_options, this)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
-    }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
+            .setTitle(R.string.title_new_template)
+            .setItems(R.array.new_template_options, this)
+            .setNegativeButton(android.R.string.cancel, null)
+            .create()
 
     override fun onClick(dialog: DialogInterface, which: Int) {
         (parentFragment as TemplateListFragment).onTemplateCreated(addTemplate((fun() = when {
