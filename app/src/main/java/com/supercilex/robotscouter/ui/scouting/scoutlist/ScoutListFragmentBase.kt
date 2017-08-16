@@ -56,7 +56,7 @@ abstract class ScoutListFragmentBase : FragmentBase(),
         return scoutKey
     }
     protected val bundle: Bundle
-        get() = getScoutBundle(team, arguments.getBoolean(KEY_ADD_SCOUT), scoutKey)
+        get() = getScoutBundle(team, arguments.getBoolean(KEY_ADD_SCOUT), scoutKey = scoutKey)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
