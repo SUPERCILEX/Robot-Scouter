@@ -97,6 +97,8 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
             } else {
                 templateKey
             }
+
+            arguments.remove(TEAM_KEY)
         } else {
             savedInstanceState?.let { pagerAdapter.currentTabKey = getTabKey(it) }
         }
