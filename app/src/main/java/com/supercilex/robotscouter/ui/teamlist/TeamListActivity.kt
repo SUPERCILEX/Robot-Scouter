@@ -159,7 +159,7 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
             }
         }
 
-        logSelectTeamEvent(args.getTeam().number)
+        logSelectTeamEvent(args.getTeam())
     }
 
     private fun handleIntent(intent: Intent) {

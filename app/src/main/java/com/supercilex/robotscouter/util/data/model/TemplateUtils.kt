@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.defaultTemplatesListener
+import com.supercilex.robotscouter.util.logAddTemplateEvent
 import com.supercilex.robotscouter.util.uid
 
 val templateIndicesRef: DatabaseReference get() = getTemplateIndicesRef(uid!!)
@@ -34,5 +35,6 @@ fun addTemplate(@TemplateType type: Int): String {
         else -> throw IllegalStateException("Unknown template type: $type")
     }
 
+    logAddTemplateEvent(key)
     return key
 }

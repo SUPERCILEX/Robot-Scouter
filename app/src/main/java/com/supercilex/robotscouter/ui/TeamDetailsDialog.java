@@ -84,7 +84,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 team.getTimestamp())));
         dialog.show(manager, TAG);
 
-        logEditTeamDetailsEvent(team.getNumber());
+        logEditTeamDetailsEvent(team);
     }
 
     @Override

@@ -31,7 +31,6 @@ import com.supercilex.robotscouter.util.data.model.viewAction
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.logEditTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
@@ -131,10 +130,7 @@ abstract class ScoutListFragmentBase : FragmentBase(),
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
-            R.id.action_edit_template -> {
-                TemplateListActivity.start(context, team)
-                logEditTemplateEvent(team.number)
-            }
+            R.id.action_edit_template -> TemplateListActivity.start(context, team)
             R.id.action_edit_team_details -> TeamDetailsDialog.show(childFragmentManager, team)
             else -> return false
         }

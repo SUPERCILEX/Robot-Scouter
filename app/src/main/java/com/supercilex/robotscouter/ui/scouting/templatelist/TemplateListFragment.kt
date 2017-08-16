@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
@@ -43,6 +44,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
             override fun onTabSelected(tab: TabLayout.Tab) {
                 super.onTabSelected(tab)
+                currentTabKey?.let { logViewTemplateEvent(it) }
                 fam.close(true)
                 fam.showMenuButton(true)
             }
@@ -83,17 +85,17 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
     private fun handleArgs(savedInstanceState: Bundle?) {
         if (arguments.containsKey(TEAM_KEY)) {
-            val team = arguments.getTeam()
+            val templateKey = arguments.getTeam().templateKey
 
-            pagerAdapter.currentTabKey = if (isNativeTemplateType(team.templateKey)) {
+            pagerAdapter.currentTabKey = if (isNativeTemplateType(templateKey)) {
                 Snackbar.make(rootView,
                               R.string.title_template_added_as_default,
                               Snackbar.LENGTH_LONG)
                         .show()
 
-                addTemplate(team.templateKey.toInt()).also { defaultTemplateKey = it }
+                addTemplate(templateKey.toInt()).also { defaultTemplateKey = it }
             } else {
-                team.templateKey
+                templateKey
             }
         } else {
             savedInstanceState?.let { pagerAdapter.currentTabKey = getTabKey(it) }

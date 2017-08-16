@@ -74,7 +74,7 @@ fun getScoutMetricsRef(key: String): DatabaseReference =
 fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
 fun Team.addScout(overrideKey: String? = null): String {
-    logAddScoutEvent(number)
+    logAddScoutEvent(this, overrideKey ?: templateKey)
 
     val indexRef = getScoutIndicesRef(key).push()
     indexRef.setValue(System.currentTimeMillis())
