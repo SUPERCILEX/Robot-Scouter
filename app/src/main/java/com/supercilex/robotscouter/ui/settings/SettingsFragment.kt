@@ -30,9 +30,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.User
-import com.supercilex.robotscouter.ui.teamlist.LicensesFragment
+import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.RC_SIGN_IN
 import com.supercilex.robotscouter.util.data.clearPrefs
+import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.getDebugInfo
@@ -40,15 +41,25 @@ import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
+import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.user
 
 class SettingsFragment : PreferenceFragmentCompat(),
+        TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = prefs
         addPreferencesFromResource(R.xml.app_preferences)
         onPreferenceChange(preferenceScreen, null)
+    }
+
+    override fun onDisplayPreferenceDialog(preference: Preference) {
+        if (preference.key == FIREBASE_PREF_DEFAULT_TEMPLATE_KEY) {
+            SettingsTemplateSelectorDialog.show(childFragmentManager)
+        } else {
+            super.onDisplayPreferenceDialog(preference)
+        }
     }
 
     override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
@@ -73,11 +84,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             is ListPreference -> {
                 if (preference.value == null) {
-                    preference.isPersistent = false
-                    preference.value = Preference::class.java.getDeclaredField("mDefaultValue")
-                            .apply { isAccessible = true }
-                            .get(preference).toString()
-                    preference.isPersistent = true
+                    preference.apply {
+                        isPersistent = false
+                        value = Preference::class.java.getDeclaredField("mDefaultValue")
+                                .apply { isAccessible = true }
+                                .get(preference)?.toString()
+                        isPersistent = true
+                    }
                 }
             }
             else -> when (preference.key) {
@@ -133,6 +146,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
             else -> return false
         }
         return true
+    }
+
+    override fun onTemplateSelected(key: String) {
+        defaultTemplateKey = key
+        (preferenceScreen.findPreference(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY) as ListPreference)
+                .value = key
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -31,6 +31,7 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
 import com.supercilex.robotscouter.util.ui.LifecycleActivity
+import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial

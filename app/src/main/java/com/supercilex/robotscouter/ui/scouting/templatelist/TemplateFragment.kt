@@ -20,13 +20,13 @@ import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
-import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
+import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.getHighestIntPriority
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {

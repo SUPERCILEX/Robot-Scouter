@@ -34,9 +34,10 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logEditTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
+import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 
 abstract class ScoutListFragmentBase : FragmentBase(),
-        Observer<Team>, TeamMediaCreator.StartCaptureListener {
+        TemplateSelectionListener, Observer<Team>, TeamMediaCreator.StartCaptureListener {
     protected val rootView: View by lazy {
         View.inflate(context, R.layout.fragment_scout_list, null)
     }
@@ -140,8 +141,8 @@ abstract class ScoutListFragmentBase : FragmentBase(),
         return true
     }
 
-    fun onAddScout(overrideTemplateKey: String) {
-        pagerAdapter!!.currentTabKey = team.addScout(overrideTemplateKey)
+    override fun onTemplateSelected(key: String) {
+        pagerAdapter!!.currentTabKey = team.addScout(key)
     }
 
     private fun initScoutList() {

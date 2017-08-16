@@ -8,8 +8,8 @@ import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
+import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

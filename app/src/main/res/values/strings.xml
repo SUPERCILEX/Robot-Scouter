@@ -133,8 +133,8 @@
     <!-- Template editor activity -->
     <string name="title_activity_template_list">Scout template editor</string>
     <string name="title_new_template">New template</string>
-    <string name="title_template_selector">Add scout from template</string>
-    <string name="title_set_default_template">"Set as default template"</string>
+    <string name="title_add_scout_template_selector">Add scout from template</string>
+    <string name="title_set_default_template">Set as default template</string>
     <string name="title_template_tab">Template %d</string>
     <string name="title_edit_template_name">Edit template name</string>
     <string name="title_template_added">Template added</string>
@@ -198,6 +198,9 @@
         <item>yes</item>
         <item>no</item>
     </string-array>
+
+    <string name="title_pref_default_template">Default template</string>
+    <string name="summary_pref_default_template">%s\nChoose the default template for new scouts</string>
 
     <string name="title_pref_should_upload_to_tba">@string/should_upload_media_dialog_title</string>
     <string name="summary_pref_should_upload_to_tba">%s\nChoose what happens when you take a picture with Robot Scouter</string>

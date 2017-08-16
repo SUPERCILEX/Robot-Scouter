@@ -7,7 +7,7 @@ const val MATCH = 0
 const val PIT = 1
 
 const val DEFAULT_TEMPLATE_TYPE = MATCH.toString()
-val TEMPLATE_TYPES = listOf(EMPTY, MATCH, PIT)
+val TEMPLATE_TYPES = listOf(MATCH, PIT)
 
 @IntDef(EMPTY.toLong(), MATCH.toLong(), PIT.toLong())
 @Retention(AnnotationRetention.SOURCE)

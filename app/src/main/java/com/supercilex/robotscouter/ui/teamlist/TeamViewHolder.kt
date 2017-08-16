@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
-import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
+import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
 
 class TeamViewHolder @Keep constructor(itemView: View) :
@@ -139,7 +139,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         when {
             isItemSelected || couldItemBeSelected || v.id == R.id.root -> onTeamContextMenuRequested()
             v.id == R.id.media -> TeamDetailsDialog.show(fragment.childFragmentManager, team)
-            v.id == R.id.new_scout -> TemplateSelectorDialog.show(
+            v.id == R.id.new_scout -> TeamTemplateSelectorDialog.show(
                     fragment.childFragmentManager, team)
             else -> return false
         }

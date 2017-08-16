@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
+import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 
 class NewTeamDialog : KeyboardDialogBase() {
     private val rootView: View by lazy { View.inflate(context, R.layout.dialog_new_team, null) }

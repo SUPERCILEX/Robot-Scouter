@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scoutlist.AppBarViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
+import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 
 class TabletScoutListFragment : ScoutListFragmentBase() {

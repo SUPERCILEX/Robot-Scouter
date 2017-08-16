@@ -17,12 +17,12 @@ import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.teamlist.OnBackPressedListener
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.ui.FragmentBase
+import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
 class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressedListener {
     private val rootView by lazy { View.inflate(context, R.layout.fragment_template_list, null) }

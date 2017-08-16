@@ -7,7 +7,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
+import android.support.annotation.StringRes
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.content.res.AppCompatResources
@@ -25,19 +25,18 @@ import com.google.firebase.database.DataSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.MATCH
 import com.supercilex.robotscouter.data.model.PIT
-import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
-import com.supercilex.robotscouter.ui.teamlist.TeamSelectionListener
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
-import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.model.TabNamesHolder
-import com.supercilex.robotscouter.util.data.model.parseTeam
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
-import com.supercilex.robotscouter.util.data.model.toBundle
 
-class TemplateSelectorDialog : LifecycleDialogFragment() {
-    private val holder by lazy { ViewModelProviders.of(this).get(TabNamesHolder::class.java) }
+abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
+    @get:StringRes
+    protected abstract val title: Int
+
+    protected open val holder: TabNamesHolder by lazy {
+        ViewModelProviders.of(this).get(TabNamesHolder::class.java)
+    }
 
     private val rootView by lazy { View.inflate(context, R.layout.dialog_template_selector, null) }
     private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
@@ -120,25 +119,12 @@ class TemplateSelectorDialog : LifecycleDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
-            .setTitle(R.string.title_template_selector)
+            .setTitle(title)
             .setView(rootView)
             .setNegativeButton(android.R.string.cancel, null)
             .create()
 
-    fun onItemSelected(key: String) {
-        when {
-            context is TeamSelectionListener -> {
-                (context as TeamSelectionListener).onTeamSelected(getScoutBundle(
-                        parseTeam(arguments), true, key), false)
-            }
-            parentFragment is ScoutListFragmentBase -> {
-                (parentFragment as ScoutListFragmentBase).onAddScout(key)
-            }
-            else -> throw IllegalStateException("Unknown caller: $context")
-        }
-
-        dismiss()
-    }
+    protected abstract fun onItemSelected(key: String)
 
     private class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
             View.OnClickListener {
@@ -168,14 +154,13 @@ class TemplateSelectorDialog : LifecycleDialogFragment() {
             }
         }
 
-        override fun onClick(v: View) = listener.onItemSelected(key)
+        override fun onClick(v: View) {
+            listener.onItemSelected(key)
+            listener.dismiss()
+        }
     }
 
-    companion object {
-        private const val TAG = "TemplateSelectorDialog"
-        private const val EXTRA_ITEMS = 2
-
-        fun show(manager: FragmentManager, team: Team? = null) =
-                TemplateSelectorDialog().show(manager, TAG, team?.toBundle() ?: Bundle())
+    private companion object {
+        const val EXTRA_ITEMS = 2
     }
 }

@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.teamsListener
 import com.supercilex.robotscouter.util.ui.FragmentBase
+import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
 class TeamListFragment : FragmentBase(), OnBackPressedListener {
     private val holder: TeamListHolder by lazy {
