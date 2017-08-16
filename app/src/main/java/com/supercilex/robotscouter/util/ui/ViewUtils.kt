@@ -11,6 +11,7 @@ import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Debug
 import android.os.SystemClock
 import android.support.annotation.ColorRes
 import android.support.design.widget.TextInputEditText
@@ -26,10 +27,12 @@ import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import android.widget.ProgressBar
 import android.widget.TextView
+import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.nightMode
@@ -51,7 +54,16 @@ fun initUi(app: Application) {
     }
 
     app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            if (BuildConfig.DEBUG) {
+                val window = activity.window
+                if (Debug.isDebuggerConnected()) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            }
+        }
 
         override fun onActivityStarted(activity: Activity) {
             visibleActivities.add(activity)
