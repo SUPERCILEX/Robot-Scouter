@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting
 
-import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DataSnapshot
@@ -9,7 +8,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.util.data.ViewModelBase
 
-class TabKeysHolder(app: Application) : ViewModelBase<DatabaseReference>(app), ValueEventListener {
+class TabKeysHolder : ViewModelBase<DatabaseReference>(), ValueEventListener {
     val keysListener = MutableLiveData<List<String>>()
     lateinit var ref: DatabaseReference
 

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import com.supercilex.robotscouter.RobotScouter
 
 class NotificationForwarder : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -24,9 +25,10 @@ class NotificationForwarder : BroadcastReceiver() {
         private const val KEY_CANCEL = "cancel"
         private const val KEY_NOTIFICATION_ID = "notification_id"
 
-        fun getCancelIntent(context: Context, id: Int, intent: Intent): Intent =
+        fun getCancelIntent(id: Int, intent: Intent): Intent =
                 Intent(intent).putExtra(KEY_COMPONENT, intent.component)
-                        .setComponent(ComponentName(context, NotificationForwarder::class.java))
+                        .setComponent(ComponentName(
+                                RobotScouter.INSTANCE, NotificationForwarder::class.java))
                         .putExtra(KEY_NOTIFICATION_ID, id)
                         .putExtra(KEY_CANCEL, true)
     }

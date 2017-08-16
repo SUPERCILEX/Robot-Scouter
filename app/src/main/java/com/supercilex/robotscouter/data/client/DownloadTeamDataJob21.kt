@@ -11,5 +11,5 @@ class DownloadTeamDataJob21 : TbaJobBase21() {
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.updateTeam(newTeam) }
 
-    override fun startTask(previousTeam: Team) = TbaDownloader.load(previousTeam, this)
+    override fun startTask(previousTeam: Team) = TbaDownloader.load(previousTeam)
 }

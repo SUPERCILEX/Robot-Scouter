@@ -14,6 +14,7 @@ import com.firebase.jobdispatcher.FirebaseJobDispatcher
 import com.firebase.jobdispatcher.GooglePlayDriver
 import com.firebase.jobdispatcher.Job
 import com.firebase.jobdispatcher.Trigger
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 
 private val NUMBER = "number"
@@ -37,19 +38,18 @@ private fun Job.Builder.buildAndSchedule(dispatcher: FirebaseJobDispatcher) {
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-private fun JobInfo.Builder.buildAndSchedule(context: Context, clazz: String) {
-    val scheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
+    val scheduler = RobotScouter.INSTANCE.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     val result: Int = scheduler.schedule(build())
     if (result != JobScheduler.RESULT_SUCCESS) {
         throw IllegalStateException(getErrorMessage(clazz, result))
     }
 }
 
-fun startInternetJob14(context: Context,
-                       team: Team,
+fun startInternetJob14(team: Team,
                        jobId: Int,
                        clazz: Class<out com.firebase.jobdispatcher.JobService>) {
-    val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context.applicationContext))
+    val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(RobotScouter.INSTANCE))
 
     dispatcher.newJobBuilder()
             .setService(clazz)
@@ -61,14 +61,11 @@ fun startInternetJob14(context: Context,
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun startInternetJob21(context: Context,
-                       team: Team,
-                       jobId: Int,
-                       clazz: Class<out JobService>) {
-    JobInfo.Builder(jobId, ComponentName(context.packageName, clazz.name))
+fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
+    JobInfo.Builder(jobId, ComponentName(RobotScouter.INSTANCE.packageName, clazz.name))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setExtras(toRawPersistableBundle(team))
-            .buildAndSchedule(context, clazz.name)
+            .buildAndSchedule(clazz.name)
 }
 
 private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"

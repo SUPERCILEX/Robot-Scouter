@@ -16,7 +16,7 @@ import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.teamsListener
+import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
@@ -56,7 +56,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
             }
         })
 
-        teamsListener.observe(this, Observer { snapshots ->
+        TeamsLiveData.observe(this, Observer { snapshots ->
             adapter?.cleanup()
             lifecycle.removeObserver(adapter)
             if (snapshots == null) {

@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
-import android.app.Application
 import android.os.Bundle
 import com.firebase.ui.database.FirebaseArray
 import com.firebase.ui.database.ObservableSnapshotArray
@@ -10,7 +9,7 @@ import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getRef
 
-class SpinnerItemsHolder(app: Application) : ViewModelBase<Bundle>(app) {
+class SpinnerItemsHolder : ViewModelBase<Bundle>() {
     lateinit var ref: DatabaseReference
         private set
     var selectedValueKey: String? = null

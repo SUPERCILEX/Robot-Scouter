@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data.model
 
-import android.app.Application
 import com.firebase.ui.database.FirebaseIndexArray
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.firebase.ui.database.SnapshotParser
@@ -10,7 +9,7 @@ import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ViewModelBase
 
-class TabNamesHolder(app: Application) : ViewModelBase<Pair<Query, DatabaseReference>>(app) {
+class TabNamesHolder : ViewModelBase<Pair<Query, DatabaseReference>>() {
     lateinit var namesListener: ObservableSnapshotArray<String?>
         private set
 

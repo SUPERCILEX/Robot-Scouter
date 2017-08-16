@@ -10,6 +10,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
+import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.getRefBundle
@@ -17,7 +18,6 @@ import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
-import com.supercilex.robotscouter.util.teamsListener
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
 
@@ -31,7 +31,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
 
     override fun onAttemptDismiss(): Boolean {
         val templateKey = getRef(arguments).key
-        teamsListener.observeOnDataChanged().observeOnce().addOnSuccessListener { teams ->
+        TeamsLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener { teams ->
             (0 until teams.size)
                     .map { teams.getObject(it) }
                     .filter { TextUtils.equals(templateKey, it.templateKey) }

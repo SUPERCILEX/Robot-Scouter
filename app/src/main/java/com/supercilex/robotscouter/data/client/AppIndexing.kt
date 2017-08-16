@@ -10,18 +10,18 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.model.indexable
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.onSignedIn
-import com.supercilex.robotscouter.util.teamsListener
 import java.util.concurrent.ExecutionException
 
 class AppIndexingService : JobIntentService(), OnSuccessListener<ObservableSnapshotArray<Team>> {
     override fun onHandleWork(intent: Intent) {
         try {
             Tasks.await(onSignedIn())
-            Tasks.await(teamsListener.observeOnDataChanged().observeOnce()
+            Tasks.await(TeamsLiveData.observeOnDataChanged().observeOnce()
                                 .addOnSuccessListener(this))
         } catch (e: ExecutionException) {
             FirebaseCrash.report(e)

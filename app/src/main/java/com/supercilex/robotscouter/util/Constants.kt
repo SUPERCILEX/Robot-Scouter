@@ -1,20 +1,17 @@
 package com.supercilex.robotscouter.util
 
+import android.app.ActivityManager
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import android.support.v4.app.ActivityManagerCompat
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.database.DatabaseReference
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
-import com.supercilex.robotscouter.util.data.PrefsLiveData
-import com.supercilex.robotscouter.util.data.TeamsLiveData
-import com.supercilex.robotscouter.util.data.TemplateIndicesLiveData
 import com.supercilex.robotscouter.util.data.ref
-import kotlin.properties.Delegates
 
 const val SINGLE_ITEM = 1
 
@@ -67,29 +64,17 @@ const val FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
 const val FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT = "hasShownExportHint"
 // [END FIREBASE CHILD NAMES]
 
-var teamsListener: TeamsLiveData by Delegates.notNull()
-    private set
-val defaultTemplatesListener = DefaultTemplatesLiveData()
-val templateIndicesListener = TemplateIndicesLiveData()
-val prefsListener = PrefsLiveData()
-
-var providerAuthority: String by Delegates.notNull()
-    private set
-
-var refWatcher: RefWatcher by Delegates.notNull()
-    private set
-
-var isInTestMode: Boolean by Delegates.notNull()
-    private set
-
-fun initConstants(context: Context) {
-    teamsListener = TeamsLiveData(context)
-    providerAuthority = "${context.packageName}.provider"
-    refWatcher = LeakCanary.install(context as RobotScouter)
-    isInTestMode = Settings.System.getString(context.contentResolver, "firebase.test.lab") == "true"
+val providerAuthority: String by lazy { "${RobotScouter.INSTANCE.packageName}.provider" }
+val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter.INSTANCE) }
+val isLowRamDevice: Boolean by lazy {
+    ActivityManagerCompat.isLowRamDevice(
+            RobotScouter.INSTANCE.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
 }
-
-fun getDebugInfo(): String = """
+val isInTestMode: Boolean by lazy {
+    Settings.System.getString(RobotScouter.INSTANCE.contentResolver, "firebase.test.lab") == "true"
+}
+val debugInfo: String get() =
+        """
         |- Robot Scouter version: ${BuildConfig.VERSION_NAME}
         |- Android OS version: ${Build.VERSION.SDK_INT}
         |- User id: $uid

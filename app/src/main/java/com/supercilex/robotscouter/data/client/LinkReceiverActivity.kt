@@ -67,7 +67,7 @@ class LinkReceiverActivity : AppCompatActivity() {
                                   .putExtra(SCOUT_ARGS_KEY, data)
                                   .addNewDocumentFlags())
         } else {
-            startActivity(ScoutListActivity.createIntent(this, data))
+            startActivity(ScoutListActivity.createIntent(data))
         }
     }
 

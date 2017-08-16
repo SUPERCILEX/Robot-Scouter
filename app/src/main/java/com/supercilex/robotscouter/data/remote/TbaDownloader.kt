@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.remote
 
-import android.content.Context
 import android.os.Handler
 import android.text.TextUtils
 import com.bumptech.glide.Glide
@@ -8,12 +7,13 @@ import com.google.android.gms.tasks.Task
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import retrofit2.Response
 import java.io.IOException
 
-class TbaDownloader private constructor(team: Team, context: Context) :
-        TbaServiceBase<TbaTeamApi>(team, context, TbaTeamApi::class.java) {
+class TbaDownloader private constructor(team: Team) :
+        TbaServiceBase<TbaTeamApi>(team, TbaTeamApi::class.java) {
     @Throws(Exception::class)
     override fun call(): Team {
         getTeamInfo()
@@ -72,7 +72,9 @@ class TbaDownloader private constructor(team: Team, context: Context) :
     private fun setAndCacheMedia(url: String, year: Int) {
         team.media = url
         team.mediaYear = year
-        Handler(context.mainLooper).post { Glide.with(context).load(url).preload() }
+        Handler(RobotScouter.INSTANCE.mainLooper).post {
+            Glide.with(RobotScouter.INSTANCE).load(url).preload()
+        }
     }
 
     companion object {
@@ -82,7 +84,6 @@ class TbaDownloader private constructor(team: Team, context: Context) :
         private const val CHIEF_DELPHI = "cdphotothread"
         private const val MAX_HISTORY = 2000
 
-        fun load(team: Team, context: Context): Task<Team> =
-                TbaServiceBase.executeAsync(TbaDownloader(team, context))
+        fun load(team: Team): Task<Team> = TbaServiceBase.executeAsync(TbaDownloader(team))
     }
 }

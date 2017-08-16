@@ -26,11 +26,11 @@ import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
+import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
 import com.supercilex.robotscouter.util.data.FirebaseCopier
 import com.supercilex.robotscouter.util.data.copySnapshots
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
-import com.supercilex.robotscouter.util.defaultTemplatesListener
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
@@ -74,22 +74,22 @@ fun getScoutMetricsRef(key: String): DatabaseReference =
 fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
 
 fun Team.addScout(overrideKey: String? = null): String {
-    logAddScoutEvent(this, overrideKey ?: templateKey)
+    val templateKey = overrideKey ?: this.templateKey
 
     val indexRef = getScoutIndicesRef(key).push()
     indexRef.setValue(System.currentTimeMillis())
     val scoutRef = getScoutMetricsRef(indexRef.key)
 
-    if (isNativeTemplateType(overrideKey) ||
-            overrideKey == null && isNativeTemplateType(templateKey)) {
-        defaultTemplatesListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
-            copySnapshots(it[overrideKey?.toInt() ?: templateKey.toInt()], scoutRef)
+    if (isNativeTemplateType(templateKey)) {
+        DefaultTemplatesLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
+            copySnapshots(it[templateKey.toInt()], scoutRef)
         }
     } else {
-        FirebaseCopier(getTemplateMetricsRef(overrideKey ?: templateKey), scoutRef)
+        FirebaseCopier(getTemplateMetricsRef(templateKey), scoutRef)
                 .performTransformation()
     }
 
+    logAddScoutEvent(this, templateKey)
     return indexRef.key
 }
 

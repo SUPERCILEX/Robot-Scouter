@@ -153,9 +153,9 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
                     .commit()
         } else {
             if (restoreOnConfigChange) {
-                startActivityForResult(ScoutListActivity.createIntent(this, args), RC_SCOUT)
+                startActivityForResult(ScoutListActivity.createIntent(args), RC_SCOUT)
             } else {
-                startActivity(ScoutListActivity.createIntent(this, args))
+                startActivity(ScoutListActivity.createIntent(args))
             }
         }
 

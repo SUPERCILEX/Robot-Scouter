@@ -34,16 +34,17 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
-import com.supercilex.robotscouter.util.prefsListener
 import java.util.concurrent.CopyOnWriteArrayList
 
 private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
 
-fun initUi(app: Application) {
+fun initUi() {
     AppCompatDelegate.setDefaultNightMode(nightMode)
-    prefsListener.observeForever {
+    PrefsLiveData.observeForever {
         it?.addChangeEventListener(object : ChangeEventListenerBase {
             override fun onDataChanged() {
                 AppCompatDelegate.setDefaultNightMode(nightMode)
@@ -53,7 +54,7 @@ fun initUi(app: Application) {
         })
     }
 
-    app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+    RobotScouter.INSTANCE.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             if (BuildConfig.DEBUG) {
                 val window = activity.window
@@ -66,7 +67,7 @@ fun initUi(app: Application) {
         }
 
         override fun onActivityStarted(activity: Activity) {
-            visibleActivities.add(activity)
+            visibleActivities += activity
         }
 
         override fun onActivityResumed(activity: Activity) {
@@ -78,7 +79,7 @@ fun initUi(app: Application) {
         override fun onActivityPaused(activity: Activity) = Unit
 
         override fun onActivityStopped(activity: Activity) {
-            visibleActivities.remove(activity)
+            visibleActivities -= activity
         }
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
@@ -94,14 +95,13 @@ fun isInTabletMode(context: Context): Boolean {
             || size > Configuration.SCREENLAYOUT_SIZE_LARGE
 }
 
-fun animateColorChange(context: Context,
-                       @ColorRes from: Int,
+fun animateColorChange(@ColorRes from: Int,
                        @ColorRes to: Int,
                        listener: ValueAnimator.AnimatorUpdateListener) {
     ValueAnimator.ofObject(
             ArgbEvaluator(),
-            ContextCompat.getColor(context, from),
-            ContextCompat.getColor(context, to)).apply {
+            ContextCompat.getColor(RobotScouter.INSTANCE, from),
+            ContextCompat.getColor(RobotScouter.INSTANCE, to)).apply {
         addUpdateListener(listener)
         start()
     }

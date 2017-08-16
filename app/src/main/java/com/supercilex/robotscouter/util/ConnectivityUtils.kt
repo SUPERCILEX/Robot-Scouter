@@ -2,12 +2,10 @@ package com.supercilex.robotscouter.util
 
 import android.content.Context
 import android.net.ConnectivityManager
-import kotlin.properties.Delegates
+import com.supercilex.robotscouter.RobotScouter
 
-private var connectivityManager by Delegates.notNull<ConnectivityManager>()
-
-fun initConnectivity(context: Context) {
-    connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+private val connectivityManager by lazy {
+    RobotScouter.INSTANCE.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 }
 
 fun isOffline() = connectivityManager.activeNetworkInfo?.isConnected == false

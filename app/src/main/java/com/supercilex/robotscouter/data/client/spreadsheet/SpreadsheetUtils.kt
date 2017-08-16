@@ -1,18 +1,17 @@
 package com.supercilex.robotscouter.data.client.spreadsheet
 
-import android.app.ActivityManager
-import android.content.Context
 import android.graphics.Paint
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.app.ActivityManagerCompat
 import android.widget.Toast
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.isLowRamDevice
 import org.apache.poi.ss.formula.OperationEvaluationContext
 import org.apache.poi.ss.formula.eval.ErrorEval
 import org.apache.poi.ss.formula.eval.NumberEval
@@ -29,7 +28,6 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.util.WorkbookUtil
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
-import kotlin.properties.Delegates
 
 val AVERAGEIF_FUNCTION: FreeRefFunction = object : FreeRefFunction {
     override fun evaluate(args: Array<ValueEval>, context: OperationEvaluationContext): ValueEval =
@@ -68,12 +66,6 @@ private const val COLUMN_WIDTH_SCALE_FACTOR = 46
 private const val CELL_WIDTH_CEILING = 7500
 
 val isUnsupportedDevice by lazy { VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || isLowRamDevice }
-private var isLowRamDevice: Boolean by Delegates.notNull()
-
-fun initSpreadsheet(context: Context) {
-    isLowRamDevice = ActivityManagerCompat.isLowRamDevice(
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
-}
 
 val Cell?.stringValue: String get() {
     if (this == null) return ""
@@ -147,11 +139,11 @@ fun CTTitle.setValue(text: String) {
 fun Drawing<*>.createChartAnchor(startRow: Int, startColumn: Int, endColumn: Int): ClientAnchor =
         createAnchor(0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2)
 
-fun showError(context: Context, e: Exception) {
+fun showError(e: Exception) {
     FirebaseCrash.report(e)
-    showToast(context, "${context.getString(R.string.fui_general_error)}\n\n${e.message}")
+    showToast("${RobotScouter.INSTANCE.getString(R.string.fui_general_error)}\n\n${e.message}")
 }
 
-fun showToast(context: Context, message: String) = Handler(Looper.getMainLooper()).post {
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+fun showToast(message: String) = Handler(Looper.getMainLooper()).post {
+    Toast.makeText(RobotScouter.INSTANCE, message, Toast.LENGTH_LONG).show()
 }

@@ -153,7 +153,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                     consumption.setException(ex)
                 }
             }
-            consumptions.add(consumption.task)
+            consumptions += consumption.task
         }
 
         return Tasks.whenAll(consumptions).continueWithTask(Continuation<Void, Task<Nothing>> {

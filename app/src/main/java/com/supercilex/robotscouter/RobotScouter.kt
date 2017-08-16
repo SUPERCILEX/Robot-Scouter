@@ -9,11 +9,9 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
-import com.supercilex.robotscouter.data.client.spreadsheet.initSpreadsheet
+import com.supercilex.robotscouter.util.data.initDatabase
 import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
-import com.supercilex.robotscouter.util.initConnectivity
-import com.supercilex.robotscouter.util.initConstants
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
 
@@ -22,13 +20,13 @@ class RobotScouter : MultiDexApplication() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) return
 
-        initAnalytics(this)
-        initConnectivity(this)
-        initConstants(this)
-        initPrefs(this)
-        initUi(this)
-        initSpreadsheet(this)
-        initNotifications(this)
+        INSTANCE = this
+
+        initAnalytics()
+        initDatabase()
+        initPrefs()
+        initUi()
+        initNotifications()
 
         FirebaseRemoteConfig.getInstance().apply {
             setDefaults(R.xml.remote_config_defaults)
@@ -50,6 +48,9 @@ class RobotScouter : MultiDexApplication() {
     }
 
     companion object {
+        lateinit var INSTANCE: RobotScouter
+            private set
+
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }

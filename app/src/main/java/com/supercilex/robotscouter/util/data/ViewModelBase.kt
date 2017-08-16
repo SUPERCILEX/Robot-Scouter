@@ -1,10 +1,9 @@
 package com.supercilex.robotscouter.util.data
 
-import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
+import android.arch.lifecycle.ViewModel
 import android.support.annotation.CallSuper
 
-abstract class ViewModelBase<in T>(app: Application) : AndroidViewModel(app) {
+abstract class ViewModelBase<in T> : ViewModel() {
     private var isInitialized = false
 
     fun init(args: T) {

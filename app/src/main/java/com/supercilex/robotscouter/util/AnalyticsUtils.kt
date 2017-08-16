@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util
 
-import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event
@@ -10,9 +9,9 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.model.getTeamNames
-import kotlin.properties.Delegates
 
 private const val TEAM_ID = "team_id"
 private const val TEMPLATE_ID = "template_id"
@@ -22,10 +21,11 @@ private const val TEAMS_CATEGORY = "teams"
 private const val SCOUT_CATEGORY = "scout"
 private const val TEMPLATE_CATEGORY = "template"
 
-private var analytics: FirebaseAnalytics by Delegates.notNull()
+private val analytics: FirebaseAnalytics by lazy {
+    FirebaseAnalytics.getInstance(RobotScouter.INSTANCE)
+}
 
-fun initAnalytics(context: Context) {
-    analytics = FirebaseAnalytics.getInstance(context)
+fun initAnalytics() {
     FirebaseAuth.getInstance().addAuthStateListener {
         // Log uid to help debug db crashes
         FirebaseCrash.log("User id: $uid")

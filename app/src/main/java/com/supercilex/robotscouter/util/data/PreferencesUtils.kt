@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceDataStore
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.firebase.database.DataSnapshot
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_PREFS
 import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
@@ -17,11 +18,10 @@ import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.data.model.userPrefs
-import com.supercilex.robotscouter.util.prefsListener
-import com.supercilex.robotscouter.util.teamsListener
-import kotlin.properties.Delegates
 
-private var localPrefs: SharedPreferences by Delegates.notNull()
+private val localPrefs: SharedPreferences by lazy {
+    RobotScouter.INSTANCE.getSharedPreferences(FIREBASE_PREFS, Context.MODE_PRIVATE)
+}
 
 val prefs = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
@@ -77,10 +77,8 @@ var hasShownExportHint: Boolean
     get() = prefs.getBoolean(FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT, false)
     set(value) = prefs.putBoolean(FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT, value)
 
-fun initPrefs(context: Context) {
-    localPrefs = context.getSharedPreferences(FIREBASE_PREFS, Context.MODE_PRIVATE)
-
-    prefsListener.observeForever {
+fun initPrefs() {
+    PrefsLiveData.observeForever {
         it?.addChangeEventListener(object : ChangeEventListenerBase {
             override fun onChildChanged(type: ChangeEventListener.EventType,
                                         snapshot: DataSnapshot,
@@ -143,8 +141,8 @@ fun clearPrefs() {
 private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
 
 private fun updateTeamTemplateKeys() {
-    teamsListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
-        val listener = teamsListener.templateKeyUpdater
+    TeamsLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
+        val listener = TeamsLiveData.templateKeyUpdater
         it.addChangeEventListener(listener)
         it.removeChangeEventListener(listener)
     }

@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.data.remote
 
-import android.content.Context
 import com.google.android.gms.tasks.Task
 import com.google.gson.JsonObject
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -12,8 +12,8 @@ import java.io.File
 import java.io.IOException
 import java.util.Arrays
 
-class TbaUploader private constructor(team: Team, context: Context) :
-        TbaServiceBase<TbaTeamMediaApi>(team, context, TbaTeamMediaApi::class.java) {
+class TbaUploader private constructor(team: Team) :
+        TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
     @Throws(Exception::class)
     override fun call(): Team {
         uploadToImgur()
@@ -26,7 +26,7 @@ class TbaUploader private constructor(team: Team, context: Context) :
         val response: Response<JsonObject> = TbaTeamMediaApi.IMGUR_RETROFIT
                 .create(TbaTeamMediaApi::class.java)
                 .postToImgur(
-                        context.getString(R.string.imgur_client_id),
+                        RobotScouter.INSTANCE.getString(R.string.imgur_client_id),
                         team.toString(),
                         RequestBody.create(MediaType.parse("image/*"), File(team.media)))
                 .execute()
@@ -68,7 +68,6 @@ class TbaUploader private constructor(team: Team, context: Context) :
     }
 
     companion object {
-        fun upload(team: Team, context: Context): Task<Team> =
-                TbaServiceBase.executeAsync(TbaUploader(team, context))
+        fun upload(team: Team): Task<Team> = TbaServiceBase.executeAsync(TbaUploader(team))
     }
 }

@@ -5,7 +5,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
-import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import com.firebase.ui.database.ChangeEventListener
@@ -47,7 +46,6 @@ import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 import com.supercilex.robotscouter.util.data.model.updateTemplateKey
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.templateIndicesListener
 import java.io.File
 import java.util.Arrays
 import java.util.Collections
@@ -64,6 +62,13 @@ private val QUERY_KEY = "query_key"
 
 val ref: DatabaseReference by lazy {
     FirebaseDatabase.getInstance().apply { setPersistenceEnabled(true) }.reference
+}
+
+fun initDatabase() {
+    PrefsLiveData
+    TeamsLiveData
+    DefaultTemplatesLiveData
+    TemplateIndicesLiveData
 }
 
 fun getRefBundle(ref: DatabaseReference) = Bundle().apply {
@@ -174,7 +179,7 @@ abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotA
     }
 }
 
-class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveData<Team>() {
+object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
         get() = FirebaseIndexArray(teamIndicesRef.orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
 
@@ -191,7 +196,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
 
             if (templateKey == DEFAULT_TEMPLATE_TYPE) team.updateTemplateKey(defaultTemplateKey)
             else if (templateKey != defaultTemplateKey) {
-                templateIndicesListener.observeOnDataChanged().observeOnce().addOnSuccessListener {
+                TemplateIndicesLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
                     if (it.map { it.key }.contains(templateKey)) {
                         team.updateTemplateKey(defaultTemplateKey)
                     } else {
@@ -228,10 +233,10 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             if (type == ChangeEventListener.EventType.ADDED || type == ChangeEventListener.EventType.CHANGED) {
                 val team = value!!.getObject(index)
 
-                team.fetchLatestData(context)
+                team.fetchLatestData()
                 val media = team.media
                 if (!TextUtils.isEmpty(media) && File(media).exists()) {
-                    startUploadTeamMediaJob(context, team)
+                    startUploadTeamMediaJob(team)
                 }
             }
         }
@@ -259,7 +264,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
                     break
                 }
 
-                rawTeams.add(rawTeam)
+                rawTeams += rawTeam
             }
         }
 
@@ -287,7 +292,7 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
 
     override fun onActive() {
         value?.apply {
-            templateIndicesListener.observeForever(keepAliveListener)
+            TemplateIndicesLiveData.observeForever(keepAliveListener)
 
             if (!isListening(templateKeyUpdater)) addChangeEventListener(templateKeyUpdater)
             if (!isListening(updater)) addChangeEventListener(updater)
@@ -301,28 +306,26 @@ class TeamsLiveData(private val context: Context) : ObservableSnapshotArrayLiveD
             removeChangeEventListener(updater)
             removeChangeEventListener(merger)
 
-            templateIndicesListener.removeObserver(keepAliveListener)
+            TemplateIndicesLiveData.removeObserver(keepAliveListener)
         }
     }
 }
 
-class TemplateIndicesLiveData : ObservableSnapshotArrayLiveData<String>() {
+object TemplateIndicesLiveData : ObservableSnapshotArrayLiveData<String>() {
     override val items: ObservableSnapshotArray<String>
         get() = FirebaseArray(templateIndicesRef, String::class.java)
 }
 
-class DefaultTemplatesLiveData : LiveData<ObservableSnapshotArray<Scout>>() {
+object DefaultTemplatesLiveData : LiveData<ObservableSnapshotArray<Scout>>() {
     init {
         value = FirebaseArray(FIREBASE_DEFAULT_TEMPLATES, SCOUT_PARSER)
                 .apply { addChangeEventListener(object : ChangeEventListenerBase {}) }
     }
 }
 
-class PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
-    override val items: ObservableSnapshotArray<Any> get() = FirebaseArray<Any>(userPrefs, PARSER)
-
-    private companion object {
-        val PARSER = SnapshotParser<Any> {
+object PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
+    override val items: ObservableSnapshotArray<Any>
+        get() = FirebaseArray<Any>(userPrefs) {
             when (it.key) {
                 FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
                 FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
@@ -337,5 +340,4 @@ class PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
                 else -> it
             }
         }
-    }
 }

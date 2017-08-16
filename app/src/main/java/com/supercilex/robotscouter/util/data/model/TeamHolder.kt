@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data.model
 
-import android.app.Application
 import android.arch.core.util.Function
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
@@ -14,14 +13,14 @@ import com.google.firebase.database.DataSnapshot
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.toBundle
-import com.supercilex.robotscouter.util.teamsListener
 
-class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
+class TeamHolder : ViewModelBase<Bundle>(),
         Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
-    val teamListener: LiveData<Team> = Transformations.switchMap(teamsListener, this)
+    val teamListener: LiveData<Team> = Transformations.switchMap(TeamsLiveData, this)
 
     private val keepAliveListener = Observer<Team> {}
     private val team: Team by lazy { teamListener.value!! }
@@ -44,7 +43,7 @@ class TeamHolder(app: Application) : ViewModelBase<Bundle>(app),
             }
 
             team.addTeam()
-            TbaDownloader.load(team, getApplication()).addOnSuccessListener { team.updateTeam(it) }
+            TbaDownloader.load(team).addOnSuccessListener { team.updateTeam(it) }
         }
 
         return object : MutableLiveData<Team>(), ChangeEventListenerBase {

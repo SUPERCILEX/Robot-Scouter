@@ -133,13 +133,12 @@ fun Team.deleteTeam() {
     }
 }
 
-fun Team.fetchLatestData(context: Context) {
-    val appContext = context.applicationContext
+fun Team.fetchLatestData() {
     fetchAndActivate().addOnSuccessListener {
         val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp)
         val freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS)
 
-        if (differenceDays >= freshness) startDownloadTeamDataJob(appContext, this)
+        if (differenceDays >= freshness) startDownloadTeamDataJob(this)
     }
 }
 

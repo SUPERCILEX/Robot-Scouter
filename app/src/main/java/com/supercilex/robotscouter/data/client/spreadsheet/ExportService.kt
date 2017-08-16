@@ -89,7 +89,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                 R.string.export_in_progress_title,
                 cache.getExportNotification(getString(R.string.exporting_status_loading)))
 
-        if (isOffline()) showToast(this, getString(R.string.export_warning_offline))
+        if (isOffline()) showToast(getString(R.string.export_warning_offline))
 
         try {
             // Force a refresh
@@ -100,8 +100,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
             onSuccess(Tasks.await(Scouts.getAll(cache.teams), 5, TimeUnit.MINUTES))
         } catch (e: Exception) {
             when (e) {
-                is ExecutionException, is InterruptedException, is TimeoutException ->
-                    showError(this, e)
+                is ExecutionException, is InterruptedException, is TimeoutException -> showError(e)
                 else -> throw e
             }
         }
@@ -164,7 +163,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
                         PendingIntent.getBroadcast(
                                 this,
                                 exportId,
-                                NotificationForwarder.getCancelIntent(this, exportId, shareIntent),
+                                NotificationForwarder.getCancelIntent(exportId, shareIntent),
                                 PendingIntent.FLAG_ONE_SHOT))
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setAutoCancel(true)
@@ -226,7 +225,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
 
             return unhideFile(absoluteFile)
         } catch (e: IOException) {
-            showError(this, e)
+            showError(e)
             absoluteFile.delete()
         } finally {
             if (stream != null)
@@ -251,7 +250,7 @@ class ExportService : IntentService(TAG), OnSuccessListener<Map<Team, List<Scout
         val workbook: Workbook
         if (isUnsupportedDevice) {
             workbook = HSSFWorkbook()
-            showToast(this, getString(R.string.unsupported_device))
+            showToast(getString(R.string.unsupported_device))
         } else {
             workbook = XSSFWorkbook()
         }

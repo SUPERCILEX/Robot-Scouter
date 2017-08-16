@@ -316,7 +316,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
         if (shouldUpdateBackground(mToolbar.getBackground(), newColorPrimary)) {
             animateColorChange(
-                    mActivity,
                     oldColorPrimary,
                     newColorPrimary,
                     animator -> mToolbar.setBackgroundColor((int) animator.getAnimatedValue()));
@@ -329,7 +328,6 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
             if (shouldUpdateBackground(
                     mDrawerLayout.getStatusBarBackgroundDrawable(), newColorPrimaryDark)) {
                 animateColorChange(
-                        mActivity,
                         oldColorPrimaryDark,
                         newColorPrimaryDark,
                         animator -> mDrawerLayout

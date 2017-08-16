@@ -36,7 +36,7 @@ import com.supercilex.robotscouter.util.data.clearPrefs
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.prefs
-import com.supercilex.robotscouter.util.getDebugInfo
+import com.supercilex.robotscouter.util.debugInfo
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logLoginEvent
@@ -131,7 +131,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     context, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
             "version" -> {
                 (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
-                        ClipData.newPlainText(getString(R.string.debug_info_name), getDebugInfo())
+                        ClipData.newPlainText(getString(R.string.debug_info_name), debugInfo)
                 Toast.makeText(context, R.string.debug_info_copied, Toast.LENGTH_SHORT).show()
             }
             "licenses" -> fragmentManager.beginTransaction()
