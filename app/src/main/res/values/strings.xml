@@ -149,7 +149,7 @@
     <string-array name="new_template_options">
         <item>Match Scouting</item>
         <item>Pit Scouting</item>
-        <item>Empty</item>
+        <item>Blank</item>
     </string-array>
 
     <string name="move_cancelled">Move cancelled: another user updated the template while you were reordering items.</string>
