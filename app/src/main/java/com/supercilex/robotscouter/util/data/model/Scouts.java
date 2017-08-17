@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import static com.supercilex.robotscouter.util.ConnectivityUtilsKt.isOffline;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_METRICS;
 import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_NAME;
+import static com.supercilex.robotscouter.util.ConstantsKt.FIREBASE_TEMPLATE_KEY;
 import static com.supercilex.robotscouter.util.ConstantsKt.getFIREBASE_SCOUTS;
 import static com.supercilex.robotscouter.util.data.model.ScoutUtilsKt.getMETRIC_PARSER;
 import static com.supercilex.robotscouter.util.data.model.ScoutUtilsKt.getScoutIndicesRef;
@@ -124,6 +125,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
         private final TaskCompletionSource<Void> mScoutMetricsTask;
 
         private String mName;
+        private String mTemplateKey;
         private final List<Metric<?>> mMetrics = new ArrayList<>();
 
         private Timer mTimer = new Timer();
@@ -170,6 +172,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
             // for why this hack is necessary.
 
             mName = snapshot.child(FIREBASE_NAME).getValue(String.class);
+            mTemplateKey = snapshot.child(FIREBASE_TEMPLATE_KEY).getValue(String.class);
             finish();
         }
 
@@ -178,7 +181,7 @@ public final class Scouts implements OnFailureListener, OnSuccessListener<Pair<T
             mMetricsQuery.removeEventListener((ChildEventListener) this);
             mQuery.removeEventListener((ValueEventListener) this);
 
-            Scout scout = new Scout(mName, mMetrics);
+            Scout scout = new Scout(mName, mTemplateKey, mMetrics);
             if (!scout.getMetrics().isEmpty()) {
                 List<Scout> scouts = mScouts.get(mPair.first);
                 if (scouts == null) {

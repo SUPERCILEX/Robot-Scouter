@@ -64,7 +64,12 @@
     </plurals>
     <string name="write_storage_rationale_spreadsheet">Robot Scouter needs access to your storage to create the spreadsheet file.</string>
     <string name="export_hint">Export started; view progress in the notification drawer.</string>
-    <string name="export_complete_title">Spreadsheet exporting complete</string>
+    <string name="export_title">Spreadsheet exporter</string>
+    <string name="export_complete_title">Export complete for %s</string>
+    <plurals name="export_complete_subtitle">
+        <item quantity="one">1 file exported</item>
+        <item quantity="other">%d files exported</item>
+    </plurals>
     <plurals name="export_complete_summary">
         <item quantity="one">1 team exported</item>
         <item quantity="other">%d teams exported</item>
@@ -74,8 +79,9 @@
         <item quantity="other">Exported teams %s.</item>
     </plurals>
     <string name="export_in_progress_title">Exporting spreadsheet</string>
+    <string name="export_initializing_title">Initializing</string>
     <string name="exporting_status_loading">Loading teams</string>
-    <string name="exporting_status_team">Exporting team %s’s sheet</string>
+    <string name="exporting_status_template">Exporting teams for %s</string>
     <string name="exporting_status_average">Exporting average sheet</string>
     <string name="exporting_status_cleanup">Cleanup</string>
     <string name="export_warning_offline">Exporting spreadsheet while offline may yield incomplete results.</string>
@@ -141,8 +147,8 @@
     <string name="title_template_added_as_default">Template added and set as default</string>
 
     <string-array name="new_template_options">
-        <item>Match scouting</item>
-        <item>Pit scouting</item>
+        <item>Match Scouting</item>
+        <item>Pit Scouting</item>
         <item>Empty</item>
     </string-array>
 

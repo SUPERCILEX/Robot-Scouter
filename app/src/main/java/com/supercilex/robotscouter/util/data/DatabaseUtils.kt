@@ -37,6 +37,7 @@ import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIREBASE_TEAMS
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
+import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.data.model.METRIC_PARSER
 import com.supercilex.robotscouter.util.data.model.deleteTeam
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
@@ -56,6 +57,7 @@ val TEAM_PARSER = SnapshotParser<Team> {
 }
 val SCOUT_PARSER = SnapshotParser<Scout> {
     Scout(it.child(FIREBASE_NAME).getValue(String::class.java),
+          it.child(FIREBASE_TEMPLATE_KEY).getValue(String::class.java)!!,
           it.child(FIREBASE_METRICS).children.map { METRIC_PARSER.parseSnapshot(it) })
 }
 private val QUERY_KEY = "query_key"

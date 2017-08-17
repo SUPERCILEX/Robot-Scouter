@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
 import com.supercilex.robotscouter.util.FIREBASE_SCOUT_INDICES
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
+import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_UNIT
 import com.supercilex.robotscouter.util.FIREBASE_VALUE
@@ -79,6 +80,7 @@ fun Team.addScout(overrideKey: String? = null): String {
     val indexRef = getScoutIndicesRef(key).push()
     indexRef.setValue(System.currentTimeMillis())
     val scoutRef = getScoutMetricsRef(indexRef.key)
+    FIREBASE_SCOUTS.child(indexRef.key).child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
 
     if (isNativeTemplateType(templateKey)) {
         DefaultTemplatesLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
