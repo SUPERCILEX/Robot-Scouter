@@ -132,7 +132,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 }
             }
             R.id.add_header -> metricRef.setValue(Metric.Header(), priority)
-            else -> throw IllegalStateException("Unknown id: $id")
+            else -> throw IllegalStateException("Unknown view id: $id")
         }
 
         itemTouchCallback.addItemToScrollQueue(adapter.itemCount)

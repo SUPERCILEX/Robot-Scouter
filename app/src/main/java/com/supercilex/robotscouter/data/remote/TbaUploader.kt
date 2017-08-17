@@ -55,7 +55,7 @@ class TbaUploader private constructor(team: Team) :
 
         val body: JsonObject = response.body()!!
         if (!body.get("success").asBoolean && body.get("message").asString != "suggestion_exists") {
-            throw IllegalStateException()
+            throw IllegalStateException("Failed to upload suggestion: $body")
         }
     }
 

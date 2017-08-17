@@ -62,7 +62,7 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                     inflater.inflate(R.layout.scout_template_notes, parent, false))
             LIST -> SpinnerTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_spinner, parent, false))
-            else -> throw IllegalStateException()
+            else -> throw IllegalStateException("Unknown view type: $viewType")
         }
     }
 

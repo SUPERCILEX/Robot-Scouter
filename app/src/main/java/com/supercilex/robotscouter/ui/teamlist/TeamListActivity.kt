@@ -131,7 +131,7 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
             R.id.action_edit_templates -> TemplateListActivity.start(this)
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             R.id.action_settings -> SettingsActivity.show(this)
-            else -> throw IllegalStateException()
+            else -> throw IllegalStateException("Unknown item id: ${item.itemId}")
         }
 
         drawerLayout.closeDrawer(GravityCompat.START)

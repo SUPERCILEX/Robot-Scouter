@@ -132,7 +132,7 @@ fun clearPrefs() {
             is Boolean -> prefs.putBoolean(key, false)
             is String -> prefs.putString(key, null)
             else -> throw IllegalStateException(
-                    "Unknown value type: ${if (value == null) "null" else value::class.java}")
+                    "Unknown value type: ${value?.let { it::class.java }}")
         }
     }
     clearLocalPrefs()

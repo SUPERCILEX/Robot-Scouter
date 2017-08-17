@@ -19,7 +19,6 @@ abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) : Callable<Tea
 
     protected val year: Int get() = Calendar.getInstance().get(Calendar.YEAR)
 
-    @Throws(IllegalStateException::class)
     protected fun cannotContinue(response: Response<*>): Boolean = when {
         response.isSuccessful -> false
         response.code() == ERROR_404 -> true

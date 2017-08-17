@@ -48,7 +48,7 @@ class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                     inflater.inflate(R.layout.scout_notes, parent, false))
             LIST -> SpinnerViewHolder(
                     inflater.inflate(R.layout.scout_spinner, parent, false))
-            else -> throw IllegalStateException()
+            else -> throw IllegalStateException("Unknown view type: $viewType")
         }
     }
 }
