@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.data.model.TEMPLATE_TYPES
 import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.model.TabNamesHolder
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 
@@ -55,6 +56,7 @@ class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase {
         }.toTypedArray()
         entryValues = TEMPLATE_TYPES.map { it.toString() }.toMutableList()
                 .apply { addAll(namesListener.map { it.key }) }.toTypedArray()
+        value = defaultTemplateKey
         notifyChanged()
 
         isPersistent = true
