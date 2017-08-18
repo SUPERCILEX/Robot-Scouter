@@ -13,6 +13,7 @@
     <dimen name="spacing_xlarge">32dp</dimen>
     <dimen name="spacing_xxlarge">64dp</dimen>
     <dimen name="spacing_dialog_layout">20dp</dimen>
+    <dimen name="spacing_checkbox_margin_hack">-7dp</dimen>
 
     <dimen name="square_view_hw">56dp</dimen>
 

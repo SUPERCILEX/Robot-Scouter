@@ -18,6 +18,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -38,7 +39,9 @@ abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
         ViewModelProviders.of(this).get(TabNamesHolder::class.java)
     }
 
-    private val rootView by lazy { View.inflate(context, R.layout.dialog_template_selector, null) }
+    protected val rootView: LinearLayout by lazy {
+        View.inflate(context, R.layout.dialog_template_selector, null) as LinearLayout
+    }
     private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
     private val adapter by lazy {
