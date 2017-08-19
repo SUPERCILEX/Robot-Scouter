@@ -4,34 +4,41 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
-import com.firebase.ui.database.ObservableSnapshotArray
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.crash.FirebaseCrash
-import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.data.TeamsLiveData
+import com.supercilex.robotscouter.util.data.TemplateNamesLiveData
+import com.supercilex.robotscouter.util.data.model.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.model.indexable
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.onSignedIn
+import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 
-class AppIndexingService : JobIntentService(), OnSuccessListener<ObservableSnapshotArray<Team>> {
+class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         try {
-            Tasks.await(onSignedIn())
-            Tasks.await(TeamsLiveData.observeOnDataChanged().observeOnce()
-                                .addOnSuccessListener(this))
+            Tasks.await(Tasks.whenAll(onSignedIn(), FirebaseAppIndex.getInstance().removeAll()))
+            Tasks.await(Tasks.whenAll(
+                    TeamsLiveData.observeOnDataChanged().observeOnce {
+                        AsyncTaskExecutor.execute(Callable {
+                            FirebaseAppIndex.getInstance().update(*it.mapIndexed { index, _ ->
+                                it.getObject(index).indexable
+                            }.toTypedArray())
+                        })
+                    },
+                    TemplateNamesLiveData.observeOnDataChanged().observeOnce {
+                        AsyncTaskExecutor.execute(Callable {
+                            FirebaseAppIndex.getInstance().update(*it.mapIndexed { index, snapshot ->
+                                getTemplateIndexable(snapshot.key, it.getObject(index))
+                            }.toTypedArray())
+                        })
+                    }))
         } catch (e: ExecutionException) {
             FirebaseCrash.report(e)
-        }
-    }
-
-    override fun onSuccess(teams: ObservableSnapshotArray<Team>) {
-        FirebaseAppIndex.getInstance().apply {
-            removeAll()
-            update(*teams.mapIndexed { index, _ -> teams.getObject(index).indexable }.toTypedArray())
         }
     }
 

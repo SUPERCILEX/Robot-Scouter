@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.util.data.model
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -83,8 +84,9 @@ fun Team.addScout(overrideKey: String? = null): String {
     FIREBASE_SCOUTS.child(indexRef.key).child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
 
     if (isNativeTemplateType(templateKey)) {
-        DefaultTemplatesLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
+        DefaultTemplatesLiveData.observeOnDataChanged().observeOnce {
             copySnapshots(it[templateKey.toInt()], scoutRef)
+            Tasks.forResult(null)
         }
     } else {
         FirebaseCopier(getTemplateMetricsRef(templateKey), scoutRef)

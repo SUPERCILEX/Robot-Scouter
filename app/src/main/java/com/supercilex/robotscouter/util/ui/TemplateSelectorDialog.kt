@@ -26,10 +26,8 @@ import com.google.firebase.database.DataSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.MATCH
 import com.supercilex.robotscouter.data.model.PIT
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.model.TabNamesHolder
-import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 
 abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
     @get:StringRes
@@ -45,12 +43,12 @@ abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
     private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
     private val adapter by lazy {
-        object : FirebaseRecyclerAdapter<String?, ItemViewHolder>(
+        object : FirebaseRecyclerAdapter<String, ItemViewHolder>(
                 holder.namesListener,
                 R.layout.select_dialog_item_material,
                 ItemViewHolder::class.java,
                 this) {
-            override fun getItem(position: Int): String? = when (position) {
+            override fun getItem(position: Int): String = when (position) {
                 MATCH, PIT -> resources.getStringArray(R.array.new_template_options)[position]
                 else -> super.getItem(position - EXTRA_ITEMS)
             }
@@ -69,7 +67,7 @@ abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
                     ItemViewHolder(
                             LayoutInflater.from(parent.context).inflate(viewType, parent, false))
 
-            override fun populateViewHolder(holder: ItemViewHolder, text: String?, position: Int) =
+            override fun populateViewHolder(holder: ItemViewHolder, text: String, position: Int) =
                     holder.bind(this@TemplateSelectorDialog, text, when (position) {
                         MATCH, PIT -> position.toString()
                         else -> getRef(position - EXTRA_ITEMS).key
@@ -79,7 +77,7 @@ abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        holder.init(templateIndicesRef to FIREBASE_TEMPLATES)
+        holder.init(null)
         progress.show()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -134,13 +132,12 @@ abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
         private lateinit var listener: TemplateSelectorDialog
         private lateinit var key: String
 
-        fun bind(listener: TemplateSelectorDialog, text: String?, key: String) {
+        fun bind(listener: TemplateSelectorDialog, text: String, key: String) {
             this.listener = listener
             this.key = key
 
             itemView as TextView
-            itemView.text = text ?: itemView.context.getString(
-                    R.string.title_template_tab, layoutPosition - EXTRA_ITEMS + 1)
+            itemView.text = text
             itemView.setOnClickListener(this)
             if (key == defaultTemplateKey) {
                 itemView.compoundDrawablePadding = TypedValue.applyDimension(

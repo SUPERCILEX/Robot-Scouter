@@ -9,23 +9,18 @@ import android.support.annotation.Size
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import com.firebase.ui.database.FirebaseIndexArray
 import com.firebase.ui.database.ObservableSnapshotArray
-import com.firebase.ui.database.SnapshotParser
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.FIREBASE_NAME
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.TemplateNamesLiveData
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.hasShownExportHint
 import com.supercilex.robotscouter.util.data.model.Scouts
-import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.putExtra
@@ -34,6 +29,7 @@ import com.supercilex.robotscouter.util.logExportTeamsEvent
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import org.apache.poi.ss.formula.WorkbookEvaluator
 import pub.devrel.easypermissions.EasyPermissions
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
 class ExportService : IntentService(TAG) {
@@ -75,34 +71,29 @@ class ExportService : IntentService(TAG) {
         notificationManager.setNumOfTemplates(zippedScouts.size)
 
         val keepAliveListener = object : ChangeEventListenerBase {}
-        val array = FirebaseIndexArray(
-                templateIndicesRef,
-                FIREBASE_TEMPLATES,
-                SnapshotParser { it.child(FIREBASE_NAME).getValue(String::class.java) })
+        val array = TemplateNamesLiveData.value!!
         val namesListener =
-                MutableLiveData<ObservableSnapshotArray<String?>>().also { it.postValue(array) }
+                MutableLiveData<ObservableSnapshotArray<String>>().also { it.postValue(array) }
 
         array.addChangeEventListener(keepAliveListener)
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateKey, scouts) ->
-            namesListener.observeOnDataChanged().observeOnce().continueWith(
-                    AsyncTaskExecutor, Continuation<ObservableSnapshotArray<String?>, Unit> {
-                SpreadsheetExporter(scouts, notificationManager, fun(): String {
-                    if (isNativeTemplateType(templateKey)) {
-                        return resources.getStringArray(
-                                R.array.new_template_options)[templateKey.toInt()]
-                    }
-
-                    for ((index, snapshot) in it.result.withIndex()) {
-                        if (snapshot.key == templateKey) {
-                            return it.result.getObject(index) ?:
-                                    getString(R.string.title_template_tab, index + 1)
+            namesListener.observeOnDataChanged().observeOnce {
+                AsyncTaskExecutor.execute(Callable {
+                    SpreadsheetExporter(scouts, notificationManager, fun(): String {
+                        if (isNativeTemplateType(templateKey)) {
+                            return resources.getStringArray(
+                                    R.array.new_template_options)[templateKey.toInt()]
                         }
-                    }
 
-                    throw IllegalStateException(
-                            "Couldn't find template key ($templateKey) in keys: $it")
-                }.invoke()).export()
-            })
+                        for ((index, snapshot) in it.withIndex()) {
+                            if (snapshot.key == templateKey) return it.getObject(index)
+                        }
+
+                        throw IllegalStateException(
+                                "Couldn't find template key ($templateKey) in keys: $it")
+                    }.invoke()).export()
+                })
+            }
         }))
         array.removeChangeEventListener(keepAliveListener)
     }

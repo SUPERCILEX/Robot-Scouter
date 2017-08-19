@@ -4,7 +4,12 @@ service firebase.storage {
       allow read, write: if false;
     }
 
-    match /share_template.html {
+    match /share_team_template.html {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /share_template_template.html {
       allow read: if true;
       allow write: if false;
     }

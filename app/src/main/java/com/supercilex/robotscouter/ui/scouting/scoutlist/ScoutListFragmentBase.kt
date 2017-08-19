@@ -130,7 +130,7 @@ abstract class ScoutListFragmentBase : FragmentBase(),
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
-            R.id.action_edit_template -> TemplateListActivity.start(context, team)
+            R.id.action_edit_template -> TemplateListActivity.start(context, team.templateKey)
             R.id.action_edit_team_details -> TeamDetailsDialog.show(childFragmentManager, team)
             else -> return false
         }

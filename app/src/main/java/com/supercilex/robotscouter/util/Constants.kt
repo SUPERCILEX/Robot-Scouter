@@ -17,6 +17,7 @@ const val SINGLE_ITEM = 1
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
+const val TEMPLATES_LINK_BASE = "${APP_LINK_BASE}templates"
 const val KEY_QUERY = "key"
 
 /** The list of all supported authentication providers in Firebase Auth UI.  */

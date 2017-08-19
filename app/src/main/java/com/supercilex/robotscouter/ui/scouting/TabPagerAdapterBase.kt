@@ -58,6 +58,7 @@ abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
         field = value
         keys.indexOf(field).let { if (it != -1) selectTab(it) }
     }
+    val currentTab: TabLayout.Tab? get() = tabLayout.getTabAt(keys.indexOf(currentTabKey))
 
     init {
         holder.init(keysRef)

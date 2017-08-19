@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatDelegate
 import android.support.v7.preference.PreferenceDataStore
 import com.firebase.ui.database.ChangeEventListener
 import com.firebase.ui.database.ObservableSnapshotArray
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DataSnapshot
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
@@ -88,6 +89,8 @@ fun initPrefs() {
 
                 if (type == ChangeEventListener.EventType.ADDED
                         || type == ChangeEventListener.EventType.CHANGED) {
+                    var hasDefaultTemplateChanged = false
+
                     localPrefs.updatePrefs {
                         when (key) {
                             FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
@@ -101,15 +104,15 @@ fun initPrefs() {
                             -> {
                                 val value = it.getObject(index) as String
 
-                                if (key == FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
-                                        && defaultTemplateKey != value) {
-                                    updateTeamTemplateKeys()
-                                }
+                                hasDefaultTemplateChanged = key == FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
+                                        && defaultTemplateKey != value
 
                                 putString(key, value)
                             }
                         }
                     }
+
+                    if (hasDefaultTemplateChanged) updateTeamTemplateKeys()
                 } else if (type == ChangeEventListener.EventType.REMOVED) {
                     localPrefs.updatePrefs { remove(key) }
                 }
@@ -141,10 +144,12 @@ fun clearPrefs() {
 private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
 
 private fun updateTeamTemplateKeys() {
-    TeamsLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
+    TeamsLiveData.observeOnDataChanged().observeOnce {
         val listener = TeamsLiveData.templateKeyUpdater
         it.addChangeEventListener(listener)
         it.removeChangeEventListener(listener)
+
+        Tasks.forResult(null)
     }
 }
 

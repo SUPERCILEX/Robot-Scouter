@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
@@ -31,7 +32,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
 
     override fun onAttemptDismiss(): Boolean {
         val templateKey = getRef(arguments).key
-        TeamsLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener { teams ->
+        TeamsLiveData.observeOnDataChanged().observeOnce { teams ->
             (0 until teams.size)
                     .map { teams.getObject(it) }
                     .filter { TextUtils.equals(templateKey, it.templateKey) }
@@ -40,6 +41,8 @@ class DeleteTemplateDialog : ManualDismissDialog() {
             if (templateKey == defaultTemplateKey) defaultTemplateKey = DEFAULT_TEMPLATE_TYPE
             templateIndicesRef.child(templateKey).removeValue()
             FIREBASE_TEMPLATES.child(templateKey).removeValue()
+
+            Tasks.forResult(null)
         }
 
         return true

@@ -85,4 +85,11 @@ fun logViewTemplateEvent(templateKey: String) = analytics.logEvent(Event.VIEW_IT
     putString(TEMPLATE_ID, templateKey)
 })
 
+fun logShareTemplateEvent(templateKey: String) = analytics.logEvent(Event.SHARE, Bundle().apply {
+    putString(ITEM_ID, "share_template")
+    putString(ITEM_NAME, "Template")
+    putString(ITEM_CATEGORY, TEMPLATE_CATEGORY)
+    putString(TEAM_ID, templateKey)
+})
+
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())

@@ -8,6 +8,7 @@
     <string name="undo">Undo</string>
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>
+    <string name="share">Share</string>
     <string name="open">Open</string>
     <string name="deleted">Deleted</string>
     <string name="number_too_big_error">Please enter a number between 0 and 2^63 – 1</string>
@@ -41,16 +42,15 @@
     <string name="select_all">Select all</string>
     <string name="multiple_teams_selected">Multiple teams selected</string>
 
-    <string name="share">Share</string>
-    <plurals name="share_title">
+    <plurals name="share_team_title">
         <item quantity="one">Share team %s</item>
         <item quantity="other">Share teams %s</item>
     </plurals>
-    <plurals name="share_message">
+    <plurals name="share_team_message">
         <item quantity="one">You were invited to edit team %s with me in Robot Scouter!</item>
         <item quantity="other">You were invited to edit teams %s with me in Robot Scouter!</item>
     </plurals>
-    <plurals name="share_call_to_action">
+    <plurals name="share_team_call_to_action">
         <item quantity="one">Import team %s into Robot Scouter</item>
         <item quantity="other">Import teams %s into Robot Scouter</item>
     </plurals>
@@ -145,6 +145,12 @@
     <string name="title_edit_template_name">Edit template name</string>
     <string name="title_template_added">Template added</string>
     <string name="title_template_added_as_default">Template added and set as default</string>
+
+    <string name="title_share_template">Share the %s template</string>
+    <string name="message_share_template">
+        You were invited to edit the %s scouting template with me in Robot Scouter!
+    </string>
+    <string name="cta_share_template">Import the %s scouting template into Robot Scouter</string>
 
     <string-array name="new_template_options">
         <item>Match Scouting</item>

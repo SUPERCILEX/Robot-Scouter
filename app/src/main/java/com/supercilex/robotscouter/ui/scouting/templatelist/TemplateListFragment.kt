@@ -16,16 +16,17 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
+import com.google.firebase.appindexing.FirebaseUserActions
+import com.google.firebase.appindexing.builders.Actions
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.SINGLE_ITEM
-import com.supercilex.robotscouter.util.data.TEAM_KEY
+import com.supercilex.robotscouter.util.data.TAB_KEY
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.getTabKey
-import com.supercilex.robotscouter.util.data.getTeam
+import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.data.model.addTemplate
-import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.data.model.getTemplateLink
 import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
@@ -44,9 +45,14 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
             override fun onTabSelected(tab: TabLayout.Tab) {
                 super.onTabSelected(tab)
-                currentTabKey?.let { logViewTemplateEvent(it) }
                 fam.close(true)
                 fam.showMenuButton(true)
+
+                currentTabKey?.let {
+                    logViewTemplateEvent(it)
+                    FirebaseUserActions.getInstance().end(
+                            Actions.newView(tab.text?.toString()!!, getTemplateLink(it)))
+                }
             }
         }
 
@@ -84,9 +90,8 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     }
 
     private fun handleArgs(savedInstanceState: Bundle?) {
-        if (arguments.containsKey(TEAM_KEY)) {
-            val templateKey = arguments.getTeam().templateKey
-
+        val templateKey = getTabKey(arguments)
+        if (templateKey != null) {
             pagerAdapter.currentTabKey = if (isNativeTemplateType(templateKey)) {
                 Snackbar.make(rootView,
                               R.string.title_template_added_as_default,
@@ -98,7 +103,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
                 templateKey
             }
 
-            arguments.remove(TEAM_KEY)
+            arguments.remove(TAB_KEY)
         } else {
             savedInstanceState?.let { pagerAdapter.currentTabKey = getTabKey(it) }
         }
@@ -118,6 +123,10 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_share -> TemplateSharer.shareTemplate(
+                    activity,
+                    pagerAdapter.currentTabKey!!,
+                    pagerAdapter.currentTab?.text?.toString()!!)
             R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             else -> return false
         }
@@ -152,7 +161,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     companion object {
         const val TAG = "TemplateListFragment"
 
-        fun newInstance(team: Team?) =
-                TemplateListFragment().apply { arguments = team?.toBundle() ?: Bundle() }
+        fun newInstance(templateKey: String?) =
+                TemplateListFragment().apply { arguments = getTabKeyBundle(templateKey) }
     }
 }

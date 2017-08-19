@@ -31,16 +31,12 @@ private fun getBooleanForInt(value: Int) = value == 1
 
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
 
-fun Intent.putExtra(team: Team): Intent = putExtra(TEAM_KEY, team)
-
 fun Team.toBundle() = Bundle().apply { putParcelable(TEAM_KEY, this@toBundle) }
 
 fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(teams))
 
 fun List<Team>.toBundle() =
         Bundle().apply { putParcelableArrayList(TEAMS_KEY, ArrayList(this@toBundle)) }
-
-fun Intent.getTeamExtra(): Team = getParcelableExtra(TEAM_KEY)
 
 fun Bundle.getTeam(): Team = getParcelable(TEAM_KEY)
 

@@ -14,6 +14,7 @@ import com.firebase.ui.database.ObservableSnapshotArray
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DataSnapshot
@@ -22,10 +23,12 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
+import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
-import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.FIREBASE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
@@ -71,6 +74,7 @@ fun initDatabase() {
     TeamsLiveData
     DefaultTemplatesLiveData
     TemplateIndicesLiveData
+    TemplateNamesLiveData
 }
 
 fun getRefBundle(ref: DatabaseReference) = Bundle().apply {
@@ -109,18 +113,17 @@ fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also 
     }
 }.task
 
-fun <T> LiveData<T>.observeOnce(isNullable: Boolean = false): Task<T> = TaskCompletionSource<T>().apply {
-    val observe = {
+inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Task<R> = TaskCompletionSource<R>().apply {
+    AppToolkitTaskExecutor.getInstance().executeOnMainThread {
         observeForever(object : Observer<T> {
             override fun onChanged(t: T?) {
-                setResult(t ?: if (isNullable) null else return)
-                task.addOnCompleteListener { removeObserver(this) }
+                block(t ?: return).addOnCompleteListener {
+                    removeObserver(this)
+                    if (it.isSuccessful) setResult(it.result) else setException(it.exception!!)
+                }
             }
         })
     }
-
-    if (AppToolkitTaskExecutor.getInstance().isMainThread) observe()
-    else AppToolkitTaskExecutor.getInstance().postToMainThread { observe() }
 }.task
 
 fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<ObservableSnapshotArray<T>> =
@@ -186,6 +189,8 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
         get() = FirebaseIndexArray(teamIndicesRef.orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
 
     val templateKeyUpdater = object : ChangeEventListenerBase {
+        private var nTeamUpdatesForTemplateKey = "" to -1
+
         override fun onChildChanged(type: ChangeEventListener.EventType,
                                     snapshot: DataSnapshot,
                                     index: Int,
@@ -196,9 +201,28 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
             val team = value!!.getObject(index)
             val templateKey = team.templateKey
 
-            if (templateKey == DEFAULT_TEMPLATE_TYPE) team.updateTemplateKey(defaultTemplateKey)
-            else if (templateKey != defaultTemplateKey) {
-                TemplateIndicesLiveData.observeOnDataChanged().observeOnce().addOnSuccessListener {
+            if (templateKey != defaultTemplateKey) {
+                if (team.key == nTeamUpdatesForTemplateKey.first) {
+                    nTeamUpdatesForTemplateKey =
+                            nTeamUpdatesForTemplateKey.first to nTeamUpdatesForTemplateKey.second + 1
+
+                    if (nTeamUpdatesForTemplateKey.second >= 5) {
+                        // We're probably stuck in a recursive loop where a team is shared between
+                        // two devices who each have different default template. Each device is like
+                        // "THIS IS THE DEFAULT TEMPLATE! NO, THIS ONE IS YOU SUCKER!" and it
+                        // bounces back and forth like that.
+                        return
+                    }
+                } else {
+                    nTeamUpdatesForTemplateKey = team.key to 0
+                }
+
+                if (isNativeTemplateType(templateKey)) {
+                    team.updateTemplateKey(defaultTemplateKey)
+                    return
+                }
+
+                TemplateIndicesLiveData.observeOnDataChanged().observeOnce {
                     if (it.map { it.key }.contains(templateKey)) {
                         team.updateTemplateKey(defaultTemplateKey)
                     } else {
@@ -223,6 +247,8 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
                                             FirebaseCrash.report(error.toException())
                                 })
                     }
+
+                    Tasks.forResult(null)
                 }
             }
         }
@@ -316,6 +342,14 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
 object TemplateIndicesLiveData : ObservableSnapshotArrayLiveData<String>() {
     override val items: ObservableSnapshotArray<String>
         get() = FirebaseArray(templateIndicesRef, String::class.java)
+}
+
+object TemplateNamesLiveData : ObservableSnapshotArrayLiveData<String>() {
+    override val items: ObservableSnapshotArray<String>
+        get() = FirebaseIndexArray(templateIndicesRef, FIREBASE_TEMPLATES, SnapshotParser {
+            it.child(FIREBASE_NAME).getValue(String::class.java) ?: RobotScouter.INSTANCE.getString(
+                    R.string.title_template_tab, value!!.indexOf(it) + 1)
+        })
 }
 
 object DefaultTemplatesLiveData : LiveData<ObservableSnapshotArray<Scout>>() {
