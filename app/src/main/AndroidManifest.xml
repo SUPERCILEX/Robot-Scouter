@@ -75,6 +75,21 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
+            android:name=".ui.scouting.templatelist.TemplateListActivity"
+            android:label="@string/title_activity_template_list"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:theme="@style/RobotScouter.Launcher"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:theme="@style/RobotScouter.Launcher"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
             android:name=".data.client.LinkReceiverActivity"
             android:label=""
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -97,20 +112,6 @@
             </intent-filter>
 
         </activity>
-
-        <activity
-            android:name=".ui.scouting.templatelist.TemplateListActivity"
-            android:label="@string/title_activity_template_list"
-            android:parentActivityName=".ui.teamlist.TeamListActivity"
-            android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan" />
-
-        <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.teamlist.TeamListActivity"
-            android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan" />
 
         <service android:name=".data.client.spreadsheet.ExportService" />
 

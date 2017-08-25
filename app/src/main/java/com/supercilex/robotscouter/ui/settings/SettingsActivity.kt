@@ -3,13 +3,11 @@ package com.supercilex.robotscouter.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
+import com.supercilex.robotscouter.util.ui.handleUpNavigation
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,10 +28,7 @@ class SettingsActivity : AppCompatActivity() {
             if (supportFragmentManager.fragments
                     .any { it is OnBackPressedListener && it.onBackPressed() }) return true
 
-            if (NavUtils.shouldUpRecreateTask(this, Intent(this, TeamListActivity::class.java))) {
-                TaskStackBuilder.create(this).addParentStack(this).startActivities()
-            }
-            finish()
+            handleUpNavigation()
             true
         } else {
             super.onOptionsItemSelected(item)

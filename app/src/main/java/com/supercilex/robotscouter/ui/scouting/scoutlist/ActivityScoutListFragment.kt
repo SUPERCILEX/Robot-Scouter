@@ -8,8 +8,6 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.ColorInt
-import android.support.v4.app.NavUtils
-import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -17,8 +15,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
+import com.supercilex.robotscouter.util.ui.handleUpNavigation
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 
 class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
@@ -48,11 +46,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {
-        if (NavUtils.shouldUpRecreateTask(
-                activity, Intent(context, TeamListActivity::class.java))) {
-            TaskStackBuilder.create(context).addParentStack(activity).startActivities()
-        }
-        activity.finish()
+        activity.handleUpNavigation()
         true
     } else {
         super.onOptionsItemSelected(item)

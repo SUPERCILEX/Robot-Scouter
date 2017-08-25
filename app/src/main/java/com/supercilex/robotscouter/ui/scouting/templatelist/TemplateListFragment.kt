@@ -84,13 +84,13 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
         fam.hideMenuButton(false)
         pagerAdapter
-        handleArgs(savedInstanceState)
+        handleArgs(arguments, savedInstanceState)
 
         return rootView
     }
 
-    private fun handleArgs(savedInstanceState: Bundle?) {
-        val templateKey = getTabKey(arguments)
+    fun handleArgs(args: Bundle, savedInstanceState: Bundle? = null) {
+        val templateKey = getTabKey(args)
         if (templateKey != null) {
             pagerAdapter.currentTabKey = if (isNativeTemplateType(templateKey)) {
                 Snackbar.make(rootView,
@@ -103,7 +103,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
                 templateKey
             }
 
-            arguments.remove(TAB_KEY)
+            args.remove(TAB_KEY)
         } else {
             savedInstanceState?.let { pagerAdapter.currentTabKey = getTabKey(it) }
         }

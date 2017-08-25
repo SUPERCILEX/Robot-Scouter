@@ -128,7 +128,7 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
-            R.id.action_edit_templates -> TemplateListActivity.start(this)
+            R.id.action_edit_templates -> startActivity(TemplateListActivity.createIntent())
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             R.id.action_settings -> SettingsActivity.show(this)
             else -> throw IllegalStateException("Unknown item id: ${item.itemId}")

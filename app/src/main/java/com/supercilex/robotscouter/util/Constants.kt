@@ -20,6 +20,8 @@ const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
 const val TEMPLATES_LINK_BASE = "${APP_LINK_BASE}templates"
 const val KEY_QUERY = "key"
 
+const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
+
 /** The list of all supported authentication providers in Firebase Auth UI.  */
 val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),

@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
+import com.supercilex.robotscouter.util.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.KEY_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
@@ -83,15 +84,18 @@ class LinkReceiverActivity : AppCompatActivity() {
         if (isInTabletMode(this)) {
             startActivity(Intent(this, TeamListActivity::class.java)
                                   .putExtra(SCOUT_ARGS_KEY, data)
-                                  .addNewDocumentFlags())
+                                  .addNewDocumentFlags()
+                                  .setAction(ACTION_FROM_DEEP_LINK))
         } else {
-            startActivity(ScoutListActivity.createIntent(data))
+            startActivity(ScoutListActivity.createIntent(data).setAction(ACTION_FROM_DEEP_LINK))
         }
     }
 
     private fun processTemplate(templateKey: String) {
         templateIndicesRef.child(templateKey).setValue(true)
-        TemplateListActivity.start(this, templateKey)
+        startActivity(TemplateListActivity.createIntent(templateKey)
+                              .addNewDocumentFlags()
+                              .setAction(ACTION_FROM_DEEP_LINK))
     }
 
     private fun getTeams(link: Uri): List<Team> = link.getQueryParameters(KEY_QUERY).map {
@@ -106,7 +110,9 @@ class LinkReceiverActivity : AppCompatActivity() {
     private fun getTemplate(link: Uri): String? = link.getQueryParameter(KEY_QUERY)
 
     private fun startTeamListActivityNoArgs() =
-            startActivity(Intent(this, TeamListActivity::class.java).addNewDocumentFlags())
+            startActivity(Intent(this, TeamListActivity::class.java)
+                                  .addNewDocumentFlags()
+                                  .setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
         Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
