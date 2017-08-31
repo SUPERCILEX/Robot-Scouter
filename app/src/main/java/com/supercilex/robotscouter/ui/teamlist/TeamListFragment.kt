@@ -13,14 +13,21 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.client.spreadsheet.ExportService
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.data.IO_PERMS
 import com.supercilex.robotscouter.util.data.TeamsLiveData
+import com.supercilex.robotscouter.util.data.observeOnDataChanged
+import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
+import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 
-class TeamListFragment : FragmentBase(), OnBackPressedListener {
+class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListener<Nothing?> {
     private val holder: TeamListHolder by lazy {
         ViewModelProviders.of(this).get(TeamListHolder::class.java)
                 .also { onHolderReadyTask.setResult(it) }
@@ -30,6 +37,9 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     private val rootView: View by lazy { View.inflate(context, R.layout.fragment_team_list, null) }
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
     private val menuHelper: TeamMenuHelper by lazy { TeamMenuHelper(this, recyclerView) }
+    val permHandler: PermissionRequestHandler by lazy {
+        PermissionRequestHandler(IO_PERMS, this, this)
+    }
 
     private var adapter: TeamListAdapter? = null
     private val fab: FloatingActionButton by lazy { activity.findViewById<FloatingActionButton>(R.id.fab) }
@@ -90,15 +100,27 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
 
     fun resetMenu() = menuHelper.resetMenu()
 
-    fun exportAllTeams() = menuHelper.exportAllTeams()
+    fun exportAllTeams() = onSuccess(null)
+
+    override fun onSuccess(nothing: Nothing?) {
+        if (menuHelper.areTeamsSelected()) {
+            menuHelper.exportTeams()
+        } else {
+            TeamsLiveData.observeOnDataChanged().observeOnce {
+                ExportService.exportAndShareSpreadSheet(
+                        this, permHandler, it.mapIndexed { index, _ -> it.getObject(index) })
+                Tasks.forResult(null)
+            }
+        }
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) =
-            menuHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
+            permHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-            menuHelper.onActivityResult(requestCode)
+            permHandler.onActivityResult(requestCode)
 
     companion object {
         const val TAG = "TeamListFragment"

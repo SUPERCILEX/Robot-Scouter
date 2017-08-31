@@ -6,11 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,32 +23,27 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
-import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.getAdapterItems;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
-public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback,
-        View.OnClickListener {
+public class TeamMenuHelper implements View.OnClickListener {
     private static final String SELECTED_TEAMS_KEY = "selected_teams_key";
 
-    private final Fragment mFragment;
+    private final TeamListFragment mFragment;
     private final AppCompatActivity mActivity;
-    private final PermissionRequestHandler mPermHandler;
 
     private final List<Team> mSelectedTeams = new ArrayList<>();
 
@@ -74,14 +66,13 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     private Snackbar mSelectAllSnackBar;
 
-    public TeamMenuHelper(Fragment fragment, RecyclerView recyclerView) {
+    public TeamMenuHelper(TeamListFragment fragment, RecyclerView recyclerView) {
         mFragment = fragment;
         mActivity = ((AppCompatActivity) mFragment.getActivity());
         mRecyclerView = recyclerView;
         mFab = mActivity.findViewById(R.id.fab);
         mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
         mToolbar = mFragment.getView().findViewById(R.id.toolbar);
-        mPermHandler = new PermissionRequestHandler(getIO_PERMS(), mFragment, this);
         initSnackBar();
 
         mToolbar.setNavigationOnClickListener(this);
@@ -106,9 +97,11 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
         return !mSelectedTeams.isEmpty();
     }
 
-    public void exportAllTeams() {
-        mSelectedTeams.addAll(getAdapterItems(mAdapter));
-        exportTeams();
+    public void exportTeams() {
+        if (ExportService.Companion.exportAndShareSpreadSheet(
+                mFragment, mFragment.getPermHandler(), mSelectedTeams)) {
+            resetMenu();
+        }
     }
 
     @Override
@@ -351,30 +344,5 @@ public class TeamMenuHelper implements OnSuccessListener<Void>, ActivityCompat.O
 
     private void notifyItemsChanged() {
         notifyItemsChangedNoAnimation(mRecyclerView, 0, mRecyclerView.getAdapter().getItemCount());
-    }
-
-    @Override
-    public void onSuccess(Void aVoid) {
-        exportTeams();
-    }
-
-    private void exportTeams() {
-        if (ExportService.Companion.exportAndShareSpreadSheet(
-                mFragment, mPermHandler, mSelectedTeams)) {
-            resetMenu();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        mPermHandler.onRequestPermissionsResult(requestCode,
-                                                permissions,
-                                                grantResults);
-    }
-
-    public void onActivityResult(int requestCode) {
-        mPermHandler.onActivityResult(requestCode);
     }
 }

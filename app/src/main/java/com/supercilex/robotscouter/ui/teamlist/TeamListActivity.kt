@@ -173,6 +173,7 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
 
         intent.data?.let {
             if (it.toString() == ADD_SCOUT_INTENT) NewTeamDialog.show(supportFragmentManager)
+            if (it.toString() == EXPORT_ALL_TEAMS_INTENT) teamListFragment.exportAllTeams()
         }
 
         // When the app is installed through a dynamic link, we can only get it from the launcher
@@ -200,5 +201,6 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
         const val DONATE_EXTRA = "donate_extra"
         const val UPDATE_EXTRA = "update_extra"
         const val ADD_SCOUT_INTENT = "add_scout"
+        const val EXPORT_ALL_TEAMS_INTENT = "export_all_teams"
     }
 }
