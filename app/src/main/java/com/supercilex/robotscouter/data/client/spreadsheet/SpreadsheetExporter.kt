@@ -188,8 +188,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
         val templateName = templateName.toUpperCase().replace(" ", "_")
 
-        return if (middleMan == null) "${templateName}_${cache.teamNames}$extension"
-        else "${templateName}_${cache.teamNames}$middleMan$extension"
+        return if (middleMan == null) "[$templateName] ${cache.teamNames}$extension"
+        else "[$templateName] ${cache.teamNames}$middleMan$extension"
     }
 
     @AddTrace(name = "getWorkbook")
