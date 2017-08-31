@@ -89,8 +89,7 @@ class ExportService : IntentService(TAG) {
                             if (snapshot.key == templateKey) return it.getObject(index)
                         }
 
-                        throw IllegalStateException(
-                                "Couldn't find template key ($templateKey) in keys: $it")
+                        return getString(R.string.title_unknown_template)
                     }.invoke()).export()
                 })
             }

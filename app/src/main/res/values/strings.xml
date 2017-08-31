@@ -142,6 +142,7 @@
     <string name="title_add_scout_template_selector">Add scout from template</string>
     <string name="title_set_default_template">Set as default template</string>
     <string name="title_template_tab">Template %d</string>
+    <string name="title_unknown_template">Unknown Template</string>
     <string name="title_edit_template_name">Edit template name</string>
     <string name="title_template_added">Template added</string>
     <string name="title_template_added_as_default">Template added and set as default</string>
