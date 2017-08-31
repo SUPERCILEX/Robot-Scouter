@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
+import com.supercilex.robotscouter.util.data.IoUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +34,6 @@ import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.createFile;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getMediaFolder;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.hideFile;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.unhideFile;
 
 public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     public interface StartCaptureListener {
@@ -159,7 +158,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             Context context = mFragment.get().getContext();
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    photo = unhideFile(photo);
+                    photo = IoUtilsKt.unhide(photo);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -182,10 +181,10 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     private File createImageFile(File mediaFolder) throws IOException {
-        return createFile(hideFile(mTeam.toString()),
-                          "jpg",
-                          mediaFolder,
-                          String.valueOf(System.currentTimeMillis()));
+        return IoUtilsKt.hide(createFile(mTeam.toString(),
+                                         "jpg",
+                                         mediaFolder,
+                                         String.valueOf(System.currentTimeMillis())));
     }
 
     @Override

@@ -25,9 +25,9 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
-import com.supercilex.robotscouter.util.data.hideFile
+import com.supercilex.robotscouter.util.data.hide
 import com.supercilex.robotscouter.util.data.rootFolder
-import com.supercilex.robotscouter.util.data.unhideFile
+import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -143,36 +143,30 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
 
     private fun writeFile(rsFolder: File): File? {
         var stream: FileOutputStream? = null
-        var absoluteFile = File(rsFolder, getFullyQualifiedFileName())
+        var file = File(rsFolder, getFullyQualifiedFileName())
         try {
-            var i = 1
-            while (true) {
-                if (absoluteFile.exists()) {
-                    absoluteFile = File(rsFolder, getFullyQualifiedFileName(" ($i)"))
-                } else {
-                    absoluteFile = File(absoluteFile.parentFile, hideFile(absoluteFile.name))
-                    if (!absoluteFile.createNewFile()
+            file = synchronized(notificationManager) {
+                findAvailableFile(file, rsFolder).hide().apply {
+                    if (!createNewFile()
                             // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
-                            && (!absoluteFile.delete() || !absoluteFile.createNewFile())) {
-                        throw IOException("Failed to create file")
+                            && (!delete() || !createNewFile())) {
+                        throw IOException("Failed to create file: $this")
                     }
-                    break
                 }
-                i++
             }
+            stream = FileOutputStream(file)
 
-            stream = FileOutputStream(absoluteFile)
             try {
                 getWorkbook()
             } catch (e: Exception) {
-                absoluteFile.delete()
+                file.delete()
                 throw e
             }.write(stream)
 
-            return unhideFile(absoluteFile)
+            return file.unhide()
         } catch (e: IOException) {
             abortCritical(e, notificationManager)
-            absoluteFile.delete()
+            file.delete()
         } finally {
             if (stream != null)
                 try {
@@ -184,12 +178,39 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         return null
     }
 
-    private fun getFullyQualifiedFileName(middleMan: String? = null): String {
-        val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
-        val templateName = templateName.toUpperCase().replace(" ", "_")
+    private fun findAvailableFile(wantedFile: File,
+                                  rsFolder: File,
+                                  currentIdenticalTemplateNames: Int? = null): File {
+        fun getPolyTemplateName(n: Int?) = if (n == null) templateName else "$templateName ($n)"
 
-        return if (middleMan == null) "[$templateName] ${cache.teamNames}$extension"
-        else "[$templateName] ${cache.teamNames}$middleMan$extension"
+        var availableFile = wantedFile
+
+        var i = 1
+        var nIdenticalTemplateNames = 1
+        while (true) {
+            availableFile = when {
+                availableFile.exists() -> File(rsFolder, getFullyQualifiedFileName(
+                        getPolyTemplateName(currentIdenticalTemplateNames), " ($i)"))
+                availableFile.hide().exists() -> {
+                    findAvailableFile(
+                            File(rsFolder, getFullyQualifiedFileName(
+                                    getPolyTemplateName(nIdenticalTemplateNames))),
+                            rsFolder,
+                            nIdenticalTemplateNames++)
+                }
+                else -> return availableFile
+            }
+            i++
+        }
+    }
+
+    private fun getFullyQualifiedFileName(templateName: String = this.templateName,
+                                          middleMan: String? = null): String {
+        val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
+        val normalizedTemplateName = templateName.toUpperCase().replace(" ", "_")
+
+        return if (middleMan == null) "[$normalizedTemplateName] ${cache.teamNames}$extension"
+        else "[$normalizedTemplateName] ${cache.teamNames}$middleMan$extension"
     }
 
     @AddTrace(name = "getWorkbook")

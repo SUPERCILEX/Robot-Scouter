@@ -29,13 +29,13 @@ val rootFolder: File?
 val mediaFolder: File?
     get() = if (rootFolder != null && (MEDIA_FOLDER.exists() || MEDIA_FOLDER.mkdirs())) MEDIA_FOLDER else null
 
-fun hideFile(fileName: String): String = ".$fileName"
+fun File.hide() = File(parentFile, ".$name")
 
 @Throws(IOException::class)
-fun unhideFile(file: File): File {
-    val unhidden = File(file.parentFile, file.name.substring(1))
-    if (!file.renameTo(unhidden)) {
-        throw IOException("Failed to rename file: $file")
+fun File.unhide(): File {
+    val unhidden = File(parentFile, name.substring(1))
+    if (!renameTo(unhidden)) {
+        throw IOException("Failed to rename file: $this")
     }
     return unhidden
 }
