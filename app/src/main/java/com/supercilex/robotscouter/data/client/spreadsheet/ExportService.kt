@@ -19,7 +19,6 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.TemplateNamesLiveData
 import com.supercilex.robotscouter.util.data.getTeamListExtra
-import com.supercilex.robotscouter.util.data.hasShownExportHint
 import com.supercilex.robotscouter.util.data.model.Scouts
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
@@ -141,11 +140,7 @@ class ExportService : IntentService(TAG) {
                 return false
             }
 
-            if (!hasShownExportHint) {
-                Snackbar.make(fragment.view!!, R.string.export_hint, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok) { hasShownExportHint = true }
-                        .show()
-            }
+            Snackbar.make(fragment.view!!, R.string.export_hint, Snackbar.LENGTH_SHORT).show()
 
             logExportTeamsEvent(teams)
             ContextCompat.startForegroundService(

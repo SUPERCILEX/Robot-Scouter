@@ -64,7 +64,6 @@ const val FIREBASE_PREF_NIGHT_MODE = "nightMode"
 const val FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"
 const val FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
 const val FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
-const val FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT = "hasShownExportHint"
 // [END FIREBASE CHILD NAMES]
 
 val providerAuthority: String by lazy { "${RobotScouter.INSTANCE.packageName}.provider" }

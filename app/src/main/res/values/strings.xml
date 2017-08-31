@@ -63,7 +63,7 @@
         <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
     <string name="write_storage_rationale_spreadsheet">Robot Scouter needs access to your storage to create the spreadsheet file.</string>
-    <string name="export_hint">Export started; view progress in the notification drawer.</string>
+    <string name="export_hint">Exporting…</string>
     <string name="export_title">Spreadsheet exporter</string>
     <string name="export_complete_title">Export complete for %s</string>
     <plurals name="export_complete_subtitle">

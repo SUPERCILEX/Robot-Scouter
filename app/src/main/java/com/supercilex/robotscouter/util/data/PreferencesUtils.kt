@@ -14,7 +14,6 @@ import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.util.FIREBASE_PREFS
 import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
-import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
@@ -74,9 +73,6 @@ var hasShownSignInTutorial: Boolean
     get() = prefs.getBoolean(FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
     set(value) = prefs.putBoolean(FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
 
-var hasShownExportHint: Boolean
-    get() = prefs.getBoolean(FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT, false)
-    set(value) = prefs.putBoolean(FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT, value)
 
 fun initPrefs() {
     PrefsLiveData.observeForever {
@@ -94,8 +90,7 @@ fun initPrefs() {
                     localPrefs.updatePrefs {
                         when (key) {
                             FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                            FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
-                            FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
+                            FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
                             -> putBoolean(key, it.getObject(index) as Boolean)
 
                             FIREBASE_PREF_DEFAULT_TEMPLATE_KEY,

@@ -34,7 +34,6 @@ import com.supercilex.robotscouter.util.FIREBASE_METRICS
 import com.supercilex.robotscouter.util.FIREBASE_NAME
 import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
-import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
@@ -364,8 +363,7 @@ object PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
         get() = FirebaseArray<Any>(userPrefs) {
             when (it.key) {
                 FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
-                FIREBASE_PREF_HAS_SHOWN_EXPORT_HINT
+                FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
                 -> it.getValue(Boolean::class.java)
 
                 FIREBASE_PREF_DEFAULT_TEMPLATE_KEY,
