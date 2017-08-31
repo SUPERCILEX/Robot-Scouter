@@ -171,7 +171,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
 
             return unhideFile(absoluteFile)
         } catch (e: IOException) {
-            showError(e)
+            abortCritical(e, notificationManager)
             absoluteFile.delete()
         } finally {
             if (stream != null)

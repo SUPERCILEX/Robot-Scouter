@@ -139,9 +139,10 @@ fun CTTitle.setValue(text: String) {
 fun Drawing<*>.createChartAnchor(startRow: Int, startColumn: Int, endColumn: Int): ClientAnchor =
         createAnchor(0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2)
 
-fun showError(e: Exception) {
+fun abortCritical(e: Exception, notificationManager: ExportNotificationManager) {
     FirebaseCrash.report(e)
     showToast("${RobotScouter.INSTANCE.getString(R.string.fui_general_error)}\n\n${e.message}")
+    notificationManager.abort()
 }
 
 fun showToast(message: String) = Handler(Looper.getMainLooper()).post {

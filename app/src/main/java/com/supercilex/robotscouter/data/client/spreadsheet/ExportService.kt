@@ -60,7 +60,7 @@ class ExportService : IntentService(TAG) {
 
             onHandleScouts(notificationManager, scouts)
         } catch (e: Exception) {
-            showError(e)
+            abortCritical(e, notificationManager)
         }
     }
 
@@ -94,8 +94,7 @@ class ExportService : IntentService(TAG) {
                     }.invoke()).export()
                 })
             }
-        }))
-        array.removeChangeEventListener(keepAliveListener)
+        }).addOnCompleteListener { array.removeChangeEventListener(keepAliveListener) })
     }
 
     private fun zipScouts(map: Map<Team, List<Scout>>): Map<String, Map<Team, List<Scout>>> {

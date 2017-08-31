@@ -125,6 +125,12 @@ class ExportNotificationManager(private val service: ExportService) {
         }
     }
 
+    fun abort() {
+        ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        manager.cancel(hashCode())
+        for (exporter in exporters) manager.cancel(exporter.value.id)
+    }
+
     private fun next(exporter: SpreadsheetExporter, notification: Notification) {
         val holder = exporters[exporter]!!
         incrementProgress(holder)
