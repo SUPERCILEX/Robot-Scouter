@@ -7,7 +7,7 @@
 </h1>
 
 <h4 align="center">
-    FIRST Robot Scouting made simple and collaborative
+    Easy, efficient, and collaborative FIRST robot scouting
 </h4>
 
 <p align="center">
@@ -22,8 +22,8 @@
     </a>
 </p>
 
-Robot Scouter is an open-source Android app that makes FRC and other FIRST competition robot
-scouting simple and collaborative.
+Robot Scouter is an open-source Android app with three core goals to make FIRST competition robot
+scouting easy, efficient, and collaborative.
 
 ![Robot Scouter demo](docs/demo.gif)
 
