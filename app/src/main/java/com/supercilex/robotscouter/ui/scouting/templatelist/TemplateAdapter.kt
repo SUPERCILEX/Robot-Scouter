@@ -70,7 +70,7 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                                 snapshot: DataSnapshot,
                                 index: Int,
                                 oldIndex: Int) {
-        if (callback.onChildChanged(type, index)) {
+        callback.onChildChanged(type, index) {
             super.onChildChanged(type, snapshot, index, oldIndex)
         }
     }

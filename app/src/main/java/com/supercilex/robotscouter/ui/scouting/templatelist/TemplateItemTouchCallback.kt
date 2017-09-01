@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.support.design.widget.Snackbar
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.MotionEvent
@@ -14,23 +15,25 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateViewHolder
+import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import java.util.Collections
 
-class TemplateItemTouchCallback<T>(private val rootView: View) :
-        ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
     private val recyclerView: RecyclerView = rootView.findViewById(R.id.list)
     lateinit var adapter: FirebaseRecyclerAdapter<T, *>
     lateinit var itemTouchHelper: ItemTouchHelper
 
     private val movableSnapshots = ArrayList<DataSnapshot>()
+    private var animatorPointer: RecyclerView.ItemAnimator? = null
     private var scrollToPosition = RecyclerView.NO_POSITION
     private var isMovingItem = false
 
     fun getItem(position: Int): T {
         val snapshots = adapter.snapshots
-        return if (isMovingItem) snapshots.getObject(snapshots.indexOf(movableSnapshots[position]))
-        else snapshots.getObject(position)
+        return if (isMovingItem) {
+            snapshots.getObject(snapshots.indexOfFirst { it.ref == movableSnapshots[position].ref })
+        } else snapshots.getObject(position)
     }
 
     fun getRef(position: Int): DatabaseReference =
@@ -58,16 +61,41 @@ class TemplateItemTouchCallback<T>(private val rootView: View) :
         scrollToPosition = position
     }
 
-    fun onChildChanged(type: ChangeEventListener.EventType, index: Int): Boolean {
+    fun onChildChanged(type: ChangeEventListener.EventType,
+                       index: Int,
+                       injectedSuperCall: () -> Unit) {
         if (isMovingItem) {
-            cleanupMove()
-            Snackbar.make(rootView, R.string.move_cancelled, Snackbar.LENGTH_LONG).show()
-            adapter.notifyDataSetChanged()
-            return false
+            if (run isCatchingUpOnMove@ {
+                if (type == ChangeEventListener.EventType.MOVED) return@isCatchingUpOnMove true
+                else {
+                    val updatedSnapshot = adapter.snapshots[index]
+                    val oldSnapshot = movableSnapshots.find { it.ref == updatedSnapshot.ref }!!
+
+                    if (type == ChangeEventListener.EventType.CHANGED
+                            && oldSnapshot.value == updatedSnapshot.value) {
+                        return@isCatchingUpOnMove true
+                    }
+                }
+
+                return@isCatchingUpOnMove false
+            }) {
+                injectedSuperCall()
+                if (adapter.snapshots.map { it.value } == movableSnapshots.map { it.value }) {
+                    ViewCompat.postOnAnimationDelayed(
+                            recyclerView,
+                            { cleanupMove() },
+                            maxAnimationDuration(animatorPointer ?: recyclerView.itemAnimator))
+                }
+            } else {
+                cleanupMove()
+                Snackbar.make(rootView, R.string.move_cancelled, Snackbar.LENGTH_LONG).show()
+                adapter.notifyDataSetChanged()
+            }
+            return
         } else if (type == ChangeEventListener.EventType.ADDED && index == scrollToPosition) {
             recyclerView.scrollToPosition(scrollToPosition)
         }
-        return true
+        injectedSuperCall()
     }
 
     override fun onMove(recyclerView: RecyclerView,
@@ -111,8 +139,9 @@ class TemplateItemTouchCallback<T>(private val rootView: View) :
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         if (isMovingItem) {
+            animatorPointer = recyclerView.itemAnimator
+            recyclerView.itemAnimator = null
             for ((i, snapshot) in movableSnapshots.withIndex()) snapshot.ref.setPriority(i)
-            cleanupMove()
         }
 
         // We can't directly update the background because the header metric needs to update its padding
@@ -122,5 +151,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) :
     private fun cleanupMove() {
         isMovingItem = false
         movableSnapshots.clear()
+        animatorPointer?.let { recyclerView.itemAnimator = it }
+        animatorPointer = null
     }
 }
