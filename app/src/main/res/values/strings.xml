@@ -237,7 +237,7 @@
     <string name="title_pref_sign_out">Sign out and reset Robot Scouter</string>
 
     <string name="summary_pref_about">
-        Robot Scouter is developed with 💖 by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>
+        Robot Scouter is developed with %s by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>
         and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf
         you want to try out new features before everyone else, feel free to join
         <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso,

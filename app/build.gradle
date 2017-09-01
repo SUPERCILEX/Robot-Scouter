@@ -112,7 +112,7 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-database:$playServicesVersion"
 
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.0'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.1'
 
     // Firebase
     implementation "com.google.firebase:firebase-core:$playServicesVersion"

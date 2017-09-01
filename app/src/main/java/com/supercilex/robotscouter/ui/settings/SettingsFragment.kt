@@ -67,8 +67,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
             override fun onBindViewHolder(holder: PreferenceViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
                 if (getItem(position).key == "about") {
-                    (holder.findViewById(R.id.about) as TextView).movementMethod =
-                            LinkMovementMethod.getInstance()
+                    (holder.findViewById(R.id.about) as TextView).apply {
+                        text = getString(R.string.summary_pref_about, "\uD83D\uDC96")
+                        movementMethod = LinkMovementMethod.getInstance()
+                    }
                 }
             }
         }

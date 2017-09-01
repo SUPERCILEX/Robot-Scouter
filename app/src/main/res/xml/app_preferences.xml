@@ -71,8 +71,7 @@
                         android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
                         android:paddingRight="?android:attr/listPreferredItemPaddingRight"
                         android:paddingTop="16dp"
-                        android:paddingBottom="16dp"
-                        android:text="@string/summary_pref_about" />
+                        android:paddingBottom="16dp" />
 
                 </LinearLayout>
 
