@@ -19,7 +19,7 @@
     <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_general">
 
         <com.supercilex.robotscouter.ui.settings.DefaultTemplatePreference
-            android:icon="@drawable/ic_assignment_white_24dp"
+            android:icon="@drawable/ic_content_paste_white_24dp"
             android:key="defaultTemplateKey"
             android:summary="@string/summary_pref_default_template"
             android:title="@string/title_pref_default_template" />

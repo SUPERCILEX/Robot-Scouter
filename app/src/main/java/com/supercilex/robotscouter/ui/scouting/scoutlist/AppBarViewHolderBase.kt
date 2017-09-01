@@ -84,7 +84,7 @@ open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
         Glide.with(backdrop)
                 .asBitmap()
                 .load(media)
-                .apply(RequestOptions.centerCropTransform().error(R.drawable.ic_memory_grey_48dp))
+                .apply(RequestOptions.centerCropTransform().error(R.drawable.ic_person_grey_96dp))
                 .listener(object : RequestListener<Bitmap> {
                     override fun onResourceReady(resource: Bitmap?,
                                                  model: Any?,

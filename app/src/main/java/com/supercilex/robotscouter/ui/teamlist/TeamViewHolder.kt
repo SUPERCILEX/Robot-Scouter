@@ -166,7 +166,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
             Glide.with(context)
                     .load(team.media)
                     .apply(RequestOptions.circleCropTransform().error(ContextCompat.getDrawable(
-                            context, R.drawable.ic_memory_grey_48dp)))
+                            context, R.drawable.ic_person_grey_96dp)))
         }
 
         private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE

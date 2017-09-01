@@ -164,7 +164,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
             Glide.with(getContext())
                     .load(mTeam.getMedia())
                     .apply(RequestOptions.circleCropTransform()
-                                   .error(R.drawable.ic_memory_grey_48dp))
+                                   .error(R.drawable.ic_person_grey_96dp))
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onResourceReady(Drawable resource,

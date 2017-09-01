@@ -10,7 +10,7 @@
 
         <item
             android:id="@+id/action_edit_templates"
-            android:icon="@drawable/ic_mode_edit_white_24dp"
+            android:icon="@drawable/ic_content_paste_white_24dp"
             android:title="@string/title_activity_template_list" />
     </group>
 
