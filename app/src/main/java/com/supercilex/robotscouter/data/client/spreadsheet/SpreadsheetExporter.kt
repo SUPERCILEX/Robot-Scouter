@@ -14,7 +14,6 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.perf.metrics.AddTrace
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.data.client.NotificationForwarder
 import com.supercilex.robotscouter.data.model.BOOLEAN
 import com.supercilex.robotscouter.data.model.HEADER
 import com.supercilex.robotscouter.data.model.LIST
@@ -30,6 +29,7 @@ import com.supercilex.robotscouter.util.data.rootFolder
 import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
+import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
@@ -105,10 +105,10 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 .addAction(
                         R.drawable.ic_share_white_24dp,
                         RobotScouter.INSTANCE.getString(R.string.share),
-                        PendingIntent.getBroadcast(
+                        PendingIntent.getActivity(
                                 RobotScouter.INSTANCE,
                                 exportId,
-                                NotificationForwarder.getCancelIntent(exportId, shareIntent),
+                                NotificationIntentForwarder.getCancelIntent(exportId, shareIntent),
                                 PendingIntent.FLAG_ONE_SHOT))
                 .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
                 .setAutoCancel(true)

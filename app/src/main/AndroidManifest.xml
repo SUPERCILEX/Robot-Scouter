@@ -91,7 +91,6 @@
 
         <activity
             android:name=".data.client.LinkReceiverActivity"
-            android:label=""
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:excludeFromRecents="true"
             android:taskAffinity=""
@@ -112,6 +111,13 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".util.ui.NotificationIntentForwarder"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/RobotScouter.Translucent" />
 
         <service android:name=".data.client.spreadsheet.ExportService" />
 
@@ -163,8 +169,6 @@
                 <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
             </intent-filter>
         </receiver>
-
-        <receiver android:name=".data.client.NotificationForwarder" />
 
         <!-- TODO remove once https://github.com/googlesamples/android-play-billing/issues/63 is fixed -->
         <activity
