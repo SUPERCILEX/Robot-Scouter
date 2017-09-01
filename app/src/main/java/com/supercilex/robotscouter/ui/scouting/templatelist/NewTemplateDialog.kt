@@ -19,11 +19,13 @@ class NewTemplateDialog : DialogFragmentBase(), DialogInterface.OnClickListener 
             .create()
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        (parentFragment as TemplateListFragment).onTemplateCreated(addTemplate((fun() = when {
-            which == 2 -> EMPTY
-            TEMPLATE_TYPES.contains(which) -> which
-            else -> throw IllegalStateException("Unknown template type: $which")
-        }).invoke()))
+        (parentFragment as TemplateListFragment).onTemplateCreated(addTemplate(run {
+            when {
+                which == 2 -> EMPTY
+                TEMPLATE_TYPES.contains(which) -> which
+                else -> throw IllegalStateException("Unknown template type: $which")
+            }
+        }))
     }
 
     companion object {

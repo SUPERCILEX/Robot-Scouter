@@ -19,15 +19,14 @@ import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.update_required_title)
-            .setMessage(fun(): CharSequence {
+            .setMessage(run {
                 val message = FirebaseRemoteConfig.getInstance().getString(UPDATE_MESSAGE_KEY)
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Html.fromHtml(message, Html.FROM_HTML_MODE_COMPACT)
                 } else {
-                    @Suppress("DEPRECATION")
-                    Html.fromHtml(message)
+                    @Suppress("DEPRECATION") Html.fromHtml(message)
                 }
-            }.invoke())
+            })
             .setPositiveButton(R.string.update, this)
             .setOnCancelListener(this)
             .setCancelable(false)

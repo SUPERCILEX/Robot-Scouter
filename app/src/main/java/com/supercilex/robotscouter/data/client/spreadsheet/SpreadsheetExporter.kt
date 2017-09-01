@@ -224,9 +224,11 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         }
         cache.workbook = workbook
 
-        val averageSheet = (fun(): Sheet? = if (cache.teams.size > SINGLE_ITEM) {
-            workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
-        } else null).invoke()
+        val averageSheet = run {
+            if (cache.teams.size > SINGLE_ITEM) {
+                workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
+            } else null
+        }
 
         for (team in cache.teams) {
             notificationManager.updateProgress(this, team)
