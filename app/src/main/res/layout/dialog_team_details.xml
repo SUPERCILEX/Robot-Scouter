@@ -41,7 +41,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/media"
                 app:layout_constraintTop_toTopOf="@+id/media"
                 app:layout_constraintBottom_toBottomOf="@+id/media"
-                app:srcCompat="@drawable/ic_add_a_photo_black_24dp" />
+                app:srcCompat="@drawable/ic_add_a_photo_white_24dp" />
 
         </android.support.constraint.ConstraintLayout>
 
