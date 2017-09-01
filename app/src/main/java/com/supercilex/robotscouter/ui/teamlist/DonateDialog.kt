@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.isInTestMode
 import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.uid
@@ -93,7 +94,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         it as PurchaseException
         if (it.errorCode == BillingResponse.USER_CANCELED) {
             Snackbar.make(rootView, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
-        } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED) { // User owns subscription
+        } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED // User owns subscription
+                && !isInTestMode) {
             FirebaseCrash.report(it)
             showError()
         }
