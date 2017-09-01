@@ -116,22 +116,20 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.fab) {
-            if (isSignedIn) {
-                NewTeamDialog.show(supportFragmentManager)
-            } else {
-                authHelper.showSignInResolution()
-            }
-        }
+        if (v.id == R.id.fab) runIfSignedIn { NewTeamDialog.show(supportFragmentManager) }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
-            R.id.action_edit_templates -> startActivity(TemplateListActivity.createIntent())
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
-            R.id.action_settings -> SettingsActivity.show(this)
-            else -> throw IllegalStateException("Unknown item id: ${item.itemId}")
+            else -> runIfSignedIn {
+                when (item.itemId) {
+                    R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
+                    R.id.action_edit_templates -> startActivity(TemplateListActivity.createIntent())
+                    R.id.action_settings -> SettingsActivity.show(this)
+                    else -> throw IllegalStateException("Unknown item id: ${item.itemId}")
+                }
+            }
         }
 
         drawerLayout.closeDrawer(GravityCompat.START)
@@ -172,8 +170,12 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
         }
 
         intent.data?.let {
-            if (it.toString() == ADD_SCOUT_INTENT) NewTeamDialog.show(supportFragmentManager)
-            if (it.toString() == EXPORT_ALL_TEAMS_INTENT) teamListFragment.exportAllTeams()
+            if (it.toString() == ADD_SCOUT_INTENT) runIfSignedIn {
+                NewTeamDialog.show(supportFragmentManager)
+            }
+            if (it.toString() == EXPORT_ALL_TEAMS_INTENT) runIfSignedIn {
+                teamListFragment.exportAllTeams()
+            }
         }
 
         // When the app is installed through a dynamic link, we can only get it from the launcher
@@ -192,6 +194,9 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
 
         this.intent = Intent() // Consume Intent
     }
+
+    private inline fun runIfSignedIn(block: () -> Unit) =
+            if (isSignedIn) block() else authHelper.showSignInResolution()
 
     private companion object {
         const val RC_SCOUT = 744

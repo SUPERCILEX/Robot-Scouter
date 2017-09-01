@@ -18,6 +18,7 @@ import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.appindexing.builders.Actions
+import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.SINGLE_ITEM
@@ -31,7 +32,8 @@ import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 
-class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressedListener {
+class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressedListener,
+        FirebaseAuth.AuthStateListener {
     private val rootView by lazy { View.inflate(context, R.layout.fragment_template_list, null) }
     val fam: FloatingActionMenu by lazy { rootView.findViewById<FloatingActionMenu>(R.id.fab_menu) }
     private val pagerAdapter by lazy {
@@ -65,6 +67,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        FirebaseAuth.getInstance().addAuthStateListener(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -87,6 +90,11 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
         handleArgs(arguments, savedInstanceState)
 
         return rootView
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FirebaseAuth.getInstance().removeAuthStateListener(this)
     }
 
     fun handleArgs(args: Bundle, savedInstanceState: Bundle? = null) {
@@ -157,6 +165,10 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
     override fun onBackPressed(): Boolean =
             childFragmentManager.fragments.any { it is OnBackPressedListener && it.onBackPressed() }
+
+    override fun onAuthStateChanged(auth: FirebaseAuth) {
+        if (auth.currentUser == null) activity.finish()
+    }
 
     companion object {
         const val TAG = "TemplateListFragment"
