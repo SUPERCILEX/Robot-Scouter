@@ -40,10 +40,12 @@
             android:id="@+id/scout_list"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:keyboardNavigationCluster="true"
             app:layout_constraintStart_toEndOf="@+id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="UnusedAttribute" />
 
         <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
             android:id="@+id/no_team_selected_hint"
