@@ -29,9 +29,8 @@ open class CounterViewHolder(itemView: View) :
         super.bind()
         updateValue(metric.value)
         increment.setOnClickListener(this)
-        increment.setOnLongClickListener(this)
         decrement.setOnClickListener(this)
-        decrement.setOnLongClickListener(this)
+        count.setOnLongClickListener(this)
     }
 
     @CallSuper

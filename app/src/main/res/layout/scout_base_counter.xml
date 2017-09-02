@@ -18,11 +18,11 @@
     <android.support.text.emoji.widget.EmojiAppCompatTextView
         android:id="@+id/count"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_large"
-        android:layout_marginEnd="@dimen/spacing_large"
-        android:layout_gravity="center_vertical"
-        android:textIsSelectable="true"
+        android:layout_height="@dimen/square_view_hw"
+        android:paddingStart="@dimen/spacing_large"
+        android:paddingEnd="@dimen/spacing_large"
+        android:gravity="center_vertical"
+        android:textIsSelectable="false"
         android:textSize="18sp"
         android:textStyle="normal|bold"
         tools:text="10" />
