@@ -85,6 +85,8 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     }
 
     companion object {
+        const val TAG = "ActivityScoutListFrag"
+
         fun newInstance(args: Bundle): ScoutListFragmentBase =
                 ActivityScoutListFragment().apply { arguments = args }
     }

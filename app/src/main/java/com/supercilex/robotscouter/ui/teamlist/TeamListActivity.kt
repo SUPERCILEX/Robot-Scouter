@@ -9,6 +9,7 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -30,18 +31,35 @@ import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logSelectTeamEvent
-import com.supercilex.robotscouter.util.ui.LifecycleActivity
+import com.supercilex.robotscouter.util.ui.ActivityBase
+import com.supercilex.robotscouter.util.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
+class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, OnSuccessListener<Nothing?> {
+    override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
+        override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
+                    scoutListFragment?.addScoutWithSelector()
+                } else {
+                    NewTeamDialog.show(supportFragmentManager)
+                }
+                KeyEvent.KEYCODE_E -> teamListFragment.exportAllTeams()
+                KeyEvent.KEYCODE_D -> scoutListFragment?.showTeamDetails()
+            }
+        }
+    }
+
     val teamListFragment by lazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
+    val scoutListFragment
+        get() = supportFragmentManager.findFragmentByTag(TabletScoutListFragment.TAG) as? TabletScoutListFragment
     private val authHelper by lazy { AuthHelper(this) }
     private val tutorialHelper: TutorialHelper by lazy {
         ViewModelProviders.of(this).get(TutorialHelper::class.java)
@@ -147,7 +165,9 @@ class TeamListActivity : LifecycleActivity(), View.OnClickListener, NavigationVi
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
         if (isInTabletMode(this)) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.scout_list, TabletScoutListFragment.newInstance(args))
+                    .replace(R.id.scout_list,
+                             TabletScoutListFragment.newInstance(args),
+                             TabletScoutListFragment.TAG)
                     .commit()
         } else {
             if (restoreOnConfigChange) {

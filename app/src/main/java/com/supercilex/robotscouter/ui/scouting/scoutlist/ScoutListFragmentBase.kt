@@ -125,21 +125,31 @@ abstract class ScoutListFragmentBase : FragmentBase(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_new_scout -> pagerAdapter!!.currentTabKey = team.addScout()
+            R.id.action_new_scout -> addScout()
             R.id.action_add_media -> ShouldUploadMediaToTbaDialog.show(this)
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
             R.id.action_edit_template -> startActivity(TemplateListActivity.createIntent(team.templateKey))
-            R.id.action_edit_team_details -> TeamDetailsDialog.show(childFragmentManager, team)
+            R.id.action_edit_team_details -> showTeamDetails()
             else -> return false
         }
         return true
     }
 
-    override fun onTemplateSelected(key: String) {
+    fun showTeamDetails() {
+        TeamDetailsDialog.show(childFragmentManager, team)
+    }
+
+    fun addScoutWithSelector() {
+        ScoutTemplateSelectorDialog.show(childFragmentManager)
+    }
+
+    fun addScout(key: String? = null) {
         pagerAdapter!!.currentTabKey = team.addScout(key)
     }
+
+    override fun onTemplateSelected(key: String) = addScout(key)
 
     private fun initScoutList() {
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
@@ -152,8 +162,7 @@ abstract class ScoutListFragmentBase : FragmentBase(),
 
         if (arguments.getBoolean(KEY_ADD_SCOUT, false)) {
             arguments.remove(KEY_ADD_SCOUT)
-            pagerAdapter!!.currentTabKey =
-                    team.addScout(arguments.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))
+            addScout(arguments.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))
         }
     }
 

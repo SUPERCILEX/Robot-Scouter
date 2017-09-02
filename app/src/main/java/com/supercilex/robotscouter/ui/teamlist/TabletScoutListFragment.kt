@@ -66,6 +66,8 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
     }
 
     companion object {
+        const val TAG = "TabletScoutListFrag"
+
         fun newInstance(args: Bundle): ScoutListFragmentBase =
                 TabletScoutListFragment().apply { arguments = args }
     }
