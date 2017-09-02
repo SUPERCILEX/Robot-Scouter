@@ -115,7 +115,12 @@ fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also 
 inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Task<R> = TaskCompletionSource<R>().apply {
     AppToolkitTaskExecutor.getInstance().executeOnMainThread {
         observeForever(object : Observer<T> {
+            private var hasChanged = false
+
             override fun onChanged(t: T?) {
+                if (hasChanged) return
+                hasChanged = true
+
                 block(t ?: return).addOnCompleteListener {
                     removeObserver(this)
                     if (it.isSuccessful) setResult(it.result) else setException(it.exception!!)
