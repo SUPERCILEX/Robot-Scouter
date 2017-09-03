@@ -66,15 +66,15 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
         }
 
         var hasScrolledToPos = false
-
         val visiblePositions = (recyclerView.layoutManager as LinearLayoutManager).let {
-            it.findFirstVisibleItemPosition()..it.findLastVisibleItemPosition()
+            it.findFirstCompletelyVisibleItemPosition()..it.findLastCompletelyVisibleItemPosition()
         }
+
         for (i in 0 until itemCount) {
             val key = getItem(i).key
             if (TextUtils.equals(key, selectedTeamKey)) {
                 if (!hasScrolledToPos) {
-                    if (i !in visiblePositions) recyclerView.scrollToPosition(i)
+                    if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
                     hasScrolledToPos = true
                 }
 
@@ -87,10 +87,11 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
         if (!hasScrolledToPos && !TextUtils.isEmpty(selectedTeamKey)) {
             for (i in 0 until itemCount) {
                 if (team != null && getItem(i).numberAsLong >= team.numberAsLong) {
-                    recyclerView.scrollToPosition(i)
-                    break
+                    if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
+                    return
                 }
             }
+            recyclerView.smoothScrollToPosition(itemCount)
         }
     }
 

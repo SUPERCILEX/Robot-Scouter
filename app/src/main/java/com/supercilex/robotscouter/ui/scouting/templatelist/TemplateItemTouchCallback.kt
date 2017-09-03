@@ -93,7 +93,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
             }
             return
         } else if (type == ChangeEventListener.EventType.ADDED && index == scrollToPosition) {
-            recyclerView.scrollToPosition(scrollToPosition)
+            recyclerView.smoothScrollToPosition(scrollToPosition)
         }
         injectedSuperCall()
     }
