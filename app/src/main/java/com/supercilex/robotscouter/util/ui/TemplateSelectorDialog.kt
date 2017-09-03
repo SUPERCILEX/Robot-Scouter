@@ -107,7 +107,8 @@ abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
                 }
 
                 // Only draw the divider for the second item i.e. the last native template
-                val child = parent.getChildAt(1)
+                val child = parent.getChildAt(1 - (recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstVisibleItemPosition()) ?: return
                 parent.getDecoratedBoundsWithMargins(child, bounds)
                 val bottom = bounds.bottom + Math.round(child.translationY)
                 val top = bottom - divider.intrinsicHeight
