@@ -31,13 +31,6 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (0 until rootView.childCount).map { rootView.getChildAt(it) }.let {
-            rootView.removeAllViews()
-            rootView.addView(LinearLayout(context).apply {
-                layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, 0, 1F)
-                it.forEach { addView(it) }
-            })
-        }
         rootView.addView(setAsDefaultCheckbox)
     }
 
