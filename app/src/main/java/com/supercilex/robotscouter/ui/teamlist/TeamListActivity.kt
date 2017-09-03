@@ -163,10 +163,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
     }
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
-        args.getTeam().let {
-            teamListFragment.selectTeam(it)
-            logSelectTeamEvent(it)
-        }
+        logSelectTeamEvent(args.getTeam())
 
         if (isInTabletMode(this)) {
             supportFragmentManager.beginTransaction()

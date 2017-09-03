@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.arch.lifecycle.LifecycleFragment
-import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -28,10 +28,10 @@ import java.util.Collections
 class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                       private val fragment: LifecycleFragment,
                       private val menuManager: TeamMenuHelper,
-                      private val selectedTeamKeyListener: LiveData<String?>) :
+                      private val selectedTeamKeyListener: MutableLiveData<Team?>) :
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(
                 snapshots, R.layout.team_list_row_layout, TeamViewHolder::class.java, fragment),
-        ListPreloader.PreloadModelProvider<Team>, Observer<String?> {
+        ListPreloader.PreloadModelProvider<Team>, Observer<Team?> {
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(
             Glide.with(fragment),
@@ -59,21 +59,37 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
         selectedTeamKeyListener?.observeForever(this)
     }
 
-    override fun onChanged(teamKey: String?) {
+    override fun onChanged(team: Team?) {
         val oldKey = selectedTeamKey
-        selectedTeamKey = teamKey
+        selectedTeamKey = team?.key.let {
+            if (TextUtils.equals(selectedTeamKey, it)) return else it
+        }
 
+        var hasScrolledToPos = false
+
+        val visiblePositions = (recyclerView.layoutManager as LinearLayoutManager).let {
+            it.findFirstVisibleItemPosition()..it.findLastVisibleItemPosition()
+        }
         for (i in 0 until itemCount) {
             val key = getItem(i).key
             if (TextUtils.equals(key, selectedTeamKey)) {
-                (recyclerView.layoutManager as LinearLayoutManager).apply {
-                    if (i !in findFirstVisibleItemPosition()..findLastVisibleItemPosition()) {
-                        recyclerView.scrollToPosition(i)
-                    }
+                if (!hasScrolledToPos) {
+                    if (i !in visiblePositions) recyclerView.scrollToPosition(i)
+                    hasScrolledToPos = true
                 }
+
                 notifyItemChanged(i)
             } else if (TextUtils.equals(key, oldKey)) {
                 notifyItemChanged(i)
+            }
+        }
+
+        if (!hasScrolledToPos && !TextUtils.isEmpty(selectedTeamKey)) {
+            for (i in 0 until itemCount) {
+                if (team != null && getItem(i).numberAsLong >= team.numberAsLong) {
+                    recyclerView.scrollToPosition(i)
+                    break
+                }
             }
         }
     }

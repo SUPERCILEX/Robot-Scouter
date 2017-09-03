@@ -165,11 +165,15 @@ private fun deepCopy(values: MutableMap<String, Any?>, from: DataSnapshot) {
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {
     override fun postValue(value: T) {
-        if (this.value != value) super.postValue(value)
+        runIfDifferent(value) { super.postValue(value) }
     }
 
     override fun setValue(value: T) {
-        if (this.value != value) super.setValue(value)
+        runIfDifferent(value) { super.setValue(value) }
+    }
+
+    private inline fun runIfDifferent(value: T, block: () -> Unit) {
+        if (this.value != value) block()
     }
 }
 
