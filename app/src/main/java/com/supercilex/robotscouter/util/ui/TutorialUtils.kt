@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.ui
 
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Handler
 import android.support.design.widget.CoordinatorLayout
@@ -64,20 +63,6 @@ fun showSignInTutorial(helper: TutorialHelper, owner: LifecycleActivity) = Handl
 
 private inline fun runIfPressed(state: Int, block: () -> Unit) {
     if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) block()
-}
-
-class UniqueMutableLiveData<T> : MutableLiveData<T>() {
-    override fun postValue(value: T) {
-        if (this.value != value) {
-            super.postValue(value)
-        }
-    }
-
-    override fun setValue(value: T) {
-        if (this.value != value) {
-            super.setValue(value)
-        }
-    }
 }
 
 private class PromptTouchEventForwarder(private val prompt: View) : CoordinatorLayout.Behavior<View>() {

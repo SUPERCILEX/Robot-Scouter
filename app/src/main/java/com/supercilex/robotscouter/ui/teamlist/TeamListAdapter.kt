@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist
 import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
@@ -64,7 +65,14 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
 
         for (i in 0 until itemCount) {
             val key = getItem(i).key
-            if (TextUtils.equals(key, selectedTeamKey) || TextUtils.equals(key, oldKey)) {
+            if (TextUtils.equals(key, selectedTeamKey)) {
+                (recyclerView.layoutManager as LinearLayoutManager).apply {
+                    if (i !in findFirstVisibleItemPosition()..findLastVisibleItemPosition()) {
+                        recyclerView.scrollToPosition(i)
+                    }
+                }
+                notifyItemChanged(i)
+            } else if (TextUtils.equals(key, oldKey)) {
                 notifyItemChanged(i)
             }
         }

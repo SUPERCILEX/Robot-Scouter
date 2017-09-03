@@ -163,6 +163,11 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
     }
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
+        args.getTeam().let {
+            teamListFragment.selectTeam(it)
+            logSelectTeamEvent(it)
+        }
+
         if (isInTabletMode(this)) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.scout_list,
@@ -176,8 +181,6 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                 startActivity(ScoutListActivity.createIntent(args))
             }
         }
-
-        logSelectTeamEvent(args.getTeam())
     }
 
     private fun handleIntent(intent: Intent) {

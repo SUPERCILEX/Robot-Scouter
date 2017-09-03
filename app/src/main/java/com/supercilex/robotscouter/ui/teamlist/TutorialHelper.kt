@@ -6,9 +6,9 @@ import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIA
 import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.PrefsLiveData
+import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getPrefOrDefault
-import com.supercilex.robotscouter.util.ui.UniqueMutableLiveData
 
 class TutorialHelper : ViewModelBase<Nothing?>(),
         Observer<ObservableSnapshotArray<Any>>, ChangeEventListenerBase {

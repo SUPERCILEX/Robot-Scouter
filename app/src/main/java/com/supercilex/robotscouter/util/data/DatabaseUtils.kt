@@ -163,6 +163,16 @@ private fun deepCopy(values: MutableMap<String, Any?>, from: DataSnapshot) {
     }
 }
 
+class UniqueMutableLiveData<T> : MutableLiveData<T>() {
+    override fun postValue(value: T) {
+        if (this.value != value) super.postValue(value)
+    }
+
+    override fun setValue(value: T) {
+        if (this.value != value) super.setValue(value)
+    }
+}
+
 interface ChangeEventListenerBase : ChangeEventListener {
     override fun onChildChanged(type: ChangeEventListener.EventType,
                                 snapshot: DataSnapshot,
