@@ -32,8 +32,8 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdateTeam
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
-import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
+import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 
 open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
                                 rootView: View,

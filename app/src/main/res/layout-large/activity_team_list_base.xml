@@ -47,7 +47,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="UnusedAttribute" />
 
-        <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
+        <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
             android:id="@+id/no_team_selected_hint"
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/no_team_selected"

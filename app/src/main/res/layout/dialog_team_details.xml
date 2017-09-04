@@ -21,7 +21,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
+            <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
                 android:id="@+id/progress"
                 style="@style/Base.Widget.AppCompat.ProgressBar"
                 android:layout_width="0dp"
@@ -87,7 +87,7 @@
                 android:hint="@string/team_name"
                 android:visibility="gone">
 
-                <com.supercilex.robotscouter.util.ui.EmojiCompatTextInputEditText
+                <com.supercilex.robotscouter.util.ui.views.EmojiCompatTextInputEditText
                     android:id="@+id/name_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

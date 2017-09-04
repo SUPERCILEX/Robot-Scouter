@@ -34,7 +34,7 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
-            <com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
+            <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
                 android:id="@+id/progress"
                 style="@style/Base.Widget.AppCompat.ProgressBar"
                 android:layout_width="@dimen/square_view_hw"
@@ -69,7 +69,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
+        <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/no_scouts"
             app:layout_constraintStart_toStartOf="parent"

@@ -24,9 +24,9 @@ import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.model.teamIndicesRef
 import com.supercilex.robotscouter.util.data.model.templateIndicesRef
 import com.supercilex.robotscouter.util.onSignedIn
-import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
+import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 class LinkReceiverActivity : AppCompatActivity() {

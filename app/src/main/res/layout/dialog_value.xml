@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.supercilex.robotscouter.util.ui.EmojiCompatTextInputEditText
+        <com.supercilex.robotscouter.util.ui.views.EmojiCompatTextInputEditText
             android:id="@+id/value"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

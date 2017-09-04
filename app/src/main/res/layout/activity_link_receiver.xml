@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
+<com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/progress"
     style="@style/Base.Widget.AppCompat.ProgressBar"

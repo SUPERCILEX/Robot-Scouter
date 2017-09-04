@@ -34,7 +34,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.supercilex.robotscouter.util.ui.SupportVectorDrawablesTextView
+        <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/no_templates"
             app:layout_constraintStart_toStartOf="parent"

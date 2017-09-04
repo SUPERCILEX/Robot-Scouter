@@ -37,7 +37,7 @@
 
     </LinearLayout>
 
-    <com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
+    <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
         android:id="@+id/progress"
         style="@style/Base.Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"

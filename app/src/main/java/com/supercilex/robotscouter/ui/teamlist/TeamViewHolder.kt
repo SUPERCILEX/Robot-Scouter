@@ -22,9 +22,9 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.util.data.getScoutBundle
-import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
+import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {

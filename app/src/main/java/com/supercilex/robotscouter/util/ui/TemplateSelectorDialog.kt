@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.data.model.MATCH
 import com.supercilex.robotscouter.data.model.PIT
 import com.supercilex.robotscouter.util.data.defaultTemplateKey
 import com.supercilex.robotscouter.util.data.model.TabNamesHolder
+import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 
 abstract class TemplateSelectorDialog : LifecycleDialogFragment() {
     @get:StringRes

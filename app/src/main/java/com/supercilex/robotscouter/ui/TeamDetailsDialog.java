@@ -36,9 +36,9 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
 import com.supercilex.robotscouter.util.data.ArgUtilsKt;
 import com.supercilex.robotscouter.util.data.model.TeamHolder;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
-import com.supercilex.robotscouter.util.ui.ContentLoadingProgressBar;
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase;
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator;
+import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar;
 
 import java.io.File;
 
