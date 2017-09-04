@@ -29,25 +29,25 @@ scouting easy, efficient, and collaborative.
 
 ## Features
 
-  - **Full offline support** 📡
-  - **No setup required i.e. no databases** 🗄️ (managing databases = 💩)
-  - Easy sharing between users 🔗
-  - Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
- Android N and use split screen mode to scout several teams at once.
-  - **Customizable scouting templates** 📃 with several different metrics to choose from:
-    - header/title 🔖
-    - true/false (checkbox)
-    - stopwatch (for keeping track of cycle time) ⏱️
-    - number (counter)
-    - list (item selector)
-    - text (notes) 📜
-  - **Integration with [The Blue Alliance](https://www.thebluealliance.com)** to automatically populate relevant team info
-  - **Highly advanced spreadsheet exporting**:
-    - Averages are computed for each team automatically
-    - An average sheet is included to compare teams against each other in a global view 📊
-    - Fancy formatting on devices with Android Lollipop (21) and above 🎀
-    - **Charts!** 📈
-  - And more!
+- **Full offline support** 📡
+- **No setup required i.e. no databases** 🗄️ (managing databases = 💩)
+- Easy sharing between users 🔗
+- Seamless collaboration: multiple people can scout the same team, different teams, or go solo on
+  Android N and use split screen mode to scout several teams at once.
+- **Customizable scouting templates** 📃 with several different metrics to choose from:
+  - header/title 🔖
+  - true/false (checkbox)
+  - stopwatch (for keeping track of cycle time) ⏱️
+  - number (counter)
+  - list (item selector)
+  - text (notes) 📜
+- **Integration with [The Blue Alliance](https://www.thebluealliance.com)** to automatically populate relevant team info
+- **Advanced spreadsheet exporting:**
+  - Averages are computed for each team automatically
+  - A global average sheet is included to compare teams against each other 📊
+  - Fancy formatting on devices with Android Lollipop (21) and above 🎀
+  - **Charts!** 📈
+- And more!
 
 ## Contributing 💗
 
@@ -55,17 +55,17 @@ Want to add features, fix bugs, or just poke around the code? No problem! Just m
 the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too deep.
 
 ### Learning 📚
- - Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter
- - Take careful note of the [Firebase Realtime Database](https://firebase.google.com/docs/database/)
- and [Firebase-UI](https://github.com/firebase/FirebaseUI-Android)
+- Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter
+- Take careful note of the [Firebase Realtime Database](https://firebase.google.com/docs/database/)
+  and [Firebase-UI](https://github.com/firebase/FirebaseUI-Android)
 
 ## Environment setup 💻
 
 1. [Move the dummy files](building/setup.sh#L17-L21) into position
 1. If you are working with the database or need access to other Firebase technologies,
-[create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
-and replace the dummy [google-services.json](travis-dummies/google-services.json)
-with the one created in your Firebase project
+   [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
+   and replace the dummy [google-services.json](travis-dummies/google-services.json) with the one
+   created in your Firebase project
 1. Run `./gradlew check` to make sure the Travis build will pass
 1. That's it! 🚀
 
