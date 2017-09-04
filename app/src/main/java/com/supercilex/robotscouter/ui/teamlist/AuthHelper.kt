@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
-import com.supercilex.robotscouter.util.signInAnonymouslyDbInit
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.user
 
@@ -60,7 +59,7 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
 
     fun signIn() = com.supercilex.robotscouter.util.signIn(activity)
 
-    private fun signInAnonymously() = signInAnonymouslyDbInit()
+    private fun signInAnonymously() = FirebaseAuth.getInstance().signInAnonymously()
             .addOnFailureListener(activity) {
                 Snackbar.make(rootView, R.string.anonymous_sign_in_failed, Snackbar.LENGTH_LONG)
                         .setAction(R.string.sign_in, this)
