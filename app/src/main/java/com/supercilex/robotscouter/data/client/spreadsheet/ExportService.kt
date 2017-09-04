@@ -15,7 +15,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.TemplateNamesLiveData
 import com.supercilex.robotscouter.util.data.getTeamListExtra
@@ -28,7 +28,6 @@ import com.supercilex.robotscouter.util.logExportTeamsEvent
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import org.apache.poi.ss.formula.WorkbookEvaluator
 import pub.devrel.easypermissions.EasyPermissions
-import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
 class ExportService : IntentService(TAG) {
@@ -77,7 +76,7 @@ class ExportService : IntentService(TAG) {
         array.addChangeEventListener(keepAliveListener)
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateKey, scouts) ->
             namesListener.observeOnDataChanged().observeOnce {
-                AsyncTaskExecutor.execute(Callable {
+                async {
                     SpreadsheetExporter(scouts, notificationManager, fun(): String {
                         if (isNativeTemplateType(templateKey)) {
                             return resources.getStringArray(
@@ -90,7 +89,7 @@ class ExportService : IntentService(TAG) {
 
                         return getString(R.string.title_unknown_template)
                     }.invoke()).export()
-                })
+                }
             }
         }).addOnCompleteListener { array.removeChangeEventListener(keepAliveListener) })
     }

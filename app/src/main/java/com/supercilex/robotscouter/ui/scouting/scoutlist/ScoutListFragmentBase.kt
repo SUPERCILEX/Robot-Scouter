@@ -13,6 +13,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.R
@@ -21,8 +22,10 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
+import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
+import com.supercilex.robotscouter.util.data.TemplateIndicesLiveData
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabKey
 import com.supercilex.robotscouter.util.data.model.TeamHolder
@@ -30,6 +33,8 @@ import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.viewAction
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
+import com.supercilex.robotscouter.util.data.observeOnDataChanged
+import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
@@ -130,7 +135,23 @@ abstract class ScoutListFragmentBase : FragmentBase(),
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
-            R.id.action_edit_template -> startActivity(TemplateListActivity.createIntent(team.templateKey))
+            R.id.action_edit_template -> {
+                val templateKey = team.templateKey
+                TemplateIndicesLiveData.observeOnDataChanged().observeOnce {
+                    async {
+                        it.map { it.key }.contains(templateKey)
+                    }.addOnSuccessListener { ownsTemplate ->
+                        if (ownsTemplate) {
+                            startActivity(TemplateListActivity.createIntent(templateKey))
+                        } else {
+                            Toast.makeText(context,
+                                           R.string.error_template_access_denied,
+                                           Toast.LENGTH_LONG)
+                                    .show()
+                        }
+                    }
+                }
+            }
             R.id.action_edit_team_details -> showTeamDetails()
             else -> return false
         }

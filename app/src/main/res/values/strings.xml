@@ -153,6 +153,8 @@
     </string>
     <string name="cta_share_template">Import the %s scouting template into Robot Scouter</string>
 
+    <string name="error_template_access_denied">Access denied: template owned by another user</string>
+
     <string-array name="new_template_options">
         <item>Match Scouting</item>
         <item>Pit Scouting</item>

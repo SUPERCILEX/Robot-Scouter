@@ -6,6 +6,9 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
+inline fun <T> async(crossinline block: () -> T): Task<T> =
+        AsyncTaskExecutor.execute(Callable { block() })
+
 object AsyncTaskExecutor : Executor {
     private val service = Executors.newCachedThreadPool()
 
