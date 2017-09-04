@@ -13,10 +13,10 @@
         android:drawablePadding="@dimen/spacing_mini"
         android:stateListAnimator="@null"
         android:textColor="@android:color/white"
-        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/barrier"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
         app:drawableStartCompat="@drawable/ic_timer_white_24dp"
         tools:ignore="UnusedAttribute"
         tools:text="Start (0:00)" />
@@ -39,7 +39,7 @@
         android:scrollbars="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/barrier"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </merge>

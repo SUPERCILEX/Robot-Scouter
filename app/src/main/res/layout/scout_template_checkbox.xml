@@ -17,10 +17,10 @@
         android:layout_marginLeft="@dimen/spacing_normal"
         android:hint="@string/checkbox_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@id/name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/name"
-        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintTop_toTopOf="@id/name"
+        app:layout_constraintBottom_toBottomOf="@id/name"
         tools:ignore="UnknownIdInLayout"
         tools:text="Name" />
 

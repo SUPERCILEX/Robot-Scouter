@@ -23,10 +23,10 @@
         android:layout_height="0dp"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/media"
-        app:layout_constraintEnd_toEndOf="@+id/media"
-        app:layout_constraintTop_toTopOf="@+id/media"
-        app:layout_constraintBottom_toBottomOf="@+id/media" />
+        app:layout_constraintStart_toStartOf="@id/media"
+        app:layout_constraintEnd_toEndOf="@id/media"
+        app:layout_constraintTop_toTopOf="@id/media"
+        app:layout_constraintBottom_toBottomOf="@id/media" />
 
     <TextView
         android:id="@+id/number"
@@ -41,10 +41,10 @@
         android:textIsSelectable="false"
         android:textSize="18sp"
         android:textStyle="normal|bold"
-        app:layout_constraintStart_toEndOf="@+id/media"
-        app:layout_constraintEnd_toStartOf="@+id/new_scout"
+        app:layout_constraintStart_toEndOf="@id/media"
+        app:layout_constraintEnd_toStartOf="@id/new_scout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/name"
+        app:layout_constraintBottom_toTopOf="@id/name"
         app:layout_constraintHorizontal_chainStyle="packed"
         tools:text="2521" />
 
@@ -60,9 +60,9 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textIsSelectable="false"
         android:textSize="@dimen/text_size_normal"
-        app:layout_constraintStart_toEndOf="@+id/media"
-        app:layout_constraintEnd_toStartOf="@+id/new_scout"
-        app:layout_constraintTop_toBottomOf="@+id/number"
+        app:layout_constraintStart_toEndOf="@id/media"
+        app:layout_constraintEnd_toStartOf="@id/new_scout"
+        app:layout_constraintTop_toBottomOf="@id/number"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="SERT" />
 

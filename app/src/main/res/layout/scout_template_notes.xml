@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:hint="@string/note_name"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@+id/reorder"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/text"
-        app:layout_constraintBottom_toBottomOf="@+id/text"
+        app:layout_constraintStart_toEndOf="@id/reorder"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="@id/text"
+        app:layout_constraintBottom_toBottomOf="@id/text"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
@@ -35,7 +35,7 @@
         android:layout_marginLeft="@dimen/spacing_normal"
         android:hint="@string/hint_notes"
         android:inputType="textMultiLine|textCapSentences"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintStart_toEndOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

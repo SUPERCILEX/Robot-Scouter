@@ -13,9 +13,9 @@
         android:textIsSelectable="false"
         android:textSize="@dimen/text_size_normal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/stopwatch"
+        app:layout_constraintEnd_toStartOf="@id/stopwatch"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/barrier"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 

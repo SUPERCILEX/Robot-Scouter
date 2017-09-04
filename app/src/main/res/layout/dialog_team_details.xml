@@ -28,19 +28,19 @@
                 android:layout_height="0dp"
                 android:indeterminate="true"
                 android:visibility="gone"
-                app:layout_constraintStart_toStartOf="@+id/media"
-                app:layout_constraintEnd_toEndOf="@+id/media"
-                app:layout_constraintTop_toTopOf="@+id/media"
-                app:layout_constraintBottom_toBottomOf="@+id/media" />
+                app:layout_constraintStart_toStartOf="@id/media"
+                app:layout_constraintEnd_toEndOf="@id/media"
+                app:layout_constraintTop_toTopOf="@id/media"
+                app:layout_constraintBottom_toBottomOf="@id/media" />
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:contentDescription="@string/accessibility_robot_icon"
-                app:layout_constraintStart_toStartOf="@+id/media"
-                app:layout_constraintEnd_toEndOf="@+id/media"
-                app:layout_constraintTop_toTopOf="@+id/media"
-                app:layout_constraintBottom_toBottomOf="@+id/media"
+                app:layout_constraintStart_toStartOf="@id/media"
+                app:layout_constraintEnd_toEndOf="@id/media"
+                app:layout_constraintTop_toTopOf="@id/media"
+                app:layout_constraintBottom_toBottomOf="@id/media"
                 app:srcCompat="@drawable/ic_add_a_photo_white_24dp" />
 
         </android.support.constraint.ConstraintLayout>
@@ -71,10 +71,10 @@
                 android:layout_marginLeft="@dimen/spacing_normal"
                 android:background="?android:attr/selectableItemBackground"
                 android:contentDescription="@string/accessibility_edit_team_name"
-                app:layout_constraintStart_toEndOf="@+id/name"
+                app:layout_constraintStart_toEndOf="@id/name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/name"
-                app:layout_constraintBottom_toBottomOf="@+id/name"
+                app:layout_constraintTop_toTopOf="@id/name"
+                app:layout_constraintBottom_toBottomOf="@id/name"
                 app:layout_constraintHorizontal_bias="0"
                 app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 

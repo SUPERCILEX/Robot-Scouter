@@ -21,7 +21,7 @@
             android:layout_height="0dp"
             android:tag="TeamListFragment"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -31,7 +31,7 @@
             android:elevation="@dimen/card_elevation"
             android:outlineProvider="bounds"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/padding"
+            app:layout_constraintEnd_toStartOf="@id/padding"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="UnusedAttribute" />
@@ -41,7 +41,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:keyboardNavigationCluster="true"
-            app:layout_constraintStart_toEndOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -52,7 +52,7 @@
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/no_team_selected"
             android:visibility="visible"
-            app:layout_constraintStart_toEndOf="@+id/guideline"
+            app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +71,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/card_elevation"
             android:layout_marginLeft="@dimen/card_elevation"
-            app:layout_constraintStart_toEndOf="@+id/guideline" />
+            app:layout_constraintStart_toEndOf="@id/guideline" />
 
     </android.support.constraint.ConstraintLayout>
 

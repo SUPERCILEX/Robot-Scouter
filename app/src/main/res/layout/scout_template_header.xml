@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/header_name"
         android:inputType="textMultiLine|textCapWords"
-        app:layout_constraintStart_toEndOf="@+id/reorder"
+        app:layout_constraintStart_toEndOf="@id/reorder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnknownIdInLayout"
