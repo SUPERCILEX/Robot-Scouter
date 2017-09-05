@@ -6,7 +6,7 @@
         android:start="2dp"
         android:top="2dp">
         <shape android:shape="oval">
-            <solid android:color="#F5F5F5" />
+            <solid android:color="@color/shortcut_background" />
 
             <size
                 android:width="44dp"
