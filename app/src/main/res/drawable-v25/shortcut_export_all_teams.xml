@@ -1,23 +1,9 @@
-<layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/shortcut_background" />
 
-    <item android:gravity="center">
-        <aapt:attr name="android:drawable">
-            <vector
-                android:width="48dp"
-                android:height="48dp"
-                android:viewportHeight="24.0"
-                android:viewportWidth="24.0">
-
-                <path
-                    android:fillColor="@color/colorPrimary"
-                    android:pathData="M9,3L5,6.99h3L8,14h2L10,6.99h3L9,3zM16,17.01L16,10h-2v7.01h-3L15,21l4,-3.99h-3z" />
-
-            </vector>
-        </aapt:attr>
-    </item>
+    <item
+        android:drawable="@drawable/ic_shortcut_export_all_teams"
+        android:gravity="center" />
 
 </layer-list>

@@ -21,4 +21,6 @@
     <dimen name="corner_radius">2dp</dimen>
 
     <dimen name="text_size_normal">16sp</dimen>
+
+    <dimen name="shortcut_inset">25%</dimen>
 </resources>
