@@ -96,8 +96,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 }
             }
             else -> when (preference.key) {
-                "link_account", "sign_out" -> preference.isVisible = isFullUser
-                "version" -> preference.summary = BuildConfig.VERSION_NAME
+                KEY_LINK_ACCOUNT, KEY_SIGN_OUT -> preference.isVisible = isFullUser
+                KEY_VERSION -> preference.summary = BuildConfig.VERSION_NAME
             }
         }
 
@@ -117,26 +117,26 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceClick(preference: Preference): Boolean {
         when (preference.key) {
-            "reset_tutorials" -> {
+            KEY_RESET_TUTORIALS -> {
                 clearPrefs()
                 activity.finish()
             }
-            "link_account" -> signIn(this)
-            "sign_out" -> AuthUI.getInstance()
+            KEY_LINK_ACCOUNT -> signIn(this)
+            KEY_SIGN_OUT -> AuthUI.getInstance()
                     .signOut(activity)
                     .addOnSuccessListener {
                         FirebaseAuth.getInstance().signInAnonymously()
                         FirebaseAppIndex.getInstance().removeAll()
                         activity.finish()
                     }
-            "release_notes" -> launchUrl(
+            KEY_RELEASE_NOTES -> launchUrl(
                     context, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
-            "version" -> {
+            KEY_VERSION -> {
                 (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
                         ClipData.newPlainText(getString(R.string.debug_info_name), debugInfo)
                 Toast.makeText(context, R.string.debug_info_copied, Toast.LENGTH_SHORT).show()
             }
-            "licenses" -> fragmentManager.beginTransaction()
+            KEY_LICENSES -> fragmentManager.beginTransaction()
                     .setCustomAnimations(
                             R.anim.fade_in,
                             R.anim.fade_out,
@@ -182,6 +182,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     companion object {
         const val TAG = "SettingsFragment"
+
+        private const val KEY_RESET_TUTORIALS = "reset_tutorials"
+        private const val KEY_LINK_ACCOUNT = "link_account"
+        private const val KEY_SIGN_OUT = "sign_out"
+        private const val KEY_RELEASE_NOTES = "release_notes"
+        private const val KEY_VERSION = "version"
+        private const val KEY_LICENSES = "licenses"
 
         fun newInstance() = SettingsFragment()
     }
