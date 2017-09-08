@@ -65,11 +65,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    aaptOptions {
-        // TODO remove once https://issuetracker.google.com/issues/64397629 is fixed
-        additionalParameters "--no-resource-deduping"
-    }
 }
 
 play {
