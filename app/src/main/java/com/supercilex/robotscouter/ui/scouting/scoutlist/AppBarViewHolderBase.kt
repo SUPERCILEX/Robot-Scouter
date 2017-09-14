@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
-import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.graphics.Bitmap
@@ -10,6 +9,7 @@ import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
@@ -35,7 +35,7 @@ import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 
-open class AppBarViewHolderBase(private val fragment: LifecycleFragment,
+open class AppBarViewHolderBase(private val fragment: Fragment,
                                 rootView: View,
                                 listener: LiveData<Team>,
                                 private val onScoutingReadyTask: Task<*>) :

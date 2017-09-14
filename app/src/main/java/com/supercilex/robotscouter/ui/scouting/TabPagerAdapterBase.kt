@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting
 
 import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.OnLifecycleEvent
@@ -9,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.text.TextUtils
@@ -26,7 +26,7 @@ import com.supercilex.robotscouter.util.data.getTabKeyBundle
 import com.supercilex.robotscouter.util.refWatcher
 import java.util.ArrayList
 
-abstract class TabPagerAdapterBase(protected val fragment: LifecycleFragment,
+abstract class TabPagerAdapterBase(protected val fragment: Fragment,
                                    private val tabLayout: TabLayout,
                                    keysRef: DatabaseReference,
                                    private val dataRef: DatabaseReference) :

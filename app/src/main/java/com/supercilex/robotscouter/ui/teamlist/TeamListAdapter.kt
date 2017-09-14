@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.arch.lifecycle.LifecycleFragment
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -26,7 +26,7 @@ import com.supercilex.robotscouter.util.ui.getAdapterItems
 import java.util.Collections
 
 class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
-                      private val fragment: LifecycleFragment,
+                      private val fragment: Fragment,
                       private val menuManager: TeamMenuHelper,
                       private val selectedTeamKeyListener: MutableLiveData<Team?>) :
         FirebaseRecyclerAdapter<Team, TeamViewHolder>(

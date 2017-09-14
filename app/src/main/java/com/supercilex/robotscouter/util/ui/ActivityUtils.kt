@@ -1,11 +1,9 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.app.Activity
-import android.arch.lifecycle.LifecycleFragment
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.Intent
 import android.os.Build
+import android.support.v4.app.Fragment
 import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
@@ -33,14 +31,7 @@ fun Activity.handleUpNavigation() {
     }
 }
 
-// TODO remove once arch components are merged into support lib
-abstract class LifecycleActivity : AppCompatActivity(), LifecycleRegistryOwner {
-    private val lifecycleRegistry = LifecycleRegistry(this)
-
-    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry
-}
-
-abstract class ActivityBase : LifecycleActivity() {
+abstract class ActivityBase : AppCompatActivity() {
     protected open val keyboardShortcutHandler: KeyboardShortcutHandler =
             object : KeyboardShortcutHandler() {
                 override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {}
@@ -67,7 +58,7 @@ abstract class ActivityBase : LifecycleActivity() {
     }
 }
 
-abstract class FragmentBase : LifecycleFragment() {
+abstract class FragmentBase : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         refWatcher.watch(this)

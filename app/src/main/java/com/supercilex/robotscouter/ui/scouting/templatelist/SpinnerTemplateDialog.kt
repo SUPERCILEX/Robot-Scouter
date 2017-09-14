@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -22,12 +23,11 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.SpinnerIt
 import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
 import com.supercilex.robotscouter.util.data.getRefBundle
 import com.supercilex.robotscouter.util.ui.CardListHelper
-import com.supercilex.robotscouter.util.ui.LifecycleDialogFragment
 import com.supercilex.robotscouter.util.ui.create
 import com.supercilex.robotscouter.util.ui.getHighestIntPriority
 import com.supercilex.robotscouter.util.ui.show
 
-class SpinnerTemplateDialog : LifecycleDialogFragment(), View.OnClickListener {
+class SpinnerTemplateDialog : DialogFragment(), View.OnClickListener {
     private val rootView: View by lazy {
         View.inflate(context, R.layout.scout_template_edit_spinner_items, null)
     }

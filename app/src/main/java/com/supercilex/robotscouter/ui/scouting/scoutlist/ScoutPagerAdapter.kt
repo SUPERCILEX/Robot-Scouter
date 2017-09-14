@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
-import android.arch.lifecycle.LifecycleFragment
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
@@ -11,7 +11,7 @@ import com.supercilex.robotscouter.util.data.model.deleteTeam
 import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
 import com.supercilex.robotscouter.util.isOffline
 
-class ScoutPagerAdapter(fragment: LifecycleFragment, tabLayout: TabLayout, private val team: Team) :
+class ScoutPagerAdapter(fragment: Fragment, tabLayout: TabLayout, private val team: Team) :
         TabPagerAdapterBase(fragment, tabLayout, getScoutIndicesRef(team.key), FIREBASE_SCOUTS) {
     override val editTabNameRes = R.string.edit_scout_name
 

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.os.Handler
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.FragmentActivity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,7 @@ import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import uk.co.samuelwall.materialtaptargetprompt.ActivityResourceFinder
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
-fun showAddTeamTutorial(helper: TutorialHelper, owner: LifecycleActivity) {
+fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
     helper.hasShownAddTeamTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt = MaterialTapTargetPrompt.Builder(object : ActivityResourceFinder(owner) {
             override fun getPromptParentView(): ViewGroup = owner.findViewById(R.id.root)
@@ -42,7 +43,7 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: LifecycleActivity) {
     })
 }
 
-fun showSignInTutorial(helper: TutorialHelper, owner: LifecycleActivity) = Handler().post {
+fun showSignInTutorial(helper: TutorialHelper, owner: FragmentActivity) = Handler().post {
     helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt: MaterialTapTargetPrompt?
             get() = MaterialTapTargetPrompt.Builder(owner, R.style.RobotScouter_Tutorial_Menu)

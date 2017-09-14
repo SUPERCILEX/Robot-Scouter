@@ -1,7 +1,5 @@
 package com.supercilex.robotscouter.util.ui
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -37,20 +35,13 @@ abstract class DialogFragmentBase : DialogFragment() {
     }
 }
 
-// TODO remove once arch components are merged into support lib
-abstract class LifecycleDialogFragment : DialogFragmentBase(), LifecycleRegistryOwner {
-    private val lifecycleRegistry = LifecycleRegistry(this)
-
-    override fun getLifecycle(): LifecycleRegistry = lifecycleRegistry
-}
-
 /**
  * Enables choosing whether or not to dismiss the dialog when the positive button is clicked.
  *
  * **Note:** for this class to work correctly, the dialog must be an [AlertDialog] and set a
  * [DialogInterface.OnShowListener].
  */
-abstract class ManualDismissDialog : LifecycleDialogFragment(), DialogInterface.OnShowListener {
+abstract class ManualDismissDialog : DialogFragment(), DialogInterface.OnShowListener {
     /** @return true if the dialog should be dismissed, false otherwise */
     protected abstract fun onAttemptDismiss(): Boolean
 
