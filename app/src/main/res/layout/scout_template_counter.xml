@@ -28,7 +28,6 @@
         android:layout_marginRight="@dimen/spacing_large"
         android:layout_gravity="center_vertical"
         android:hint="@string/unit"
-        android:inputType="textMultiLine|textCapSentences"
         tools:text="s" />
 
 </LinearLayout>
