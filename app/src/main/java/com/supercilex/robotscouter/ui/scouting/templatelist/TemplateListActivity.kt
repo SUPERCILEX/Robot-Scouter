@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.data.getTabKey
-import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.data.getTabId
+import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
 
 class TemplateListActivity : AppCompatActivity() {
@@ -22,7 +22,7 @@ class TemplateListActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .add(R.id.template_list,
-                         TemplateListFragment.newInstance(getTabKey(intent.extras)),
+                         TemplateListFragment.newInstance(getTabId(intent.extras)),
                          TemplateListFragment.TAG)
                     .commit()
         }
@@ -45,8 +45,8 @@ class TemplateListActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(templateKey: String? = null) =
+        fun createIntent(templateId: String? = null) =
                 Intent(RobotScouter.INSTANCE, TemplateListActivity::class.java)
-                        .apply { putExtras(getTabKeyBundle(templateKey)) }
+                        .apply { putExtras(getTabIdBundle(templateId)) }
     }
 }

@@ -11,7 +11,6 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.CounterValueDialog
-import com.supercilex.robotscouter.util.FIREBASE_VALUE
 
 open class CounterViewHolder(itemView: View) :
         MetricViewHolderBase<Metric.Number, Long, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
@@ -58,7 +57,7 @@ open class CounterViewHolder(itemView: View) :
     }
 
     override fun onLongClick(v: View): Boolean {
-        CounterValueDialog.show(manager, metric.ref.child(FIREBASE_VALUE), valueWithoutUnit)
+        CounterValueDialog.show(manager, metric.ref, valueWithoutUnit)
         return true
     }
 }

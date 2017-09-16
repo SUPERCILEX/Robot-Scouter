@@ -2,33 +2,30 @@ package com.supercilex.robotscouter.data.client.spreadsheet
 
 import android.Manifest
 import android.app.IntentService
-import android.arch.lifecycle.MutableLiveData
 import android.content.Intent
 import android.support.annotation.RequiresPermission
 import android.support.annotation.Size
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import com.firebase.ui.database.ObservableSnapshotArray
 import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.async
-import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
-import com.supercilex.robotscouter.util.data.TemplateNamesLiveData
+import com.supercilex.robotscouter.util.data.SCOUT_PARSER
+import com.supercilex.robotscouter.util.data.getFromServer
 import com.supercilex.robotscouter.util.data.getTeamListExtra
-import com.supercilex.robotscouter.util.data.model.Scouts
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
+import com.supercilex.robotscouter.util.data.model.getScouts
+import com.supercilex.robotscouter.util.data.model.getTemplateName
+import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.putExtra
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExportTeamsEvent
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import org.apache.poi.ss.formula.WorkbookEvaluator
 import pub.devrel.easypermissions.EasyPermissions
-import java.util.concurrent.TimeUnit
 
 class ExportService : IntentService(TAG) {
     init {
@@ -43,20 +40,11 @@ class ExportService : IntentService(TAG) {
 
         val teams = intent.getTeamListExtra()
         try {
-            // Force a refresh
-            Tasks.await(Scouts.getAll(teams), 5, TimeUnit.MINUTES)
-
-            notificationManager.onStartSecondLoad()
-
-            val scouts = Tasks.await(Scouts.getAll(teams), 5, TimeUnit.MINUTES)
-
-            if (scouts.size != teams.size) {
-                // Some error occurred, let's try again
-                startService(Intent(this, ExportService::class.java).putExtra(teams))
-                return
-            }
-
-            onHandleScouts(notificationManager, scouts)
+            val scoutTasks = teams.map { it.getScouts() }
+            Tasks.await(Tasks.whenAll(scoutTasks))
+            onHandleScouts(
+                    notificationManager,
+                    scoutTasks.withIndex().associate { teams[it.index] to it.value.result })
         } catch (e: Exception) {
             abortCritical(e, notificationManager)
         }
@@ -68,30 +56,22 @@ class ExportService : IntentService(TAG) {
 
         notificationManager.setNumOfTemplates(zippedScouts.size)
 
-        val keepAliveListener = object : ChangeEventListenerBase {}
-        val array = TemplateNamesLiveData.value!!
-        val namesListener =
-                MutableLiveData<ObservableSnapshotArray<String>>().also { it.postValue(array) }
-
-        array.addChangeEventListener(keepAliveListener)
-        Tasks.await(Tasks.whenAll(zippedScouts.map { (templateKey, scouts) ->
-            namesListener.observeOnDataChanged().observeOnce {
-                async {
-                    SpreadsheetExporter(scouts, notificationManager, fun(): String {
-                        if (isNativeTemplateType(templateKey)) {
-                            return resources.getStringArray(
-                                    R.array.new_template_options)[templateKey.toInt()]
-                        }
-
-                        for ((index, snapshot) in it.withIndex()) {
-                            if (snapshot.key == templateKey) return it.getObject(index)
-                        }
-
-                        return getString(R.string.title_unknown_template)
+        val templates = Tasks.await(getTemplatesQuery().getFromServer())
+                .map { SCOUT_PARSER.parseSnapshot(it) }
+        Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
+            async {
+                if (isNativeTemplateType(templateId)) {
+                    SpreadsheetExporter(scouts, notificationManager, resources.getStringArray(
+                            R.array.new_template_options)[templateId.toInt()]).export()
+                } else {
+                    SpreadsheetExporter(scouts, notificationManager, {
+                        val template = templates.find { it.id == templateId }
+                        template?.getTemplateName(templates.indexOf(template))
+                                ?: getString(R.string.title_unknown_template)
                     }.invoke()).export()
                 }
             }
-        }).addOnCompleteListener { array.removeChangeEventListener(keepAliveListener) })
+        }))
     }
 
     private fun zipScouts(map: Map<Team, List<Scout>>): Map<String, Map<Team, List<Scout>>> {
@@ -101,9 +81,9 @@ class ExportService : IntentService(TAG) {
         val zippedScouts = HashMap<String, HashMap<Team, ArrayList<Scout>>>()
         for ((team, scouts) in map) {
             for (scout in scouts) {
-                zippedScouts[scout.templateKey]?.also {
+                zippedScouts[scout.templateId]?.also {
                     it[team]?.also { it += scout } ?: initMap(it, team, scout)
-                } ?: zippedScouts.put(scout.templateKey, HashMap<Team, ArrayList<Scout>>()
+                } ?: zippedScouts.put(scout.templateId, HashMap<Team, ArrayList<Scout>>()
                         .also { initMap(it, team, scout) })
             }
         }

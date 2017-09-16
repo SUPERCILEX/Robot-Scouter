@@ -22,7 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService;
 import com.supercilex.robotscouter.data.model.Team;
@@ -35,7 +35,6 @@ import java.util.List;
 
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
 import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
-import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.getAdapterItems;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
@@ -51,7 +50,7 @@ public class TeamMenuHelper implements View.OnClickListener {
     private final RecyclerView mRecyclerView;
     private final DrawerLayout mDrawerLayout;
     private final Toolbar mToolbar;
-    private FirebaseRecyclerAdapter<Team, TeamViewHolder> mAdapter;
+    private FirestoreRecyclerAdapter<Team, TeamViewHolder> mAdapter;
 
     private boolean mIsMenuReady;
 
@@ -83,13 +82,13 @@ public class TeamMenuHelper implements View.OnClickListener {
                 mFragment.getView(), R.string.multiple_teams_selected, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.select_all, v -> {
                     mSelectedTeams.clear();
-                    mSelectedTeams.addAll(getAdapterItems(mAdapter));
+                    mSelectedTeams.addAll(mAdapter.getSnapshots());
                     updateState();
                     notifyItemsChanged();
                 });
     }
 
-    public void setAdapter(FirebaseRecyclerAdapter<Team, TeamViewHolder> adapter) {
+    public void setAdapter(FirestoreRecyclerAdapter<Team, TeamViewHolder> adapter) {
         mAdapter = adapter;
     }
 

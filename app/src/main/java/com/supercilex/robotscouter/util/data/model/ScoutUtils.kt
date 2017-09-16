@@ -1,120 +1,57 @@
 package com.supercilex.robotscouter.util.data.model
 
-import com.firebase.ui.database.SnapshotParser
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.GenericTypeIndicator
-import com.google.firebase.database.ValueEventListener
-import com.supercilex.robotscouter.data.model.BOOLEAN
-import com.supercilex.robotscouter.data.model.HEADER
-import com.supercilex.robotscouter.data.model.LIST
-import com.supercilex.robotscouter.data.model.Metric
-import com.supercilex.robotscouter.data.model.NUMBER
-import com.supercilex.robotscouter.data.model.STOPWATCH
-import com.supercilex.robotscouter.data.model.TEXT
+import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
-import com.supercilex.robotscouter.util.FIREBASE_METRICS
-import com.supercilex.robotscouter.util.FIREBASE_NAME
-import com.supercilex.robotscouter.util.FIREBASE_SCOUTS
-import com.supercilex.robotscouter.util.FIREBASE_SCOUT_INDICES
-import com.supercilex.robotscouter.util.FIREBASE_SELECTED_VALUE_KEY
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.FIREBASE_TYPE
-import com.supercilex.robotscouter.util.FIREBASE_UNIT
-import com.supercilex.robotscouter.util.FIREBASE_VALUE
+import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.FIRESTORE_METRICS
+import com.supercilex.robotscouter.util.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
-import com.supercilex.robotscouter.util.data.FirebaseCopier
-import com.supercilex.robotscouter.util.data.copySnapshots
+import com.supercilex.robotscouter.util.data.delete
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
-val METRIC_PARSER = SnapshotParser<Metric<*>> { snapshot ->
-    val type = snapshot.child(FIREBASE_TYPE).getValue(Int::class.java) ?:
-            // This appears to happen in the in-between state when the metric has been half copied.
-            return@SnapshotParser Metric.Header(
-                    "Sanity check failed. Please report: bit.ly/RSGitHub.").apply { ref = snapshot.ref }
+fun Team.getScoutRef() = ref.collection(FIRESTORE_SCOUTS)
 
-    val name = snapshot.child(FIREBASE_NAME).getValue(String::class.java) ?: ""
-    val value = snapshot.child(FIREBASE_VALUE)
+fun Team.getScoutMetricsRef(id: String) = getScoutRef().document(id).collection(FIRESTORE_METRICS)
 
-    when (type) {
-        HEADER -> Metric.Header(name)
-        BOOLEAN -> Metric.Boolean(name, value.getValue(Boolean::class.java)!!)
-        NUMBER -> {
-            Metric.Number(
-                    name,
-                    value.getValue(object : GenericTypeIndicator<Long>() {})!!,
-                    snapshot.child(FIREBASE_UNIT).getValue(String::class.java))
-        }
-        STOPWATCH -> {
-            Metric.Stopwatch(
-                    name,
-                    value.children.map { it.getValue(Long::class.java)!! })
-        }
-        TEXT -> Metric.Text(name, value.getValue(String::class.java))
-        LIST -> {
-            Metric.List(
-                    name,
-                    value.children.associateBy(
-                            { it.key }, { it.getValue(String::class.java) ?: "" }),
-                    snapshot.child(FIREBASE_SELECTED_VALUE_KEY).getValue(String::class.java))
-        }
-        else -> throw IllegalStateException("Unknown metric type: $type")
-    }.apply { ref = snapshot.ref }
-}
+fun Team.addScout(overrideId: String? = null): String {
+    val templateId = overrideId ?: templateId
 
-fun getScoutMetricsRef(key: String): DatabaseReference =
-        FIREBASE_SCOUTS.child(key).child(FIREBASE_METRICS)
+    val scoutRef = getScoutRef().document()
+    scoutRef.set(Scout(scoutRef.id, templateId))
 
-fun getScoutIndicesRef(teamKey: String): DatabaseReference = FIREBASE_SCOUT_INDICES.child(teamKey)
-
-fun Team.addScout(overrideKey: String? = null): String {
-    val templateKey = overrideKey ?: this.templateKey
-
-    val indexRef = getScoutIndicesRef(key).push()
-    indexRef.setValue(System.currentTimeMillis())
-    val scoutRef = getScoutMetricsRef(indexRef.key)
-    FIREBASE_SCOUTS.child(indexRef.key).child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
-
-    if (isNativeTemplateType(templateKey)) {
+    if (isNativeTemplateType(templateId)) {
         DefaultTemplatesLiveData.observeOnDataChanged().observeOnce {
-            copySnapshots(it[templateKey.toInt()], scoutRef)
+            it.find { it.id == templateId }!!.metrics.forEach {
+                getScoutMetricsRef(scoutRef.id).document(it.ref.id).set(it)
+            }
             Tasks.forResult(null)
         }
     } else {
-        FirebaseCopier(getTemplateMetricsRef(templateKey), scoutRef)
-                .performTransformation()
+        getTemplateRef(templateId).collection(FIRESTORE_METRICS).get()
+                .addOnSuccessListener(AsyncTaskExecutor, OnSuccessListener {
+                    it.documents.associate { it.id to it.data }.forEach {
+                        getScoutMetricsRef(scoutRef.id).document(it.key).set(it.value)
+                    }
+                })
     }
 
-    logAddScoutEvent(this, templateKey)
-    return indexRef.key
+    logAddScoutEvent(this, templateId)
+    return scoutRef.id
 }
 
-fun Team.deleteScout(scoutKey: String) {
-    FIREBASE_SCOUTS.child(scoutKey).removeValue()
-    getScoutIndicesRef(key).child(scoutKey).removeValue()
+fun Team.deleteScout(id: String) {
+    getScoutRef().document(id).delete()
+    getScoutMetricsRef(id).delete()
 }
 
-fun Team.deleteAllScouts(): Task<Nothing?> = TaskCompletionSource<Nothing?>().also {
-    getScoutIndicesRef(key).addListenerForSingleValueEvent(object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            for (keySnapshot in snapshot.children) {
-                FIREBASE_SCOUTS.child(keySnapshot.key).removeValue()
-                keySnapshot.ref.removeValue()
-            }
-            it.setResult(null)
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            it.setException(error.toException())
-            FirebaseCrash.report(error.toException())
-        }
-    })
-}.task
+fun Team.deleteAllScouts() {
+    ref.delete()
+    getScoutRef().delete().addOnSuccessListener {
+        for (snapshot in it) deleteScout(snapshot.id)
+    }
+}

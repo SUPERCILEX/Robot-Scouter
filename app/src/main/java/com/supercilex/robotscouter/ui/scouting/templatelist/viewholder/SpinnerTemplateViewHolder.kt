@@ -6,8 +6,6 @@ import android.widget.ArrayAdapter
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.SpinnerViewHolder
-import com.supercilex.robotscouter.ui.scouting.templatelist.SpinnerTemplateDialog
-import com.supercilex.robotscouter.util.FIREBASE_VALUE
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -20,7 +18,7 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
     override fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> {
         val items = LinkedHashMap<String, String>()
         items.put(
-                metric.ref.push().key,
+                metric.ref.parent.document().id,
                 itemView.context.getString(R.string.edit_spinner_items_short))
         items.putAll(listMetric.value)
         return ArrayAdapter(
@@ -32,9 +30,8 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
             disableAnimations()
             updateMetricName(name.text.toString())
 
-            SpinnerTemplateDialog.show(
-                    manager, metric.ref.child(FIREBASE_VALUE), metric.selectedValueKey)
-            spinner.setSelection(indexOfKey(metric.selectedValueKey))
+            spinner.setSelection(indexOfKey(metric.selectedValueId))
+            TODO("Rewrite spinner item stuff")
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id)
         }

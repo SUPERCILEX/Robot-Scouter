@@ -18,8 +18,9 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 
 private val NUMBER = "number"
-private val KEY = "key"
-private val TEMPLATE_KEY = "template-key"
+private val ID = "id"
+private val OWNERS = "owners"
+private val TEMPLATE_ID = "template-id"
 private val NAME = "name"
 private val MEDIA = "media"
 private val WEBSITE = "website"
@@ -72,8 +73,9 @@ private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with er
 
 fun parseRawBundle(args: Bundle) = Team(
         args.getString(NUMBER),
-        args.getString(KEY),
-        args.getString(TEMPLATE_KEY),
+        args.getString(ID),
+        args.getBundleAsMap(OWNERS),
+        args.getString(TEMPLATE_ID),
         args.getString(NAME),
         args.getString(MEDIA),
         args.getString(WEBSITE),
@@ -87,8 +89,9 @@ fun parseRawBundle(args: Bundle) = Team(
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun parseRawBundle(args: PersistableBundle) = Team(
         args.getString(NUMBER),
-        args.getString(KEY),
-        args.getString(TEMPLATE_KEY),
+        args.getString(ID),
+        args.getBundleAsMap(OWNERS),
+        args.getString(TEMPLATE_ID),
         args.getString(NAME),
         args.getString(MEDIA),
         args.getString(WEBSITE),
@@ -101,8 +104,9 @@ fun parseRawBundle(args: PersistableBundle) = Team(
 
 private fun toRawBundle(team: Team) = Bundle().apply {
     putString(NUMBER, team.number)
-    putString(KEY, team.key)
-    putString(TEMPLATE_KEY, team.templateKey)
+    putString(ID, team.id)
+    putBundle(OWNERS, Bundle().apply { team.owners.forEach { putLong(it.key, it.value) } })
+    putString(TEMPLATE_ID, team.templateId)
     putString(NAME, team.name)
     putString(MEDIA, team.media)
     putString(WEBSITE, team.website)
@@ -117,8 +121,11 @@ private fun toRawBundle(team: Team) = Bundle().apply {
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
     putString(NUMBER, team.number)
-    putString(KEY, team.key)
-    putString(TEMPLATE_KEY, team.templateKey)
+    putString(ID, team.id)
+    putPersistableBundle(OWNERS, PersistableBundle().apply {
+        team.owners.forEach { putLong(it.key, it.value) }
+    })
+    putString(TEMPLATE_ID, team.templateId)
     putString(NAME, team.name)
     putString(MEDIA, team.media)
     putString(WEBSITE, team.website)

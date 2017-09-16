@@ -67,14 +67,14 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
         })
 
         TeamsLiveData.observe(this, Observer { snapshots ->
-            adapter?.cleanup()
+            adapter?.stopListening()
             lifecycle.removeObserver(adapter)
             if (snapshots == null) {
                 rootView.findViewById<View>(R.id.no_content_hint).visibility = View.VISIBLE
                 selectTeam(null)
             } else {
                 adapter = TeamListAdapter(
-                        snapshots, this, menuHelper, holder.selectedTeamKeyListener)
+                        snapshots, this, menuHelper, holder.selectedTeamIdListener)
                 recyclerView.adapter = adapter
                 menuHelper.setAdapter(adapter)
                 menuHelper.restoreState(savedInstanceState); savedInstanceState?.clear()
@@ -107,8 +107,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
             menuHelper.exportTeams()
         } else {
             TeamsLiveData.observeOnDataChanged().observeOnce {
-                ExportService.exportAndShareSpreadSheet(
-                        this, permHandler, it.mapIndexed { index, _ -> it.getObject(index) })
+                ExportService.exportAndShareSpreadSheet(this, permHandler, it)
                 Tasks.forResult(null)
             }
         }

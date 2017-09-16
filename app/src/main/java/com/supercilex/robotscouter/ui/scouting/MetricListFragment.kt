@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.FragmentBase
 
@@ -15,7 +15,7 @@ abstract class MetricListFragment : FragmentBase() {
     protected val holder: MetricListHolder by lazy {
         ViewModelProviders.of(this).get(MetricListHolder::class.java)
     }
-    protected abstract val metricsRef: DatabaseReference
+    protected abstract val metricsRef: CollectionReference
 
     protected val recyclerView: RecyclerView by lazy {
         View.inflate(context, R.layout.fragment_metric_list, null) as RecyclerView

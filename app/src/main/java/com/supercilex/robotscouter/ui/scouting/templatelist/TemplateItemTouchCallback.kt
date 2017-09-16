@@ -6,38 +6,30 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.MotionEvent
 import android.view.View
-import com.firebase.ui.database.ChangeEventListener
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.firebase.ui.common.ChangeEventType
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.model.OrderedModel
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateViewHolder
+import com.supercilex.robotscouter.util.FIRESTORE_POSITION
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import java.util.Collections
 
-class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
+class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
     private val recyclerView: RecyclerView = rootView.findViewById(R.id.list)
-    lateinit var adapter: FirebaseRecyclerAdapter<T, *>
+    lateinit var adapter: FirestoreRecyclerAdapter<T, *>
     lateinit var itemTouchHelper: ItemTouchHelper
 
-    private val movableSnapshots = ArrayList<DataSnapshot>()
+    private val movableItems = ArrayList<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null
     private var scrollToPosition = RecyclerView.NO_POSITION
     private var isMovingItem = false
 
-    fun getItem(position: Int): T {
-        val snapshots = adapter.snapshots
-        return if (isMovingItem) {
-            snapshots.getObject(snapshots.indexOfFirst { it.ref == movableSnapshots[position].ref })
-        } else snapshots.getObject(position)
-    }
-
-    fun getRef(position: Int): DatabaseReference =
-            (if (isMovingItem) movableSnapshots[position] else adapter.snapshots[position]).ref
+    fun getItem(position: Int): T =
+            if (isMovingItem) movableItems[position] else adapter.snapshots[position]
 
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
         viewHolder.itemView.findViewById<View>(R.id.reorder)
@@ -61,18 +53,13 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
         scrollToPosition = position
     }
 
-    fun onChildChanged(type: ChangeEventListener.EventType,
-                       index: Int,
-                       injectedSuperCall: () -> Unit) {
+    fun onChildChanged(type: ChangeEventType, index: Int, injectedSuperCall: () -> Unit) {
         if (isMovingItem) {
             if (run isCatchingUpOnMove@ {
-                if (type == ChangeEventListener.EventType.MOVED) return@isCatchingUpOnMove true
+                if (type == ChangeEventType.MOVED) return@isCatchingUpOnMove true
                 else {
-                    val updatedSnapshot = adapter.snapshots[index]
-                    val oldSnapshot = movableSnapshots.find { it.ref == updatedSnapshot.ref }!!
-
-                    if (type == ChangeEventListener.EventType.CHANGED
-                            && oldSnapshot.value == updatedSnapshot.value) {
+                    if (type == ChangeEventType.CHANGED
+                            && movableItems.contains(adapter.snapshots[index])) {
                         return@isCatchingUpOnMove true
                     }
                 }
@@ -80,7 +67,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
                 return@isCatchingUpOnMove false
             }) {
                 injectedSuperCall()
-                if (adapter.snapshots.map { it.value } == movableSnapshots.map { it.value }) {
+                if (adapter.snapshots == movableItems) {
                     ViewCompat.postOnAnimationDelayed(
                             recyclerView,
                             { cleanupMove() },
@@ -92,7 +79,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
                 adapter.notifyDataSetChanged()
             }
             return
-        } else if (type == ChangeEventListener.EventType.ADDED && index == scrollToPosition) {
+        } else if (type == ChangeEventType.ADDED && index == scrollToPosition) {
             recyclerView.smoothScrollToPosition(scrollToPosition)
         }
         injectedSuperCall()
@@ -104,36 +91,40 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
         val fromPos = viewHolder.adapterPosition
         val toPos = target.adapterPosition
 
-        if (!isMovingItem) movableSnapshots.addAll(adapter.snapshots)
+        if (!isMovingItem) movableItems.addAll(adapter.snapshots)
         isMovingItem = true
 
         if (fromPos < toPos) {
-            for (i in fromPos until toPos) Collections.swap(movableSnapshots, i, i + 1)
+            for (i in fromPos until toPos) swapDown(i)
         } else {
-            for (i in fromPos downTo toPos + 1) Collections.swap(movableSnapshots, i, i - 1)
+            for (i in fromPos downTo toPos + 1) swapUp(i)
         }
         adapter.notifyItemMoved(fromPos, toPos)
 
         return true
     }
 
+    private fun swapDown(i: Int) = swap(i, i + 1)
+
+    private fun swapUp(i: Int) = swap(i, i - 1)
+
+    private fun swap(i: Int, j: Int) {
+        movableItems[i].position = j
+        movableItems[j].position = i
+        Collections.swap(movableItems, i, j)
+    }
+
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val deletedRef: DatabaseReference = adapter.getRef(viewHolder.adapterPosition)
+        val deletedRef = adapter.snapshots.getSnapshot(viewHolder.adapterPosition).reference
 
         viewHolder.itemView.clearFocus() // Needed to prevent the item from being re-added
-        deletedRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                deletedRef.removeValue()
+        deletedRef.get().addOnSuccessListener { snapshot: DocumentSnapshot ->
+            deletedRef.delete()
 
-                Snackbar.make(rootView, R.string.deleted, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.undo) {
-                            deletedRef.setValue(snapshot.value, snapshot.priority)
-                        }
-                        .show()
-            }
-
-            override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
-        })
+            Snackbar.make(rootView, R.string.deleted, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo) { deletedRef.set(snapshot.data) }
+                    .show()
+        }
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
@@ -141,7 +132,11 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
         if (isMovingItem) {
             animatorPointer = recyclerView.itemAnimator
             recyclerView.itemAnimator = null
-            for ((i, snapshot) in movableSnapshots.withIndex()) snapshot.ref.setPriority(i)
+            firestoreBatch {
+                for (item in movableItems) {
+                    update(item.ref, FIRESTORE_POSITION, item.position)
+                }
+            }
         }
 
         // We can't directly update the background because the header metric needs to update its padding
@@ -150,7 +145,7 @@ class TemplateItemTouchCallback<T>(private val rootView: View) : ItemTouchHelper
 
     private fun cleanupMove() {
         isMovingItem = false
-        movableSnapshots.clear()
+        movableItems.clear()
         animatorPointer?.let { recyclerView.itemAnimator = it }
         animatorPointer = null
     }

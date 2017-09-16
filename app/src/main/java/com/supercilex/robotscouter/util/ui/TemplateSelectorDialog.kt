@@ -21,22 +21,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.firebase.ui.database.ChangeEventListener
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.google.firebase.database.DataSnapshot
+import com.firebase.ui.common.ChangeEventType
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.MATCH
 import com.supercilex.robotscouter.data.model.PIT
-import com.supercilex.robotscouter.util.data.defaultTemplateKey
-import com.supercilex.robotscouter.util.data.model.TabNamesHolder
+import com.supercilex.robotscouter.data.model.Scout
+import com.supercilex.robotscouter.util.data.defaultTemplateId
+import com.supercilex.robotscouter.util.data.model.ScoutsHolder
+import com.supercilex.robotscouter.util.data.model.getTemplateName
+import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 
 abstract class TemplateSelectorDialog : DialogFragment() {
     @get:StringRes
     protected abstract val title: Int
 
-    protected open val holder: TabNamesHolder by lazy {
-        ViewModelProviders.of(this).get(TabNamesHolder::class.java)
+    private val holder: ScoutsHolder by lazy {
+        ViewModelProviders.of(this).get(ScoutsHolder::class.java)
     }
 
     protected val rootView: LinearLayout by lazy {
@@ -45,41 +49,45 @@ abstract class TemplateSelectorDialog : DialogFragment() {
     private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
     private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
     private val adapter by lazy {
-        object : FirebaseRecyclerAdapter<String, ItemViewHolder>(
-                holder.namesListener,
-                R.layout.select_dialog_item_material,
-                ItemViewHolder::class.java,
-                this) {
-            override fun getItem(position: Int): String = when (position) {
-                MATCH, PIT -> resources.getStringArray(R.array.new_template_options)[position]
+        val options = FirestoreRecyclerOptions.Builder<Scout>()
+                .setSnapshotArray(holder.scouts)
+                .setLifecycleOwner(this)
+                .build()
+
+        object : FirestoreRecyclerAdapter<Scout, ItemViewHolder>(options) {
+            override fun getItem(position: Int): Scout = when (position) {
+                MATCH, PIT -> Scout(
+                        position.toString(),
+                        position.toString(),
+                        resources.getStringArray(R.array.new_template_options)[position])
                 else -> super.getItem(position - EXTRA_ITEMS)
             }
 
             override fun getItemCount() = super.getItemCount() + EXTRA_ITEMS
 
-            override fun onChildChanged(type: ChangeEventListener.EventType,
-                                        snapshot: DataSnapshot,
-                                        index: Int,
+            override fun onChildChanged(type: ChangeEventType,
+                                        snapshot: DocumentSnapshot,
+                                        newIndex: Int,
                                         oldIndex: Int) = super.onChildChanged(
-                    type, snapshot, index + EXTRA_ITEMS, oldIndex + EXTRA_ITEMS)
+                    type, snapshot, newIndex + EXTRA_ITEMS, oldIndex + EXTRA_ITEMS)
 
             override fun onDataChanged() = progress.hide()
 
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder =
-                    ItemViewHolder(
-                            LayoutInflater.from(parent.context).inflate(viewType, parent, false))
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                    ItemViewHolder(LayoutInflater.from(parent.context).inflate(
+                            R.layout.select_dialog_item_material, parent, false))
 
-            override fun populateViewHolder(holder: ItemViewHolder, text: String, position: Int) =
-                    holder.bind(this@TemplateSelectorDialog, text, when (position) {
+            override fun onBindViewHolder(holder: ItemViewHolder, position: Int, scout: Scout) =
+                    holder.bind(this@TemplateSelectorDialog, scout, when (position) {
                         MATCH, PIT -> position.toString()
-                        else -> getRef(position - EXTRA_ITEMS).key
+                        else -> snapshots[position - EXTRA_ITEMS].id
                     })
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        holder.init(null)
+        holder.init(getTemplatesQuery())
         progress.show()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -128,21 +136,21 @@ abstract class TemplateSelectorDialog : DialogFragment() {
             .setNegativeButton(android.R.string.cancel, null)
             .create()
 
-    protected abstract fun onItemSelected(key: String)
+    protected abstract fun onItemSelected(id: String)
 
     private class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
             View.OnClickListener {
         private lateinit var listener: TemplateSelectorDialog
-        private lateinit var key: String
+        private lateinit var id: String
 
-        fun bind(listener: TemplateSelectorDialog, text: String, key: String) {
+        fun bind(listener: TemplateSelectorDialog, scout: Scout, id: String) {
             this.listener = listener
-            this.key = key
+            this.id = id
 
             itemView as TextView
-            itemView.text = text
+            itemView.text = scout.getTemplateName(adapterPosition - EXTRA_ITEMS)
             itemView.setOnClickListener(this)
-            if (key == defaultTemplateKey) {
+            if (id == defaultTemplateId) {
                 itemView.compoundDrawablePadding = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
                         itemView.resources.getDimension(R.dimen.spacing_mini),
@@ -158,7 +166,7 @@ abstract class TemplateSelectorDialog : DialogFragment() {
         }
 
         override fun onClick(v: View) {
-            listener.onItemSelected(key)
+            listener.onItemSelected(id)
             listener.dismiss()
         }
     }

@@ -23,9 +23,9 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.TAB_KEY
-import com.supercilex.robotscouter.util.data.defaultTemplateKey
-import com.supercilex.robotscouter.util.data.getTabKey
-import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.data.defaultTemplateId
+import com.supercilex.robotscouter.util.data.getTabId
+import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.data.model.getTemplateLink
 import com.supercilex.robotscouter.util.logViewTemplateEvent
@@ -40,9 +40,13 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
         val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
         val adapter = object : TemplatePagerAdapter(this, tabLayout) {
-            override fun onChanged(newKeys: List<String>?) {
-                super.onChanged(newKeys)
-                if (newKeys!!.isEmpty()) fam.hideMenuButton(true) else fam.showMenuButton(true)
+            override fun onDataChanged() {
+                super.onDataChanged()
+                if (holder.scouts.isEmpty()) {
+                    fam.hideMenuButton(true)
+                } else {
+                    fam.showMenuButton(true)
+                }
             }
 
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -50,7 +54,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
                 fam.close(true)
                 fam.showMenuButton(true)
 
-                currentTabKey?.let {
+                currentTabId?.let {
                     logViewTemplateEvent(it)
                     FirebaseUserActions.getInstance().end(
                             Actions.newView(tab.text?.toString()!!, getTemplateLink(it)))
@@ -86,10 +90,13 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
         initFab(R.id.add_spinner, R.drawable.ic_list_white_24dp)
 
         fam.hideMenuButton(false)
-        pagerAdapter
-        handleArgs(arguments, savedInstanceState)
 
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        pagerAdapter
+        handleArgs(arguments, savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -98,22 +105,22 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     }
 
     fun handleArgs(args: Bundle, savedInstanceState: Bundle? = null) {
-        val templateKey = getTabKey(args)
-        if (templateKey != null) {
-            pagerAdapter.currentTabKey = if (isNativeTemplateType(templateKey)) {
+        val templateId = getTabId(args)
+        if (templateId != null) {
+            pagerAdapter.currentTabId = if (isNativeTemplateType(templateId)) {
                 Snackbar.make(rootView,
                               R.string.title_template_added_as_default,
                               Snackbar.LENGTH_LONG)
                         .show()
 
-                addTemplate(templateKey.toInt()).also { defaultTemplateKey = it }
+                addTemplate(templateId.toInt()).also { defaultTemplateId = it }
             } else {
-                templateKey
+                templateId
             }
 
             args.remove(TAB_KEY)
         } else {
-            savedInstanceState?.let { pagerAdapter.currentTabKey = getTabKey(it) }
+            savedInstanceState?.let { pagerAdapter.currentTabId = getTabId(it) }
         }
     }
 
@@ -133,7 +140,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
         when (item.itemId) {
             R.id.action_share -> TemplateSharer.shareTemplate(
                     activity,
-                    pagerAdapter.currentTabKey!!,
+                    pagerAdapter.currentTabId!!,
                     pagerAdapter.currentTab?.text?.toString()!!)
             R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             else -> return false
@@ -144,22 +151,22 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     override fun onClick(v: View) {
         childFragmentManager.fragments
                 .filterIsInstance<TemplateFragment>()
-                .filter { pagerAdapter.currentTabKey == it.metricsRef.parent.key }
+                .filter { pagerAdapter.currentTabId == it.metricsRef.parent.id }
                 .also {
                     if (it.size > SINGLE_ITEM) {
                         throw IllegalStateException(
-                                "Multiple fragments found with key ${it[0].metricsRef.parent.key}")
+                                "Multiple fragments found with id ${it[0].metricsRef.parent.id}")
                     }
 
                     it[0].onClick(v)
                 }
     }
 
-    fun onTemplateCreated(key: String) {
-        pagerAdapter.currentTabKey = key
+    fun onTemplateCreated(id: String) {
+        pagerAdapter.currentTabId = id
 
         Snackbar.make(rootView, R.string.title_template_added, Snackbar.LENGTH_LONG)
-                .setAction(R.string.title_set_default_template) { defaultTemplateKey = key }
+                .setAction(R.string.title_set_default_template) { defaultTemplateId = id }
                 .show()
     }
 
@@ -173,7 +180,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
     companion object {
         const val TAG = "TemplateListFragment"
 
-        fun newInstance(templateKey: String?) =
-                TemplateListFragment().apply { arguments = getTabKeyBundle(templateKey) }
+        fun newInstance(templateId: String?) =
+                TemplateListFragment().apply { arguments = getTabIdBundle(templateId) }
     }
 }

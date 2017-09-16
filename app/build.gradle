@@ -74,7 +74,7 @@ play {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
 
@@ -96,16 +96,16 @@ dependencies {
 
     // Firebase UI
     // Auth
-//    implementation 'com.firebaseui:firebase-ui-auth:2.0.0'
+//    implementation 'com.firebaseui:firebase-ui-auth:3.0.0'
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
     implementation("com.twitter.sdk.android:twitter-core:3.0.0@aar") { transitive = true }
     // Database
-//    implementation 'com.firebaseui:firebase-ui-database:2.0.0'
-    implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-database:$firebaseUiVersion"
-    implementation "com.google.firebase:firebase-database:$playServicesVersion"
+//    implementation 'com.firebaseui:firebase-ui-firestore:3.0.0'
+//    implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion" TODO
+    implementation "com.google.firebase:firebase-firestore:$playServicesVersion"
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.1'
 

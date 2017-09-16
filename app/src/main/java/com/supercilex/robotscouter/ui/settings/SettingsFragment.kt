@@ -30,10 +30,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.User
-import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.RC_SIGN_IN
 import com.supercilex.robotscouter.util.data.clearPrefs
-import com.supercilex.robotscouter.util.data.defaultTemplateKey
+import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.debugInfo
@@ -55,7 +55,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (preference.key == FIREBASE_PREF_DEFAULT_TEMPLATE_KEY) {
+        if (preference.key == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID) {
             SettingsTemplateSelectorDialog.show(childFragmentManager)
         } else {
             super.onDisplayPreferenceDialog(preference)
@@ -150,10 +150,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
         return true
     }
 
-    override fun onTemplateSelected(key: String) {
-        defaultTemplateKey = key
-        (preferenceScreen.findPreference(FIREBASE_PREF_DEFAULT_TEMPLATE_KEY) as ListPreference)
-                .value = key
+    override fun onTemplateSelected(id: String) {
+        defaultTemplateId = id
+        (preferenceScreen.findPreference(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID) as ListPreference)
+                .value = id
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

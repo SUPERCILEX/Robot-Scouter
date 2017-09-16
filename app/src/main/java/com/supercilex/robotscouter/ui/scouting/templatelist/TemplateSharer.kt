@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.model.getTemplateLink
 import com.supercilex.robotscouter.util.isOffline
@@ -17,15 +18,15 @@ import com.supercilex.robotscouter.util.logShareTemplateEvent
 
 class TemplateSharer private constructor(private val activity: FragmentActivity) :
         CachingSharer(activity) {
-    fun share(templateKey: String, templateName: String) {
+    fun share(templateId: String, templateName: String) {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
             getInvitationIntent(
-                    getTemplateLink(templateKey),
+                    getTemplateLink(templateId),
                     templateName,
                     it.result.format(activity.getString(R.string.cta_share_template, templateName)))
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
-        }.addOnFailureListener {
+        }.addOnFailureListener(CrashLogger).addOnFailureListener {
             FirebaseCrash.report(it)
             Snackbar.make(activity.findViewById<View>(R.id.root),
                           R.string.fui_general_error,
@@ -51,7 +52,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
          * @return true if a share intent was launched, false otherwise
          */
         fun shareTemplate(activity: FragmentActivity,
-                          templateKey: String,
+                          templateId: String,
                           templateName: String): Boolean {
             if (isOffline()) {
                 Snackbar.make(activity.findViewById<View>(R.id.root),
@@ -61,8 +62,9 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
                 return false
             }
 
-            TemplateSharer(activity).share(templateKey, templateName)
-            logShareTemplateEvent(templateKey)
+            TODO("Implement sharing")
+            TemplateSharer(activity).share(templateId, templateName)
+            logShareTemplateEvent(templateId)
             return true
         }
     }

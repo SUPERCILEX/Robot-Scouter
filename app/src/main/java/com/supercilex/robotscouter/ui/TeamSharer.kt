@@ -12,11 +12,12 @@ import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
 import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.model.TeamCache
-import com.supercilex.robotscouter.util.data.model.linkKeyNumberPair
+import com.supercilex.robotscouter.util.data.model.linkIdNumberPair
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logShareTeamsEvent
 
@@ -39,7 +40,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
             val deepLinkBuilder = StringBuilder("$TEAMS_LINK_BASE?")
             for (team in cache.teams) {
-                deepLinkBuilder.append(team.linkKeyNumberPair)
+                deepLinkBuilder.append(team.linkIdNumberPair)
             }
 
             getInvitationIntent(
@@ -47,7 +48,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                     it.result.format(cache.shareCta, cache.teams[0].media))
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
-        }.addOnFailureListener {
+        }.addOnFailureListener(CrashLogger).addOnFailureListener {
             FirebaseCrash.report(it)
             Snackbar.make(activity.findViewById<View>(R.id.root),
                           R.string.fui_general_error,
@@ -101,6 +102,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
             }
             if (teams.isEmpty()) return false
 
+            TODO("Implement sharing")
             TeamSharer(activity, teams)
             logShareTeamsEvent(teams)
             return true

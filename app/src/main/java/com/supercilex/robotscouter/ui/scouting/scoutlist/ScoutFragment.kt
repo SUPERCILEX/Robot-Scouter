@@ -4,20 +4,21 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import com.google.firebase.database.DatabaseReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
-import com.supercilex.robotscouter.util.data.getTabKey
-import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.data.getTabId
+import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.deleteScout
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.toBundle
 
 class ScoutFragment : MetricListFragment() {
-    override val metricsRef: DatabaseReference by lazy { getScoutMetricsRef(getTabKey(arguments)!!) }
+    private val team by lazy { arguments.getTeam() }
+    private val scoutId by lazy { getTabId(arguments)!! }
+    override val metricsRef by lazy { team.getScoutMetricsRef(scoutId) }
     override val adapter: MetricListAdapterBase by lazy {
         ScoutAdapter(holder.metrics, childFragmentManager, recyclerView, this)
     }
@@ -28,14 +29,13 @@ class ScoutFragment : MetricListFragment() {
             toolbar.inflateMenu(R.menu.scout_options)
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
-        arguments.getTeam().deleteScout(metricsRef.parent.key)
-        metricsRef.parent.removeValue()
+        team.deleteScout(scoutId)
         true
     } else super.onOptionsItemSelected(item)
 
     companion object {
-        fun newInstance(scoutKey: String, team: Team) = ScoutFragment().apply {
-            arguments = getTabKeyBundle(scoutKey).apply { putAll(team.toBundle()) }
+        fun newInstance(scoutId: String, team: Team) = ScoutFragment().apply {
+            arguments = getTabIdBundle(scoutId).apply { putAll(team.toBundle()) }
         }
     }
 }

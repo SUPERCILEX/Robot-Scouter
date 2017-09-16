@@ -13,7 +13,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.R
@@ -21,20 +20,15 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
-import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.data.TemplateIndicesLiveData
 import com.supercilex.robotscouter.util.data.getScoutBundle
-import com.supercilex.robotscouter.util.data.getTabKey
+import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.viewAction
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
@@ -54,14 +48,14 @@ abstract class ScoutListFragmentBase : FragmentBase(),
     protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null
 
-    private val scoutKey: String? get() {
-        var scoutKey: String? = pagerAdapter?.currentTabKey
-        if (scoutKey == null && savedState != null) scoutKey = getTabKey(savedState!!)
-        if (scoutKey == null) scoutKey = getTabKey(arguments)
-        return scoutKey
+    private val scoutId: String? get() {
+        var scoutId: String? = pagerAdapter?.currentTabId
+        if (scoutId == null && savedState != null) scoutId = getTabId(savedState!!)
+        if (scoutId == null) scoutId = getTabId(arguments)
+        return scoutId
     }
     protected val bundle: Bundle
-        get() = getScoutBundle(team, arguments.getBoolean(KEY_ADD_SCOUT), scoutKey = scoutKey)
+        get() = getScoutBundle(team, arguments.getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,21 +130,7 @@ abstract class ScoutListFragmentBase : FragmentBase(),
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
             R.id.action_edit_template -> {
-                val templateKey = team.templateKey
-                TemplateIndicesLiveData.observeOnDataChanged().observeOnce {
-                    async {
-                        it.map { it.key }.contains(templateKey)
-                    }.addOnSuccessListener { ownsTemplate ->
-                        if (ownsTemplate) {
-                            startActivity(TemplateListActivity.createIntent(templateKey))
-                        } else {
-                            Toast.makeText(context,
-                                           R.string.error_template_access_denied,
-                                           Toast.LENGTH_LONG)
-                                    .show()
-                        }
-                    }
-                }
+                TODO("Test getFromServer")
             }
             R.id.action_edit_team_details -> showTeamDetails()
             else -> return false
@@ -166,17 +146,17 @@ abstract class ScoutListFragmentBase : FragmentBase(),
         ScoutTemplateSelectorDialog.show(childFragmentManager)
     }
 
-    fun addScout(key: String? = null) {
-        pagerAdapter!!.currentTabKey = team.addScout(key)
+    fun addScout(id: String? = null) {
+        pagerAdapter!!.currentTabId = team.addScout(id)
     }
 
-    override fun onTemplateSelected(key: String) = addScout(key)
+    override fun onTemplateSelected(id: String) = addScout(id)
 
     private fun initScoutList() {
         val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
         val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
         pagerAdapter = ScoutPagerAdapter(this, tabLayout, team)
-        pagerAdapter!!.currentTabKey = scoutKey
+        pagerAdapter!!.currentTabId = scoutId
 
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)

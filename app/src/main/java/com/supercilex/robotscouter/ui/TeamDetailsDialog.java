@@ -71,8 +71,9 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         TeamDetailsDialog dialog = new TeamDetailsDialog();
         dialog.setArguments(ArgUtilsKt.toBundle(new Team(
                 team.getNumber(),
-                team.getKey(),
-                team.getTemplateKey(),
+                team.getId(),
+                team.getOwners(),
+                team.getTemplateId(),
                 team.getName(),
                 team.getMedia(),
                 team.getWebsite(),
@@ -255,7 +256,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 mTeam.setWebsite(website);
             }
 
-            TeamUtilsKt.forceUpdateTeam(mTeam);
+            TeamUtilsKt.forceUpdate(mTeam);
             TeamUtilsKt.forceRefresh(mTeam);
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed

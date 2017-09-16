@@ -7,9 +7,9 @@ import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 class ScoutTemplateSelectorDialog : AddScoutTemplateSelectorDialog() {
     override val title = R.string.title_add_scout_template_selector
 
-    override fun onItemSelected(key: String) {
-        super.onItemSelected(key)
-        (parentFragment as TemplateSelectionListener).onTemplateSelected(key)
+    override fun onItemSelected(id: String) {
+        super.onItemSelected(id)
+        (parentFragment as TemplateSelectionListener).onTemplateSelected(id)
     }
 
     companion object {

@@ -12,5 +12,5 @@ interface TeamSelectionListener {
 }
 
 interface TemplateSelectionListener {
-    fun onTemplateSelected(key: String)
+    fun onTemplateSelected(id: String)
 }

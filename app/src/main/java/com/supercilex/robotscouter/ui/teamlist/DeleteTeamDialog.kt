@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.getTeamList
-import com.supercilex.robotscouter.util.data.model.deleteTeam
+import com.supercilex.robotscouter.util.data.model.delete
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
@@ -44,7 +44,7 @@ class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        for (team: Team in teams) team.deleteTeam()
+        for (team: Team in teams) team.delete()
     }
 
     companion object {

@@ -4,23 +4,31 @@ import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
+import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.FIREBASE_TEAMS
-import com.supercilex.robotscouter.util.FIREBASE_TEAM_INDICES
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
-import com.supercilex.robotscouter.util.KEY_QUERY
+import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
+import com.supercilex.robotscouter.util.FIRESTORE_POSITION
+import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
+import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
+import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.ID_QUERY
 import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
+import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.data.METRIC_PARSER
+import com.supercilex.robotscouter.util.data.SCOUT_PARSER
+import com.supercilex.robotscouter.util.data.getFromServer
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.uid
@@ -31,9 +39,11 @@ import java.util.concurrent.TimeUnit
 
 private const val FRESHNESS_DAYS = "team_freshness"
 
-val teamIndicesRef: DatabaseReference get() = FIREBASE_TEAM_INDICES.child(uid!!)
+val teamsQuery get() = "$FIRESTORE_OWNERS.${uid!!}".let {
+    FIRESTORE_TEAMS.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
+}
 
-val Team.ref: DatabaseReference get() = FIREBASE_TEAMS.child(key)
+val Team.ref: DocumentReference get() = FIRESTORE_TEAMS.document(id)
 
 fun getTeamNames(teams: List<Team>): String {
     val sortedTeams = ArrayList(teams)
@@ -60,13 +70,9 @@ fun getTeamNames(teams: List<Team>): String {
     }
 }
 
-fun Team.addTeam() {
-    val index = teamIndicesRef.push()
-    key = index.key
-    val number = numberAsLong
-    index.setValue(number, number)
-
-    forceUpdateTeam()
+fun Team.add() {
+    id = FIRESTORE_TEAMS.document().id
+    forceUpdate()
     forceRefresh()
 
     FirebaseUserActions.getInstance().end(
@@ -76,10 +82,10 @@ fun Team.addTeam() {
                     .build())
 }
 
-fun Team.updateTeam(newTeam: Team) {
+fun Team.update(newTeam: Team) {
     checkForMatchingTeamDetails(this, newTeam)
     if (this == newTeam) {
-        ref.child(FIREBASE_TIMESTAMP).setValue(getCurrentTimestamp())
+        ref.update(FIRESTORE_TIMESTAMP, getCurrentTimestamp())
         return
     }
 
@@ -89,7 +95,7 @@ fun Team.updateTeam(newTeam: Team) {
         mediaYear = newTeam.mediaYear
     }
     if (!hasCustomWebsite) website = newTeam.website
-    forceUpdateTeam()
+    forceUpdate()
 }
 
 private fun checkForMatchingTeamDetails(team: Team, newTeam: Team) {
@@ -99,25 +105,25 @@ private fun checkForMatchingTeamDetails(team: Team, newTeam: Team) {
 
 }
 
-fun Team.updateTemplateKey(key: String) {
-    if (key == templateKey) return
+fun Team.updateTemplateId(id: String) {
+    if (id == templateId) return
 
-    templateKey = key
-    ref.child(FIREBASE_TEMPLATE_KEY).setValue(templateKey)
+    templateId = id
+    ref.update(FIRESTORE_TEMPLATE_ID, templateId)
 }
 
 fun Team.updateMedia(newTeam: Team) {
     media = newTeam.media
     shouldUploadMediaToTba = false
-    forceUpdateTeam()
+    forceUpdate()
 }
 
-fun Team.forceUpdateTeam() {
-    ref.setValue(this)
+fun Team.forceUpdate() {
+    ref.set(this)
     FirebaseAppIndex.getInstance().update(indexable)
 }
 
-fun Team.forceRefresh(): Task<Void?> = ref.child(FIREBASE_TIMESTAMP).removeValue()
+fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, FieldValue.delete())
 
 fun Team.copyMediaInfo(newTeam: Team) {
     media = newTeam.media
@@ -125,12 +131,10 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = Calendar.getInstance().get(Calendar.YEAR)
 }
 
-fun Team.deleteTeam() {
-    deleteAllScouts().addOnSuccessListener {
-        ref.removeValue()
-        teamIndicesRef.child(key).removeValue()
-        FirebaseAppIndex.getInstance().remove(deepLink)
-    }
+fun Team.delete() {
+    deleteAllScouts()
+    ref.delete()
+    FirebaseAppIndex.getInstance().remove(deepLink)
 }
 
 fun Team.fetchLatestData() {
@@ -139,6 +143,18 @@ fun Team.fetchLatestData() {
         val freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS)
 
         if (differenceDays >= freshness) startDownloadTeamDataJob(this)
+    }
+}
+
+fun Team.getScouts(): Task<List<Scout>> = async {
+    val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).getFromServer())
+            .map { SCOUT_PARSER.parseSnapshot(it) }
+    val metricTasks =
+            scouts.map { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getFromServer() }
+    Tasks.await(Tasks.whenAll(metricTasks))
+
+    scouts.mapIndexed { index, scout ->
+        scout.copy(metrics = metricTasks[index].result.map { METRIC_PARSER.parseSnapshot(it) })
     }
 }
 
@@ -157,8 +173,8 @@ val Team.indexable: Indexable get() = Indexables.digitalDocumentBuilder()
         .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
         .build()
 
-private val Team.deepLink: String get() = "$TEAMS_LINK_BASE?$linkKeyNumberPair"
+private val Team.deepLink: String get() = "$TEAMS_LINK_BASE?$linkIdNumberPair"
 
-val Team.linkKeyNumberPair: String get() = "&$KEY_QUERY=$key:$number"
+val Team.linkIdNumberPair: String get() = "&$ID_QUERY=$id:$number"
 
 val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)

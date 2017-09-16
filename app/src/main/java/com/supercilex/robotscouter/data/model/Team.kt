@@ -1,20 +1,25 @@
 package com.supercilex.robotscouter.data.model
 
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.Keep
 import android.support.annotation.RestrictTo
 import android.text.TextUtils
-import com.google.firebase.database.Exclude
-import com.google.firebase.database.PropertyName
-import com.supercilex.robotscouter.util.FIREBASE_TIMESTAMP
-import com.supercilex.robotscouter.util.data.defaultTemplateKey
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.PropertyName
+import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.readBooleanCompat
+import com.supercilex.robotscouter.util.data.readBundleAsMap
 import com.supercilex.robotscouter.util.data.writeBooleanCompat
+import com.supercilex.robotscouter.util.uid
 
 data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: String,
-                @Exclude @get:Exclude @set:Exclude var key: String,
-                @Exclude @get:Keep @set:Keep var templateKey: String = defaultTemplateKey,
+                @Exclude @get:Exclude var id: String,
+                @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
+                var owners: Map<String, Long> = mapOf(uid!! to number.toLong()),
+                @Exclude @get:Keep @set:Keep var templateId: String = defaultTemplateId,
                 @Exclude @get:Keep @set:Keep var name: String? = null,
                 @Exclude @get:Keep @set:Keep var media: String? = null,
                 @Exclude @get:Keep @set:Keep var website: String? = null,
@@ -32,7 +37,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
     constructor() : this("0", "")
 
     @Keep
-    @PropertyName(FIREBASE_TIMESTAMP)
+    @PropertyName(FIRESTORE_TIMESTAMP)
     fun getCurrentTimestamp(): Any = System.currentTimeMillis()
 
     override fun toString() = if (TextUtils.isEmpty(name)) number else number + " - " + name
@@ -48,8 +53,9 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.apply {
             writeString(number)
-            writeString(key)
-            writeString(templateKey)
+            writeString(id)
+            writeBundle(Bundle().apply { owners.forEach { putLong(it.key, it.value) } })
+            writeString(templateId)
             writeString(name)
             writeString(media)
             writeString(website)
@@ -70,6 +76,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
             override fun createFromParcel(source: Parcel): Team = source.run {
                 Team(readString(),
                      readString(),
+                     readBundleAsMap(),
                      readString(),
                      readString(),
                      readString(),

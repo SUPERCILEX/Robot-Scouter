@@ -13,10 +13,10 @@ import com.supercilex.robotscouter.util.ui.show
 class TeamTemplateSelectorDialog : AddScoutTemplateSelectorDialog() {
     override val title = R.string.title_add_scout_template_selector
 
-    override fun onItemSelected(key: String) {
-        super.onItemSelected(key)
+    override fun onItemSelected(id: String) {
+        super.onItemSelected(id)
         (context as TeamSelectionListener).onTeamSelected(getScoutBundle(
-                arguments.getTeam(), true, key), false)
+                arguments.getTeam(), true, id), false)
     }
 
     companion object {

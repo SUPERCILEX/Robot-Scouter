@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.text.TextUtils
 import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.perf.metrics.AddTrace
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -168,12 +169,13 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             abortCritical(e, notificationManager)
             file.delete()
         } finally {
-            if (stream != null)
+            if (stream != null) {
                 try {
                     stream.close()
                 } catch (e: IOException) {
                     FirebaseCrash.report(e)
                 }
+            }
         }
         return null
     }
@@ -259,8 +261,6 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         val metricCache = HashMap<String, Int>()
 
         fun setRowValue(metric: Metric<*>, row: Row, column: Int) {
-            row.getCell(0, CREATE_NULL_AS_BLANK).setCellValue(metric.name)
-
             val valueCell = row.getCell(column, CREATE_NULL_AS_BLANK)
             when (metric.type) {
                 BOOLEAN -> valueCell.setCellValue((metric as Metric.Boolean).value)
@@ -281,7 +281,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 }
                 LIST -> {
                     val listMetric = metric as Metric.List
-                    val selectedItem = listMetric.value[listMetric.selectedValueKey]
+                    val selectedItem = listMetric.value[listMetric.selectedValueId]
                     valueCell.setCellValue(selectedItem)
                 }
                 TEXT -> {
@@ -304,21 +304,22 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         }
 
         fun setupRow(metric: Metric<*>, index: Int): Row {
-            metricCache[metric.ref.key] = index
+            metricCache[metric.ref.id] = index
             cache.putRootMetric(team, index, metric.let {
                 return@let when (metric.type) {
-                    HEADER -> Metric.Header(it.name)
-                    BOOLEAN -> Metric.Boolean(it.name)
-                    NUMBER -> Metric.Number(it.name)
-                    STOPWATCH -> Metric.Stopwatch(it.name)
-                    TEXT -> Metric.Text(it.name)
-                    LIST -> Metric.List(it.name)
+                    HEADER -> Metric.Header(it.name, position = index)
+                    BOOLEAN -> Metric.Boolean(it.name, position = index)
+                    NUMBER -> Metric.Number(it.name, position = index)
+                    STOPWATCH -> Metric.Stopwatch(it.name, position = index)
+                    TEXT -> Metric.Text(it.name, position = index)
+                    LIST -> Metric.List(it.name, position = index)
                     else -> throw IllegalStateException("Unknown metric type ${metric.type}")
                 }.apply { ref = it.ref }
             })
 
             return teamSheet.createRow(index).apply {
                 createCell(0).apply {
+                    setCellValue(metric.name)
                     if (metric.type == HEADER) {
                         cellStyle = cache.headerMetricRowHeaderStyle
                         addTitleRowMergedRegion(row)
@@ -345,7 +346,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 if (i == scouts.lastIndex) { // Initialize the metric list
                     setupRow(metric, j + 1).also { setRowValue(metric, it, i + 1) }
                 } else {
-                    val metricIndex = metricCache[metric.ref.key]
+                    val metricIndex = metricCache[metric.ref.id]
                     if (metricIndex == null) {
                         if (!hasOutdatedMetrics) {
                             teamSheet.createRow(teamSheet.lastRowNum + 2).also {
@@ -487,7 +488,9 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 }
             }
 
-            return 0 to Metric.Header()
+            return 0 to Metric.Header(position = 0).apply {
+                ref = FirebaseFirestore.getInstance().document("null/null")
+            }
         }.invoke()
 
         val data: LineChartData
@@ -557,7 +560,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             val team = cache.teams[workbook.getSheetIndex(scoutSheet) - 1]
             for (j in 1..scoutSheet.lastRowNum) {
                 val rootMetric = cache.getRootMetric(team, j) ?: continue
-                val metricIndex = metricCache[rootMetric.ref.key]
+                val metricIndex = metricCache[rootMetric.ref.id]
                 val averageCell = scoutSheet.getRow(j).run { getCell(lastCellNum - 1) }
 
                 if (TextUtils.isEmpty(averageCell.stringValue) || rootMetric.type == TEXT) continue
@@ -568,7 +571,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                         cellStyle = cache.columnHeaderStyle
                     }
 
-                    metricCache[rootMetric.ref.key] = headerCell.columnIndex
+                    metricCache[rootMetric.ref.id] = headerCell.columnIndex
                     setAverageFormula(
                             scoutSheet, row.createCell(headerCell.columnIndex), averageCell)
                 } else {

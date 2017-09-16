@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.arch.lifecycle.Observer
-import com.firebase.ui.database.ObservableSnapshotArray
-import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
-import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+import com.firebase.ui.firestore.ObservableSnapshotArray
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
@@ -31,9 +31,9 @@ class TutorialHelper : ViewModelBase<Nothing?>(),
 
     override fun onDataChanged() {
         hasShownAddTeamTutorial.setValue(
-                prefs!!.getPrefOrDefault(FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
+                prefs!!.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
         hasShownSignInTutorial.setValue(
-                prefs!!.getPrefOrDefault(FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
+                prefs!!.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
     }
 
     override fun onCleared() {

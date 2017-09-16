@@ -5,7 +5,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.firebase.ui.database.ObservableSnapshotArray
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.BOOLEAN
 import com.supercilex.robotscouter.data.model.HEADER
@@ -23,15 +24,17 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.EditTextView
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.HeaderViewHolder
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.SpinnerViewHolder
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.StopwatchViewHolder
-import com.supercilex.robotscouter.util.ui.CardListHelper
 
 class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                    manager: FragmentManager,
                    recyclerView: RecyclerView,
                    owner: LifecycleOwner) :
-        MetricListAdapterBase(metrics, manager, recyclerView, owner) {
-    override val cardListHelper: CardListHelper = ListHelper(true)
-
+        MetricListAdapterBase(FirestoreRecyclerOptions.Builder<Metric<*>>()
+                                      .setSnapshotArray(metrics)
+                                      .setLifecycleOwner(owner)
+                                      .build(),
+                              manager,
+                              recyclerView) {
     override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
             MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)

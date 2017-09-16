@@ -7,9 +7,9 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import android.text.TextUtils
-import com.firebase.ui.database.ChangeEventListener
-import com.firebase.ui.database.ObservableSnapshotArray
-import com.google.firebase.database.DataSnapshot
+import com.firebase.ui.common.ChangeEventType
+import com.firebase.ui.firestore.ObservableSnapshotArray
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
@@ -33,17 +33,16 @@ class TeamHolder : ViewModelBase<Bundle>(),
     override fun apply(teams: ObservableSnapshotArray<Team>?): LiveData<Team> {
         if (teams == null) return MutableLiveData()
 
-        if (TextUtils.isEmpty(team.key)) {
-            for (i in teams.indices) {
-                val candidate = teams.getObject(i)
+        if (TextUtils.isEmpty(team.id)) {
+            for (candidate in teams) {
                 if (candidate.numberAsLong == team.numberAsLong) {
-                    team.key = candidate.key
+                    team.id = candidate.id
                     return apply(teams)
                 }
             }
 
-            team.addTeam()
-            TbaDownloader.load(team).addOnSuccessListener { team.updateTeam(it) }
+            team.add()
+            TbaDownloader.load(team).addOnSuccessListener { team.update(it) }
         }
 
         return object : MutableLiveData<Team>(), ChangeEventListenerBase {
@@ -55,17 +54,17 @@ class TeamHolder : ViewModelBase<Bundle>(),
                 teams.removeChangeEventListener(this)
             }
 
-            override fun onChildChanged(type: ChangeEventListener.EventType,
-                                        snapshot: DataSnapshot,
-                                        index: Int,
+            override fun onChildChanged(type: ChangeEventType,
+                                        snapshot: DocumentSnapshot,
+                                        newIndex: Int,
                                         oldIndex: Int) {
-                if (!TextUtils.equals(teamListener.value?.key, snapshot.key)) return
+                if (!TextUtils.equals(teamListener.value?.id, snapshot.id)) return
 
-                if (type == ChangeEventListener.EventType.REMOVED) {
+                if (type == ChangeEventType.REMOVED) {
                     value = null; return
-                } else if (type == ChangeEventListener.EventType.MOVED) return
+                } else if (type == ChangeEventType.MOVED) return
 
-                val newTeam = teams.getObject(index)
+                val newTeam = teams[newIndex]
                 if (value != newTeam) value = newTeam.copy()
             }
         }

@@ -6,110 +6,147 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
+import android.support.annotation.WorkerThread
 import android.text.TextUtils
-import com.firebase.ui.database.ChangeEventListener
-import com.firebase.ui.database.FirebaseArray
-import com.firebase.ui.database.FirebaseIndexArray
-import com.firebase.ui.database.ObservableSnapshotArray
-import com.firebase.ui.database.SnapshotParser
+import com.firebase.ui.common.ChangeEventType
+import com.firebase.ui.firestore.ChangeEventListener
+import com.firebase.ui.firestore.FirestoreArray
+import com.firebase.ui.firestore.ObservableSnapshotArray
+import com.firebase.ui.firestore.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.database.ValueEventListener
-import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.RobotScouter
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QueryListenOptions
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
+import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
-import com.supercilex.robotscouter.util.FIREBASE_DEFAULT_TEMPLATES
-import com.supercilex.robotscouter.util.FIREBASE_METRICS
-import com.supercilex.robotscouter.util.FIREBASE_NAME
-import com.supercilex.robotscouter.util.FIREBASE_PREF_DEFAULT_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
-import com.supercilex.robotscouter.util.FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
-import com.supercilex.robotscouter.util.FIREBASE_PREF_NIGHT_MODE
-import com.supercilex.robotscouter.util.FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
-import com.supercilex.robotscouter.util.FIREBASE_TEAMS
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATES
-import com.supercilex.robotscouter.util.FIREBASE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.data.model.METRIC_PARSER
-import com.supercilex.robotscouter.util.data.model.deleteTeam
+import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
+import com.supercilex.robotscouter.util.FIRESTORE_METRICS
+import com.supercilex.robotscouter.util.FIRESTORE_NAME
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
+import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
+import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.FIRESTORE_VALUE
+import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.data.model.delete
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
-import com.supercilex.robotscouter.util.data.model.getScoutIndicesRef
-import com.supercilex.robotscouter.util.data.model.teamIndicesRef
-import com.supercilex.robotscouter.util.data.model.templateIndicesRef
-import com.supercilex.robotscouter.util.data.model.updateTemplateKey
+import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
+import com.supercilex.robotscouter.util.data.model.getScoutRef
+import com.supercilex.robotscouter.util.data.model.getScouts
+import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
+import com.supercilex.robotscouter.util.data.model.teamsQuery
+import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
 import java.io.File
-import java.util.Arrays
-import java.util.Collections
-import java.util.HashMap
 
 val TEAM_PARSER = SnapshotParser<Team> {
-    it.getValue(Team::class.java)!!.apply { key = it.key }
+    it.toObject(Team::class.java).apply { id = it.id }
 }
-val SCOUT_PARSER = SnapshotParser<Scout> {
-    Scout(it.child(FIREBASE_NAME).getValue(String::class.java),
-          it.child(FIREBASE_TEMPLATE_KEY).getValue(String::class.java)!!,
-          it.child(FIREBASE_METRICS).children.map { METRIC_PARSER.parseSnapshot(it) })
+val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
+    Scout(snapshot.id,
+          snapshot.getString(FIRESTORE_TEMPLATE_ID),
+          snapshot.getString(FIRESTORE_NAME),
+          snapshot.getLong(FIRESTORE_TIMESTAMP),
+          @Suppress("UNCHECKED_CAST")
+          (snapshot.data[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
+              Metric.parse(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
+                      "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
+          })
 }
-private val QUERY_KEY = "query_key"
+val METRIC_PARSER = SnapshotParser<Metric<*>> { Metric.parse(it.data, it.reference) }
 
-val ref: DatabaseReference by lazy {
-    FirebaseDatabase.getInstance().apply { setPersistenceEnabled(true) }.reference
-}
+private val REF_KEY = "com.supercilex.robotscouter.REF"
 
 fun initDatabase() {
     PrefsLiveData
     TeamsLiveData
     DefaultTemplatesLiveData
-    TemplateIndicesLiveData
-    TemplateNamesLiveData
 }
 
-fun getRefBundle(ref: DatabaseReference) = Bundle().apply {
-    putString(QUERY_KEY, ref.toString()
-            .split("firebaseio.com/".toRegex())
-            .dropLastWhile { it.isEmpty() }
-            .toTypedArray()[1])
+fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
+
+fun Bundle.getRef() = FirebaseFirestore.getInstance().document(getString(REF_KEY))
+
+inline fun firestoreBatch(transaction: WriteBatch.() -> Unit) = FirebaseFirestore.getInstance().batch().run {
+    transaction()
+    commit()
 }
 
-fun getRef(args: Bundle): DatabaseReference
-        = FirebaseDatabase.getInstance().getReference(args.getString(QUERY_KEY))
+inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
+        firestoreBatch { transaction(this@batch) }
 
-fun copySnapshots(copySnapshot: DataSnapshot, to: DatabaseReference): Task<Nothing?> =
-        HashMap<String, Any?>().let {
-            deepCopy(it, copySnapshot)
-            to.updateChildren(it).continueWith { null }
-        }
+/**
+ * Delete all documents in a collection. This does **not** automatically discover and delete
+ * sub-collections.
+ */
+fun CollectionReference.delete(batchSize: Int = 100): Task<List<DocumentSnapshot>> = async {
+    val deleted = ArrayList<DocumentSnapshot>()
 
-fun forceUpdate(query: Query): Task<Query> = TaskCompletionSource<Query>().also {
-    FirebaseArray(query, Any::class.java).apply {
-        addChangeEventListener(object : ChangeEventListener {
-            override fun onChildChanged(type: ChangeEventListener.EventType,
-                                        snapshot: DataSnapshot,
-                                        index: Int,
-                                        oldIndex: Int) = setResult()
+    var query = orderBy("__name__").limit(batchSize.toLong())
+    var latestDeleted = deleteQueryBatch(query)
+    deleted.addAll(latestDeleted)
 
-            override fun onDataChanged() = setResult()
-
-            private fun setResult() {
-                removeChangeEventListener(this)
-                it.setResult(query)
-            }
-
-            override fun onCancelled(error: DatabaseError) = it.setException(error.toException())
-        })
+    while (latestDeleted.size >= batchSize) {
+        query = orderBy("__name__").startAfter(latestDeleted.last().id).limit(batchSize.toLong())
+        latestDeleted = deleteQueryBatch(query)
     }
+
+    deleted as List<DocumentSnapshot>
+}.addOnFailureListener(CrashLogger)
+
+/** Delete all results from a query in a single [WriteBatch]. */
+@WorkerThread
+private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await(query.get()).let {
+    val batch = query.firestore.batch()
+    for (snapshot in it) {
+        batch.delete(snapshot.reference)
+    }
+    Tasks.await(batch.commit())
+    it.documents
+}
+
+fun Query.getFromServer(): Task<QuerySnapshot> = TaskCompletionSource<QuerySnapshot>().apply {
+    val listener = object : EventListener<QuerySnapshot> {
+        lateinit var registration: ListenerRegistration
+
+        override fun onEvent(snapshot: QuerySnapshot, e: FirebaseFirestoreException?) {
+            if (e == null) {
+                if (!snapshot.metadata.isFromCache || isOffline()) {
+                    setResult(snapshot)
+                    registration.remove()
+                }
+            } else {
+                FirebaseCrash.report(e)
+                setException(e)
+            }
+        }
+    }
+
+    listener.registration = addSnapshotListener(
+            QueryListenOptions()
+                    .includeDocumentMetadataChanges()
+                    .includeQueryMetadataChanges(),
+            listener)
 }.task
 
 inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Task<R> = TaskCompletionSource<R>().apply {
@@ -130,10 +167,22 @@ inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Ta
     }
 }.task
 
-fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<ObservableSnapshotArray<T>> =
+fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(fromServer: Boolean = false):
+        LiveData<ObservableSnapshotArray<T>> =
         Transformations.switchMap(this) {
             object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
+                private var fromServer = true
+
+                override fun onChildChanged(type: ChangeEventType,
+                                            snapshot: DocumentSnapshot,
+                                            newIndex: Int,
+                                            oldIndex: Int) {
+                    this.fromServer = !snapshot.metadata.isFromCache
+                }
+
                 override fun onDataChanged() {
+                    if (fromServer && !this.fromServer && !isOffline()) return
+
                     if (AppToolkitTaskExecutor.getInstance().isMainThread) value = it
                     else postValue(it)
                 }
@@ -147,21 +196,6 @@ fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<Ob
                 }
             }
         }
-
-private fun deepCopy(values: MutableMap<String, Any?>, from: DataSnapshot) {
-    val children = from.children
-    if (children.iterator().hasNext()) {
-        for (snapshot in children) {
-            val data = HashMap<String, Any?>()
-            data.put(".priority", snapshot.priority)
-            values.put(snapshot.key, data)
-
-            deepCopy(data, snapshot)
-        }
-    } else {
-        values.put(".value", from.value)
-    }
-}
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {
     override fun postValue(value: T) {
@@ -178,15 +212,17 @@ class UniqueMutableLiveData<T> : MutableLiveData<T>() {
 }
 
 interface ChangeEventListenerBase : ChangeEventListener {
-    override fun onChildChanged(type: ChangeEventListener.EventType,
-                                snapshot: DataSnapshot,
-                                index: Int,
+    override fun onChildChanged(type: ChangeEventType,
+                                snapshot: DocumentSnapshot,
+                                newIndex: Int,
                                 oldIndex: Int) = Unit
 
     override fun onDataChanged() = Unit
 
-    override fun onCancelled(error: DatabaseError) = FirebaseCrash.report(error.toException())
+    override fun onError(e: FirebaseFirestoreException) = FirebaseCrash.report(e)
 }
+
+object KeepAliveListener : ChangeEventListenerBase
 
 abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotArray<T>>(),
         FirebaseAuth.AuthStateListener {
@@ -204,27 +240,26 @@ abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotA
 
 object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
-        get() = FirebaseIndexArray(teamIndicesRef.orderByValue(), FIREBASE_TEAMS, TEAM_PARSER)
+        get() = FirestoreArray(teamsQuery, TEAM_PARSER)
 
-    val templateKeyUpdater = object : ChangeEventListenerBase {
-        private var nTeamUpdatesForTemplateKey = "" to -1
+    val templateIdUpdater = object : ChangeEventListenerBase {
+        private var nTeamUpdatesForTemplateId = "" to -1
 
-        override fun onChildChanged(type: ChangeEventListener.EventType,
-                                    snapshot: DataSnapshot,
-                                    index: Int,
+        override fun onChildChanged(type: ChangeEventType,
+                                    snapshot: DocumentSnapshot,
+                                    newIndex: Int,
                                     oldIndex: Int) {
-            if (type != ChangeEventListener.EventType.ADDED
-                    && type != ChangeEventListener.EventType.CHANGED) return
+            if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
-            val team = value!!.getObject(index)
-            val templateKey = team.templateKey
+            val team = value!![newIndex]
+            val templateId = team.templateId
 
-            if (templateKey != defaultTemplateKey) {
-                if (team.key == nTeamUpdatesForTemplateKey.first) {
-                    nTeamUpdatesForTemplateKey =
-                            nTeamUpdatesForTemplateKey.first to nTeamUpdatesForTemplateKey.second + 1
+            if (templateId != defaultTemplateId) {
+                if (team.id == nTeamUpdatesForTemplateId.first) {
+                    nTeamUpdatesForTemplateId =
+                            nTeamUpdatesForTemplateId.first to nTeamUpdatesForTemplateId.second + 1
 
-                    if (nTeamUpdatesForTemplateKey.second >= 5) {
+                    if (nTeamUpdatesForTemplateId.second >= 5) {
                         // We're probably stuck in a recursive loop where a team is shared between
                         // two devices who each have different default template. Each device is like
                         // "THIS IS THE DEFAULT TEMPLATE! NO, THIS ONE IS YOU SUCKER!" and it
@@ -232,52 +267,30 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
                         return
                     }
                 } else {
-                    nTeamUpdatesForTemplateKey = team.key to 0
+                    nTeamUpdatesForTemplateId = team.id to 0
                 }
 
-                if (isNativeTemplateType(templateKey)) {
-                    team.updateTemplateKey(defaultTemplateKey)
+                if (isNativeTemplateType(templateId)) {
+                    team.updateTemplateId(defaultTemplateId)
                     return
                 }
 
-                TemplateIndicesLiveData.observeOnDataChanged().observeOnce {
-                    if (it.map { it.key }.contains(templateKey)) {
-                        team.updateTemplateKey(defaultTemplateKey)
-                    } else {
-                        // If we don't own the template and its data == null, we need to update it
-                        // to the default to guarantee data consistency when other devices are
-                        // offline or the team is shared with another user. For example, say an
-                        // online device deletes a template, but an offline one continues adding
-                        // teams with the deleted template. When everything is synced up, we will
-                        // end up with teams that have template keys pointing to non-existent
-                        // templates. The same thing will happen if another user deletes a template
-                        // since that user won’t have access to the other user’s teams to update them.
-
-                        FIREBASE_TEMPLATES.child(templateKey)
-                                .addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        if (snapshot.value == null) {
-                                            team.updateTemplateKey(defaultTemplateKey)
-                                        }
-                                    }
-
-                                    override fun onCancelled(error: DatabaseError) =
-                                            FirebaseCrash.report(error.toException())
-                                })
+                getTemplatesQuery().get().addOnSuccessListener {
+                    if (it.documents.map { it.getString(FIRESTORE_TEMPLATE_ID) }
+                            .contains(templateId)) {
+                        team.updateTemplateId(defaultTemplateId)
                     }
-
-                    Tasks.forResult(null)
-                }
+                }.addOnFailureListener(CrashLogger)
             }
         }
     }
     private val updater = object : ChangeEventListenerBase {
-        override fun onChildChanged(type: ChangeEventListener.EventType,
-                                    snapshot: DataSnapshot,
-                                    index: Int,
+        override fun onChildChanged(type: ChangeEventType,
+                                    snapshot: DocumentSnapshot,
+                                    newIndex: Int,
                                     oldIndex: Int) {
-            if (type == ChangeEventListener.EventType.ADDED || type == ChangeEventListener.EventType.CHANGED) {
-                val team = value!!.getObject(index)
+            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+                val team = value!![newIndex]
 
                 team.fetchLatestData()
                 val media = team.media
@@ -288,48 +301,51 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
         }
     }
     private val merger = object : ChangeEventListenerBase {
-        override fun onChildChanged(type: ChangeEventListener.EventType,
-                                    snapshot: DataSnapshot,
-                                    index: Int,
+        override fun onChildChanged(type: ChangeEventType,
+                                    snapshot: DocumentSnapshot,
+                                    newIndex: Int,
                                     oldIndex: Int) {
-            if (isOffline()
-                    || !(type == ChangeEventListener.EventType.ADDED || type == ChangeEventListener.EventType.CHANGED)) {
+            if (isOffline() || !(type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED)) {
                 return
             }
 
-            val teams = value!!
-            val rawTeams = ArrayList<Team>()
-            for (j in 0 until teams.size) {
-                val team = teams.getObject(j)
-                val rawTeam = team.copy(key = "", timestamp = 0)
+            val teams = ArrayList(value!!)
+            async {
+                val rawTeams = ArrayList<Team>()
+                for (team in teams) {
+                    val rawTeam = team.copy(id = "", timestamp = 0)
 
-                if (rawTeams.contains(rawTeam)) {
-                    mergeTeams(ArrayList(Arrays.asList(
-                            teams.getObject(rawTeams.indexOf(rawTeam)),
-                            team)))
-                    break
+                    if (rawTeams.contains(rawTeam)) {
+                        val existingTeam = teams[rawTeams.indexOf(rawTeam)]
+                        if (existingTeam.timestamp < team.timestamp) {
+                            mergeTeams(existingTeam, team)
+                        } else {
+                            mergeTeams(team, existingTeam)
+                        }
+                        break
+                    }
+
+                    rawTeams += rawTeam
                 }
-
-                rawTeams += rawTeam
-            }
+            }.addOnFailureListener(CrashLogger)
         }
 
-        private fun mergeTeams(teams: MutableList<Team>) {
-            Collections.sort(teams)
-            val oldTeam = teams.removeAt(0)
-
-            for (team in teams) {
-                forceUpdate(getScoutIndicesRef(team.key)).addOnSuccessListener { query ->
-                    FirebaseCopier(query, getScoutIndicesRef(oldTeam.key))
-                            .performTransformation()
-                            .continueWithTask { task -> task.result.ref.removeValue() }
-                            .addOnSuccessListener { _ -> team.deleteTeam() }
+        @WorkerThread
+        private fun mergeTeams(existingTeam: Team, duplicate: Team) {
+            val scouts = Tasks.await(duplicate.getScouts())
+            firestoreBatch {
+                for (scout in scouts) {
+                    val scoutId = scout.id
+                    existingTeam.getScoutRef().document(scoutId).set(scout)
+                    for (metric in scout.metrics) {
+                        existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).set(metric)
+                    }
                 }
+            }.addOnSuccessListener {
+                duplicate.delete()
             }
         }
     }
-
-    private val keepAliveListener = Observer<ObservableSnapshotArray<String>> {}
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         super.onAuthStateChanged(auth)
@@ -338,9 +354,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
 
     override fun onActive() {
         value?.apply {
-            TemplateIndicesLiveData.observeForever(keepAliveListener)
-
-            if (!isListening(templateKeyUpdater)) addChangeEventListener(templateKeyUpdater)
+            if (!isListening(templateIdUpdater)) addChangeEventListener(templateIdUpdater)
             if (!isListening(updater)) addChangeEventListener(updater)
             if (!isListening(merger)) addChangeEventListener(merger)
         }
@@ -348,47 +362,35 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
 
     override fun onInactive() {
         value?.apply {
-            removeChangeEventListener(templateKeyUpdater)
+            removeChangeEventListener(templateIdUpdater)
             removeChangeEventListener(updater)
             removeChangeEventListener(merger)
-
-            TemplateIndicesLiveData.removeObserver(keepAliveListener)
         }
     }
 }
 
-object TemplateIndicesLiveData : ObservableSnapshotArrayLiveData<String>() {
-    override val items: ObservableSnapshotArray<String>
-        get() = FirebaseArray(templateIndicesRef, String::class.java)
-}
-
-object TemplateNamesLiveData : ObservableSnapshotArrayLiveData<String>() {
-    override val items: ObservableSnapshotArray<String>
-        get() = FirebaseIndexArray(templateIndicesRef, FIREBASE_TEMPLATES, SnapshotParser {
-            it.child(FIREBASE_NAME).getValue(String::class.java) ?: RobotScouter.INSTANCE.getString(
-                    R.string.title_template_tab, value!!.indexOf(it) + 1)
-        })
-}
-
 object DefaultTemplatesLiveData : LiveData<ObservableSnapshotArray<Scout>>() {
     init {
-        value = FirebaseArray(FIREBASE_DEFAULT_TEMPLATES, SCOUT_PARSER)
-                .apply { addChangeEventListener(object : ChangeEventListenerBase {}) }
+        value = FirestoreArray(
+                FIRESTORE_DEFAULT_TEMPLATES,
+                QueryListenOptions().includeQueryMetadataChanges().includeDocumentMetadataChanges(),
+                SCOUT_PARSER)
     }
 }
 
 object PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
     override val items: ObservableSnapshotArray<Any>
-        get() = FirebaseArray<Any>(userPrefs) {
-            when (it.key) {
-                FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
-                -> it.getValue(Boolean::class.java)
+        get() = FirestoreArray<Any>(userPrefs) {
+            val id = it.id
+            when (id) {
+                FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
+                FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+                -> it.getBoolean(FIRESTORE_VALUE)
 
-                FIREBASE_PREF_DEFAULT_TEMPLATE_KEY,
-                FIREBASE_PREF_NIGHT_MODE,
-                FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA
-                -> it.getValue(String::class.java)
+                FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
+                FIRESTORE_PREF_NIGHT_MODE,
+                FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
+                -> it.getString(FIRESTORE_VALUE)
 
                 else -> it
             }

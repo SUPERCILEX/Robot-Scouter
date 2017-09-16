@@ -6,9 +6,7 @@ import android.support.annotation.StringRes
 import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.EditText
-import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
 
 abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
@@ -28,11 +26,6 @@ abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
         }
 
         return createDialog(rootView, title)
-    }
-
-    override fun onAttemptDismiss(): Boolean {
-        getRef(arguments).setValue(value).addOnFailureListener { FirebaseCrash.report(it) }
-        return true
     }
 
     protected companion object {

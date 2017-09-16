@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -12,26 +11,20 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionMenu
-import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
-import com.supercilex.robotscouter.util.FIREBASE_VALUE
-import com.supercilex.robotscouter.util.data.copySnapshots
-import com.supercilex.robotscouter.util.data.defaultTemplateKey
-import com.supercilex.robotscouter.util.data.getTabKey
-import com.supercilex.robotscouter.util.data.getTabKeyBundle
+import com.supercilex.robotscouter.util.data.defaultTemplateId
+import com.supercilex.robotscouter.util.data.delete
+import com.supercilex.robotscouter.util.data.getTabId
+import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
-import com.supercilex.robotscouter.util.ui.getHighestIntPriority
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
-    public override val metricsRef: DatabaseReference by lazy {
-        getTemplateMetricsRef(getTabKey(arguments)!!)
+    public override val metricsRef: CollectionReference by lazy {
+        getTemplateMetricsRef(getTabId(arguments)!!)
     }
 
     override val adapter by lazy {
@@ -90,25 +83,14 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         when (id) {
-            R.id.action_set_default_template -> defaultTemplateKey = metricsRef.parent.key
+            R.id.action_set_default_template -> defaultTemplateId = metricsRef.parent.id
             R.id.action_delete_template -> {
                 recyclerView.clearFocus()
                 DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)
             }
             R.id.action_remove_metrics -> {
-                metricsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        metricsRef.removeValue()
-                        Snackbar.make(activity.findViewById(R.id.root),
-                                      R.string.deleted,
-                                      Snackbar.LENGTH_LONG)
-                                .setAction(R.string.undo) { copySnapshots(snapshot, snapshot.ref) }
-                                .show()
-                    }
-
-                    override fun onCancelled(error: DatabaseError) =
-                            FirebaseCrash.report(error.toException())
-                })
+                TODO("Add back undo SnackBar")
+                metricsRef.delete()
             }
             else -> return false
         }
@@ -118,20 +100,17 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onClick(v: View) {
         val id = v.id
 
-        val priority = getHighestIntPriority(adapter.snapshots) + 1
-        val metricRef = metricsRef.push()
+        val position = adapter.itemCount
+        val metricRef = metricsRef.document()
         when (id) {
-            R.id.add_checkbox -> metricRef.setValue(Metric.Boolean(), priority)
-            R.id.add_counter -> metricRef.setValue(Metric.Number(), priority)
-            R.id.add_stopwatch -> metricRef.setValue(Metric.Stopwatch(), priority)
-            R.id.add_note -> metricRef.setValue(Metric.Text(), priority)
+            R.id.add_checkbox -> metricRef.set(Metric.Boolean(position = position))
+            R.id.add_counter -> metricRef.set(Metric.Number(position = position))
+            R.id.add_stopwatch -> metricRef.set(Metric.Stopwatch(position = position))
+            R.id.add_note -> metricRef.set(Metric.Text(position = position))
             R.id.add_spinner -> {
-                metricRef.apply {
-                    setValue(Metric.List(), priority)
-                    child(FIREBASE_VALUE).child("a").setPriority(0)
-                }
+                metricRef.set(Metric.List(position = position))
             }
-            R.id.add_header -> metricRef.setValue(Metric.Header(), priority)
+            R.id.add_header -> metricRef.set(Metric.Header(position = position))
             else -> throw IllegalStateException("Unknown view id: $id")
         }
 
@@ -147,7 +126,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     }
 
     companion object {
-        fun newInstance(templateKey: String) =
-                TemplateFragment().apply { arguments = getTabKeyBundle(templateKey) }
+        fun newInstance(templateId: String) =
+                TemplateFragment().apply { arguments = getTabIdBundle(templateId) }
     }
 }

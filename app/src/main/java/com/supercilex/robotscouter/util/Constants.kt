@@ -6,19 +6,18 @@ import android.os.Build
 import android.provider.Settings
 import android.support.v4.app.ActivityManagerCompat
 import com.firebase.ui.auth.AuthUI
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.data.ref
 
 const val SINGLE_ITEM = 1
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
 const val TEMPLATES_LINK_BASE = "${APP_LINK_BASE}templates"
-const val KEY_QUERY = "key"
+const val ID_QUERY = "id"
 
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 
@@ -32,38 +31,38 @@ val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
 
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
-val FIREBASE_USERS: DatabaseReference = ref.child("users")
+const val FIRESTORE_OWNERS = "owners"
+const val FIRESTORE_NAME = "name"
+const val FIRESTORE_VALUE = "value"
+
+val FIRESTORE_USERS = FirebaseFirestore.getInstance().collection("users")
 
 // Team
-val FIREBASE_TEAMS: DatabaseReference = ref.child("teams")
-val FIREBASE_TEAM_INDICES: DatabaseReference = ref.child("team-indices")
-const val FIREBASE_TIMESTAMP = "timestamp"
+val FIRESTORE_TEAMS = FirebaseFirestore.getInstance().collection("teams")
+const val FIRESTORE_TIMESTAMP = "timestamp"
 
 // Scout
-val FIREBASE_SCOUTS: DatabaseReference = ref.child("scouts")
-val FIREBASE_SCOUT_INDICES: DatabaseReference = ref.child("scout-indices")
-const val FIREBASE_METRICS = "metrics"
+const val FIRESTORE_SCOUTS = "scouts"
+const val FIRESTORE_METRICS = "metrics"
 
 // Scout views
-const val FIREBASE_VALUE = "value"
-const val FIREBASE_TYPE = "type"
-const val FIREBASE_NAME = "name"
-const val FIREBASE_UNIT = "unit"
-const val FIREBASE_SELECTED_VALUE_KEY = "selectedValueKey"
+const val FIRESTORE_POSITION = "position"
+const val FIRESTORE_TYPE = "type"
+const val FIRESTORE_UNIT = "unit"
+const val FIRESTORE_SELECTED_VALUE_ID = "selectedValueId"
 
 // Templates
-val FIREBASE_TEMPLATES: DatabaseReference = ref.child("templates")
-val FIREBASE_TEMPLATE_INDICES: DatabaseReference = ref.child("template-indices")
-val FIREBASE_DEFAULT_TEMPLATES: DatabaseReference = ref.child("default-templates")
-const val FIREBASE_TEMPLATE_KEY = "templateKey"
+val FIRESTORE_TEMPLATES = FirebaseFirestore.getInstance().collection("templates")
+val FIRESTORE_DEFAULT_TEMPLATES = FirebaseFirestore.getInstance().collection("default-templates")
+const val FIRESTORE_TEMPLATE_ID = "templateId"
 
 // Prefs
-const val FIREBASE_PREFS = "prefs"
-const val FIREBASE_PREF_DEFAULT_TEMPLATE_KEY = "defaultTemplateKey"
-const val FIREBASE_PREF_NIGHT_MODE = "nightMode"
-const val FIREBASE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"
-const val FIREBASE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
-const val FIREBASE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
+const val FIRESTORE_PREFS = "prefs"
+const val FIRESTORE_PREF_DEFAULT_TEMPLATE_ID = "defaultTemplateId"
+const val FIRESTORE_PREF_NIGHT_MODE = "nightMode"
+const val FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"
+const val FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
+const val FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
 // [END FIREBASE CHILD NAMES]
 
 val providerAuthority: String by lazy { "${RobotScouter.INSTANCE.packageName}.provider" }

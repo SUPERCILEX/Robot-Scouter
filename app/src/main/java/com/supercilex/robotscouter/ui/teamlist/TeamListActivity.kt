@@ -17,7 +17,6 @@ import android.widget.Toast
 import com.firebase.ui.auth.util.PlayServicesHelper
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
@@ -25,6 +24,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.fetchAndActivate
@@ -207,7 +207,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                     val link = it?.link
                     if (link != null) startActivity(Intent(Intent.ACTION_VIEW, link))
                 }
-                .addOnFailureListener { FirebaseCrash.report(it) }
+                .addOnFailureListener(CrashLogger)
                 .addOnFailureListener(this) {
                     Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
                 }

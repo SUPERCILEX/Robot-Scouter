@@ -15,7 +15,7 @@ import java.util.ArrayList
 open class SpinnerViewHolder(itemView: View) :
         MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView), AdapterView.OnItemSelectedListener {
     protected var spinner: Spinner = itemView.findViewById(R.id.spinner)
-    private val keys: List<String> get() = ArrayList(metric.value.keys)
+    private val ids: List<String> get() = ArrayList(metric.value.keys)
 
     public override fun bind() {
         super.bind()
@@ -26,19 +26,19 @@ open class SpinnerViewHolder(itemView: View) :
 
         spinner.adapter = spinnerArrayAdapter
         spinner.onItemSelectedListener = this
-        spinner.setSelection(indexOfKey(metric.selectedValueKey))
+        spinner.setSelection(indexOfKey(metric.selectedValueId))
     }
 
     @CallSuper
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
-        if (indexOfKey(metric.selectedValueKey) != itemPosition) {
+        if (indexOfKey(metric.selectedValueId) != itemPosition) {
             disableAnimations()
-            metric.selectedValueKey = keys[itemPosition]
+            metric.selectedValueId = ids[itemPosition]
         }
     }
 
     protected open fun indexOfKey(key: String?): Int =
-            keys.indices.firstOrNull { TextUtils.equals(key, keys[it]) } ?: 0
+            ids.indices.firstOrNull { TextUtils.equals(key, ids[it]) } ?: 0
 
     protected open fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> = ArrayAdapter(
             itemView.context,

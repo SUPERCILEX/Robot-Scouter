@@ -8,7 +8,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.data.defaultTemplateKey
+import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 
 abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
@@ -35,7 +35,7 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
     }
 
     @CallSuper
-    override fun onItemSelected(key: String) {
-        if (setAsDefaultCheckbox.isChecked) defaultTemplateKey = key
+    override fun onItemSelected(id: String) {
+        if (setAsDefaultCheckbox.isChecked) defaultTemplateId = id
     }
 }

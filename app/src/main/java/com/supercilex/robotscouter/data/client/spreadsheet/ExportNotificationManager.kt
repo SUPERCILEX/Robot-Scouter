@@ -49,13 +49,6 @@ class ExportNotificationManager(private val service: ExportService) {
                         .build())
     }
 
-    fun onStartSecondLoad() {
-        masterNotificationHolder.progress = 1
-        manager.notify(hashCode(), masterNotification
-                .updateProgress(ESTIMATED_MASTER_OPS, masterNotificationHolder.progress)
-                .build())
-    }
-
     fun setNumOfTemplates(nTemplates: Int) {
         this.nTemplates = nTemplates
         masterNotificationHolder.progress = EXTRA_MASTER_OPS
@@ -163,14 +156,14 @@ class ExportNotificationManager(private val service: ExportService) {
             var progress: Int = 0)
 
     private companion object {
-        /** Accounts for two load steps. */
-        const val EXTRA_MASTER_OPS = 2
-        /** Accounts for [EXTRA_MASTER_OPS] with two export files. */
-        const val ESTIMATED_MASTER_OPS = 4
+        /** Accounts for a load step. */
+        const val EXTRA_MASTER_OPS = 1
+        /** Accounts for two export files. */
+        const val ESTIMATED_MASTER_OPS = EXTRA_MASTER_OPS + 2
 
         /** Accounts one cleanup step. */
         const val EXTRA_EXPORT_OPS_SINGLE = 1
-        /** Accounts for [EXTRA_EXPORT_OPS_SINGLE] and the average sheet step. */
-        const val EXTRA_EXPORT_OPS_POLY = 2
+        /** Accounts for the average sheet step. */
+        const val EXTRA_EXPORT_OPS_POLY = EXTRA_EXPORT_OPS_SINGLE + 1
     }
 }

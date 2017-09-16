@@ -3,10 +3,12 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist
 import android.content.DialogInterface
 import android.support.v4.app.FragmentManager
 import android.text.InputType
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.ValueDialogBase
-import com.supercilex.robotscouter.util.data.getRefBundle
+import com.supercilex.robotscouter.util.FIRESTORE_VALUE
+import com.supercilex.robotscouter.util.data.getRef
+import com.supercilex.robotscouter.util.data.putRef
 import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.ui.show
 
@@ -21,7 +23,7 @@ class CounterValueDialog : ValueDialogBase<Long>() {
     }
 
     override fun onAttemptDismiss() = if (lastEditText.text.toString().isNumber()) {
-        super.onAttemptDismiss()
+        arguments.getRef().update(FIRESTORE_VALUE, value); true
     } else {
         inputLayout.error = getString(R.string.number_too_big_error); false
     }
@@ -29,8 +31,9 @@ class CounterValueDialog : ValueDialogBase<Long>() {
     companion object {
         private const val TAG = "CounterValueDialog"
 
-        fun show(manager: FragmentManager, ref: DatabaseReference, currentValue: String) =
-                CounterValueDialog().show(manager, TAG, getRefBundle(ref)) {
+        fun show(manager: FragmentManager, ref: DocumentReference, currentValue: String) =
+                CounterValueDialog().show(manager, TAG) {
+                    putRef(ref)
                     putString(CURRENT_VALUE, currentValue)
                 }
     }

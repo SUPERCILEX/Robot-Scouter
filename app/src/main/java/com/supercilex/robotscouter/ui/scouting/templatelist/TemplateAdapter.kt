@@ -5,9 +5,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.firebase.ui.database.ChangeEventListener
-import com.firebase.ui.database.ObservableSnapshotArray
-import com.google.firebase.database.DataSnapshot
+import com.firebase.ui.common.ChangeEventType
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.firebase.ui.firestore.ObservableSnapshotArray
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.BOOLEAN
 import com.supercilex.robotscouter.data.model.HEADER
@@ -25,24 +26,24 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.EditTextT
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.HeaderTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.SpinnerTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.StopwatchTemplateViewHolder
-import com.supercilex.robotscouter.util.ui.CardListHelper
 
 class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                       manager: FragmentManager,
                       recyclerView: RecyclerView,
                       owner: LifecycleOwner,
                       private val callback: TemplateItemTouchCallback<Metric<*>>) :
-        MetricListAdapterBase(metrics, manager, recyclerView, owner) {
-    override val cardListHelper: CardListHelper = ListHelper()
-
+        MetricListAdapterBase(FirestoreRecyclerOptions.Builder<Metric<*>>()
+                                      .setSnapshotArray(metrics)
+                                      .setLifecycleOwner(owner)
+                                      .build(),
+                              manager,
+                              recyclerView) {
     override fun getItem(position: Int) = callback.getItem(position)
 
-    override fun getRef(position: Int) = callback.getRef(position)
-
-    override fun populateViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
-                                    metric: Metric<*>,
-                                    position: Int) {
-        super.populateViewHolder(viewHolder, metric, position)
+    override fun onBindViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
+                                  position: Int,
+                                  metric: Metric<*>) {
+        super.onBindViewHolder(viewHolder, position, metric)
         callback.onBind(viewHolder, position)
     }
 
@@ -66,12 +67,12 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
         }
     }
 
-    override fun onChildChanged(type: ChangeEventListener.EventType,
-                                snapshot: DataSnapshot,
-                                index: Int,
+    override fun onChildChanged(type: ChangeEventType,
+                                snapshot: DocumentSnapshot,
+                                newIndex: Int,
                                 oldIndex: Int) {
-        callback.onChildChanged(type, index) {
-            super.onChildChanged(type, snapshot, index, oldIndex)
+        callback.onChildChanged(type, newIndex) {
+            super.onChildChanged(type, snapshot, newIndex, oldIndex)
         }
     }
 }

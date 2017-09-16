@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import java.util.ArrayList
 
@@ -31,6 +32,19 @@ private fun getBooleanForInt(value: Int) = value == 1
 
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
 
+fun <T> Parcel.readBundleAsMap(): Map<String, T> =
+        readBundle(RobotScouter::class.java.classLoader).let { bundleToMap(it) }
+
+fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundle(key).let { bundleToMap(it) }
+
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+fun <T> PersistableBundle.getBundleAsMap(key: String) = getPersistableBundle(key).let { bundle ->
+    bundle.keySet().associate { it to bundle.get(it) } as Map<String, T>
+}
+
+private fun <T> bundleToMap(bundle: Bundle) =
+        bundle.keySet().associate { it to bundle.get(it) } as Map<String, T>
+
 fun Team.toBundle() = Bundle().apply { putParcelable(TEAM_KEY, this@toBundle) }
 
 fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(teams))
@@ -44,21 +58,21 @@ fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra(TEAMS_KE
 
 fun Bundle.getTeamList(): List<Team> = getParcelableArrayList(TEAMS_KEY)
 
-fun getTabKeyBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
+fun getTabIdBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
 
-fun getTabKey(bundle: Bundle): String? = bundle.getString(TAB_KEY)
+fun getTabId(bundle: Bundle): String? = bundle.getString(TAB_KEY)
 
 fun getScoutBundle(team: Team,
                    addScout: Boolean = false,
-                   overrideTemplateKey: String? = null,
-                   scoutKey: String? = null): Bundle {
-    if (!addScout && overrideTemplateKey != null) {
-        throw IllegalArgumentException("Can't use an override key without adding a scout.")
+                   overrideTemplateId: String? = null,
+                   scoutId: String? = null): Bundle {
+    if (!addScout && overrideTemplateId != null) {
+        throw IllegalArgumentException("Can't use an override id without adding a scout.")
     }
 
     return team.toBundle().apply {
         putBoolean(KEY_ADD_SCOUT, addScout)
-        putString(KEY_OVERRIDE_TEMPLATE_KEY, overrideTemplateKey)
-        putAll(getTabKeyBundle(scoutKey))
+        putString(KEY_OVERRIDE_TEMPLATE_KEY, overrideTemplateId)
+        putAll(getTabIdBundle(scoutId))
     }
 }
