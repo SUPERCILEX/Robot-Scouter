@@ -28,13 +28,13 @@ import com.supercilex.robotscouter.data.client.spreadsheet.ExportService;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.TeamDetailsDialog;
 import com.supercilex.robotscouter.ui.TeamSharer;
+import com.supercilex.robotscouter.util.NumberUtilsKt;
 import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
-import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
 import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
@@ -129,7 +129,7 @@ public class TeamMenuHelper implements View.OnClickListener {
         if (areTeamsSelected()) {
             setNormalMenuItemsVisible(false);
             setContextMenuItemsVisible(true);
-            setTeamSpecificItemsVisible(mSelectedTeams.size() == SINGLE_ITEM);
+            setTeamSpecificItemsVisible(NumberUtilsKt.isSingleton(mSelectedTeams));
             updateToolbarTitle();
         }
     }
@@ -222,7 +222,7 @@ public class TeamMenuHelper implements View.OnClickListener {
         } else {
             if (!areTeamsSelected()) { // NOPMD
                 resetMenu();
-            } else if (newSize == SINGLE_ITEM) {
+            } else if (newSize == 1) { // NOPMD
                 setTeamSpecificItemsVisible(true);
             } else {
                 setTeamSpecificItemsVisible(false);

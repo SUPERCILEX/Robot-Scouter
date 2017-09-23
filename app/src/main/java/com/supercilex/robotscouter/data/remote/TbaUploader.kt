@@ -9,7 +9,6 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
-import java.util.Arrays
 
 class TbaUploader private constructor(team: Team) :
         TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
@@ -58,10 +57,8 @@ class TbaUploader private constructor(team: Team) :
     /**
      * @return Return a period plus the file extension
      */
-    private fun getFileExtension(url: String): String {
-        val splitUrl: List<String> = Arrays.asList(*url.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        return ".${splitUrl[splitUrl.lastIndex]}"
-    }
+    private fun getFileExtension(url: String): String =
+            ".${url.split(".").dropLastWhile { it.isEmpty() }.last()}"
 
     companion object {
         fun upload(team: Team): Task<Team> = TbaServiceBase.executeAsync(TbaUploader(team))

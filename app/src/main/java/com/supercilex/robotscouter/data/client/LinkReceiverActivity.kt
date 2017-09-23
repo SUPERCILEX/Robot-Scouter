@@ -4,21 +4,34 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.annotation.WorkerThread
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
+import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
-import com.supercilex.robotscouter.util.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.ID_QUERY
+import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
+import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
+import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
+import com.supercilex.robotscouter.util.data.KEYS
+import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
+import com.supercilex.robotscouter.util.data.getScoutBundle
+import com.supercilex.robotscouter.util.data.updateOwner
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.onSignedIn
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
+import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import java.util.Date
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 class LinkReceiverActivity : AppCompatActivity() {
@@ -30,26 +43,16 @@ class LinkReceiverActivity : AppCompatActivity() {
         onSignedIn().continueWithTask { FirebaseDynamicLinks.getInstance().getDynamicLink(intent) }
                 .continueWith(AsyncTaskExecutor, Continuation<PendingDynamicLinkData, Unit> {
                     val link: Uri = it.result?.link ?: intent.data ?: Uri.Builder().build()
+                    val token: String = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS).also {
+                        if (it == null) {
+                            showErrorAndContinue()
+                            return@Continuation
+                        }
+                    }
 
                     when (link.lastPathSegment) {
-                        "teams" -> {
-                            val teams = getTeams(link)
-
-                            if (teams.isEmpty()) {
-                                showErrorAndContinue()
-                            } else {
-                                processTeams(teams)
-                            }
-                        }
-                        "templates" -> {
-                            val templateId = getTemplate(link)
-
-                            if (templateId == null) {
-                                showErrorAndContinue()
-                            } else {
-                                processTemplate(templateId)
-                            }
-                        }
+                        FIRESTORE_TEAMS.id -> processTeams(link, token)
+                        FIRESTORE_TEMPLATES.id -> processTemplates(link, token)
                         else -> showErrorAndContinue()
                     }
                 })
@@ -58,24 +61,40 @@ class LinkReceiverActivity : AppCompatActivity() {
                 .addOnCompleteListener { finish() }
     }
 
-    private fun processTeams(teams: List<Team>) {
-        TODO()
+    @WorkerThread
+    private fun processTeams(link: Uri, token: String) {
+        val refs = link.getQueryParameter(KEYS).split(",").map { FIRESTORE_TEAMS.document(it) }
+        Tasks.await(updateOwner(refs, token, null) { ref ->
+            link.getQueryParameter(ref.id).toLong()
+        })
+
+        if (refs.isSingleton) {
+            val id = refs.single().id
+            val data = getScoutBundle(Team(link.getQueryParameter(id).toLong(), id))
+
+            if (isInTabletMode(this)) {
+                startActivity(Intent(this, TeamListActivity::class.java)
+                                      .putExtra(SCOUT_ARGS_KEY, data)
+                                      .addNewDocumentFlags()
+                                      .setAction(ACTION_FROM_DEEP_LINK))
+            } else {
+                startActivity(ScoutListActivity.createIntent(data).setAction(ACTION_FROM_DEEP_LINK))
+            }
+        } else {
+            Toast.makeText(this, R.string.teams_imported, Toast.LENGTH_LONG).show()
+            startTeamListActivityNoArgs()
+        }
     }
 
-    private fun processTemplate(templateId: String) {
-        TODO()
+    @WorkerThread
+    private fun processTemplates(link: Uri, token: String) {
+        val refs = link.getQueryParameter(KEYS).split(",").map { FIRESTORE_TEMPLATES.document(it) }
+        Tasks.await(updateOwner(refs, token, null) { Date() })
+
+        startActivity(TemplateListActivity.createIntent(refs.single().id)
+                              .addNewDocumentFlags()
+                              .setAction(ACTION_FROM_DEEP_LINK))
     }
-
-    private fun getTeams(link: Uri): List<Team> = link.getQueryParameters(ID_QUERY).map {
-        // Format: id:2521
-        val teamPairSplit: List<String> = it.split(":")
-        val teamId = teamPairSplit[0]
-        val teamNumber = teamPairSplit[1]
-
-        Team(teamNumber.toLong(), teamId)
-    }
-
-    private fun getTemplate(link: Uri): String? = link.getQueryParameter(ID_QUERY)
 
     private fun startTeamListActivityNoArgs() =
             startActivity(Intent(this, TeamListActivity::class.java)

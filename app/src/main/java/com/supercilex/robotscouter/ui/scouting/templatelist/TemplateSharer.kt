@@ -8,20 +8,29 @@ import android.view.View
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
 import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.firestore.FieldPath
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.util.data.CachingSharer
-import com.supercilex.robotscouter.util.data.model.getTemplateLink
+import com.supercilex.robotscouter.util.data.generateToken
+import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logShareTemplateEvent
+import java.util.Date
 
 class TemplateSharer private constructor(private val activity: FragmentActivity) :
         CachingSharer(activity) {
     fun share(templateId: String, templateName: String) {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
+            val token = generateToken
+            FIRESTORE_TEMPLATES.document(templateId)
+                    .update(FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
+
             getInvitationIntent(
-                    getTemplateLink(templateId),
+                    getTemplateLink(templateId, token),
                     templateName,
                     it.result.format(activity.getString(R.string.cta_share_template, templateName)))
         }).addOnSuccessListener {
@@ -62,7 +71,6 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
                 return false
             }
 
-            TODO("Implement sharing")
             TemplateSharer(activity).share(templateId, templateName)
             logShareTemplateEvent(templateId)
             return true

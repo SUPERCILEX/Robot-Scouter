@@ -12,8 +12,7 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.SINGLE_ITEM
-import java.util.Arrays
+import com.supercilex.robotscouter.util.isSingleton
 
 const val EXPORT_GROUP = "export_group"
 const val EXPORT_CHANNEL = "export"
@@ -23,11 +22,11 @@ fun initNotifications() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
     RobotScouter.INSTANCE.getSystemService(NotificationManager::class.java).apply {
-        createNotificationChannelGroups(Arrays.asList(
+        createNotificationChannelGroups(listOf(
                 NotificationChannelGroup(
                         EXPORT_GROUP, RobotScouter.INSTANCE.getString(R.string.export_group_name))))
 
-        createNotificationChannels(Arrays.asList(
+        createNotificationChannels(listOf(
                 getExportChannel(),
                 getExportInProgressChannel()))
     }
@@ -65,7 +64,7 @@ class NotificationIntentForwarder : Activity() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 activeNotifications.filter { it.id == notificationId }.let {
-                    if (it.isEmpty() || it.size > SINGLE_ITEM) throw IllegalStateException(
+                    if (!it.isSingleton) throw IllegalStateException(
                             "Couldn't find unique notification id ($notificationId) in $activeNotifications")
                     it[0]
                 }.notification.group?.let { key ->

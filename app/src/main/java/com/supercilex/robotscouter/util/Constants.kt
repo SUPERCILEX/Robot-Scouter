@@ -12,14 +12,7 @@ import com.squareup.leakcanary.RefWatcher
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
 
-const val SINGLE_ITEM = 1
-
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
-const val TEAMS_LINK_BASE = "${APP_LINK_BASE}teams"
-const val TEMPLATES_LINK_BASE = "${APP_LINK_BASE}templates"
-const val ID_QUERY = "id"
-
-const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 
 /** The list of all supported authentication providers in Firebase Auth UI.  */
 val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
@@ -32,14 +25,18 @@ val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
 const val FIRESTORE_OWNERS = "owners"
+const val FIRESTORE_ACTIVE_TOKENS = "activeTokens"
+const val FIRESTORE_PENDING_APPROVALS = "pendingApprovals"
 const val FIRESTORE_NAME = "name"
 const val FIRESTORE_VALUE = "value"
+const val FIRESTORE_TIMESTAMP = "timestamp"
 
 val FIRESTORE_USERS = FirebaseFirestore.getInstance().collection("users")
+const val FIRESTORE_LAST_LOGIN = "lastLogin"
 
 // Team
 val FIRESTORE_TEAMS = FirebaseFirestore.getInstance().collection("teams")
-const val FIRESTORE_TIMESTAMP = "timestamp"
+const val FIRESTORE_NUMBER = "number"
 
 // Scout
 const val FIRESTORE_SCOUTS = "scouts"

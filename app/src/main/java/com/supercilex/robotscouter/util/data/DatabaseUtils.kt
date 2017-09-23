@@ -32,6 +32,7 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -57,7 +58,10 @@ import java.io.File
 import java.util.Date
 
 val TEAM_PARSER = SnapshotParser<Team> {
-    it.toObject(Team::class.java).apply { id = it.id }
+    it.toObject(Team::class.java).apply { id = it.id }.apply {
+        // TODO https://groups.google.com/d/msg/firestore-trusted-testers/XP2ZHZz5BlY/sXWParNmAQAJ
+        activeTokensz = it.data[FIRESTORE_ACTIVE_TOKENS] as Map<String, Date>
+    }
 }
 val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
     Scout(snapshot.id,

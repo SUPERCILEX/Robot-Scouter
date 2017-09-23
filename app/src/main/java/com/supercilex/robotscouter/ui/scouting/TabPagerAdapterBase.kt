@@ -16,10 +16,10 @@ import android.widget.LinearLayout
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
-import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
+import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.refWatcher
 
 abstract class TabPagerAdapterBase(protected val fragment: Fragment,
@@ -78,7 +78,7 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
                     selectTab(holder.scouts.indexOfFirst { it.id == currentTabId })
                 } ?: run {
                     val index = oldScouts.indexOfFirst { it.id == prevTabId }
-                    currentTabId = if (oldScouts.size > SINGLE_ITEM) {
+                    currentTabId = if (oldScouts.isPolynomial) {
                         (if (oldScouts.lastIndex > index)
                             oldScouts[index + 1]
                         else

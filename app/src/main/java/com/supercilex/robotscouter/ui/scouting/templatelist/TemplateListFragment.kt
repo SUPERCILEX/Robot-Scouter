@@ -21,13 +21,13 @@ import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
-import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.TAB_KEY
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
+import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.model.addTemplate
-import com.supercilex.robotscouter.util.data.model.getTemplateLink
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
@@ -153,7 +153,7 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
                 .filterIsInstance<TemplateFragment>()
                 .filter { pagerAdapter.currentTabId == it.metricsRef.parent.id }
                 .also {
-                    if (it.size > SINGLE_ITEM) {
+                    if (!it.isSingleton) {
                         throw IllegalStateException(
                                 "Multiple fragments found with id ${it[0].metricsRef.parent.id}")
                     }

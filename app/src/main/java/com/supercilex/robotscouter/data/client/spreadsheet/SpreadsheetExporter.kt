@@ -23,10 +23,10 @@ import com.supercilex.robotscouter.data.model.STOPWATCH
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.hide
 import com.supercilex.robotscouter.util.data.rootFolder
 import com.supercilex.robotscouter.util.data.unhide
+import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
@@ -226,7 +226,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         cache.workbook = workbook
 
         val averageSheet = run {
-            if (cache.teams.size > SINGLE_ITEM) {
+            if (cache.teams.isPolynomial) {
                 workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
             } else null
         }
@@ -294,10 +294,9 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         }
 
         fun addTitleRowMergedRegion(row: Row) {
-            val numOfScouts = scouts.size
-            if (numOfScouts > SINGLE_ITEM) {
+            if (scouts.isPolynomial) {
                 row.rowNum.also {
-                    teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, numOfScouts))
+                    teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, scouts.size))
                 }
             }
         }
@@ -368,7 +367,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             }
         }
 
-        if (scouts.size > SINGLE_ITEM) buildTeamAverageColumn(teamSheet, team)
+        if (scouts.isPolynomial) buildTeamAverageColumn(teamSheet, team)
     }
 
     private fun buildTeamAverageColumn(sheet: Sheet, team: Team) {
@@ -481,7 +480,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
 
             for (possibleChart in chartData.keys) {
                 if (possibleChart is XSSFChart
-                        && possibleChart.graphicFrame.anchor.row1 == SINGLE_ITEM) {
+                        && possibleChart.graphicFrame.anchor.row1 == 1) {
                     chart = possibleChart
                     return 0 to getMetricForChart(possibleChart, chartPool)
                 }

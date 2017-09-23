@@ -15,17 +15,12 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.RC_SIGN_IN
 import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
-import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
-import com.supercilex.robotscouter.util.uid
-import com.supercilex.robotscouter.util.user
 
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
         LifecycleObserver, FirebaseAuth.AuthStateListener {
@@ -76,9 +71,6 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
             if (resultCode == Activity.RESULT_OK) {
                 Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
                 hasShownSignInTutorial = true
-
-                val user: FirebaseUser = user!!
-                User(uid!!, user.email, user.displayName, user.photoUrl).add()
 
                 logLoginEvent()
             } else {

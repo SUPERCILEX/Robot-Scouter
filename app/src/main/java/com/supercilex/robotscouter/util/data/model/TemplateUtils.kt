@@ -1,8 +1,6 @@
 package com.supercilex.robotscouter.util.data.model
 
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.appindexing.Indexable
-import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -14,8 +12,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
-import com.supercilex.robotscouter.util.ID_QUERY
-import com.supercilex.robotscouter.util.TEMPLATES_LINK_BASE
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.delete
@@ -57,15 +53,6 @@ fun addTemplate(@TemplateType type: Int): String {
 
 fun Scout.getTemplateName(index: Int): String =
         name ?: RobotScouter.INSTANCE.getString(R.string.title_template_tab, index + 1)
-
-fun getTemplateLink(templateId: String) = "$TEMPLATES_LINK_BASE?$ID_QUERY=$templateId"
-
-fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
-        Indexables.digitalDocumentBuilder()
-                .setUrl(getTemplateLink(templateId))
-                .setName(templateName)
-                .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
-                .build()
 
 fun deleteTemplate(id: String) {
     getTemplateMetricsRef(id).delete().addOnSuccessListener {

@@ -8,7 +8,7 @@ import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
-import com.supercilex.robotscouter.util.ACTION_FROM_DEEP_LINK
+import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.refWatcher
 
 fun Intent.addNewDocumentFlags(): Intent {

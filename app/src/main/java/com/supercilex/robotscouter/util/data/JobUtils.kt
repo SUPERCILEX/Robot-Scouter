@@ -18,19 +18,21 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import java.util.Date
 
-private val NUMBER = "number"
-private val ID = "id"
-private val OWNERS = "owners"
-private val TEMPLATE_ID = "template-id"
-private val NAME = "name"
-private val MEDIA = "media"
-private val WEBSITE = "website"
-private val CUSTOM_NAME = "custom-name"
-private val CUSTOM_MEDIA = "custom-media"
-private val CUSTOM_WEBSITE = "custom-website"
-private val SHOULD_UPLOAD_MEDIA = "should-upload-media-to-tba"
-private val MEDIA_YEAR = "media-year"
-private val TIMESTAMP = "timestamp"
+private const val NUMBER = "number"
+private const val ID = "id"
+private const val OWNERS = "owners"
+private const val ACTIVE_TOKENS = "activeTokens"
+private const val PENDING_APPROVALS = "pendingApprovals"
+private const val TEMPLATE_ID = "template-id"
+private const val NAME = "name"
+private const val MEDIA = "media"
+private const val WEBSITE = "website"
+private const val CUSTOM_NAME = "custom-name"
+private const val CUSTOM_MEDIA = "custom-media"
+private const val CUSTOM_WEBSITE = "custom-website"
+private const val SHOULD_UPLOAD_MEDIA = "should-upload-media-to-tba"
+private const val MEDIA_YEAR = "media-year"
+private const val TIMESTAMP = "timestamp"
 
 private fun Job.Builder.buildAndSchedule(dispatcher: FirebaseJobDispatcher) {
     val result: Int = dispatcher.schedule(build())
@@ -76,6 +78,8 @@ fun parseRawBundle(args: Bundle) = Team(
         args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
+        args.getBundleAsMap(ACTIVE_TOKENS),
+        args.getBundleAsMap(PENDING_APPROVALS),
         args.getString(TEMPLATE_ID),
         args.getString(NAME),
         args.getString(MEDIA),
@@ -92,6 +96,8 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
+        args.getBundleAsMap(ACTIVE_TOKENS),
+        args.getBundleAsMap(PENDING_APPROVALS),
         args.getString(TEMPLATE_ID),
         args.getString(NAME),
         args.getString(MEDIA),
@@ -107,6 +113,12 @@ private fun toRawBundle(team: Team) = Bundle().apply {
     putLong(NUMBER, team.number)
     putString(ID, team.id)
     putBundle(OWNERS, Bundle().apply { team.owners.forEach { putLong(it.key, it.value) } })
+    putBundle(ACTIVE_TOKENS, Bundle().apply {
+        team.activeTokensz.forEach { putLong(it.key, it.value.time) }
+    })
+    putBundle(PENDING_APPROVALS, Bundle().apply {
+        team.pendingApprovals.forEach { putString(it.key, it.value) }
+    })
     putString(TEMPLATE_ID, team.templateId)
     putString(NAME, team.name)
     putString(MEDIA, team.media)
@@ -125,6 +137,12 @@ private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
     putString(ID, team.id)
     putPersistableBundle(OWNERS, PersistableBundle().apply {
         team.owners.forEach { putLong(it.key, it.value) }
+    })
+    putPersistableBundle(ACTIVE_TOKENS, PersistableBundle().apply {
+        team.activeTokensz.forEach { putLong(it.key, it.value.time) }
+    })
+    putPersistableBundle(PENDING_APPROVALS, PersistableBundle().apply {
+        team.pendingApprovals.forEach { putString(it.key, it.value) }
     })
     putString(TEMPLATE_ID, team.templateId)
     putString(NAME, team.name)

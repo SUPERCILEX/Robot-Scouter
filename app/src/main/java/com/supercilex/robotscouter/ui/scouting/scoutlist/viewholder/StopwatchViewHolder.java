@@ -38,8 +38,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.supercilex.robotscouter.util.ConstantsKt.SINGLE_ITEM;
-
 public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
         implements View.OnClickListener {
     private static final Map<Metric.Stopwatch, Timer> TIMERS = new ConcurrentHashMap<>();
@@ -124,7 +122,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             String formattedTime =
                     minutes + COLON + (TimeUnit.MILLISECONDS.toSeconds(nanos) - (minutes * 60));
             String[] split = formattedTime.split(COLON);
-            if (split[1].length() <= SINGLE_ITEM) {
+            if (split[1].length() <= 1) { // NOPMD
                 formattedTime = split[0] + COLON + LEADING_ZERO + split[1];
             }
 

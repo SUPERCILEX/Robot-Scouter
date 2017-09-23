@@ -7,10 +7,10 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.SINGLE_ITEM
 import com.supercilex.robotscouter.util.data.getTeamList
 import com.supercilex.robotscouter.util.data.model.delete
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
 import java.util.Collections
@@ -34,10 +34,8 @@ class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
 
         return AlertDialog.Builder(context)
                 .setTitle(R.string.confirm_action)
-                .setMessage(when (SINGLE_ITEM) {
-                                teams.size -> null
-                                else -> getString(R.string.caution_delete, deletedTeams)
-                            })
+                .setMessage(if (teams.isSingleton) null
+                            else getString(R.string.caution_delete, deletedTeams))
                 .setPositiveButton(R.string.delete, this)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create()

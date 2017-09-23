@@ -5,6 +5,9 @@ service cloud.firestore {
     }
 
     match /teams/{teamId} {
+      function isExistingOwner() {
+        return resource.data.owners[request.auth.uid] is int;
+      }
       function isValidTeam() {
         return request.resource.data.number is int
                  && request.resource.data.owners[request.auth.uid] == request.resource.data.number
@@ -12,8 +15,9 @@ service cloud.firestore {
       }
 
       allow read: if request.auth != null; // TODO This and the others are bad but Firestore doesn't yet support an isOwner() call here
-      allow create, update: if request.resource.data.owners[request.auth.uid] is int && isValidTeam();
-      allow delete: if resource.data.owners[request.auth.uid] is int;
+      allow create: if request.resource.data.owners[request.auth.uid] is int && isValidTeam();
+      allow update: if (isExistingOwner() || hasPendingApproval()) && isValidTeam();
+      allow delete: if isExistingOwner();
 
       match /scouts/{scoutId} {
         function isScoutOwner() {
@@ -31,13 +35,17 @@ service cloud.firestore {
     }
 
     match /templates/{templateId} {
+      function isExistingOwner() {
+        return resource.data.owners[request.auth.uid] is timestamp;
+      }
       function isTemplateOwner() {
         return get(/databases/$(database)/documents/templates/$(templateId)).data.owners[request.auth.uid] is timestamp;
       }
 
       allow read: if request.auth != null;
-      allow create, update: if request.resource.data.owners[request.auth.uid] is timestamp && isValidScout();
-      allow delete: if resource.data.owners[request.auth.uid] is timestamp;
+      allow create: if request.resource.data.owners[request.auth.uid] is timestamp && isValidScout();
+      allow update: if (isExistingOwner() || hasPendingApproval()) && isValidScout();
+      allow delete: if isExistingOwner();
 
       match /metrics/{metricId} {
         allow read, delete: if isTemplateOwner();
@@ -81,6 +89,10 @@ service cloud.firestore {
       }
     }
   }
+}
+
+function hasPendingApproval() {
+  return request.resource.data.pendingApprovals[request.auth.uid] in resource.data.activeTokens.keys();
 }
 
 function isValidScout() {

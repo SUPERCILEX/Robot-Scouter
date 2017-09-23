@@ -35,9 +35,9 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.util.data.model.viewAction
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
+import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator

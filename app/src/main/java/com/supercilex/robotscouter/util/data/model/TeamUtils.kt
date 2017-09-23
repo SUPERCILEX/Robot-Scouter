@@ -8,9 +8,6 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.appindexing.Indexable
-import com.google.firebase.appindexing.builders.Actions
-import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
@@ -22,13 +19,13 @@ import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.util.ID_QUERY
-import com.supercilex.robotscouter.util.SINGLE_ITEM
-import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.METRIC_PARSER
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
+import com.supercilex.robotscouter.util.data.deepLink
+import com.supercilex.robotscouter.util.data.indexable
 import com.supercilex.robotscouter.util.fetchAndActivate
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.uid
 import java.util.ArrayList
@@ -50,7 +47,7 @@ fun getTeamNames(teams: List<Team>): String {
     Collections.sort(sortedTeams)
 
     return when {
-        sortedTeams.size == SINGLE_ITEM -> sortedTeams[0].toString()
+        sortedTeams.isSingleton -> sortedTeams[0].toString()
         sortedTeams.size == 2 -> "${sortedTeams[0]} and ${sortedTeams[1]}"
         else -> {
             val teamsMaxedOut = sortedTeams.size > 10
@@ -166,16 +163,3 @@ fun Team.visitTbaWebsite(context: Context) =
         launchUrl(context, Uri.parse("https://www.thebluealliance.com/team/$number"))
 
 fun Team.visitTeamWebsite(context: Context) = launchUrl(context, Uri.parse(website))
-
-val Team.indexable: Indexable get() = Indexables.digitalDocumentBuilder()
-        .setUrl(deepLink)
-        .setName(toString())
-        .apply { setImage(media ?: return@apply) }
-        .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
-        .build()
-
-private val Team.deepLink: String get() = "$TEAMS_LINK_BASE?$linkIdNumberPair"
-
-val Team.linkIdNumberPair: String get() = "&$ID_QUERY=$id:$number"
-
-val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)

@@ -8,6 +8,7 @@ import android.support.annotation.RestrictTo
 import android.text.TextUtils
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.readBooleanCompat
@@ -20,6 +21,11 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
                 @Exclude @get:Exclude var id: String,
                 @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
                 var owners: Map<String, Long> = mapOf(uid!! to number),
+                @Exclude @get:PropertyName(FIRESTORE_ACTIVE_TOKENS) @get:Keep
+                @set:Exclude @set:RestrictTo(RestrictTo.Scope.TESTS)
+                var activeTokensz: Map<String, Date> = emptyMap(),
+                @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
+                var pendingApprovals: Map<String, String> = emptyMap(),
                 @Exclude @get:Keep @set:Keep var templateId: String = defaultTemplateId,
                 @Exclude @get:Keep @set:Keep var name: String? = null,
                 @Exclude @get:Keep @set:Keep var media: String? = null,
@@ -54,6 +60,8 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
             writeLong(number)
             writeString(id)
             writeBundle(Bundle().apply { owners.forEach { putLong(it.key, it.value) } })
+            writeBundle(Bundle().apply { activeTokensz.forEach { putLong(it.key, it.value.time) } })
+            writeBundle(Bundle().apply { pendingApprovals.forEach { putString(it.key, it.value) } })
             writeString(templateId)
             writeString(name)
             writeString(media)
@@ -75,6 +83,8 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
             override fun createFromParcel(source: Parcel): Team = source.run {
                 Team(readLong(),
                      readString(),
+                     readBundleAsMap(),
+                     readBundleAsMap { Date(getLong(it)) },
                      readBundleAsMap(),
                      readString(),
                      readString(),

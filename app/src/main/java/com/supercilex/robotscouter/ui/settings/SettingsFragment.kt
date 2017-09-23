@@ -26,15 +26,12 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.RC_SIGN_IN
 import com.supercilex.robotscouter.util.data.clearPrefs
 import com.supercilex.robotscouter.util.data.defaultTemplateId
-import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.debugInfo
 import com.supercilex.robotscouter.util.isFullUser
@@ -42,8 +39,6 @@ import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
-import com.supercilex.robotscouter.util.uid
-import com.supercilex.robotscouter.util.user
 
 class SettingsFragment : PreferenceFragmentCompat(),
         TemplateSelectionListener,
@@ -160,12 +155,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(context, R.string.signed_in, Toast.LENGTH_SHORT).show()
-
-                val user: FirebaseUser = user!!
-                User(uid!!, user.email, user.displayName, user.photoUrl).add()
-
                 logLoginEvent()
-
                 activity.finish()
             } else {
                 val response: IdpResponse = IdpResponse.fromResultIntent(data) ?: return

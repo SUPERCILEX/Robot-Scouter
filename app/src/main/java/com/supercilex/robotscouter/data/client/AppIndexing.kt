@@ -12,10 +12,10 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.TeamsLiveData
-import com.supercilex.robotscouter.util.data.model.getTemplateIndexable
+import com.supercilex.robotscouter.util.data.getTemplateIndexable
+import com.supercilex.robotscouter.util.data.indexable
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.util.data.model.indexable
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.onSignedIn

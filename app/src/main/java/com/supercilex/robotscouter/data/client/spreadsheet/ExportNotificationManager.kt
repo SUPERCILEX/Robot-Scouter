@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.SINGLE_ITEM
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.properties.Delegates
@@ -61,7 +61,7 @@ class ExportNotificationManager(private val service: ExportService) {
         val id = exporter.hashCode()
         val teams = exporter.scouts.keys
         val maxProgress = teams.size +
-                if (teams.size == SINGLE_ITEM) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
+                if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
         val notification = exportNotification.updateProgress(maxProgress, 0)
         exporters[exporter] = NotificationHolder(id, notification, maxProgress)

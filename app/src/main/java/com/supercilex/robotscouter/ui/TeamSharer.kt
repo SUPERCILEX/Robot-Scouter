@@ -9,17 +9,20 @@ import android.view.View
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
 import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.firestore.FieldPath
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.SINGLE_ITEM
-import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
+import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.data.CachingSharer
+import com.supercilex.robotscouter.util.data.generateToken
+import com.supercilex.robotscouter.util.data.getTeamsLink
 import com.supercilex.robotscouter.util.data.model.TeamCache
-import com.supercilex.robotscouter.util.data.model.linkIdNumberPair
+import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logShareTeamsEvent
+import java.util.Date
 
 class TeamSharer private constructor(private val activity: FragmentActivity,
                                      @Size(min = 1) teams: List<Team>) : CachingSharer(activity) {
@@ -29,8 +32,8 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         return if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
             activity.resources.getQuantityString(
                     R.plurals.share_team_message,
-                    SINGLE_ITEM,
-                    cache.teams[0].toString() + " and more")
+                    1,
+                    "${cache.teams[0]} and more")
         } else {
             fullMessage
         }
@@ -38,13 +41,12 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
 
     init {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
-            val deepLinkBuilder = StringBuilder("$TEAMS_LINK_BASE?")
-            for (team in cache.teams) {
-                deepLinkBuilder.append(team.linkIdNumberPair)
-            }
+            val token = generateToken
+            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
+            for (team in cache.teams) team.ref.update(tokenPath, Date())
 
             getInvitationIntent(
-                    deepLinkBuilder.toString(),
+                    cache.teams.getTeamsLink(token),
                     it.result.format(cache.shareCta, cache.teams[0].media))
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
@@ -102,7 +104,6 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
             }
             if (teams.isEmpty()) return false
 
-            TODO("Implement sharing")
             TeamSharer(activity, teams)
             logShareTeamsEvent(teams)
             return true

@@ -119,8 +119,8 @@
     <string name="new_scout_or_team_long">Add a new scout or team</string>
     <string name="add_scout">Add scout</string>
     <string name="add_media">Add media</string>
-    <string name="visit_team_website">Visit team %s’s website</string>
-    <string name="visit_team_website_on_tba">Visit team %s on The Blue Alliance</string>
+    <string name="visit_team_website">Visit team %d’s website</string>
+    <string name="visit_team_website_on_tba">Visit team %d on The Blue Alliance</string>
     <string name="edit_template">Edit next scout template</string>
 
     <string name="edit_team_details">Edit team details</string>

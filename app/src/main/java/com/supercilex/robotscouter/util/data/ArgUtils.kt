@@ -32,20 +32,31 @@ private fun getBooleanForInt(value: Int) = value == 1
 
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
 
-fun <T> Parcel.readBundleAsMap(): Map<String, T> =
-        readBundle(RobotScouter::class.java.classLoader).let { bundleToMap(it) }
+@Suppress("UNCHECKED_CAST")
+fun <T> Parcel.readBundleAsMap(): Map<String, T> = readBundleAsMap { get(it) as T }
 
-fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundle(key).let { bundleToMap(it) }
-
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun <T> PersistableBundle.getBundleAsMap(key: String) = getPersistableBundle(key).let { bundle ->
-    @Suppress("UNCHECKED_CAST")
-    bundle.keySet().associate { it to bundle.get(it) } as Map<String, T>
-}
+inline fun <T> Parcel.readBundleAsMap(parse: Bundle.(String) -> T): Map<String, T> =
+        readBundle(RobotScouter::class.java.classLoader).let { bundleToMap(it, parse) }
 
 @Suppress("UNCHECKED_CAST")
-private fun <T> bundleToMap(bundle: Bundle) =
-        bundle.keySet().associate { it to bundle.get(it) } as Map<String, T>
+fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundleAsMap(key) { get(it) as T }
+
+inline fun <T> Bundle.getBundleAsMap(key: String, parse: Bundle.(String) -> T): Map<String, T> =
+        getBundle(key).let { bundleToMap(it, parse) }
+
+@Suppress("UNCHECKED_CAST")
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+fun <T> PersistableBundle.getBundleAsMap(key: String) = getBundleAsMap(key) { get(it) as T }
+
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+inline fun <T> PersistableBundle.getBundleAsMap(key: String,
+                                                parse: PersistableBundle.(String) -> T) =
+        getPersistableBundle(key).let { bundle ->
+            bundle.keySet().associate { it to bundle.parse(it) } as Map<String, T>
+        }
+
+inline fun <T> bundleToMap(bundle: Bundle, parse: Bundle.(String) -> T) =
+        bundle.keySet().associate { it to bundle.parse(it) }
 
 fun Team.toBundle() = Bundle().apply { putParcelable(TEAM_KEY, this@toBundle) }
 

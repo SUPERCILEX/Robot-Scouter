@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.teamlist
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -21,6 +22,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
@@ -204,8 +206,10 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(intent)
                 .addOnSuccessListener(this) {
-                    val link = it?.link
-                    if (link != null) startActivity(Intent(Intent.ACTION_VIEW, link))
+                    it?.link?.let {
+                        startActivity(Intent(intent).setComponent(
+                                ComponentName(this, LinkReceiverActivity::class.java)))
+                    }
                 }
                 .addOnFailureListener(CrashLogger)
                 .addOnFailureListener(this) {

@@ -12,10 +12,15 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.data.model.User
+import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getTeamNames
+import com.supercilex.robotscouter.util.data.model.userRef
 import java.lang.Exception
+import java.util.Date
 
 private const val TEAM_ID = "team_id"
 private const val TEMPLATE_ID = "template_id"
@@ -31,11 +36,21 @@ private val analytics: FirebaseAnalytics by lazy {
 
 fun initAnalytics() {
     FirebaseAuth.getInstance().addAuthStateListener {
+        val user = it.currentUser
+
         // Log uid to help debug db crashes
-        FirebaseCrash.log("User id: $uid")
-        analytics.setUserId(uid)
+        FirebaseCrash.log("User id: ${user?.uid}")
+        analytics.setUserId(user?.uid)
         analytics.setUserProperty(
                 FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providers.toString())
+
+        if (user != null) User(user.uid, user.email, user.displayName, user.photoUrl).add()
+    }
+
+    FirebaseAuth.getInstance().addIdTokenListener {
+        if (uid != null) {
+            userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
+        }
     }
 }
 
