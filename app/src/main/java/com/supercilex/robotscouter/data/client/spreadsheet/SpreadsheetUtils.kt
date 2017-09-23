@@ -89,7 +89,7 @@ fun getSafeSheetName(workbook: Workbook, team: Team): String {
         else {
             safeName = "$originalName ($i)"
             if (safeName.length > MAX_SHEET_LENGTH) {
-                originalName = team.number
+                originalName = team.number.toString()
                 safeName = originalName
             }
         }

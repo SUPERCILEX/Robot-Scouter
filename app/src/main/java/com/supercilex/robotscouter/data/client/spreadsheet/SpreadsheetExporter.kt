@@ -12,7 +12,6 @@ import android.support.v4.content.FileProvider
 import android.text.TextUtils
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.perf.metrics.AddTrace
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.BOOLEAN
@@ -215,7 +214,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         else "[$normalizedTemplateName] ${cache.teamNames}$middleMan$extension"
     }
 
-    @AddTrace(name = "getWorkbook")
+    //    @AddTrace(name = "getWorkbook") // TODO
     private fun getWorkbook(): Workbook {
         val workbook: Workbook
         if (isUnsupportedDevice) {

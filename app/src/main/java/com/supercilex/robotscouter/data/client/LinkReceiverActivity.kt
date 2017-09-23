@@ -72,7 +72,7 @@ class LinkReceiverActivity : AppCompatActivity() {
         val teamId = teamPairSplit[0]
         val teamNumber = teamPairSplit[1]
 
-        Team(teamNumber, teamId)
+        Team(teamNumber.toLong(), teamId)
     }
 
     private fun getTemplate(link: Uri): String? = link.getQueryParameter(ID_QUERY)

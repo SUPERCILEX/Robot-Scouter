@@ -9,19 +9,16 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
-import java.io.IOException
 import java.util.Arrays
 
 class TbaUploader private constructor(team: Team) :
         TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
-    @Throws(Exception::class)
     override fun call(): Team {
         uploadToImgur()
         if (team.shouldUploadMediaToTba) uploadToTba()
         return team
     }
 
-    @Throws(IOException::class)
     private fun uploadToImgur() {
         val response: Response<JsonObject> = TbaTeamMediaApi.IMGUR_RETROFIT
                 .create(TbaTeamMediaApi::class.java)
@@ -42,13 +39,12 @@ class TbaUploader private constructor(team: Team) :
         team.media = link
     }
 
-    @Throws(IOException::class)
     private fun uploadToTba() {
         val response: Response<JsonObject> = api.postToTba(
-                team.number,
+                team.number.toString(),
                 year,
                 tbaApiKey,
-                RequestBody.create(MediaType.parse("text/*"), team.media))
+                RequestBody.create(MediaType.parse("text/*"), team.media!!))
                 .execute()
 
         if (cannotContinue(response)) return

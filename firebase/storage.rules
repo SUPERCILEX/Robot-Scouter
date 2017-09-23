@@ -1,0 +1,11 @@
+service firebase.storage {
+  match /b/robot-scouter-app.appspot.com/o {
+    match /share_team_template.html {
+      allow read;
+    }
+
+    match /share_template_template.html {
+      allow read;
+    }
+  }
+}

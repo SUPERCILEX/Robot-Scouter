@@ -42,13 +42,13 @@ fun initAnalytics() {
 fun logSelectTeamEvent(team: Team) = analytics.logEvent(Event.SELECT_CONTENT, Bundle().apply {
     putString(ITEM_ID, "select_team")
     putString(CONTENT_TYPE, TEAM_CATEGORY)
-    putString(ITEM_NAME, team.number)
+    putLong(ITEM_NAME, team.number)
     putString(TEAM_ID, team.id)
 })
 
 fun logEditTeamDetailsEvent(team: Team) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
     putString(ITEM_ID, "edit_team_details")
-    putString(ITEM_NAME, team.number)
+    putLong(ITEM_NAME, team.number)
     putString(ITEM_CATEGORY, TEAM_CATEGORY)
     putString(TEAM_ID, team.id)
 })
@@ -69,7 +69,7 @@ fun logExportTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.VIEW_ITEM,
 
 fun logAddScoutEvent(team: Team, templateId: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
     putString(ITEM_ID, "add_scout")
-    putString(ITEM_NAME, team.number)
+    putLong(ITEM_NAME, team.number)
     putString(ITEM_CATEGORY, SCOUT_CATEGORY)
     putString(TEAM_ID, team.id)
     putString(TEMPLATE_ID, templateId)

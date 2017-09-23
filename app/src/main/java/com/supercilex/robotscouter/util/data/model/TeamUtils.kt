@@ -12,11 +12,11 @@ import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
@@ -28,13 +28,13 @@ import com.supercilex.robotscouter.util.TEAMS_LINK_BASE
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.METRIC_PARSER
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
-import com.supercilex.robotscouter.util.data.getFromServer
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.uid
 import java.util.ArrayList
 import java.util.Calendar
 import java.util.Collections
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 private const val FRESHNESS_DAYS = "team_freshness"
@@ -123,7 +123,7 @@ fun Team.forceUpdate() {
     FirebaseAppIndex.getInstance().update(indexable)
 }
 
-fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, FieldValue.delete())
+fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, Date(0))
 
 fun Team.copyMediaInfo(newTeam: Team) {
     media = newTeam.media
@@ -132,14 +132,15 @@ fun Team.copyMediaInfo(newTeam: Team) {
 }
 
 fun Team.delete() {
-    deleteAllScouts()
-    ref.delete()
-    FirebaseAppIndex.getInstance().remove(deepLink)
+    deleteAllScouts().addOnSuccessListener {
+        ref.delete()
+        FirebaseAppIndex.getInstance().remove(deepLink)
+    }.addOnFailureListener(CrashLogger)
 }
 
 fun Team.fetchLatestData() {
     fetchAndActivate().addOnSuccessListener {
-        val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp)
+        val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp.time)
         val freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS)
 
         if (differenceDays >= freshness) startDownloadTeamDataJob(this)
@@ -147,10 +148,10 @@ fun Team.fetchLatestData() {
 }
 
 fun Team.getScouts(): Task<List<Scout>> = async {
-    val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).getFromServer())
+    val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).get())
             .map { SCOUT_PARSER.parseSnapshot(it) }
     val metricTasks =
-            scouts.map { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getFromServer() }
+            scouts.map { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).get() }
     Tasks.await(Tasks.whenAll(metricTasks))
 
     scouts.mapIndexed { index, scout ->

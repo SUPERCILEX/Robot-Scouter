@@ -138,11 +138,11 @@ class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressed
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             R.id.action_share -> TemplateSharer.shareTemplate(
                     activity,
                     pagerAdapter.currentTabId!!,
                     pagerAdapter.currentTab?.text?.toString()!!)
-            R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             else -> return false
         }
         return true

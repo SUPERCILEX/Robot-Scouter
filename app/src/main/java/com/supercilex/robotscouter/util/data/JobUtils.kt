@@ -16,6 +16,7 @@ import com.firebase.jobdispatcher.Job
 import com.firebase.jobdispatcher.Trigger
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import java.util.Date
 
 private val NUMBER = "number"
 private val ID = "id"
@@ -72,7 +73,7 @@ fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
 private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"
 
 fun parseRawBundle(args: Bundle) = Team(
-        args.getString(NUMBER),
+        args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
         args.getString(TEMPLATE_ID),
@@ -84,11 +85,11 @@ fun parseRawBundle(args: Bundle) = Team(
         args.getBoolean(CUSTOM_WEBSITE),
         args.getBoolean(SHOULD_UPLOAD_MEDIA),
         args.getInt(MEDIA_YEAR),
-        args.getLong(TIMESTAMP))
+        Date(args.getLong(TIMESTAMP)))
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun parseRawBundle(args: PersistableBundle) = Team(
-        args.getString(NUMBER),
+        args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
         args.getString(TEMPLATE_ID),
@@ -100,10 +101,10 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getBooleanCompat(CUSTOM_WEBSITE),
         args.getBooleanCompat(SHOULD_UPLOAD_MEDIA),
         args.getInt(MEDIA_YEAR),
-        args.getLong(TIMESTAMP))
+        Date(args.getLong(TIMESTAMP)))
 
 private fun toRawBundle(team: Team) = Bundle().apply {
-    putString(NUMBER, team.number)
+    putLong(NUMBER, team.number)
     putString(ID, team.id)
     putBundle(OWNERS, Bundle().apply { team.owners.forEach { putLong(it.key, it.value) } })
     putString(TEMPLATE_ID, team.templateId)
@@ -115,12 +116,12 @@ private fun toRawBundle(team: Team) = Bundle().apply {
     putBoolean(CUSTOM_WEBSITE, team.hasCustomWebsite)
     putBoolean(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba)
     putInt(MEDIA_YEAR, team.mediaYear)
-    putLong(TIMESTAMP, team.timestamp)
+    putLong(TIMESTAMP, team.timestamp.time)
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
-    putString(NUMBER, team.number)
+    putLong(NUMBER, team.number)
     putString(ID, team.id)
     putPersistableBundle(OWNERS, PersistableBundle().apply {
         team.owners.forEach { putLong(it.key, it.value) }
@@ -134,5 +135,5 @@ private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
     putBooleanCompat(CUSTOM_WEBSITE, team.hasCustomWebsite)
     putBooleanCompat(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba)
     putInt(MEDIA_YEAR, team.mediaYear)
-    putLong(TIMESTAMP, team.timestamp)
+    putLong(TIMESTAMP, team.timestamp.time)
 }

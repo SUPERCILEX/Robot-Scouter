@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
@@ -36,7 +35,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
         TeamsLiveData.observeOnDataChanged().observeOnce { teams ->
             firestoreBatch {
                 teams.filter { TextUtils.equals(templateId, it.templateId) }.forEach {
-                    update(it.ref, FIRESTORE_TEMPLATE_ID, FieldValue.delete())
+                    update(it.ref, FIRESTORE_TEMPLATE_ID, defaultTemplateId)
                 }
             }
 

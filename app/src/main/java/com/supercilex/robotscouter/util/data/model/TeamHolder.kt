@@ -34,9 +34,9 @@ class TeamHolder : ViewModelBase<Bundle>(),
         if (teams == null) return MutableLiveData()
 
         if (TextUtils.isEmpty(team.id)) {
-            for (candidate in teams) {
-                if (candidate.numberAsLong == team.numberAsLong) {
-                    team.id = candidate.id
+            for ((number, id) in teams) {
+                if (number == team.number) {
+                    team.id = id
                     return apply(teams)
                 }
             }

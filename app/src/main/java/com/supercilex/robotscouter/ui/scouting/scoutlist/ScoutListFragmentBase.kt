@@ -13,19 +13,28 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
+import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
+import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
+import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
+import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.addScout
+import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.model.viewAction
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
@@ -130,7 +139,27 @@ abstract class ScoutListFragmentBase : FragmentBase(),
             R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
             R.id.action_visit_team_website -> team.visitTeamWebsite(context)
             R.id.action_edit_template -> {
-                TODO("Test getFromServer")
+                val templateId = team.templateId
+
+                if (isNativeTemplateType(templateId)) {
+                    startActivity(TemplateListActivity.createIntent(templateId))
+                    return true
+                }
+
+                getTemplatesQuery().get().continueWith(
+                        AsyncTaskExecutor, Continuation<QuerySnapshot, Boolean> {
+                    it.result.map { SCOUT_PARSER.parseSnapshot(it) }
+                            .find { it.id == templateId } != null
+                }).addOnSuccessListener { ownsTemplate ->
+                    if (ownsTemplate) {
+                        startActivity(TemplateListActivity.createIntent(templateId))
+                    } else {
+                        Toast.makeText(context,
+                                       R.string.error_template_access_denied,
+                                       Toast.LENGTH_LONG)
+                                .show()
+                    }
+                }.addOnFailureListener(CrashLogger)
             }
             R.id.action_edit_team_details -> showTeamDetails()
             else -> return false

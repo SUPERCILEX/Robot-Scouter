@@ -8,9 +8,7 @@ import com.supercilex.robotscouter.util.uid
 val userPrefs get() = getUserPrefs(uid!!)
 
 fun User.add() {
-    val userRef = getUserRef(uid)
-
-    TODO()
+    getUserRef(uid).set(this)
 }
 
 private fun getUserRef(uid: String) = FIRESTORE_USERS.document(uid)

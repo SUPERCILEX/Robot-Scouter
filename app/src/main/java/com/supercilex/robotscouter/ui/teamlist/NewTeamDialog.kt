@@ -25,7 +25,7 @@ class NewTeamDialog : KeyboardDialogBase() {
         val teamNumber: String = lastEditText.text.toString()
         return if (teamNumber.isNumber()) {
             (activity as TeamSelectionListener)
-                    .onTeamSelected(getScoutBundle(Team(teamNumber, ""), true))
+                    .onTeamSelected(getScoutBundle(Team(teamNumber.toLong(), ""), true))
             true
         } else {
             inputLayout.error = getString(R.string.number_too_big_error)

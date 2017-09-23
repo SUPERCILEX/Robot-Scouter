@@ -1,31 +1,31 @@
 package com.supercilex.robotscouter.util.data.model
 
-import com.google.android.gms.tasks.Tasks
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.data.model.MATCH
-import com.supercilex.robotscouter.data.model.PIT
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TemplateType
+import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.util.ID_QUERY
 import com.supercilex.robotscouter.util.TEMPLATES_LINK_BASE
-import com.supercilex.robotscouter.util.data.DefaultTemplatesLiveData
+import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.delete
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.logAddTemplateEvent
 import com.supercilex.robotscouter.util.uid
+import java.util.Date
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         "$FIRESTORE_OWNERS.${uid!!}".let {
-            FIRESTORE_TEMPLATES.whereGreaterThanOrEqualTo(it, 0).orderBy(it, direction)
+            FIRESTORE_TEMPLATES.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
         }
 
 fun getTemplateRef(id: String) = FIRESTORE_TEMPLATES.document(id)
@@ -42,14 +42,14 @@ fun addTemplate(@TemplateType type: Int): String {
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
     }
 
-    when (type) {
-        MATCH, PIT -> DefaultTemplatesLiveData.observeOnDataChanged().observeOnce {
-            it.find { it.id == type.toString() }!!.metrics.forEach {
-                getTemplateMetricsRef(id).document(it.ref.id).set(it)
-            }
-            Tasks.forResult(null)
+    FIRESTORE_DEFAULT_TEMPLATES.get().addOnSuccessListener(
+            AsyncTaskExecutor, OnSuccessListener {
+        it.map {
+            SCOUT_PARSER.parseSnapshot(it)
+        }.find { it.id == type.toString() }!!.metrics.forEach {
+            getTemplateMetricsRef(id).document(it.ref.id).set(it)
         }
-    }
+    })
 
     logAddTemplateEvent(id)
     return id
@@ -68,6 +68,7 @@ fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
                 .build()
 
 fun deleteTemplate(id: String) {
-    getTemplateRef(id).delete()
-    getTemplateMetricsRef(id).delete()
+    getTemplateMetricsRef(id).delete().addOnSuccessListener {
+        getTemplateRef(id).delete()
+    }.addOnFailureListener(CrashLogger)
 }

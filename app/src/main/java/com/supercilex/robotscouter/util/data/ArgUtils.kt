@@ -39,9 +39,11 @@ fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundle(key).let 
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun <T> PersistableBundle.getBundleAsMap(key: String) = getPersistableBundle(key).let { bundle ->
+    @Suppress("UNCHECKED_CAST")
     bundle.keySet().associate { it to bundle.get(it) } as Map<String, T>
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun <T> bundleToMap(bundle: Bundle) =
         bundle.keySet().associate { it to bundle.get(it) } as Map<String, T>
 

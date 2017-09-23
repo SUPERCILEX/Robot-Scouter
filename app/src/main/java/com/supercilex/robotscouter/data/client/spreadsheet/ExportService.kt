@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
-import com.supercilex.robotscouter.util.data.getFromServer
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplateName
@@ -56,7 +55,7 @@ class ExportService : IntentService(TAG) {
 
         notificationManager.setNumOfTemplates(zippedScouts.size)
 
-        val templates = Tasks.await(getTemplatesQuery().getFromServer())
+        val templates = Tasks.await(getTemplatesQuery().get())
                 .map { SCOUT_PARSER.parseSnapshot(it) }
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
             async {

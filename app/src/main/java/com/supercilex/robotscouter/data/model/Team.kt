@@ -14,11 +14,12 @@ import com.supercilex.robotscouter.util.data.readBooleanCompat
 import com.supercilex.robotscouter.util.data.readBundleAsMap
 import com.supercilex.robotscouter.util.data.writeBooleanCompat
 import com.supercilex.robotscouter.util.uid
+import java.util.Date
 
-data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: String,
+data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: Long,
                 @Exclude @get:Exclude var id: String,
                 @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
-                var owners: Map<String, Long> = mapOf(uid!! to number.toLong()),
+                var owners: Map<String, Long> = mapOf(uid!! to number),
                 @Exclude @get:Keep @set:Keep var templateId: String = defaultTemplateId,
                 @Exclude @get:Keep @set:Keep var name: String? = null,
                 @Exclude @get:Keep @set:Keep var media: String? = null,
@@ -28,22 +29,20 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
                 @Exclude @get:Keep @set:Keep var hasCustomWebsite: Boolean = false,
                 @Exclude @get:Keep @set:Keep var shouldUploadMediaToTba: Boolean = false,
                 @Exclude @get:Keep @set:Keep var mediaYear: Int = 0,
-                @Exclude @get:Exclude @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var timestamp: Long = 0) :
+                @Exclude @get:Exclude @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
+                var timestamp: Date = Date(0)) :
         Parcelable, Comparable<Team> {
-    @get:Exclude
-    val numberAsLong get() = number.toLong()
-
     // Empty no-arg constructor for Firebase
-    constructor() : this("0", "")
+    constructor() : this(0, "")
 
     @Keep
     @PropertyName(FIRESTORE_TIMESTAMP)
-    fun getCurrentTimestamp(): Any = System.currentTimeMillis()
+    fun getCurrentTimestamp() = Date()
 
-    override fun toString() = if (TextUtils.isEmpty(name)) number else number + " - " + name
+    override fun toString() = if (TextUtils.isEmpty(name)) number.toString() else "$number - $name"
 
     override operator fun compareTo(other: Team): Int {
-        val comparison = numberAsLong.compareTo(other.numberAsLong)
+        val comparison = number.compareTo(other.number)
         return if (comparison == 0) timestamp.compareTo(other.timestamp)
         else comparison
     }
@@ -52,7 +51,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.apply {
-            writeString(number)
+            writeLong(number)
             writeString(id)
             writeBundle(Bundle().apply { owners.forEach { putLong(it.key, it.value) } })
             writeString(templateId)
@@ -64,7 +63,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
             writeBooleanCompat(hasCustomWebsite)
             writeBooleanCompat(shouldUploadMediaToTba)
             writeInt(mediaYear)
-            writeLong(timestamp)
+            writeLong(timestamp.time)
         }
     }
 
@@ -74,7 +73,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
         @JvmField
         val CREATOR: Parcelable.Creator<Team> = object : Parcelable.Creator<Team> {
             override fun createFromParcel(source: Parcel): Team = source.run {
-                Team(readString(),
+                Team(readLong(),
                      readString(),
                      readBundleAsMap(),
                      readString(),
@@ -86,7 +85,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
                      readBooleanCompat(),
                      readBooleanCompat(),
                      readInt(),
-                     readLong())
+                     Date(readLong()))
             }
 
             override fun newArray(size: Int): Array<Team?> = arrayOfNulls(size)

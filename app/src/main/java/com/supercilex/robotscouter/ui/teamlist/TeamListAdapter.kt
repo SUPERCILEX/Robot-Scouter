@@ -88,7 +88,7 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
 
         if (!hasScrolledToPos && !TextUtils.isEmpty(selectedTeamId)) {
             for (i in 0 until itemCount) {
-                if (team != null && getItem(i).numberAsLong >= team.numberAsLong) {
+                if (team != null && getItem(i).number >= team.number) {
                     if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
                     return
                 }

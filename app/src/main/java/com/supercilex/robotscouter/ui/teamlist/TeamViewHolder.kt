@@ -113,7 +113,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     private fun setTeamNumber() {
-        numberTextView.text = team.number
+        numberTextView.text = team.number.toString()
     }
 
     private fun setTeamName() = if (TextUtils.isEmpty(team.name)) {

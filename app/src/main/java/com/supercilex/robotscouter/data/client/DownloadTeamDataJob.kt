@@ -7,8 +7,8 @@ import com.supercilex.robotscouter.util.data.startInternetJob21
 
 fun startDownloadTeamDataJob(team: Team) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        startInternetJob21(team, team.numberAsLong.toInt(), DownloadTeamDataJob21::class.java)
+        startInternetJob21(team, team.number.toInt(), DownloadTeamDataJob21::class.java)
     } else {
-        startInternetJob14(team, team.numberAsLong.toInt(), DownloadTeamDataJob14::class.java)
+        startInternetJob14(team, team.number.toInt(), DownloadTeamDataJob14::class.java)
     }
 }

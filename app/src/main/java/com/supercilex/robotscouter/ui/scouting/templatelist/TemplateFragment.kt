@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.delete
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
@@ -89,8 +91,20 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)
             }
             R.id.action_remove_metrics -> {
-                TODO("Add back undo SnackBar")
-                metricsRef.delete()
+                recyclerView.clearFocus()
+                metricsRef.delete().addOnSuccessListener { documents ->
+                    Snackbar.make(activity.findViewById(R.id.root),
+                                  R.string.deleted,
+                                  Snackbar.LENGTH_LONG)
+                            .setAction(R.string.undo) {
+                                firestoreBatch {
+                                    for (document in documents) {
+                                        set(document.reference, document.data)
+                                    }
+                                }
+                            }
+                            .show()
+                }
             }
             else -> return false
         }

@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.TeamsLiveData
-import com.supercilex.robotscouter.util.data.getFromServer
 import com.supercilex.robotscouter.util.data.model.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
@@ -33,7 +32,7 @@ class AppIndexingService : JobIntentService() {
                                     *it.map { it.indexable }.toTypedArray())
                         }
                     },
-                    getTemplatesQuery().getFromServer().addOnSuccessListener(
+                    getTemplatesQuery().get().addOnSuccessListener(
                             AsyncTaskExecutor, OnSuccessListener {
                         FirebaseAppIndex.getInstance().update(*it.mapIndexed { index, snapshot ->
                             getTemplateIndexable(

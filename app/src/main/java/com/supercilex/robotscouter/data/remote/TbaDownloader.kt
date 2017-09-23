@@ -10,20 +10,18 @@ import com.google.gson.JsonObject
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import retrofit2.Response
-import java.io.IOException
 
 class TbaDownloader private constructor(team: Team) :
         TbaServiceBase<TbaTeamApi>(team, TbaTeamApi::class.java) {
-    @Throws(Exception::class)
     override fun call(): Team {
         getTeamInfo()
         getTeamMedia(year)
         return team
     }
 
-    @Throws(IOException::class)
     private fun getTeamInfo() {
-        val response: Response<JsonObject> = api.getInfo(team.number, tbaApiKey).execute()
+        val response: Response<JsonObject> =
+                api.getInfo(team.number.toString(), tbaApiKey).execute()
 
         if (cannotContinue(response)) return
 
@@ -38,9 +36,9 @@ class TbaDownloader private constructor(team: Team) :
         }
     }
 
-    @Throws(IOException::class)
     private fun getTeamMedia(year: Int) {
-        val response: Response<JsonArray> = api.getMedia(team.number, year, tbaApiKey).execute()
+        val response: Response<JsonArray> =
+                api.getMedia(team.number.toString(), year, tbaApiKey).execute()
 
         if (cannotContinue(response)) return
 

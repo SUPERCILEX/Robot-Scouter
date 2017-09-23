@@ -21,13 +21,10 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QueryListenOptions
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
@@ -35,7 +32,6 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -58,6 +54,7 @@ import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
 import java.io.File
+import java.util.Date
 
 val TEAM_PARSER = SnapshotParser<Team> {
     it.toObject(Team::class.java).apply { id = it.id }
@@ -66,7 +63,7 @@ val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
     Scout(snapshot.id,
           snapshot.getString(FIRESTORE_TEMPLATE_ID),
           snapshot.getString(FIRESTORE_NAME),
-          snapshot.getLong(FIRESTORE_TIMESTAMP),
+          snapshot.getDate(FIRESTORE_TIMESTAMP),
           @Suppress("UNCHECKED_CAST")
           (snapshot.data[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
               Metric.parse(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
@@ -80,7 +77,6 @@ private val REF_KEY = "com.supercilex.robotscouter.REF"
 fun initDatabase() {
     PrefsLiveData
     TeamsLiveData
-    DefaultTemplatesLiveData
 }
 
 fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
@@ -99,15 +95,15 @@ inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReferen
  * Delete all documents in a collection. This does **not** automatically discover and delete
  * sub-collections.
  */
-fun CollectionReference.delete(batchSize: Int = 100): Task<List<DocumentSnapshot>> = async {
+fun CollectionReference.delete(batchSize: Long = 100): Task<List<DocumentSnapshot>> = async {
     val deleted = ArrayList<DocumentSnapshot>()
 
-    var query = orderBy("__name__").limit(batchSize.toLong())
+    var query = orderBy(FieldPath.documentId()).limit(batchSize)
     var latestDeleted = deleteQueryBatch(query)
     deleted.addAll(latestDeleted)
 
     while (latestDeleted.size >= batchSize) {
-        query = orderBy("__name__").startAfter(latestDeleted.last().id).limit(batchSize.toLong())
+        query = orderBy(FieldPath.documentId()).startAfter(latestDeleted.last().id).limit(batchSize)
         latestDeleted = deleteQueryBatch(query)
     }
 
@@ -117,37 +113,11 @@ fun CollectionReference.delete(batchSize: Int = 100): Task<List<DocumentSnapshot
 /** Delete all results from a query in a single [WriteBatch]. */
 @WorkerThread
 private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await(query.get()).let {
-    val batch = query.firestore.batch()
-    for (snapshot in it) {
-        batch.delete(snapshot.reference)
-    }
-    Tasks.await(batch.commit())
+    Tasks.await(firestoreBatch {
+        for (snapshot in it) delete(snapshot.reference)
+    })
     it.documents
 }
-
-fun Query.getFromServer(): Task<QuerySnapshot> = TaskCompletionSource<QuerySnapshot>().apply {
-    val listener = object : EventListener<QuerySnapshot> {
-        lateinit var registration: ListenerRegistration
-
-        override fun onEvent(snapshot: QuerySnapshot, e: FirebaseFirestoreException?) {
-            if (e == null) {
-                if (!snapshot.metadata.isFromCache || isOffline()) {
-                    setResult(snapshot)
-                    registration.remove()
-                }
-            } else {
-                FirebaseCrash.report(e)
-                setException(e)
-            }
-        }
-    }
-
-    listener.registration = addSnapshotListener(
-            QueryListenOptions()
-                    .includeDocumentMetadataChanges()
-                    .includeQueryMetadataChanges(),
-            listener)
-}.task
 
 inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Task<R> = TaskCompletionSource<R>().apply {
     AppToolkitTaskExecutor.getInstance().executeOnMainThread {
@@ -167,22 +137,10 @@ inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Ta
     }
 }.task
 
-fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(fromServer: Boolean = false):
-        LiveData<ObservableSnapshotArray<T>> =
+fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<ObservableSnapshotArray<T>> =
         Transformations.switchMap(this) {
             object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
-                private var fromServer = true
-
-                override fun onChildChanged(type: ChangeEventType,
-                                            snapshot: DocumentSnapshot,
-                                            newIndex: Int,
-                                            oldIndex: Int) {
-                    this.fromServer = !snapshot.metadata.isFromCache
-                }
-
                 override fun onDataChanged() {
-                    if (fromServer && !this.fromServer && !isOffline()) return
-
                     if (AppToolkitTaskExecutor.getInstance().isMainThread) value = it
                     else postValue(it)
                 }
@@ -313,7 +271,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
             async {
                 val rawTeams = ArrayList<Team>()
                 for (team in teams) {
-                    val rawTeam = team.copy(id = "", timestamp = 0)
+                    val rawTeam = team.copy(id = "", timestamp = Date(0))
 
                     if (rawTeams.contains(rawTeam)) {
                         val existingTeam = teams[rawTeams.indexOf(rawTeam)]
@@ -366,15 +324,6 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
             removeChangeEventListener(updater)
             removeChangeEventListener(merger)
         }
-    }
-}
-
-object DefaultTemplatesLiveData : LiveData<ObservableSnapshotArray<Scout>>() {
-    init {
-        value = FirestoreArray(
-                FIRESTORE_DEFAULT_TEMPLATES,
-                QueryListenOptions().includeQueryMetadataChanges().includeDocumentMetadataChanges(),
-                SCOUT_PARSER)
     }
 }
 
