@@ -22,6 +22,10 @@
     </a>
 </p>
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/Z46b8v6bmM1Upeh32oNdLuRB/SUPERCILEX/Robot-Scouter'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/Z46b8v6bmM1Upeh32oNdLuRB/SUPERCILEX/Robot-Scouter.svg' />
+</a>
+
 Robot Scouter is an open-source Android app with three core goals to make FIRST competition robot
 scouting easy, efficient, and collaborative.
 
