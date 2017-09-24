@@ -104,7 +104,7 @@ fun CollectionReference.delete(batchSize: Long = 100): Task<List<DocumentSnapsho
 
     var query = orderBy(FieldPath.documentId()).limit(batchSize)
     var latestDeleted = deleteQueryBatch(query)
-    deleted.addAll(latestDeleted)
+    deleted += latestDeleted
 
     while (latestDeleted.size >= batchSize) {
         query = orderBy(FieldPath.documentId()).startAfter(latestDeleted.last()).limit(batchSize)

@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import com.github.clans.fab.FloatingActionMenu
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
@@ -42,16 +40,13 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
 
     private var hasAddedItem: Boolean = false
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchCallback.adapter = adapter
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+        recyclerView.recycledViewPool = recyclerPool
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0) {
@@ -75,8 +70,6 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 return false
             }
         })
-
-        return view
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
@@ -137,6 +130,8 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     }
 
     companion object {
+        val recyclerPool = RecyclerView.RecycledViewPool()
+
         fun newInstance(templateId: String) =
                 TemplateFragment().apply { arguments = getTabIdBundle(templateId) }
     }

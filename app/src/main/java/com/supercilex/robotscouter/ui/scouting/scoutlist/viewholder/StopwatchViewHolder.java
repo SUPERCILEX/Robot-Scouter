@@ -27,6 +27,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase;
+import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutFragment;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
 
 import java.lang.ref.WeakReference;
@@ -66,6 +67,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         manager.setInitialPrefetchItemCount(5);
         mCycles.setLayoutManager(manager);
         new GravitySnapHelper(Gravity.START).attachToRecyclerView(mCycles);
+        mCycles.setRecycledViewPool(ScoutFragment.Companion.getRecyclerPool());
         mCycles.setAdapter(new Adapter());
 
         Timer timer = TIMERS.get(getMetric());
@@ -221,8 +223,9 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
     }
 
     private class Adapter extends RecyclerView.Adapter<DataHolder> {
-        private static final int DATA_ITEM = 0;
-        private static final int AVERAGE_ITEM = 1;
+        // Don't conflict with metric types since the pool is shared
+        private static final int DATA_ITEM = 1000;
+        private static final int AVERAGE_ITEM = 1001;
 
         @Override
         public DataHolder onCreateViewHolder(ViewGroup parent, int viewType) {
