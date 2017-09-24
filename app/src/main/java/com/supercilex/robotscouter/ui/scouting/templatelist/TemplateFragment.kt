@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
+import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
     public override val metricsRef: CollectionReference by lazy {
@@ -46,7 +47,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         itemTouchCallback.adapter = adapter
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
-        recyclerView.recycledViewPool = recyclerPool
+        recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0) {
@@ -130,8 +131,6 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     }
 
     companion object {
-        val recyclerPool = RecyclerView.RecycledViewPool()
-
         fun newInstance(templateId: String) =
                 TemplateFragment().apply { arguments = getTabIdBundle(templateId) }
     }

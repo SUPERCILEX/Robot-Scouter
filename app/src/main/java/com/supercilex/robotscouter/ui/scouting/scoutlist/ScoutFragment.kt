@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +16,7 @@ import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.deleteScout
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 
 class ScoutFragment : MetricListFragment() {
     private val team by lazy { arguments.getTeam() }
@@ -29,7 +29,7 @@ class ScoutFragment : MetricListFragment() {
     val toolbar: Toolbar by lazy { parentFragment.view!!.findViewById<Toolbar>(R.id.toolbar) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView.recycledViewPool = recyclerPool
+        recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
@@ -41,8 +41,6 @@ class ScoutFragment : MetricListFragment() {
     } else super.onOptionsItemSelected(item)
 
     companion object {
-        val recyclerPool = RecyclerView.RecycledViewPool()
-
         fun newInstance(scoutId: String, team: Team) = ScoutFragment().apply {
             arguments = getTabIdBundle(scoutId).apply { putAll(team.toBundle()) }
         }

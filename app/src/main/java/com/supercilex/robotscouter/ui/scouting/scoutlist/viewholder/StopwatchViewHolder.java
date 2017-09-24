@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.transition.TransitionManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,8 +30,8 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase;
-import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutFragment;
 import com.supercilex.robotscouter.util.AsyncTaskExecutor;
+import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -67,7 +70,14 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         manager.setInitialPrefetchItemCount(5);
         mCycles.setLayoutManager(manager);
         new GravitySnapHelper(Gravity.START).attachToRecyclerView(mCycles);
-        mCycles.setRecycledViewPool(ScoutFragment.Companion.getRecyclerPool());
+
+        FragmentManager fragmentManager = ((FragmentActivity) itemView.getContext()).getSupportFragmentManager();
+        for (Fragment fragment : fragmentManager.getFragments()) {
+            if (fragment instanceof RecyclerPoolHolder) {
+                mCycles.setRecycledViewPool(((RecyclerPoolHolder) fragment).getRecyclerPool());
+            }
+        }
+
         mCycles.setAdapter(new Adapter());
 
         Timer timer = TIMERS.get(getMetric());

@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.content.res.AppCompatResources
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -31,9 +32,13 @@ import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
+import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 
-class TemplateListFragment : FragmentBase(), View.OnClickListener, OnBackPressedListener,
+class TemplateListFragment : FragmentBase(),
+        View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder,
         FirebaseAuth.AuthStateListener {
+    override val recyclerPool = RecyclerView.RecycledViewPool()
+
     private val rootView by lazy { View.inflate(context, R.layout.fragment_template_list, null) }
     val fam: FloatingActionMenu by lazy { rootView.findViewById<FloatingActionMenu>(R.id.fab_menu) }
     private val pagerAdapter by lazy {

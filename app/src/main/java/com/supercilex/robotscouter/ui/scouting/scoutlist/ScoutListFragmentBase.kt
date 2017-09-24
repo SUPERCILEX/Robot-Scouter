@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -40,11 +41,14 @@ import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.ui.FragmentBase
+import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 
-abstract class ScoutListFragmentBase : FragmentBase(),
+abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team>, TeamMediaCreator.StartCaptureListener {
+    override val recyclerPool = RecyclerView.RecycledViewPool()
+
     protected val rootView: View by lazy {
         View.inflate(context, R.layout.fragment_scout_list, null)
     }
