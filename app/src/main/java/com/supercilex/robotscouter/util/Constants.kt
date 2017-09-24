@@ -73,7 +73,7 @@ val isInTestMode: Boolean by lazy {
 }
 val debugInfo: String get() =
         """
-        |- Robot Scouter version: ${BuildConfig.VERSION_NAME}
+        |- Robot Scouter version: ${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}
         |- Android OS version: ${Build.VERSION.SDK_INT}
         |- User id: $uid
         """.trimMargin()
