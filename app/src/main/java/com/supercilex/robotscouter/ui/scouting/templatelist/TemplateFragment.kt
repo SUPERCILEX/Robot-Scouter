@@ -112,23 +112,20 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     }
 
     override fun onClick(v: View) {
-        val id = v.id
-
         val position = adapter.itemCount
         val metricRef = metricsRef.document()
-        when (id) {
+
+        itemTouchCallback.addItemToScrollQueue(position)
+        when (v.id) {
             R.id.add_checkbox -> metricRef.set(Metric.Boolean(position = position))
             R.id.add_counter -> metricRef.set(Metric.Number(position = position))
             R.id.add_stopwatch -> metricRef.set(Metric.Stopwatch(position = position))
             R.id.add_note -> metricRef.set(Metric.Text(position = position))
-            R.id.add_spinner -> {
-                metricRef.set(Metric.List(position = position))
-            }
+            R.id.add_spinner -> metricRef.set(Metric.List(position = position))
             R.id.add_header -> metricRef.set(Metric.Header(position = position))
             else -> throw IllegalStateException("Unknown view id: $id")
         }
 
-        itemTouchCallback.addItemToScrollQueue(adapter.itemCount)
         fam.close(true)
         hasAddedItem = true
     }

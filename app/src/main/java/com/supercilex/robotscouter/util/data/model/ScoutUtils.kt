@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.delete
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 fun Team.getScoutRef() = ref.collection(FIRESTORE_SCOUTS)
@@ -30,17 +31,21 @@ fun Team.addScout(overrideId: String? = null): String {
     if (isNativeTemplateType(templateId)) {
         FIRESTORE_DEFAULT_TEMPLATES.get().addOnSuccessListener(
                 AsyncTaskExecutor, OnSuccessListener {
-            it.map {
-                SCOUT_PARSER.parseSnapshot(it)
-            }.find { it.id == templateId }!!.metrics.forEach {
-                getScoutMetricsRef(scoutRef.id).document(it.ref.id).set(it)
+            firestoreBatch {
+                it.map {
+                    SCOUT_PARSER.parseSnapshot(it)
+                }.find { it.id == templateId }!!.metrics.forEach {
+                    set(getScoutMetricsRef(scoutRef.id).document(it.ref.id), it)
+                }
             }
         })
     } else {
         getTemplateRef(templateId).collection(FIRESTORE_METRICS).get().addOnSuccessListener(
                 AsyncTaskExecutor, OnSuccessListener {
-            it.documents.associate { it.id to it.data }.forEach {
-                getScoutMetricsRef(scoutRef.id).document(it.key).set(it.value)
+            firestoreBatch {
+                it.documents.associate { it.id to it.data }.forEach {
+                    set(getScoutMetricsRef(scoutRef.id).document(it.key), it.value)
+                }
             }
         }).addOnFailureListener(CrashLogger)
     }
