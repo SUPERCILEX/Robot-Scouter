@@ -156,9 +156,9 @@
     <string name="error_template_access_denied">Access denied: template owned by another user</string>
 
     <string-array name="new_template_options">
-        <item>Match Scouting</item>
-        <item>Pit Scouting</item>
-        <item>Blank</item>
+        <item>Match Scout</item>
+        <item>Pit Scout</item>
+        <item>Blank Scout</item>
     </string-array>
 
     <string name="move_cancelled">Move cancelled: another user updated the template while you were reordering items.</string>
