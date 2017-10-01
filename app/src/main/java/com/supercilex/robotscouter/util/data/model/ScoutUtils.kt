@@ -73,7 +73,7 @@ fun Team.addScout(overrideId: String? = null): String {
         null
     })
 
-    logAddScoutEvent(this, templateId)
+    logAddScoutEvent(this, id, templateId)
     return scoutRef.id
 }
 

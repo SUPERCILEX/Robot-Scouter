@@ -23,6 +23,7 @@ import java.lang.Exception
 import java.util.Date
 
 private const val TEAM_ID = "team_id"
+private const val SCOUT_ID = "scout_id"
 private const val TEMPLATE_ID = "template_id"
 
 private const val TEAM_CATEGORY = "team"
@@ -82,11 +83,12 @@ fun logExportTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.VIEW_ITEM,
     putString(TEAM_ID, teams.map { it.id }.toString())
 })
 
-fun logAddScoutEvent(team: Team, templateId: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
+fun logAddScoutEvent(team: Team, scoutId: String, templateId: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
     putString(ITEM_ID, "add_scout")
     putLong(ITEM_NAME, team.number)
     putString(ITEM_CATEGORY, SCOUT_CATEGORY)
     putString(TEAM_ID, team.id)
+    putString(SCOUT_ID, scoutId)
     putString(TEMPLATE_ID, templateId)
 })
 
