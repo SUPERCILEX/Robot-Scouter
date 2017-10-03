@@ -3,13 +3,14 @@ buildscript {
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
+        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
     }
 
     ext {
-        kotlinVersion = '1.1.50'
+        kotlinVersion = '1.2.0-beta-31'
         supportLibVersion = '26.1.0'
         playServicesVersion = '11.3.0'
-        archVersion = '1.0.0-alpha9-1'
+        archVersion = '1.0.0-beta1'
         firebaseUiVersion = '5376eb55e5'
         leakCanaryVersion = '1.5.3'
         retrofitVersion = '2.3.0'
@@ -32,5 +33,6 @@ allprojects {
         jcenter()
         google()
         maven { url 'https://jitpack.io' }
+        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2' }
     }
 }

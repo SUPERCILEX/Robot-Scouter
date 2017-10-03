@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.hypot
 
 private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
 
@@ -106,7 +107,7 @@ fun animateCircularReveal(view: View, visible: Boolean) {
             visible,
             centerX,
             centerY,
-            Math.hypot(centerX.toDouble(), centerY.toDouble()).toFloat())
+            hypot(centerX.toDouble(), centerY.toDouble()).toFloat())
     animator?.start()
 }
 

@@ -7,6 +7,8 @@ import android.support.design.widget.Snackbar
 import android.util.AttributeSet
 import android.view.View
 import com.github.clans.fab.FloatingActionMenu
+import kotlin.math.max
+import kotlin.math.min
 
 class FabMenuBehavior : CoordinatorLayout.Behavior<FloatingActionMenu> {
     @Keep constructor() : super()
@@ -22,7 +24,7 @@ class FabMenuBehavior : CoordinatorLayout.Behavior<FloatingActionMenu> {
                                         child: FloatingActionMenu,
                                         dependency: View): Boolean =
             if (dependency is Snackbar.SnackbarLayout) {
-                child.translationY = Math.min(0f, dependency.translationY - dependency.height)
+                child.translationY = min(0f, dependency.translationY - dependency.height)
                 true
             } else {
                 super.onDependentViewChanged(parent, child, dependency)
@@ -32,7 +34,7 @@ class FabMenuBehavior : CoordinatorLayout.Behavior<FloatingActionMenu> {
                                         child: FloatingActionMenu,
                                         dependency: View) {
         if (dependency is Snackbar.SnackbarLayout) {
-            child.translationY = Math.max(0f, dependency.translationY - dependency.height)
+            child.translationY = max(0f, dependency.translationY - dependency.height)
         }
     }
 }

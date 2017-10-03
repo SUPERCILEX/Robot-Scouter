@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import kotlin.math.roundToInt
 
 abstract class TemplateSelectorDialog : DialogFragment() {
     @get:StringRes
@@ -120,7 +121,7 @@ abstract class TemplateSelectorDialog : DialogFragment() {
                 val child = parent.getChildAt(1 - (recyclerView.layoutManager as LinearLayoutManager)
                         .findFirstVisibleItemPosition()) ?: return
                 parent.getDecoratedBoundsWithMargins(child, bounds)
-                val bottom = bounds.bottom + Math.round(child.translationY)
+                val bottom = bounds.bottom + child.translationY.roundToInt()
                 val top = bottom - divider.intrinsicHeight
                 divider.setBounds(left, top, right, bottom)
                 divider.draw(c)

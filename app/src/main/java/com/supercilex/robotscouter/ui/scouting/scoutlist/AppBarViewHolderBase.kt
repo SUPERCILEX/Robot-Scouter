@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import kotlin.math.roundToInt
 
 open class AppBarViewHolderBase(private val fragment: Fragment,
                                 rootView: View,
@@ -154,7 +155,7 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
     }
 
     private fun getTransparentColor(@ColorInt opaque: Int): Int = Color.argb(
-            Math.round(Color.alpha(opaque) * 0.6f),
+            (Color.alpha(opaque) * 0.6f).roundToInt(),
             Color.red(opaque),
             Color.green(opaque),
             Color.blue(opaque))

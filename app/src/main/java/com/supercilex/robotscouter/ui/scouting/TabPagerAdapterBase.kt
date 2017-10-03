@@ -98,18 +98,18 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
     private fun selectTab(index: Int) = tabLayout.getTabAt(index)?.select()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private fun startListening() {
+    fun startListening() {
         holder.scouts.addChangeEventListener(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun stopListening() {
+    fun stopListening() {
         holder.scouts.removeChangeEventListener(this)
     }
 
     @Suppress("unused")
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun cleanup() {
+    fun cleanup() {
         fragment.lifecycle.removeObserver(this)
         refWatcher.watch(this)
     }

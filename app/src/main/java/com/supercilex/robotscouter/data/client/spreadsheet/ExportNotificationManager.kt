@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 class ExportNotificationManager(private val service: ExportService) {
@@ -140,7 +141,7 @@ class ExportNotificationManager(private val service: ExportService) {
         if (maxProgress < progress) throw IllegalArgumentException(
                 "Max progress ($maxProgress) must be greater or equal to progress ($progress)")
 
-        val percentage = Math.round(progress.toFloat() / maxProgress.toFloat() * 100)
+        val percentage = (progress.toFloat() / maxProgress.toFloat() * 100).roundToInt()
         setProgress(maxProgress, progress, false).setSubText("$percentage%")
         return this
     }
