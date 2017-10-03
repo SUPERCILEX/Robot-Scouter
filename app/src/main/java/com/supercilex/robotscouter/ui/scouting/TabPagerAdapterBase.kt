@@ -1,8 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
+import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.annotation.StringRes
@@ -20,13 +19,12 @@ import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
-import com.supercilex.robotscouter.util.refWatcher
 
 abstract class TabPagerAdapterBase(protected val fragment: Fragment,
                                    private val tabLayout: TabLayout,
                                    protected val dataRef: CollectionReference) :
         FragmentStatePagerAdapter(fragment.childFragmentManager),
-        TabLayout.OnTabSelectedListener, View.OnLongClickListener, LifecycleObserver,
+        TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
 
@@ -97,21 +95,12 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
 
     private fun selectTab(index: Int) = tabLayout.getTabAt(index)?.select()
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun startListening() {
+    override fun onStart(owner: LifecycleOwner) {
         holder.scouts.addChangeEventListener(this)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun stopListening() {
+    override fun onStop(owner: LifecycleOwner) {
         holder.scouts.removeChangeEventListener(this)
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun cleanup() {
-        fragment.lifecycle.removeObserver(this)
-        refWatcher.watch(this)
     }
 
     override fun onLongClick(v: View): Boolean {

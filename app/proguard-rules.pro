@@ -6,6 +6,9 @@
 -dontwarn kotlin.**
 -dontwarn com.supercilex.robotscouter.util.data.TeamsLiveData$merger$1$mergeTeams$2$1$1
 
+# TODO temporary until AC reaches 1.0
+-keep class * implements android.arch.lifecycle.GeneratedAdapter {<init>(...);}
+
 # In-app billing
 -keep class com.android.vending.billing.**
 

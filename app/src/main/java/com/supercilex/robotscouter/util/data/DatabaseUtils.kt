@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.util.data
 
-import android.arch.core.executor.AppToolkitTaskExecutor
+import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
@@ -32,7 +32,6 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.isNativeTemplateType
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -58,10 +57,7 @@ import java.io.File
 import java.util.Date
 
 val TEAM_PARSER = SnapshotParser<Team> {
-    it.toObject(Team::class.java).apply { id = it.id }.apply {
-        // TODO https://groups.google.com/d/msg/firestore-trusted-testers/XP2ZHZz5BlY/sXWParNmAQAJ
-        activeTokensz = it.data[FIRESTORE_ACTIVE_TOKENS] as Map<String, Date>
-    }
+    it.toObject(Team::class.java).apply { id = it.id }
 }
 val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
     Scout(snapshot.id,
@@ -124,7 +120,7 @@ private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await
 }
 
 inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Task<R> = TaskCompletionSource<R>().apply {
-    AppToolkitTaskExecutor.getInstance().executeOnMainThread {
+    ArchTaskExecutor.getInstance().executeOnMainThread {
         observeForever(object : Observer<T> {
             private var hasChanged = false
 
@@ -145,7 +141,7 @@ fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<Ob
         Transformations.switchMap(this) {
             object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
                 override fun onDataChanged() {
-                    if (AppToolkitTaskExecutor.getInstance().isMainThread) value = it
+                    if (ArchTaskExecutor.getInstance().isMainThread) value = it
                     else postValue(it)
                 }
 

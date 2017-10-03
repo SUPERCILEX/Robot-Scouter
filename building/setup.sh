@@ -1,6 +1,6 @@
 #!/bin/bash
 
-${ANDROID_HOME}tools/bin/sdkmanager --channel=3 \
+echo y | ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 \
     "tools" "platform-tools" "build-tools;${BUILD_TOOLS_VERSION}" "platforms;android-26"
 
 if [ $TRAVIS_PULL_REQUEST = "false" ]; then

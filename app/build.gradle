@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 if (isReleaseBuild) {
     apply plugin: 'com.google.firebase.firebase-crash'
-//    apply plugin: 'com.google.firebase.firebase-perf' TODO
+    apply plugin: 'com.google.firebase.firebase-perf'
 }
 apply plugin: 'com.github.triplet.play'
 tasks.whenTaskAdded { task ->
@@ -16,7 +16,6 @@ apply from: '../quality/quality.gradle'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1' // Note: remember to update travis.yml versions too
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
@@ -87,10 +86,10 @@ dependencies {
     implementation "com.android.support:palette-v7:$supportLibVersion"
     implementation "com.android.support:preference-v14:$supportLibVersion"
     implementation "com.android.support:support-emoji-appcompat:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
 
     implementation "android.arch.lifecycle:extensions:$archVersion"
-    kapt "android.arch.lifecycle:compiler:$archVersion"
+    implementation "android.arch.lifecycle:common-java8:$archVersion"
 
     implementation 'com.android.billingclient:billing:dp-1'
 
@@ -100,19 +99,19 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
-    implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
-    implementation("com.twitter.sdk.android:twitter-core:3.0.0@aar") { transitive = true }
+    implementation 'com.facebook.android:facebook-login:4.27.0'
+    implementation("com.twitter.sdk.android:twitter-core:3.1.0@aar") { transitive = true }
     // Database
 //    implementation 'com.firebaseui:firebase-ui-firestore:3.0.0'
-//    implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion" TODO
+    implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-firestore:$playServicesVersion"
 
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.1'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.3'
 
     // Firebase
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-crash:$playServicesVersion"
-//    implementation "com.google.firebase:firebase-perf:$playServicesVersion" TODO
+    implementation "com.google.firebase:firebase-perf:$playServicesVersion"
     implementation "com.google.firebase:firebase-storage:$playServicesVersion"
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
     implementation "com.google.firebase:firebase-appindexing:$playServicesVersion"
@@ -120,7 +119,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    implementation 'pub.devrel:easypermissions:1.0.0'
+    implementation 'pub.devrel:easypermissions:1.0.1'
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
 

@@ -1,10 +1,8 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.app.Activity
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Intent
 import android.support.design.widget.Snackbar
 import android.view.Menu
@@ -23,7 +21,7 @@ import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
-        LifecycleObserver, FirebaseAuth.AuthStateListener {
+        DefaultLifecycleObserver, FirebaseAuth.AuthStateListener {
     private val rootView: View = activity.findViewById(R.id.root)
 
     private var signInMenuItem: MenuItem? = null
@@ -40,14 +38,12 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
         updateMenuState()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-    fun onStateChange(source: LifecycleOwner, event: Lifecycle.Event) {
-        @Suppress("NON_EXHAUSTIVE_WHEN")
-        when (event) {
-            Lifecycle.Event.ON_START -> FirebaseAuth.getInstance().addAuthStateListener(this)
-            Lifecycle.Event.ON_STOP -> FirebaseAuth.getInstance().removeAuthStateListener(this)
-            Lifecycle.Event.ON_DESTROY -> source.lifecycle.removeObserver(this)
-        }
+    override fun onStart(owner: LifecycleOwner) {
+        FirebaseAuth.getInstance().addAuthStateListener(this)
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        FirebaseAuth.getInstance().removeAuthStateListener(this)
     }
 
     override fun onAuthStateChanged(auth: FirebaseAuth) = updateMenuState()

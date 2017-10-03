@@ -78,7 +78,7 @@ fun parseRawBundle(args: Bundle) = Team(
         args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
-        args.getBundleAsMap(ACTIVE_TOKENS),
+        args.getBundleAsMap<Date>(ACTIVE_TOKENS).toMutableMap(),
         args.getBundleAsMap(PENDING_APPROVALS),
         args.getString(TEMPLATE_ID),
         args.getString(NAME),
@@ -96,7 +96,7 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
-        args.getBundleAsMap(ACTIVE_TOKENS),
+        args.getBundleAsMap<Date>(ACTIVE_TOKENS).toMutableMap(),
         args.getBundleAsMap(PENDING_APPROVALS),
         args.getString(TEMPLATE_ID),
         args.getString(NAME),
@@ -114,7 +114,7 @@ private fun toRawBundle(team: Team) = Bundle().apply {
     putString(ID, team.id)
     putBundle(OWNERS, Bundle().apply { team.owners.forEach { putLong(it.key, it.value) } })
     putBundle(ACTIVE_TOKENS, Bundle().apply {
-        team.activeTokensz.forEach { putLong(it.key, it.value.time) }
+        team.activeTokens.forEach { putLong(it.key, it.value.time) }
     })
     putBundle(PENDING_APPROVALS, Bundle().apply {
         team.pendingApprovals.forEach { putString(it.key, it.value) }
@@ -139,7 +139,7 @@ private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
         team.owners.forEach { putLong(it.key, it.value) }
     })
     putPersistableBundle(ACTIVE_TOKENS, PersistableBundle().apply {
-        team.activeTokensz.forEach { putLong(it.key, it.value.time) }
+        team.activeTokens.forEach { putLong(it.key, it.value.time) }
     })
     putPersistableBundle(PENDING_APPROVALS, PersistableBundle().apply {
         team.pendingApprovals.forEach { putString(it.key, it.value) }

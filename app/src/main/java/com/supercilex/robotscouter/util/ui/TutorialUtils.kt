@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.Observer
-import android.os.Handler
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.FragmentActivity
@@ -43,7 +43,8 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
     })
 }
 
-fun showSignInTutorial(helper: TutorialHelper, owner: FragmentActivity) = Handler().post {
+fun showSignInTutorial(helper: TutorialHelper, owner: FragmentActivity)
+        = ArchTaskExecutor.getInstance().postToMainThread {
     helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt: MaterialTapTargetPrompt?
             get() = MaterialTapTargetPrompt.Builder(owner, R.style.RobotScouter_Tutorial_Menu)

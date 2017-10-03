@@ -73,7 +73,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 team.getNumber(),
                 team.getId(),
                 team.getOwners(),
-                team.getActiveTokensz(),
+                team.getActiveTokens(),
                 team.getPendingApprovals(),
                 team.getTemplateId(),
                 team.getName(),
