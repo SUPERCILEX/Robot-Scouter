@@ -4,6 +4,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.model.TeamCache
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellStyle
@@ -18,7 +19,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     private val metricCache = HashMap<Team, HashMap<Int, Metric<*>>>()
     private val formatStyles = HashMap<String, Short>()
 
-    lateinit var workbook: Workbook
+    var workbook: Workbook by LateinitVal()
     val creationHelper: CreationHelper by lazy { workbook.creationHelper }
 
     val columnHeaderStyle: CellStyle? by lazy {

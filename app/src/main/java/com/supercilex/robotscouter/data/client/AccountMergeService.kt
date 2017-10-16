@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.generateToken
@@ -22,13 +23,13 @@ import java.util.Date
 import com.supercilex.robotscouter.util.data.model.userPrefs as userPrefsRef
 
 class AccountMergeService : ManualMergeService() {
-    private lateinit var token: String
+    private var token: String by LateinitVal()
 
-    private lateinit var prevUid: String
-    private lateinit var userPrefs: Task<QuerySnapshot>
+    private var prevUid: String by LateinitVal()
+    private var userPrefs: Task<QuerySnapshot> by LateinitVal()
 
-    private lateinit var teams: Task<QuerySnapshot>
-    private lateinit var templates: Task<QuerySnapshot>
+    private var teams: Task<QuerySnapshot> by LateinitVal()
+    private var templates: Task<QuerySnapshot> by LateinitVal()
 
     override fun onLoadData(): Task<Void?>? {
         token = generateToken

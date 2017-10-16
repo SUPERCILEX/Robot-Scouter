@@ -13,6 +13,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.OrderedModel
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateViewHolder
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import java.util.Collections
@@ -20,8 +21,8 @@ import java.util.Collections
 class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
     private val recyclerView: RecyclerView = rootView.findViewById(R.id.list)
-    lateinit var adapter: FirestoreRecyclerAdapter<T, *>
-    lateinit var itemTouchHelper: ItemTouchHelper
+    var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
+    var itemTouchHelper: ItemTouchHelper by LateinitVal()
 
     private val movableItems = ArrayList<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null

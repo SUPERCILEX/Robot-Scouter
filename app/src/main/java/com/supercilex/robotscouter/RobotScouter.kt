@@ -9,6 +9,7 @@ import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.initDatabase
 import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
@@ -48,8 +49,7 @@ class RobotScouter : MultiDexApplication() {
     }
 
     companion object {
-        lateinit var INSTANCE: RobotScouter
-            private set
+        var INSTANCE: RobotScouter by LateinitVal()
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

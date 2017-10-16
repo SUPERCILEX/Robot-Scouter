@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_UNIT
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
+import com.supercilex.robotscouter.util.LateinitVal
 
 sealed class Metric<T>(@Exclude @get:Keep val type: Int,
                        name: String,
@@ -90,8 +91,8 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int,
         override fun toString(): String = "${super.toString()}, selectedValueId=$selectedValueId"
     }
 
-    @Exclude @get:Exclude
-    override lateinit var ref: DocumentReference
+    @get:Exclude
+    override var ref: DocumentReference by LateinitVal()
 
     @Exclude @get:Keep
     var name = name
