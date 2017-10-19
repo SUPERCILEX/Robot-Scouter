@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.util.data.model
 
 import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.data.model.Scout
@@ -25,32 +25,24 @@ fun Team.getScoutMetricsRef(id: String) = getScoutRef().document(id).collection(
 
 fun Team.addScout(overrideId: String? = null): String {
     val templateId = overrideId ?: templateId
-
     val scoutRef = getScoutRef().document()
-    scoutRef.set(Scout(scoutRef.id, templateId))
 
-    val nameCollector = TaskCompletionSource<String?>()
+    scoutRef.set(Scout(scoutRef.id, templateId))
     if (isNativeTemplateType(templateId)) {
-        FIRESTORE_DEFAULT_TEMPLATES.get().continueWithTask(
-                AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
+        FIRESTORE_DEFAULT_TEMPLATES.get().continueWith(
+                AsyncTaskExecutor, Continuation<QuerySnapshot, String?> {
             val scout = it.result.map { SCOUT_PARSER.parseSnapshot(it) }
                     .find { it.id == templateId }!!
-            nameCollector.setResult(scout.name)
 
             firestoreBatch {
                 scout.metrics.forEach {
                     set(getScoutMetricsRef(scoutRef.id).document(it.ref.id), it)
                 }
             }
-        }).addOnFailureListener(CrashLogger).addOnFailureListener {
-            nameCollector.setException(it)
-        }
-    } else {
-        getTemplateRef(templateId).get().addOnCompleteListener {
-            if (it.isSuccessful) nameCollector.setResult(SCOUT_PARSER.parseSnapshot(it.result).name)
-            else nameCollector.setException(it.exception!!)
-        }.addOnFailureListener(CrashLogger)
 
+            scout.name
+        })
+    } else {
         getTemplateRef(templateId).collection(FIRESTORE_METRICS).get().continueWithTask(
                 AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
             firestoreBatch {
@@ -59,18 +51,19 @@ fun Team.addScout(overrideId: String? = null): String {
                 }
             }
         }).addOnFailureListener(CrashLogger)
-    }
 
-    nameCollector.task.continueWithTask {
-        it.result!!
-        getScoutRef().get()
-    }.continueWith(AsyncTaskExecutor, Continuation<QuerySnapshot, Nothing?> {
-        val nExistingTemplates = it.result.map {
+        getTemplateRef(templateId).get().continueWith {
+            SCOUT_PARSER.parseSnapshot(it.result).name
+        }
+    }.addOnFailureListener(CrashLogger).addOnCompleteListener(
+            AsyncTaskExecutor, OnCompleteListener {
+        val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
+        val nExistingTemplates = Tasks.await(getScoutRef().get()).map {
             SCOUT_PARSER.parseSnapshot(it).templateId
         }.groupBy { it }[templateId]!!.size
 
-        scoutRef.update(FIRESTORE_NAME, "${nameCollector.task.result} $nExistingTemplates")
-        null
+        scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates")
+                .addOnFailureListener(CrashLogger)
     })
 
     logAddScoutEvent(this, id, templateId)

@@ -59,7 +59,7 @@ fun startInternetJob14(team: Team,
             .setService(clazz)
             .setTag(jobId.toString())
             .setTrigger(Trigger.executionWindow(0, 0))
-            .setExtras(toRawBundle(team))
+            .setExtras(team.toRawBundle())
             .setConstraints(Constraint.ON_ANY_NETWORK)
             .buildAndSchedule(dispatcher)
 }
@@ -68,7 +68,7 @@ fun startInternetJob14(team: Team,
 fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
     JobInfo.Builder(jobId, ComponentName(RobotScouter.INSTANCE.packageName, clazz.name))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setExtras(toRawPersistableBundle(team))
+            .setExtras(team.toRawPersistableBundle())
             .buildAndSchedule(clazz.name)
 }
 
@@ -78,7 +78,7 @@ fun parseRawBundle(args: Bundle) = Team(
         args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
-        args.getBundleAsMap<Date>(ACTIVE_TOKENS).toMutableMap(),
+        args.getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
         args.getBundleAsMap(PENDING_APPROVALS),
         args.getString(TEMPLATE_ID),
         args.getString(NAME),
@@ -96,7 +96,7 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getLong(NUMBER),
         args.getString(ID),
         args.getBundleAsMap(OWNERS),
-        args.getBundleAsMap<Date>(ACTIVE_TOKENS).toMutableMap(),
+        args.getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
         args.getBundleAsMap(PENDING_APPROVALS),
         args.getString(TEMPLATE_ID),
         args.getString(NAME),
@@ -109,49 +109,51 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getInt(MEDIA_YEAR),
         Date(args.getLong(TIMESTAMP)))
 
-private fun toRawBundle(team: Team) = Bundle().apply {
-    putLong(NUMBER, team.number)
-    putString(ID, team.id)
-    putBundle(OWNERS, Bundle().apply { team.owners.forEach { putLong(it.key, it.value) } })
+private fun Team.toRawBundle() = Bundle().apply {
+    putLong(NUMBER, number)
+    putString(ID, id)
+    putBundle(OWNERS, Bundle().apply {
+        owners.forEach { putLong(it.key, it.value) }
+    })
     putBundle(ACTIVE_TOKENS, Bundle().apply {
-        team.activeTokens.forEach { putLong(it.key, it.value.time) }
+        activeTokens.forEach { putLong(it.key, it.value.time) }
     })
     putBundle(PENDING_APPROVALS, Bundle().apply {
-        team.pendingApprovals.forEach { putString(it.key, it.value) }
+        pendingApprovals.forEach { putString(it.key, it.value) }
     })
-    putString(TEMPLATE_ID, team.templateId)
-    putString(NAME, team.name)
-    putString(MEDIA, team.media)
-    putString(WEBSITE, team.website)
-    putBoolean(CUSTOM_NAME, team.hasCustomName)
-    putBoolean(CUSTOM_MEDIA, team.hasCustomMedia)
-    putBoolean(CUSTOM_WEBSITE, team.hasCustomWebsite)
-    putBoolean(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba)
-    putInt(MEDIA_YEAR, team.mediaYear)
-    putLong(TIMESTAMP, team.timestamp.time)
+    putString(TEMPLATE_ID, templateId)
+    putString(NAME, name)
+    putString(MEDIA, media)
+    putString(WEBSITE, website)
+    putBoolean(CUSTOM_NAME, hasCustomName)
+    putBoolean(CUSTOM_MEDIA, hasCustomMedia)
+    putBoolean(CUSTOM_WEBSITE, hasCustomWebsite)
+    putBoolean(SHOULD_UPLOAD_MEDIA, shouldUploadMediaToTba)
+    putInt(MEDIA_YEAR, mediaYear)
+    putLong(TIMESTAMP, timestamp.time)
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-private fun toRawPersistableBundle(team: Team) = PersistableBundle().apply {
-    putLong(NUMBER, team.number)
-    putString(ID, team.id)
+private fun Team.toRawPersistableBundle() = PersistableBundle().apply {
+    putLong(NUMBER, number)
+    putString(ID, id)
     putPersistableBundle(OWNERS, PersistableBundle().apply {
-        team.owners.forEach { putLong(it.key, it.value) }
+        owners.forEach { putLong(it.key, it.value) }
     })
     putPersistableBundle(ACTIVE_TOKENS, PersistableBundle().apply {
-        team.activeTokens.forEach { putLong(it.key, it.value.time) }
+        activeTokens.forEach { putLong(it.key, it.value.time) }
     })
     putPersistableBundle(PENDING_APPROVALS, PersistableBundle().apply {
-        team.pendingApprovals.forEach { putString(it.key, it.value) }
+        pendingApprovals.forEach { putString(it.key, it.value) }
     })
-    putString(TEMPLATE_ID, team.templateId)
-    putString(NAME, team.name)
-    putString(MEDIA, team.media)
-    putString(WEBSITE, team.website)
-    putBooleanCompat(CUSTOM_NAME, team.hasCustomName)
-    putBooleanCompat(CUSTOM_MEDIA, team.hasCustomMedia)
-    putBooleanCompat(CUSTOM_WEBSITE, team.hasCustomWebsite)
-    putBooleanCompat(SHOULD_UPLOAD_MEDIA, team.shouldUploadMediaToTba)
-    putInt(MEDIA_YEAR, team.mediaYear)
-    putLong(TIMESTAMP, team.timestamp.time)
+    putString(TEMPLATE_ID, templateId)
+    putString(NAME, name)
+    putString(MEDIA, media)
+    putString(WEBSITE, website)
+    putBooleanCompat(CUSTOM_NAME, hasCustomName)
+    putBooleanCompat(CUSTOM_MEDIA, hasCustomMedia)
+    putBooleanCompat(CUSTOM_WEBSITE, hasCustomWebsite)
+    putBooleanCompat(SHOULD_UPLOAD_MEDIA, shouldUploadMediaToTba)
+    putInt(MEDIA_YEAR, mediaYear)
+    putLong(TIMESTAMP, timestamp.time)
 }

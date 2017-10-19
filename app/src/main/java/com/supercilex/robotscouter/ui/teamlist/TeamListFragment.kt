@@ -67,8 +67,11 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
         })
 
         TeamsLiveData.observe(this, Observer { snapshots ->
-            adapter?.stopListening()
-            lifecycle.removeObserver(adapter)
+            adapter?.let {
+                it.stopListening()
+                lifecycle.removeObserver(it)
+            }
+
             if (snapshots == null) {
                 rootView.findViewById<View>(R.id.no_content_hint).visibility = View.VISIBLE
                 selectTeam(null)

@@ -114,6 +114,7 @@ fun CollectionReference.delete(batchSize: Long = 100): Task<List<DocumentSnapsho
 @WorkerThread
 private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await(query.get()).let {
     Tasks.await(firestoreBatch {
+        // TODO remove this when moving to CF delete; breaks when offline
         for (snapshot in it) delete(snapshot.reference)
     })
     it.documents

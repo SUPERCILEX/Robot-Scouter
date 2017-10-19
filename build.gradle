@@ -7,10 +7,10 @@ buildscript {
     }
 
     ext {
-        kotlinVersion = '1.2.0-beta-31'
+        kotlinVersion = '1.2.0-beta-88'
         supportLibVersion = '26.1.0'
         playServicesVersion = '11.4.2'
-        archVersion = '1.0.0-beta2'
+        archVersion = '1.0.0-rc1'
         firebaseUiVersion = '9cc77708bd'
         leakCanaryVersion = '1.5.4'
         retrofitVersion = '2.3.0'
@@ -18,12 +18,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-rc1'
+        classpath 'com.android.tools.build:gradle:3.0.0-rc2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.1.0'
-        classpath('com.google.firebase:firebase-plugins:1.1.0-alpha1') {
-            exclude group: 'com.google.guava', module: 'guava-jdk5'
-        }
+        classpath 'com.google.firebase:firebase-plugins:1.1.1'
         classpath 'com.github.SUPERCILEX:gradle-play-publisher:013f54c874'
     }
 }

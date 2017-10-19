@@ -1,12 +1,15 @@
 package com.supercilex.robotscouter.util.data.model
 
-import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
@@ -38,16 +41,16 @@ fun addTemplate(@TemplateType type: Int): String {
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
     }
 
-    FIRESTORE_DEFAULT_TEMPLATES.get().addOnSuccessListener(
-            AsyncTaskExecutor, OnSuccessListener {
+    FIRESTORE_DEFAULT_TEMPLATES.get().continueWithTask(
+            AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
         firestoreBatch {
-            it.map {
+            it.result.map {
                 SCOUT_PARSER.parseSnapshot(it)
             }.find { it.id == type.toString() }!!.metrics.forEach {
                 set(getTemplateMetricsRef(id).document(it.ref.id), it)
             }
         }
-    })
+    }).addOnFailureListener(CrashLogger)
 
     logAddTemplateEvent(id)
     return id
