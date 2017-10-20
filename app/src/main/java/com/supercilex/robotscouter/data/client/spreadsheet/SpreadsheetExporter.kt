@@ -97,7 +97,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 RobotScouter.INSTANCE, exportId, shareIntent, PendingIntent.FLAG_ONE_SHOT)
 
         val builder = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_CHANNEL)
-                .setSmallIcon(R.drawable.ic_done_white_48dp)
+                .setSmallIcon(R.drawable.ic_done_white_24dp)
                 .setContentTitle(RobotScouter.INSTANCE.getString(
                         R.string.export_complete_title, templateName))
                 .setSubText(getPluralTeams(R.plurals.export_complete_summary, cache.teams.size))
