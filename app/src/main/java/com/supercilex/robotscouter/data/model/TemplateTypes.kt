@@ -1,18 +1,20 @@
 package com.supercilex.robotscouter.data.model
 
-import android.support.annotation.IntDef
 import com.supercilex.robotscouter.util.isNumber
 
-const val MATCH = 0
-const val PIT = 1
-const val EMPTY = 2
+enum class TemplateType(val id: Int) {
+    MATCH(0),
+    PIT(1),
+    EMPTY(2);
 
-const val DEFAULT_TEMPLATE_TYPE = MATCH.toString()
-val TEMPLATE_TYPES = listOf(MATCH, PIT, EMPTY)
+    companion object {
+        val DEFAULT: TemplateType = MATCH
 
-fun isNativeTemplateType(id: String?): Boolean =
-        id?.isNumber() == true && TEMPLATE_TYPES.contains(id.toInt())
+        fun valueOf(id: Int): TemplateType = coerce(id.toString())
+                ?: throw IllegalArgumentException("Unknown template type: $id")
 
-@IntDef(MATCH.toLong(), PIT.toLong(), EMPTY.toLong())
-@Retention(AnnotationRetention.SOURCE)
-annotation class TemplateType
+        fun coerce(id: String?): TemplateType? = if (id?.isNumber() == true) {
+            TemplateType.values().find { it.id == id.toInt() }
+        } else null
+    }
+}

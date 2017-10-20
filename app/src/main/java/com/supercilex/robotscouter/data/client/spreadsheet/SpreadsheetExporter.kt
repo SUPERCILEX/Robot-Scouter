@@ -15,14 +15,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.perf.metrics.AddTrace
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.data.model.BOOLEAN
-import com.supercilex.robotscouter.data.model.HEADER
-import com.supercilex.robotscouter.data.model.LIST
 import com.supercilex.robotscouter.data.model.Metric
-import com.supercilex.robotscouter.data.model.NUMBER
-import com.supercilex.robotscouter.data.model.STOPWATCH
+import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.Scout
-import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.hide
 import com.supercilex.robotscouter.util.data.rootFolder
@@ -263,8 +258,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         fun setRowValue(metric: Metric<*>, row: Row, column: Int) {
             val valueCell = row.getCell(column, CREATE_NULL_AS_BLANK)
             when (metric.type) {
-                BOOLEAN -> valueCell.setCellValue((metric as Metric.Boolean).value)
-                NUMBER -> {
+                MetricType.BOOLEAN -> valueCell.setCellValue((metric as Metric.Boolean).value)
+                MetricType.NUMBER -> {
                     val numberMetric = metric as Metric.Number
                     valueCell.setCellValue(numberMetric.value.toDouble())
 
@@ -272,25 +267,24 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                     if (TextUtils.isEmpty(unit)) cache.setCellFormat(valueCell, "0.00")
                     else cache.setCellFormat(valueCell, "#0\"$unit\"")
                 }
-                STOPWATCH -> {
+                MetricType.STOPWATCH -> {
                     val cycles = (metric as Metric.Stopwatch).value ?: return
                     val average = if (cycles.isEmpty()) 0 else cycles.sum() / cycles.size
 
                     valueCell.setCellValue(TimeUnit.MILLISECONDS.toSeconds(average).toDouble())
                     cache.setCellFormat(valueCell, "#0\"s\"")
                 }
-                LIST -> {
+                MetricType.LIST -> {
                     val listMetric = metric as Metric.List
                     val selectedItem = listMetric.value[listMetric.selectedValueId]
                     valueCell.setCellValue(selectedItem)
                 }
-                TEXT -> {
+                MetricType.TEXT -> {
                     valueCell.setCellValue(
                             cache.creationHelper.createRichTextString((metric as Metric.Text).value))
                 }
-                HEADER -> { // No data
+                MetricType.HEADER -> { // No data
                 }
-                else -> throw IllegalStateException("Unknown metric type ${metric.type}")
             }
         }
 
@@ -306,20 +300,19 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             metricCache[metric.ref.id] = index
             cache.putRootMetric(team, index, metric.let {
                 return@let when (metric.type) {
-                    HEADER -> Metric.Header(it.name, position = index)
-                    BOOLEAN -> Metric.Boolean(it.name, position = index)
-                    NUMBER -> Metric.Number(it.name, position = index)
-                    STOPWATCH -> Metric.Stopwatch(it.name, position = index)
-                    TEXT -> Metric.Text(it.name, position = index)
-                    LIST -> Metric.List(it.name, position = index)
-                    else -> throw IllegalStateException("Unknown metric type ${metric.type}")
+                    MetricType.HEADER -> Metric.Header(it.name, position = index)
+                    MetricType.BOOLEAN -> Metric.Boolean(it.name, position = index)
+                    MetricType.NUMBER -> Metric.Number(it.name, position = index)
+                    MetricType.STOPWATCH -> Metric.Stopwatch(it.name, position = index)
+                    MetricType.TEXT -> Metric.Text(it.name, position = index)
+                    MetricType.LIST -> Metric.List(it.name, position = index)
                 }.apply { ref = it.ref }
             })
 
             return teamSheet.createRow(index).apply {
                 createCell(0).apply {
                     setCellValue(metric.name)
-                    if (metric.type == HEADER) {
+                    if (metric.type == MetricType.HEADER) {
                         cellStyle = cache.headerMetricRowHeaderStyle
                         addTitleRowMergedRegion(row)
                     } else {
@@ -393,22 +386,22 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                     row.getCell(cell.columnIndex - 1, CREATE_NULL_AS_BLANK))
 
             when (type) {
-                BOOLEAN -> {
+                MetricType.BOOLEAN -> {
                     cell.cellFormula = "COUNTIF($rangeAddress, TRUE) / COUNTA($rangeAddress)"
                     cache.setCellFormat(cell, "0.00%")
                 }
-                NUMBER -> {
+                MetricType.NUMBER -> {
                     cell.cellFormula = "SUM($rangeAddress) / COUNT($rangeAddress)"
                     buildTeamChart(row, team, chartData, chartPool)
                 }
-                STOPWATCH -> {
+                MetricType.STOPWATCH -> {
                     val excludeZeros = "\"<>0\""
                     cell.cellFormula = "IF(COUNTIF($rangeAddress, $excludeZeros) = 0, 0, " +
                             "AVERAGEIF($rangeAddress, $excludeZeros))"
 
                     buildTeamChart(row, team, chartData, chartPool)
                 }
-                LIST -> {
+                MetricType.LIST -> {
                     sheet.setArrayFormula(
                             "INDEX($rangeAddress, MATCH(MAX(COUNTIF($rangeAddress, $rangeAddress)), " +
                                     "COUNTIF($rangeAddress, $rangeAddress), 0))",
@@ -418,9 +411,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                                     cell.columnIndex,
                                     cell.columnIndex))
                 }
-                HEADER, TEXT -> { // Nothing to average
+                MetricType.HEADER, MetricType.TEXT -> { // Nothing to average
                 }
-                else -> throw IllegalStateException("Unknown metric type $type")
             }
         }
 
@@ -472,7 +464,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             for (i in row.rowNum downTo 1) {
                 val metric = cache.getRootMetric(team, i) ?: continue
 
-                if (metric.type == HEADER) {
+                if (metric.type == MetricType.HEADER) {
                     val cachedChart = chartPool[metric]
                     if (cachedChart != null) chart = cachedChart
                     return i to metric
@@ -562,7 +554,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 val metricIndex = metricCache[rootMetric.ref.id]
                 val averageCell = scoutSheet.getRow(j).run { getCell(lastCellNum - 1) }
 
-                if (TextUtils.isEmpty(averageCell.stringValue) || rootMetric.type == TEXT) continue
+                if (TextUtils.isEmpty(averageCell.stringValue)
+                        || rootMetric.type == MetricType.TEXT) continue
 
                 if (metricIndex == null) {
                     val headerCell = headerRow.createCell(headerRow.lastCellNum.toInt()).apply {

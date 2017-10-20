@@ -21,7 +21,7 @@ import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.model.isNativeTemplateType
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
@@ -145,8 +145,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
             R.id.action_edit_template -> {
                 val templateId = team.templateId
 
-                if (isNativeTemplateType(templateId)) {
-                    startActivity(TemplateListActivity.createIntent(templateId))
+                TemplateType.coerce(templateId)?.let {
+                    startActivity(TemplateListActivity.createIntent(it.id.toString()))
                     return true
                 }
 

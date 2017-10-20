@@ -10,7 +10,7 @@ import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.FIRESTORE_PREFS
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
@@ -49,7 +49,8 @@ val prefs = object : PreferenceDataStore() {
 }
 
 var defaultTemplateId: String
-    get() = prefs.getString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, DEFAULT_TEMPLATE_TYPE)!!
+    get() =
+        prefs.getString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, TemplateType.DEFAULT.id.toString())!!
     set(value) = prefs.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
 
 @get:AppCompatDelegate.NightMode

@@ -8,7 +8,7 @@ import android.text.TextUtils
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.DEFAULT_TEMPLATE_TYPE
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
@@ -39,7 +39,9 @@ class DeleteTemplateDialog : ManualDismissDialog() {
                 }
             }
 
-            if (templateId == defaultTemplateId) defaultTemplateId = DEFAULT_TEMPLATE_TYPE
+            if (templateId == defaultTemplateId) {
+                defaultTemplateId = TemplateType.DEFAULT.id.toString()
+            }
             deleteTemplate(templateId)
 
             Tasks.forResult(null)

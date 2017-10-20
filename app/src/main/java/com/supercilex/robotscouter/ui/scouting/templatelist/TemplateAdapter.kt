@@ -10,14 +10,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.BOOLEAN
-import com.supercilex.robotscouter.data.model.HEADER
-import com.supercilex.robotscouter.data.model.LIST
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
-import com.supercilex.robotscouter.data.model.NUMBER
-import com.supercilex.robotscouter.data.model.STOPWATCH
-import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.CheckboxTemplateViewHolder
@@ -47,23 +41,22 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
         callback.onBind(viewHolder, position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
             MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            HEADER -> HeaderTemplateViewHolder(
+        return when (MetricType.valueOf(viewType)) {
+            MetricType.HEADER -> HeaderTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_header, parent, false))
-            BOOLEAN -> CheckboxTemplateViewHolder(
+            MetricType.BOOLEAN -> CheckboxTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_checkbox, parent, false))
-            NUMBER -> CounterTemplateViewHolder(
+            MetricType.NUMBER -> CounterTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_counter, parent, false))
-            STOPWATCH -> StopwatchTemplateViewHolder(
+            MetricType.STOPWATCH -> StopwatchTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_stopwatch, parent, false))
-            TEXT -> EditTextTemplateViewHolder(
+            MetricType.TEXT -> EditTextTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_notes, parent, false))
-            LIST -> SpinnerTemplateViewHolder(
+            MetricType.LIST -> SpinnerTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_spinner, parent, false))
-            else -> throw IllegalStateException("Unknown view type: $viewType")
         }
     }
 

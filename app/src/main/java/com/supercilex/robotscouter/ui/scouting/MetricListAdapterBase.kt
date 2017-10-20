@@ -7,7 +7,6 @@ import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
-import com.supercilex.robotscouter.data.model.HEADER
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.util.ui.CardListHelper
@@ -23,7 +22,7 @@ abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>
         override fun isLastItem(position: Int): Boolean =
                 super.isLastItem(position) || isHeader(position + 1)
 
-        private fun isHeader(position: Int): Boolean = getItem(position).type == HEADER
+        private fun isHeader(position: Int): Boolean = getItem(position).type == MetricType.HEADER
     }
     private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
 
@@ -41,8 +40,7 @@ abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>
         viewHolder.bind(metric, manager, animator)
     }
 
-    @MetricType
-    override fun getItemViewType(position: Int): Int = getItem(position).type
+    override fun getItemViewType(position: Int): Int = getItem(position).type.id
 
     override fun onChildChanged(type: ChangeEventType,
                                 snapshot: DocumentSnapshot,

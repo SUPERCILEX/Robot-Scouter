@@ -31,7 +31,7 @@ fun getTemplateRef(id: String) = FIRESTORE_TEMPLATES.document(id)
 
 fun getTemplateMetricsRef(id: String) = getTemplateRef(id).collection(FIRESTORE_METRICS)
 
-fun addTemplate(@TemplateType type: Int): String {
+fun addTemplate(type: TemplateType): String {
     val ref = FIRESTORE_TEMPLATES.document()
     val id = ref.id
 
@@ -46,7 +46,7 @@ fun addTemplate(@TemplateType type: Int): String {
         firestoreBatch {
             it.result.map {
                 SCOUT_PARSER.parseSnapshot(it)
-            }.find { it.id == type.toString() }!!.metrics.forEach {
+            }.find { it.id == type.id.toString() }!!.metrics.forEach {
                 set(getTemplateMetricsRef(id).document(it.ref.id), it)
             }
         }

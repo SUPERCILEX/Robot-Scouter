@@ -7,7 +7,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.model.isNativeTemplateType
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
@@ -28,11 +28,11 @@ fun Team.addScout(overrideId: String? = null): String {
     val scoutRef = getScoutRef().document()
 
     scoutRef.set(Scout(scoutRef.id, templateId))
-    if (isNativeTemplateType(templateId)) {
+    (TemplateType.coerce(templateId)?.let { type ->
         FIRESTORE_DEFAULT_TEMPLATES.get().continueWith(
                 AsyncTaskExecutor, Continuation<QuerySnapshot, String?> {
             val scout = it.result.map { SCOUT_PARSER.parseSnapshot(it) }
-                    .find { it.id == templateId }!!
+                    .find { it.id == type.id.toString() }!!
 
             firestoreBatch {
                 scout.metrics.forEach {
@@ -42,7 +42,7 @@ fun Team.addScout(overrideId: String? = null): String {
 
             scout.name
         })
-    } else {
+    } ?: run {
         getTemplateRef(templateId).collection(FIRESTORE_METRICS).get().continueWithTask(
                 AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
             firestoreBatch {
@@ -55,7 +55,7 @@ fun Team.addScout(overrideId: String? = null): String {
         getTemplateRef(templateId).get().continueWith {
             SCOUT_PARSER.parseSnapshot(it.result).name
         }
-    }.addOnFailureListener(CrashLogger).addOnCompleteListener(
+    }).addOnFailureListener(CrashLogger).addOnCompleteListener(
             AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(getScoutRef().get()).map {

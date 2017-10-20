@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.data.model
 import android.support.annotation.Keep
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.PropertyName
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_SELECTED_VALUE_ID
@@ -11,17 +12,18 @@ import com.supercilex.robotscouter.util.FIRESTORE_UNIT
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.LateinitVal
 
-sealed class Metric<T>(@Exclude @get:Keep val type: Int,
+sealed class Metric<T>(@Exclude @get:Exclude val type: MetricType,
                        name: String,
                        value: T,
                        @Exclude @get:Keep override var position: Int) : OrderedModel {
-    class Header(name: String = "", position: Int) : Metric<Nothing?>(HEADER, name, null, position)
+    class Header(name: String = "", position: Int) :
+            Metric<Nothing?>(MetricType.HEADER, name, null, position)
 
     class Boolean(name: String = "", value: kotlin.Boolean = false, position: Int) :
-            Metric<kotlin.Boolean>(BOOLEAN, name, value, position)
+            Metric<kotlin.Boolean>(MetricType.BOOLEAN, name, value, position)
 
     class Number(name: String = "", value: Long = 0, unit: String? = null, position: Int) :
-            Metric<Long>(NUMBER, name, value, position) {
+            Metric<Long>(MetricType.NUMBER, name, value, position) {
         @Exclude @get:Keep
         var unit = unit
             set(value) {
@@ -53,16 +55,16 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int,
     class Stopwatch(name: String = "",
                     value: kotlin.collections.List<Long>? = emptyList(),
                     position: Int) :
-            Metric<kotlin.collections.List<Long>?>(STOPWATCH, name, value, position)
+            Metric<kotlin.collections.List<Long>?>(MetricType.STOPWATCH, name, value, position)
 
     class Text(name: String = "", value: String? = null, position: Int) :
-            Metric<String?>(TEXT, name, value, position)
+            Metric<String?>(MetricType.TEXT, name, value, position)
 
     class List(name: String = "",
                value: Map<String, String> = mapOf("a" to "Item 1"),
                selectedValueId: String? = "a",
                position: Int) :
-            Metric<Map<String, String>>(LIST, name, value, position) {
+            Metric<Map<String, String>>(MetricType.LIST, name, value, position) {
         @Exclude @get:Keep
         var selectedValueId = selectedValueId
             set(value) {
@@ -91,6 +93,10 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int,
         override fun toString(): String = "${super.toString()}, selectedValueId=$selectedValueId"
     }
 
+    @get:PropertyName(FIRESTORE_TYPE)
+    @get:Keep
+    val id get() = type.id
+
     @get:Exclude
     override var ref: DocumentReference by LateinitVal()
 
@@ -102,6 +108,7 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int,
                 ref.update(FIRESTORE_NAME, field)
             }
         }
+
     @Exclude @get:Keep
     var value = value
         set(value) {
@@ -122,7 +129,7 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int,
     }
 
     override fun hashCode(): Int {
-        var result = type
+        var result = type.hashCode()
         result = 31 * result + ref.path.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + (value?.hashCode() ?: 0)
@@ -139,31 +146,32 @@ sealed class Metric<T>(@Exclude @get:Keep val type: Int,
             val type = (fields[FIRESTORE_TYPE] as Long).toInt()
             val name = (fields[FIRESTORE_NAME] as String?).orEmpty()
 
-            return when (type) {
-                HEADER -> Metric.Header(name, position)
-                BOOLEAN -> Metric.Boolean(name, fields[FIRESTORE_VALUE] as kotlin.Boolean, position)
-                NUMBER -> {
+            return when (MetricType.valueOf(type)) {
+                MetricType.HEADER -> Metric.Header(name, position)
+                MetricType.BOOLEAN -> {
+                    Metric.Boolean(name, fields[FIRESTORE_VALUE] as kotlin.Boolean, position)
+                }
+                MetricType.NUMBER -> {
                     Metric.Number(
                             name,
                             fields[FIRESTORE_VALUE] as Long,
                             fields[FIRESTORE_UNIT] as String?,
                             position)
                 }
-                STOPWATCH -> {
+                MetricType.STOPWATCH -> {
                     Metric.Stopwatch(
                             name,
                             fields[FIRESTORE_VALUE] as kotlin.collections.List<Long>,
                             position)
                 }
-                TEXT -> Metric.Text(name, fields[FIRESTORE_VALUE] as String?, position)
-                LIST -> {
+                MetricType.TEXT -> Metric.Text(name, fields[FIRESTORE_VALUE] as String?, position)
+                MetricType.LIST -> {
                     Metric.List(
                             name,
                             fields[FIRESTORE_VALUE] as Map<String, String>,
                             fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
                             position)
                 }
-                else -> throw IllegalStateException("Unknown metric type: $type")
             }.also { it.ref = ref }
         }
     }

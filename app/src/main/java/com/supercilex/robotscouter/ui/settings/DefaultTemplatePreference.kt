@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity
 import android.support.v7.preference.ListPreference
 import android.util.AttributeSet
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.TEMPLATE_TYPES
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
@@ -45,14 +45,14 @@ class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase {
 
         isPersistent = false
 
-        entries = TEMPLATE_TYPES.mapIndexed { index, _ ->
-            context.resources.getStringArray(R.array.new_template_options)[index]
+        entries = TemplateType.values().map {
+            context.resources.getStringArray(R.array.new_template_options)[it.id]
         }.toMutableList().apply {
             addAll(namesListener.mapIndexed { index, _ ->
                 namesListener[index].getTemplateName(index)
             })
         }.toTypedArray()
-        entryValues = TEMPLATE_TYPES.map { it.toString() }.toMutableList()
+        entryValues = TemplateType.values().map { it.id.toString() }.toMutableList()
                 .apply { addAll(namesListener.map { it.id }) }.toTypedArray()
         value = defaultTemplateId
         notifyChanged()

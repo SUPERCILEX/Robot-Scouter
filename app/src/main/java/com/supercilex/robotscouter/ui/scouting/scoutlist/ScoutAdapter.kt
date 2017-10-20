@@ -8,14 +8,8 @@ import android.view.ViewGroup
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.BOOLEAN
-import com.supercilex.robotscouter.data.model.HEADER
-import com.supercilex.robotscouter.data.model.LIST
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
-import com.supercilex.robotscouter.data.model.NUMBER
-import com.supercilex.robotscouter.data.model.STOPWATCH
-import com.supercilex.robotscouter.data.model.TEXT
 import com.supercilex.robotscouter.ui.scouting.MetricListAdapterBase
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CheckboxViewHolder
@@ -35,23 +29,22 @@ class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                                       .build(),
                               manager,
                               recyclerView) {
-    override fun onCreateViewHolder(parent: ViewGroup, @MetricType viewType: Int):
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
             MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            HEADER -> HeaderViewHolder(
+        return when (MetricType.valueOf(viewType)) {
+            MetricType.HEADER -> HeaderViewHolder(
                     inflater.inflate(R.layout.scout_header, parent, false))
-            BOOLEAN -> CheckboxViewHolder(
+            MetricType.BOOLEAN -> CheckboxViewHolder(
                     inflater.inflate(R.layout.scout_checkbox, parent, false))
-            NUMBER -> CounterViewHolder(
+            MetricType.NUMBER -> CounterViewHolder(
                     inflater.inflate(R.layout.scout_counter, parent, false))
-            STOPWATCH -> StopwatchViewHolder(
+            MetricType.STOPWATCH -> StopwatchViewHolder(
                     inflater.inflate(R.layout.scout_stopwatch, parent, false))
-            TEXT -> EditTextViewHolder(
+            MetricType.TEXT -> EditTextViewHolder(
                     inflater.inflate(R.layout.scout_notes, parent, false))
-            LIST -> SpinnerViewHolder(
+            MetricType.LIST -> SpinnerViewHolder(
                     inflater.inflate(R.layout.scout_spinner, parent, false))
-            else -> throw IllegalStateException("Unknown view type: $viewType")
         }
     }
 }

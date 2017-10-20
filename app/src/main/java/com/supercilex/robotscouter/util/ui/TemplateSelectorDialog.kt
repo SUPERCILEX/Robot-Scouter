@@ -26,9 +26,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.MATCH
-import com.supercilex.robotscouter.data.model.PIT
 import com.supercilex.robotscouter.data.model.Scout
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.data.model.getTemplateName
@@ -57,7 +56,7 @@ abstract class TemplateSelectorDialog : DialogFragment() {
 
         object : FirestoreRecyclerAdapter<Scout, ItemViewHolder>(options) {
             override fun getItem(position: Int): Scout = when (position) {
-                MATCH, PIT -> Scout(
+                TemplateType.MATCH.id, TemplateType.PIT.id -> Scout(
                         position.toString(),
                         position.toString(),
                         resources.getStringArray(R.array.new_template_options)[position])
@@ -80,7 +79,7 @@ abstract class TemplateSelectorDialog : DialogFragment() {
 
             override fun onBindViewHolder(holder: ItemViewHolder, position: Int, scout: Scout) =
                     holder.bind(this@TemplateSelectorDialog, scout, when (position) {
-                        MATCH, PIT -> position.toString()
+                        TemplateType.MATCH.id, TemplateType.PIT.id -> position.toString()
                         else -> snapshots[position - EXTRA_ITEMS].id
                     })
         }

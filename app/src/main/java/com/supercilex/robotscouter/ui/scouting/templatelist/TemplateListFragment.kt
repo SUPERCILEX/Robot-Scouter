@@ -21,7 +21,7 @@ import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.isNativeTemplateType
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.data.TAB_KEY
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.getTabId
@@ -112,16 +112,14 @@ class TemplateListFragment : FragmentBase(),
     fun handleArgs(args: Bundle, savedInstanceState: Bundle? = null) {
         val templateId = getTabId(args)
         if (templateId != null) {
-            pagerAdapter.currentTabId = if (isNativeTemplateType(templateId)) {
+            pagerAdapter.currentTabId = TemplateType.coerce(templateId)?.let {
                 Snackbar.make(rootView,
                               R.string.title_template_added_as_default,
                               Snackbar.LENGTH_LONG)
                         .show()
 
-                addTemplate(templateId.toInt()).also { defaultTemplateId = it }
-            } else {
-                templateId
-            }
+                addTemplate(it).also { defaultTemplateId = it }
+            } ?: templateId
 
             args.remove(TAB_KEY)
         } else {

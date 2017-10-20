@@ -6,7 +6,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.TEMPLATE_TYPES
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 
@@ -18,12 +18,8 @@ class NewTemplateDialog : DialogFragmentBase(), DialogInterface.OnClickListener 
             .create()
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        (parentFragment as TemplateListFragment).onTemplateCreated(addTemplate(run {
-            when {
-                TEMPLATE_TYPES.contains(which) -> which
-                else -> throw IllegalStateException("Unknown template type: $which")
-            }
-        }))
+        (parentFragment as TemplateListFragment)
+                .onTemplateCreated(addTemplate(TemplateType.valueOf(which)))
     }
 
     companion object {

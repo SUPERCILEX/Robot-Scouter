@@ -12,7 +12,7 @@ import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.model.isNativeTemplateType
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.getTeamListExtra
@@ -59,14 +59,14 @@ class ExportService : IntentService(TAG) {
                 .map { SCOUT_PARSER.parseSnapshot(it) }
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
             async {
-                if (isNativeTemplateType(templateId)) {
+                TemplateType.coerce(templateId)?.let {
                     SpreadsheetExporter(scouts, notificationManager, resources.getStringArray(
-                            R.array.new_template_options)[templateId.toInt()]).export()
-                } else {
+                            R.array.new_template_options)[it.id]).export()
+                } ?: run {
                     SpreadsheetExporter(scouts, notificationManager, {
-                        val template = templates.find { it.id == templateId }
-                        template?.getTemplateName(templates.indexOf(template))
-                                ?: getString(R.string.title_unknown_template)
+                        templates.find { it.id == templateId }?.let {
+                            it.getTemplateName(templates.indexOf(it))
+                        } ?: getString(R.string.title_unknown_template)
                     }.invoke()).export()
                 }
             }

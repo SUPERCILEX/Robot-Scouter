@@ -30,7 +30,7 @@ import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.model.isNativeTemplateType
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
@@ -229,7 +229,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
                     nTeamUpdatesForTemplateId = team.id to 0
                 }
 
-                if (isNativeTemplateType(templateId)) {
+                TemplateType.coerce(templateId)?.let {
                     team.updateTemplateId(defaultTemplateId)
                     return
                 }
