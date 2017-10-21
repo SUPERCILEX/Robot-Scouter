@@ -11,11 +11,13 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.AppBarViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindOptionalView
 
 class TabletScoutListFragment : ScoutListFragmentBase() {
-    override val viewHolder: AppBarViewHolderBase by lazy {
+    override val viewHolder: AppBarViewHolderBase by unsafeLazy {
         object : AppBarViewHolderBase(
-                this, rootView, dataHolder.teamListener, onScoutingReadyTask.task) {
+                this, view!!, dataHolder.teamListener, onScoutingReadyTask.task) {
             init {
                 toolbar.setOnMenuItemClickListener {
                     // We need to be able to guarantee that our `onOptionsItemSelected`s are called
@@ -29,7 +31,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
             }
         }
     }
-    private var hint: View? = null; get() {
+    private var noContentHint: View? = null; get() {
         if (field == null) field = activity.findViewById(R.id.no_team_selected_hint)
         return field
     }
@@ -50,13 +52,13 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        hint?.visibility = View.GONE
+        noContentHint?.visibility = View.GONE
     }
 
     override fun onDestroy() {
         super.onDestroy()
         (activity as TeamListActivity).teamListFragment.selectTeam(null)
-        hint?.visibility = View.VISIBLE
+        noContentHint?.visibility = View.VISIBLE
     }
 
     override fun onTeamDeleted() = removeFragment()

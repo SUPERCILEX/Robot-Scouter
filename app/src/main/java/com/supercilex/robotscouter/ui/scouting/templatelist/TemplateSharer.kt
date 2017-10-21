@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentActivity
-import android.view.View
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
 import com.google.firebase.crash.FirebaseCrash
@@ -37,7 +36,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
             activity.startActivityForResult(it, RC_SHARE)
         }.addOnFailureListener(CrashLogger).addOnFailureListener {
             FirebaseCrash.report(it)
-            Snackbar.make(activity.findViewById<View>(R.id.root),
+            Snackbar.make(activity.findViewById(R.id.root),
                           R.string.fui_general_error,
                           Snackbar.LENGTH_LONG)
                     .show()
@@ -64,7 +63,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
                           templateId: String,
                           templateName: String): Boolean {
             if (isOffline()) {
-                Snackbar.make(activity.findViewById<View>(R.id.root),
+                Snackbar.make(activity.findViewById(R.id.root),
                               R.string.no_connection,
                               Snackbar.LENGTH_LONG)
                         .show()

@@ -9,9 +9,10 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
+import com.supercilex.robotscouter.util.unsafeLazy
 
 class TemplateListActivity : AppCompatActivity() {
-    private val templateListFragment: TemplateListFragment by lazy {
+    private val templateListFragment: TemplateListFragment by unsafeLazy {
         supportFragmentManager.findFragmentByTag(TemplateListFragment.TAG) as TemplateListFragment
     }
 

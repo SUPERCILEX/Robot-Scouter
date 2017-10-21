@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
 import android.content.DialogInterface
+import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.text.InputType
 import com.google.firebase.firestore.DocumentReference
@@ -17,8 +18,8 @@ class CounterValueDialog : ValueDialogBase<Long>() {
     override val title = R.string.edit_value
     override val hint = R.string.value
 
-    override fun onShow(dialog: DialogInterface) {
-        super.onShow(dialog)
+    override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
+        super.onShow(dialog, savedInstanceState)
         lastEditText.inputType = InputType.TYPE_CLASS_NUMBER
     }
 

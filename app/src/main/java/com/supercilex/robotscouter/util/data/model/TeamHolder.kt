@@ -17,13 +17,14 @@ import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.unsafeLazy
 
 class TeamHolder : ViewModelBase<Bundle>(),
         Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
     val teamListener: LiveData<Team> = Transformations.switchMap(TeamsLiveData, this)
 
     private val keepAliveListener = Observer<Team> {}
-    private val team: Team by lazy { teamListener.value!! }
+    private val team: Team by unsafeLazy { teamListener.value!! }
 
     override fun onCreate(args: Bundle) {
         (teamListener as MutableLiveData).value = args.getTeam(); team

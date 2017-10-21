@@ -16,11 +16,12 @@ import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
+import kotterknife.bindView
 import java.util.Collections
 
 class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
-    private val recyclerView: RecyclerView = rootView.findViewById(R.id.list)
+    private val recyclerView: RecyclerView by rootView.bindView(R.id.list)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 

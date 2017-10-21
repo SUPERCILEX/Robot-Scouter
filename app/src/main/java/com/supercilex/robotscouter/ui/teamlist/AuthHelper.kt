@@ -19,10 +19,11 @@ import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
+import kotterknife.bindView
 
 class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
         DefaultLifecycleObserver, FirebaseAuth.AuthStateListener {
-    private val rootView: View = activity.findViewById(R.id.root)
+    private val rootView: View by activity.bindView(R.id.root)
 
     private var signInMenuItem: MenuItem? = null
 

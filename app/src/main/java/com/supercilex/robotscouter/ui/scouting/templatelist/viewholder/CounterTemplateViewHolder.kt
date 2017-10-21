@@ -6,9 +6,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CounterViewHolder
+import kotterknife.bindView
 
 class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), TemplateViewHolder {
-    private val unit: EditText = itemView.findViewById(R.id.unit)
+    private val unit: EditText by bindView(R.id.unit)
 
     init {
         itemView as LinearLayout

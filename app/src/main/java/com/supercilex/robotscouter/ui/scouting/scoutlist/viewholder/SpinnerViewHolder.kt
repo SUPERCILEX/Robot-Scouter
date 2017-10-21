@@ -10,11 +10,12 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
+import kotterknife.bindView
 import java.util.ArrayList
 
 open class SpinnerViewHolder(itemView: View) :
         MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView), AdapterView.OnItemSelectedListener {
-    protected var spinner: Spinner = itemView.findViewById(R.id.spinner)
+    protected val spinner: Spinner by bindView(R.id.spinner)
     private val ids: List<String> get() = ArrayList(metric.value.keys)
 
     public override fun bind() {

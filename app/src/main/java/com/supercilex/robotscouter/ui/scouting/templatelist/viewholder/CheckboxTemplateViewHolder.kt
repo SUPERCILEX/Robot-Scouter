@@ -6,9 +6,10 @@ import android.view.View
 import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CheckboxViewHolder
+import kotterknife.bindView
 
 class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView), TemplateViewHolder {
-    private val checkBoxName: EditText = itemView.findViewById(R.id.checkbox_name)
+    private val checkBoxName: EditText by bindView(R.id.checkbox_name)
 
     init {
         itemView as ConstraintLayout

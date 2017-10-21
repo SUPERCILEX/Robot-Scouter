@@ -13,10 +13,11 @@ import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
+import com.supercilex.robotscouter.util.unsafeLazy
 import java.util.Collections
 
 class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val teams: List<Team> by lazy { arguments.getTeamList() }
+    private val teams: List<Team> by unsafeLazy { arguments.getTeamList() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

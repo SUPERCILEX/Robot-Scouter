@@ -28,17 +28,18 @@ import com.supercilex.robotscouter.util.isInTestMode
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.uid
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 import java.lang.ref.WeakReference
 
 class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
-    private val rootView by lazy { View.inflate(context, R.layout.dialog_donate, null) }
-    private val content by lazy { rootView.findViewById<View>(R.id.content) }
-    private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
-    private val amountTextView by lazy { rootView.findViewById<TextView>(R.id.amount_textview) }
-    private val amountSeekBar by lazy { rootView.findViewById<SeekBar>(R.id.amount) }
-    private val monthlyCheckBox by lazy { rootView.findViewById<CheckBox>(R.id.monthly) }
+    private val content: View by bindView(R.id.content)
+    private val progress: ContentLoadingProgressBar by bindView(R.id.progress)
+    private val amountTextView: TextView by bindView(R.id.amount_textview)
+    private val amountSeekBar: SeekBar by bindView(R.id.amount)
+    private val monthlyCheckBox: CheckBox by bindView(R.id.monthly)
 
-    private val billingClient by lazy {
+    private val billingClient by unsafeLazy {
         BillingClient.Builder(context).setListener(PURCHASE_LISTENER).build()
     }
     private val billingClientReadyTask = TaskCompletionSource<@BillingResponse Int>()
@@ -50,13 +51,13 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.donate)
-            .setView(rootView)
+            .setView(View.inflate(context, R.layout.dialog_donate, null))
             .setPositiveButton(R.string.donate, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .createAndSetup()
+            .createAndSetup(savedInstanceState)
 
-    override fun onShow(dialog: DialogInterface) {
-        super.onShow(dialog)
+    override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
+        super.onShow(dialog, savedInstanceState)
         amountSeekBar.setOnSeekBarChangeListener(this)
         onProgressChanged(amountSeekBar, 0, false) // Init state
     }
@@ -93,7 +94,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     }.addOnFailureListener {
         it as PurchaseException
         if (it.errorCode == BillingResponse.USER_CANCELED) {
-            Snackbar.make(rootView, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(content, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
         } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED // User owns subscription
                 && !isInTestMode) {
             FirebaseCrash.report(it)
@@ -183,7 +184,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun showError() {
         updateProgress(false)
-        Snackbar.make(rootView, R.string.fui_general_error, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(content, R.string.fui_general_error, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {

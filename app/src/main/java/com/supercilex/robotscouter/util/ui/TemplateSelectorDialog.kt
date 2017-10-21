@@ -19,7 +19,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -33,22 +32,21 @@ import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 import kotlin.math.roundToInt
 
 abstract class TemplateSelectorDialog : DialogFragment() {
     @get:StringRes
     protected abstract val title: Int
 
-    private val holder: ScoutsHolder by lazy {
+    private val holder: ScoutsHolder by unsafeLazy {
         ViewModelProviders.of(this).get(ScoutsHolder::class.java)
     }
 
-    protected val rootView: LinearLayout by lazy {
-        View.inflate(context, R.layout.dialog_template_selector, null) as LinearLayout
-    }
-    private val progress by lazy { rootView.findViewById<ContentLoadingProgressBar>(R.id.progress) }
-    private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
-    private val adapter by lazy {
+    private val progress: ContentLoadingProgressBar by bindView(R.id.progress)
+    private val recyclerView: RecyclerView by bindView(R.id.list)
+    private val adapter by unsafeLazy {
         val options = FirestoreRecyclerOptions.Builder<Scout>()
                 .setSnapshotArray(holder.scouts)
                 .setLifecycleOwner(this)
@@ -88,6 +86,18 @@ abstract class TemplateSelectorDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         holder.init(getTemplatesQuery())
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val rootView = View.inflate(context, R.layout.dialog_template_selector, null)
+        return AlertDialog.Builder(context)
+                .setTitle(title)
+                .setView(rootView)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create { onViewCreated(rootView, savedInstanceState) }
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         progress.show()
 
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -129,12 +139,6 @@ abstract class TemplateSelectorDialog : DialogFragment() {
             }
         })
     }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
-            .setTitle(title)
-            .setView(rootView)
-            .setNegativeButton(android.R.string.cancel, null)
-            .create()
 
     protected abstract fun onItemSelected(id: String)
 

@@ -18,9 +18,10 @@ import java.util.ArrayList
 class LicensesFragment : Fragment(), OnBackPressedListener {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        val rootView: View = View.inflate(context, R.layout.fragment_licenses, null)
+                              savedInstanceState: Bundle?): View =
+            View.inflate(context, R.layout.fragment_licenses, null)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val licenses: MutableList<LicenseEntry> = ArrayList()
         licenses.apply {
             add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
@@ -39,13 +40,11 @@ class LicensesFragment : Fragment(), OnBackPressedListener {
             add(Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter"))
         }
 
-        val list: RecyclerView = rootView.findViewById(R.id.list)
+        val list: RecyclerView = view.findViewById(R.id.list)
         list.layoutManager = LinearLayoutManager(context)
         list.adapter = LicenseAdapter(licenses)
 
         Licenses.load(licenses)
-
-        return rootView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

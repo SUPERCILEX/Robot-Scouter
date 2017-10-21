@@ -6,10 +6,11 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
+import kotterknife.bindView
 
 class EditTextTemplateViewHolder(itemView: View) :
         MetricViewHolderBase<Metric.Text, String?, TextView>(itemView), TemplateViewHolder {
-    private val text: EditText = itemView.findViewById(R.id.text)
+    private val text: EditText by bindView(R.id.text)
 
     override fun bind() {
         super.bind()

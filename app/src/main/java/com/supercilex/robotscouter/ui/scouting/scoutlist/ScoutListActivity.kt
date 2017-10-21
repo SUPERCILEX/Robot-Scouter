@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
+import com.supercilex.robotscouter.util.unsafeLazy
 
 class ScoutListActivity : ActivityBase() {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
@@ -23,7 +24,7 @@ class ScoutListActivity : ActivityBase() {
             }
         }
     }
-    private val scoutListFragment: ActivityScoutListFragment by lazy {
+    private val scoutListFragment: ActivityScoutListFragment by unsafeLazy {
         supportFragmentManager.findFragmentByTag(ActivityScoutListFragment.TAG) as ActivityScoutListFragment
     }
 

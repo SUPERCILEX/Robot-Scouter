@@ -15,19 +15,15 @@ import com.supercilex.robotscouter.util.data.shouldUploadMediaToTba
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.create
+import kotterknife.bindView
 
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val rootView: View by lazy {
-        View.inflate(context, R.layout.dialog_should_upload_media, null)
-    }
-    private val saveResponseCheckbox: CheckBox by lazy {
-        rootView.findViewById<CheckBox>(R.id.save_response)
-    }
+    private val saveResponseCheckbox: CheckBox by bindView(R.id.save_response)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
             .setTitle(R.string.should_upload_media_dialog_title)
             .setMessage(R.string.should_upload_media_rationale)
-            .setView(rootView)
+            .setView(View.inflate(context, R.layout.dialog_should_upload_media, null))
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
             .create {

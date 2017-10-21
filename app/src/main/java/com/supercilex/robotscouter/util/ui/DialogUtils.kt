@@ -8,9 +8,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -41,14 +39,15 @@ abstract class DialogFragmentBase : DialogFragment() {
  * **Note:** for this class to work correctly, the dialog must be an [AlertDialog] and set a
  * [DialogInterface.OnShowListener].
  */
-abstract class ManualDismissDialog : DialogFragment(), DialogInterface.OnShowListener {
+abstract class ManualDismissDialog : DialogFragment() {
     /** @return true if the dialog should be dismissed, false otherwise */
     protected abstract fun onAttemptDismiss(): Boolean
 
-    protected fun AlertDialog.Builder.createAndSetup() = create { onShow(this) }
+    protected fun AlertDialog.Builder.createAndSetup(savedInstanceState: Bundle?) =
+            create { onShow(this, savedInstanceState) }
 
     @CallSuper
-    override fun onShow(dialog: DialogInterface) {
+    open fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         dialog as AlertDialog
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { handleOnAttemptDismiss() }
     }
@@ -67,19 +66,17 @@ abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActi
         dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
     }
 
-    protected fun createDialog(rootView: View, @StringRes title: Int) =
+    protected fun createDialog(rootView: View, @StringRes title: Int, savedInstanceState: Bundle?) =
             AlertDialog.Builder(context)
                     .setView(rootView)
                     .setTitle(title)
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .createAndSetup()
+                    .createAndSetup(savedInstanceState)
 
-    override fun onCreateView(inflater: LayoutInflater?,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
+        super.onShow(dialog, savedInstanceState)
         lastEditText.setOnEditorActionListener(this)
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {

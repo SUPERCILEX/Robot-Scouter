@@ -22,13 +22,14 @@ import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.util.unsafeLazy
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
-    public override val metricsRef: CollectionReference by lazy {
+    public override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(getTabId(arguments)!!)
     }
 
-    override val adapter by lazy {
+    override val adapter by unsafeLazy {
         TemplateAdapter(
                 holder.metrics,
                 childFragmentManager,
@@ -36,12 +37,18 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 this,
                 itemTouchCallback)
     }
-    private val itemTouchCallback by lazy { TemplateItemTouchCallback<Metric<*>>(recyclerView) }
-    private val fam: FloatingActionMenu by lazy { (parentFragment as TemplateListFragment).fam }
+    private val itemTouchCallback by unsafeLazy {
+        TemplateItemTouchCallback<Metric<*>>(recyclerView)
+    }
+    private val fam: FloatingActionMenu by unsafeLazy {
+        parentFragment.view!!.findViewById<FloatingActionMenu>(R.id.fab_menu)
+    }
 
     private var hasAddedItem: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchCallback.adapter = adapter
@@ -87,9 +94,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             R.id.action_remove_metrics -> {
                 recyclerView.clearFocus()
                 metricsRef.delete().addOnSuccessListener { documents ->
-                    Snackbar.make(activity.findViewById(R.id.root),
-                                  R.string.deleted,
-                                  Snackbar.LENGTH_LONG)
+                    Snackbar.make(fam, R.string.deleted, Snackbar.LENGTH_LONG)
                             .setAction(R.string.undo) {
                                 firestoreBatch {
                                     for (document in documents) {

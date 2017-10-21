@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting
 
 import android.content.DialogInterface
+import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.app.FragmentManager
 import android.text.InputType
@@ -11,6 +12,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.putRef
 import com.supercilex.robotscouter.util.ui.show
+import com.supercilex.robotscouter.util.unsafeLazy
 
 class TabNameDialog : ValueDialogBase<String>() {
     override val value: String? get() {
@@ -20,11 +22,11 @@ class TabNameDialog : ValueDialogBase<String>() {
             else -> name
         }
     }
-    override val title by lazy { arguments.getInt(TITLE_KEY) }
+    override val title by unsafeLazy { arguments.getInt(TITLE_KEY) }
     override val hint = R.string.scout_name
 
-    override fun onShow(dialog: DialogInterface) {
-        super.onShow(dialog)
+    override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
+        super.onShow(dialog, savedInstanceState)
         lastEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
     }
 

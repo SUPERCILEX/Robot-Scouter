@@ -44,7 +44,7 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
         TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     protected var team: Team = listener.value!!
 
-    protected val toolbar: Toolbar = rootView.findViewById(R.id.toolbar)
+    val toolbar: Toolbar = rootView.findViewById(R.id.toolbar)
     protected val header: CollapsingToolbarLayout = rootView.findViewById(R.id.header)
     private val backdrop: ImageView = rootView.findViewById(R.id.backdrop)
     private val mediaLoadProgress: ContentLoadingProgressBar = rootView.findViewById(R.id.progress)

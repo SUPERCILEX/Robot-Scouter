@@ -28,7 +28,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
             .setMessage(R.string.delete_template_warning)
             .setPositiveButton(R.string.delete_template, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .createAndSetup()
+            .createAndSetup(savedInstanceState)
 
     override fun onAttemptDismiss(): Boolean {
         val templateId = arguments.getRef().id

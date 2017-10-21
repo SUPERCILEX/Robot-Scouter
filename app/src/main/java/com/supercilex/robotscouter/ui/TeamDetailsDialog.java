@@ -140,7 +140,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         updateUi();
 
-        return createDialog(mRootView, R.string.team_details);
+        return createDialog(mRootView, R.string.team_details, savedInstanceState);
     }
 
     @Override

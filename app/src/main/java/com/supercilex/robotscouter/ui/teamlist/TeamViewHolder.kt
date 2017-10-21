@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import kotterknife.bindView
 
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
@@ -51,11 +52,11 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         }
     }
 
-    internal val mediaImageView: ImageView = itemView.findViewById(R.id.media)
-    private val mediaLoadProgress: ContentLoadingProgressBar = itemView.findViewById(R.id.progress)
-    private val numberTextView: TextView = itemView.findViewById(R.id.number)
-    private val nameTextView: TextView = itemView.findViewById(R.id.name)
-    private val newScoutButton: ImageButton = itemView.findViewById(R.id.new_scout)
+    internal val mediaImageView: ImageView by bindView(R.id.media)
+    private val mediaLoadProgress: ContentLoadingProgressBar by bindView(R.id.progress)
+    private val numberTextView: TextView by bindView(R.id.number)
+    private val nameTextView: TextView by bindView(R.id.name)
+    private val newScoutButton: ImageButton by bindView(R.id.new_scout)
 
     private lateinit var team: Team
     private lateinit var fragment: Fragment

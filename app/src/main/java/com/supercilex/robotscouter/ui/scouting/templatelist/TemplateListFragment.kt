@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -33,17 +34,19 @@ import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 
 class TemplateListFragment : FragmentBase(),
         View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder,
         FirebaseAuth.AuthStateListener {
     override val recyclerPool = RecyclerView.RecycledViewPool()
 
-    private val rootView by lazy { View.inflate(context, R.layout.fragment_template_list, null) }
-    val fam: FloatingActionMenu by lazy { rootView.findViewById<FloatingActionMenu>(R.id.fab_menu) }
-    private val pagerAdapter by lazy {
-        val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
-        val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
+    private val toolbar: Toolbar by bindView(R.id.toolbar)
+    private val fam: FloatingActionMenu by bindView(R.id.fab_menu)
+    private val pagerAdapter by unsafeLazy {
+        val tabLayout: TabLayout = view!!.findViewById(R.id.tabs)
+        val viewPager: ViewPager = view!!.findViewById(R.id.viewpager)
         val adapter = object : TemplatePagerAdapter(this, tabLayout) {
             override fun onDataChanged() {
                 super.onDataChanged()
@@ -81,12 +84,15 @@ class TemplateListFragment : FragmentBase(),
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        fun initFab(@IdRes id: Int, @DrawableRes icon: Int) {
-            val fab: FloatingActionButton = rootView.findViewById(id)
-            fab.setOnClickListener(this)
-            fab.setImageDrawable(AppCompatResources.getDrawable(fab.context, icon))
-        }
+                              savedInstanceState: Bundle?): View? =
+            View.inflate(context, R.layout.fragment_template_list, null)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fun initFab(@IdRes id: Int, @DrawableRes icon: Int) =
+                view.findViewById<FloatingActionButton>(id).let {
+                    it.setOnClickListener(this)
+                    it.setImageDrawable(AppCompatResources.getDrawable(it.context, icon))
+                }
         initFab(R.id.add_header, R.drawable.ic_title_white_24dp)
         initFab(R.id.add_checkbox, R.drawable.ic_done_white_24dp)
         initFab(R.id.add_stopwatch, R.drawable.ic_timer_white_24dp)
@@ -96,10 +102,6 @@ class TemplateListFragment : FragmentBase(),
 
         fam.hideMenuButton(false)
 
-        return rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         pagerAdapter
         handleArgs(arguments, savedInstanceState)
     }
@@ -113,7 +115,7 @@ class TemplateListFragment : FragmentBase(),
         val templateId = getTabId(args)
         if (templateId != null) {
             pagerAdapter.currentTabId = TemplateType.coerce(templateId)?.let {
-                Snackbar.make(rootView,
+                Snackbar.make(fam,
                               R.string.title_template_added_as_default,
                               Snackbar.LENGTH_LONG)
                         .show()
@@ -130,7 +132,7 @@ class TemplateListFragment : FragmentBase(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val activity = activity as AppCompatActivity
-        activity.setSupportActionBar(rootView.findViewById(R.id.toolbar))
+        activity.setSupportActionBar(toolbar)
         activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -168,7 +170,7 @@ class TemplateListFragment : FragmentBase(),
     fun onTemplateCreated(id: String) {
         pagerAdapter.currentTabId = id
 
-        Snackbar.make(rootView, R.string.title_template_added, Snackbar.LENGTH_LONG)
+        Snackbar.make(fam, R.string.title_template_added, Snackbar.LENGTH_LONG)
                 .setAction(R.string.title_set_default_template) { defaultTemplateId = id }
                 .show()
     }

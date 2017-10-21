@@ -44,17 +44,17 @@ import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
+import com.supercilex.robotscouter.util.unsafeLazy
 
 abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team>, TeamMediaCreator.StartCaptureListener {
     override val recyclerPool = RecyclerView.RecycledViewPool()
 
-    protected val rootView: View by lazy {
-        View.inflate(context, R.layout.fragment_scout_list, null)
-    }
     protected abstract val viewHolder: AppBarViewHolderBase
 
-    protected val dataHolder: TeamHolder by lazy { ViewModelProviders.of(this).get(TeamHolder::class.java) }
+    protected val dataHolder: TeamHolder by unsafeLazy {
+        ViewModelProviders.of(this).get(TeamHolder::class.java)
+    }
     private lateinit var team: Team
     private var pagerAdapter: ScoutPagerAdapter? = null
 
@@ -93,11 +93,13 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        if (savedState == null && isOffline()) {
-            Snackbar.make(rootView, R.string.offline_reassurance, Snackbar.LENGTH_LONG).show()
+                              savedInstanceState: Bundle?): View =
+            View.inflate(context, R.layout.fragment_scout_list, null)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (savedInstanceState == null && isOffline()) {
+            Snackbar.make(view, R.string.offline_reassurance, Snackbar.LENGTH_LONG).show()
         }
-        return rootView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -186,8 +188,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onTemplateSelected(id: String) = addScout(id)
 
     private fun initScoutList() {
-        val tabLayout = rootView.findViewById<TabLayout>(R.id.tabs)
-        val viewPager = rootView.findViewById<ViewPager>(R.id.viewpager)
+        val tabLayout = view!!.findViewById<TabLayout>(R.id.tabs)
+        val viewPager = view!!.findViewById<ViewPager>(R.id.viewpager)
         pagerAdapter = ScoutPagerAdapter(this, tabLayout, team)
         pagerAdapter!!.currentTabId = scoutId
 

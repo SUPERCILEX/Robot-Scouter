@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.v7.widget.AppCompatCheckBox
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckBox
@@ -10,10 +11,11 @@ import android.widget.LinearLayout
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
+import com.supercilex.robotscouter.util.unsafeLazy
 
 abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
     override val title = R.string.title_add_scout_template_selector
-    private val setAsDefaultCheckbox: CheckBox by lazy {
+    private val setAsDefaultCheckbox: CheckBox by unsafeLazy {
         AppCompatCheckBox(context).apply {
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                 val checkboxMarginCompensation =
@@ -29,9 +31,9 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        rootView.addView(setAsDefaultCheckbox)
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (view as LinearLayout).addView(setAsDefaultCheckbox)
     }
 
     @CallSuper

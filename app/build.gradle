@@ -124,6 +124,7 @@ dependencies {
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
 
     // Third party
+    implementation 'com.github.SUPERCILEX:kotterknife:5331f07fdf'
     implementation 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'uk.co.samuelwall:material-tap-target-prompt:2.1.0'

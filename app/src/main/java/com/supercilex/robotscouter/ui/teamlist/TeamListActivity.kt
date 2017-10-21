@@ -39,6 +39,8 @@ import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 
 @SuppressLint("GoogleAppIndexingApiWarning")
 class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -57,17 +59,17 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
         }
     }
 
-    val teamListFragment by lazy {
+    val teamListFragment by unsafeLazy {
         supportFragmentManager.findFragmentByTag(TeamListFragment.TAG) as TeamListFragment
     }
     val scoutListFragment
         get() = supportFragmentManager.findFragmentByTag(TabletScoutListFragment.TAG) as? TabletScoutListFragment
-    private val authHelper by lazy { AuthHelper(this) }
-    private val tutorialHelper: TutorialHelper by lazy {
+    private val authHelper by unsafeLazy { AuthHelper(this) }
+    private val tutorialHelper: TutorialHelper by unsafeLazy {
         ViewModelProviders.of(this).get(TutorialHelper::class.java)
     }
 
-    val drawerToggle: ActionBarDrawerToggle by lazy {
+    val drawerToggle: ActionBarDrawerToggle by unsafeLazy {
         ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -75,7 +77,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close)
     }
-    private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
+    private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)

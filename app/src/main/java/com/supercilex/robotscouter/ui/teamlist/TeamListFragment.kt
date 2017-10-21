@@ -26,22 +26,24 @@ import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 
 class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListener<Nothing?> {
-    private val holder: TeamListHolder by lazy {
+    private val holder: TeamListHolder by unsafeLazy {
         ViewModelProviders.of(this).get(TeamListHolder::class.java)
                 .also { onHolderReadyTask.setResult(it) }
     }
     private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
 
-    private val rootView: View by lazy { View.inflate(context, R.layout.fragment_team_list, null) }
-    private val recyclerView: RecyclerView by lazy { rootView.findViewById<RecyclerView>(R.id.list) }
-    private val menuHelper: TeamMenuHelper by lazy { TeamMenuHelper(this, recyclerView) }
-    val permHandler: PermissionRequestHandler by lazy {
+    private val recyclerView: RecyclerView by bindView(R.id.list)
+    private var adapter: TeamListAdapter? = null
+    private val menuHelper: TeamMenuHelper by unsafeLazy { TeamMenuHelper(this, recyclerView) }
+    val permHandler: PermissionRequestHandler by unsafeLazy {
         PermissionRequestHandler(IO_PERMS, this, this)
     }
 
-    private var adapter: TeamListAdapter? = null
+    private val noContentHint: View by bindView(R.id.no_content_hint)
     private val fab: FloatingActionButton by lazy { activity.findViewById<FloatingActionButton>(R.id.fab) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +54,10 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
 
     override fun onCreateView(inflater: LayoutInflater?,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View? =
+            View.inflate(context, R.layout.fragment_team_list, null)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -73,7 +78,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
             }
 
             if (snapshots == null) {
-                rootView.findViewById<View>(R.id.no_content_hint).visibility = View.VISIBLE
+                noContentHint.visibility = View.VISIBLE
                 selectTeam(null)
             } else {
                 adapter = TeamListAdapter(
@@ -83,8 +88,6 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
                 menuHelper.restoreState(savedInstanceState); savedInstanceState?.clear()
             }
         })
-
-        return rootView
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

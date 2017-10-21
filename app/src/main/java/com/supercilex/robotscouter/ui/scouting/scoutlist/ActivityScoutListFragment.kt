@@ -18,9 +18,10 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
 import com.supercilex.robotscouter.util.ui.isInTabletMode
+import com.supercilex.robotscouter.util.unsafeLazy
 
 class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
-    override val viewHolder: AppBarViewHolderBase by lazy {
+    override val viewHolder: AppBarViewHolderBase by unsafeLazy {
         ActivityAppBarViewHolder(dataHolder.teamListener, onScoutingReadyTask.task)
     }
 
@@ -35,7 +36,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val activity = activity as AppCompatActivity
-        activity.setSupportActionBar(rootView.findViewById(R.id.toolbar))
+        activity.setSupportActionBar(viewHolder.toolbar)
         activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         super.onActivityCreated(savedInstanceState)
     }
@@ -61,7 +62,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     private inner class ActivityAppBarViewHolder(listener: LiveData<Team>,
                                                  onScoutingReadyTask: Task<Nothing?>) :
             AppBarViewHolderBase(
-                    this@ActivityScoutListFragment, rootView, listener, onScoutingReadyTask) {
+                    this@ActivityScoutListFragment, view!!, listener, onScoutingReadyTask) {
         override fun bind() {
             super.bind()
             (activity as AppCompatActivity).supportActionBar!!.title = team.toString()

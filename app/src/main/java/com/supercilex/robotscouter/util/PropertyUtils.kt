@@ -3,6 +3,8 @@ package com.supercilex.robotscouter.util
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+fun <T> unsafeLazy(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+
 class LateinitVal<T : Any> : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 

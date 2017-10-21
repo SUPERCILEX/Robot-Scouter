@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
+import kotterknife.bindView
 
 abstract class TabPagerAdapterBase(protected val fragment: Fragment,
                                    private val tabLayout: TabLayout,
@@ -27,6 +28,7 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
+    private val noContentHint: View by fragment.bindView(R.id.no_content_hint)
 
     protected val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
     protected var oldScouts: List<Scout> = emptyList()
@@ -53,8 +55,7 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
     override fun onDataChanged() {
         val prevTabId = currentTabId
 
-        fragment.view!!.findViewById<View>(R.id.no_content_hint).visibility =
-                if (holder.scouts.isEmpty()) View.VISIBLE else View.GONE
+        noContentHint.visibility = if (holder.scouts.isEmpty()) View.VISIBLE else View.GONE
 
         tabLayout.removeOnTabSelectedListener(this)
         notifyDataSetChanged()
