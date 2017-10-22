@@ -45,7 +45,9 @@
             android:resource="@color/colorPrimary" />
         <meta-data
             android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
-            android:value="false" />
+            android:value="false"
+            tools:replace="android:value" />
+        <!-- TODO https://github.com/jitpack/jitpack.io/issues/1900 -->
 
         <activity
             android:name=".ui.teamlist.TeamListActivity"
