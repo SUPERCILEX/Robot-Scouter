@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
+import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -108,7 +110,14 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         if (savedInstanceState != null) viewHolder.restoreState(savedInstanceState)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) = viewHolder.initMenu()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                owner.lifecycle.removeObserver(this)
+                viewHolder.initMenu()
+            }
+        })
+    }
 
     override fun onStart() {
         super.onStart()
