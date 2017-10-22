@@ -79,7 +79,6 @@ var hasShownSignInTutorial: Boolean
     get() = prefs.getBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
     set(value) = prefs.putBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
 
-
 fun initPrefs() {
     PrefsLiveData.observeForever {
         it?.addChangeEventListener(object : ChangeEventListenerBase {

@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindOptionalView
 
 class TabletScoutListFragment : ScoutListFragmentBase() {
     override val viewHolder: AppBarViewHolderBase by unsafeLazy {

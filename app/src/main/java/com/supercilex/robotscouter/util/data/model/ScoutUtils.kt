@@ -60,7 +60,7 @@ fun Team.addScout(overrideId: String? = null): String {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(getScoutRef().get()).map {
             SCOUT_PARSER.parseSnapshot(it).templateId
-        }.groupBy { it }[templateId]!!.size
+        }.groupBy { it }[templateId]!!.size // ktlint-disable
 
         scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates")
                 .addOnFailureListener(CrashLogger)

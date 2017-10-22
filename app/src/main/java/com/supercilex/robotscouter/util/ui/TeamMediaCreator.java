@@ -134,7 +134,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             try {
                 //noinspection MissingPermission
                 photoFile = createImageFile(getMediaFolder());
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD
                 FirebaseCrash.report(e);
                 Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
             }
