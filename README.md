@@ -29,7 +29,7 @@
 Robot Scouter is an open-source Android app with three core goals to make FIRST competition robot
 scouting easy, efficient, and collaborative.
 
-![Robot Scouter demo](docs/demo.gif)
+<img src="docs/demo.gif" width="50%" height="50%" />
 
 ## Features
 
