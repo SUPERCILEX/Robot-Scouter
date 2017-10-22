@@ -15,7 +15,7 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:hint="@string/metric_counter_name_hint"
-        android:inputType="text"
+        android:inputType="textMultiLine|textCapSentences"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_counter" />
