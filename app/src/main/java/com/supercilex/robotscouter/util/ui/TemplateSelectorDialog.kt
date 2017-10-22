@@ -57,7 +57,7 @@ abstract class TemplateSelectorDialog : DialogFragment() {
                 TemplateType.MATCH.id, TemplateType.PIT.id -> Scout(
                         position.toString(),
                         position.toString(),
-                        resources.getStringArray(R.array.new_template_options)[position])
+                        resources.getStringArray(R.array.template_new_options)[position])
                 else -> super.getItem(position - EXTRA_ITEMS)
             }
 

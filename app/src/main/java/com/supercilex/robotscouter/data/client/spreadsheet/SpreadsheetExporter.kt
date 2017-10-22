@@ -215,7 +215,7 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         val workbook: Workbook
         if (isUnsupportedDevice) {
             workbook = HSSFWorkbook()
-            showToast(RobotScouter.INSTANCE.getString(R.string.unsupported_device))
+            showToast(RobotScouter.INSTANCE.getString(R.string.export_unsupported_device_rationale))
         } else {
             workbook = XSSFWorkbook()
         }

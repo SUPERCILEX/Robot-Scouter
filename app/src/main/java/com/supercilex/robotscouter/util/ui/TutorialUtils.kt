@@ -21,7 +21,7 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
             override fun getPromptParentView(): ViewGroup = owner.findViewById(R.id.root)
         }, R.style.RobotScouter_Tutorial)
                 .setTarget(R.id.fab)
-                .setPrimaryText(R.string.create_first_team)
+                .setPrimaryText(R.string.tutorial_create_first_team_title)
                 .setAutoDismiss(false)
                 .setPromptStateChangeListener { _, state ->
                     runIfPressed(state) { hasShownAddTeamTutorial = true }
@@ -49,8 +49,8 @@ fun showSignInTutorial(helper: TutorialHelper, owner: FragmentActivity)
         private val prompt: MaterialTapTargetPrompt?
             get() = MaterialTapTargetPrompt.Builder(owner, R.style.RobotScouter_Tutorial_Menu)
                     .setTarget(R.id.action_sign_in)
-                    .setPrimaryText(R.string.sign_in)
-                    .setSecondaryText(R.string.sign_in_rationale)
+                    .setPrimaryText(R.string.tutorial_sign_in_title)
+                    .setSecondaryText(R.string.tutorial_sign_in_rationale)
                     .setPromptStateChangeListener { _, state ->
                         runIfPressed(state) { hasShownSignInTutorial = true }
                     }

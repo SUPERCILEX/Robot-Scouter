@@ -126,7 +126,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
             if (!EasyPermissions.hasPermissions(context, mPermHandler.getPermsArray())) {
-                mPermHandler.requestPerms(R.string.write_storage_rationale_media);
+                mPermHandler.requestPerms(R.string.media_write_storage_rationale);
                 return;
             }
 
@@ -134,7 +134,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             try {
                 //noinspection MissingPermission
                 photoFile = createImageFile(getMediaFolder());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 FirebaseCrash.report(e);
                 Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
             }
@@ -180,7 +180,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         }
     }
 
-    private File createImageFile(File mediaFolder) throws IOException {
+    private File createImageFile(File mediaFolder) {
         return IoUtilsKt.hide(createFile(mTeam.toString(),
                                          "jpg",
                                          mediaFolder,

@@ -23,7 +23,7 @@ class TabNameDialog : ValueDialogBase<String>() {
         }
     }
     override val title by unsafeLazy { arguments.getInt(TITLE_KEY) }
-    override val hint = R.string.scout_name
+    override val hint = R.string.scout_name_title
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)

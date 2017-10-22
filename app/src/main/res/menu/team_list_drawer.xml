@@ -6,24 +6,24 @@
         <item
             android:id="@+id/action_export_all_teams"
             android:icon="@drawable/ic_import_export_white_24dp"
-            android:title="@string/export_all_teams" />
+            android:title="@string/export_all_teams_title" />
 
         <item
             android:id="@+id/action_edit_templates"
             android:icon="@drawable/ic_content_paste_white_24dp"
-            android:title="@string/title_activity_template_list" />
+            android:title="@string/template_activity_title" />
     </group>
 
     <group android:id="@+id/two">
         <item
             android:id="@+id/action_donate"
             android:icon="@drawable/ic_donate_white_24dp"
-            android:title="@string/donate" />
+            android:title="@string/donate_title" />
 
         <item
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings_white_24dp"
-            android:title="@string/title_activity_settings" />
+            android:title="@string/settings_activity_title" />
     </group>
 
 </menu>

@@ -31,7 +31,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
             getInvitationIntent(
                     getTemplateLink(templateId, token),
                     templateName,
-                    it.result.format(activity.getString(R.string.cta_share_template, templateName)))
+                    it.result.format(activity.getString(R.string.template_share_cta, templateName)))
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
         }.addOnFailureListener(CrashLogger).addOnFailureListener {
@@ -45,10 +45,10 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
 
     private fun getInvitationIntent(deepLink: String, templateName: String, html: String) =
             AppInviteInvitation.IntentBuilder(
-                    activity.getString(R.string.title_share_template, templateName))
-                    .setMessage(activity.getString(R.string.message_share_template, templateName))
+                    activity.getString(R.string.template_share_title, templateName))
+                    .setMessage(activity.getString(R.string.template_share_message, templateName))
                     .setDeepLink(Uri.parse(deepLink))
-                    .setEmailSubject(activity.getString(R.string.cta_share_template, templateName))
+                    .setEmailSubject(activity.getString(R.string.template_share_cta, templateName))
                     .setEmailHtmlContent(html)
                     .build()
 

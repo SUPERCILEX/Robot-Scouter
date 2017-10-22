@@ -57,7 +57,7 @@ fun addTemplate(type: TemplateType): String {
 }
 
 fun Scout.getTemplateName(index: Int): String =
-        name ?: RobotScouter.INSTANCE.getString(R.string.title_template_tab, index + 1)
+        name ?: RobotScouter.INSTANCE.getString(R.string.template_tab_default_title, index + 1)
 
 fun deleteTemplate(id: String) {
     getTemplateMetricsRef(id).delete().addOnSuccessListener {

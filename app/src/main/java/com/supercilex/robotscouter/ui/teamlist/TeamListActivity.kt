@@ -74,8 +74,8 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                 this,
                 drawerLayout,
                 findViewById(R.id.toolbar),
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
+                R.string.team_navigation_drawer_open_desc,
+                R.string.team_navigation_drawer_close_desc)
     }
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
 
@@ -215,7 +215,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                 }
                 .addOnFailureListener(CrashLogger)
                 .addOnFailureListener(this) {
-                    Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
                 }
 
         this.intent = Intent() // Consume Intent

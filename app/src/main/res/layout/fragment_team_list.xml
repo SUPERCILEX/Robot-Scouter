@@ -29,7 +29,7 @@
 
         <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
             style="@style/RobotScouter.Tutorial.NoContentHint"
-            android:text="@string/no_teams"
+            android:text="@string/tutorial_no_teams_hint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

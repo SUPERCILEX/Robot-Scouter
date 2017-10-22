@@ -13,14 +13,14 @@
 
     <item
         android:id="@+id/action_set_default_template"
-        android:title="@string/title_set_default_template" />
+        android:title="@string/template_set_default_title" />
 
     <item
         android:id="@+id/action_remove_metrics"
-        android:title="@string/remove_metrics" />
+        android:title="@string/template_remove_metrics_title" />
 
     <item
         android:id="@+id/action_delete_template"
-        android:title="@string/delete_template" />
+        android:title="@string/template_delete_title" />
 
 </menu>

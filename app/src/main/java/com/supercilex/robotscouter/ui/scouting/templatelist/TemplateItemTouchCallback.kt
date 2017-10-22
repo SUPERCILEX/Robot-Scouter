@@ -77,7 +77,10 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
                 }
             } else {
                 cleanupMove()
-                Snackbar.make(rootView, R.string.move_cancelled, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(rootView,
+                              R.string.template_move_cancelled_rationale,
+                              Snackbar.LENGTH_LONG)
+                        .show()
                 adapter.notifyDataSetChanged()
             }
             return

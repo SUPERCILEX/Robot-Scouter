@@ -14,7 +14,7 @@
         android:layout_marginRight="@dimen/spacing_normal"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:hint="@string/counter_name"
+        android:hint="@string/metric_counter_name_hint"
         android:inputType="text"
         tools:text="Example" />
 
@@ -27,7 +27,7 @@
         android:layout_marginEnd="@dimen/spacing_large"
         android:layout_marginRight="@dimen/spacing_large"
         android:layout_gravity="center_vertical"
-        android:hint="@string/unit"
+        android:hint="@string/metric_counter_unit_hint"
         tools:text="s" />
 
 </LinearLayout>

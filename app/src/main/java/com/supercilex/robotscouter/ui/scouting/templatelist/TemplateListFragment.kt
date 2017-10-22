@@ -116,7 +116,7 @@ class TemplateListFragment : FragmentBase(),
         if (templateId != null) {
             pagerAdapter.currentTabId = TemplateType.coerce(templateId)?.let {
                 Snackbar.make(fam,
-                              R.string.title_template_added_as_default,
+                              R.string.template_added_message,
                               Snackbar.LENGTH_LONG)
                         .show()
 
@@ -170,8 +170,8 @@ class TemplateListFragment : FragmentBase(),
     fun onTemplateCreated(id: String) {
         pagerAdapter.currentTabId = id
 
-        Snackbar.make(fam, R.string.title_template_added, Snackbar.LENGTH_LONG)
-                .setAction(R.string.title_set_default_template) { defaultTemplateId = id }
+        Snackbar.make(fam, R.string.template_added_title, Snackbar.LENGTH_LONG)
+                .setAction(R.string.template_set_default_title) { defaultTemplateId = id }
                 .show()
     }
 

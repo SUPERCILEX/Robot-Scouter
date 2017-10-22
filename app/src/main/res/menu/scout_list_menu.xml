@@ -8,13 +8,13 @@
     <item
         android:id="@+id/action_new_scout"
         android:icon="@drawable/ic_add_white_24dp"
-        android:title="@string/add_scout"
+        android:title="@string/scout_add_title"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_add_media"
         android:icon="@drawable/ic_add_a_photo_white_24dp"
-        android:title="@string/add_media"
+        android:title="@string/scout_add_media_title"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
@@ -39,13 +39,13 @@
     <item
         android:id="@+id/action_edit_template"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/edit_template"
+        android:title="@string/scout_edit_template_title"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_edit_team_details"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/edit_team_details"
+        android:title="@string/details_title"
         app:showAsAction="ifRoom" />
 
 </menu>

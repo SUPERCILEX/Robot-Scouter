@@ -49,12 +49,12 @@ class LicensesFragment : Fragment(), OnBackPressedListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as AppCompatActivity).setTitle(R.string.title_pref_licenses)
+        (activity as AppCompatActivity).setTitle(R.string.settings_pref_licenses_title)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as AppCompatActivity).setTitle(R.string.title_activity_settings)
+        (activity as AppCompatActivity).setTitle(R.string.settings_activity_title)
     }
 
     override fun onBackPressed(): Boolean {

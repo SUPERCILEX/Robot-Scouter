@@ -132,8 +132,9 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
         visitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website)
 
         menu.findItem(R.id.action_visit_tba_website).title =
-                fragment.getString(R.string.visit_team_website_on_tba, team.number)
-        visitTeamWebsiteItem.title = fragment.getString(R.string.visit_team_website, team.number)
+                fragment.getString(R.string.scout_visit_team_tba_website_title, team.number)
+        visitTeamWebsiteItem.title =
+                fragment.getString(R.string.scout_visit_team_website_title, team.number)
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
         toolbar.post {
             fragment.view?.findViewById<View>(R.id.action_new_scout)?.setOnLongClickListener(this)

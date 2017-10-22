@@ -71,7 +71,7 @@
         android:layout_width="@dimen/square_view_hw"
         android:layout_height="@dimen/square_view_hw"
         android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="@string/add_scout"
+        android:contentDescription="@string/scout_add_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -140,7 +140,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
         updateUi();
 
-        return createDialog(mRootView, R.string.team_details, savedInstanceState);
+        return createDialog(mRootView, R.string.details_title, savedInstanceState);
     }
 
     @Override
@@ -320,7 +320,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
             inputLayout.setError(null);
             return true;
         } else {
-            inputLayout.setError(getString(R.string.malformed_url));
+            inputLayout.setError(getString(R.string.details_malformed_url_error));
             return false;
         }
     }

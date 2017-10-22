@@ -6,7 +6,7 @@ import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 
 class SettingsTemplateSelectorDialog : TemplateSelectorDialog() {
-    override val title = R.string.title_pref_default_template
+    override val title = R.string.settings_pref_default_template_title
 
     override fun onItemSelected(id: String) =
             (parentFragment as TemplateSelectionListener).onTemplateSelected(id)

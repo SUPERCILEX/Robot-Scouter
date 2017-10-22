@@ -118,7 +118,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     private fun setTeamName() = if (TextUtils.isEmpty(team.name)) {
-        nameTextView.text = itemView.context.getString(R.string.unknown_team)
+        nameTextView.text = itemView.context.getString(R.string.team_unknown_team_title)
     } else {
         nameTextView.text = team.name
     }

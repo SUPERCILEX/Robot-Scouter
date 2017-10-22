@@ -27,7 +27,7 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
                     @Suppress("DEPRECATION") Html.fromHtml(message)
                 }
             })
-            .setPositiveButton(R.string.update, this)
+            .setPositiveButton(R.string.update_title, this)
             .setOnCancelListener(this)
             .setCancelable(false)
             .create()

@@ -10,7 +10,7 @@ import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 
 open class TemplatePagerAdapter(fragment: Fragment, tabLayout: TabLayout) :
         TabPagerAdapterBase(fragment, tabLayout, FIRESTORE_TEMPLATES) {
-    override val editTabNameRes = R.string.title_edit_template_name
+    override val editTabNameRes = R.string.template_edit_name_title
 
     init {
         holder.init(getTemplatesQuery(Query.Direction.DESCENDING))
@@ -19,5 +19,5 @@ open class TemplatePagerAdapter(fragment: Fragment, tabLayout: TabLayout) :
     override fun getItem(position: Int) = TemplateFragment.newInstance(holder.scouts[position].id)
 
     override fun getPageTitle(position: Int): String =
-            fragment.getString(R.string.title_template_tab, count - position)
+            fragment.getString(R.string.template_tab_default_title, count - position)
 }

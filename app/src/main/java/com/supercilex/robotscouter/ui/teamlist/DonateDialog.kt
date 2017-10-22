@@ -50,9 +50,9 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
-            .setTitle(R.string.donate)
+            .setTitle(R.string.donate_title)
             .setView(View.inflate(context, R.layout.dialog_donate, null))
-            .setPositiveButton(R.string.donate, null)
+            .setPositiveButton(R.string.donate_title, null)
             .setNegativeButton(android.R.string.cancel, null)
             .createAndSetup(savedInstanceState)
 
@@ -89,7 +89,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     private fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
         updateProgress(false)
     }.addOnSuccessListener {
-        Toast.makeText(context, R.string.donate_thanks, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, R.string.donate_thanks_message, Toast.LENGTH_LONG).show()
         dismiss()
     }.addOnFailureListener {
         it as PurchaseException

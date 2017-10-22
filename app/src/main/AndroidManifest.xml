@@ -65,14 +65,14 @@
 
         <activity
             android:name=".ui.scouting.scoutlist.ScoutListActivity"
-            android:label="@string/title_activity_scout_list"
+            android:label="@string/scout_activity_title"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.scouting.templatelist.TemplateListActivity"
-            android:label="@string/title_activity_template_list"
+            android:label="@string/template_activity_title"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
@@ -80,7 +80,7 @@
 
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/settings_activity_title"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan" />

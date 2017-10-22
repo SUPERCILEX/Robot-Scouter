@@ -53,20 +53,23 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
 
     private fun signInAnonymously() = FirebaseAuth.getInstance().signInAnonymously()
             .addOnFailureListener(activity) {
-                Snackbar.make(rootView, R.string.anonymous_sign_in_failed, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.sign_in, this)
+                Snackbar.make(rootView,
+                              R.string.team_anonymous_sign_in_failed_message,
+                              Snackbar.LENGTH_LONG)
+                        .setAction(R.string.team_sign_in_title, this)
                         .show()
             }
 
     fun showSignInResolution() =
             Snackbar.make(rootView, R.string.sign_in_required, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.sign_in, this)
+                    .setAction(R.string.team_sign_in_title, this)
                     .show()
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
-                Snackbar.make(rootView, R.string.signed_in, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(rootView, R.string.team_signed_in_message, Snackbar.LENGTH_LONG)
+                        .show()
                 hasShownSignInTutorial = true
 
                 logLoginEvent()
@@ -75,13 +78,13 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
 
                 if (response.errorCode == ErrorCodes.NO_NETWORK) {
                     Snackbar.make(rootView, R.string.no_connection, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.try_again, this)
+                            .setAction(R.string.team_sign_in_try_again_title, this)
                             .show()
                     return
                 }
 
-                Snackbar.make(rootView, R.string.sign_in_failed, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.try_again, this)
+                Snackbar.make(rootView, R.string.team_sign_in_failed_message, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.team_sign_in_try_again_title, this)
                         .show()
             }
         }

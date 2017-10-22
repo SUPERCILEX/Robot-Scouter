@@ -35,7 +35,7 @@ class ExportService : IntentService(TAG) {
     override fun onHandleIntent(intent: Intent) {
         val notificationManager = ExportNotificationManager(this)
 
-        if (isOffline()) showToast(getString(R.string.export_warning_offline))
+        if (isOffline()) showToast(getString(R.string.export_offline_rationale))
 
         val teams = intent.getTeamListExtra()
         try {
@@ -61,12 +61,12 @@ class ExportService : IntentService(TAG) {
             async {
                 TemplateType.coerce(templateId)?.let {
                     SpreadsheetExporter(scouts, notificationManager, resources.getStringArray(
-                            R.array.new_template_options)[it.id]).export()
+                            R.array.template_new_options)[it.id]).export()
                 } ?: run {
                     SpreadsheetExporter(scouts, notificationManager, {
                         templates.find { it.id == templateId }?.let {
                             it.getTemplateName(templates.indexOf(it))
-                        } ?: getString(R.string.title_unknown_template)
+                        } ?: getString(R.string.export_unknown_template_title)
                     }.invoke()).export()
                 }
             }
@@ -114,11 +114,12 @@ class ExportService : IntentService(TAG) {
             val context = fragment.context
 
             if (!EasyPermissions.hasPermissions(context, *permHandler.permsArray)) {
-                permHandler.requestPerms(R.string.write_storage_rationale_spreadsheet)
+                permHandler.requestPerms(R.string.export_write_storage_rationale)
                 return false
             }
 
-            Snackbar.make(fragment.view!!, R.string.export_hint, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(fragment.view!!, R.string.export_progress_hint, Snackbar.LENGTH_SHORT)
+                    .show()
 
             logExportTeamsEvent(teams)
             ContextCompat.startForegroundService(

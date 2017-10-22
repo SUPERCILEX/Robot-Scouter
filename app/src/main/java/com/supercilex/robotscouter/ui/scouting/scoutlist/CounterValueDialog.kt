@@ -15,8 +15,8 @@ import com.supercilex.robotscouter.util.ui.show
 
 class CounterValueDialog : ValueDialogBase<Long>() {
     override val value get() = lastEditText.text.toString().toLong()
-    override val title = R.string.edit_value
-    override val hint = R.string.value
+    override val title = R.string.scout_edit_counter_value_title
+    override val hint = R.string.scout_counter_value_title
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)

@@ -30,7 +30,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         val fullMessage = cache.shareMessage
         return if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
             activity.resources.getQuantityString(
-                    R.plurals.share_team_message,
+                    R.plurals.team_share_message,
                     1,
                     "${cache.teams[0]} and more")
         } else {
@@ -76,11 +76,11 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
             val quantity = teams.size
 
             shareMessage = resources.getQuantityString(
-                    R.plurals.share_team_message, quantity, teamNames)
+                    R.plurals.team_share_message, quantity, teamNames)
             shareCta = resources.getQuantityString(
-                    R.plurals.share_team_call_to_action, quantity, teamNames)
+                    R.plurals.team_share_cta, quantity, teamNames)
             shareTitle = resources.getQuantityString(
-                    R.plurals.share_team_title, quantity, teamNames)
+                    R.plurals.team_share_title, quantity, teamNames)
         }
     }
 

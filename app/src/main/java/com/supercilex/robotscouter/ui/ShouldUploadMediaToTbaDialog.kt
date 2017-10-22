@@ -21,8 +21,8 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
     private val saveResponseCheckbox: CheckBox by bindView(R.id.save_response)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
-            .setTitle(R.string.should_upload_media_dialog_title)
-            .setMessage(R.string.should_upload_media_rationale)
+            .setTitle(R.string.media_should_upload_title)
+            .setMessage(R.string.media_should_upload_rationale)
             .setView(View.inflate(context, R.layout.dialog_should_upload_media, null))
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)

@@ -36,7 +36,7 @@
 
         <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
             style="@style/RobotScouter.Tutorial.NoContentHint"
-            android:text="@string/no_templates"
+            android:text="@string/tutorial_no_templates_hint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -66,32 +66,32 @@
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_header"
             style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/add_header" />
+            app:fab_label="@string/metric_header_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_checkbox"
             style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/add_checkbox" />
+            app:fab_label="@string/metric_checkbox_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_stopwatch"
             style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/add_stopwatch" />
+            app:fab_label="@string/metric_stopwatch_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_note"
             style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/add_note" />
+            app:fab_label="@string/metric_note_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_counter"
             style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/add_counter" />
+            app:fab_label="@string/metric_counter_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_spinner"
             style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/add_spinner" />
+            app:fab_label="@string/metric_spinner_add_title" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

@@ -98,7 +98,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null && isOffline()) {
-            Snackbar.make(view, R.string.offline_reassurance, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(view, R.string.scout_offline_rationale, Snackbar.LENGTH_LONG).show()
         }
     }
 
@@ -161,7 +161,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                         startActivity(TemplateListActivity.createIntent(templateId))
                     } else {
                         Toast.makeText(context,
-                                       R.string.error_template_access_denied,
+                                       R.string.template_access_denied_error,
                                        Toast.LENGTH_LONG)
                                 .show()
                     }

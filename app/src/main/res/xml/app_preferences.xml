@@ -3,55 +3,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt">
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_ui">
+    <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_ui_title">
 
         <android.support.v7.preference.ListPreference
             android:defaultValue="auto"
-            android:entries="@array/entries_pref_night_mode"
-            android:entryValues="@array/entry_values_pref_night_mode"
+            android:entries="@array/settings_pref_night_mode_entries"
+            android:entryValues="@array/settings_pref_night_mode_values"
             android:icon="@drawable/ic_settings_white_24dp"
             android:key="nightMode"
             android:summary="%s"
-            android:title="@string/title_pref_night_mode" />
+            android:title="@string/settings_pref_night_mode_title" />
 
     </android.support.v7.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_general">
+    <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_general_title">
 
         <com.supercilex.robotscouter.ui.settings.DefaultTemplatePreference
             android:icon="@drawable/ic_content_paste_white_24dp"
             android:key="defaultTemplateId"
-            android:summary="@string/summary_pref_default_template"
-            android:title="@string/title_pref_default_template" />
+            android:summary="@string/settings_pref_default_template_summary"
+            android:title="@string/settings_pref_default_template_title" />
 
         <android.support.v7.preference.ListPreference
             android:defaultValue="ask"
-            android:entries="@array/entries_pref_should_upload_to_tba"
-            android:entryValues="@array/entry_values_pref_should_upload_to_tba"
+            android:entries="@array/settings_pref_should_upload_to_tba_entries"
+            android:entryValues="@array/settings_pref_should_upload_to_tba_values"
             android:icon="@android:drawable/stat_sys_upload_done"
             android:key="uploadMediaToTba"
-            android:summary="@string/summary_pref_should_upload_to_tba"
-            android:title="@string/title_pref_should_upload_to_tba" />
+            android:summary="@string/settings_pref_should_upload_to_tba_summary"
+            android:title="@string/settings_pref_should_upload_to_tba_title" />
 
         <android.support.v7.preference.Preference
             android:icon="@drawable/ic_replay_white_24dp"
             android:key="reset_tutorials"
-            android:title="@string/title_pref_reset_tutorials" />
+            android:title="@string/settings_pref_reset_tutorials_title" />
 
         <android.support.v7.preference.Preference
             android:icon="@drawable/ic_link_white_24dp"
             android:key="link_account"
-            android:summary="@string/summary_pref_link_account"
-            android:title="@string/title_pref_link_account" />
+            android:summary="@string/settings_pref_link_account_summary"
+            android:title="@string/settings_pref_link_account_title" />
 
         <android.support.v7.preference.Preference
             android:icon="@drawable/ic_sign_out_white_24dp"
             android:key="sign_out"
-            android:title="@string/title_pref_sign_out" />
+            android:title="@string/settings_pref_sign_out_title" />
 
     </android.support.v7.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/title_category_about">
+    <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_about_title">
 
         <android.support.v7.preference.Preference android:key="about">
 
@@ -81,16 +81,16 @@
 
         <android.support.v7.preference.Preference
             android:key="release_notes"
-            android:summary="@string/summary_pref_release_notes"
-            android:title="@string/title_pref_release_notes" />
+            android:summary="@string/settings_pref_release_notes_summary"
+            android:title="@string/settings_pref_release_notes_title" />
 
         <android.support.v7.preference.Preference
             android:key="version"
-            android:title="@string/title_pref_version" />
+            android:title="@string/settings_pref_version_title" />
 
         <android.support.v7.preference.Preference
             android:key="licenses"
-            android:title="@string/title_pref_licenses" />
+            android:title="@string/settings_pref_licenses_title" />
 
     </android.support.v7.preference.PreferenceCategory>
 

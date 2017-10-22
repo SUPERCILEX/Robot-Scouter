@@ -19,7 +19,7 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
         val items = LinkedHashMap<String, String>()
         items.put(
                 metric.ref.parent.document().id,
-                itemView.context.getString(R.string.edit_spinner_items_short))
+                itemView.context.getString(R.string.metric_spinner_edit_title))
         items.putAll(listMetric.value)
         return ArrayAdapter(
                 itemView.context, android.R.layout.simple_spinner_item, ArrayList(items.values))

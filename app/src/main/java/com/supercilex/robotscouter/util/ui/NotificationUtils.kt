@@ -24,7 +24,8 @@ fun initNotifications() {
     RobotScouter.INSTANCE.getSystemService(NotificationManager::class.java).apply {
         createNotificationChannelGroups(listOf(
                 NotificationChannelGroup(
-                        EXPORT_GROUP, RobotScouter.INSTANCE.getString(R.string.export_group_name))))
+                        EXPORT_GROUP,
+                        RobotScouter.INSTANCE.getString(R.string.export_group_title))))
 
         createNotificationChannels(listOf(
                 getExportChannel(),
@@ -35,10 +36,10 @@ fun initNotifications() {
 @RequiresApi(Build.VERSION_CODES.O)
 fun getExportChannel(): NotificationChannel = NotificationChannel(
         EXPORT_CHANNEL,
-        RobotScouter.INSTANCE.getString(R.string.export_channel_name),
+        RobotScouter.INSTANCE.getString(R.string.export_channel_title),
         NotificationManager.IMPORTANCE_HIGH).apply {
     group = EXPORT_GROUP
-    description = RobotScouter.INSTANCE.getString(R.string.export_channel_description)
+    description = RobotScouter.INSTANCE.getString(R.string.export_channel_desc)
     setShowBadge(true)
     enableVibration(true)
     enableLights(true)
@@ -47,10 +48,10 @@ fun getExportChannel(): NotificationChannel = NotificationChannel(
 @RequiresApi(Build.VERSION_CODES.O)
 fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
         EXPORT_IN_PROGRESS_CHANNEL,
-        RobotScouter.INSTANCE.getString(R.string.export_in_progress_channel_name),
+        RobotScouter.INSTANCE.getString(R.string.export_progress_channel_title),
         NotificationManager.IMPORTANCE_LOW).apply {
     group = EXPORT_GROUP
-    description = RobotScouter.INSTANCE.getString(R.string.export_in_progress_channel_description)
+    description = RobotScouter.INSTANCE.getString(R.string.export_progress_channel_desc)
     setShowBadge(false)
     enableVibration(false)
     enableLights(false)

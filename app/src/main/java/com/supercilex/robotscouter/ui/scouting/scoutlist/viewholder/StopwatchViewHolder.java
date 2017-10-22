@@ -61,7 +61,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
     protected void bind() {
         super.bind();
         mToggleStopwatch.setOnClickListener(this);
-        setText(R.string.start_stopwatch);
+        setText(R.string.metric_stopwatch_start_title);
 
         LinearLayoutManager manager =
                 new LinearLayoutManager(itemView.getContext(),
@@ -91,7 +91,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
     @Override
     public void onClick(View v) {
         if (mTimer == null) {
-            setText(R.string.stop_stopwatch, "0:00");
+            setText(R.string.metric_stopwatch_stop_title, "0:00");
             mTimer = new Timer(this);
         } else {
             ArrayList<Long> newCycles = new ArrayList<>(getMetric().getValue());
@@ -147,7 +147,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         }
 
         public void updateButtonTime() {
-            setText(R.string.stop_stopwatch, getFormattedTime(getElapsedTime()));
+            setText(R.string.metric_stopwatch_stop_title, getFormattedTime(getElapsedTime()));
         }
 
         /** @return The time since this class was instantiated and then cancelled */
@@ -161,7 +161,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
             mTimerTask.trySetException(new CancellationException());
             updateStyle();
-            setText(R.string.start_stopwatch);
+            setText(R.string.metric_stopwatch_start_title);
 
             return getElapsedTime();
         }
@@ -296,7 +296,8 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             mIndex = index;
 
             itemView.setOnCreateContextMenuListener(this);
-            mTitle.setText(itemView.getContext().getString(R.string.cycle_item, mIndex + 1));
+            mTitle.setText(itemView.getContext().getString(
+                    R.string.metric_stopwatch_cycle_title, mIndex + 1));
             mValue.setText(Timer.getFormattedTime(nanoTime));
         }
 
@@ -322,7 +323,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         }
 
         public void bind(List<Long> cycles) {
-            mTitle.setText(R.string.average);
+            mTitle.setText(R.string.metric_stopwatch_cycle_average_title);
 
             long sum = 0;
             for (Long duration : cycles) sum += duration;

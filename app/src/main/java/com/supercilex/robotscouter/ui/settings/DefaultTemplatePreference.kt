@@ -46,7 +46,7 @@ class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase {
         isPersistent = false
 
         entries = TemplateType.values().map {
-            context.resources.getStringArray(R.array.new_template_options)[it.id]
+            context.resources.getStringArray(R.array.template_new_options)[it.id]
         }.toMutableList().apply {
             addAll(namesListener.mapIndexed { index, _ ->
                 namesListener[index].getTemplateName(index)

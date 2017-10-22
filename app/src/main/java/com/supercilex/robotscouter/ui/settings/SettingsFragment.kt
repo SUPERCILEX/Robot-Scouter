@@ -63,7 +63,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 super.onBindViewHolder(holder, position)
                 if (getItem(position).key == "about") {
                     (holder.findViewById(R.id.about) as TextView).apply {
-                        text = getString(R.string.summary_pref_about, "\uD83D\uDC96")
+                        text = getString(R.string.settings_pref_about_summary, "\uD83D\uDC96")
                         movementMethod = LinkMovementMethod.getInstance()
                     }
                 }
@@ -128,8 +128,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     context, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
             KEY_VERSION -> {
                 (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
-                        ClipData.newPlainText(getString(R.string.debug_info_name), debugInfo)
-                Toast.makeText(context, R.string.debug_info_copied, Toast.LENGTH_SHORT).show()
+                        ClipData.newPlainText(getString(R.string.settings_debug_info_title), debugInfo)
+                Toast.makeText(context,
+                               R.string.settings_debug_info_copied_message,
+                               Toast.LENGTH_SHORT)
+                        .show()
             }
             KEY_LICENSES -> fragmentManager.beginTransaction()
                     .setCustomAnimations(
@@ -154,7 +157,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(context, R.string.signed_in, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.team_signed_in_message, Toast.LENGTH_SHORT).show()
                 logLoginEvent()
                 activity.finish()
             } else {
@@ -165,7 +168,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     return
                 }
 
-                Toast.makeText(context, R.string.sign_in_failed, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.team_sign_in_failed_message, Toast.LENGTH_SHORT)
+                        .show()
             }
         }
     }

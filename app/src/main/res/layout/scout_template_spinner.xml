@@ -14,7 +14,7 @@
         android:layout_marginRight="@dimen/spacing_normal"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:hint="@string/spinner_name"
+        android:hint="@string/metric_spinner_name_hint"
         android:inputType="textMultiLine|textCapSentences"
         tools:ignore="UnknownIdInLayout"
         tools:text="Example" />

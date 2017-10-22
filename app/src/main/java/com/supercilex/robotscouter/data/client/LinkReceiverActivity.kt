@@ -81,7 +81,7 @@ class LinkReceiverActivity : AppCompatActivity() {
                 startActivity(ScoutListActivity.createIntent(data).setAction(ACTION_FROM_DEEP_LINK))
             }
         } else {
-            Toast.makeText(this, R.string.teams_imported, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.link_teams_imported_message, Toast.LENGTH_LONG).show()
             startTeamListActivityNoArgs()
         }
     }
@@ -102,7 +102,7 @@ class LinkReceiverActivity : AppCompatActivity() {
                                   .setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
-        Toast.makeText(this, R.string.uri_parse_error, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
         startTeamListActivityNoArgs()
     }
 }

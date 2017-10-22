@@ -24,9 +24,9 @@ import com.supercilex.robotscouter.util.ui.show
 
 class DeleteTemplateDialog : ManualDismissDialog() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
-            .setTitle(R.string.confirm_action)
-            .setMessage(R.string.delete_template_warning)
-            .setPositiveButton(R.string.delete_template, null)
+            .setTitle(R.string.template_delete_dialog_title)
+            .setMessage(R.string.template_delete_message)
+            .setPositiveButton(R.string.template_delete_title, null)
             .setNegativeButton(android.R.string.cancel, null)
             .createAndSetup(savedInstanceState)
 

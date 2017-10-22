@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_export_teams"
         android:icon="@drawable/ic_import_export_white_24dp"
-        android:title="@string/export_teams"
+        android:title="@string/export_teams_title"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
@@ -32,7 +32,7 @@
     <item
         android:id="@+id/action_edit_team_details"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/edit_team_details"
+        android:title="@string/details_title"
         android:visible="false"
         app:showAsAction="ifRoom" />
 

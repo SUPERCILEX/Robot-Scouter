@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
 import com.supercilex.robotscouter.util.unsafeLazy
 
 abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
-    override val title = R.string.title_add_scout_template_selector
+    override val title = R.string.template_add_scout_selector_title
     private val setAsDefaultCheckbox: CheckBox by unsafeLazy {
         AppCompatCheckBox(context).apply {
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
@@ -27,7 +27,7 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
                 rightMargin = a.getDimensionPixelSize(1, 0) + checkboxMarginCompensation
                 a.recycle()
             }
-            setText(R.string.title_set_default_template)
+            setText(R.string.template_set_default_title)
         }
     }
 

@@ -5,8 +5,8 @@
         android:enabled="true"
         android:icon="@drawable/shortcut_add_scout"
         android:shortcutId="add_scout"
-        android:shortcutLongLabel="@string/new_scout_or_team_long"
-        android:shortcutShortLabel="@string/new_scout_or_team">
+        android:shortcutLongLabel="@string/scout_new_title_long"
+        android:shortcutShortLabel="@string/scout_new_title">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="add_scout"
@@ -19,8 +19,8 @@
         android:enabled="true"
         android:icon="@drawable/shortcut_export_all_teams"
         android:shortcutId="export_all_teams"
-        android:shortcutLongLabel="@string/export_all_teams"
-        android:shortcutShortLabel="@string/export_all_teams">
+        android:shortcutLongLabel="@string/export_all_teams_title"
+        android:shortcutShortLabel="@string/export_all_teams_title">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="export_all_teams"

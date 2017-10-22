@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.util.isOffline
 
 class ScoutPagerAdapter(fragment: Fragment, tabLayout: TabLayout, private val team: Team) :
         TabPagerAdapterBase(fragment, tabLayout, team.getScoutRef()) {
-    override val editTabNameRes = R.string.edit_scout_name
+    override val editTabNameRes = R.string.scout_edit_name_title
 
     init {
         holder.init(dataRef.orderBy(FIRESTORE_TIMESTAMP, Query.Direction.DESCENDING))
@@ -24,14 +24,14 @@ class ScoutPagerAdapter(fragment: Fragment, tabLayout: TabLayout, private val te
             ScoutFragment.newInstance(holder.scouts[position].id, team)
 
     override fun getPageTitle(position: Int): String =
-            fragment.getString(R.string.title_scout_tab, count - position)
+            fragment.getString(R.string.scout_tab_default_title, count - position)
 
     override fun onDataChanged() {
         if (oldScouts.isNotEmpty() && holder.scouts.isEmpty() && !isOffline() && fragment.isResumed) {
             Snackbar.make(fragment.view!!,
-                          fragment.getString(R.string.should_delete_team_message, team),
+                          fragment.getString(R.string.scout_should_delete_team_message, team),
                           Snackbar.LENGTH_LONG)
-                    .setAction(R.string.should_delete_team_action) { team.delete() }
+                    .setAction(R.string.scout_delete_team_title) { team.delete() }
                     .show()
         }
         super.onDataChanged()

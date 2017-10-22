@@ -78,9 +78,10 @@ public class TeamMenuHelper implements View.OnClickListener {
     }
 
     private void initSnackBar() {
-        mSelectAllSnackBar = Snackbar.make(
-                mFragment.getView(), R.string.multiple_teams_selected, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.select_all, v -> {
+        mSelectAllSnackBar = Snackbar.make(mFragment.getView(),
+                                           R.string.team_multiple_selected_message,
+                                           Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.team_select_all_title, v -> {
                     mSelectedTeams.clear();
                     mSelectedTeams.addAll(mAdapter.getSnapshots());
                     updateState();
@@ -264,10 +265,10 @@ public class TeamMenuHelper implements View.OnClickListener {
         if (visible) {
             Team team = mSelectedTeams.get(0);
 
-            mVisitTbaWebsiteItem.setTitle(
-                    mActivity.getString(R.string.visit_team_website_on_tba, team.getNumber()));
-            mVisitTeamWebsiteItem.setTitle(
-                    mActivity.getString(R.string.visit_team_website, team.getNumber()));
+            mVisitTbaWebsiteItem.setTitle(mActivity.getString(
+                    R.string.scout_visit_team_tba_website_title, team.getNumber()));
+            mVisitTeamWebsiteItem.setTitle(mActivity.getString(
+                    R.string.scout_visit_team_website_title, team.getNumber()));
 
             mSelectAllSnackBar.dismiss();
         }
