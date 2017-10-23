@@ -75,7 +75,7 @@ class ExportService : IntentService(TAG) {
 
     private fun zipScouts(map: Map<Team, List<Scout>>): Map<String, Map<Team, List<Scout>>> {
         fun initMap(map: HashMap<Team, ArrayList<Scout>>, team: Team, scout: Scout) =
-                map.put(team, ArrayList<Scout>().also { it.add(scout) })
+                map.put(team, ArrayList<Scout>().also { it += scout })
 
         val zippedScouts = HashMap<String, HashMap<Team, ArrayList<Scout>>>()
         for ((team, scouts) in map) {

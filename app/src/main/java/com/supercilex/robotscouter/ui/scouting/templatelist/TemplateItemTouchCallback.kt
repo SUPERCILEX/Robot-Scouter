@@ -57,18 +57,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
 
     fun onChildChanged(type: ChangeEventType, index: Int, injectedSuperCall: () -> Unit) {
         if (isMovingItem) {
-            if (run isCatchingUpOnMove@ {
-                if (type == ChangeEventType.MOVED) return@isCatchingUpOnMove true
-                else {
-                    if (type == ChangeEventType.CHANGED
-                            && movableItems.contains(adapter.snapshots[index])) {
-                        return@isCatchingUpOnMove true
-                    }
-                }
-
-                return@isCatchingUpOnMove false
-            }) {
-                injectedSuperCall()
+            if (isCatchingUpOnMove(type, index)) {
                 if (adapter.snapshots == movableItems) {
                     ViewCompat.postOnAnimationDelayed(
                             recyclerView,
@@ -89,6 +78,12 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         }
         injectedSuperCall()
     }
+
+    private fun isCatchingUpOnMove(type: ChangeEventType, index: Int): Boolean =
+            type == ChangeEventType.MOVED
+                    // Setting `position` causes an update.
+                    // Our model doesn't include positions in its equals implementation
+                    || type == ChangeEventType.CHANGED && movableItems.contains(adapter.snapshots[index])
 
     override fun onMove(recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
