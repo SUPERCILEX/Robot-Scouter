@@ -23,6 +23,9 @@ import com.supercilex.robotscouter.util.data.model.userPrefs
 private val localPrefs: SharedPreferences by lazy {
     RobotScouter.INSTANCE.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
 }
+private val migrationPrefs: SharedPreferences by lazy {
+    RobotScouter.INSTANCE.getSharedPreferences("migrations", Context.MODE_PRIVATE)
+}
 
 val prefs = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
@@ -47,6 +50,10 @@ val prefs = object : PreferenceDataStore() {
     override fun getBoolean(key: String, defValue: Boolean): Boolean =
             localPrefs.getBoolean(key, defValue)
 }
+
+var hasPerformedV1toV2Migration: Boolean
+    get() = migrationPrefs.getBoolean("v1...v2", false)
+    set(value) = migrationPrefs.updatePrefs { putBoolean("v1...v2", value) }
 
 var defaultTemplateId: String
     get() =
