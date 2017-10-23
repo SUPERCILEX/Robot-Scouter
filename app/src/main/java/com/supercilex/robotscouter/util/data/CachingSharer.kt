@@ -34,9 +34,7 @@ abstract class CachingSharer(private val context: Context) {
             }.also {
                 if (it.isEmpty()) {
                     shareTemplateFile.delete()
-                    throw NoSuchFileException(
-                            shareTemplateFile,
-                            reason = "Some error occurred trying to read the file data.")
+                    call()
                 }
             }
         }
