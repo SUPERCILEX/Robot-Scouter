@@ -59,7 +59,7 @@ Want to add features, fix bugs, or just poke around the code? No problem! Just m
 the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too deep.
 
 If you know another language, please help
-[translate Robot Scouter](https://www.transifex.com/supercilex/robot-scouter/content/)!
+[translate Robot Scouter](https://www.transifex.com/supercilex/robot-scouter/)!
 
 ### Learning 📚
 - Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter

@@ -127,8 +127,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             KEY_RELEASE_NOTES -> launchUrl(
                     context, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
             KEY_TRANSLATE -> launchUrl(
-                    context,
-                    Uri.parse("https://www.transifex.com/supercilex/robot-scouter/content/"))
+                    context, Uri.parse("https://www.transifex.com/supercilex/robot-scouter/"))
             KEY_VERSION -> {
                 (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
                         ClipData.newPlainText(
