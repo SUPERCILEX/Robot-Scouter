@@ -85,6 +85,11 @@
             android:title="@string/settings_pref_release_notes_title" />
 
         <android.support.v7.preference.Preference
+            android:key="translate"
+            android:summary="@string/settings_pref_translate_summary"
+            android:title="@string/settings_pref_translate_title" />
+
+        <android.support.v7.preference.Preference
             android:key="version"
             android:title="@string/settings_pref_version_title" />
 

@@ -268,6 +268,9 @@
     <string name="settings_pref_release_notes_title">Release notes</string>
     <string name="settings_pref_release_notes_summary">View the latest release notes</string>
 
+    <string name="settings_pref_translate_title">Help translate Robot Scouter</string>
+    <string name="settings_pref_translate_summary">Know another language? Please help translate!</string>
+
     <string name="settings_pref_version_title">Version</string>
     <string name="settings_debug_info_title">Robot Scouter debug info</string>
     <string name="settings_debug_info_copied_message">Debug info copied to clipboard!</string>

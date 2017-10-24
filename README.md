@@ -58,6 +58,9 @@ scouting easy, efficient, and collaborative.
 Want to add features, fix bugs, or just poke around the code? No problem! Just make sure to read
 the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too deep.
 
+If you know another language, please help
+[translate Robot Scouter](https://www.transifex.com/supercilex/robot-scouter/content/)!
+
 ### Learning 📚
 - Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter
 - Take careful note of the [Firebase Realtime Database](https://firebase.google.com/docs/database/)

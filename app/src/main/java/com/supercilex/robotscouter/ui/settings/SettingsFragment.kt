@@ -126,9 +126,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     }
             KEY_RELEASE_NOTES -> launchUrl(
                     context, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
+            KEY_TRANSLATE -> launchUrl(
+                    context,
+                    Uri.parse("https://www.transifex.com/supercilex/robot-scouter/content/"))
             KEY_VERSION -> {
                 (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
-                        ClipData.newPlainText(getString(R.string.settings_debug_info_title), debugInfo)
+                        ClipData.newPlainText(
+                                getString(R.string.settings_debug_info_title), debugInfo)
                 Toast.makeText(context,
                                R.string.settings_debug_info_copied_message,
                                Toast.LENGTH_SHORT)
@@ -181,6 +185,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         private const val KEY_LINK_ACCOUNT = "link_account"
         private const val KEY_SIGN_OUT = "sign_out"
         private const val KEY_RELEASE_NOTES = "release_notes"
+        private const val KEY_TRANSLATE = "translate"
         private const val KEY_VERSION = "version"
         private const val KEY_LICENSES = "licenses"
 
