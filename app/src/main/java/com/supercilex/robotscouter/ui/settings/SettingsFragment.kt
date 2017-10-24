@@ -26,7 +26,6 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
-import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.RC_SIGN_IN
@@ -34,6 +33,7 @@ import com.supercilex.robotscouter.util.data.clearPrefs
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.debugInfo
+import com.supercilex.robotscouter.util.fullVersionName
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logLoginEvent
@@ -92,7 +92,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             else -> when (preference.key) {
                 KEY_LINK_ACCOUNT, KEY_SIGN_OUT -> preference.isVisible = isFullUser
-                KEY_VERSION -> preference.summary = BuildConfig.VERSION_NAME
+                KEY_VERSION -> preference.summary = fullVersionName
             }
         }
 

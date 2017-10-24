@@ -9,7 +9,6 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
@@ -62,6 +61,12 @@ const val FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
 const val FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
 // [END FIREBASE CHILD NAMES]
 
+val fullVersionName: String by lazy {
+    // Get it from the package manager instead of the BuildConfig to support injected version names
+    // from the automated build system.
+    RobotScouter.INSTANCE.packageManager
+            .getPackageInfo(RobotScouter.INSTANCE.packageName, 0).versionName
+}
 val providerAuthority: String by lazy { "${RobotScouter.INSTANCE.packageName}.provider" }
 val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter.INSTANCE) }
 val isLowRamDevice: Boolean by lazy {
@@ -73,7 +78,7 @@ val isInTestMode: Boolean by lazy {
 }
 val debugInfo: String get() =
         """
-        |- Robot Scouter version: ${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}
+        |- Robot Scouter version: $fullVersionName
         |- Android OS version: ${Build.VERSION.SDK_INT}
         |- User id: $uid
         """.trimMargin()
