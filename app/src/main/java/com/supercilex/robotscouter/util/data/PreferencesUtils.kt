@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatDelegate
 import android.support.v7.preference.PreferenceDataStore
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ObservableSnapshotArray
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.TemplateType
@@ -18,6 +17,8 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIA
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
+import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 
 private val localPrefs: SharedPreferences by lazy {
@@ -151,11 +152,7 @@ private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
 
 private fun updateTeamTemplateIds() {
     TeamsLiveData.observeOnDataChanged().observeOnce {
-        val listener = TeamsLiveData.templateIdUpdater
-        it.addChangeEventListener(listener)
-        it.removeChangeEventListener(listener)
-
-        Tasks.forResult(null)
+        async { for (team in it) team.updateTemplateId(defaultTemplateId) }
     }
 }
 

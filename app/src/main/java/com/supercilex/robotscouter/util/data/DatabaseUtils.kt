@@ -201,7 +201,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
         get() = FirestoreArray(teamsQuery, TEAM_PARSER)
 
-    val templateIdUpdater = object : ChangeEventListenerBase {
+    private val templateIdUpdater = object : ChangeEventListenerBase {
         private var nTeamUpdatesForTemplateId = "" to -1
 
         override fun onChildChanged(type: ChangeEventType,
