@@ -7,14 +7,14 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.KeepAliveListener
-import com.supercilex.robotscouter.util.data.METRIC_PARSER
 import com.supercilex.robotscouter.util.data.ViewModelBase
+import com.supercilex.robotscouter.util.data.metricParser
 
 class MetricListHolder : ViewModelBase<CollectionReference>() {
     var metrics: ObservableSnapshotArray<Metric<*>> by LateinitVal()
 
     override fun onCreate(args: CollectionReference) {
-        metrics = FirestoreArray(args.orderBy(FIRESTORE_POSITION), METRIC_PARSER)
+        metrics = FirestoreArray(args.orderBy(FIRESTORE_POSITION), metricParser)
         metrics.addChangeEventListener(KeepAliveListener)
     }
 

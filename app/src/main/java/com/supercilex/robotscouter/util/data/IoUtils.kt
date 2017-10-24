@@ -6,10 +6,10 @@ import android.support.annotation.RequiresPermission
 import java.io.File
 import java.io.IOException
 
-val IO_PERMS = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-private val ROOT_FOLDER = File(Environment.getExternalStorageDirectory(), "Robot Scouter")
-private val MEDIA_FOLDER = File(ROOT_FOLDER, "Media")
+private val root = File(Environment.getExternalStorageDirectory(), "Robot Scouter")
+private val media = File(root, "Media")
 
 fun createFile(prefix: String,
                suffix: String,
@@ -23,11 +23,11 @@ fun createFile(prefix: String,
 
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 val rootFolder: File?
-    get() = if (isExternalStorageMounted() && (ROOT_FOLDER.exists() || ROOT_FOLDER.mkdirs())) ROOT_FOLDER else null
+    get() = if (isExternalStorageMounted() && (root.exists() || root.mkdirs())) root else null
 
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 val mediaFolder: File?
-    get() = if (rootFolder != null && (MEDIA_FOLDER.exists() || MEDIA_FOLDER.mkdirs())) MEDIA_FOLDER else null
+    get() = if (rootFolder != null && (media.exists() || media.mkdirs())) media else null
 
 fun File.hide() = File(parentFile, ".$name")
 

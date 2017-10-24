@@ -32,7 +32,6 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
@@ -40,6 +39,7 @@ import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
 import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
+import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.ui.FragmentBase
@@ -163,7 +163,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
                 getTemplatesQuery().get().continueWith(
                         AsyncTaskExecutor, Continuation<QuerySnapshot, Boolean> {
-                    it.result.map { SCOUT_PARSER.parseSnapshot(it) }
+                    it.result.map { scoutParser.parseSnapshot(it) }
                             .find { it.id == templateId } != null
                 }).addOnSuccessListener { ownsTemplate ->
                     if (ownsTemplate) {

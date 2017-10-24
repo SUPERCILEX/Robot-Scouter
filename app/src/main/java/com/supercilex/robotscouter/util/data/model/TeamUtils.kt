@@ -16,17 +16,17 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
-import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.async
-import com.supercilex.robotscouter.util.data.METRIC_PARSER
-import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.deepLink
 import com.supercilex.robotscouter.util.data.indexable
+import com.supercilex.robotscouter.util.data.metricParser
+import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
+import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
 import java.util.ArrayList
 import java.util.Calendar
@@ -37,10 +37,10 @@ import java.util.concurrent.TimeUnit
 private const val FRESHNESS_DAYS = "team_freshness"
 
 val teamsQuery get() = "$FIRESTORE_OWNERS.${uid!!}".let {
-    FIRESTORE_TEAMS.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
+    teams.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
 }
 
-val Team.ref: DocumentReference get() = FIRESTORE_TEAMS.document(id)
+val Team.ref: DocumentReference get() = teams.document(id)
 
 fun getTeamNames(teams: List<Team>): String {
     val sortedTeams = ArrayList(teams)
@@ -68,7 +68,7 @@ fun getTeamNames(teams: List<Team>): String {
 }
 
 fun Team.add() {
-    id = FIRESTORE_TEAMS.document().id
+    id = teams.document().id
     forceUpdate()
     forceRefresh()
 
@@ -146,13 +146,13 @@ fun Team.fetchLatestData() {
 
 fun Team.getScouts(): Task<List<Scout>> = async {
     val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).get())
-            .map { SCOUT_PARSER.parseSnapshot(it) }
+            .map { scoutParser.parseSnapshot(it) }
     val metricTasks =
             scouts.map { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).get() }
     Tasks.await(Tasks.whenAll(metricTasks))
 
     scouts.mapIndexed { index, scout ->
-        scout.copy(metrics = metricTasks[index].result.map { METRIC_PARSER.parseSnapshot(it) })
+        scout.copy(metrics = metricTasks[index].result.map { metricParser.parseSnapshot(it) })
     }
 }
 

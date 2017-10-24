@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.RobotScouter
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 
 /** The list of all supported authentication providers in Firebase Auth UI.  */
-val ALL_PROVIDERS: List<AuthUI.IdpConfig> = listOf(
+val allProviders: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
         AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
         AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build(),
@@ -30,11 +30,11 @@ const val FIRESTORE_NAME = "name"
 const val FIRESTORE_VALUE = "value"
 const val FIRESTORE_TIMESTAMP = "timestamp"
 
-val FIRESTORE_USERS = FirebaseFirestore.getInstance().collection("users")
+val users = FirebaseFirestore.getInstance().collection("users")
 const val FIRESTORE_LAST_LOGIN = "lastLogin"
 
 // Team
-val FIRESTORE_TEAMS = FirebaseFirestore.getInstance().collection("teams")
+val teams = FirebaseFirestore.getInstance().collection("teams")
 const val FIRESTORE_NUMBER = "number"
 
 // Scout
@@ -48,8 +48,8 @@ const val FIRESTORE_UNIT = "unit"
 const val FIRESTORE_SELECTED_VALUE_ID = "selectedValueId"
 
 // Templates
-val FIRESTORE_TEMPLATES = FirebaseFirestore.getInstance().collection("templates")
-val FIRESTORE_DEFAULT_TEMPLATES = FirebaseFirestore.getInstance().collection("default-templates")
+val templates = FirebaseFirestore.getInstance().collection("templates")
+val defaultTemplates = FirebaseFirestore.getInstance().collection("default-templates")
 const val FIRESTORE_TEMPLATE_ID = "templateId"
 
 // Prefs

@@ -14,12 +14,12 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.async
-import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.putExtra
+import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExportTeamsEvent
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
@@ -56,7 +56,7 @@ class ExportService : IntentService(TAG) {
         notificationManager.setNumOfTemplates(zippedScouts.size)
 
         val templates = Tasks.await(getTemplatesQuery().get())
-                .map { SCOUT_PARSER.parseSnapshot(it) }
+                .map { scoutParser.parseSnapshot(it) }
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
             async {
                 TemplateType.coerce(templateId)?.let {
@@ -102,7 +102,7 @@ class ExportService : IntentService(TAG) {
             System.setProperty(
                     "org.apache.poi.javax.xml.stream.XMLEventFactory",
                     "com.fasterxml.aalto.stax.EventFactoryImpl")
-            WorkbookEvaluator.registerFunction("AVERAGEIF", AVERAGEIF_FUNCTION)
+            WorkbookEvaluator.registerFunction("AVERAGEIF", averageifFunction)
         }
 
         /** @return true if an export was attempted, false otherwise */

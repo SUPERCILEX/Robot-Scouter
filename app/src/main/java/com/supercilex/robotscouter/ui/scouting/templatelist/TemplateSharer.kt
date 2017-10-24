@@ -12,12 +12,12 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
-import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logShareTemplateEvent
+import com.supercilex.robotscouter.util.templates
 import java.util.Date
 
 class TemplateSharer private constructor(private val activity: FragmentActivity) :
@@ -25,7 +25,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
     fun share(templateId: String, templateName: String) {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
             val token = generateToken
-            FIRESTORE_TEMPLATES.document(templateId)
+            templates.document(templateId)
                     .update(FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
 
             getInvitationIntent(

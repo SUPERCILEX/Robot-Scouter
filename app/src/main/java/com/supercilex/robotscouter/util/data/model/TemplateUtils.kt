@@ -10,29 +10,29 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
-import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
-import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.delete
 import com.supercilex.robotscouter.util.data.firestoreBatch
+import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddTemplateEvent
+import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
 import java.util.Date
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         "$FIRESTORE_OWNERS.${uid!!}".let {
-            FIRESTORE_TEMPLATES.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
+            templates.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
         }
 
-fun getTemplateRef(id: String) = FIRESTORE_TEMPLATES.document(id)
+fun getTemplateRef(id: String) = templates.document(id)
 
 fun getTemplateMetricsRef(id: String) = getTemplateRef(id).collection(FIRESTORE_METRICS)
 
 fun addTemplate(type: TemplateType): String {
-    val ref = FIRESTORE_TEMPLATES.document()
+    val ref = templates.document()
     val id = ref.id
 
     ref.batch {
@@ -41,11 +41,11 @@ fun addTemplate(type: TemplateType): String {
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
     }
 
-    FIRESTORE_DEFAULT_TEMPLATES.get().continueWithTask(
+    defaultTemplates.get().continueWithTask(
             AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
         firestoreBatch {
             it.result.map {
-                SCOUT_PARSER.parseSnapshot(it)
+                scoutParser.parseSnapshot(it)
             }.find { it.id == type.id.toString() }!!.metrics.forEach {
                 set(getTemplateMetricsRef(id).document(it.ref.id), it)
             }

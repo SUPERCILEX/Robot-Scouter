@@ -10,13 +10,13 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_SCOUTS
-import com.supercilex.robotscouter.util.data.SCOUT_PARSER
 import com.supercilex.robotscouter.util.data.delete
 import com.supercilex.robotscouter.util.data.firestoreBatch
+import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddScoutEvent
 
 fun Team.getScoutRef() = ref.collection(FIRESTORE_SCOUTS)
@@ -29,9 +29,9 @@ fun Team.addScout(overrideId: String? = null): String {
 
     scoutRef.set(Scout(scoutRef.id, templateId))
     (TemplateType.coerce(templateId)?.let { type ->
-        FIRESTORE_DEFAULT_TEMPLATES.get().continueWith(
+        defaultTemplates.get().continueWith(
                 AsyncTaskExecutor, Continuation<QuerySnapshot, String?> {
-            val scout = it.result.map { SCOUT_PARSER.parseSnapshot(it) }
+            val scout = it.result.map { scoutParser.parseSnapshot(it) }
                     .find { it.id == type.id.toString() }!!
 
             firestoreBatch {
@@ -53,13 +53,13 @@ fun Team.addScout(overrideId: String? = null): String {
         }).addOnFailureListener(CrashLogger)
 
         getTemplateRef(templateId).get().continueWith {
-            SCOUT_PARSER.parseSnapshot(it.result).name
+            scoutParser.parseSnapshot(it.result).name
         }
     }).addOnFailureListener(CrashLogger).addOnCompleteListener(
             AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(getScoutRef().get()).map {
-            SCOUT_PARSER.parseSnapshot(it).templateId
+            scoutParser.parseSnapshot(it).templateId
         }.groupBy { it }[templateId]!!.size
 
         scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates")

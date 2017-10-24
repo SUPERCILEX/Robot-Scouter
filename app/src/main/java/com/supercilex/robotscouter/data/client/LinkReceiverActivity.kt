@@ -18,8 +18,6 @@ import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
-import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
-import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.data.KEYS
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
@@ -27,6 +25,8 @@ import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.updateOwner
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.onSignedIn
+import com.supercilex.robotscouter.util.teams
+import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
@@ -49,8 +49,8 @@ class LinkReceiverActivity : AppCompatActivity() {
                     }
 
                     when (link.lastPathSegment) {
-                        FIRESTORE_TEAMS.id -> processTeams(link, token)
-                        FIRESTORE_TEMPLATES.id -> processTemplates(link, token)
+                        teams.id -> processTeams(link, token)
+                        templates.id -> processTemplates(link, token)
                         else -> showErrorAndContinue()
                     }
                 })
@@ -61,7 +61,7 @@ class LinkReceiverActivity : AppCompatActivity() {
 
     @WorkerThread
     private fun processTeams(link: Uri, token: String) {
-        val refs = link.getQueryParameter(KEYS).split(",").map { FIRESTORE_TEAMS.document(it) }
+        val refs = link.getQueryParameter(KEYS).split(",").map { teams.document(it) }
         Tasks.await(updateOwner(refs, token, null) { ref ->
             link.getQueryParameter(ref.id).toLong()
         })
@@ -86,7 +86,7 @@ class LinkReceiverActivity : AppCompatActivity() {
 
     @WorkerThread
     private fun processTemplates(link: Uri, token: String) {
-        val refs = link.getQueryParameter(KEYS).split(",").map { FIRESTORE_TEMPLATES.document(it) }
+        val refs = link.getQueryParameter(KEYS).split(",").map { templates.document(it) }
         Tasks.await(updateOwner(refs, token, null) { Date() })
 
         startActivity(TemplateListActivity.createIntent(refs.single().id)

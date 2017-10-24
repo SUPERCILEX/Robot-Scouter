@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.util.WorkbookUtil
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
 
-val AVERAGEIF_FUNCTION: FreeRefFunction = object : FreeRefFunction {
+val averageifFunction: FreeRefFunction = object : FreeRefFunction {
     override fun evaluate(args: Array<ValueEval>, context: OperationEvaluationContext): ValueEval =
             if (args.size >= 2 && args.size % 2 == 0) {
                 var result = 0.0

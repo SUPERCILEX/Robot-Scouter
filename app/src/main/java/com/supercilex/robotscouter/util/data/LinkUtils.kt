@@ -17,15 +17,15 @@ import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
-import com.supercilex.robotscouter.util.FIRESTORE_TEAMS
-import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
+import com.supercilex.robotscouter.util.teams
+import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
 
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 const val KEYS = "keys"
 
-private val TEAMS_LINK_BASE = "$APP_LINK_BASE${FIRESTORE_TEAMS.id}/"
-private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${FIRESTORE_TEMPLATES.id}/"
+private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teams.id}/"
+private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templates.id}/"
 
 val generateToken: String get() = FirebaseFirestore.getInstance().collection("null").document().id
 

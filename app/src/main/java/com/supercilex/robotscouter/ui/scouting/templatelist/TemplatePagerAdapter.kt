@@ -5,11 +5,11 @@ import android.support.v4.app.Fragment
 import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
-import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
+import com.supercilex.robotscouter.util.templates
 
 open class TemplatePagerAdapter(fragment: Fragment, tabLayout: TabLayout) :
-        TabPagerAdapterBase(fragment, tabLayout, FIRESTORE_TEMPLATES) {
+        TabPagerAdapterBase(fragment, tabLayout, templates) {
     override val editTabNameRes = R.string.template_edit_name_title
 
     init {

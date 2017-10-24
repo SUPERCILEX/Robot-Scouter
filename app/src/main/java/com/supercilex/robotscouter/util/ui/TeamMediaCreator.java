@@ -33,7 +33,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.createFile;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIO_PERMS;
+import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIoPerms;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getMediaFolder;
 
 public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -60,7 +60,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     private static final String MEDIA_CREATOR_KEY = "media_creator";
 
     static {
-        List<String> perms = new ArrayList<>(getIO_PERMS());
+        List<String> perms = new ArrayList<>(getIoPerms());
         perms.add(Manifest.permission.CAMERA);
         PERMS = Collections.unmodifiableList(perms);
     }

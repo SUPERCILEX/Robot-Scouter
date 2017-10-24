@@ -56,10 +56,10 @@ import com.supercilex.robotscouter.util.isOffline
 import java.io.File
 import java.util.Date
 
-val TEAM_PARSER = SnapshotParser<Team> {
+val teamParser = SnapshotParser<Team> {
     it.toObject(Team::class.java).apply { id = it.id }
 }
-val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
+val scoutParser = SnapshotParser<Scout> { snapshot ->
     Scout(snapshot.id,
           snapshot.getString(FIRESTORE_TEMPLATE_ID),
           snapshot.getString(FIRESTORE_NAME),
@@ -70,9 +70,9 @@ val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
                       "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
           })
 }
-val METRIC_PARSER = SnapshotParser<Metric<*>> { Metric.parse(it.data, it.reference) }
+val metricParser = SnapshotParser<Metric<*>> { Metric.parse(it.data, it.reference) }
 
-private val REF_KEY = "com.supercilex.robotscouter.REF"
+private const val REF_KEY = "com.supercilex.robotscouter.REF"
 
 fun initDatabase() {
     PrefsLiveData
@@ -195,7 +195,7 @@ abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotA
 
 object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
-        get() = FirestoreArray(teamsQuery, TEAM_PARSER)
+        get() = FirestoreArray(teamsQuery, teamParser)
 
     private val templateIdUpdater = object : ChangeEventListenerBase {
         private var nTeamUpdatesForTemplateId = "" to -1

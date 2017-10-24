@@ -19,8 +19,8 @@ import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.data.IO_PERMS
 import com.supercilex.robotscouter.util.data.TeamsLiveData
+import com.supercilex.robotscouter.util.data.ioPerms
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.ui.FragmentBase
@@ -40,7 +40,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
     private var adapter: TeamListAdapter? = null
     private val menuHelper: TeamMenuHelper by unsafeLazy { TeamMenuHelper(this, recyclerView) }
     val permHandler: PermissionRequestHandler by unsafeLazy {
-        PermissionRequestHandler(IO_PERMS, this, this)
+        PermissionRequestHandler(ioPerms, this, this)
     }
 
     private val noContentHint: View by bindView(R.id.no_content_hint)
