@@ -3,10 +3,10 @@
     <color name="night_black">@android:color/white</color>
 
     <color name="light_grey">#757575</color>
-    <color name="light_grey_text">#bdbdbd</color>
+    <color name="light_grey_text">#BDBDBD</color>
+    <color name="off_white">@color/material_grey_600</color>
+    <color name="pale_blue">#46264CAC</color>
 
-    <color name="list_item_normal">#424242</color>
-    <color name="list_divider">#757575</color>
-    <color name="selected_list_item">#46264CAC</color>
+    <color name="list_item_normal">@color/material_grey_800</color>
     <color name="selected_icon">#EEEEEE</color>
 </resources>

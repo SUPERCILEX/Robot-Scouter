@@ -4,16 +4,22 @@
     <color name="colorPrimaryDark">#1C3AA9</color>
     <color name="colorAccent">#FF4081</color>
 
+    <!-- Palette -->
     <color name="night_black">@android:color/black</color>
     <color name="light_grey">#CFCFCF</color>
     <color name="light_grey_text">#9B9B9B</color>
+    <color name="off_white">#E1E1E1</color>
+    <color name="pale_blue">#463971FF</color>
 
+    <color name="material_grey_700">#616161</color>
+
+    <!-- Uses -->
     <color name="list_item_normal">@android:color/white</color>
-    <color name="list_divider">#E1E1E1</color>
-    <color name="selected_list_item">#463971FF</color>
-    <color name="selected_toolbar">#616161</color>
-    <color name="selected_status_bar">#424242</color>
+    <color name="list_divider">@color/off_white</color>
+    <color name="selected_list_item">@color/pale_blue</color>
+    <color name="selected_toolbar">@color/material_grey_700</color>
+    <color name="selected_status_bar">@color/material_grey_800</color>
     <color name="selected_icon">@color/selected_toolbar</color>
 
-    <color name="shortcut_background">#F5F5F5</color>
+    <color name="shortcut_background">@color/material_grey_100</color>
 </resources>
