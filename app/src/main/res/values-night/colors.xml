@@ -6,6 +6,7 @@
     <color name="light_grey_text">#BDBDBD</color>
     <color name="off_white">@color/material_grey_600</color>
     <color name="pale_blue">#46264CAC</color>
+    <color name="pale_white">#dc111111</color>
 
     <color name="list_item_normal">@color/material_grey_800</color>
     <color name="selected_icon">#EEEEEE</color>

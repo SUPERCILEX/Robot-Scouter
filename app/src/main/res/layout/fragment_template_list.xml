@@ -57,7 +57,7 @@
         android:layout_gravity="bottom|end"
         android:padding="@dimen/spacing_large"
         app:layout_behavior="com.supercilex.robotscouter.ui.scouting.templatelist.FabMenuBehavior"
-        app:menu_backgroundColor="#dcf1f1f1"
+        app:menu_backgroundColor="@color/fam_background"
         app:menu_colorNormal="@color/colorAccent"
         app:menu_colorPressed="@color/colorAccent"
         app:menu_colorRipple="@color/colorAccent"
