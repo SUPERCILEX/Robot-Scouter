@@ -16,7 +16,6 @@
         android:layout_weight="1"
         android:hint="@string/metric_spinner_name_hint"
         android:inputType="textMultiLine|textCapSentences"
-        tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_spinner" />

@@ -15,8 +15,7 @@
         android:name="com.supercilex.robotscouter.ui.teamlist.TeamListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tag="TeamListFragment"
-        tools:ignore="InconsistentLayout" />
+        android:tag="TeamListFragment" />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/drawer"

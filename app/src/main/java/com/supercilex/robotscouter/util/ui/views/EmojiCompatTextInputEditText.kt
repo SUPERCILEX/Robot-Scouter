@@ -20,7 +20,7 @@ class EmojiCompatTextInputEditText : EmojiAppCompatEditText {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
             super(context, attrs, defStyleAttr)
 
-    /** Copied from [TextInputEditText] */
+    /** Copied from [android.support.design.widget.TextInputEditText] */
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
         val ic = super.onCreateInputConnection(outAttrs)
         if (ic != null && outAttrs.hintText == null) {

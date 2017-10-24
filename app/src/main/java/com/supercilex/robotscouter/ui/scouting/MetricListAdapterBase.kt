@@ -26,6 +26,7 @@ abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>
     }
     private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
 
+    @Suppress("UNCHECKED_CAST") // Needed to support extension
     override fun onBindViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
                                   position: Int,
                                   metric: Metric<*>) {
@@ -33,9 +34,7 @@ abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>
 
         cardListHelper.onBind(viewHolder)
 
-        @Suppress("UNCHECKED_CAST")
         viewHolder as MetricViewHolderBase<Metric<Any>, *, *>
-        @Suppress("UNCHECKED_CAST")
         metric as Metric<Any>
         viewHolder.bind(metric, manager, animator)
     }

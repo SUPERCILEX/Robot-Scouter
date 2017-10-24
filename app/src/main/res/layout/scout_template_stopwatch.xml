@@ -17,7 +17,6 @@
         app:layout_constraintEnd_toStartOf="@id/stopwatch"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_stopwatch" />

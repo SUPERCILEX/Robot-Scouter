@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 
+@Suppress("unused") // Used through view reflection
 class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase {
     private val holder = ViewModelProviders
             .of((context as ContextWrapper).baseContext as FragmentActivity)

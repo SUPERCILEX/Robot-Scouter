@@ -16,7 +16,6 @@
         app:layout_constraintStart_toEndOf="@id/reorder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnknownIdInLayout"
         tools:text="Title" />
 
 </android.support.constraint.ConstraintLayout>

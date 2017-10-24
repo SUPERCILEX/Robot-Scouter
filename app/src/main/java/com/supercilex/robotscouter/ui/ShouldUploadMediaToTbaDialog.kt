@@ -41,13 +41,11 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
     companion object {
         private const val TAG = "ShouldUploadMediaToTbaD"
 
-        fun show(fragment: Fragment) {
-            if (shouldAskToUploadMediaToTba) {
-                ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
-            } else {
-                (fragment as TeamMediaCreator.StartCaptureListener)
-                        .onStartCapture(shouldUploadMediaToTba)
-            }
+        fun show(fragment: Fragment) = if (shouldAskToUploadMediaToTba) {
+            ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
+        } else {
+            (fragment as TeamMediaCreator.StartCaptureListener)
+                    .onStartCapture(shouldUploadMediaToTba)
         }
     }
 }

@@ -24,7 +24,8 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Html.fromHtml(message, Html.FROM_HTML_MODE_COMPACT)
                 } else {
-                    @Suppress("DEPRECATION") Html.fromHtml(message)
+                    @Suppress("DEPRECATION") // Needed to support older Android versions
+                    Html.fromHtml(message)
                 }
             })
             .setPositiveButton(R.string.update_title, this)

@@ -182,13 +182,9 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         return true
     }
 
-    fun showTeamDetails() {
-        TeamDetailsDialog.show(childFragmentManager, team)
-    }
+    fun showTeamDetails() = TeamDetailsDialog.show(childFragmentManager, team)
 
-    fun addScoutWithSelector() {
-        ScoutTemplateSelectorDialog.show(childFragmentManager)
-    }
+    fun addScoutWithSelector() = ScoutTemplateSelectorDialog.show(childFragmentManager)
 
     fun addScout(id: String? = null) {
         pagerAdapter!!.currentTabId = team.addScout(id)

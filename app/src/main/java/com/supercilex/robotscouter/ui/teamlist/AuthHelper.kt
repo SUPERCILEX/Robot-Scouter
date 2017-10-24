@@ -39,13 +39,11 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
         updateMenuState()
     }
 
-    override fun onStart(owner: LifecycleOwner) {
-        FirebaseAuth.getInstance().addAuthStateListener(this)
-    }
+    override fun onStart(owner: LifecycleOwner) =
+            FirebaseAuth.getInstance().addAuthStateListener(this)
 
-    override fun onStop(owner: LifecycleOwner) {
-        FirebaseAuth.getInstance().removeAuthStateListener(this)
-    }
+    override fun onStop(owner: LifecycleOwner) =
+            FirebaseAuth.getInstance().removeAuthStateListener(this)
 
     override fun onAuthStateChanged(auth: FirebaseAuth) = updateMenuState()
 

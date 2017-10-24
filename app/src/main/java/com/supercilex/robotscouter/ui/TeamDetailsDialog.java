@@ -197,6 +197,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         }
     }
 
+    @NonNull
     @Override
     protected EditText getLastEditText() {
         return mWebsiteEditText;

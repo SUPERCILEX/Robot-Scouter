@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.util.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -59,8 +60,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     private static final String MEDIA_CREATOR_KEY = "media_creator";
 
     static {
-        List<String> perms = new ArrayList<>();
-        perms.addAll(getIO_PERMS());
+        List<String> perms = new ArrayList<>(getIO_PERMS());
         perms.add(Manifest.permission.CAMERA);
         PERMS = Collections.unmodifiableList(perms);
     }
@@ -119,6 +119,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
         startCapture(mShouldUploadMediaToTba);
     }
 
+    @SuppressLint("MissingPermission")
     public void startCapture(boolean shouldUploadMediaToTba) {
         mShouldUploadMediaToTba = shouldUploadMediaToTba;
 
@@ -132,7 +133,6 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
 
             File photoFile = null;
             try {
-                //noinspection MissingPermission
                 photoFile = createImageFile(getMediaFolder());
             } catch (Exception e) { // NOPMD
                 FirebaseCrash.report(e);

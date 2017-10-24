@@ -488,23 +488,22 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         if (chart == null) {
             val drawing = row.sheet.createDrawingPatriarch()
             val startChartIndex = lastDataCellNum + 3
-            @Suppress("NAME_SHADOWING")
-            val chart = drawing.createChart(drawing.createChartAnchor(
+            val newChart = drawing.createChart(drawing.createChartAnchor(
                     getChartRowIndex(nearestHeader.first, ArrayList(chartData.keys)),
                     startChartIndex,
                     startChartIndex + 10))
 
-            data = chart.chartDataFactory.createLineChartData()
+            data = newChart.chartDataFactory.createLineChartData()
 
-            val bottomAxis = chart.chartAxisFactory.createCategoryAxis(AxisPosition.BOTTOM)
-            val leftAxis = chart.chartAxisFactory.createValueAxis(AxisPosition.LEFT)
+            val bottomAxis = newChart.chartAxisFactory.createCategoryAxis(AxisPosition.BOTTOM)
+            val leftAxis = newChart.chartAxisFactory.createValueAxis(AxisPosition.LEFT)
             leftAxis.crosses = AxisCrosses.AUTO_ZERO
 
-            val legend = chart.orCreateLegend
+            val legend = newChart.orCreateLegend
             legend.position = LegendPosition.RIGHT
 
-            chartData.put(chart, data to listOf(bottomAxis, leftAxis))
-            chartPool.put(nearestHeader.second, chart)
+            chartData.put(newChart, data to listOf(bottomAxis, leftAxis))
+            chartPool.put(nearestHeader.second, newChart)
         } else {
             data = chartData[chart!!]!!.first
         }

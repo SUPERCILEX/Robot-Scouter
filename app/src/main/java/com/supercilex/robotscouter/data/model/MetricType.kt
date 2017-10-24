@@ -9,9 +9,7 @@ enum class MetricType(val id: Int) {
     LIST(2);
 
     companion object {
-        fun valueOf(id: Int): MetricType {
-            return MetricType.values().find { it.id == id }
-                    ?: throw IllegalArgumentException("Unknown metric type: $id")
-        }
+        fun valueOf(id: Int): MetricType = MetricType.values().find { it.id == id }
+                ?: throw IllegalArgumentException("Unknown metric type: $id")
     }
 }

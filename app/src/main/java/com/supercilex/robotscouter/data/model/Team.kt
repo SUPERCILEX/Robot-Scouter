@@ -74,7 +74,7 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
     }
 
     companion object {
-        @Suppress("unused")
+        @Suppress("unused") // Mandatory when implementing parcelable
         @Exclude
         @JvmField
         val CREATOR: Parcelable.Creator<Team> = object : Parcelable.Creator<Team> {

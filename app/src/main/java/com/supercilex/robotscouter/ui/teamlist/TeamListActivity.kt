@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
@@ -42,7 +41,6 @@ import com.supercilex.robotscouter.util.ui.showSignInTutorial
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 
-@SuppressLint("GoogleAppIndexingApiWarning")
 class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, OnSuccessListener<Nothing?> {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {

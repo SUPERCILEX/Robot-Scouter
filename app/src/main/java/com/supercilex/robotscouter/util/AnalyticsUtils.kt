@@ -116,9 +116,7 @@ fun logShareTemplateEvent(templateId: String) = analytics.logEvent(Event.SHARE, 
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any> {
-    override fun onFailure(e: Exception) {
-        FirebaseCrash.report(e)
-    }
+    override fun onFailure(e: Exception) = FirebaseCrash.report(e)
 
     override fun onComplete(task: Task<Any>) {
         onFailure(task.exception ?: return)

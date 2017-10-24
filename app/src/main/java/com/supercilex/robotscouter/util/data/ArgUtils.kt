@@ -32,19 +32,19 @@ private fun getBooleanForInt(value: Int) = value == 1
 
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST") // Trust the client
 fun <T> Parcel.readBundleAsMap(): Map<String, T> = readBundleAsMap { get(it) as T }
 
 inline fun <T> Parcel.readBundleAsMap(parse: Bundle.(String) -> T): Map<String, T> =
         readBundle(RobotScouter::class.java.classLoader).let { bundleToMap(it, parse) }
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST") // Trust the client
 fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundleAsMap(key) { get(it) as T }
 
 inline fun <T> Bundle.getBundleAsMap(key: String, parse: Bundle.(String) -> T): Map<String, T> =
         getBundle(key).let { bundleToMap(it, parse) }
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST") // Trust the client
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun <T> PersistableBundle.getBundleAsMap(key: String) = getBundleAsMap(key) { get(it) as T }
 

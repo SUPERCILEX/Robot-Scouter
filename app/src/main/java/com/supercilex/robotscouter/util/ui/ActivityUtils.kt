@@ -34,7 +34,7 @@ fun Activity.handleUpNavigation() {
 abstract class ActivityBase : AppCompatActivity() {
     protected open val keyboardShortcutHandler: KeyboardShortcutHandler =
             object : KeyboardShortcutHandler() {
-                override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {}
+                override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) = Unit
             }
 
     override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent): Boolean {

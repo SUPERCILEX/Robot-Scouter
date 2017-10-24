@@ -140,7 +140,7 @@ sealed class Metric<T>(@Exclude @get:Exclude val type: MetricType,
             "${javaClass.simpleName}: ref=${ref.path}, position=$position, name=\"$name\", value=$value"
 
     companion object {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST") // We know what our data types are
         fun parse(fields: Map<String, Any?>, ref: DocumentReference): Metric<*> {
             val position = (fields[FIRESTORE_POSITION] as Long).toInt()
             val type = (fields[FIRESTORE_TYPE] as Long).toInt()

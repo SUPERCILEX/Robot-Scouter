@@ -79,9 +79,8 @@ class ExportNotificationManager(private val service: ExportService) {
         return id
     }
 
-    fun updateProgress(exporter: SpreadsheetExporter, team: Team) {
-        next(exporter, exportNotification.setContentText(team.toString()).build())
-    }
+    fun updateProgress(exporter: SpreadsheetExporter, team: Team) =
+            next(exporter, exportNotification.setContentText(team.toString()).build())
 
     fun onStartBuildingAverageSheet(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification

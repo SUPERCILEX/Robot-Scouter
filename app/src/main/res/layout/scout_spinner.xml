@@ -9,7 +9,6 @@
         style="@style/RobotScouter.ListItemNameInLinearLayout"
         android:textIsSelectable="false"
         android:textSize="@dimen/text_size_normal"
-        tools:ignore="UnknownIdInLayout"
         tools:text="Example" />
 
     <include layout="@layout/scout_base_spinner" />

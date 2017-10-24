@@ -65,9 +65,8 @@ class RobotScouter : MultiDexApplication() {
                 "Noto Color Emoji Compat",
                 R.array.com_google_android_gms_fonts_certs)).registerInitCallback(
                 object : EmojiCompat.InitCallback() {
-                    override fun onFailed(throwable: Throwable?) {
-                        FirebaseCrash.log("EmojiCompat failed to initialize with error: $throwable")
-                    }
+                    override fun onFailed(throwable: Throwable?) =
+                            FirebaseCrash.log("EmojiCompat failed to initialize with error: $throwable")
                 }))
 
         performMigrations()

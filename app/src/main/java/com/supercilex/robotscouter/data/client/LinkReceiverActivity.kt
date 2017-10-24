@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.client
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -33,7 +32,6 @@ import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import java.util.Date
 
-@SuppressLint("GoogleAppIndexingApiWarning")
 class LinkReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

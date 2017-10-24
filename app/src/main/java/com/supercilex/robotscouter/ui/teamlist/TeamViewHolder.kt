@@ -123,9 +123,8 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         nameTextView.text = team.name
     }
 
-    private fun setProgressVisibility(isMediaLoaded: Boolean = recyclerView.isScrolling || this.isMediaLoaded) {
-        if (isMediaLoaded) mediaLoadProgress.hide(true) else mediaLoadProgress.show()
-    }
+    private fun setProgressVisibility(isMediaLoaded: Boolean = recyclerView.isScrolling || this.isMediaLoaded) =
+            if (isMediaLoaded) mediaLoadProgress.hide(true) else mediaLoadProgress.show()
 
     override fun onClick(v: View) {
         if (v.id == R.id.media || isItemSelected || couldItemBeSelected) {

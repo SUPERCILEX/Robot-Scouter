@@ -64,7 +64,7 @@ val SCOUT_PARSER = SnapshotParser<Scout> { snapshot ->
           snapshot.getString(FIRESTORE_TEMPLATE_ID),
           snapshot.getString(FIRESTORE_NAME),
           snapshot.getDate(FIRESTORE_TIMESTAMP),
-          @Suppress("UNCHECKED_CAST")
+          @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
           (snapshot.data[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
               Metric.parse(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
                       "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
@@ -157,13 +157,9 @@ fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<Ob
         }
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {
-    override fun postValue(value: T) {
-        runIfDifferent(value) { super.postValue(value) }
-    }
+    override fun postValue(value: T) = runIfDifferent(value) { super.postValue(value) }
 
-    override fun setValue(value: T) {
-        runIfDifferent(value) { super.setValue(value) }
-    }
+    override fun setValue(value: T) = runIfDifferent(value) { super.setValue(value) }
 
     private inline fun runIfDifferent(value: T, block: () -> Unit) {
         if (this.value != value) block()

@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
@@ -87,50 +86,48 @@ var hasShownSignInTutorial: Boolean
     get() = prefs.getBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
     set(value) = prefs.putBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
 
-fun initPrefs() {
-    PrefsLiveData.observeForever {
-        it?.addChangeEventListener(object : ChangeEventListenerBase {
-            override fun onChildChanged(type: ChangeEventType,
-                                        snapshot: DocumentSnapshot,
-                                        newIndex: Int,
-                                        oldIndex: Int) {
-                val id = snapshot.id
+fun initPrefs() = PrefsLiveData.observeForever {
+    it?.addChangeEventListener(object : ChangeEventListenerBase {
+        override fun onChildChanged(type: ChangeEventType,
+                                    snapshot: DocumentSnapshot,
+                                    newIndex: Int,
+                                    oldIndex: Int) {
+            val id = snapshot.id
 
-                if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
-                    var hasDefaultTemplateChanged = false
+            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+                var hasDefaultTemplateChanged = false
 
-                    localPrefs.updatePrefs {
-                        when (id) {
-                            FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                            FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
-                            -> putBoolean(id, it[newIndex] as Boolean)
+                localPrefs.updatePrefs {
+                    when (id) {
+                        FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
+                        FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+                        -> putBoolean(id, it[newIndex] as Boolean)
 
-                            FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
-                            FIRESTORE_PREF_NIGHT_MODE,
-                            FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
-                            -> {
-                                val value = it[newIndex] as String
+                        FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
+                        FIRESTORE_PREF_NIGHT_MODE,
+                        FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
+                        -> {
+                            val value = it[newIndex] as String
 
-                                hasDefaultTemplateChanged = id == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
-                                        && defaultTemplateId != value
+                            hasDefaultTemplateChanged = id == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
+                                    && defaultTemplateId != value
 
-                                putString(id, value)
-                            }
+                            putString(id, value)
                         }
                     }
-
-                    if (hasDefaultTemplateChanged) updateTeamTemplateIds()
-                } else if (type == ChangeEventType.REMOVED) {
-                    localPrefs.updatePrefs { remove(id) }
                 }
+
+                if (hasDefaultTemplateChanged) updateTeamTemplateIds()
+            } else if (type == ChangeEventType.REMOVED) {
+                localPrefs.updatePrefs { remove(id) }
             }
-        }) ?: clearLocalPrefs()
-    }
+        }
+    }) ?: clearLocalPrefs()
 }
 
 fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T {
     for (i in 0..lastIndex) {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST") // Trust the client
         if (getSnapshot(i).id == id) return get(i) as T
     }
     return defValue
@@ -156,7 +153,6 @@ private fun updateTeamTemplateIds() {
     }
 }
 
-@SuppressLint("CommitPrefEdits")
 private inline fun SharedPreferences.updatePrefs(transaction: SharedPreferences.Editor.() -> Unit) = edit().run {
     transaction()
     apply()
