@@ -1,7 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
 import android.view.View
 import android.widget.EditText
 import com.supercilex.robotscouter.R
@@ -10,14 +8,6 @@ import kotterknife.bindView
 
 class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView), TemplateViewHolder {
     private val checkBoxName: EditText by bindView(R.id.checkbox_name)
-
-    init {
-        itemView as ConstraintLayout
-        val set = ConstraintSet()
-        set.clone(itemView)
-        set.connect(R.id.name, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
-        set.applyTo(itemView)
-    }
 
     override fun bind() {
         super.bind()
