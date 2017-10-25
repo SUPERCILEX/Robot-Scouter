@@ -70,14 +70,14 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         return scoutId
     }
     protected val bundle: Bundle
-        get() = getScoutBundle(team, arguments.getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
+        get() = getScoutBundle(team, arguments!!.getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         savedState = savedInstanceState
 
-        dataHolder.init(savedInstanceState ?: arguments)
+        dataHolder.init(savedInstanceState ?: arguments!!)
         team = dataHolder.teamListener.value!!
         dataHolder.teamListener.observe(this, this)
     }
@@ -147,12 +147,13 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
             viewHolder.onActivityResult(requestCode, resultCode)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val activity = activity!!
         when (item.itemId) {
             R.id.action_new_scout -> addScout()
             R.id.action_add_media -> ShouldUploadMediaToTbaDialog.show(this)
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
-            R.id.action_visit_tba_website -> team.visitTbaWebsite(context)
-            R.id.action_visit_team_website -> team.visitTeamWebsite(context)
+            R.id.action_visit_tba_website -> team.visitTbaWebsite(activity)
+            R.id.action_visit_team_website -> team.visitTeamWebsite(activity)
             R.id.action_edit_template -> {
                 val templateId = team.templateId
 
@@ -201,9 +202,11 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         viewPager.adapter = pagerAdapter
         tabLayout.setupWithViewPager(viewPager)
 
-        if (arguments.getBoolean(KEY_ADD_SCOUT, false)) {
-            arguments.remove(KEY_ADD_SCOUT)
-            addScout(arguments.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))
+        arguments!!.let {
+            if (it.getBoolean(KEY_ADD_SCOUT, false)) {
+                it.remove(KEY_ADD_SCOUT)
+                addScout(it.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))
+            }
         }
     }
 

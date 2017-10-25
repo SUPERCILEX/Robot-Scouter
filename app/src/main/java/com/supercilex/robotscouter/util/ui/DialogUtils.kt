@@ -67,7 +67,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActi
     }
 
     protected fun createDialog(rootView: View, @StringRes title: Int, savedInstanceState: Bundle?) =
-            AlertDialog.Builder(context)
+            AlertDialog.Builder(context!!)
                     .setView(rootView)
                     .setTitle(title)
                     .setPositiveButton(android.R.string.ok, null)

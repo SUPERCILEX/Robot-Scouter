@@ -44,7 +44,9 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
     }
 
     private val noContentHint: View by bindView(R.id.no_content_hint)
-    private val fab: FloatingActionButton by lazy { activity.findViewById<FloatingActionButton>(R.id.fab) }
+    private val fab: FloatingActionButton by lazy {
+        activity!!.findViewById<FloatingActionButton>(R.id.fab)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +54,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
         holder.init(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?,
+    override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
             View.inflate(context, R.layout.fragment_team_list, null)

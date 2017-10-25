@@ -16,7 +16,7 @@ class TeamTemplateSelectorDialog : AddScoutTemplateSelectorDialog() {
     override fun onItemSelected(id: String) {
         super.onItemSelected(id)
         (context as TeamSelectionListener).onTeamSelected(getScoutBundle(
-                arguments.getTeam(), true, id), false)
+                arguments!!.getTeam(), true, id), false)
     }
 
     companion object {

@@ -24,7 +24,7 @@ class CounterValueDialog : ValueDialogBase<Long>() {
     }
 
     override fun onAttemptDismiss() = if (lastEditText.text.toString().isNumber()) {
-        arguments.getRef().update(FIRESTORE_VALUE, value); true
+        arguments!!.getRef().update(FIRESTORE_VALUE, value); true
     } else {
         inputLayout.error = getString(R.string.number_too_big_error); false
     }

@@ -73,7 +73,7 @@ fun Bundle.getTeamList(): List<Team> = getParcelableArrayList(TEAMS_KEY)
 
 fun getTabIdBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
 
-fun getTabId(bundle: Bundle): String? = bundle.getString(TAB_KEY)
+fun getTabId(bundle: Bundle?): String? = bundle?.getString(TAB_KEY)
 
 fun getScoutBundle(team: Team,
                    addScout: Boolean = false,

@@ -90,14 +90,14 @@ abstract class TemplateSelectorDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val rootView = View.inflate(context, R.layout.dialog_template_selector, null)
-        return AlertDialog.Builder(context)
+        return AlertDialog.Builder(context!!)
                 .setTitle(title)
                 .setView(rootView)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create { onViewCreated(rootView, savedInstanceState) }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         progress.show()
 
         recyclerView.layoutManager = LinearLayoutManager(context)

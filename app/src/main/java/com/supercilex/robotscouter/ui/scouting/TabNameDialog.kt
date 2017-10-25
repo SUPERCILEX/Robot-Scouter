@@ -22,7 +22,7 @@ class TabNameDialog : ValueDialogBase<String>() {
             else -> name
         }
     }
-    override val title by unsafeLazy { arguments.getInt(TITLE_KEY) }
+    override val title by unsafeLazy { arguments!!.getInt(TITLE_KEY) }
     override val hint = R.string.scout_name_title
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class TabNameDialog : ValueDialogBase<String>() {
     }
 
     override fun onAttemptDismiss(): Boolean {
-        arguments.getRef().update(FIRESTORE_NAME, value)
+        arguments!!.getRef().update(FIRESTORE_NAME, value)
         return true
     }
 

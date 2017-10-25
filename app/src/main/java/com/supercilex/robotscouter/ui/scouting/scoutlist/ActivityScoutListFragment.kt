@@ -27,7 +27,8 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (activity.callingActivity != null && isInTabletMode(context)) {
+        val activity = activity!!
+        if (activity.callingActivity != null && isInTabletMode(activity)) {
             activity.setResult(Activity.RESULT_OK, Intent().putExtra(SCOUT_ARGS_KEY, bundle))
             activity.finish()
         }
@@ -47,7 +48,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {
-        activity.handleUpNavigation()
+        activity!!.handleUpNavigation()
         true
     } else {
         super.onOptionsItemSelected(item)
@@ -57,7 +58,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
         if (auth.currentUser == null) onTeamDeleted()
     }
 
-    override fun onTeamDeleted() = activity.finish()
+    override fun onTeamDeleted() = activity!!.finish()
 
     private inner class ActivityAppBarViewHolder(listener: LiveData<Team>,
                                                  onScoutingReadyTask: Task<Nothing?>) :
@@ -66,7 +67,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
         override fun bind() {
             super.bind()
             (activity as AppCompatActivity).supportActionBar!!.title = team.toString()
-            setTaskDescription(null, ContextCompat.getColor(context, R.color.colorPrimary))
+            setTaskDescription(null, ContextCompat.getColor(context!!, R.color.colorPrimary))
         }
 
         override fun updateScrim(color: Int, bitmap: Bitmap?) {
@@ -79,7 +80,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                     && (icon == null || !icon.isRecycled)
                     && activity != null) {
-                activity.setTaskDescription(
+                activity!!.setTaskDescription(
                         ActivityManager.TaskDescription(team.toString(), icon, colorPrimary))
             }
         }

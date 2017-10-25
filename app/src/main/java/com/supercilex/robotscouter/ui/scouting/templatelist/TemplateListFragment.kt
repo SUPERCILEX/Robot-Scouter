@@ -103,7 +103,7 @@ class TemplateListFragment : FragmentBase(),
         fam.hideMenuButton(false)
 
         pagerAdapter
-        handleArgs(arguments, savedInstanceState)
+        handleArgs(arguments!!, savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -145,7 +145,7 @@ class TemplateListFragment : FragmentBase(),
         when (item.itemId) {
             R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             R.id.action_share -> TemplateSharer.shareTemplate(
-                    activity,
+                    activity!!,
                     pagerAdapter.currentTabId!!,
                     pagerAdapter.currentTab?.text?.toString()!!)
             else -> return false
@@ -179,7 +179,7 @@ class TemplateListFragment : FragmentBase(),
             childFragmentManager.fragments.any { it is OnBackPressedListener && it.onBackPressed() }
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
-        if (auth.currentUser == null) activity.finish()
+        if (auth.currentUser == null) activity!!.finish()
     }
 
     companion object {

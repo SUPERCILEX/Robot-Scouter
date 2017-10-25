@@ -17,7 +17,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 
 class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
             .setTitle(R.string.update_required_title)
             .setMessage(run {
                 val message = FirebaseRemoteConfig.getInstance().getString(UPDATE_MESSAGE_KEY)
@@ -33,9 +33,9 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
             .setCancelable(false)
             .create()
 
-    override fun onClick(dialog: DialogInterface, which: Int) = showStoreListing(activity)
+    override fun onClick(dialog: DialogInterface, which: Int) = showStoreListing(activity!!)
 
-    override fun onCancel(dialog: DialogInterface?) = activity.finish()
+    override fun onCancel(dialog: DialogInterface?) = activity!!.finish()
 
     companion object {
         private const val TAG = "UpdateDialog"

@@ -118,7 +118,8 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     private fun isTeamSelected(team: Team) = menuManager.selectedTeams.contains(team)
 
     override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
-            TeamViewHolder.getTeamMediaRequestBuilder(isTeamSelected(team), fragment.context, team)
+            TeamViewHolder.getTeamMediaRequestBuilder(
+                    isTeamSelected(team), fragment.context!!, team)
 
     override fun getPreloadItems(position: Int): List<Team> =
             Collections.singletonList(getItem(position))

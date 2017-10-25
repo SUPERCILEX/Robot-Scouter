@@ -123,7 +123,7 @@ class ExportService : IntentService(TAG) {
 
             logExportTeamsEvent(teams)
             ContextCompat.startForegroundService(
-                    fragment.activity,
+                    fragment.context!!,
                     Intent(context, ExportService::class.java).putExtra(teams))
 
             return true

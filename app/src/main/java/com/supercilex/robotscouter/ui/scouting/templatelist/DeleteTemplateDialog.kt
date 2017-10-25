@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
 
 class DeleteTemplateDialog : ManualDismissDialog() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
             .setTitle(R.string.template_delete_dialog_title)
             .setMessage(R.string.template_delete_message)
             .setPositiveButton(R.string.template_delete_title, null)
@@ -31,7 +31,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
             .createAndSetup(savedInstanceState)
 
     override fun onAttemptDismiss(): Boolean {
-        val templateId = arguments.getRef().id
+        val templateId = arguments!!.getRef().id
         TeamsLiveData.observeOnDataChanged().observeOnce { teams ->
             firestoreBatch {
                 teams.filter { TextUtils.equals(templateId, it.templateId) }.forEach {

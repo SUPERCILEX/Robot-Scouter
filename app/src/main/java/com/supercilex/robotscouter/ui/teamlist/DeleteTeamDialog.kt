@@ -17,7 +17,7 @@ import com.supercilex.robotscouter.util.unsafeLazy
 import java.util.Collections
 
 class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val teams: List<Team> by unsafeLazy { arguments.getTeamList() }
+    private val teams: List<Team> by unsafeLazy { arguments!!.getTeamList() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
                     .append('\n')
         }
 
-        return AlertDialog.Builder(context)
+        return AlertDialog.Builder(context!!)
                 .setTitle(R.string.team_delete_dialog_title)
                 .setMessage(if (teams.isSingleton) null
                             else getString(R.string.team_delete_rationale, deletedTeams))

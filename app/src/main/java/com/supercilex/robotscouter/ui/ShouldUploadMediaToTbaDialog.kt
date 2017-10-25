@@ -20,7 +20,7 @@ import kotterknife.bindView
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     private val saveResponseCheckbox: CheckBox by bindView(R.id.save_response)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
             .setTitle(R.string.media_should_upload_title)
             .setMessage(R.string.media_should_upload_rationale)
             .setView(View.inflate(context, R.layout.dialog_should_upload_media, null))

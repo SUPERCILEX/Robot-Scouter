@@ -22,7 +22,7 @@ fun Intent.addNewDocumentFlags(): Intent {
 }
 
 fun Activity.handleUpNavigation() {
-    if (NavUtils.shouldUpRecreateTask(this, NavUtils.getParentActivityIntent(this))
+    if (NavUtils.shouldUpRecreateTask(this, NavUtils.getParentActivityIntent(this)!!)
             || intent.action == ACTION_FROM_DEEP_LINK) {
         TaskStackBuilder.create(this).addParentStack(this).startActivities()
         finish()

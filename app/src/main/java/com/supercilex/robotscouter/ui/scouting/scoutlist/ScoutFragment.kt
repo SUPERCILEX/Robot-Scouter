@@ -20,14 +20,16 @@ import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
 
 class ScoutFragment : MetricListFragment() {
-    private val team by unsafeLazy { arguments.getTeam() }
+    private val team by unsafeLazy { arguments!!.getTeam() }
     private val scoutId by unsafeLazy { getTabId(arguments)!! }
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
     override val adapter: MetricListAdapterBase by unsafeLazy {
         ScoutAdapter(holder.metrics, childFragmentManager, recyclerView, this)
     }
 
-    val toolbar: Toolbar by unsafeLazy { parentFragment.view!!.findViewById<Toolbar>(R.id.toolbar) }
+    val toolbar: Toolbar by unsafeLazy {
+        parentFragment!!.view!!.findViewById<Toolbar>(R.id.toolbar)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

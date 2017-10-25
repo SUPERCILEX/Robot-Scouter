@@ -31,7 +31,7 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (view as LinearLayout).addView(setAsDefaultCheckbox)
     }

@@ -14,13 +14,13 @@ tasks.whenTaskAdded { task ->
 apply from: '../quality/quality.gradle'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
         applicationId 'com.supercilex.robotscouter'
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1 // The version code is updated on each Travis build
         versionName '2.0.0-beta1'
         multiDexEnabled true

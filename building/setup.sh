@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo y | ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 \
-    "tools" "platform-tools" "build-tools;${BUILD_TOOLS_VERSION}" "platforms;android-26"
+    "tools" "platform-tools" "build-tools;${BUILD_TOOLS_VERSION}" "platforms;android-27"
 
 if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   cd app

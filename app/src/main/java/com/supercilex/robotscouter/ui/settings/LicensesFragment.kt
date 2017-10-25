@@ -58,7 +58,7 @@ class LicensesFragment : Fragment(), OnBackPressedListener {
     }
 
     override fun onBackPressed(): Boolean {
-        fragmentManager.popBackStack()
+        fragmentManager!!.popBackStack()
         return true
     }
 

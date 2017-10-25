@@ -41,7 +41,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         TemplateItemTouchCallback<Metric<*>>(recyclerView)
     }
     private val fam: FloatingActionMenu by unsafeLazy {
-        parentFragment.view!!.findViewById<FloatingActionMenu>(R.id.fab_menu)
+        parentFragment!!.view!!.findViewById<FloatingActionMenu>(R.id.fab_menu)
     }
 
     private var hasAddedItem: Boolean = false

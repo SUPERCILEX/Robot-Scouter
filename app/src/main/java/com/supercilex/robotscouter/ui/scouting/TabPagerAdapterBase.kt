@@ -46,7 +46,7 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
 
     override fun getCount() = holder.scouts.size
 
-    override fun getItemPosition(any: Any?) = PagerAdapter.POSITION_NONE
+    override fun getItemPosition(any: Any) = PagerAdapter.POSITION_NONE
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         currentTabId = holder.scouts[tab.position].id

@@ -8,7 +8,7 @@ buildscript {
 
     ext {
         kotlinVersion = '1.2.0-beta-88'
-        supportLibVersion = '26.1.0'
+        supportLibVersion = '27.0.0'
         playServicesVersion = '11.4.2'
         archVersion = '1.0.0-rc1'
         firebaseUiVersion = '08a7a28219'

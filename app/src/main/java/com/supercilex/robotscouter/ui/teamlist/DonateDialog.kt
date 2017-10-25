@@ -40,7 +40,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     private val monthlyCheckBox: CheckBox by bindView(R.id.monthly)
 
     private val billingClient by unsafeLazy {
-        BillingClient.Builder(context).setListener(PURCHASE_LISTENER).build()
+        BillingClient.Builder(context!!).setListener(PURCHASE_LISTENER).build()
     }
     private val billingClientReadyTask = TaskCompletionSource<@BillingResponse Int>()
 
@@ -49,7 +49,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         billingClient.startConnection(this)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
             .setTitle(R.string.donate_title)
             .setView(View.inflate(context, R.layout.dialog_donate, null))
             .setPositiveButton(R.string.donate_title, null)

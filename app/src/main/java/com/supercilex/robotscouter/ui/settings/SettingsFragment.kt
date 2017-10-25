@@ -98,19 +98,20 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
         preference.icon?.let {
             val value = TypedValue()
-            if (!context.theme.resolveAttribute(android.R.attr.textColorSecondary, value, true)) {
+            if (!preference.context.theme
+                    .resolveAttribute(android.R.attr.textColorSecondary, value, true)) {
                 return@let
             }
 
-            DrawableCompat.setTint(
-                    it,
-                    AppCompatResources.getColorStateList(context, value.resourceId).defaultColor)
+            DrawableCompat.setTint(it, AppCompatResources.getColorStateList(
+                    preference.context, value.resourceId).defaultColor)
         }
 
         return true
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {
+        val activity = activity!!
         when (preference.key) {
             KEY_RESET_TUTORIALS -> {
                 clearPrefs()
@@ -125,11 +126,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         activity.finish()
                     }
             KEY_RELEASE_NOTES -> launchUrl(
-                    context, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
+                    activity, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
             KEY_TRANSLATE -> launchUrl(
-                    context, Uri.parse("https://www.transifex.com/supercilex/robot-scouter/"))
+                    activity, Uri.parse("https://www.transifex.com/supercilex/robot-scouter/"))
             KEY_VERSION -> {
-                (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
+                (activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
                         ClipData.newPlainText(
                                 getString(R.string.settings_debug_info_title), debugInfo)
                 Toast.makeText(context,
@@ -137,7 +138,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                                Toast.LENGTH_SHORT)
                         .show()
             }
-            KEY_LICENSES -> fragmentManager.beginTransaction()
+            KEY_LICENSES -> fragmentManager!!.beginTransaction()
                     .setCustomAnimations(
                             R.anim.fade_in,
                             R.anim.fade_out,
@@ -162,7 +163,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(context, R.string.team_signed_in_message, Toast.LENGTH_SHORT).show()
                 logLoginEvent()
-                activity.finish()
+                activity!!.finish()
             } else {
                 val response: IdpResponse = IdpResponse.fromResultIntent(data) ?: return
 
