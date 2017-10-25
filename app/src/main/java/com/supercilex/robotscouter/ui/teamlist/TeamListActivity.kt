@@ -25,12 +25,12 @@ import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logSelectTeamEvent
 import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.KeyboardShortcutHandler
@@ -210,11 +210,9 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                         startActivity(Intent(intent).setComponent(
                                 ComponentName(this, LinkReceiverActivity::class.java)))
                     }
-                }
-                .addOnFailureListener(CrashLogger)
-                .addOnFailureListener(this) {
+                }.addOnFailureListener(this) {
                     Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
-                }
+        }.logFailures()
 
         this.intent = Intent() // Consume Intent
     }

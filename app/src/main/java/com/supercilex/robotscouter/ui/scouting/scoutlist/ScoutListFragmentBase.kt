@@ -29,7 +29,6 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.data.getScoutBundle
@@ -42,6 +41,7 @@ import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
@@ -174,7 +174,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                                        Toast.LENGTH_LONG)
                                 .show()
                     }
-                }.addOnFailureListener(CrashLogger)
+                }.logFailures()
             }
             R.id.action_edit_team_details -> showTeamDetails()
             else -> return false

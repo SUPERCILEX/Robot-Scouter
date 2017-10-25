@@ -9,7 +9,6 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_SCOUTS
@@ -18,6 +17,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddScoutEvent
+import com.supercilex.robotscouter.util.logFailures
 
 fun Team.getScoutRef() = ref.collection(FIRESTORE_SCOUTS)
 
@@ -50,12 +50,12 @@ fun Team.addScout(overrideId: String? = null): String {
                     set(getScoutMetricsRef(scoutRef.id).document(it.key), it.value)
                 }
             }
-        }).addOnFailureListener(CrashLogger)
+        }).logFailures()
 
         getTemplateRef(templateId).get().continueWith {
             scoutParser.parseSnapshot(it.result).name
         }
-    }).addOnFailureListener(CrashLogger).addOnCompleteListener(
+    }).logFailures().addOnCompleteListener(
             AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(getScoutRef().get()).map {
@@ -63,7 +63,7 @@ fun Team.addScout(overrideId: String? = null): String {
         }.groupBy { it }[templateId]!!.size
 
         scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates")
-                .addOnFailureListener(CrashLogger)
+                .logFailures()
     })
 
     logAddScoutEvent(this, id, templateId)

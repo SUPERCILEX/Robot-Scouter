@@ -7,12 +7,10 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentActivity
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.FieldPath
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.generateToken
@@ -20,6 +18,7 @@ import com.supercilex.robotscouter.util.data.getTeamsLink
 import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTeamsEvent
 import java.util.Date
 
@@ -49,8 +48,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
                     it.result.format(cache.shareCta, cache.teams[0].media))
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
-        }.addOnFailureListener(CrashLogger).addOnFailureListener {
-            FirebaseCrash.report(it)
+        }.logFailures().addOnFailureListener {
             Snackbar.make(activity.findViewById(R.id.root),
                           R.string.fui_general_error,
                           Snackbar.LENGTH_LONG)

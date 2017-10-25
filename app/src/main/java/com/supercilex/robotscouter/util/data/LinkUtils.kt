@@ -13,10 +13,10 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.APP_LINK_BASE
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
@@ -68,7 +68,7 @@ inline fun updateOwner(refs: Iterable<DocumentReference>,
             update(ref, newOwnerPath, newValue(ref))
         }.addOnSuccessListener {
             ref.update(pendingApprovalPath, FieldValue.delete())
-        }.addOnFailureListener(CrashLogger)
+        }.logFailures()
     })
 }
 

@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
+import com.supercilex.robotscouter.util.logFailures
 
 private val localPrefs: SharedPreferences by lazy {
     RobotScouter.INSTANCE.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
@@ -149,7 +150,7 @@ private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
 
 private fun updateTeamTemplateIds() {
     TeamsLiveData.observeOnDataChanged().observeOnce {
-        async { for (team in it) team.updateTemplateId(defaultTemplateId) }
+        async { for (team in it) team.updateTemplateId(defaultTemplateId) }.logFailures()
     }
 }
 

@@ -13,7 +13,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
@@ -26,6 +25,7 @@ import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
 import java.util.ArrayList
@@ -132,7 +132,7 @@ fun Team.delete() {
     deleteAllScouts().addOnSuccessListener {
         ref.delete()
         FirebaseAppIndex.getInstance().remove(deepLink)
-    }.addOnFailureListener(CrashLogger)
+    }.logFailures()
 }
 
 fun Team.fetchLatestData() {

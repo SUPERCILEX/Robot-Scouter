@@ -116,11 +116,11 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
             if (result == BillingResponse.ITEM_ALREADY_OWNED) {
                 billingClient.queryPurchaseHistoryAsync(type) {
                     if (it.responseCode != BillingResponse.OK) {
-                        val ex = PurchaseException(
+                        val e = PurchaseException(
                                 it.responseCode,
                                 message = "Purchase fetch failed with code ${it.responseCode} and sku $sku")
-                        FirebaseCrash.report(ex)
-                        purchaseStartTask.setException(ex)
+                        FirebaseCrash.report(e)
+                        purchaseStartTask.setException(e)
                         return@queryPurchaseHistoryAsync
                     }
 
@@ -129,9 +129,10 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                             .addOnSuccessListener { purchaseStartTask.setResult(null) }
                 }
             } else {
-                val ex = PurchaseException(result, sku)
-                FirebaseCrash.report(ex)
-                purchaseStartTask.setException(ex)
+                PurchaseException(result, sku).let {
+                    FirebaseCrash.report(it)
+                    purchaseStartTask.setException(it)
+                }
             }
         }
 
@@ -149,11 +150,11 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                 if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
                     consumption.setResult(purchaseToken)
                 } else {
-                    val ex = PurchaseException(
+                    val e = PurchaseException(
                             resultCode,
                             message = "Consumption failed with code $resultCode and sku ${purchase.sku}")
-                    FirebaseCrash.report(ex)
-                    consumption.setException(ex)
+                    FirebaseCrash.report(e)
+                    consumption.setException(e)
                 }
             }
             consumptions += consumption.task

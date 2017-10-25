@@ -31,7 +31,6 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -53,6 +52,7 @@ import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.logFailures
 import java.io.File
 import java.util.Date
 
@@ -108,7 +108,7 @@ fun CollectionReference.delete(batchSize: Long = 100): Task<List<DocumentSnapsho
     }
 
     deleted as List<DocumentSnapshot>
-}.addOnFailureListener(CrashLogger)
+}.logFailures()
 
 /** Delete all results from a query in a single [WriteBatch]. */
 @WorkerThread
@@ -235,7 +235,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
                             .contains(templateId)) {
                         team.updateTemplateId(defaultTemplateId)
                     }
-                }.addOnFailureListener(CrashLogger)
+                }.logFailures()
             }
         }
     }
@@ -282,7 +282,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
 
                     rawTeams += rawTeam
                 }
-            }.addOnFailureListener(CrashLogger)
+            }.logFailures()
         }
 
         @WorkerThread

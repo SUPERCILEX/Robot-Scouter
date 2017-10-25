@@ -9,7 +9,6 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.data.batch
@@ -18,6 +17,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddTemplateEvent
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
 import java.util.Date
@@ -50,7 +50,7 @@ fun addTemplate(type: TemplateType): String {
                 set(getTemplateMetricsRef(id).document(it.ref.id), it)
             }
         }
-    }).addOnFailureListener(CrashLogger)
+    }).logFailures()
 
     logAddTemplateEvent(id)
     return id

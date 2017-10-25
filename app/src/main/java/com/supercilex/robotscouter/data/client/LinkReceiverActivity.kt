@@ -16,7 +16,6 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.data.KEYS
@@ -24,6 +23,7 @@ import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.updateOwner
 import com.supercilex.robotscouter.util.isSingleton
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.onSignedIn
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
@@ -54,7 +54,7 @@ class LinkReceiverActivity : AppCompatActivity() {
                         else -> showErrorAndContinue()
                     }
                 })
-                .addOnFailureListener(CrashLogger)
+                .logFailures()
                 .addOnFailureListener { showErrorAndContinue() }
                 .addOnCompleteListener { finish() }
     }

@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.updateOwner
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.uid
 import java.util.Date
 import com.supercilex.robotscouter.util.data.model.userPrefs as userPrefsRef
@@ -41,27 +42,27 @@ class AccountMergeService : ManualMergeService() {
         templates = getTemplatesQuery().get()
 
         return Tasks.whenAll(userPrefs, teams, templates).continueWithTask(
-                AsyncTaskExecutor, Continuation {
+                AsyncTaskExecutor, Continuation<Void?, Task<Void?>> {
             firestoreBatch {
                 val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
                 (teams.result.toMutableList() + templates.result).map {
                     update(it.reference, tokenPath, Date())
                 }
             }
-        })
+        }).logFailures()
     }
 
     override fun onTransferData(response: IdpResponse): Task<Void?>? = async {
         for (snapshot in userPrefs.result) {
-            userPrefsRef.document(snapshot.id).set(snapshot.data)
+            userPrefsRef.document(snapshot.id).set(snapshot.data).logFailures()
         }
 
         updateOwner(teams.result.map { it.reference }, token, prevUid) { ref ->
             teams.result.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)
-        }
+        }.logFailures()
         updateOwner(templates.result.map { it.reference }, token, prevUid) { ref ->
             templates.result.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)
-        }
+        }.logFailures()
 
         null
     }
