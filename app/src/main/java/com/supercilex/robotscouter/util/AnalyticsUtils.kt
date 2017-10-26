@@ -36,6 +36,8 @@ private val analytics: FirebaseAnalytics by lazy {
 }
 
 fun initAnalytics() {
+    analytics.setAnalyticsCollectionEnabled(!isInTestMode)
+
     FirebaseAuth.getInstance().addAuthStateListener {
         val user = it.currentUser
 
