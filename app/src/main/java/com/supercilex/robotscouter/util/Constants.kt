@@ -67,6 +67,11 @@ val fullVersionName: String by lazy {
     RobotScouter.INSTANCE.packageManager
             .getPackageInfo(RobotScouter.INSTANCE.packageName, 0).versionName
 }
+val fullVersionCode: Int by lazy {
+    // See fullVersionName
+    RobotScouter.INSTANCE.packageManager
+            .getPackageInfo(RobotScouter.INSTANCE.packageName, 0).versionCode
+}
 val providerAuthority: String by lazy { "${RobotScouter.INSTANCE.packageName}.provider" }
 val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter.INSTANCE) }
 val isLowRamDevice: Boolean by lazy {

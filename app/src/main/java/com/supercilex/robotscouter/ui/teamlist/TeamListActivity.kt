@@ -19,7 +19,6 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
@@ -28,6 +27,7 @@ import com.supercilex.robotscouter.ui.settings.SettingsActivity
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.fetchAndActivate
+import com.supercilex.robotscouter.util.fullVersionCode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logFailures
@@ -111,7 +111,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
 
     override fun onSuccess(nothing: Nothing?) {
         val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
-        if (BuildConfig.VERSION_CODE < minimum && !isOffline()) {
+        if (fullVersionCode < minimum && !isOffline()) {
             UpdateDialog.show(supportFragmentManager)
         }
     }
