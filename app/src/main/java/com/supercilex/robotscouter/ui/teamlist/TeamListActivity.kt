@@ -19,6 +19,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
@@ -111,7 +112,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
 
     override fun onSuccess(nothing: Nothing?) {
         val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
-        if (fullVersionCode < minimum && !isOffline()) {
+        if (!BuildConfig.DEBUG && fullVersionCode < minimum && !isOffline()) {
             UpdateDialog.show(supportFragmentManager)
         }
     }
