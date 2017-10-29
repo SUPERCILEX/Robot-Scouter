@@ -10,6 +10,7 @@ import android.view.View
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.OrderedModel
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateViewHolder
@@ -29,14 +30,17 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 
-    private val movableItems = ArrayList<T>()
+    private val localItems = ArrayList<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null
     private var scrollToPosition = RecyclerView.NO_POSITION
     private var isMovingItem = false
     private var isDeletingItem = false
 
     fun getItem(position: Int): T =
-            if (isMovingItem) movableItems[position] else adapter.snapshots[position]
+            if (isMovingItem || isDeletingItem) localItems[position] else adapter.snapshots[position]
+
+    fun getItemCount(injectedSuperCall: () -> Int): Int =
+            if (isMovingItem || isDeletingItem) localItems.size else injectedSuperCall()
 
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
         viewHolder.itemView.find<View>(R.id.reorder)
@@ -74,27 +78,32 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
             type: ChangeEventType, newIndex: Int, oldIndex: Int, injectedSuperCall: () -> Unit) {
         if (isMovingItem) {
             if (isCatchingUpOnMove(type, newIndex)) {
-                if (adapter.snapshots == movableItems) {
-                    ViewCompat.postOnAnimationDelayed(
-                            recyclerView,
-                            { cleanupMove() },
-                            maxAnimationDuration(animatorPointer ?: recyclerView.itemAnimator))
+                if (adapter.snapshots == localItems) {
+                    postCleanup { isMovingItem = false }
                 }
 
                 // Update item corners
                 adapter.notifyItemChanged(newIndex)
                 adapter.notifyItemChanged(oldIndex)
             } else {
-                cleanupMove()
-                longSnackbar(rootView, R.string.template_move_cancelled_rationale)
-                adapter.notifyDataSetChanged()
+                isMovingItem = false
+                cleanupFailure()
             }
             return
-        } else if (isDeletingItem && type == ChangeEventType.REMOVED) {
-            isDeletingItem = false
-            injectedSuperCall()
-            recyclerView.post {
-                adapter.notifyItemChanged(oldIndex) // Update item corners
+        } else if (isDeletingItem) {
+            if (isCatchingUpOnDelete(type, newIndex)) {
+                if (adapter.snapshots == localItems) {
+                    postCleanup { isDeletingItem = false }
+                }
+
+                if (oldIndex != -1) {
+                    // Update item corners
+                    adapter.notifyItemChanged(oldIndex)
+                    adapter.notifyItemChanged(oldIndex - 1)
+                }
+            } else {
+                isDeletingItem = false
+                cleanupFailure()
             }
         } else if (type == ChangeEventType.ADDED && newIndex == scrollToPosition) {
             injectedSuperCall()
@@ -111,7 +120,25 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
             type == ChangeEventType.MOVED
                     // Setting `position` causes an update.
                     // Our model doesn't include positions in its equals implementation
-                    || type == ChangeEventType.CHANGED && movableItems.contains(adapter.snapshots[index])
+                    || type == ChangeEventType.CHANGED && localItems.contains(adapter.snapshots[index])
+
+    private fun isCatchingUpOnDelete(type: ChangeEventType, index: Int): Boolean =
+            type == ChangeEventType.REMOVED
+                    // See isCatchingUpOnMove
+                    || type == ChangeEventType.CHANGED && localItems.contains(adapter.snapshots[index])
+
+    private inline fun postCleanup(crossinline cleanup: () -> Unit) {
+        ViewCompat.postOnAnimationDelayed(
+                recyclerView,
+                { cleanup(); this.cleanup() },
+                maxAnimationDuration(animatorPointer ?: recyclerView.itemAnimator))
+    }
+
+    private fun cleanupFailure() {
+        cleanup()
+        longSnackbar(rootView, R.string.template_move_cancelled_rationale)
+        adapter.notifyDataSetChanged()
+    }
 
     override fun onMove(recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -119,7 +146,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         val fromPos = viewHolder.adapterPosition
         val toPos = target.adapterPosition
 
-        if (!isMovingItem) movableItems.addAll(adapter.snapshots)
+        if (!isMovingItem) localItems.addAll(adapter.snapshots)
         isMovingItem = true
 
         if (fromPos < toPos) {
@@ -137,21 +164,35 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
     private fun swapUp(i: Int) = swap(i, i - 1)
 
     private fun swap(i: Int, j: Int) {
-        movableItems[i].position = j
-        movableItems[j].position = i
-        Collections.swap(movableItems, i, j)
+        localItems[i].position = j
+        localItems[j].position = i
+        Collections.swap(localItems, i, j)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        if (!isDeletingItem) localItems.addAll(adapter.snapshots)
         isDeletingItem = true
-        val deletedRef = adapter.snapshots.getSnapshot(viewHolder.adapterPosition).reference
+
+        val position = viewHolder.adapterPosition
+        val deletedRef = adapter.snapshots.getSnapshot(position).reference
+        val itemsBelow: List<OrderedModel> =
+                ArrayList(adapter.snapshots.subList(position + 1, adapter.itemCount))
+
+        localItems.removeAt(position)
+        adapter.notifyItemRemoved(position)
 
         viewHolder.itemView.clearFocus() // Needed to prevent the item from being re-added
         deletedRef.get().addOnSuccessListener { snapshot: DocumentSnapshot ->
-            deletedRef.delete()
+            firestoreBatch {
+                delete(deletedRef)
+                updatePositions(itemsBelow, -1)
+            }
 
             longSnackbar(rootView, R.string.deleted, R.string.undo) {
-                deletedRef.set(snapshot.data)
+                firestoreBatch {
+                    updatePositions(itemsBelow, 1)
+                    set(deletedRef, snapshot.data)
+                }
             }
         }
     }
@@ -162,16 +203,20 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
             animatorPointer = recyclerView.itemAnimator
             recyclerView.itemAnimator = null
             firestoreBatch {
-                for (item in movableItems) {
-                    update(item.ref, FIRESTORE_POSITION, item.position)
-                }
+                updatePositions(localItems)
             }
         }
     }
 
-    private fun cleanupMove() {
-        isMovingItem = false
-        movableItems.clear()
+    private fun WriteBatch.updatePositions(items: List<OrderedModel>, offset: Int = 0) {
+        for (item in items) {
+            item.position += offset
+            update(item.ref, FIRESTORE_POSITION, item.position)
+        }
+    }
+
+    private fun cleanup() {
+        localItems.clear()
         animatorPointer?.let { recyclerView.itemAnimator = it }
         animatorPointer = null
     }

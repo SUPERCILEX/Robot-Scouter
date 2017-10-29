@@ -34,6 +34,8 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
                               recyclerView) {
     override fun getItem(position: Int) = callback.getItem(position)
 
+    override fun getItemCount() = callback.getItemCount { super.getItemCount() }
+
     override fun onBindViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
                                   position: Int,
                                   metric: Metric<*>) {
