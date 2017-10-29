@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.data.client
 
+import android.arch.core.executor.ArchTaskExecutor
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -41,12 +42,7 @@ class LinkReceiverActivity : AppCompatActivity() {
         onSignedIn().continueWithTask { FirebaseDynamicLinks.getInstance().getDynamicLink(intent) }
                 .continueWith(AsyncTaskExecutor, Continuation<PendingDynamicLinkData, Unit> {
                     val link: Uri = it.result?.link ?: intent.data ?: Uri.Builder().build()
-                    val token: String = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS).also {
-                        if (it == null) {
-                            showErrorAndContinue()
-                            return@Continuation
-                        }
-                    }
+                    val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
 
                     when (link.lastPathSegment) {
                         teams.id -> processTeams(link, token)
@@ -60,9 +56,10 @@ class LinkReceiverActivity : AppCompatActivity() {
     }
 
     @WorkerThread
-    private fun processTeams(link: Uri, token: String) {
+    private fun processTeams(link: Uri, token: String?) {
         val refs = link.getQueryParameter(KEYS).split(",").map { teams.document(it) }
-        Tasks.await(updateOwner(refs, token, null) { ref ->
+
+        if (token != null) Tasks.await(updateOwner(refs, token, null) { ref ->
             link.getQueryParameter(ref.id).toLong()
         })
 
@@ -85,9 +82,10 @@ class LinkReceiverActivity : AppCompatActivity() {
     }
 
     @WorkerThread
-    private fun processTemplates(link: Uri, token: String) {
+    private fun processTemplates(link: Uri, token: String?) {
         val refs = link.getQueryParameter(KEYS).split(",").map { templates.document(it) }
-        Tasks.await(updateOwner(refs, token, null) { Date() })
+
+        if (token != null) Tasks.await(updateOwner(refs, token, null) { Date() })
 
         startActivity(TemplateListActivity.createIntent(refs.single().id)
                               .addNewDocumentFlags()
@@ -100,7 +98,9 @@ class LinkReceiverActivity : AppCompatActivity() {
                                   .setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
-        Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
+        ArchTaskExecutor.getInstance().executeOnMainThread {
+            Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
+        }
         startTeamListActivityNoArgs()
     }
 }
