@@ -146,4 +146,6 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         animatorPointer?.let { recyclerView.itemAnimator = it }
         animatorPointer = null
     }
+
+    override fun isLongPressDragEnabled() = false
 }
