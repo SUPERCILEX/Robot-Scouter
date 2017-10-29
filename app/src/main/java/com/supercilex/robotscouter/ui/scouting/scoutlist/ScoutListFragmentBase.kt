@@ -6,7 +6,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.RecyclerView
@@ -16,7 +15,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -47,6 +45,8 @@ import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.support.v4.longToast
 
 abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team>, TeamMediaCreator.StartCaptureListener {
@@ -100,7 +100,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null && isOffline()) {
-            Snackbar.make(view, R.string.scout_offline_rationale, Snackbar.LENGTH_LONG).show()
+            longSnackbar(view, R.string.scout_offline_rationale)
         }
     }
 
@@ -166,14 +166,11 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                         AsyncTaskExecutor, Continuation<QuerySnapshot, Boolean> {
                     it.result.map { scoutParser.parseSnapshot(it) }
                             .find { it.id == templateId } != null
-                }).addOnSuccessListener { ownsTemplate ->
+                }).addOnSuccessListener(activity) { ownsTemplate ->
                     if (ownsTemplate) {
                         startActivity(TemplateListActivity.createIntent(templateId))
                     } else {
-                        Toast.makeText(context,
-                                       R.string.template_access_denied_error,
-                                       Toast.LENGTH_LONG)
-                                .show()
+                        longToast(R.string.template_access_denied_error)
                     }
                 }.logFailures()
             }

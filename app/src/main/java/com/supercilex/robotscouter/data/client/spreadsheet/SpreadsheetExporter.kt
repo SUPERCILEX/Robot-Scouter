@@ -188,13 +188,11 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             availableFile = when {
                 availableFile.exists() -> File(rsFolder, getFullyQualifiedFileName(
                         getPolyTemplateName(currentIdenticalTemplateNames), " ($i)"))
-                availableFile.hide().exists() -> {
-                    findAvailableFile(
-                            File(rsFolder, getFullyQualifiedFileName(
-                                    getPolyTemplateName(nIdenticalTemplateNames))),
-                            rsFolder,
-                            nIdenticalTemplateNames++)
-                }
+                availableFile.hide().exists() -> findAvailableFile(
+                        File(rsFolder, getFullyQualifiedFileName(
+                                getPolyTemplateName(nIdenticalTemplateNames))),
+                        rsFolder,
+                        nIdenticalTemplateNames++)
                 else -> return availableFile
             }
             i++

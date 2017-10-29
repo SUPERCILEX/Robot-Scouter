@@ -1,12 +1,10 @@
 package com.supercilex.robotscouter.data.client
 
 import android.arch.core.executor.ArchTaskExecutor
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.WorkerThread
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -31,6 +29,8 @@ import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.longToast
 import java.util.Date
 
 class LinkReceiverActivity : AppCompatActivity() {
@@ -68,15 +68,16 @@ class LinkReceiverActivity : AppCompatActivity() {
             val data = getScoutBundle(Team(link.getQueryParameter(id).toLong(), id))
 
             if (isInTabletMode(this)) {
-                startActivity(Intent(this, TeamListActivity::class.java)
-                                      .putExtra(SCOUT_ARGS_KEY, data)
+                startActivity(intentFor<TeamListActivity>(SCOUT_ARGS_KEY to data)
                                       .addNewDocumentFlags()
                                       .setAction(ACTION_FROM_DEEP_LINK))
             } else {
                 startActivity(ScoutListActivity.createIntent(data).setAction(ACTION_FROM_DEEP_LINK))
             }
         } else {
-            Toast.makeText(this, R.string.link_teams_imported_message, Toast.LENGTH_LONG).show()
+            ArchTaskExecutor.getInstance().executeOnMainThread {
+                longToast(R.string.link_teams_imported_message)
+            }
             startTeamListActivityNoArgs()
         }
     }
@@ -93,13 +94,13 @@ class LinkReceiverActivity : AppCompatActivity() {
     }
 
     private fun startTeamListActivityNoArgs() =
-            startActivity(Intent(this, TeamListActivity::class.java)
+            startActivity(intentFor<TeamListActivity>()
                                   .addNewDocumentFlags()
                                   .setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
         ArchTaskExecutor.getInstance().executeOnMainThread {
-            Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
+            longToast(R.string.link_uri_parse_error)
         }
         startTeamListActivityNoArgs()
     }

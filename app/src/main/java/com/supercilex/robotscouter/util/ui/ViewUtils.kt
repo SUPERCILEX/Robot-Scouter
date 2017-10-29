@@ -29,6 +29,8 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
+import org.jetbrains.anko.configuration
+import org.jetbrains.anko.landscape
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.hypot
 
@@ -81,9 +83,9 @@ fun initUi() {
 }
 
 fun isInTabletMode(context: Context): Boolean {
-    val config: Configuration = context.resources.configuration
+    val config: Configuration = context.configuration
     val size: Int = config.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
-    return size == Configuration.SCREENLAYOUT_SIZE_LARGE && config.orientation == Configuration.ORIENTATION_LANDSCAPE
+    return size == Configuration.SCREENLAYOUT_SIZE_LARGE && config.landscape
             || size > Configuration.SCREENLAYOUT_SIZE_LARGE
 }
 

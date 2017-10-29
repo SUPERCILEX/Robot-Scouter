@@ -14,13 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.util.data.IoUtilsKt;
+
+import org.jetbrains.anko.ToastsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +30,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import kotlin.Pair;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.createFile;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIoPerms;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getMediaFolder;
+import static org.jetbrains.anko.ContextUtilsKt.bundleOf;
 
 public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
     public interface StartCaptureListener {
@@ -105,9 +108,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     public Bundle toBundle() {
-        Bundle args = new Bundle();
-        args.putParcelable(MEDIA_CREATOR_KEY, this);
-        return args;
+        return bundleOf(new Pair<>(MEDIA_CREATOR_KEY, this));
     }
 
     public void setTeam(Team team) {
@@ -136,7 +137,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 photoFile = createImageFile(getMediaFolder());
             } catch (Exception e) { // NOPMD
                 FirebaseCrash.report(e);
-                Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+                ToastsKt.longToast(context, e.toString());
             }
 
             if (photoFile != null) {

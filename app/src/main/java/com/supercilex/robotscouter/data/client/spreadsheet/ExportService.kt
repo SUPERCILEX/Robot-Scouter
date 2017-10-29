@@ -5,7 +5,6 @@ import android.app.IntentService
 import android.content.Intent
 import android.support.annotation.RequiresPermission
 import android.support.annotation.Size
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import com.google.android.gms.tasks.Tasks
@@ -24,6 +23,8 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExportTeamsEvent
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import org.apache.poi.ss.formula.WorkbookEvaluator
+import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
 
 class ExportService : IntentService(TAG) {
@@ -111,20 +112,18 @@ class ExportService : IntentService(TAG) {
                                       @Size(min = 1) teams: List<Team>): Boolean {
             if (teams.isEmpty()) return false
 
-            val context = fragment.context
+            val context = fragment.context!!
 
             if (!EasyPermissions.hasPermissions(context, *permHandler.permsArray)) {
                 permHandler.requestPerms(R.string.export_write_storage_rationale)
                 return false
             }
 
-            Snackbar.make(fragment.view!!, R.string.export_progress_hint, Snackbar.LENGTH_SHORT)
-                    .show()
+            snackbar(fragment.view!!, R.string.export_progress_hint)
 
             logExportTeamsEvent(teams)
             ContextCompat.startForegroundService(
-                    fragment.context!!,
-                    Intent(context, ExportService::class.java).putExtra(teams))
+                    context, context.intentFor<ExportService>().putExtra(teams))
 
             return true
         }

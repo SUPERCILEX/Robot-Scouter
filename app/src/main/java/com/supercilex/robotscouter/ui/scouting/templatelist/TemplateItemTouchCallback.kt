@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
-import android.support.design.widget.Snackbar
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -17,6 +16,7 @@ import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import kotterknife.bindView
+import org.jetbrains.anko.design.longSnackbar
 import java.util.Collections
 
 class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
@@ -66,10 +66,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
                 }
             } else {
                 cleanupMove()
-                Snackbar.make(rootView,
-                              R.string.template_move_cancelled_rationale,
-                              Snackbar.LENGTH_LONG)
-                        .show()
+                longSnackbar(rootView, R.string.template_move_cancelled_rationale)
                 adapter.notifyDataSetChanged()
             }
             return
@@ -121,9 +118,9 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         deletedRef.get().addOnSuccessListener { snapshot: DocumentSnapshot ->
             deletedRef.delete()
 
-            Snackbar.make(rootView, R.string.deleted, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.undo) { deletedRef.set(snapshot.data) }
-                    .show()
+            longSnackbar(rootView, R.string.deleted, R.string.undo) {
+                deletedRef.set(snapshot.data)
+            }
         }
     }
 

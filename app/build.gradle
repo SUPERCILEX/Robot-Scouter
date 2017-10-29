@@ -76,6 +76,8 @@ dependencies {
     implementation fileTree(dir: 'libs')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.anko:anko-design:$ankoVersion"
+    implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
 
     // Support libraries
     implementation 'com.android.support:multidex:1.0.2'

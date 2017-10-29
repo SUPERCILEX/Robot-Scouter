@@ -13,7 +13,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import com.firebase.ui.auth.util.PlayServicesHelper
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
@@ -41,6 +40,7 @@ import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.longToast
 
 class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, OnSuccessListener<Nothing?> {
@@ -204,15 +204,13 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
         // When the app is installed through a dynamic link, we can only get it from the launcher
         // activity so we have to check to see if there are any pending links and then forward those
         // along to the LinkReceiverActivity
-        FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(intent)
-                .addOnSuccessListener(this) {
-                    it?.link?.let {
-                        startActivity(Intent(intent).setComponent(
-                                ComponentName(this, LinkReceiverActivity::class.java)))
-                    }
-                }.addOnFailureListener(this) {
-                    Toast.makeText(this, R.string.link_uri_parse_error, Toast.LENGTH_LONG).show()
+        FirebaseDynamicLinks.getInstance().getDynamicLink(intent).addOnSuccessListener(this) {
+            it?.link?.let {
+                startActivity(Intent(intent).setComponent(
+                        ComponentName(this, LinkReceiverActivity::class.java)))
+            }
+        }.addOnFailureListener(this) {
+            longToast(R.string.link_uri_parse_error)
         }.logFailures()
 
         this.intent = Intent() // Consume Intent

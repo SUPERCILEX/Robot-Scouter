@@ -3,10 +3,10 @@ package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.SpinnerViewHolder
+import org.jetbrains.anko.longToast
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -33,12 +33,10 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
 
             spinner.setSelection(indexOfKey(metric.selectedValueId))
             // TODO Rewrite spinner item stuff
-            Toast.makeText(itemView.context,
-                           "Sorry, updating item selectors hasn't been implemented in the Robot" +
-                                   " Scouter v2.0 beta yet, but it will be by the time v2.0 reaches" +
-                                   " the stable channel.",
-                           Toast.LENGTH_LONG)
-                    .show()
+            itemView.context.longToast(
+                    "Sorry, updating item selectors hasn't been implemented in the Robot" +
+                            " Scouter v2.0 beta yet, but it will be by the time v2.0 reaches" +
+                            " the stable channel.")
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id)
         }

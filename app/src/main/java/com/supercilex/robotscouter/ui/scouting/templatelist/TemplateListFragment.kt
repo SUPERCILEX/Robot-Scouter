@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.IdRes
-import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
@@ -36,6 +35,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.design.longSnackbar
 
 class TemplateListFragment : FragmentBase(),
         View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder,
@@ -115,11 +115,7 @@ class TemplateListFragment : FragmentBase(),
         val templateId = getTabId(args)
         if (templateId != null) {
             pagerAdapter.currentTabId = TemplateType.coerce(templateId)?.let {
-                Snackbar.make(fam,
-                              R.string.template_added_message,
-                              Snackbar.LENGTH_LONG)
-                        .show()
-
+                longSnackbar(fam, R.string.template_added_message)
                 addTemplate(it).also { defaultTemplateId = it }
             } ?: templateId
 
@@ -169,10 +165,9 @@ class TemplateListFragment : FragmentBase(),
 
     fun onTemplateCreated(id: String) {
         pagerAdapter.currentTabId = id
-
-        Snackbar.make(fam, R.string.template_added_title, Snackbar.LENGTH_LONG)
-                .setAction(R.string.template_set_default_title) { defaultTemplateId = id }
-                .show()
+        longSnackbar(fam, R.string.template_added_title, R.string.template_set_default_title) {
+            defaultTemplateId = id
+        }
     }
 
     override fun onBackPressed(): Boolean =

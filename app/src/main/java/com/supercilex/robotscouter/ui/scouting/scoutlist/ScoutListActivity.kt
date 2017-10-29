@@ -10,6 +10,8 @@ import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.multipleTask
 
 class ScoutListActivity : ActivityBase() {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
@@ -43,9 +45,8 @@ class ScoutListActivity : ActivityBase() {
 
     companion object {
         fun createIntent(args: Bundle): Intent =
-                Intent(RobotScouter.INSTANCE, ScoutListActivity::class.java)
-                        .putExtra(SCOUT_ARGS_KEY, args)
-                        .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                RobotScouter.INSTANCE.intentFor<ScoutListActivity>(SCOUT_ARGS_KEY to args)
+                        .multipleTask()
                         .addNewDocumentFlags()
     }
 }

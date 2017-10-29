@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.content.Intent
 import android.net.Uri
-import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentActivity
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
@@ -17,6 +16,7 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTemplateEvent
 import com.supercilex.robotscouter.util.templates
+import org.jetbrains.anko.design.longSnackbar
 import java.util.Date
 
 class TemplateSharer private constructor(private val activity: FragmentActivity) :
@@ -34,10 +34,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
         }.logFailures().addOnFailureListener {
-            Snackbar.make(activity.findViewById(R.id.root),
-                          R.string.fui_general_error,
-                          Snackbar.LENGTH_LONG)
-                    .show()
+            longSnackbar(activity.findViewById(R.id.root), R.string.fui_general_error)
         }
     }
 
@@ -61,10 +58,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
                           templateId: String,
                           templateName: String): Boolean {
             if (isOffline()) {
-                Snackbar.make(activity.findViewById(R.id.root),
-                              R.string.no_connection,
-                              Snackbar.LENGTH_LONG)
-                        .show()
+                longSnackbar(activity.findViewById(R.id.root), R.string.no_connection)
                 return false
             }
 

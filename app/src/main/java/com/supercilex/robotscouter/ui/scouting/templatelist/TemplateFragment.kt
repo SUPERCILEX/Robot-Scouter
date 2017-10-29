@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
@@ -23,6 +22,7 @@ import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.design.longSnackbar
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
     public override val metricsRef: CollectionReference by unsafeLazy {
@@ -94,15 +94,13 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             R.id.action_remove_metrics -> {
                 recyclerView.clearFocus()
                 metricsRef.delete().addOnSuccessListener { documents ->
-                    Snackbar.make(fam, R.string.deleted, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.undo) {
-                                firestoreBatch {
-                                    for (document in documents) {
-                                        set(document.reference, document.data)
-                                    }
-                                }
+                    longSnackbar(fam, R.string.deleted, R.string.undo) {
+                        firestoreBatch {
+                            for (document in documents) {
+                                set(document.reference, document.data)
                             }
-                            .show()
+                        }
+                    }
                 }
             }
             else -> return false

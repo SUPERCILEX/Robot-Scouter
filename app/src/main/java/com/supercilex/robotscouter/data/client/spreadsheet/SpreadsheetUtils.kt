@@ -5,7 +5,6 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -27,6 +26,7 @@ import org.apache.poi.ss.usermodel.Drawing
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.util.WorkbookUtil
+import org.jetbrains.anko.longToast
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
 
 val averageifFunction: FreeRefFunction = object : FreeRefFunction {
@@ -146,5 +146,5 @@ fun abortCritical(e: Exception, notificationManager: ExportNotificationManager) 
 }
 
 fun showToast(message: String) = Handler(Looper.getMainLooper()).post {
-    Toast.makeText(RobotScouter.INSTANCE, message, Toast.LENGTH_LONG).show()
+    RobotScouter.INSTANCE.longToast(message)
 }

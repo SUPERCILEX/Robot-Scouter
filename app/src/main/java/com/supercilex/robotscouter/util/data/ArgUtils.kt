@@ -8,6 +8,7 @@ import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import org.jetbrains.anko.bundleOf
 import java.util.ArrayList
 
 const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
@@ -58,12 +59,11 @@ inline fun <T> PersistableBundle.getBundleAsMap(key: String,
 inline fun <T> bundleToMap(bundle: Bundle, parse: Bundle.(String) -> T) =
         bundle.keySet().associate { it to bundle.parse(it) }
 
-fun Team.toBundle() = Bundle().apply { putParcelable(TEAM_KEY, this@toBundle) }
+fun Team.toBundle() = bundleOf(TEAM_KEY to this@toBundle)
 
 fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(teams))
 
-fun List<Team>.toBundle() =
-        Bundle().apply { putParcelableArrayList(TEAMS_KEY, ArrayList(this@toBundle)) }
+fun List<Team>.toBundle() = bundleOf(TEAMS_KEY to ArrayList(this@toBundle))
 
 fun Bundle.getTeam(): Team = getParcelable(TEAM_KEY)
 
@@ -71,7 +71,7 @@ fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra(TEAMS_KE
 
 fun Bundle.getTeamList(): List<Team> = getParcelableArrayList(TEAMS_KEY)
 
-fun getTabIdBundle(key: String?) = Bundle().apply { putString(TAB_KEY, key) }
+fun getTabIdBundle(key: String?) = bundleOf(TAB_KEY to key)
 
 fun getTabId(bundle: Bundle?): String? = bundle?.getString(TAB_KEY)
 

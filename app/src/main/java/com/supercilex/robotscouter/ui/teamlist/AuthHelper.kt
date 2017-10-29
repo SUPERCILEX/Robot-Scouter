@@ -4,7 +4,6 @@ import android.app.Activity
 import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.content.Intent
-import android.support.design.widget.Snackbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,8 +19,9 @@ import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import kotterknife.bindView
+import org.jetbrains.anko.design.longSnackbar
 
-class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
+class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
         DefaultLifecycleObserver, FirebaseAuth.AuthStateListener {
     private val rootView: View by activity.bindView(R.id.root)
 
@@ -51,23 +51,21 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
 
     private fun signInAnonymously() = FirebaseAuth.getInstance().signInAnonymously()
             .addOnFailureListener(activity) {
-                Snackbar.make(rootView,
-                              R.string.team_anonymous_sign_in_failed_message,
-                              Snackbar.LENGTH_LONG)
-                        .setAction(R.string.team_sign_in_title, this)
-                        .show()
+                longSnackbar(
+                        rootView,
+                        R.string.team_anonymous_sign_in_failed_message,
+                        R.string.team_sign_in_title,
+                        this)
             }
 
-    fun showSignInResolution() =
-            Snackbar.make(rootView, R.string.sign_in_required, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.team_sign_in_title, this)
-                    .show()
+    fun showSignInResolution() {
+        longSnackbar(rootView, R.string.sign_in_required, R.string.team_sign_in_title, this)
+    }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
-                Snackbar.make(rootView, R.string.team_signed_in_message, Snackbar.LENGTH_LONG)
-                        .show()
+                longSnackbar(rootView, R.string.team_signed_in_message)
                 hasShownSignInTutorial = true
 
                 logLoginEvent()
@@ -75,20 +73,24 @@ class AuthHelper(private val activity: TeamListActivity) : View.OnClickListener,
                 val response: IdpResponse = IdpResponse.fromResultIntent(data) ?: return
 
                 if (response.errorCode == ErrorCodes.NO_NETWORK) {
-                    Snackbar.make(rootView, R.string.no_connection, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.team_sign_in_try_again_title, this)
-                            .show()
+                    longSnackbar(
+                            rootView,
+                            R.string.no_connection,
+                            R.string.team_sign_in_try_again_title,
+                            this)
                     return
                 }
 
-                Snackbar.make(rootView, R.string.team_sign_in_failed_message, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.team_sign_in_try_again_title, this)
-                        .show()
+                longSnackbar(
+                        rootView,
+                        R.string.team_sign_in_failed_message,
+                        R.string.team_sign_in_try_again_title,
+                        this)
             }
         }
     }
 
-    override fun onClick(v: View) = signIn()
+    override fun invoke(v: View) = signIn()
 
     private fun updateMenuState() {
         signInMenuItem?.isVisible = !isFullUser

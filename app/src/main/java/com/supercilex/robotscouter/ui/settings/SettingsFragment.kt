@@ -20,7 +20,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
-import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
@@ -39,6 +38,7 @@ import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
+import org.jetbrains.anko.support.v4.toast
 
 class SettingsFragment : PreferenceFragmentCompat(),
         TemplateSelectionListener,
@@ -133,10 +133,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 (activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
                         ClipData.newPlainText(
                                 getString(R.string.settings_debug_info_title), debugInfo)
-                Toast.makeText(context,
-                               R.string.settings_debug_info_copied_message,
-                               Toast.LENGTH_SHORT)
-                        .show()
+                toast(R.string.settings_debug_info_copied_message)
             }
             KEY_LICENSES -> fragmentManager!!.beginTransaction()
                     .setCustomAnimations(
@@ -161,19 +158,18 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(context, R.string.team_signed_in_message, Toast.LENGTH_SHORT).show()
+                toast(R.string.team_signed_in_message)
                 logLoginEvent()
                 activity!!.finish()
             } else {
                 val response: IdpResponse = IdpResponse.fromResultIntent(data) ?: return
 
                 if (response.errorCode == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(context, R.string.no_connection, Toast.LENGTH_SHORT).show()
+                    toast(R.string.no_connection)
                     return
                 }
 
-                Toast.makeText(context, R.string.team_sign_in_failed_message, Toast.LENGTH_SHORT)
-                        .show()
+                toast(R.string.team_sign_in_failed_message)
             }
         }
     }

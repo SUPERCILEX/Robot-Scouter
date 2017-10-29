@@ -10,6 +10,7 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.intentFor
 
 class TemplateListActivity : AppCompatActivity() {
     private val templateListFragment: TemplateListFragment by unsafeLazy {
@@ -46,8 +47,8 @@ class TemplateListActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(templateId: String? = null) =
-                Intent(RobotScouter.INSTANCE, TemplateListActivity::class.java)
-                        .apply { putExtras(getTabIdBundle(templateId)) }
+        fun createIntent(templateId: String? = null): Intent =
+                RobotScouter.INSTANCE.intentFor<TemplateListActivity>()
+                        .putExtras(getTabIdBundle(templateId))
     }
 }

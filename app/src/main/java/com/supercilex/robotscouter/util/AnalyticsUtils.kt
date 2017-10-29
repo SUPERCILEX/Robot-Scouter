@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getTeamNames
 import com.supercilex.robotscouter.util.data.model.userRef
+import org.jetbrains.anko.bundleOf
 import java.lang.Exception
 import java.util.Date
 
@@ -57,63 +58,55 @@ fun initAnalytics() {
     }
 }
 
-fun logSelectTeamEvent(team: Team) = analytics.logEvent(Event.SELECT_CONTENT, Bundle().apply {
-    putString(ITEM_ID, "select_team")
-    putString(CONTENT_TYPE, TEAM_CATEGORY)
-    putLong(ITEM_NAME, team.number)
-    putString(TEAM_ID, team.id)
-})
+fun logSelectTeamEvent(team: Team) = analytics.logEvent(Event.SELECT_CONTENT, bundleOf(
+        ITEM_ID to "select_team",
+        CONTENT_TYPE to TEAM_CATEGORY,
+        ITEM_NAME to team.number,
+        TEAM_ID to team.id))
 
-fun logEditTeamDetailsEvent(team: Team) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
-    putString(ITEM_ID, "edit_team_details")
-    putLong(ITEM_NAME, team.number)
-    putString(ITEM_CATEGORY, TEAM_CATEGORY)
-    putString(TEAM_ID, team.id)
-})
+fun logEditTeamDetailsEvent(team: Team) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
+        ITEM_ID to "edit_team_details",
+        ITEM_NAME to team.number,
+        ITEM_CATEGORY to TEAM_CATEGORY,
+        TEAM_ID to team.id))
 
-fun logShareTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.SHARE, Bundle().apply {
-    putString(ITEM_ID, "share_team")
-    putString(ITEM_NAME, getTeamNames(teams))
-    putString(ITEM_CATEGORY, TEAMS_CATEGORY)
-    putString(TEAM_ID, teams.map { it.id }.toString())
-})
+fun logShareTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.SHARE, bundleOf(
+        ITEM_ID to "share_team",
+        ITEM_NAME to getTeamNames(teams),
+        ITEM_CATEGORY to TEAMS_CATEGORY,
+        TEAM_ID to teams.map { it.id }.toString()))
 
-fun logExportTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
-    putString(ITEM_ID, "export_teams")
-    putString(ITEM_NAME, getTeamNames(teams))
-    putString(ITEM_CATEGORY, TEAMS_CATEGORY)
-    putString(TEAM_ID, teams.map { it.id }.toString())
-})
+fun logExportTeamsEvent(teams: List<Team>) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
+        ITEM_ID to "export_teams",
+        ITEM_NAME to getTeamNames(teams),
+        ITEM_CATEGORY to TEAMS_CATEGORY,
+        TEAM_ID to teams.map { it.id }.toString()))
 
-fun logAddScoutEvent(team: Team, scoutId: String, templateId: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
-    putString(ITEM_ID, "add_scout")
-    putLong(ITEM_NAME, team.number)
-    putString(ITEM_CATEGORY, SCOUT_CATEGORY)
-    putString(TEAM_ID, team.id)
-    putString(SCOUT_ID, scoutId)
-    putString(TEMPLATE_ID, templateId)
-})
+fun logAddScoutEvent(team: Team, scoutId: String, templateId: String) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
+        ITEM_ID to "add_scout",
+        ITEM_NAME to team.number,
+        ITEM_CATEGORY to SCOUT_CATEGORY,
+        TEAM_ID to team.id,
+        SCOUT_ID to scoutId,
+        TEMPLATE_ID to templateId))
 
-fun logAddTemplateEvent(templateId: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
-    putString(ITEM_ID, "add_template")
-    putString(ITEM_NAME, "Template")
-    putString(ITEM_CATEGORY, TEMPLATE_CATEGORY)
-    putString(TEMPLATE_ID, templateId)
-})
+fun logAddTemplateEvent(templateId: String) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
+        ITEM_ID to "add_template",
+        ITEM_NAME to "Template",
+        ITEM_CATEGORY to TEMPLATE_CATEGORY,
+        TEMPLATE_ID to templateId))
 
-fun logViewTemplateEvent(templateId: String) = analytics.logEvent(Event.VIEW_ITEM, Bundle().apply {
-    putString(ITEM_ID, "view_template")
-    putString(ITEM_NAME, "Template")
-    putString(ITEM_CATEGORY, TEMPLATE_CATEGORY)
-    putString(TEMPLATE_ID, templateId)
-})
+fun logViewTemplateEvent(templateId: String) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
+        ITEM_ID to "view_template",
+        ITEM_NAME to "Template",
+        ITEM_CATEGORY to TEMPLATE_CATEGORY,
+        TEMPLATE_ID to templateId))
 
-fun logShareTemplateEvent(templateId: String) = analytics.logEvent(Event.SHARE, Bundle().apply {
-    putString(ITEM_ID, "share_template")
-    putString(ITEM_NAME, "Template")
-    putString(ITEM_CATEGORY, TEMPLATE_CATEGORY)
-    putString(TEAM_ID, templateId)
-})
+fun logShareTemplateEvent(templateId: String) = analytics.logEvent(Event.SHARE, bundleOf(
+        ITEM_ID to "share_template",
+        ITEM_NAME to "Template",
+        ITEM_CATEGORY to TEMPLATE_CATEGORY,
+        TEAM_ID to templateId))
 
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 

@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui
 import android.content.Intent
 import android.net.Uri
 import android.support.annotation.Size
-import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentActivity
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
@@ -20,6 +19,7 @@ import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTeamsEvent
+import org.jetbrains.anko.design.longSnackbar
 import java.util.Date
 
 class TeamSharer private constructor(private val activity: FragmentActivity,
@@ -49,10 +49,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
         }.logFailures().addOnFailureListener {
-            Snackbar.make(activity.findViewById(R.id.root),
-                          R.string.fui_general_error,
-                          Snackbar.LENGTH_LONG)
-                    .show()
+            longSnackbar(activity.findViewById(R.id.root), R.string.fui_general_error)
         }
     }
 
@@ -93,10 +90,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         fun shareTeams(activity: FragmentActivity,
                        @Size(min = 1) teams: List<Team>): Boolean {
             if (isOffline()) {
-                Snackbar.make(activity.findViewById(R.id.root),
-                              R.string.no_connection,
-                              Snackbar.LENGTH_LONG)
-                        .show()
+                longSnackbar(activity.findViewById(R.id.root), R.string.no_connection)
                 return false
             }
             if (teams.isEmpty()) return false

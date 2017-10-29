@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.teamlist
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.View
@@ -11,7 +10,6 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponse
 import com.android.billingclient.api.BillingClientStateListener
@@ -30,6 +28,8 @@ import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.support.v4.longToast
 import java.lang.ref.WeakReference
 
 class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
@@ -89,12 +89,12 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     private fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
         updateProgress(false)
     }.addOnSuccessListener {
-        Toast.makeText(context, R.string.donate_thanks_message, Toast.LENGTH_LONG).show()
+        longToast(R.string.donate_thanks_message)
         dismiss()
     }.addOnFailureListener {
         it as PurchaseException
         if (it.errorCode == BillingResponse.USER_CANCELED) {
-            Snackbar.make(content, R.string.donate_cancel_message, Snackbar.LENGTH_LONG).show()
+            longSnackbar(content, R.string.donate_cancel_message)
         } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED // User owns subscription
                 && !isInTestMode) {
             FirebaseCrash.report(it)
@@ -185,7 +185,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun showError() {
         updateProgress(false)
-        Snackbar.make(content, R.string.fui_general_error, Snackbar.LENGTH_LONG).show()
+        longSnackbar(content, R.string.fui_general_error)
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {

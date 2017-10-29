@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.isSingleton
+import org.jetbrains.anko.intentFor
 
 const val EXPORT_GROUP = "export_group"
 const val EXPORT_CHANNEL = "export"
@@ -92,8 +93,8 @@ class NotificationIntentForwarder : Activity() {
         private const val KEY_NOTIFICATION_ID = "notification_id"
 
         fun getCancelIntent(notificationId: Int, forwardedIntent: Intent): Intent =
-                Intent(RobotScouter.INSTANCE, NotificationIntentForwarder::class.java)
-                        .putExtra(KEY_INTENT, forwardedIntent)
-                        .putExtra(KEY_NOTIFICATION_ID, notificationId)
+                RobotScouter.INSTANCE.intentFor<NotificationIntentForwarder>(
+                        KEY_INTENT to forwardedIntent,
+                        KEY_NOTIFICATION_ID to notificationId)
     }
 }

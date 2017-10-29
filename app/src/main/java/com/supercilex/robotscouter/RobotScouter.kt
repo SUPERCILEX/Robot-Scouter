@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,7 +16,6 @@ import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.app.FragmentActivity
 import android.support.v4.provider.FontRequest
 import android.support.v7.app.AppCompatDelegate
-import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Tasks
@@ -38,6 +36,8 @@ import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.longToast
 
 class RobotScouter : MultiDexApplication() {
     override fun onCreate() {
@@ -98,10 +98,7 @@ class RobotScouter : MultiDexApplication() {
 
     class V1ToV2Migrator : ViewModelBase<FragmentActivity>() {
         override fun onCreate(args: FragmentActivity) {
-            Toast.makeText(INSTANCE,
-                           "Starting migration from v1 to v2. Please wait...",
-                           Toast.LENGTH_LONG)
-                    .show()
+            INSTANCE.longToast("Starting migration from v1 to v2. Please wait...")
 
             AuthUI.getInstance().signOut(args).addOnSuccessListener(
                     AsyncTaskExecutor, OnSuccessListener {
@@ -112,10 +109,7 @@ class RobotScouter : MultiDexApplication() {
                     hasPerformedV1toV2Migration = true
                     Handler(Looper.getMainLooper()).postDelayed(
                             {
-                                Toast.makeText(INSTANCE,
-                                               "Migration complete, restarting Robot Scouter...",
-                                               Toast.LENGTH_LONG)
-                                        .show()
+                                INSTANCE.longToast("Migration complete, restarting Robot Scouter...")
                                 // Ensure shared prefs were saved
                                 ArchTaskExecutor.getInstance().executeOnDiskIO { restartApp() }
                             }, 500)
@@ -167,7 +161,7 @@ class RobotScouter : MultiDexApplication() {
                     PendingIntent.getActivity(
                             INSTANCE,
                             123456,
-                            Intent(INSTANCE, TeamListActivity::class.java),
+                            INSTANCE.intentFor<TeamListActivity>(),
                             PendingIntent.FLAG_CANCEL_CURRENT))
             System.exit(0)
         }

@@ -16,6 +16,7 @@ import com.firebase.jobdispatcher.Job
 import com.firebase.jobdispatcher.Trigger
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import org.jetbrains.anko.bundleOf
 import java.util.Date
 
 private const val NUMBER = "number"
@@ -109,29 +110,28 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getInt(MEDIA_YEAR),
         Date(args.getLong(TIMESTAMP)))
 
-private fun Team.toRawBundle() = Bundle().apply {
-    putLong(NUMBER, number)
-    putString(ID, id)
-    putBundle(OWNERS, Bundle().apply {
-        owners.forEach { putLong(it.key, it.value) }
-    })
-    putBundle(ACTIVE_TOKENS, Bundle().apply {
-        activeTokens.forEach { putLong(it.key, it.value.time) }
-    })
-    putBundle(PENDING_APPROVALS, Bundle().apply {
-        pendingApprovals.forEach { putString(it.key, it.value) }
-    })
-    putString(TEMPLATE_ID, templateId)
-    putString(NAME, name)
-    putString(MEDIA, media)
-    putString(WEBSITE, website)
-    putBoolean(CUSTOM_NAME, hasCustomName)
-    putBoolean(CUSTOM_MEDIA, hasCustomMedia)
-    putBoolean(CUSTOM_WEBSITE, hasCustomWebsite)
-    putBoolean(SHOULD_UPLOAD_MEDIA, shouldUploadMediaToTba)
-    putInt(MEDIA_YEAR, mediaYear)
-    putLong(TIMESTAMP, timestamp.time)
-}
+private fun Team.toRawBundle() = bundleOf(
+        NUMBER to number,
+        ID to id,
+        OWNERS to Bundle().apply {
+            owners.forEach { putLong(it.key, it.value) }
+        },
+        ACTIVE_TOKENS to Bundle().apply {
+            activeTokens.forEach { putLong(it.key, it.value.time) }
+        },
+        PENDING_APPROVALS to Bundle().apply {
+            pendingApprovals.forEach { putString(it.key, it.value) }
+        },
+        TEMPLATE_ID to templateId,
+        NAME to name,
+        MEDIA to media,
+        WEBSITE to website,
+        CUSTOM_NAME to hasCustomName,
+        CUSTOM_MEDIA to hasCustomMedia,
+        CUSTOM_WEBSITE to hasCustomWebsite,
+        SHOULD_UPLOAD_MEDIA to shouldUploadMediaToTba,
+        MEDIA_YEAR to mediaYear,
+        TIMESTAMP to timestamp.time)
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun Team.toRawPersistableBundle() = PersistableBundle().apply {
