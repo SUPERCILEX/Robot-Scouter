@@ -62,7 +62,7 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
 
     override fun onChildChanged(
             type: ChangeEventType, snapshot: DocumentSnapshot, newIndex: Int, oldIndex: Int) {
-        callback.onChildChanged(type, newIndex) {
+        callback.onChildChanged(type, newIndex, oldIndex) {
             super.onChildChanged(type, snapshot, newIndex, oldIndex)
         }
     }

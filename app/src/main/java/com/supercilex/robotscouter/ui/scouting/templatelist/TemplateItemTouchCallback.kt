@@ -55,22 +55,27 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         scrollToPosition = position
     }
 
-    fun onChildChanged(type: ChangeEventType, index: Int, injectedSuperCall: () -> Unit) {
+    fun onChildChanged(
+            type: ChangeEventType, newIndex: Int, oldIndex: Int, injectedSuperCall: () -> Unit) {
         if (isMovingItem) {
-            if (isCatchingUpOnMove(type, index)) {
+            if (isCatchingUpOnMove(type, newIndex)) {
                 if (adapter.snapshots == movableItems) {
                     ViewCompat.postOnAnimationDelayed(
                             recyclerView,
                             { cleanupMove() },
                             maxAnimationDuration(animatorPointer ?: recyclerView.itemAnimator))
                 }
+
+                // Update item corners
+                adapter.notifyItemChanged(newIndex)
+                adapter.notifyItemChanged(oldIndex)
             } else {
                 cleanupMove()
                 longSnackbar(rootView, R.string.template_move_cancelled_rationale)
                 adapter.notifyDataSetChanged()
             }
             return
-        } else if (type == ChangeEventType.ADDED && index == scrollToPosition) {
+        } else if (type == ChangeEventType.ADDED && newIndex == scrollToPosition) {
             recyclerView.smoothScrollToPosition(scrollToPosition)
         }
         injectedSuperCall()
@@ -135,9 +140,6 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
                 }
             }
         }
-
-        // We can't directly update the background because the header metric needs to update its padding
-        adapter.notifyItemChanged(viewHolder.layoutPosition)
     }
 
     private fun cleanupMove() {
