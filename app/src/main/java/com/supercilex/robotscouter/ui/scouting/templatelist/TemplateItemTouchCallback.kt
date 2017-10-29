@@ -33,6 +33,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
     private var animatorPointer: RecyclerView.ItemAnimator? = null
     private var scrollToPosition = RecyclerView.NO_POSITION
     private var isMovingItem = false
+    private var isDeletingItem = false
 
     fun getItem(position: Int): T =
             if (isMovingItem) movableItems[position] else adapter.snapshots[position]
@@ -89,6 +90,12 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
                 adapter.notifyDataSetChanged()
             }
             return
+        } else if (isDeletingItem && type == ChangeEventType.REMOVED) {
+            isDeletingItem = false
+            injectedSuperCall()
+            recyclerView.post {
+                adapter.notifyItemChanged(oldIndex) // Update item corners
+            }
         } else if (type == ChangeEventType.ADDED && newIndex == scrollToPosition) {
             injectedSuperCall()
             recyclerView.post {
@@ -136,6 +143,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        isDeletingItem = true
         val deletedRef = adapter.snapshots.getSnapshot(viewHolder.adapterPosition).reference
 
         viewHolder.itemView.clearFocus() // Needed to prevent the item from being re-added
