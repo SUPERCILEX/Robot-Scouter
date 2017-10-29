@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
+import android.support.design.widget.AppBarLayout
+import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
@@ -22,6 +24,7 @@ import java.util.Collections
 class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
     private val recyclerView: RecyclerView by rootView.bindView(R.id.list)
+    private val appBar: AppBarLayout by (rootView.context as FragmentActivity).bindView(R.id.app_bar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 
@@ -46,7 +49,17 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
                 })
 
         if (position == scrollToPosition) {
-            (viewHolder as TemplateViewHolder).requestFocus()
+            // Scroll a second time to account for the ViewHolder not having been added when the
+            // first scroll occurred.
+            recyclerView.smoothScrollToPosition(position)
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState != RecyclerView.SCROLL_STATE_IDLE) return
+                    recyclerView.removeOnScrollListener(this)
+                    (recyclerView.findViewHolderForLayoutPosition(position) as? TemplateViewHolder)
+                            ?.requestFocus()
+                }
+            })
             scrollToPosition = RecyclerView.NO_POSITION
         }
     }
@@ -76,9 +89,14 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
             }
             return
         } else if (type == ChangeEventType.ADDED && newIndex == scrollToPosition) {
-            recyclerView.smoothScrollToPosition(scrollToPosition)
+            injectedSuperCall()
+            recyclerView.post {
+                appBar.setExpanded(false)
+                recyclerView.smoothScrollToPosition(newIndex)
+            }
+        } else {
+            injectedSuperCall()
         }
-        injectedSuperCall()
     }
 
     private fun isCatchingUpOnMove(type: ChangeEventType, index: Int): Boolean =
