@@ -34,6 +34,8 @@ import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.findOptional
 import kotlin.math.roundToInt
 
 open class AppBarViewHolderBase(private val fragment: Fragment,
@@ -44,10 +46,10 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
         TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     protected var team: Team = listener.value!!
 
-    val toolbar: Toolbar = rootView.findViewById(R.id.toolbar)
-    protected val header: CollapsingToolbarLayout = rootView.findViewById(R.id.header)
-    private val backdrop: ImageView = rootView.findViewById(R.id.backdrop)
-    private val mediaLoadProgress: ContentLoadingProgressBar = rootView.findViewById(R.id.progress)
+    val toolbar: Toolbar = rootView.find(R.id.toolbar)
+    protected val header: CollapsingToolbarLayout = rootView.find(R.id.header)
+    private val backdrop: ImageView = rootView.find(R.id.backdrop)
+    private val mediaLoadProgress: ContentLoadingProgressBar = rootView.find(R.id.progress)
 
     private val mediaCaptureListener = OnSuccessListener<Team> {
         team.copyMediaInfo(it)
@@ -137,7 +139,7 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
                 fragment.getString(R.string.scout_visit_team_website_title, team.number)
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
         toolbar.post {
-            fragment.view?.findViewById<View>(R.id.action_new_scout)?.setOnLongClickListener(this)
+            fragment.findOptional<View>(R.id.action_new_scout)?.setOnLongClickListener(this)
         }
 
         onMenuReadyTask.trySetResult(null)

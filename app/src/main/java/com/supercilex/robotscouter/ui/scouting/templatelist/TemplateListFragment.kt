@@ -36,6 +36,8 @@ import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.find
 
 class TemplateListFragment : FragmentBase(),
         View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder,
@@ -45,8 +47,8 @@ class TemplateListFragment : FragmentBase(),
     private val toolbar: Toolbar by bindView(R.id.toolbar)
     private val fam: FloatingActionMenu by bindView(R.id.fab_menu)
     private val pagerAdapter by unsafeLazy {
-        val tabLayout: TabLayout = view!!.findViewById(R.id.tabs)
-        val viewPager: ViewPager = view!!.findViewById(R.id.viewpager)
+        val tabLayout: TabLayout = find(R.id.tabs)
+        val viewPager: ViewPager = find(R.id.viewpager)
         val adapter = object : TemplatePagerAdapter(this, tabLayout) {
             override fun onDataChanged() {
                 super.onDataChanged()
@@ -89,7 +91,7 @@ class TemplateListFragment : FragmentBase(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fun initFab(@IdRes id: Int, @DrawableRes icon: Int) =
-                view.findViewById<FloatingActionButton>(id).let {
+                view.find<FloatingActionButton>(id).let {
                     it.setOnClickListener(this)
                     it.setImageDrawable(AppCompatResources.getDrawable(it.context, icon))
                 }

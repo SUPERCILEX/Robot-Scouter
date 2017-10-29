@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.ui.CardListHelper
+import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
 class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
@@ -41,9 +42,9 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
             viewSizeProvider,
             5)
 
-    private val recyclerView = fragment.view!!.findViewById<RecyclerView>(R.id.list)
+    private val recyclerView = fragment.find<RecyclerView>(R.id.list)
     private val cardListHelper = CardListHelper(this, recyclerView)
-    private val noTeamsHint: View = fragment.view!!.findViewById(R.id.no_content_hint)
+    private val noTeamsHint: View = fragment.find(R.id.no_content_hint)
 
     private var selectedTeamId: String? = null
 

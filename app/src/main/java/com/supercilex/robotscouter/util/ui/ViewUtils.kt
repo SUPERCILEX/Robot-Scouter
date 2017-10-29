@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
 import org.jetbrains.anko.configuration
+import org.jetbrains.anko.find
 import org.jetbrains.anko.landscape
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.hypot
@@ -65,7 +66,7 @@ fun initUi() {
         }
 
         override fun onActivityResumed(activity: Activity) {
-            activity.findViewById<View>(android.R.id.content).post {
+            activity.find<View>(android.R.id.content).post {
                 (activity as? AppCompatActivity ?: return@post).delegate.setLocalNightMode(nightMode)
             }
         }

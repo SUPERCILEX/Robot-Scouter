@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import java.util.Date
@@ -37,7 +38,7 @@ class LinkReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_receiver)
-        findViewById<ContentLoadingProgressBar>(R.id.progress).show()
+        find<ContentLoadingProgressBar>(R.id.progress).show()
 
         onSignedIn().continueWithTask { FirebaseDynamicLinks.getInstance().getDynamicLink(intent) }
                 .continueWith(AsyncTaskExecutor, Continuation<PendingDynamicLinkData, Unit> {

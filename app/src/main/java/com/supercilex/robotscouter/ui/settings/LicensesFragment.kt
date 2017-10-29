@@ -13,6 +13,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.LicenseEntry
 import net.yslibrary.licenseadapter.Licenses
+import org.jetbrains.anko.find
 import java.util.ArrayList
 
 class LicensesFragment : Fragment(), OnBackPressedListener {
@@ -40,7 +41,7 @@ class LicensesFragment : Fragment(), OnBackPressedListener {
             add(Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter"))
         }
 
-        val list: RecyclerView = view.findViewById(R.id.list)
+        val list: RecyclerView = view.find(R.id.list)
         list.layoutManager = LinearLayoutManager(context)
         list.adapter = LicenseAdapter(licenses)
 

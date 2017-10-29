@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.find
 
 class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListener<Nothing?> {
     private val holder: TeamListHolder by unsafeLazy {
@@ -45,7 +46,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
 
     private val noContentHint: View by bindView(R.id.no_content_hint)
     private val fab: FloatingActionButton by lazy {
-        activity!!.findViewById<FloatingActionButton>(R.id.fab)
+        activity!!.find<FloatingActionButton>(R.id.fab)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

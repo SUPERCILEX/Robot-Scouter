@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.support.v4.find
 
 class ScoutFragment : MetricListFragment() {
     private val team by unsafeLazy { arguments!!.getTeam() }
@@ -28,7 +29,7 @@ class ScoutFragment : MetricListFragment() {
     }
 
     val toolbar: Toolbar by unsafeLazy {
-        parentFragment!!.view!!.findViewById<Toolbar>(R.id.toolbar)
+        parentFragment!!.find<Toolbar>(R.id.toolbar)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

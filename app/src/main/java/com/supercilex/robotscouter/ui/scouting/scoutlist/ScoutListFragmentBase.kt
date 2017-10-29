@@ -46,6 +46,7 @@ import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.longToast
 
 abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
@@ -191,8 +192,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onTemplateSelected(id: String) = addScout(id)
 
     private fun initScoutList() {
-        val tabLayout = view!!.findViewById<TabLayout>(R.id.tabs)
-        val viewPager = view!!.findViewById<ViewPager>(R.id.viewpager)
+        val tabLayout = find<TabLayout>(R.id.tabs)
+        val viewPager = find<ViewPager>(R.id.viewpager)
         pagerAdapter = ScoutPagerAdapter(this, tabLayout, team)
         pagerAdapter!!.currentTabId = scoutId
 

@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.findOptional
 
 class TabletScoutListFragment : ScoutListFragmentBase() {
     override val viewHolder: AppBarViewHolderBase by unsafeLazy {
@@ -31,7 +32,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
         }
     }
     private var noContentHint: View? = null; get() {
-        if (field == null) field = activity!!.findViewById(R.id.no_team_selected_hint)
+        if (field == null) field = activity!!.findOptional(R.id.no_team_selected_hint)
         return field
     }
 

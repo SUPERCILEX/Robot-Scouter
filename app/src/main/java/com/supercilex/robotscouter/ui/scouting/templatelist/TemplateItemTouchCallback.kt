@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.find
 import java.util.Collections
 
 class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
@@ -37,7 +38,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
             if (isMovingItem) movableItems[position] else adapter.snapshots[position]
 
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        viewHolder.itemView.findViewById<View>(R.id.reorder)
+        viewHolder.itemView.find<View>(R.id.reorder)
                 .setOnTouchListener(View.OnTouchListener { v, event ->
                     if (event.action == MotionEvent.ACTION_DOWN) {
                         viewHolder.itemView.clearFocus() // Saves data

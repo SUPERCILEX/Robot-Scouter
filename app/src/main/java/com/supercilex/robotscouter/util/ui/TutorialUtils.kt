@@ -12,13 +12,15 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.teamlist.TutorialHelper
 import com.supercilex.robotscouter.util.data.hasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
+import org.jetbrains.anko.find
+import org.jetbrains.anko.findOptional
 import uk.co.samuelwall.materialtaptargetprompt.ActivityResourceFinder
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
 fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
     helper.hasShownAddTeamTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt = MaterialTapTargetPrompt.Builder(object : ActivityResourceFinder(owner) {
-            override fun getPromptParentView(): ViewGroup = owner.findViewById(R.id.root)
+            override fun getPromptParentView(): ViewGroup = owner.find(R.id.root)
         }, R.style.RobotScouter_Tutorial)
                 .setTarget(R.id.fab)
                 .setPrimaryText(R.string.tutorial_create_first_team_title)
@@ -30,10 +32,10 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
 
         override fun onChanged(hasShownTutorial: Boolean?) {
             if (hasShownTutorial == false) {
-                if (owner.findViewById<View?>(R.id.material_target_prompt_view)?.visibility == View.VISIBLE) return
+                if (owner.findOptional<View>(R.id.material_target_prompt_view)?.visibility == View.VISIBLE) return
 
                 prompt.show()
-                val promptView: View = owner.findViewById(R.id.material_target_prompt_view)
+                val promptView: View = owner.find(R.id.material_target_prompt_view)
                 (promptView.layoutParams as CoordinatorLayout.LayoutParams).behavior =
                         PromptTouchEventForwarder(promptView)
             } else {

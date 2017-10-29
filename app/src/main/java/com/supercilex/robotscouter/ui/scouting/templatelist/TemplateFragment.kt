@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.support.v4.find
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
     public override val metricsRef: CollectionReference by unsafeLazy {
@@ -41,7 +42,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         TemplateItemTouchCallback<Metric<*>>(recyclerView)
     }
     private val fam: FloatingActionMenu by unsafeLazy {
-        parentFragment!!.view!!.findViewById<FloatingActionMenu>(R.id.fab_menu)
+        parentFragment!!.find<FloatingActionMenu>(R.id.fab_menu)
     }
 
     private var hasAddedItem: Boolean = false

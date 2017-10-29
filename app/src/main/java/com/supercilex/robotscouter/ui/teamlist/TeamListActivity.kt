@@ -40,6 +40,7 @@ import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
 class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
@@ -72,7 +73,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
         ActionBarDrawerToggle(
                 this,
                 drawerLayout,
-                findViewById(R.id.toolbar),
+                find(R.id.toolbar),
                 R.string.team_navigation_drawer_open_desc,
                 R.string.team_navigation_drawer_close_desc)
     }
@@ -82,14 +83,14 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_list)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setSupportActionBar(find(R.id.toolbar))
 
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        findViewById<NavigationView>(R.id.drawer).setNavigationItemSelectedListener(this)
+        find<NavigationView>(R.id.drawer).setNavigationItemSelectedListener(this)
 
-        findViewById<View>(R.id.fab).setOnClickListener(this)
+        find<View>(R.id.fab).setOnClickListener(this)
         showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
         authHelper.init().addOnSuccessListener(this) {
             handleIntent(intent)

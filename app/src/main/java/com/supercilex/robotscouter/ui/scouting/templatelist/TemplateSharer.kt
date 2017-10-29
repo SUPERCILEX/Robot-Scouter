@@ -17,6 +17,7 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTemplateEvent
 import com.supercilex.robotscouter.util.templates
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.find
 import java.util.Date
 
 class TemplateSharer private constructor(private val activity: FragmentActivity) :
@@ -34,7 +35,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
         }.logFailures().addOnFailureListener {
-            longSnackbar(activity.findViewById(R.id.root), R.string.fui_general_error)
+            longSnackbar(activity.find(R.id.root), R.string.fui_general_error)
         }
     }
 
@@ -58,7 +59,7 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
                           templateId: String,
                           templateName: String): Boolean {
             if (isOffline()) {
-                longSnackbar(activity.findViewById(R.id.root), R.string.no_connection)
+                longSnackbar(activity.find(R.id.root), R.string.no_connection)
                 return false
             }
 
