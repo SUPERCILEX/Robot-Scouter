@@ -94,7 +94,7 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
                                                  isFirstResource: Boolean): Boolean {
                         mediaLoadProgress.hide(true)
 
-                        if (resource != null && !resource.isRecycled) {
+                        if (resource?.isRecycled == false) {
                             Palette.from(resource).generate { palette ->
                                 palette.vibrantSwatch?.let {
                                     updateScrim(it.rgb, resource)

@@ -51,7 +51,7 @@ class AppIndexingService : JobIntentService() {
 
 class AppIndexingUpdateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
-        if (intent != null && intent.action == FirebaseAppIndex.ACTION_UPDATE_INDEX) {
+        if (intent?.action == FirebaseAppIndex.ACTION_UPDATE_INDEX) {
             AppIndexingService.refreshIndexables(context)
         }
     }

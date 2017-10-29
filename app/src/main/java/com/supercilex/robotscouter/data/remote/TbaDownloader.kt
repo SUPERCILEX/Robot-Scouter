@@ -27,11 +27,11 @@ class TbaDownloader private constructor(team: Team) :
 
         val result: JsonObject = response.body()!!
         val teamNickname: JsonElement? = result.get(TEAM_NICKNAME)
-        if (teamNickname != null && !teamNickname.isJsonNull) {
+        if (teamNickname?.isJsonNull == false) {
             team.name = teamNickname.asString
         }
         val teamWebsite: JsonElement? = result.get(TEAM_WEBSITE)
-        if (teamWebsite != null && !teamWebsite.isJsonNull) {
+        if (teamWebsite?.isJsonNull == false) {
             team.website = teamWebsite.asString
         }
     }
