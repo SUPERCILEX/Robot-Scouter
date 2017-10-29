@@ -86,7 +86,7 @@ private inline fun <T> List<T>.generateUrl(
     }
     builder.appendQueryParameter(KEYS, keys.joinToString(","))
 
-    return builder.build().toString()
+    return Uri.decode(builder.build().toString())
 }
 
 private fun Uri.Builder.encodeToken(token: String?): Uri.Builder =

@@ -4,11 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.crash.FirebaseCrash
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
@@ -25,25 +23,23 @@ class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         try {
             Tasks.await(Tasks.whenAll(onSignedIn(), FirebaseAppIndex.getInstance().removeAll()))
-            Tasks.await(Tasks.whenAll(
-                    TeamsLiveData.observeOnDataChanged().observeOnce {
-                        async {
-                            FirebaseAppIndex.getInstance().update(
-                                    *it.map { it.indexable }.toTypedArray())
-                        }
-                    },
-                    getTemplatesQuery().get().addOnSuccessListener(
-                            AsyncTaskExecutor, OnSuccessListener {
-                        FirebaseAppIndex.getInstance().update(*it.mapIndexed { index, snapshot ->
-                            getTemplateIndexable(
-                                    snapshot.id,
-                                    scoutParser.parseSnapshot(snapshot).getTemplateName(index))
-                        }.toTypedArray())
-                    })))
+            Tasks.await(Tasks.whenAll(getUpdateTeamsTask(), getUpdateTemplatesTask()))
         } catch (e: ExecutionException) {
             FirebaseCrash.report(e)
         }
     }
+
+    private fun getUpdateTeamsTask() = FirebaseAppIndex.getInstance().update(
+            *Tasks.await(TeamsLiveData.observeOnDataChanged().observeOnce {
+                async { it.map { it.indexable }.toTypedArray() }
+            }))
+
+    private fun getUpdateTemplatesTask() = FirebaseAppIndex.getInstance().update(
+            *Tasks.await(getTemplatesQuery().get()).mapIndexed { index, snapshot ->
+                getTemplateIndexable(
+                        snapshot.id,
+                        scoutParser.parseSnapshot(snapshot).getTemplateName(index))
+            }.toTypedArray())
 
     companion object {
         private const val JOB_ID = 387
