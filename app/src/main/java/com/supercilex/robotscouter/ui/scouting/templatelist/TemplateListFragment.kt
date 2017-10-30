@@ -62,7 +62,6 @@ class TemplateListFragment : FragmentBase(),
             override fun onTabSelected(tab: TabLayout.Tab) {
                 super.onTabSelected(tab)
                 fam.close(true)
-                fam.showMenuButton(true)
 
                 currentTabId?.let {
                     logViewTemplateEvent(it)
