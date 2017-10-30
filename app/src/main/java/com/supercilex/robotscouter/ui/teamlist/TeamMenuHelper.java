@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.supercilex.robotscouter.util.AuthUtilsKt.isFullUser;
-import static com.supercilex.robotscouter.util.ui.FirebaseAdapterUtilsKt.notifyItemsChangedNoAnimation;
+import static com.supercilex.robotscouter.util.ui.RecyclerViewUtilsKt.notifyItemsChangedNoAnimation;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateColorChange;
 
 public class TeamMenuHelper implements View.OnClickListener {

@@ -17,6 +17,7 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateV
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
+import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
@@ -55,17 +56,22 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
                 })
 
         if (position == scrollToPosition) {
-            // Scroll a second time to account for the ViewHolder not having been added when the
-            // first scroll occurred.
-            recyclerView.smoothScrollToPosition(position)
-            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    if (newState != RecyclerView.SCROLL_STATE_IDLE) return
-                    recyclerView.removeOnScrollListener(this)
-                    (recyclerView.findViewHolderForLayoutPosition(position) as? TemplateViewHolder)
-                            ?.requestFocus()
-                }
-            })
+            if (recyclerView.areNoItemsOffscreen()) {
+                (viewHolder as TemplateViewHolder).requestFocus()
+            } else {
+                // Scroll a second time to account for the ViewHolder not having been added when the
+                // first scroll occurred.
+                recyclerView.smoothScrollToPosition(position)
+                recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        if (newState != RecyclerView.SCROLL_STATE_IDLE) return
+                        recyclerView.removeOnScrollListener(this)
+                        (recyclerView.findViewHolderForLayoutPosition(position) as? TemplateViewHolder)
+                                ?.requestFocus()
+                    }
+                })
+            }
+
             scrollToPosition = RecyclerView.NO_POSITION
         }
     }
@@ -131,7 +137,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         ViewCompat.postOnAnimationDelayed(
                 recyclerView,
                 { cleanup(); this.cleanup() },
-                maxAnimationDuration(animatorPointer ?: recyclerView.itemAnimator))
+                (animatorPointer ?: recyclerView.itemAnimator).maxAnimationDuration())
     }
 
     private fun cleanupFailure() {

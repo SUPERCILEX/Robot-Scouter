@@ -9,7 +9,7 @@ open class CardListHelper(private val adapter: FirestoreRecyclerAdapter<*, *>,
                           private val recyclerView: RecyclerView) {
     fun onChildChanged(type: ChangeEventType, index: Int) {
         if (type == ChangeEventType.REMOVED) {
-            notifyItemsChangedNoAnimation(recyclerView, index + if (index != 0) -1 else 0)
+            recyclerView.notifyItemsChangedNoAnimation(index + if (index != 0) -1 else 0)
         }
     }
 

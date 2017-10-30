@@ -22,6 +22,7 @@ import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
@@ -59,9 +60,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (hasAddedItem &&
-                        (manager.findFirstCompletelyVisibleItemPosition() != 0
-                                || manager.findLastCompletelyVisibleItemPosition() != adapter.itemCount - 1)) {
+                if (hasAddedItem && recyclerView.areNoItemsOffscreen()) {
                     fam.hideMenuButton(true)
                 }
 
