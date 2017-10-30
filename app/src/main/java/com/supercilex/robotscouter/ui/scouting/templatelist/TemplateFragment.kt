@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
@@ -58,12 +59,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    // User scrolled down -> hide the FAB
-                    fam.hideMenuButton(true)
-                } else if (dy < 0) {
-                    fam.showMenuButton(true)
-                } else if (hasAddedItem &&
+                if (hasAddedItem &&
                         (manager.findFirstCompletelyVisibleItemPosition() != 0
                                 || manager.findLastCompletelyVisibleItemPosition() != adapter.itemCount - 1)) {
                     fam.hideMenuButton(true)
@@ -72,7 +68,23 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 hasAddedItem = false
             }
         })
-        // This lets us close the fam when the recyclerview it touched
+        parentFragment!!.find<AppBarLayout>(R.id.app_bar)
+                .addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
+                    var isShowing = false
+
+                    override fun onOffsetChanged(appBar: AppBarLayout, offset: Int) {
+                        if (offset >= -10) { // Account for small variations
+                            if (!isShowing) fam.showMenuButton(true)
+                            isShowing = true
+                        } else {
+                            isShowing = false
+                            // User scrolled down -> hide the FAB
+                            fam.hideMenuButton(true)
+                        }
+                    }
+                })
+
+        // This lets us close the fam when the RecyclerView it touched
         recyclerView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                 fam.close(true)
