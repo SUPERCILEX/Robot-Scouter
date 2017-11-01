@@ -1,12 +1,9 @@
 package com.supercilex.robotscouter.data.client.spreadsheet
 
+import android.arch.core.executor.ArchTaskExecutor
 import android.graphics.Paint
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import android.os.Handler
-import android.os.Looper
-import com.google.firebase.crash.FirebaseCrash
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
@@ -139,12 +136,6 @@ fun CTTitle.setValue(text: String) {
 fun Drawing<*>.createChartAnchor(startRow: Int, startColumn: Int, endColumn: Int): ClientAnchor =
         createAnchor(0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2)
 
-fun abortCritical(e: Exception, notificationManager: ExportNotificationManager) {
-    FirebaseCrash.report(e)
-    showToast("${RobotScouter.INSTANCE.getString(R.string.fui_general_error)}\n\n${e.message}")
-    notificationManager.abort()
-}
-
-fun showToast(message: String) = Handler(Looper.getMainLooper()).post {
+fun showToast(message: String) = ArchTaskExecutor.getInstance().executeOnMainThread {
     RobotScouter.INSTANCE.longToast(message)
 }

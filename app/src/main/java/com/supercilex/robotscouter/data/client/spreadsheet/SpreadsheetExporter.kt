@@ -10,7 +10,6 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.text.TextUtils
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.perf.metrics.AddTrace
 import com.supercilex.robotscouter.R
@@ -59,13 +58,13 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
     fun export() {
         val exportId = notificationManager.addExporter(this)
 
-        val spreadsheetUri = getFileUri() ?: return
+        val spreadsheetUri = getFileUri()
 
         val baseIntent = Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             baseIntent.putStringArrayListExtra(
                     Intent.EXTRA_CONTENT_ANNOTATIONS,
-                    ArrayList(listOf("document")))
+                    ArrayList<String>().apply { add("document") })
         }
 
         val viewIntent = Intent(baseIntent).setAction(Intent.ACTION_VIEW)
@@ -130,24 +129,21 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
     private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
             RobotScouter.INSTANCE.resources.getQuantityString(id, cache.teams.size, *args)
 
-    private fun getFileUri(): Uri? {
-        return FileProvider.getUriForFile(
-                RobotScouter.INSTANCE,
-                providerAuthority,
-                writeFile(rootFolder ?: return null) ?: return null)
+    private fun getFileUri(): Uri {
+        val root = rootFolder ?: throw IllegalStateException("Couldn't get write access")
+        return FileProvider.getUriForFile(RobotScouter.INSTANCE, providerAuthority, writeFile(root))
     }
 
-    private fun writeFile(rsFolder: File): File? {
+    private fun writeFile(rsFolder: File): File {
         var stream: FileOutputStream? = null
         var file = File(rsFolder, getFullyQualifiedFileName())
+
         try {
-            file = synchronized(notificationManager) {
-                findAvailableFile(file, rsFolder).hide().apply {
-                    if (!createNewFile()
-                            // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
-                            && (!delete() || !createNewFile())) {
-                        throw IOException("Failed to create file: $this")
-                    }
+            file = findAvailableFile(file, rsFolder).hide().apply {
+                if (!createNewFile()
+                        // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
+                        && (!delete() || !createNewFile())) {
+                    throw IOException("Failed to create file: $this")
                 }
             }
             stream = FileOutputStream(file)
@@ -161,38 +157,24 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
 
             return file.unhide()
         } catch (e: IOException) {
-            abortCritical(e, notificationManager)
             file.delete()
+            throw e
         } finally {
-            if (stream != null) {
-                try {
-                    stream.close()
-                } catch (e: IOException) {
-                    FirebaseCrash.report(e)
-                }
-            }
+            stream?.close()
         }
-        return null
     }
 
-    private fun findAvailableFile(wantedFile: File,
-                                  rsFolder: File,
-                                  currentIdenticalTemplateNames: Int? = null): File {
-        fun getPolyTemplateName(n: Int?) = if (n == null) templateName else "$templateName ($n)"
-
+    private fun findAvailableFile(wantedFile: File, rsFolder: File): File {
         var availableFile = wantedFile
 
         var i = 1
-        var nIdenticalTemplateNames = 1
         while (true) {
             availableFile = when {
-                availableFile.exists() -> File(rsFolder, getFullyQualifiedFileName(
-                        getPolyTemplateName(currentIdenticalTemplateNames), " ($i)"))
+                availableFile.exists() ->
+                    File(rsFolder, getFullyQualifiedFileName(templateName, " ($i)"))
                 availableFile.hide().exists() -> findAvailableFile(
-                        File(rsFolder, getFullyQualifiedFileName(
-                                getPolyTemplateName(nIdenticalTemplateNames))),
-                        rsFolder,
-                        nIdenticalTemplateNames++)
+                        File(rsFolder, getFullyQualifiedFileName(templateName)),
+                        rsFolder)
                 else -> return availableFile
             }
             i++

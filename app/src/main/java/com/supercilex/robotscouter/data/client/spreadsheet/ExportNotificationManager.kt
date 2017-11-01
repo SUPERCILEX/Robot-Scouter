@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
 import java.util.concurrent.ConcurrentHashMap
@@ -40,7 +41,9 @@ class ExportNotificationManager(private val service: ExportService) {
 
     private val masterNotificationHolder = MasterNotificationHolder()
     private val exporters = ConcurrentHashMap<SpreadsheetExporter, NotificationHolder>()
-    private var nTemplates: Int by Delegates.notNull()
+
+    private var nTemplates: Int by LateinitVal()
+    private var pendingTaskCount: Int by Delegates.notNull()
 
     init {
         service.startForeground(
@@ -52,20 +55,26 @@ class ExportNotificationManager(private val service: ExportService) {
 
     fun setNumOfTemplates(nTemplates: Int) {
         this.nTemplates = nTemplates
+        pendingTaskCount = nTemplates
         masterNotificationHolder.progress = EXTRA_MASTER_OPS
         masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nTemplates
         masterNotification.updateProgress(
                 masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
     }
 
+    @Synchronized
     fun addExporter(exporter: SpreadsheetExporter): Int {
+        if (exporters.size == pendingTaskCount) {
+            throw IllegalStateException("More exporters than templates")
+        }
+
         val id = exporter.hashCode()
         val teams = exporter.scouts.keys
         val maxProgress = teams.size +
                 if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
         val notification = exportNotification.updateProgress(maxProgress, 0)
-        exporters[exporter] = NotificationHolder(id, notification, maxProgress)
+        exporters.put(exporter, NotificationHolder(id, notification, maxProgress))
 
         manager.notify(id, notification.build())
         manager.notify(hashCode(), masterNotification
@@ -79,26 +88,30 @@ class ExportNotificationManager(private val service: ExportService) {
         return id
     }
 
+    @Synchronized
     fun updateProgress(exporter: SpreadsheetExporter, team: Team) =
             next(exporter, exportNotification.setContentText(team.toString()).build())
 
+    @Synchronized
     fun onStartBuildingAverageSheet(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification
                 .setContentText(RobotScouter.INSTANCE.getString(R.string.export_average_status))
                 .build())
     }
 
+    @Synchronized
     fun onStartCleanup(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification
                 .setContentText(RobotScouter.INSTANCE.getString(R.string.export_cleanup_status))
                 .build())
     }
 
+    @Synchronized
     fun removeExporter(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
         val (id) = exporters.remove(exporter)!!
         manager.notify(id, notification.setGroup(hashCode().toString()).build())
 
-        if (exporters.isEmpty()) {
+        if (--pendingTaskCount == 0) {
             manager.notify(hashCode(), masterNotification
                     .setSmallIcon(R.drawable.ic_logo)
                     .setSubText(RobotScouter.INSTANCE.resources.getQuantityString(
@@ -126,12 +139,8 @@ class ExportNotificationManager(private val service: ExportService) {
 
     private fun next(exporter: SpreadsheetExporter, notification: Notification) {
         val holder = exporters[exporter]!!
-        incrementProgress(holder)
-        manager.notify(holder.id, notification)
-    }
-
-    private fun incrementProgress(holder: NotificationHolder) {
         exportNotification.updateProgress(holder.maxProgress, ++holder.progress)
+        manager.notify(holder.id, notification)
     }
 
     private fun NotificationCompat.Builder.updateProgress(
@@ -145,8 +154,8 @@ class ExportNotificationManager(private val service: ExportService) {
         return this
     }
 
-    private data class MasterNotificationHolder(@get:Synchronized @set:Synchronized var progress: Int = 0) {
-        var maxProgress: Int by Delegates.notNull()
+    private data class MasterNotificationHolder(var progress: Int = 0) {
+        var maxProgress: Int by LateinitVal()
     }
 
     private data class NotificationHolder(
