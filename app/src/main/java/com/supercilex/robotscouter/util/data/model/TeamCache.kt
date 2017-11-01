@@ -9,5 +9,5 @@ open class TeamCache(teams: Collection<Team>) {
         Collections.sort(sortedTeams)
         Collections.unmodifiableList(sortedTeams)
     }
-    val teamNames: String by lazy { getTeamNames(this.teams) }
+    val teamNames: String by lazy { this.teams.getNames() }
 }
