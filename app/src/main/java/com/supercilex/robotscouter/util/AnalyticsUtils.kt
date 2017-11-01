@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.util
 
 import android.os.Bundle
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
@@ -56,6 +57,9 @@ fun initAnalytics() {
 
         // Log uid to help debug db crashes
         FirebaseCrash.log("User id: ${user?.uid}")
+        Crashlytics.setUserIdentifier(user?.uid)
+        Crashlytics.setUserEmail(user?.email)
+        Crashlytics.setUserName(user?.displayName)
         analytics.setUserId(user?.uid)
         analytics.setUserProperty(
                 FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providers.toString())
@@ -173,7 +177,10 @@ fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 fun <T> Task<T>.logFailures(): Task<T> = addOnFailureListener(CrashLogger)
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any> {
-    override fun onFailure(e: Exception) = FirebaseCrash.report(e)
+    override fun onFailure(e: Exception) {
+        FirebaseCrash.report(e)
+        Crashlytics.logException(e)
+    }
 
     override fun onComplete(task: Task<Any>) {
         onFailure(task.exception ?: return)

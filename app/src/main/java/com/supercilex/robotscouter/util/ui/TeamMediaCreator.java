@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
@@ -137,6 +138,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
                 photoFile = createImageFile(getMediaFolder());
             } catch (Exception e) { // NOPMD
                 FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 ToastsKt.longToast(context, e.toString());
             }
 

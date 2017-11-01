@@ -8,6 +8,7 @@ import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import android.support.annotation.WorkerThread
 import android.text.TextUtils
+import com.crashlytics.android.Crashlytics
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ChangeEventListener
 import com.firebase.ui.firestore.FirestoreArray
@@ -174,7 +175,10 @@ interface ChangeEventListenerBase : ChangeEventListener {
 
     override fun onDataChanged() = Unit
 
-    override fun onError(e: FirebaseFirestoreException) = FirebaseCrash.report(e)
+    override fun onError(e: FirebaseFirestoreException) {
+        FirebaseCrash.report(e)
+        Crashlytics.logException(e)
+    }
 }
 
 object KeepAliveListener : ChangeEventListenerBase

@@ -16,6 +16,7 @@ import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.app.FragmentActivity
 import android.support.v4.provider.FontRequest
 import android.support.v7.app.AppCompatDelegate
+import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Tasks
@@ -65,8 +66,10 @@ class RobotScouter : MultiDexApplication() {
                 "Noto Color Emoji Compat",
                 R.array.com_google_android_gms_fonts_certs)).registerInitCallback(
                 object : EmojiCompat.InitCallback() {
-                    override fun onFailed(throwable: Throwable?) =
-                            FirebaseCrash.log("EmojiCompat failed to initialize with error: $throwable")
+                    override fun onFailed(throwable: Throwable?) {
+                        FirebaseCrash.log("EmojiCompat failed to initialize with error: $throwable")
+                        Crashlytics.log("EmojiCompat failed to initialize with error: $throwable")
+                    }
                 }))
 
         performMigrations()
@@ -115,6 +118,7 @@ class RobotScouter : MultiDexApplication() {
                             }, 500)
                 } catch (e: Exception) {
                     FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                 }
             })
         }

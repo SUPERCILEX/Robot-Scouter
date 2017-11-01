@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -189,6 +190,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                 }
             } catch (InterruptedException e) {
                 FirebaseCrash.report(e);
+                Crashlytics.logException(e);
                 mTimerTask.setException(e);
             }
             mTimerTask.setResult(null);

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.crash.FirebaseCrash
@@ -26,6 +27,7 @@ class AppIndexingService : JobIntentService() {
             Tasks.await(Tasks.whenAll(getUpdateTeamsTask(), getUpdateTemplatesTask()))
         } catch (e: ExecutionException) {
             FirebaseCrash.report(e)
+            Crashlytics.logException(e)
         }
     }
 

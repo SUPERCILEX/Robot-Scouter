@@ -16,6 +16,7 @@ import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
@@ -98,6 +99,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED // User owns subscription
                 && !isInTestMode) {
             FirebaseCrash.report(it)
+            Crashlytics.logException(it)
             showError()
         }
     }
@@ -120,6 +122,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                                 it.responseCode,
                                 message = "Purchase fetch failed with code ${it.responseCode} and sku $sku")
                         FirebaseCrash.report(e)
+                        Crashlytics.logException(e)
                         purchaseStartTask.setException(e)
                         return@queryPurchaseHistoryAsync
                     }
@@ -131,6 +134,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
             } else {
                 PurchaseException(result, sku).let {
                     FirebaseCrash.report(it)
+                    Crashlytics.logException(it)
                     purchaseStartTask.setException(it)
                 }
             }
@@ -154,6 +158,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                             resultCode,
                             message = "Consumption failed with code $resultCode and sku ${purchase.sku}")
                     FirebaseCrash.report(e)
+                    Crashlytics.logException(e)
                     consumption.setException(e)
                 }
             }

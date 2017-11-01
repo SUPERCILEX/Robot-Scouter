@@ -6,6 +6,7 @@ if (isReleaseBuild) {
     apply plugin: 'com.google.firebase.firebase-crash'
     apply plugin: 'com.google.firebase.firebase-perf'
 }
+apply plugin: 'io.fabric'
 apply plugin: 'com.github.triplet.play'
 tasks.whenTaskAdded { task ->
     if (task.name == "assembleRelease") task.dependsOn 'updateReleasePlayVersion'
@@ -46,6 +47,7 @@ android {
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
             manifestPlaceholders = [appName: 'Robot Scouter DEBUG']
+            ext.alwaysUpdateBuildId = false
         }
 
         release {
@@ -112,6 +114,7 @@ dependencies {
     // Firebase
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-crash:$playServicesVersion"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') { transitive = true }
     implementation "com.google.firebase:firebase-perf:$playServicesVersion"
     implementation "com.google.firebase:firebase-storage:$playServicesVersion"
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
