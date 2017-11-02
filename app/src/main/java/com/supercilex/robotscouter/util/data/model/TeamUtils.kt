@@ -42,7 +42,7 @@ val teamsQuery get() = "$FIRESTORE_OWNERS.${uid!!}".let {
 
 val Team.ref: DocumentReference get() = teams.document(id)
 
-fun List<Team>.getNames(): String {
+fun Collection<Team>.getNames(): String {
     val sortedTeams = ArrayList(this)
     Collections.sort(sortedTeams)
 

@@ -57,7 +57,7 @@ class ExportService : IntentService(TAG) {
                                newScouts: Map<Team, List<Scout>>) {
         val zippedScouts = zipScouts(newScouts)
 
-        notificationManager.setNumOfTemplates(zippedScouts.size)
+        notificationManager.setData(zippedScouts.size, newScouts.keys)
 
         val templateNames = getTemplateNames(zippedScouts.keys)
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->

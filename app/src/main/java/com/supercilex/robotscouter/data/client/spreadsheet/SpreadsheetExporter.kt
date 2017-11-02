@@ -169,13 +169,10 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
 
         var i = 1
         while (true) {
-            availableFile = when {
-                availableFile.exists() ->
-                    File(rsFolder, getFullyQualifiedFileName(templateName, " ($i)"))
-                availableFile.hide().exists() -> findAvailableFile(
-                        File(rsFolder, getFullyQualifiedFileName(templateName)),
-                        rsFolder)
-                else -> return availableFile
+            availableFile = if (availableFile.exists()) {
+                File(rsFolder, getFullyQualifiedFileName(templateName, " ($i)"))
+            } else {
+                return availableFile
             }
             i++
         }
