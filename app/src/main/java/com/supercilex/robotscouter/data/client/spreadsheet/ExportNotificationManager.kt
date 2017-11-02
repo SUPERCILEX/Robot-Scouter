@@ -1,38 +1,38 @@
 package com.supercilex.robotscouter.data.client.spreadsheet
 
 import android.app.Notification
-import android.app.NotificationManager
-import android.content.Context
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.ServiceCompat
 import android.support.v4.content.ContextCompat
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.LateinitVal
+import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
+import com.supercilex.robotscouter.util.ui.SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS
+import com.supercilex.robotscouter.util.ui.notificationManager
+import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 class ExportNotificationManager(private val service: ExportService) {
-    private val manager =
-            RobotScouter.INSTANCE.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationPublisher = PublishSubject.create<Pair<Int, Notification>>()
 
-    private val masterNotification: NotificationCompat.Builder = NotificationCompat.Builder(
+    private val masterNotification: NotificationCompat.Builder get() = NotificationCompat.Builder(
             RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
             .setGroup(hashCode().toString())
             .setGroupSummary(true)
             .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_overall_progress_title))
-            .setSmallIcon(android.R.drawable.stat_sys_download)
             .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
-            .updateProgress(ESTIMATED_MASTER_OPS, 0)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-    private val exportNotification: NotificationCompat.Builder = NotificationCompat.Builder(
+    private val exportNotification: NotificationCompat.Builder get() = NotificationCompat.Builder(
             RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
             .setGroup(hashCode().toString())
             .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_progress_title))
-            .setContentText(RobotScouter.INSTANCE.getString(R.string.export_initialize_status))
             .setSmallIcon(android.R.drawable.stat_sys_upload)
             .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
             .setOngoing(true)
@@ -40,74 +40,110 @@ class ExportNotificationManager(private val service: ExportService) {
 
     private val masterNotificationHolder = MasterNotificationHolder()
     private val exporters = ConcurrentHashMap<SpreadsheetExporter, NotificationHolder>()
-    private var nTemplates: Int by Delegates.notNull()
+
+    private var nTemplates: Int by LateinitVal()
+    private var teams: Set<Team> by LateinitVal()
+    private var pendingTaskCount: Int by Delegates.notNull()
 
     init {
-        service.startForeground(
-                hashCode(),
-                masterNotification
-                        .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
-                        .build())
+        service.startForeground(hashCode(), masterNotification
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
+                .updateProgress(ESTIMATED_MASTER_OPS, 0)
+                .build())
     }
 
-    fun setNumOfTemplates(nTemplates: Int) {
+    fun setData(nTemplates: Int, teams: Set<Team>) {
         this.nTemplates = nTemplates
+        this.teams = teams
+        pendingTaskCount = nTemplates
+
         masterNotificationHolder.progress = EXTRA_MASTER_OPS
         masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nTemplates
-        masterNotification.updateProgress(
-                masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
+
+        notificationManager.notify(hashCode(), masterNotification
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
+                .updateProgress(
+                        masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
+                .build())
+
+        notificationPublisher
+                .groupBy { it.first }
+                .flatMap {
+                    it.sample(
+                            // Multiply to ensure the overall rate limitation
+                            SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS * nTemplates,
+                            TimeUnit.MILLISECONDS,
+                            true)
+                }
+                .subscribe {
+                    notificationManager.notify(it.first, it.second)
+                }
     }
 
+    @Synchronized
     fun addExporter(exporter: SpreadsheetExporter): Int {
+        check(exporters.size < pendingTaskCount) { "More exporters than templates" }
+
         val id = exporter.hashCode()
         val teams = exporter.scouts.keys
         val maxProgress = teams.size +
                 if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
-        val notification = exportNotification.updateProgress(maxProgress, 0)
-        exporters[exporter] = NotificationHolder(id, notification, maxProgress)
-
-        manager.notify(id, notification.build())
-        manager.notify(hashCode(), masterNotification
-                .setContentText(RobotScouter.INSTANCE.getString(
-                        R.string.export_template_status, exporter.templateName))
-                .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .updateProgress(
-                        masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
+        notificationPublisher.onNext(id to exportNotification
+                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_initialize_status))
+                .updateProgress(maxProgress, 0)
                 .build())
+        if (pendingTaskCount == nTemplates && exporters.isEmpty()) {
+            notificationPublisher.onNext(hashCode() to masterNotification
+                    .setSmallIcon(android.R.drawable.stat_sys_upload)
+                    .setContentText(RobotScouter.INSTANCE.getString(
+                            R.string.export_template_status, exporter.templateName))
+                    .updateProgress(
+                            masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
+                    .build())
+        }
+
+        exporters.put(exporter, NotificationHolder(id, maxProgress))
 
         return id
     }
 
     fun updateProgress(exporter: SpreadsheetExporter, team: Team) =
-            next(exporter, exportNotification.setContentText(team.toString()).build())
+            next(exporter, exportNotification.setContentText(team.toString()))
 
     fun onStartBuildingAverageSheet(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_average_status))
-                .build())
+                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_average_status)))
     }
 
     fun onStartCleanup(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_cleanup_status))
-                .build())
+                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_cleanup_status)))
     }
 
+    @Synchronized
     fun removeExporter(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
         val (id) = exporters.remove(exporter)!!
-        manager.notify(id, notification.setGroup(hashCode().toString()).build())
+        // The original notification must be cancelled because we're changing channels
+        notificationManager.cancel(id)
+        notificationPublisher.onNext(id to notification.setGroup(hashCode().toString()).build())
 
-        if (exporters.isEmpty()) {
-            manager.notify(hashCode(), masterNotification
+        if (--pendingTaskCount == 0) {
+            notificationPublisher.onNext(hashCode() to masterNotification
                     .setSmallIcon(R.drawable.ic_logo)
+                    .setContentText(RobotScouter.INSTANCE.resources.getQuantityString(
+                            R.plurals.export_complete_message, teams.size, teams.getNames()))
                     .setSubText(RobotScouter.INSTANCE.resources.getQuantityString(
                             R.plurals.export_complete_subtitle, nTemplates, nTemplates))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .build())
+            notificationPublisher.onComplete()
             ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_DETACH)
         } else {
-            manager.notify(hashCode(), masterNotification
+            notificationPublisher.onNext(hashCode() to masterNotification
+                    .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.INSTANCE.getString(
                             R.string.export_template_status,
                             exporters.keys.first().templateName))
@@ -119,19 +155,15 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     fun abort() {
+        for ((_, holder) in exporters) notificationManager.cancel(holder.id)
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        manager.cancel(hashCode())
-        for (exporter in exporters) manager.cancel(exporter.value.id)
     }
 
-    private fun next(exporter: SpreadsheetExporter, notification: Notification) {
+    private fun next(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
         val holder = exporters[exporter]!!
-        incrementProgress(holder)
-        manager.notify(holder.id, notification)
-    }
-
-    private fun incrementProgress(holder: NotificationHolder) {
-        exportNotification.updateProgress(holder.maxProgress, ++holder.progress)
+        notificationPublisher.onNext(holder.id to notification
+                .updateProgress(holder.maxProgress, ++holder.progress)
+                .build())
     }
 
     private fun NotificationCompat.Builder.updateProgress(
@@ -145,15 +177,11 @@ class ExportNotificationManager(private val service: ExportService) {
         return this
     }
 
-    private data class MasterNotificationHolder(@get:Synchronized @set:Synchronized var progress: Int = 0) {
-        var maxProgress: Int by Delegates.notNull()
+    private data class MasterNotificationHolder(var progress: Int = 0) {
+        var maxProgress: Int by LateinitVal()
     }
 
-    private data class NotificationHolder(
-            val id: Int,
-            val notification: NotificationCompat.Builder,
-            val maxProgress: Int,
-            var progress: Int = 0)
+    private data class NotificationHolder(val id: Int, val maxProgress: Int, var progress: Int = 0)
 
     private companion object {
         /** Accounts for a load step. */

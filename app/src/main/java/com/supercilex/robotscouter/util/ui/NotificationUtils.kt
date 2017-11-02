@@ -19,19 +19,27 @@ const val EXPORT_GROUP = "export_group"
 const val EXPORT_CHANNEL = "export"
 const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
 
+/**
+ * Android N+ limits notification updates to 10/sec and drops the rest. This limits notification
+ * updates to 5/sec.
+ */
+const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200L
+
+val notificationManager: NotificationManager by lazy {
+    RobotScouter.INSTANCE.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+}
+
 fun initNotifications() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
-    RobotScouter.INSTANCE.getSystemService(NotificationManager::class.java).apply {
-        createNotificationChannelGroups(listOf(
-                NotificationChannelGroup(
-                        EXPORT_GROUP,
-                        RobotScouter.INSTANCE.getString(R.string.export_group_title))))
+    notificationManager.createNotificationChannelGroups(listOf(
+            NotificationChannelGroup(
+                    EXPORT_GROUP,
+                    RobotScouter.INSTANCE.getString(R.string.export_group_title))))
 
-        createNotificationChannels(listOf(
-                getExportChannel(),
-                getExportInProgressChannel()))
-    }
+    notificationManager.createNotificationChannels(listOf(
+            getExportChannel(),
+            getExportInProgressChannel()))
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -61,7 +69,7 @@ fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
 class NotificationIntentForwarder : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+        notificationManager.apply {
             val notificationId = intent.getIntExtra(KEY_NOTIFICATION_ID, -1)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -20,6 +20,8 @@ import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
+import io.reactivex.functions.Consumer
+import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.bundleOf
 import java.lang.Exception
 import java.util.Date
@@ -72,6 +74,8 @@ fun initAnalytics() {
             userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
         }
     }
+
+    RxJavaPlugins.setErrorHandler(CrashLogger)
 }
 
 fun logSelectTeamEvent(team: Team) = analytics.logEvent(Event.SELECT_CONTENT, bundleOf(
@@ -176,13 +180,17 @@ fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 
 fun <T> Task<T>.logFailures(): Task<T> = addOnFailureListener(CrashLogger)
 
-object CrashLogger : OnFailureListener, OnCompleteListener<Any> {
+object CrashLogger : OnFailureListener, OnCompleteListener<Any>, Consumer<Throwable> {
     override fun onFailure(e: Exception) {
-        FirebaseCrash.report(e)
-        Crashlytics.logException(e)
+        accept(e)
     }
 
     override fun onComplete(task: Task<Any>) {
-        onFailure(task.exception ?: return)
+        accept(task.exception ?: return)
+    }
+
+    override fun accept(t: Throwable) {
+        FirebaseCrash.report(t)
+        Crashlytics.logException(t)
     }
 }
