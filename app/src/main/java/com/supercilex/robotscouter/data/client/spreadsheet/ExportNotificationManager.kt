@@ -72,6 +72,7 @@ class ExportNotificationManager(private val service: ExportService) {
                 .groupBy { it.first }
                 .flatMap {
                     it.sample(
+                            // Multiply to ensure the overall rate limitation
                             SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS * nTemplates,
                             TimeUnit.MILLISECONDS,
                             true)
@@ -154,9 +155,8 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     fun abort() {
+        for ((_, holder) in exporters) notificationManager.cancel(holder.id)
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        notificationManager.cancel(hashCode())
-        for (exporter in exporters) notificationManager.cancel(exporter.value.id)
     }
 
     private fun next(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {

@@ -62,9 +62,7 @@ class ExportService : IntentService(TAG) {
         val templateNames = getTemplateNames(zippedScouts.keys)
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
             async {
-                SpreadsheetExporter(scouts,
-                                    notificationManager,
-                                    templateNames[templateId]!!)
+                SpreadsheetExporter(scouts, notificationManager, templateNames[templateId]!!)
                         .export()
             }.addOnFailureListener {
                 abortCritical(it, notificationManager)
@@ -87,6 +85,7 @@ class ExportService : IntentService(TAG) {
 
         val usedTemplates = HashMap<String, Int>()
         return templateIds.associate {
+            // Getting the name will be null if the user deletes a template
             it to (allPossibleTemplateNames[it] ?: unknownTemplateName)
         }.mapValues { (_, name) ->
             usedTemplates[name]?.let {
