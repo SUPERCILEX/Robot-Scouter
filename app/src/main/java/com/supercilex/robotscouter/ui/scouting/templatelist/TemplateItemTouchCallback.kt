@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.view.View
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.OrderedModel
@@ -17,6 +16,7 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateV
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import kotterknife.bindView
@@ -96,6 +96,13 @@ class TemplateItemTouchCallback<T : OrderedModel>(
             oldIndex: Int,
             injectedSuperCall: () -> Unit
     ) {
+        if (isMovingItem && isDeletingItem) {
+            isMovingItem = false
+            isDeletingItem = false
+            cleanupFailure()
+            return
+        }
+
         if (isMovingItem) {
             if (isCatchingUpOnMove(type, newIndex)) {
                 if (adapter.snapshots == localItems) {
@@ -109,7 +116,6 @@ class TemplateItemTouchCallback<T : OrderedModel>(
                 isMovingItem = false
                 cleanupFailure()
             }
-            return
         } else if (isDeletingItem) {
             if (isCatchingUpOnDelete(type, newIndex)) {
                 if (adapter.snapshots == localItems) {
@@ -142,10 +148,20 @@ class TemplateItemTouchCallback<T : OrderedModel>(
                     // Our model doesn't include positions in its equals implementation
                     || type == ChangeEventType.CHANGED && localItems.contains(adapter.snapshots[index])
 
-    private fun isCatchingUpOnDelete(type: ChangeEventType, index: Int): Boolean =
-            type == ChangeEventType.REMOVED
-                    // See isCatchingUpOnMove
-                    || type == ChangeEventType.CHANGED && localItems.contains(adapter.snapshots[index])
+    private fun isCatchingUpOnDelete(type: ChangeEventType, index: Int): Boolean {
+        if (type == ChangeEventType.REMOVED || type == ChangeEventType.MOVED) {
+            // Account for move events when we update lower item positions
+            return true
+        } else if (type == ChangeEventType.CHANGED) {
+            // See isCatchingUpOnMove
+            if (localItems.contains(adapter.snapshots[index])) return true
+
+            val path = adapter.snapshots[index].ref.path
+            // Is this change event just an update to the deleted item?
+            if (localItems.find { it.ref.path == path } == null) return true
+        }
+        return false
+    }
 
     private inline fun postCleanup(crossinline cleanup: () -> Unit) {
         ViewCompat.postOnAnimationDelayed(
@@ -192,19 +208,19 @@ class TemplateItemTouchCallback<T : OrderedModel>(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        if (!isDeletingItem) localItems.addAll(adapter.snapshots)
-        isDeletingItem = true
-
         val position = viewHolder.adapterPosition
         val deletedRef = adapter.snapshots.getSnapshot(position).reference
         val itemsBelow: List<OrderedModel> =
                 ArrayList(adapter.snapshots.subList(position + 1, adapter.itemCount))
 
+        if (!isDeletingItem) localItems.addAll(adapter.snapshots)
+        isDeletingItem = true
+
         localItems.removeAt(position)
         adapter.notifyItemRemoved(position)
 
-        viewHolder.itemView.clearFocus() // Needed to prevent the item from being re-added
-        deletedRef.get().addOnSuccessListener { snapshot: DocumentSnapshot ->
+        viewHolder.itemView.clearFocus() // Save user data for undo
+        deletedRef.get().addOnSuccessListener(rootView.context as FragmentActivity) { snapshot ->
             firestoreBatch {
                 delete(deletedRef)
                 updatePositions(itemsBelow, -1)
@@ -216,7 +232,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
                     set(deletedRef, snapshot.data)
                 }
             }
-        }
+        }.logFailures()
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
