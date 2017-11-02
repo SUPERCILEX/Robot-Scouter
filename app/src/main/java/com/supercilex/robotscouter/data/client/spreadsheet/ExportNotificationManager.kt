@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.data.client.spreadsheet
 
-import android.app.NotificationManager
-import android.content.Context
+import android.app.Notification
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.ServiceCompat
 import android.support.v4.content.ContextCompat
@@ -12,13 +11,16 @@ import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
+import com.supercilex.robotscouter.util.ui.SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS
+import com.supercilex.robotscouter.util.ui.notificationManager
+import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 class ExportNotificationManager(private val service: ExportService) {
-    private val manager =
-            RobotScouter.INSTANCE.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationPublisher = PublishSubject.create<Pair<Int, Notification>>()
 
     private val masterNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(
@@ -61,12 +63,24 @@ class ExportNotificationManager(private val service: ExportService) {
         masterNotificationHolder.progress = EXTRA_MASTER_OPS
         masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nTemplates
 
-        manager.notify(hashCode(), masterNotification
+        notificationManager.notify(hashCode(), masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
+
+        notificationPublisher
+                .groupBy { it.first }
+                .flatMap {
+                    it.sample(
+                            SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS * nTemplates,
+                            TimeUnit.MILLISECONDS,
+                            true)
+                }
+                .subscribe {
+                    notificationManager.notify(it.first, it.second)
+                }
     }
 
     @Synchronized
@@ -78,12 +92,12 @@ class ExportNotificationManager(private val service: ExportService) {
         val maxProgress = teams.size +
                 if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
-        manager.notify(id, exportNotification
+        notificationPublisher.onNext(id to exportNotification
                 .setContentText(RobotScouter.INSTANCE.getString(R.string.export_initialize_status))
                 .updateProgress(maxProgress, 0)
                 .build())
         if (pendingTaskCount == nTemplates && exporters.isEmpty()) {
-            manager.notify(hashCode(), masterNotification
+            notificationPublisher.onNext(hashCode() to masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.INSTANCE.getString(
                             R.string.export_template_status, exporter.templateName))
@@ -117,11 +131,11 @@ class ExportNotificationManager(private val service: ExportService) {
     fun removeExporter(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
         val (id) = exporters.remove(exporter)!!
         // The original notification must be cancelled because we're changing channels
-        manager.cancel(id)
-        manager.notify(id, notification.setGroup(hashCode().toString()).build())
+        notificationManager.cancel(id)
+        notificationPublisher.onNext(id to notification.setGroup(hashCode().toString()).build())
 
         if (--pendingTaskCount == 0) {
-            manager.notify(hashCode(), masterNotification
+            notificationPublisher.onNext(hashCode() to masterNotification
                     .setSmallIcon(R.drawable.ic_logo)
                     .setContentText(RobotScouter.INSTANCE.resources.getQuantityString(
                             R.plurals.export_complete_message, teams.size, teams.getNames()))
@@ -129,9 +143,10 @@ class ExportNotificationManager(private val service: ExportService) {
                             R.plurals.export_complete_subtitle, nTemplates, nTemplates))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .build())
+            notificationPublisher.onComplete()
             ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_DETACH)
         } else {
-            manager.notify(hashCode(), masterNotification
+            notificationPublisher.onNext(hashCode() to masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.INSTANCE.getString(
                             R.string.export_template_status,
@@ -145,15 +160,15 @@ class ExportNotificationManager(private val service: ExportService) {
 
     fun abort() {
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        manager.cancel(hashCode())
-        for (exporter in exporters) manager.cancel(exporter.value.id)
+        notificationManager.cancel(hashCode())
+        for (exporter in exporters) notificationManager.cancel(exporter.value.id)
     }
 
     private fun next(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
         val holder = exporters[exporter]!!
-//        manager.notify(holder.id, notification
-//                .updateProgress(holder.maxProgress, ++holder.progress)
-//                .build())
+        notificationPublisher.onNext(holder.id to notification
+                .updateProgress(holder.maxProgress, ++holder.progress)
+                .build())
     }
 
     private fun NotificationCompat.Builder.updateProgress(
