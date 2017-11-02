@@ -20,8 +20,8 @@ class SupportVectorDrawablesButton : AppCompatButton {
         initSupportVectorDrawablesAttrs(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
-            super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr) {
         initSupportVectorDrawablesAttrs(attrs)
     }
 }

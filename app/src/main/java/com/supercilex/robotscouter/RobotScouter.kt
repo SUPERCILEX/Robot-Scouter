@@ -11,10 +11,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.multidex.MultiDexApplication
-import android.support.text.emoji.EmojiCompat
-import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.app.FragmentActivity
-import android.support.v4.provider.FontRequest
 import android.support.v7.app.AppCompatDelegate
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.auth.AuthUI
@@ -23,8 +20,6 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.squareup.leakcanary.LeakCanary
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
@@ -35,6 +30,7 @@ import com.supercilex.robotscouter.util.data.hasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.data.initDatabase
 import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
+import com.supercilex.robotscouter.util.initRemoteConfig
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
 import org.jetbrains.anko.intentFor
@@ -48,29 +44,11 @@ class RobotScouter : MultiDexApplication() {
         INSTANCE = this
 
         initAnalytics()
+        initRemoteConfig()
         initDatabase()
         initPrefs()
         initUi()
         initNotifications()
-
-        FirebaseRemoteConfig.getInstance().apply {
-            setDefaults(R.xml.remote_config_defaults)
-            setConfigSettings(FirebaseRemoteConfigSettings.Builder()
-                                      .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                                      .build())
-        }
-
-        EmojiCompat.init(FontRequestEmojiCompatConfig(this, FontRequest(
-                "com.google.android.gms.fonts",
-                "com.google.android.gms",
-                "Noto Color Emoji Compat",
-                R.array.com_google_android_gms_fonts_certs)).registerInitCallback(
-                object : EmojiCompat.InitCallback() {
-                    override fun onFailed(throwable: Throwable?) {
-                        FirebaseCrash.log("EmojiCompat failed to initialize with error: $throwable")
-                        Crashlytics.log("EmojiCompat failed to initialize with error: $throwable")
-                    }
-                }))
 
         performMigrations()
     }

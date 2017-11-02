@@ -38,11 +38,12 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.findOptional
 import kotlin.math.roundToInt
 
-open class AppBarViewHolderBase(private val fragment: Fragment,
-                                rootView: View,
-                                listener: LiveData<Team>,
-                                private val onScoutingReadyTask: Task<*>) :
-        OnSuccessListener<Void?>, View.OnLongClickListener,
+open class AppBarViewHolderBase(
+        private val fragment: Fragment,
+        rootView: View,
+        listener: LiveData<Team>,
+        private val onScoutingReadyTask: Task<*>
+) : OnSuccessListener<Void?>, View.OnLongClickListener,
         TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     protected var team: Team = listener.value!!
 
@@ -89,11 +90,13 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
                 .load(media)
                 .apply(RequestOptions.centerCropTransform().error(R.drawable.ic_person_grey_96dp))
                 .listener(object : RequestListener<Bitmap> {
-                    override fun onResourceReady(resource: Bitmap?,
-                                                 model: Any?,
-                                                 target: Target<Bitmap>,
-                                                 dataSource: DataSource,
-                                                 isFirstResource: Boolean): Boolean {
+                    override fun onResourceReady(
+                            resource: Bitmap?,
+                            model: Any?,
+                            target: Target<Bitmap>,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                    ): Boolean {
                         mediaLoadProgress.hide(true)
 
                         if (resource?.isRecycled == false) {
@@ -109,10 +112,12 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
                         return false
                     }
 
-                    override fun onLoadFailed(e: GlideException?,
-                                              model: Any?,
-                                              target: Target<Bitmap>,
-                                              isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Bitmap>,
+                            isFirstResource: Boolean
+                    ): Boolean {
                         mediaLoadProgress.hide(true)
                         return false
                     }
@@ -161,7 +166,8 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
             (Color.alpha(opaque) * 0.6f).roundToInt(),
             Color.red(opaque),
             Color.green(opaque),
-            Color.blue(opaque))
+            Color.blue(opaque)
+    )
 
     override fun onLongClick(v: View): Boolean {
         when {
@@ -181,10 +187,11 @@ open class AppBarViewHolderBase(private val fragment: Fragment,
             mediaCapture.onActivityResult(requestCode, resultCode)
 
     @CallSuper
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) =
-            mediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
+    ) = mediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
     @CallSuper
     fun onSaveInstanceState(outState: Bundle) = outState.putAll(mediaCapture.toBundle())

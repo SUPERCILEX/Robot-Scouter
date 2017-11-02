@@ -13,8 +13,10 @@ import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import kotterknife.bindView
 import java.util.ArrayList
 
-open class SpinnerViewHolder(itemView: View) :
-        MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView), AdapterView.OnItemSelectedListener {
+open class SpinnerViewHolder(
+        itemView: View
+) : MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView),
+        AdapterView.OnItemSelectedListener {
     protected val spinner: Spinner by bindView(R.id.spinner)
     private val ids: List<String> get() = ArrayList(metric.value.keys)
 
@@ -44,7 +46,8 @@ open class SpinnerViewHolder(itemView: View) :
     protected open fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> = ArrayAdapter(
             itemView.context,
             android.R.layout.simple_spinner_item,
-            ArrayList(listMetric.value.values))
+            ArrayList(listMetric.value.values)
+    )
 
     override fun onNothingSelected(view: AdapterView<*>) = Unit
 }

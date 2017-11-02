@@ -31,10 +31,11 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
             }
         }
     }
-    private var noContentHint: View? = null; get() {
-        if (field == null) field = activity!!.findOptional(R.id.no_team_selected_hint)
-        return field
-    }
+    private var noContentHint: View? = null
+        get() {
+            if (field == null) field = activity!!.findOptional(R.id.no_team_selected_hint)
+            return field
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

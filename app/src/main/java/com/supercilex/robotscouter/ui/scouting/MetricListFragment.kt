@@ -28,10 +28,11 @@ abstract class MetricListFragment : FragmentBase() {
         holder.init(metricsRef)
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View =
-            View.inflate(context, R.layout.fragment_metric_list, null)
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View = View.inflate(context, R.layout.fragment_metric_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.layoutManager = manager

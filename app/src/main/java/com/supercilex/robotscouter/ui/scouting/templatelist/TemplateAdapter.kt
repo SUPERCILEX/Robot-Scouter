@@ -21,30 +21,37 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.HeaderTem
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.SpinnerTemplateViewHolder
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.StopwatchTemplateViewHolder
 
-class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
-                      manager: FragmentManager,
-                      recyclerView: RecyclerView,
-                      owner: LifecycleOwner,
-                      private val callback: TemplateItemTouchCallback<Metric<*>>) :
-        MetricListAdapterBase(FirestoreRecyclerOptions.Builder<Metric<*>>()
-                                      .setSnapshotArray(metrics)
-                                      .setLifecycleOwner(owner)
-                                      .build(),
-                              manager,
-                              recyclerView) {
+class TemplateAdapter(
+        metrics: ObservableSnapshotArray<Metric<*>>,
+        manager: FragmentManager,
+        recyclerView: RecyclerView,
+        owner: LifecycleOwner,
+        private val callback: TemplateItemTouchCallback<Metric<*>>
+) : MetricListAdapterBase(
+        FirestoreRecyclerOptions.Builder<Metric<*>>()
+                .setSnapshotArray(metrics)
+                .setLifecycleOwner(owner)
+                .build(),
+        manager,
+        recyclerView
+) {
     override fun getItem(position: Int) = callback.getItem(position)
 
     override fun getItemCount() = callback.getItemCount { super.getItemCount() }
 
-    override fun onBindViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
-                                  position: Int,
-                                  metric: Metric<*>) {
+    override fun onBindViewHolder(
+            viewHolder: MetricViewHolderBase<*, *, *>,
+            position: Int,
+            metric: Metric<*>
+    ) {
         super.onBindViewHolder(viewHolder, position, metric)
         callback.onBind(viewHolder, position)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
-            MetricViewHolderBase<*, *, *> {
+    override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+    ): MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         return when (MetricType.valueOf(viewType)) {
             MetricType.HEADER -> HeaderTemplateViewHolder(
@@ -63,7 +70,11 @@ class TemplateAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
     }
 
     override fun onChildChanged(
-            type: ChangeEventType, snapshot: DocumentSnapshot, newIndex: Int, oldIndex: Int) {
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
         callback.onChildChanged(type, newIndex, oldIndex) {
             super.onChildChanged(type, snapshot, newIndex, oldIndex)
         }

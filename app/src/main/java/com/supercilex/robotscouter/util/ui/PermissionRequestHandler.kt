@@ -7,10 +7,11 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.Collections
 
-class PermissionRequestHandler(perms: List<String>,
-                               private val fragment: Fragment,
-                               private val listener: OnSuccessListener<Nothing?>) :
-        EasyPermissions.PermissionCallbacks {
+class PermissionRequestHandler(
+        perms: List<String>,
+        private val fragment: Fragment,
+        private val listener: OnSuccessListener<Nothing?>
+) : EasyPermissions.PermissionCallbacks {
     val permsArray: Array<String> get() = perms.toTypedArray()
 
     private val perms: List<String> = Collections.unmodifiableList(perms)
@@ -39,14 +40,11 @@ class PermissionRequestHandler(perms: List<String>,
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) =
-            EasyPermissions.onRequestPermissionsResult(
-                    requestCode,
-                    permissions,
-                    grantResults,
-                    this)
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
+    ) = EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
 
     private companion object {
         const val WRITE_RC = 8653

@@ -15,16 +15,20 @@ import retrofit2.http.Query
 
 interface TbaTeamMediaApi {
     @POST("image")
-    fun postToImgur(@Header("Authorization") auth: String,
-                    @Query("title") title: String,
-                    @Body file: RequestBody): Call<JsonObject>
+    fun postToImgur(
+            @Header("Authorization") auth: String,
+            @Query("title") title: String,
+            @Body file: RequestBody
+    ): Call<JsonObject>
 
     @Multipart
     @POST("suggest/media/team/frc{number}/{year}")
-    fun postToTba(@Path("number") number: String,
-                  @Path("year") year: Int,
-                  @Query("X-TBA-Auth-Key") auth: String,
-                  @Part("media_url") url: RequestBody): Call<JsonObject>
+    fun postToTba(
+            @Path("number") number: String,
+            @Path("year") year: Int,
+            @Query("X-TBA-Auth-Key") auth: String,
+            @Part("media_url") url: RequestBody
+    ): Call<JsonObject>
 
     companion object {
         val IMGUR_RETROFIT: Retrofit = Retrofit.Builder()

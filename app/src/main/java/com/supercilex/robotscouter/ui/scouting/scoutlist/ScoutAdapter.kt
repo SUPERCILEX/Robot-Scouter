@@ -19,18 +19,23 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.HeaderViewHo
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.SpinnerViewHolder
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.StopwatchViewHolder
 
-class ScoutAdapter(metrics: ObservableSnapshotArray<Metric<*>>,
-                   manager: FragmentManager,
-                   recyclerView: RecyclerView,
-                   owner: LifecycleOwner) :
-        MetricListAdapterBase(FirestoreRecyclerOptions.Builder<Metric<*>>()
-                                      .setSnapshotArray(metrics)
-                                      .setLifecycleOwner(owner)
-                                      .build(),
-                              manager,
-                              recyclerView) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
-            MetricViewHolderBase<*, *, *> {
+class ScoutAdapter(
+        metrics: ObservableSnapshotArray<Metric<*>>,
+        manager: FragmentManager,
+        recyclerView: RecyclerView,
+        owner: LifecycleOwner
+) : MetricListAdapterBase(
+        FirestoreRecyclerOptions.Builder<Metric<*>>()
+                .setSnapshotArray(metrics)
+                .setLifecycleOwner(owner)
+                .build(),
+        manager,
+        recyclerView
+) {
+    override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+    ): MetricViewHolderBase<*, *, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         return when (MetricType.valueOf(viewType)) {
             MetricType.HEADER -> HeaderViewHolder(

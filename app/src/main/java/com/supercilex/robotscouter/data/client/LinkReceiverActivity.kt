@@ -40,20 +40,22 @@ class LinkReceiverActivity : AppCompatActivity() {
         setContentView(R.layout.activity_link_receiver)
         find<ContentLoadingProgressBar>(R.id.progress).show()
 
-        onSignedIn().continueWithTask { FirebaseDynamicLinks.getInstance().getDynamicLink(intent) }
-                .continueWith(AsyncTaskExecutor, Continuation<PendingDynamicLinkData, Unit> {
-                    val link: Uri = it.result?.link ?: intent.data ?: Uri.Builder().build()
-                    val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
+        onSignedIn().continueWithTask {
+            FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
+        }.continueWith(AsyncTaskExecutor, Continuation<PendingDynamicLinkData, Unit> {
+            val link: Uri = it.result?.link ?: intent.data ?: Uri.Builder().build()
+            val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
 
-                    when (link.lastPathSegment) {
-                        teams.id -> processTeams(link, token)
-                        templates.id -> processTemplates(link, token)
-                        else -> showErrorAndContinue()
-                    }
-                })
-                .logFailures()
-                .addOnFailureListener { showErrorAndContinue() }
-                .addOnCompleteListener { finish() }
+            when (link.lastPathSegment) {
+                teams.id -> processTeams(link, token)
+                templates.id -> processTemplates(link, token)
+                else -> showErrorAndContinue()
+            }
+        }).addOnFailureListener {
+            showErrorAndContinue()
+        }.addOnCompleteListener {
+            finish()
+        }.logFailures()
     }
 
     @WorkerThread

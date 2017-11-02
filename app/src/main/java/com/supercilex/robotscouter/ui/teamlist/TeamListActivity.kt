@@ -43,7 +43,8 @@ import kotterknife.bindView
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
-class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener,
+class TeamListActivity : ActivityBase(), View.OnClickListener,
+        NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, OnSuccessListener<Nothing?> {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
         override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {
@@ -75,7 +76,8 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
                 drawerLayout,
                 find(R.id.toolbar),
                 R.string.team_navigation_drawer_open_desc,
-                R.string.team_navigation_drawer_close_desc)
+                R.string.team_navigation_drawer_close_desc
+        )
     }
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
 
@@ -126,8 +128,11 @@ class TeamListActivity : ActivityBase(), View.OnClickListener, NavigationView.On
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_sign_in) {
-        authHelper.signIn(); true
-    } else false
+        authHelper.signIn()
+        true
+    } else {
+        false
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

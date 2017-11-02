@@ -16,17 +16,16 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.settings,
-                         SettingsFragment.newInstance(),
-                         SettingsFragment.TAG)
+                    .add(R.id.settings, SettingsFragment.newInstance(), SettingsFragment.TAG)
                     .commit()
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == android.R.id.home) {
-            if (supportFragmentManager.fragments
-                    .any { it is OnBackPressedListener && it.onBackPressed() }) return true
+            val handledBack = supportFragmentManager.fragments
+                    .any { it is OnBackPressedListener && it.onBackPressed() }
+            if (handledBack) return true
 
             handleUpNavigation()
             true

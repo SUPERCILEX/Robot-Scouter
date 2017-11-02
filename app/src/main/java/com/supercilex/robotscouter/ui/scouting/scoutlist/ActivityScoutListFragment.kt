@@ -60,10 +60,15 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
 
     override fun onTeamDeleted() = activity!!.finish()
 
-    private inner class ActivityAppBarViewHolder(listener: LiveData<Team>,
-                                                 onScoutingReadyTask: Task<Nothing?>) :
-            AppBarViewHolderBase(
-                    this@ActivityScoutListFragment, view!!, listener, onScoutingReadyTask) {
+    private inner class ActivityAppBarViewHolder(
+            listener: LiveData<Team>,
+            onScoutingReadyTask: Task<Nothing?>
+    ) : AppBarViewHolderBase(
+            this@ActivityScoutListFragment,
+            view!!,
+            listener,
+            onScoutingReadyTask
+    ) {
         override fun bind() {
             super.bind()
             (activity as AppCompatActivity).supportActionBar!!.title = team.toString()

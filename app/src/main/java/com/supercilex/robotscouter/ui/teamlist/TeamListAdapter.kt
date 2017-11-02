@@ -25,22 +25,24 @@ import com.supercilex.robotscouter.util.ui.CardListHelper
 import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
-class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
-                      private val fragment: Fragment,
-                      private val menuManager: TeamMenuHelper,
-                      private val selectedTeamIdListener: MutableLiveData<Team?>) :
-        FirestoreRecyclerAdapter<Team, TeamViewHolder>(
-                FirestoreRecyclerOptions.Builder<Team>()
-                        .setSnapshotArray(snapshots)
-                        .setLifecycleOwner(fragment)
-                        .build()),
-        ListPreloader.PreloadModelProvider<Team>, Observer<Team?> {
+class TeamListAdapter(
+        snapshots: ObservableSnapshotArray<Team>,
+        private val fragment: Fragment,
+        private val menuManager: TeamMenuHelper,
+        private val selectedTeamIdListener: MutableLiveData<Team?>
+) : FirestoreRecyclerAdapter<Team, TeamViewHolder>(
+        FirestoreRecyclerOptions.Builder<Team>()
+                .setSnapshotArray(snapshots)
+                .setLifecycleOwner(fragment)
+                .build()
+), ListPreloader.PreloadModelProvider<Team>, Observer<Team?> {
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(
             Glide.with(fragment),
             this,
             viewSizeProvider,
-            5)
+            5
+    )
 
     private val recyclerView = fragment.find<RecyclerView>(R.id.list)
     private val cardListHelper = CardListHelper(this, recyclerView)
@@ -113,7 +115,8 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
                 menuManager,
                 isTeamSelected(team),
                 menuManager.areTeamsSelected(),
-                TextUtils.equals(selectedTeamId, team.id))
+                TextUtils.equals(selectedTeamId, team.id)
+        )
     }
 
     private fun isTeamSelected(team: Team) = menuManager.selectedTeams.contains(team)
@@ -125,12 +128,15 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
     override fun getPreloadItems(position: Int): List<Team> =
             Collections.singletonList(getItem(position))
 
-    override fun onChildChanged(type: ChangeEventType,
-                                snapshot: DocumentSnapshot,
-                                newIndex: Int,
-                                oldIndex: Int) {
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
         super.onChildChanged(type, snapshot, newIndex, oldIndex)
         cardListHelper.onChildChanged(type, newIndex)
+
         if (type == ChangeEventType.CHANGED) {
             for (oldTeam in menuManager.selectedTeams) {
                 val team = getItem(newIndex)
@@ -141,7 +147,8 @@ class TeamListAdapter(snapshots: ObservableSnapshotArray<Team>,
             }
         } else if (type == ChangeEventType.REMOVED && menuManager.areTeamsSelected()) {
             for (oldTeam in menuManager.selectedTeams) {
-                if (snapshots.firstOrNull { it.id == oldTeam.id } == null) { // We found the deleted item
+                if (snapshots.firstOrNull { it.id == oldTeam.id } == null) {
+                    // We found the deleted item
                     menuManager.onSelectedTeamRemoved(oldTeam)
                     break
                 }

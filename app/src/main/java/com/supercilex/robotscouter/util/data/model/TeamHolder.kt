@@ -27,7 +27,8 @@ class TeamHolder : ViewModelBase<Bundle>(),
     private val team: Team by unsafeLazy { teamListener.value!! }
 
     override fun onCreate(args: Bundle) {
-        (teamListener as MutableLiveData).value = args.getTeam(); team
+        (teamListener as MutableLiveData).value = args.getTeam()
+        team
         teamListener.observeForever(keepAliveListener)
     }
 
@@ -55,15 +56,20 @@ class TeamHolder : ViewModelBase<Bundle>(),
                 teams.removeChangeEventListener(this)
             }
 
-            override fun onChildChanged(type: ChangeEventType,
-                                        snapshot: DocumentSnapshot,
-                                        newIndex: Int,
-                                        oldIndex: Int) {
+            override fun onChildChanged(
+                    type: ChangeEventType,
+                    snapshot: DocumentSnapshot,
+                    newIndex: Int,
+                    oldIndex: Int
+            ) {
                 if (!TextUtils.equals(teamListener.value?.id, snapshot.id)) return
 
                 if (type == ChangeEventType.REMOVED) {
-                    value = null; return
-                } else if (type == ChangeEventType.MOVED) return
+                    value = null
+                    return
+                } else if (type == ChangeEventType.MOVED) {
+                    return
+                }
 
                 val newTeam = teams[newIndex]
                 if (value != newTeam) value = newTeam.copy()

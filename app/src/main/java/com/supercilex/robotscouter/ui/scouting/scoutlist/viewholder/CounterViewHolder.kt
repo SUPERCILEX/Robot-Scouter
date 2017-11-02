@@ -13,17 +13,20 @@ import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.CounterValueDialog
 import kotterknife.bindView
 
-open class CounterViewHolder(itemView: View) :
-        MetricViewHolderBase<Metric.Number, Long, TextView>(itemView), View.OnClickListener, View.OnLongClickListener {
+open class CounterViewHolder(
+        itemView: View
+) : MetricViewHolderBase<Metric.Number, Long, TextView>(itemView),
+        View.OnClickListener, View.OnLongClickListener {
     protected val count: TextView by bindView(R.id.count)
     private val increment: ImageButton by bindView(R.id.increment_counter)
     private val decrement: ImageButton by bindView(R.id.decrement_counter)
 
-    private val valueWithoutUnit: String get() {
-        val unit: String? = metric.unit
-        val count = count.text.toString()
-        return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
-    }
+    private val valueWithoutUnit: String
+        get() {
+            val unit: String? = metric.unit
+            val count = count.text.toString()
+            return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
+        }
 
     public override fun bind() {
         super.bind()

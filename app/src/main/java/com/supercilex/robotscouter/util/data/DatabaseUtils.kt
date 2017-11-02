@@ -84,7 +84,9 @@ fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
 
 fun Bundle.getRef() = FirebaseFirestore.getInstance().document(getString(REF_KEY))
 
-inline fun firestoreBatch(transaction: WriteBatch.() -> Unit) = FirebaseFirestore.getInstance().batch().run {
+inline fun firestoreBatch(
+        transaction: WriteBatch.() -> Unit
+) = FirebaseFirestore.getInstance().batch().run {
     transaction()
     commit()
 }
@@ -121,7 +123,9 @@ private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await
     it.documents
 }
 
-inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Task<R> = TaskCompletionSource<R>().apply {
+inline fun <T, R> LiveData<T>.observeOnce(
+        crossinline block: (T) -> Task<R>
+): Task<R> = TaskCompletionSource<R>().apply {
     ArchTaskExecutor.getInstance().executeOnMainThread {
         observeForever(object : Observer<T> {
             private var hasChanged = false
@@ -139,23 +143,23 @@ inline fun <T, R> LiveData<T>.observeOnce(crossinline block: (T) -> Task<R>): Ta
     }
 }.task
 
-fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(): LiveData<ObservableSnapshotArray<T>> =
-        Transformations.switchMap(this) {
-            object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
-                override fun onDataChanged() {
-                    if (ArchTaskExecutor.getInstance().isMainThread) value = it
-                    else postValue(it)
-                }
-
-                override fun onActive() {
-                    it.addChangeEventListener(this)
-                }
-
-                override fun onInactive() {
-                    it.removeChangeEventListener(this)
-                }
-            }
+fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(
+): LiveData<ObservableSnapshotArray<T>> = Transformations.switchMap(this) {
+    object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
+        override fun onDataChanged() {
+            if (ArchTaskExecutor.getInstance().isMainThread) value = it
+            else postValue(it)
         }
+
+        override fun onActive() {
+            it.addChangeEventListener(this)
+        }
+
+        override fun onInactive() {
+            it.removeChangeEventListener(this)
+        }
+    }
+}
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {
     override fun postValue(value: T) = runIfDifferent(value) { super.postValue(value) }
@@ -168,10 +172,12 @@ class UniqueMutableLiveData<T> : MutableLiveData<T>() {
 }
 
 interface ChangeEventListenerBase : ChangeEventListener {
-    override fun onChildChanged(type: ChangeEventType,
-                                snapshot: DocumentSnapshot,
-                                newIndex: Int,
-                                oldIndex: Int) = Unit
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) = Unit
 
     override fun onDataChanged() = Unit
 
@@ -204,10 +210,12 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
     private val templateIdUpdater = object : ChangeEventListenerBase {
         private var nTeamUpdatesForTemplateId = "" to -1
 
-        override fun onChildChanged(type: ChangeEventType,
-                                    snapshot: DocumentSnapshot,
-                                    newIndex: Int,
-                                    oldIndex: Int) {
+        override fun onChildChanged(
+                type: ChangeEventType,
+                snapshot: DocumentSnapshot,
+                newIndex: Int,
+                oldIndex: Int
+        ) {
             if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
             val team = value!![newIndex]
@@ -244,10 +252,12 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
         }
     }
     private val updater = object : ChangeEventListenerBase {
-        override fun onChildChanged(type: ChangeEventType,
-                                    snapshot: DocumentSnapshot,
-                                    newIndex: Int,
-                                    oldIndex: Int) {
+        override fun onChildChanged(
+                type: ChangeEventType,
+                snapshot: DocumentSnapshot,
+                newIndex: Int,
+                oldIndex: Int
+        ) {
             if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
                 val team = value!![newIndex]
 
@@ -260,10 +270,12 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
         }
     }
     private val merger = object : ChangeEventListenerBase {
-        override fun onChildChanged(type: ChangeEventType,
-                                    snapshot: DocumentSnapshot,
-                                    newIndex: Int,
-                                    oldIndex: Int) {
+        override fun onChildChanged(
+                type: ChangeEventType,
+                snapshot: DocumentSnapshot,
+                newIndex: Int,
+                oldIndex: Int
+        ) {
             if (isOffline() || !(type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED)) {
                 return
             }

@@ -34,14 +34,17 @@ class AppIndexingService : JobIntentService() {
     private fun getUpdateTeamsTask() = FirebaseAppIndex.getInstance().update(
             *Tasks.await(TeamsLiveData.observeOnDataChanged().observeOnce {
                 async { it.map { it.indexable }.toTypedArray() }
-            }))
+            })
+    )
 
     private fun getUpdateTemplatesTask() = FirebaseAppIndex.getInstance().update(
             *Tasks.await(getTemplatesQuery().get()).mapIndexed { index, snapshot ->
                 getTemplateIndexable(
                         snapshot.id,
-                        scoutParser.parseSnapshot(snapshot).getTemplateName(index))
-            }.toTypedArray())
+                        scoutParser.parseSnapshot(snapshot).getTemplateName(index)
+                )
+            }.toTypedArray()
+    )
 
     companion object {
         private const val JOB_ID = 387

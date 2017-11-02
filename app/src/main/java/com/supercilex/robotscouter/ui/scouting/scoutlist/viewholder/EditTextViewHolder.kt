@@ -10,8 +10,9 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import kotterknife.bindView
 
-open class EditTextViewHolder(itemView: View) :
-        MetricViewHolderBase<Metric.Text, String?, TextView>(itemView),
+open class EditTextViewHolder(
+        itemView: View
+) : MetricViewHolderBase<Metric.Text, String?, TextView>(itemView),
         View.OnFocusChangeListener {
     private val textLayout: TextInputLayout by bindView(R.id.text_layout)
 

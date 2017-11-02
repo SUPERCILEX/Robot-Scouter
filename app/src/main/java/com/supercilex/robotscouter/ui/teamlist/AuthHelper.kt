@@ -55,7 +55,8 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
                         rootView,
                         R.string.team_anonymous_sign_in_failed_message,
                         R.string.team_sign_in_title,
-                        this)
+                        this
+                )
             }
 
     fun showSignInResolution() {
@@ -77,7 +78,8 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
                             rootView,
                             R.string.no_connection,
                             R.string.team_sign_in_try_again_title,
-                            this)
+                            this
+                    )
                     return
                 }
 
@@ -85,7 +87,8 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
                         rootView,
                         R.string.team_sign_in_failed_message,
                         R.string.team_sign_in_try_again_title,
-                        this)
+                        this
+                )
             }
         }
     }

@@ -16,26 +16,86 @@ import com.supercilex.robotscouter.util.data.writeBooleanCompat
 import com.supercilex.robotscouter.util.uid
 import java.util.Date
 
-data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS) var number: Long,
-                @Exclude @get:Exclude var id: String,
-                @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
-                var owners: Map<String, Long> = mapOf(uid!! to number),
-                @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
-                var activeTokens: MutableMap<String, Date> = emptyMap<String, Date>().toMutableMap(),
-                @Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
-                var pendingApprovals: Map<String, String> = emptyMap(),
-                @Exclude @get:Keep @set:Keep var templateId: String = defaultTemplateId,
-                @Exclude @get:Keep @set:Keep var name: String? = null,
-                @Exclude @get:Keep @set:Keep var media: String? = null,
-                @Exclude @get:Keep @set:Keep var website: String? = null,
-                @Exclude @get:Keep @set:Keep var hasCustomName: Boolean = false,
-                @Exclude @get:Keep @set:Keep var hasCustomMedia: Boolean = false,
-                @Exclude @get:Keep @set:Keep var hasCustomWebsite: Boolean = false,
-                @Exclude @get:Keep @set:Keep var shouldUploadMediaToTba: Boolean = false,
-                @Exclude @get:Keep @set:Keep var mediaYear: Int = 0,
-                @Exclude @get:Exclude @set:Keep @set:RestrictTo(RestrictTo.Scope.TESTS)
-                var timestamp: Date = Date(0)) :
-        Parcelable, Comparable<Team> {
+data class Team(
+        @Exclude
+        @get:Keep
+        @set:Keep
+        @set:RestrictTo(RestrictTo.Scope.TESTS)
+        var number: Long,
+
+        @Exclude
+        @get:Exclude
+        var id: String,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        @set:RestrictTo(RestrictTo.Scope.TESTS)
+        var owners: Map<String, Long> = mapOf(uid!! to number),
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        @set:RestrictTo(RestrictTo.Scope.TESTS)
+        var activeTokens: MutableMap<String, Date> = emptyMap<String, Date>().toMutableMap(),
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        @set:RestrictTo(RestrictTo.Scope.TESTS)
+        var pendingApprovals: Map<String, String> = emptyMap(),
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var templateId: String = defaultTemplateId,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var name: String? = null,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var media: String? = null,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var website: String? = null,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var hasCustomName: Boolean = false,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var hasCustomMedia: Boolean = false,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var hasCustomWebsite: Boolean = false,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var shouldUploadMediaToTba: Boolean = false,
+
+        @Exclude
+        @get:Keep
+        @set:Keep
+        var mediaYear: Int = 0,
+
+        @Exclude
+        @get:Exclude
+        @set:Keep
+        @set:RestrictTo(RestrictTo.Scope.TESTS)
+        var timestamp: Date = Date(0)
+) : Parcelable, Comparable<Team> {
     // Empty no-arg constructor for Firebase
     constructor() : this(0, "")
 
@@ -43,7 +103,11 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
     @PropertyName(FIRESTORE_TIMESTAMP)
     fun getCurrentTimestamp() = Date()
 
-    override fun toString() = if (TextUtils.isEmpty(name)) number.toString() else "$number - $name"
+    override fun toString() = if (TextUtils.isEmpty(name)) {
+        number.toString()
+    } else {
+        "$number - $name"
+    }
 
     override operator fun compareTo(other: Team): Int {
         val comparison = number.compareTo(other.number)
@@ -93,7 +157,8 @@ data class Team(@Exclude @get:Keep @set:Keep @set:RestrictTo(RestrictTo.Scope.TE
                      readBooleanCompat(),
                      readBooleanCompat(),
                      readInt(),
-                     Date(readLong()))
+                     Date(readLong())
+                )
             }
 
             override fun newArray(size: Int): Array<Team?> = arrayOfNulls(size)

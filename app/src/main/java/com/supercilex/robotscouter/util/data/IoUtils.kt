@@ -11,10 +11,12 @@ val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 private val root = File(Environment.getExternalStorageDirectory(), "Robot Scouter")
 private val media = File(root, "Media")
 
-fun createFile(prefix: String,
-               suffix: String,
-               parent: File,
-               randomSeparator: String? = System.currentTimeMillis().toString()): File {
+fun createFile(
+        prefix: String,
+        suffix: String,
+        parent: File,
+        randomSeparator: String? = System.currentTimeMillis().toString()
+): File {
     val tempFile = File(
             parent, "$prefix${if (randomSeparator == null) "" else "_$randomSeparator"}.$suffix")
     return if (tempFile.createNewFile()) tempFile

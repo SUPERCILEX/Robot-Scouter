@@ -51,9 +51,11 @@ private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
     }
 }
 
-fun startInternetJob14(team: Team,
-                       jobId: Int,
-                       clazz: Class<out com.firebase.jobdispatcher.JobService>) {
+fun startInternetJob14(
+        team: Team,
+        jobId: Int,
+        clazz: Class<out com.firebase.jobdispatcher.JobService>
+) {
     val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(RobotScouter.INSTANCE))
 
     dispatcher.newJobBuilder()
@@ -90,7 +92,8 @@ fun parseRawBundle(args: Bundle) = Team(
         args.getBoolean(CUSTOM_WEBSITE),
         args.getBoolean(SHOULD_UPLOAD_MEDIA),
         args.getInt(MEDIA_YEAR),
-        Date(args.getLong(TIMESTAMP)))
+        Date(args.getLong(TIMESTAMP))
+)
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun parseRawBundle(args: PersistableBundle) = Team(
@@ -108,7 +111,8 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getBooleanCompat(CUSTOM_WEBSITE),
         args.getBooleanCompat(SHOULD_UPLOAD_MEDIA),
         args.getInt(MEDIA_YEAR),
-        Date(args.getLong(TIMESTAMP)))
+        Date(args.getLong(TIMESTAMP))
+)
 
 private fun Team.toRawBundle() = bundleOf(
         NUMBER to number,
@@ -131,7 +135,8 @@ private fun Team.toRawBundle() = bundleOf(
         CUSTOM_WEBSITE to hasCustomWebsite,
         SHOULD_UPLOAD_MEDIA to shouldUploadMediaToTba,
         MEDIA_YEAR to mediaYear,
-        TIMESTAMP to timestamp.time)
+        TIMESTAMP to timestamp.time
+)
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun Team.toRawPersistableBundle() = PersistableBundle().apply {

@@ -50,11 +50,12 @@ inline fun <T> Bundle.getBundleAsMap(key: String, parse: Bundle.(String) -> T): 
 fun <T> PersistableBundle.getBundleAsMap(key: String) = getBundleAsMap(key) { get(it) as T }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-inline fun <T> PersistableBundle.getBundleAsMap(key: String,
-                                                parse: PersistableBundle.(String) -> T) =
-        getPersistableBundle(key).let { bundle ->
-            bundle.keySet().associate { it to bundle.parse(it) } as Map<String, T>
-        }
+inline fun <T> PersistableBundle.getBundleAsMap(
+        key: String,
+        parse: PersistableBundle.(String) -> T
+) = getPersistableBundle(key).let { bundle ->
+    bundle.keySet().associate { it to bundle.parse(it) } as Map<String, T>
+}
 
 inline fun <T> bundleToMap(bundle: Bundle, parse: Bundle.(String) -> T) =
         bundle.keySet().associate { it to bundle.parse(it) }
@@ -75,10 +76,12 @@ fun getTabIdBundle(key: String?) = bundleOf(TAB_KEY to key)
 
 fun getTabId(bundle: Bundle?): String? = bundle?.getString(TAB_KEY)
 
-fun getScoutBundle(team: Team,
-                   addScout: Boolean = false,
-                   overrideTemplateId: String? = null,
-                   scoutId: String? = null): Bundle {
+fun getScoutBundle(
+        team: Team,
+        addScout: Boolean = false,
+        overrideTemplateId: String? = null,
+        scoutId: String? = null
+): Bundle {
     require(addScout || overrideTemplateId == null) {
         "Can't use an override id without adding a scout."
     }

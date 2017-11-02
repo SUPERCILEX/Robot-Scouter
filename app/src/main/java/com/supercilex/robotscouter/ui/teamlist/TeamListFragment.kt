@@ -55,10 +55,11 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
         holder.init(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
-            View.inflate(context, R.layout.fragment_team_list, null)
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? = View.inflate(context, R.layout.fragment_team_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -88,7 +89,8 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
                         snapshots, this, menuHelper, holder.selectedTeamIdListener)
                 recyclerView.adapter = adapter
                 menuHelper.setAdapter(adapter)
-                menuHelper.restoreState(savedInstanceState); savedInstanceState?.clear()
+                menuHelper.restoreState(savedInstanceState)
+                savedInstanceState?.clear()
             }
         })
     }
@@ -122,10 +124,11 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) =
-            permHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
+    ) = permHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
             permHandler.onActivityResult(requestCode)

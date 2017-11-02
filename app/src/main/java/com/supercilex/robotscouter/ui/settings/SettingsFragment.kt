@@ -126,9 +126,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         activity.finish()
                     }
             KEY_RELEASE_NOTES -> launchUrl(
-                    activity, Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases"))
+                    activity,
+                    Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases")
+            )
             KEY_TRANSLATE -> launchUrl(
-                    activity, Uri.parse("https://www.transifex.com/supercilex/robot-scouter/"))
+                    activity,
+                    Uri.parse("https://www.transifex.com/supercilex/robot-scouter/")
+            )
             KEY_VERSION -> {
                 (activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
                         ClipData.newPlainText(
@@ -140,7 +144,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
                             R.anim.fade_in,
                             R.anim.fade_out,
                             R.anim.fade_in,
-                            R.anim.fade_out)
+                            R.anim.fade_out
+                    )
                     .replace(R.id.settings, LicensesFragment.newInstance())
                     .addToBackStack(null)
                     .commit()

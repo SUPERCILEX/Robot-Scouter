@@ -12,8 +12,8 @@ import com.supercilex.robotscouter.data.model.Metric
 import kotterknife.bindView
 
 abstract class MetricViewHolderBase<FMetric : Metric<TMetric>, TMetric, out VView : TextView>(
-        itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+        itemView: View
+) : RecyclerView.ViewHolder(itemView) {
     protected val name: VView by bindView(R.id.name)
     protected lateinit var metric: FMetric
     protected lateinit var manager: FragmentManager

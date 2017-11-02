@@ -5,8 +5,10 @@ import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.supercilex.robotscouter.R
 
-open class CardListHelper(private val adapter: FirestoreRecyclerAdapter<*, *>,
-                          private val recyclerView: RecyclerView) {
+open class CardListHelper(
+        private val adapter: FirestoreRecyclerAdapter<*, *>,
+        private val recyclerView: RecyclerView
+) {
     fun onChildChanged(type: ChangeEventType, index: Int) {
         if (type == ChangeEventType.REMOVED) {
             recyclerView.notifyItemsChangedNoAnimation(index + if (index != 0) -1 else 0)

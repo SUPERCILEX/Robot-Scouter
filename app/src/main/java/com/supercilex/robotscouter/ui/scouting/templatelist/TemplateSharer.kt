@@ -20,8 +20,9 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Date
 
-class TemplateSharer private constructor(private val activity: FragmentActivity) :
-        CachingSharer(activity) {
+class TemplateSharer private constructor(
+        private val activity: FragmentActivity
+) : CachingSharer(activity) {
     fun share(templateId: String, templateName: String) {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
             val token = generateToken
@@ -55,9 +56,11 @@ class TemplateSharer private constructor(private val activity: FragmentActivity)
         /**
          * @return true if a share intent was launched, false otherwise
          */
-        fun shareTemplate(activity: FragmentActivity,
-                          templateId: String,
-                          templateName: String): Boolean {
+        fun shareTemplate(
+                activity: FragmentActivity,
+                templateId: String,
+                templateName: String
+        ): Boolean {
             if (isOffline()) {
                 longSnackbar(activity.find(R.id.root), R.string.no_connection)
                 return false

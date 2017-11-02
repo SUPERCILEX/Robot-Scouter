@@ -10,16 +10,18 @@ import java.util.concurrent.TimeUnit
 
 abstract class CachingSharer(private val context: Context) {
     protected fun loadFile(fileName: String) = AsyncTaskExecutor.execute(object : Callable<String> {
-        private val tempShareTemplateFile: File get() {
-            val nameSplit = fileName.split(".")
-            return createFile(nameSplit[0], nameSplit[1], context.cacheDir, null)
-        }
+        private val tempShareTemplateFile: File
+            get() {
+                val nameSplit = fileName.split(".")
+                return createFile(nameSplit[0], nameSplit[1], context.cacheDir, null)
+            }
 
         override fun call(): String {
             val shareTemplateFile = File(context.cacheDir, fileName)
             return if (shareTemplateFile.exists()) {
-                if (TimeUnit.MILLISECONDS.toDays(
-                        System.currentTimeMillis() - shareTemplateFile.lastModified()) >= FRESHNESS) {
+                val diff = TimeUnit.MILLISECONDS.toDays(
+                        System.currentTimeMillis() - shareTemplateFile.lastModified())
+                if (diff >= FRESHNESS) {
                     if (shareTemplateFile.delete()) {
                         getShareTemplateFromServer(tempShareTemplateFile)
                     } else {

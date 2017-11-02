@@ -37,8 +37,7 @@ import kotterknife.bindView
 import kotlin.math.roundToInt
 
 abstract class TemplateSelectorDialog : DialogFragment() {
-    @get:StringRes
-    protected abstract val title: Int
+    @get:StringRes protected abstract val title: Int
 
     private val holder: ScoutsHolder by unsafeLazy {
         ViewModelProviders.of(this).get(ScoutsHolder::class.java)
@@ -63,11 +62,12 @@ abstract class TemplateSelectorDialog : DialogFragment() {
 
             override fun getItemCount() = super.getItemCount() + EXTRA_ITEMS
 
-            override fun onChildChanged(type: ChangeEventType,
-                                        snapshot: DocumentSnapshot,
-                                        newIndex: Int,
-                                        oldIndex: Int) = super.onChildChanged(
-                    type, snapshot, newIndex + EXTRA_ITEMS, oldIndex + EXTRA_ITEMS)
+            override fun onChildChanged(
+                    type: ChangeEventType,
+                    snapshot: DocumentSnapshot,
+                    newIndex: Int,
+                    oldIndex: Int
+            ) = super.onChildChanged(type, snapshot, newIndex + EXTRA_ITEMS, oldIndex + EXTRA_ITEMS)
 
             override fun onDataChanged() = progress.hide()
 
@@ -103,7 +103,9 @@ abstract class TemplateSelectorDialog : DialogFragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(object : DividerItemDecoration(
-                context, DividerItemDecoration.VERTICAL) {
+                context,
+                DividerItemDecoration.VERTICAL
+        ) {
             private val divider = DividerItemDecoration::class.java
                     .getDeclaredField("mDivider")
                     .apply { isAccessible = true }

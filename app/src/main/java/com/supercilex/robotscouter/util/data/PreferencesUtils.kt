@@ -62,15 +62,16 @@ var defaultTemplateId: String
     set(value) = prefs.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
 
 @get:AppCompatDelegate.NightMode
-val nightMode: Int get() {
-    val mode = prefs.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")
-    return when (mode) {
-        "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
-        "yes" -> AppCompatDelegate.MODE_NIGHT_YES
-        "no" -> AppCompatDelegate.MODE_NIGHT_NO
-        else -> throw IllegalStateException("Unknown night mode value: $mode")
+val nightMode: Int
+    get() {
+        val mode = prefs.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")
+        return when (mode) {
+            "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
+            "yes" -> AppCompatDelegate.MODE_NIGHT_YES
+            "no" -> AppCompatDelegate.MODE_NIGHT_NO
+            else -> throw IllegalStateException("Unknown night mode value: $mode")
+        }
     }
-}
 
 val shouldAskToUploadMediaToTba: Boolean
     get() = prefs.getString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "ask"
@@ -89,10 +90,12 @@ var hasShownSignInTutorial: Boolean
 
 fun initPrefs() = PrefsLiveData.observeForever {
     it?.addChangeEventListener(object : ChangeEventListenerBase {
-        override fun onChildChanged(type: ChangeEventType,
-                                    snapshot: DocumentSnapshot,
-                                    newIndex: Int,
-                                    oldIndex: Int) {
+        override fun onChildChanged(
+                type: ChangeEventType,
+                snapshot: DocumentSnapshot,
+                newIndex: Int,
+                oldIndex: Int
+        ) {
             val id = snapshot.id
 
             if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
@@ -154,7 +157,9 @@ private fun updateTeamTemplateIds() {
     }
 }
 
-private inline fun SharedPreferences.updatePrefs(transaction: SharedPreferences.Editor.() -> Unit) = edit().run {
+private inline fun SharedPreferences.updatePrefs(
+        transaction: SharedPreferences.Editor.() -> Unit
+) = edit().run {
     transaction()
     apply()
 }

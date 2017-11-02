@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.util.data.model
 
 import android.content.Context
 import android.net.Uri
+import android.support.annotation.WorkerThread
 import android.text.TextUtils
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -36,11 +37,15 @@ import java.util.concurrent.TimeUnit
 
 private const val FRESHNESS_DAYS = "team_freshness"
 
-val teamsQuery get() = "$FIRESTORE_OWNERS.${uid!!}".let {
-    teams.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
-}
+val teamsQuery
+    get() = "$FIRESTORE_OWNERS.${uid!!}".let {
+        teams.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
+    }
 
 val Team.ref: DocumentReference get() = teams.document(id)
+
+val Team.isOutdatedMedia: Boolean
+    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || TextUtils.isEmpty(media)
 
 fun Collection<Team>.getNames(): String {
     val sortedTeams = ArrayList(this)
@@ -76,7 +81,8 @@ fun Team.add() {
             Action.Builder(Action.Builder.ADD_ACTION)
                     .setObject(toString(), deepLink)
                     .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
-                    .build())
+                    .build()
+    )
 }
 
 fun Team.update(newTeam: Team) {
@@ -144,20 +150,20 @@ fun Team.fetchLatestData() {
     }
 }
 
+@WorkerThread
 fun Team.getScouts(): Task<List<Scout>> = async {
-    val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).get())
-            .map { scoutParser.parseSnapshot(it) }
-    val metricTasks =
-            scouts.map { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).get() }
+    val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).get()).map {
+        scoutParser.parseSnapshot(it)
+    }
+    val metricTasks = scouts.map {
+        getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).get()
+    }
     Tasks.await(Tasks.whenAll(metricTasks))
 
     scouts.mapIndexed { index, scout ->
         scout.copy(metrics = metricTasks[index].result.map { metricParser.parseSnapshot(it) })
     }
 }
-
-val Team.isOutdatedMedia: Boolean
-    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || TextUtils.isEmpty(media)
 
 fun Team.visitTbaWebsite(context: Context) =
         launchUrl(context, Uri.parse("https://www.thebluealliance.com/team/$number"))

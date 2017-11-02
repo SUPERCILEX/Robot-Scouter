@@ -16,6 +16,8 @@ enum class TemplateType(val id: Int) {
 
         fun coerce(id: String?): TemplateType? = if (id?.isNumber() == true) {
             TemplateType.values().find { it.id == id.toInt() }
-        } else null
+        } else {
+            null
+        }
     }
 }

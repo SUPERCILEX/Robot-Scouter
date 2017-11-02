@@ -17,8 +17,8 @@ class EmojiCompatTextInputEditText : EmojiAppCompatEditText {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
-            super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
+            : super(context, attrs, defStyleAttr)
 
     /** Copied from [android.support.design.widget.TextInputEditText] */
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {

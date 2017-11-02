@@ -38,7 +38,8 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 childFragmentManager,
                 recyclerView,
                 this,
-                itemTouchCallback)
+                itemTouchCallback
+        )
     }
     private val itemTouchCallback by unsafeLazy {
         TemplateItemTouchCallback<Metric<*>>(recyclerView)
@@ -140,7 +141,8 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     }
 
     override fun onBackPressed(): Boolean = if (fam.isOpened) {
-        fam.close(true); true
+        fam.close(true)
+        true
     } else {
         false
     }

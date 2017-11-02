@@ -20,7 +20,8 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
         val items = LinkedHashMap<String, String>()
         items.put(
                 metric.ref.parent.document().id,
-                itemView.context.getString(R.string.metric_spinner_edit_title))
+                itemView.context.getString(R.string.metric_spinner_edit_title)
+        )
         items.putAll(listMetric.value)
         return ArrayAdapter(
                 itemView.context, android.R.layout.simple_spinner_item, ArrayList(items.values))
@@ -36,7 +37,8 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
             itemView.context.longToast(
                     "Sorry, updating item selectors hasn't been implemented in the Robot" +
                             " Scouter v2.0 beta yet, but it will be by the time v2.0 reaches" +
-                            " the stable channel.")
+                            " the stable channel."
+            )
         } else {
             super.onItemSelected(parent, view, itemPosition - 1, id)
         }

@@ -81,7 +81,8 @@ val isLowRamDevice: Boolean by lazy {
 val isInTestMode: Boolean by lazy {
     Settings.System.getString(RobotScouter.INSTANCE.contentResolver, "firebase.test.lab") == "true"
 }
-val debugInfo: String get() =
+val debugInfo: String
+    get() =
         """
         |- Robot Scouter version: $fullVersionName
         |- Android OS version: ${Build.VERSION.SDK_INT}

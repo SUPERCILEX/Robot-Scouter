@@ -83,10 +83,11 @@ class TemplateListFragment : FragmentBase(),
         FirebaseAuth.getInstance().addAuthStateListener(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
-            View.inflate(context, R.layout.fragment_template_list, null)
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? = View.inflate(context, R.layout.fragment_template_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fun initFab(@IdRes id: Int, @DrawableRes icon: Int) =
@@ -144,7 +145,8 @@ class TemplateListFragment : FragmentBase(),
             R.id.action_share -> TemplateSharer.shareTemplate(
                     activity!!,
                     pagerAdapter.currentTabId!!,
-                    pagerAdapter.currentTab?.text?.toString()!!)
+                    pagerAdapter.currentTab?.text?.toString()!!
+            )
             else -> return false
         }
         return true

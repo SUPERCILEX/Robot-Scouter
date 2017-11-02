@@ -32,21 +32,23 @@ val notificationManager: NotificationManager by lazy {
 fun initNotifications() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
-    notificationManager.createNotificationChannelGroups(listOf(
-            NotificationChannelGroup(
+    notificationManager.createNotificationChannelGroups(
+            listOf(NotificationChannelGroup(
                     EXPORT_GROUP,
-                    RobotScouter.INSTANCE.getString(R.string.export_group_title))))
+                    RobotScouter.INSTANCE.getString(R.string.export_group_title)))
+    )
 
-    notificationManager.createNotificationChannels(listOf(
-            getExportChannel(),
-            getExportInProgressChannel()))
+    notificationManager.createNotificationChannels(
+            listOf(getExportChannel(), getExportInProgressChannel())
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getExportChannel(): NotificationChannel = NotificationChannel(
         EXPORT_CHANNEL,
         RobotScouter.INSTANCE.getString(R.string.export_channel_title),
-        NotificationManager.IMPORTANCE_HIGH).apply {
+        NotificationManager.IMPORTANCE_HIGH
+).apply {
     group = EXPORT_GROUP
     description = RobotScouter.INSTANCE.getString(R.string.export_channel_desc)
     setShowBadge(true)
@@ -58,7 +60,8 @@ fun getExportChannel(): NotificationChannel = NotificationChannel(
 fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
         EXPORT_IN_PROGRESS_CHANNEL,
         RobotScouter.INSTANCE.getString(R.string.export_progress_channel_title),
-        NotificationManager.IMPORTANCE_LOW).apply {
+        NotificationManager.IMPORTANCE_LOW
+).apply {
     group = EXPORT_GROUP
     description = RobotScouter.INSTANCE.getString(R.string.export_progress_channel_desc)
     setShowBadge(false)
@@ -104,6 +107,7 @@ class NotificationIntentForwarder : Activity() {
         fun getCancelIntent(notificationId: Int, forwardedIntent: Intent): Intent =
                 RobotScouter.INSTANCE.intentFor<NotificationIntentForwarder>(
                         KEY_INTENT to forwardedIntent,
-                        KEY_NOTIFICATION_ID to notificationId)
+                        KEY_NOTIFICATION_ID to notificationId
+                )
     }
 }

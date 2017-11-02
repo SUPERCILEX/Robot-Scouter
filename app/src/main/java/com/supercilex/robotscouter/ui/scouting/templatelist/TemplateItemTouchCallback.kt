@@ -24,8 +24,12 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Collections
 
-class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+class TemplateItemTouchCallback<T : OrderedModel>(
+        private val rootView: View
+) : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+        ItemTouchHelper.LEFT
+) {
     private val recyclerView: RecyclerView by rootView.bindView(R.id.list)
     private val appBar: AppBarLayout by (rootView.context as FragmentActivity).bindView(R.id.app_bar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
@@ -37,11 +41,17 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
     private var isMovingItem = false
     private var isDeletingItem = false
 
-    fun getItem(position: Int): T =
-            if (isMovingItem || isDeletingItem) localItems[position] else adapter.snapshots[position]
+    fun getItem(position: Int): T = if (isMovingItem || isDeletingItem) {
+        localItems[position]
+    } else {
+        adapter.snapshots[position]
+    }
 
-    fun getItemCount(injectedSuperCall: () -> Int): Int =
-            if (isMovingItem || isDeletingItem) localItems.size else injectedSuperCall()
+    fun getItemCount(injectedSuperCall: () -> Int): Int = if (isMovingItem || isDeletingItem) {
+        localItems.size
+    } else {
+        injectedSuperCall()
+    }
 
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
         viewHolder.itemView.find<View>(R.id.reorder)
@@ -81,7 +91,11 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
     }
 
     fun onChildChanged(
-            type: ChangeEventType, newIndex: Int, oldIndex: Int, injectedSuperCall: () -> Unit) {
+            type: ChangeEventType,
+            newIndex: Int,
+            oldIndex: Int,
+            injectedSuperCall: () -> Unit
+    ) {
         if (isMovingItem) {
             if (isCatchingUpOnMove(type, newIndex)) {
                 if (adapter.snapshots == localItems) {
@@ -146,9 +160,11 @@ class TemplateItemTouchCallback<T : OrderedModel>(private val rootView: View) : 
         adapter.notifyDataSetChanged()
     }
 
-    override fun onMove(recyclerView: RecyclerView,
-                        viewHolder: RecyclerView.ViewHolder,
-                        target: RecyclerView.ViewHolder): Boolean {
+    override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+    ): Boolean {
         val fromPos = viewHolder.adapterPosition
         val toPos = target.adapterPosition
 

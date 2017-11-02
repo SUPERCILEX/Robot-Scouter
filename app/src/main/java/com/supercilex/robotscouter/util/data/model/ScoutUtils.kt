@@ -55,15 +55,13 @@ fun Team.addScout(overrideId: String? = null): String {
         getTemplateRef(templateId).get().continueWith {
             scoutParser.parseSnapshot(it.result).name
         }
-    }).logFailures().addOnCompleteListener(
-            AsyncTaskExecutor, OnCompleteListener {
+    }).logFailures().addOnCompleteListener(AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(getScoutRef().get()).map {
             scoutParser.parseSnapshot(it).templateId
         }.groupBy { it }[templateId]!!.size
 
-        scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates")
-                .logFailures()
+        scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates").logFailures()
     })
 
     logAddScoutEvent(this, id, templateId)

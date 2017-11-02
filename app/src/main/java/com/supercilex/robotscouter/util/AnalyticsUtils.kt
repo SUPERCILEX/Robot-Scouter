@@ -69,6 +69,9 @@ fun initAnalytics() {
         if (user != null) User(user.uid, user.email, user.displayName, user.photoUrl).add()
     }
 
+    // Use an IdTokenListener which updates every hour or so to ensure the last login time gets
+    // updated accurately. If we used an AuthStateListener, it would only update when the app is
+    // restarted.
     FirebaseAuth.getInstance().addIdTokenListener {
         if (uid != null) {
             userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
@@ -78,64 +81,96 @@ fun initAnalytics() {
     RxJavaPlugins.setErrorHandler(CrashLogger)
 }
 
-fun logSelectTeamEvent(team: Team) = analytics.logEvent(Event.SELECT_CONTENT, bundleOf(
-        ITEM_ID to "select_team",
-        CONTENT_TYPE to TEAM_CATEGORY,
-        ITEM_NAME to team.number,
-        TEAM_ID to team.id))
+fun logSelectTeamEvent(team: Team) = analytics.logEvent(
+        Event.SELECT_CONTENT,
+        bundleOf(
+                ITEM_ID to "select_team",
+                CONTENT_TYPE to TEAM_CATEGORY,
+                ITEM_NAME to team.number,
+                TEAM_ID to team.id
+        )
+)
 
-fun logEditTeamDetailsEvent(team: Team) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
-        ITEM_ID to "edit_team_details",
-        ITEM_NAME to team.number,
-        ITEM_CATEGORY to TEAM_CATEGORY,
-        TEAM_ID to team.id))
+fun logEditTeamDetailsEvent(team: Team) = analytics.logEvent(
+        Event.VIEW_ITEM,
+        bundleOf(
+                ITEM_ID to "edit_team_details",
+                ITEM_NAME to team.number,
+                ITEM_CATEGORY to TEAM_CATEGORY,
+                TEAM_ID to team.id
+        )
+)
 
 fun logShareTeamsEvent(teams: List<Team>) {
     async {
         safeLog(teams) { ids, name ->
-            analytics.logEvent(Event.SHARE, bundleOf(
-                    ITEM_ID to "share_team",
-                    ITEM_NAME to name,
-                    ITEM_CATEGORY to TEAMS_CATEGORY,
-                    TEAM_ID to ids))
+            analytics.logEvent(
+                    Event.SHARE,
+                    bundleOf(
+                            ITEM_ID to "share_team",
+                            ITEM_NAME to name,
+                            ITEM_CATEGORY to TEAMS_CATEGORY,
+                            TEAM_ID to ids
+                    )
+            )
         }
     }.logFailures()
 }
 
-fun logAddScoutEvent(team: Team, scoutId: String, templateId: String) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
-        ITEM_ID to "add_scout",
-        ITEM_NAME to team.number,
-        ITEM_CATEGORY to SCOUT_CATEGORY,
-        TEAM_ID to team.id,
-        SCOUT_ID to scoutId,
-        TEMPLATE_ID to templateId))
+fun logAddScoutEvent(team: Team, scoutId: String, templateId: String) = analytics.logEvent(
+        Event.VIEW_ITEM,
+        bundleOf(
+                ITEM_ID to "add_scout",
+                ITEM_NAME to team.number,
+                ITEM_CATEGORY to SCOUT_CATEGORY,
+                TEAM_ID to team.id,
+                SCOUT_ID to scoutId,
+                TEMPLATE_ID to templateId
+        )
+)
 
-fun logAddTemplateEvent(templateId: String) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
-        ITEM_ID to "add_template",
-        ITEM_NAME to "Template",
-        ITEM_CATEGORY to TEMPLATE_CATEGORY,
-        TEMPLATE_ID to templateId))
+fun logAddTemplateEvent(templateId: String) = analytics.logEvent(
+        Event.VIEW_ITEM,
+        bundleOf(
+                ITEM_ID to "add_template",
+                ITEM_NAME to "Template",
+                ITEM_CATEGORY to TEMPLATE_CATEGORY,
+                TEMPLATE_ID to templateId
+        )
+)
 
-fun logViewTemplateEvent(templateId: String) = analytics.logEvent(Event.VIEW_ITEM, bundleOf(
-        ITEM_ID to "view_template",
-        ITEM_NAME to "Template",
-        ITEM_CATEGORY to TEMPLATE_CATEGORY,
-        TEMPLATE_ID to templateId))
+fun logViewTemplateEvent(templateId: String) = analytics.logEvent(
+        Event.VIEW_ITEM,
+        bundleOf(
+                ITEM_ID to "view_template",
+                ITEM_NAME to "Template",
+                ITEM_CATEGORY to TEMPLATE_CATEGORY,
+                TEMPLATE_ID to templateId
+        )
+)
 
-fun logShareTemplateEvent(templateId: String) = analytics.logEvent(Event.SHARE, bundleOf(
-        ITEM_ID to "share_template",
-        ITEM_NAME to "Template",
-        ITEM_CATEGORY to TEMPLATE_CATEGORY,
-        TEAM_ID to templateId))
+fun logShareTemplateEvent(templateId: String) = analytics.logEvent(
+        Event.SHARE,
+        bundleOf(
+                ITEM_ID to "share_template",
+                ITEM_NAME to "Template",
+                ITEM_CATEGORY to TEMPLATE_CATEGORY,
+                TEAM_ID to templateId
+        )
+)
 
 fun logExportTeamsEvent(teams: List<Team>) {
     async {
         safeLog(teams) { ids, name ->
-            analytics.logEvent(Event.VIEW_ITEM, bundleOf(
-                    ITEM_ID to "export_teams",
-                    ITEM_NAME to name,
-                    ITEM_CATEGORY to TEAMS_CATEGORY,
-                    TEAM_ID to ids))
+            analytics.logEvent(
+                    Event.VIEW_ITEM,
+                    bundleOf(
+                            ITEM_ID to "export_teams",
+                            ITEM_NAME to name,
+                            ITEM_CATEGORY to TEAMS_CATEGORY,
+                            TEAM_ID to ids
+                    )
+            )
         }
     }.logFailures()
 }

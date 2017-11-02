@@ -30,15 +30,14 @@ private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templates.id}/"
 val generateToken: String get() = FirebaseFirestore.getInstance().collection("null").document().id
 
 val Team.deepLink: String get() = listOf(this).getTeamsLink()
-
 val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)
-
-val Team.indexable: Indexable get() = Indexables.digitalDocumentBuilder()
-        .setUrl(deepLink)
-        .setName(toString())
-        .apply { setImage(media ?: return@apply) }
-        .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
-        .build()
+val Team.indexable: Indexable
+    get() = Indexables.digitalDocumentBuilder()
+            .setUrl(deepLink)
+            .setName(toString())
+            .apply { setImage(media ?: return@apply) }
+            .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
+            .build()
 
 fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
         Indexables.digitalDocumentBuilder()
@@ -53,10 +52,12 @@ fun List<Team>.getTeamsLink(token: String? = null): String =
 fun getTemplateLink(templateId: String, token: String? = null): String =
         listOf(templateId).generateUrl(TEMPLATES_LINK_BASE, token) { this to true.toString() }
 
-inline fun updateOwner(refs: Iterable<DocumentReference>,
-                       token: String,
-                       prevUid: String?,
-                       newValue: (DocumentReference) -> Any): Task<Void> {
+inline fun updateOwner(
+        refs: Iterable<DocumentReference>,
+        token: String,
+        prevUid: String?,
+        newValue: (DocumentReference) -> Any
+): Task<Void> {
     val pendingApprovalPath = FieldPath.of(FIRESTORE_PENDING_APPROVALS, uid!!)
     val oldOwnerPath = prevUid?.let { FieldPath.of(FIRESTORE_OWNERS, it) }
     val newOwnerPath = FieldPath.of(FIRESTORE_OWNERS, uid!!)
@@ -75,7 +76,8 @@ inline fun updateOwner(refs: Iterable<DocumentReference>,
 private inline fun <T> List<T>.generateUrl(
         linkBase: String,
         token: String?,
-        queryParamsGenerator: T.() -> Pair<String, String>): String {
+        queryParamsGenerator: T.() -> Pair<String, String>
+): String {
     val builder = Uri.Builder().path(linkBase).encodeToken(token)
 
     val keys = ArrayList<String>(size)

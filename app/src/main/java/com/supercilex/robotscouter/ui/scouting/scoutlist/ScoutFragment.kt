@@ -43,7 +43,9 @@ class ScoutFragment : MetricListFragment() {
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
         team.deleteScout(scoutId)
         true
-    } else super.onOptionsItemSelected(item)
+    } else {
+        super.onOptionsItemSelected(item)
+    }
 
     companion object {
         fun newInstance(scoutId: String, team: Team) = ScoutFragment().apply {

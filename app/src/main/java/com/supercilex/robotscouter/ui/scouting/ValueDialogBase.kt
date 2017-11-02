@@ -22,7 +22,8 @@ abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = createDialog(
             View.inflate(context, R.layout.dialog_value, null),
             title,
-            savedInstanceState)
+            savedInstanceState
+    )
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)

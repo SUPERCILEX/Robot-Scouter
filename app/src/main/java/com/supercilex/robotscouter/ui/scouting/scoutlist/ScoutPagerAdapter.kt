@@ -12,8 +12,11 @@ import com.supercilex.robotscouter.util.data.model.delete
 import com.supercilex.robotscouter.util.data.model.getScoutRef
 import com.supercilex.robotscouter.util.isOffline
 
-class ScoutPagerAdapter(fragment: Fragment, tabLayout: TabLayout, private val team: Team) :
-        TabPagerAdapterBase(fragment, tabLayout, team.getScoutRef()) {
+class ScoutPagerAdapter(
+        fragment: Fragment,
+        tabLayout: TabLayout,
+        private val team: Team
+) : TabPagerAdapterBase(fragment, tabLayout, team.getScoutRef()) {
     override val editTabNameRes = R.string.scout_edit_name_title
 
     init {
@@ -27,7 +30,8 @@ class ScoutPagerAdapter(fragment: Fragment, tabLayout: TabLayout, private val te
             fragment.getString(R.string.scout_tab_default_title, count - position)
 
     override fun onDataChanged() {
-        if (oldScouts.isNotEmpty() && holder.scouts.isEmpty() && !isOffline() && fragment.isResumed) {
+        if (oldScouts.isNotEmpty() && holder.scouts.isEmpty()
+                && !isOffline() && fragment.isResumed) {
             Snackbar.make(fragment.view!!,
                           fragment.getString(R.string.scout_should_delete_team_message, team),
                           Snackbar.LENGTH_LONG)

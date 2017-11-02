@@ -27,30 +27,32 @@ import org.jetbrains.anko.longToast
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
 
 val averageifFunction: FreeRefFunction = object : FreeRefFunction {
-    override fun evaluate(args: Array<ValueEval>, context: OperationEvaluationContext): ValueEval =
-            if (args.size >= 2 && args.size % 2 == 0) {
-                var result = 0.0
+    override fun evaluate(args: Array<ValueEval>, context: OperationEvaluationContext): ValueEval {
+        return if (args.size >= 2 && args.size % 2 == 0) {
+            var result = 0.0
 
-                var i = 0
-                while (i < args.size) {
-                    val firstArg = args[i]
-                    val secondArg = args[i + 1]
-                    val evaluate =
-                            evaluate(context.rowIndex, context.columnIndex, firstArg, secondArg)
+            var i = 0
+            while (i < args.size) {
+                val firstArg = args[i]
+                val secondArg = args[i + 1]
+                val evaluate = evaluate(context.rowIndex, context.columnIndex, firstArg, secondArg)
 
-                    result = evaluate.numberValue
-                    i += 2
-                }
-
-                NumberEval(result)
-            } else {
-                ErrorEval.VALUE_INVALID
+                result = evaluate.numberValue
+                i += 2
             }
 
-    private fun evaluate(srcRowIndex: Int,
-                         srcColumnIndex: Int,
-                         arg0: ValueEval,
-                         arg1: ValueEval): NumberEval {
+            NumberEval(result)
+        } else {
+            ErrorEval.VALUE_INVALID
+        }
+    }
+
+    private fun evaluate(
+            srcRowIndex: Int,
+            srcColumnIndex: Int,
+            arg0: ValueEval,
+            arg1: ValueEval
+    ): NumberEval {
         val totalEval = Sumif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1) as NumberEval
         val countEval = Countif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1) as NumberEval
 
@@ -64,16 +66,17 @@ private const val CELL_WIDTH_CEILING = 7500
 
 val isUnsupportedDevice by lazy { VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || isLowRamDevice }
 
-val Cell?.stringValue: String get() {
-    if (this == null) return ""
-    return when (cellTypeEnum) {
-        CellType.BOOLEAN -> booleanCellValue.toString()
-        CellType.NUMERIC -> numericCellValue.toString()
-        CellType.STRING -> stringCellValue
-        CellType.FORMULA -> cellFormula
-        else -> ""
+val Cell?.stringValue: String
+    get() {
+        if (this == null) return ""
+        return when (cellTypeEnum) {
+            CellType.BOOLEAN -> booleanCellValue.toString()
+            CellType.NUMERIC -> numericCellValue.toString()
+            CellType.STRING -> stringCellValue
+            CellType.FORMULA -> cellFormula
+            else -> ""
+        }
     }
-}
 
 fun getCellRangeAddress(first: Cell, last: Cell) = "${first.address}:${last.address}"
 

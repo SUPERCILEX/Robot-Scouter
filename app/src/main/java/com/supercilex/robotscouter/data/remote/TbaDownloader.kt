@@ -11,8 +11,9 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import retrofit2.Response
 
-class TbaDownloader private constructor(team: Team) :
-        TbaServiceBase<TbaTeamApi>(team, TbaTeamApi::class.java) {
+class TbaDownloader private constructor(
+        team: Team
+) : TbaServiceBase<TbaTeamApi>(team, TbaTeamApi::class.java) {
     override fun call(): Team {
         getTeamInfo()
         getTeamMedia(year)

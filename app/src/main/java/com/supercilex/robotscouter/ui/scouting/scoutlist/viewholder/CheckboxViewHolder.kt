@@ -6,8 +6,9 @@ import android.widget.CheckBox
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 
-open class CheckboxViewHolder(itemView: View) :
-        MetricViewHolderBase<Metric.Boolean, Boolean, CheckBox>(itemView),
+open class CheckboxViewHolder(
+        itemView: View
+) : MetricViewHolderBase<Metric.Boolean, Boolean, CheckBox>(itemView),
         View.OnClickListener {
     public override fun bind() {
         super.bind()

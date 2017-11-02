@@ -10,8 +10,9 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
 
-class TbaUploader private constructor(team: Team) :
-        TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
+class TbaUploader private constructor(
+        team: Team
+) : TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
     override fun call(): Team {
         uploadToImgur()
         if (team.shouldUploadMediaToTba) uploadToTba()
@@ -24,7 +25,8 @@ class TbaUploader private constructor(team: Team) :
                 .postToImgur(
                         RobotScouter.INSTANCE.getString(R.string.imgur_client_id),
                         team.toString(),
-                        RequestBody.create(MediaType.parse("image/*"), File(team.media)))
+                        RequestBody.create(MediaType.parse("image/*"), File(team.media))
+                )
                 .execute()
 
         if (cannotContinue(response)) throw IllegalStateException(response.toString())
@@ -43,8 +45,8 @@ class TbaUploader private constructor(team: Team) :
                 team.number.toString(),
                 year,
                 tbaApiKey,
-                RequestBody.create(MediaType.parse("text/*"), team.media!!))
-                .execute()
+                RequestBody.create(MediaType.parse("text/*"), team.media!!)
+        ).execute()
 
         if (cannotContinue(response)) return
 

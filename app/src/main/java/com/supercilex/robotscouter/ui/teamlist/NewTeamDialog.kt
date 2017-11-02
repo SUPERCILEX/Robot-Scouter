@@ -21,7 +21,8 @@ class NewTeamDialog : KeyboardDialogBase() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = createDialog(
             View.inflate(context, R.layout.dialog_new_team, null),
             R.string.scout_new_title,
-            savedInstanceState)
+            savedInstanceState
+    )
 
     public override fun onAttemptDismiss(): Boolean {
         val teamNumber: String = lastEditText.text.toString()

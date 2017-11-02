@@ -80,7 +80,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     override fun onAttemptDismiss(): Boolean {
         updateProgress(true)
 
-        val sku = "${amountSeekBar.progress + 1}${DonateDialog.SKU_BASE}${if (monthlyCheckBox.isChecked) "monthly" else "single"}"
+        val sku = "${amountSeekBar.progress + 1}${DonateDialog.SKU_BASE}" +
+                if (monthlyCheckBox.isChecked) "monthly" else "single"
         val type = if (monthlyCheckBox.isChecked) BillingClient.SkuType.SUBS else BillingClient.SkuType.INAPP
         purchaseItem(sku, type).addOnFailureListener { showError() }
 
@@ -104,8 +105,10 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
         }
     }
 
-    private fun purchaseItem(sku: String, type: String):
-            Task<Nothing> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Nothing>> {
+    private fun purchaseItem(
+            sku: String,
+            type: String
+    ): Task<Nothing> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Nothing>> {
         val purchaseStartTask = TaskCompletionSource<Nothing>()
 
         val result = billingClient.launchBillingFlow(activity, BillingFlowParams.Builder()
@@ -120,7 +123,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                     if (it.responseCode != BillingResponse.OK) {
                         val e = PurchaseException(
                                 it.responseCode,
-                                message = "Purchase fetch failed with code ${it.responseCode} and sku $sku")
+                                message = "Purchase fetch failed with code ${it.responseCode} and sku $sku"
+                        )
                         FirebaseCrash.report(e)
                         Crashlytics.logException(e)
                         purchaseStartTask.setException(e)
@@ -156,7 +160,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                 } else {
                     val e = PurchaseException(
                             resultCode,
-                            message = "Consumption failed with code $resultCode and sku ${purchase.sku}")
+                            message = "Consumption failed with code $resultCode and sku ${purchase.sku}"
+                    )
                     FirebaseCrash.report(e)
                     Crashlytics.logException(e)
                     consumption.setException(e)
@@ -239,9 +244,10 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
 
-        private class PurchaseException(val errorCode: Int,
-                                        sku: String = "",
-                                        message: String = "Purchase failed with error code $errorCode for sku $sku") :
-                Exception(message)
+        private class PurchaseException(
+                val errorCode: Int,
+                sku: String = "",
+                message: String = "Purchase failed with error code $errorCode for sku $sku"
+        ) : Exception(message)
     }
 }

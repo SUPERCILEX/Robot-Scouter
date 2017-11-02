@@ -13,7 +13,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Debug
 import android.support.annotation.ColorRes
+import android.support.text.emoji.EmojiCompat
+import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.content.ContextCompat
+import android.support.v4.provider.FontRequest
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
@@ -23,6 +26,8 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.WindowManager
 import android.widget.TextView
+import com.crashlytics.android.Crashlytics
+import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -81,6 +86,20 @@ fun initUi() {
 
         override fun onActivityDestroyed(activity: Activity) = Unit
     })
+
+    EmojiCompat.init(FontRequestEmojiCompatConfig(
+            RobotScouter.INSTANCE,
+            FontRequest(
+                    "com.google.android.gms.fonts",
+                    "com.google.android.gms",
+                    "Noto Color Emoji Compat",
+                    R.array.com_google_android_gms_fonts_certs)).registerInitCallback(
+            object : EmojiCompat.InitCallback() {
+                override fun onFailed(t: Throwable?) {
+                    FirebaseCrash.log("EmojiCompat failed to initialize with error: $t")
+                    Crashlytics.log("EmojiCompat failed to initialize with error: $t")
+                }
+            }))
 }
 
 fun isInTabletMode(context: Context): Boolean {
@@ -90,9 +109,11 @@ fun isInTabletMode(context: Context): Boolean {
             || size > Configuration.SCREENLAYOUT_SIZE_LARGE
 }
 
-fun animateColorChange(@ColorRes from: Int,
-                       @ColorRes to: Int,
-                       listener: ValueAnimator.AnimatorUpdateListener) {
+fun animateColorChange(
+        @ColorRes from: Int,
+        @ColorRes to: Int,
+        listener: ValueAnimator.AnimatorUpdateListener
+) {
     ValueAnimator.ofObject(
             ArgbEvaluator(),
             ContextCompat.getColor(RobotScouter.INSTANCE, from),
@@ -110,15 +131,18 @@ fun animateCircularReveal(view: View, visible: Boolean) {
             visible,
             centerX,
             centerY,
-            hypot(centerX.toDouble(), centerY.toDouble()).toFloat())
+            hypot(centerX.toDouble(), centerY.toDouble()).toFloat()
+    )
     animator?.start()
 }
 
-fun animateCircularReveal(view: View,
-                          visible: Boolean,
-                          centerX: Int,
-                          centerY: Int,
-                          radius: Float): Animator? {
+fun animateCircularReveal(
+        view: View,
+        visible: Boolean,
+        centerX: Int,
+        centerY: Int,
+        radius: Float
+): Animator? {
     if (visible && view.visibility == View.VISIBLE || !visible && view.visibility == View.GONE) {
         return null
     }
@@ -134,7 +158,8 @@ fun animateCircularReveal(view: View,
                 centerX,
                 centerY,
                 if (visible) 0f else radius,
-                if (visible) radius else 0f)
+                if (visible) radius else 0f
+        )
 
         anim.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
@@ -153,9 +178,8 @@ fun animateCircularReveal(view: View,
 internal fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
     if (attrs == null) return
 
-    val attributeArray = context.obtainStyledAttributes(
-            attrs,
-            R.styleable.SupportVectorDrawablesTextView)
+    val attributeArray =
+            context.obtainStyledAttributes(attrs, R.styleable.SupportVectorDrawablesTextView)
 
     var drawableStart: Drawable? = null
     var drawableEnd: Drawable? = null

@@ -21,10 +21,11 @@ import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
 import kotterknife.bindView
 
-abstract class TabPagerAdapterBase(protected val fragment: Fragment,
-                                   private val tabLayout: TabLayout,
-                                   protected val dataRef: CollectionReference) :
-        FragmentStatePagerAdapter(fragment.childFragmentManager),
+abstract class TabPagerAdapterBase(
+        protected val fragment: Fragment,
+        private val tabLayout: TabLayout,
+        protected val dataRef: CollectionReference
+) : FragmentStatePagerAdapter(fragment.childFragmentManager),
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
@@ -33,10 +34,11 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
     protected val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
     protected var oldScouts: List<Scout> = emptyList()
 
-    var currentTabId: String? = null; set(value) {
-        field = value
-        holder.scouts.indexOfFirst { it.id == field }.let { if (it != -1) selectTab(it) }
-    }
+    var currentTabId: String? = null
+        set(value) {
+            field = value
+            holder.scouts.indexOfFirst { it.id == field }.let { if (it != -1) selectTab(it) }
+        }
     val currentTab: TabLayout.Tab?
         get() = tabLayout.getTabAt(holder.scouts.indexOfFirst { it.id == currentTabId })
 
@@ -61,7 +63,9 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
         notifyDataSetChanged()
         tabLayout.addOnTabSelectedListener(this)
 
-        (0 until tabLayout.tabCount).map { tabLayout.getTabAt(it)!! }.forEachIndexed { index, tab ->
+        (0 until tabLayout.tabCount).map {
+            tabLayout.getTabAt(it)!!
+        }.forEachIndexed { index, tab ->
             tab.text = holder.scouts[index].name ?: getPageTitle(index)
 
             val tabView = (tabLayout.getChildAt(0) as LinearLayout).getChildAt(index)
@@ -78,10 +82,11 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
                 } ?: run {
                     val index = oldScouts.indexOfFirst { it.id == prevTabId }
                     currentTabId = if (oldScouts.isPolynomial) {
-                        (if (oldScouts.lastIndex > index)
+                        (if (oldScouts.lastIndex > index) {
                             oldScouts[index + 1]
-                        else
-                            oldScouts[index - 1]).id
+                        } else {
+                            oldScouts[index - 1]
+                        }).id
                     } else {
                         null
                     }
@@ -109,7 +114,8 @@ abstract class TabPagerAdapterBase(protected val fragment: Fragment,
                 fragment.childFragmentManager,
                 dataRef.document(holder.scouts[v.id].id),
                 editTabNameRes,
-                tabLayout.getTabAt(v.id)!!.text!!.toString())
+                tabLayout.getTabAt(v.id)!!.text!!.toString()
+        )
         return true
     }
 

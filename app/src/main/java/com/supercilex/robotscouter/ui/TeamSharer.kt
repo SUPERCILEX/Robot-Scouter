@@ -23,20 +23,23 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Date
 
-class TeamSharer private constructor(private val activity: FragmentActivity,
-                                     @Size(min = 1) teams: List<Team>) : CachingSharer(activity) {
+class TeamSharer private constructor(
+        private val activity: FragmentActivity,
+        @Size(min = 1) teams: List<Team>) : CachingSharer(activity
+) {
     private val cache = Cache(teams)
-    private val safeMessage: String get() {
-        val fullMessage = cache.shareMessage
-        return if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
-            activity.resources.getQuantityString(
-                    R.plurals.team_share_message,
-                    1,
-                    "${cache.teams[0]} and more")
-        } else {
-            fullMessage
+    private val safeMessage: String
+        get() {
+            val fullMessage = cache.shareMessage
+            return if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
+                activity.resources.getQuantityString(
+                        R.plurals.team_share_message,
+                        1,
+                        "${cache.teams[0]} and more")
+            } else {
+                fullMessage
+            }
         }
-    }
 
     init {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
@@ -46,7 +49,8 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
 
             getInvitationIntent(
                     cache.teams.getTeamsLink(token),
-                    it.result.format(cache.shareCta, cache.teams[0].media))
+                    it.result.format(cache.shareCta, cache.teams[0].media)
+            )
         }).addOnSuccessListener {
             activity.startActivityForResult(it, RC_SHARE)
         }.logFailures().addOnFailureListener {
@@ -88,8 +92,7 @@ class TeamSharer private constructor(private val activity: FragmentActivity,
         /**
          * @return true if a share intent was launched, false otherwise
          */
-        fun shareTeams(activity: FragmentActivity,
-                       @Size(min = 1) teams: List<Team>): Boolean {
+        fun shareTeams(activity: FragmentActivity, @Size(min = 1) teams: List<Team>): Boolean {
             if (isOffline()) {
                 longSnackbar(activity.find(R.id.root), R.string.no_connection)
                 return false

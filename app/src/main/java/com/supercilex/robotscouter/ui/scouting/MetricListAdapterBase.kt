@@ -11,10 +11,11 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.util.ui.CardListHelper
 
-abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>>,
-                                     private val manager: FragmentManager,
-                                     private val recyclerView: RecyclerView) :
-        FirestoreRecyclerAdapter<Metric<*>, MetricViewHolderBase<*, *, *>>(options) {
+abstract class MetricListAdapterBase(
+        options: FirestoreRecyclerOptions<Metric<*>>,
+        private val manager: FragmentManager,
+        private val recyclerView: RecyclerView
+) : FirestoreRecyclerAdapter<Metric<*>, MetricViewHolderBase<*, *, *>>(options) {
     private val cardListHelper: CardListHelper = object : CardListHelper(this, recyclerView) {
         override fun isFirstItem(position: Int): Boolean =
                 super.isFirstItem(position) || isHeader(position)
@@ -27,9 +28,11 @@ abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>
     private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
 
     @Suppress("UNCHECKED_CAST") // Needed to support extension
-    override fun onBindViewHolder(viewHolder: MetricViewHolderBase<*, *, *>,
-                                  position: Int,
-                                  metric: Metric<*>) {
+    override fun onBindViewHolder(
+            viewHolder: MetricViewHolderBase<*, *, *>,
+            position: Int,
+            metric: Metric<*>
+    ) {
         animator.supportsChangeAnimations = true
 
         cardListHelper.onBind(viewHolder)
@@ -41,10 +44,12 @@ abstract class MetricListAdapterBase(options: FirestoreRecyclerOptions<Metric<*>
 
     override fun getItemViewType(position: Int): Int = getItem(position).type.id
 
-    override fun onChildChanged(type: ChangeEventType,
-                                snapshot: DocumentSnapshot,
-                                newIndex: Int,
-                                oldIndex: Int) {
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
         super.onChildChanged(type, snapshot, newIndex, oldIndex)
         cardListHelper.onChildChanged(type, newIndex)
     }

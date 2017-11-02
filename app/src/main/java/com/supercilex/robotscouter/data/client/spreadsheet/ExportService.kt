@@ -47,14 +47,17 @@ class ExportService : IntentService(TAG) {
             Tasks.await(Tasks.whenAll(scoutTasks), TIMEOUT, TimeUnit.MINUTES)
             onHandleScouts(
                     notificationManager,
-                    scoutTasks.withIndex().associate { teams[it.index] to it.value.result })
+                    scoutTasks.withIndex().associate { teams[it.index] to it.value.result }
+            )
         } catch (e: Exception) {
             abortCritical(e, notificationManager)
         }
     }
 
-    private fun onHandleScouts(notificationManager: ExportNotificationManager,
-                               newScouts: Map<Team, List<Scout>>) {
+    private fun onHandleScouts(
+            notificationManager: ExportNotificationManager,
+            newScouts: Map<Team, List<Scout>>
+    ) {
         val zippedScouts = zipScouts(newScouts)
 
         notificationManager.setData(zippedScouts.size, newScouts.keys)
@@ -73,8 +76,9 @@ class ExportService : IntentService(TAG) {
     private fun getTemplateNames(templateIds: Set<String>): Map<String, String> {
         val unknownTemplateName: String = getString(R.string.export_unknown_template_title)
 
-        val allPossibleTemplateNames: Map<String, String>
-                = Tasks.await(getTemplatesQuery().get()).associate {
+        val allPossibleTemplateNames: Map<String, String> = Tasks.await(
+                getTemplatesQuery().get()
+        ).associate {
             val scout = scoutParser.parseSnapshot(it)
             scout.id to (scout.name ?: unknownTemplateName)
         }.toMutableMap().apply {
@@ -128,13 +132,16 @@ class ExportService : IntentService(TAG) {
         init {
             System.setProperty(
                     "org.apache.poi.javax.xml.stream.XMLInputFactory",
-                    "com.fasterxml.aalto.stax.InputFactoryImpl")
+                    "com.fasterxml.aalto.stax.InputFactoryImpl"
+            )
             System.setProperty(
                     "org.apache.poi.javax.xml.stream.XMLOutputFactory",
-                    "com.fasterxml.aalto.stax.OutputFactoryImpl")
+                    "com.fasterxml.aalto.stax.OutputFactoryImpl"
+            )
             System.setProperty(
                     "org.apache.poi.javax.xml.stream.XMLEventFactory",
-                    "com.fasterxml.aalto.stax.EventFactoryImpl")
+                    "com.fasterxml.aalto.stax.EventFactoryImpl"
+            )
             WorkbookEvaluator.registerFunction("AVERAGEIF", averageifFunction)
         }
 
@@ -155,7 +162,9 @@ class ExportService : IntentService(TAG) {
 
             logExportTeamsEvent(teams)
             ContextCompat.startForegroundService(
-                    context, context.intentFor<ExportService>().putExtra(teams))
+                    context,
+                    context.intentFor<ExportService>().putExtra(teams)
+            )
 
             return true
         }

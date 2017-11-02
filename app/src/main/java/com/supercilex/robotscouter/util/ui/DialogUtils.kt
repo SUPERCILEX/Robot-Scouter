@@ -18,10 +18,12 @@ import com.supercilex.robotscouter.util.refWatcher
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
         create().apply { setOnShowListener { (it as AlertDialog).listener() } }
 
-fun DialogFragment.show(manager: FragmentManager,
-                        tag: String,
-                        args: Bundle = Bundle(),
-                        argsListener: (Bundle.() -> Unit)? = null) {
+fun DialogFragment.show(
+        manager: FragmentManager,
+        tag: String,
+        args: Bundle = Bundle(),
+        argsListener: (Bundle.() -> Unit)? = null
+) {
     arguments = args.apply { argsListener?.invoke(this) }
     show(manager, tag)
 }

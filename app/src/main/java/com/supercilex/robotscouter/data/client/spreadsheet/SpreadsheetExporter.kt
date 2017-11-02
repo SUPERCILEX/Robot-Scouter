@@ -49,9 +49,11 @@ import java.io.IOException
 import java.util.Collections
 import java.util.concurrent.TimeUnit
 
-class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
-                          private val notificationManager: ExportNotificationManager,
-                          val templateName: String) {
+class SpreadsheetExporter(
+        scouts: Map<Team, List<Scout>>,
+        private val notificationManager: ExportNotificationManager,
+        val templateName: String
+) {
     val scouts: Map<Team, List<Scout>> = Collections.unmodifiableMap(scouts)
     private val cache = SpreadsheetCache(scouts.keys)
 
@@ -64,7 +66,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             baseIntent.putStringArrayListExtra(
                     Intent.EXTRA_CONTENT_ANNOTATIONS,
-                    ArrayList<String>().apply { add("document") })
+                    ArrayList<String>().apply { add("document") }
+            )
         }
 
         val viewIntent = Intent(baseIntent).setAction(Intent.ACTION_VIEW)
@@ -104,7 +107,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                                 RobotScouter.INSTANCE,
                                 exportId,
                                 NotificationIntentForwarder.getCancelIntent(exportId, shareIntent),
-                                PendingIntent.FLAG_ONE_SHOT))
+                                PendingIntent.FLAG_ONE_SHOT)
+                )
                 .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
@@ -118,7 +122,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                             RobotScouter.INSTANCE,
                             exportId,
                             viewIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT))
+                            PendingIntent.FLAG_UPDATE_CURRENT)
+            )
         }
 
         notificationManager.removeExporter(this, builder)
@@ -178,8 +183,10 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         }
     }
 
-    private fun getFullyQualifiedFileName(templateName: String = this.templateName,
-                                          middleMan: String? = null): String {
+    private fun getFullyQualifiedFileName(
+            templateName: String = this.templateName,
+            middleMan: String? = null
+    ): String {
         val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
         val normalizedTemplateName = templateName.toUpperCase().replace(" ", "_")
 
@@ -200,7 +207,9 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
 
         val averageSheet = run {
             if (cache.teams.isPolynomial) {
-                workbook.createSheet("Team Averages").apply { createFreezePane(1, 1) }
+                workbook.createSheet("Team Averages").apply {
+                    createFreezePane(1, 1)
+                }
             } else null
         }
 
@@ -241,8 +250,11 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                     valueCell.setCellValue(numberMetric.value.toDouble())
 
                     val unit = numberMetric.unit
-                    if (TextUtils.isEmpty(unit)) cache.setCellFormat(valueCell, "0.00")
-                    else cache.setCellFormat(valueCell, "#0\"$unit\"")
+                    if (TextUtils.isEmpty(unit)) {
+                        cache.setCellFormat(valueCell, "0.00")
+                    } else {
+                        cache.setCellFormat(valueCell, "#0\"$unit\"")
+                    }
                 }
                 MetricType.STOPWATCH -> {
                     val cycles = (metric as Metric.Stopwatch).value ?: return
@@ -360,7 +372,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             val cell = row.createCell(farthestColumn).apply { cellStyle = first.cellStyle }
             val rangeAddress = getCellRangeAddress(
                     first,
-                    row.getCell(cell.columnIndex - 1, CREATE_NULL_AS_BLANK))
+                    row.getCell(cell.columnIndex - 1, CREATE_NULL_AS_BLANK)
+            )
 
             when (type) {
                 MetricType.BOOLEAN -> {
@@ -386,7 +399,9 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                                     cell.rowIndex,
                                     cell.rowIndex,
                                     cell.columnIndex,
-                                    cell.columnIndex))
+                                    cell.columnIndex
+                            )
+                    )
                 }
                 MetricType.HEADER, MetricType.TEXT -> { // Nothing to average
                 }
@@ -408,10 +423,12 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         }
     }
 
-    private fun buildTeamChart(row: Row,
-                               team: Team,
-                               chartData: MutableMap<Chart, Pair<LineChartData, List<ChartAxis>>>,
-                               chartPool: MutableMap<Metric<*>, Chart>) {
+    private fun buildTeamChart(
+            row: Row,
+            team: Team,
+            chartData: MutableMap<Chart, Pair<LineChartData, List<ChartAxis>>>,
+            chartPool: MutableMap<Metric<*>, Chart>
+    ) {
         fun getChartRowIndex(defaultIndex: Int, charts: List<Chart>): Int {
             if (charts.isEmpty()) return defaultIndex
 
@@ -468,7 +485,8 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             val newChart = drawing.createChart(drawing.createChartAnchor(
                     getChartRowIndex(nearestHeader.first, ArrayList(chartData.keys)),
                     startChartIndex,
-                    startChartIndex + 10))
+                    startChartIndex + 10)
+            )
 
             data = newChart.chartDataFactory.createLineChartData()
 
@@ -486,13 +504,16 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
         }
 
         val categorySource = DataSources.fromStringCellRange(
-                row.sheet, CellRangeAddress(0, 0, 1, lastDataCellNum))
+                row.sheet,
+                CellRangeAddress(0, 0, 1, lastDataCellNum)
+        )
         data.addSeries(
                 categorySource,
                 DataSources.fromNumericCellRange(
                         row.sheet,
-                        CellRangeAddress(row.rowNum, row.rowNum, 1, lastDataCellNum)))
-                .setTitle(row.getCell(0).stringCellValue)
+                        CellRangeAddress(row.rowNum, row.rowNum, 1, lastDataCellNum)
+                )
+        ).setTitle(row.getCell(0).stringCellValue)
     }
 
     private fun buildTeamAveragesSheet(averageSheet: Sheet) {
@@ -531,7 +552,9 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
                 val averageCell = scoutSheet.getRow(j).run { getCell(lastCellNum - 1) }
 
                 if (TextUtils.isEmpty(averageCell.stringValue)
-                        || rootMetric.type == MetricType.TEXT) continue
+                        || rootMetric.type == MetricType.TEXT) {
+                    continue
+                }
 
                 if (metricIndex == null) {
                     val headerCell = headerRow.createCell(headerRow.lastCellNum.toInt()).apply {
@@ -570,12 +593,13 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
             val categorySource = DataSources.fromArray(arrayOf<String>(headerName))
             val data = chart.chartDataFactory.createScatterChartData()
             (1..sheet.lastRowNum).map { sheet.getRow(it) }.forEach {
-                data.addSerie(categorySource,
-                              DataSources.fromNumericCellRange(
-                                      sheet,
-                                      CellRangeAddress(
-                                              it.rowNum, it.rowNum, columnIndex, columnIndex)))
-                        .setTitle(it.getCell(0).stringCellValue)
+                data.addSerie(
+                        categorySource,
+                        DataSources.fromNumericCellRange(
+                                sheet,
+                                CellRangeAddress(it.rowNum, it.rowNum, columnIndex, columnIndex)
+                        )
+                ).setTitle(it.getCell(0).stringCellValue)
             }
 
             val bottomAxis = chart.chartAxisFactory.createCategoryAxis(AxisPosition.BOTTOM)

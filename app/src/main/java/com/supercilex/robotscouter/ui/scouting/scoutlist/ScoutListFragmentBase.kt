@@ -64,12 +64,13 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null
 
-    private val scoutId: String? get() {
-        var scoutId: String? = pagerAdapter?.currentTabId
-        if (scoutId == null && savedState != null) scoutId = getTabId(savedState!!)
-        if (scoutId == null) scoutId = getTabId(arguments)
-        return scoutId
-    }
+    private val scoutId: String?
+        get() {
+            var scoutId: String? = pagerAdapter?.currentTabId
+            if (scoutId == null && savedState != null) scoutId = getTabId(savedState!!)
+            if (scoutId == null) scoutId = getTabId(arguments)
+            return scoutId
+        }
     protected val bundle: Bundle
         get() = getScoutBundle(team, arguments!!.getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
 
@@ -84,8 +85,9 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     }
 
     override fun onChanged(team: Team?) {
-        if (team == null) onTeamDeleted()
-        else {
+        if (team == null) {
+            onTeamDeleted()
+        } else {
             this.team = team
             if (!onScoutingReadyTask.task.isComplete) {
                 initScoutList()
@@ -94,10 +96,11 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View =
-            View.inflate(context, R.layout.fragment_scout_list, null)
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View = View.inflate(context, R.layout.fragment_scout_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null && isOffline()) {
@@ -107,7 +110,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewHolder
+        viewHolder // Force initialize
         if (savedInstanceState != null) viewHolder.restoreState(savedInstanceState)
     }
 
@@ -136,10 +139,11 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         viewHolder.onSaveInstanceState(outState)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) =
-            viewHolder.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
+    ) = viewHolder.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
     override fun onStartCapture(shouldUploadMediaToTba: Boolean) =
             viewHolder.onStartCapture(shouldUploadMediaToTba)

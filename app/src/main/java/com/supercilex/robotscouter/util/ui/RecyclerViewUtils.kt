@@ -12,7 +12,7 @@ fun RecyclerView.areNoItemsOffscreen(): Boolean = (layoutManager as LinearLayout
 }
 
 fun RecyclerView.ItemAnimator.maxAnimationDuration() =
-        max(max(addDuration, removeDuration), max(changeDuration, changeDuration))
+        max(max(addDuration, removeDuration), changeDuration)
 
 fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int = 1) {
     val animator = itemAnimator as SimpleItemAnimator
@@ -23,5 +23,6 @@ fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int = 1
     ViewCompat.postOnAnimationDelayed(
             this,
             { animator.supportsChangeAnimations = true },
-            animator.maxAnimationDuration())
+            animator.maxAnimationDuration()
+    )
 }

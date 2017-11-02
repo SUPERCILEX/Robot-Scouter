@@ -22,21 +22,21 @@ import kotlin.properties.Delegates
 class ExportNotificationManager(private val service: ExportService) {
     private val notificationPublisher = PublishSubject.create<Pair<Int, Notification>>()
 
-    private val masterNotification: NotificationCompat.Builder get() = NotificationCompat.Builder(
-            RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
-            .setGroup(hashCode().toString())
-            .setGroupSummary(true)
-            .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_overall_progress_title))
-            .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-    private val exportNotification: NotificationCompat.Builder get() = NotificationCompat.Builder(
-            RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
-            .setGroup(hashCode().toString())
-            .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_progress_title))
-            .setSmallIcon(android.R.drawable.stat_sys_upload)
-            .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+    private val masterNotification: NotificationCompat.Builder
+        get() = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
+                .setGroup(hashCode().toString())
+                .setGroupSummary(true)
+                .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_overall_progress_title))
+                .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+    private val exportNotification: NotificationCompat.Builder
+        get() = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
+                .setGroup(hashCode().toString())
+                .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_progress_title))
+                .setSmallIcon(android.R.drawable.stat_sys_upload)
+                .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
+                .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
 
     private val masterNotificationHolder = MasterNotificationHolder()
     private val exporters = ConcurrentHashMap<SpreadsheetExporter, NotificationHolder>()
@@ -75,7 +75,8 @@ class ExportNotificationManager(private val service: ExportService) {
                             // Multiply to ensure the overall rate limitation
                             SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS * nTemplates,
                             TimeUnit.MILLISECONDS,
-                            true)
+                            true
+                    )
                 }
                 .subscribe {
                     notificationManager.notify(it.first, it.second)
