@@ -10,8 +10,9 @@ enum class TemplateType(val id: Int) {
     companion object {
         val DEFAULT: TemplateType = MATCH
 
-        fun valueOf(id: Int): TemplateType = coerce(id.toString())
-                ?: throw IllegalArgumentException("Unknown template type: $id")
+        fun valueOf(id: Int): TemplateType = requireNotNull(coerce(id.toString())) {
+            "Unknown template type: $id"
+        }
 
         fun coerce(id: String?): TemplateType? = if (id?.isNumber() == true) {
             TemplateType.values().find { it.id == id.toInt() }

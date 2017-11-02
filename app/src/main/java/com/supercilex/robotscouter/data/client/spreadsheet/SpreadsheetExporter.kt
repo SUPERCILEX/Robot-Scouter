@@ -129,10 +129,10 @@ class SpreadsheetExporter(scouts: Map<Team, List<Scout>>,
     private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
             RobotScouter.INSTANCE.resources.getQuantityString(id, cache.teams.size, *args)
 
-    private fun getFileUri(): Uri {
-        val root = rootFolder ?: throw IllegalStateException("Couldn't get write access")
-        return FileProvider.getUriForFile(RobotScouter.INSTANCE, providerAuthority, writeFile(root))
-    }
+    private fun getFileUri(): Uri = FileProvider.getUriForFile(
+            RobotScouter.INSTANCE, providerAuthority, writeFile(checkNotNull(rootFolder) {
+        "Couldn't get write access"
+    }))
 
     private fun writeFile(rsFolder: File): File {
         var stream: FileOutputStream? = null

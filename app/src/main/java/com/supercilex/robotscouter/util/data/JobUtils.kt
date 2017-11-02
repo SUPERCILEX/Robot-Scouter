@@ -37,8 +37,8 @@ private const val TIMESTAMP = "timestamp"
 
 private fun Job.Builder.buildAndSchedule(dispatcher: FirebaseJobDispatcher) {
     val result: Int = dispatcher.schedule(build())
-    if (result != FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-        throw IllegalStateException(getErrorMessage(service, result))
+    check(result == FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
+        getErrorMessage(service, result)
     }
 }
 
@@ -46,8 +46,8 @@ private fun Job.Builder.buildAndSchedule(dispatcher: FirebaseJobDispatcher) {
 private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
     val scheduler = RobotScouter.INSTANCE.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     val result: Int = scheduler.schedule(build())
-    if (result != JobScheduler.RESULT_SUCCESS) {
-        throw IllegalStateException(getErrorMessage(clazz, result))
+    check(result == JobScheduler.RESULT_SUCCESS) {
+        getErrorMessage(clazz, result)
     }
 }
 

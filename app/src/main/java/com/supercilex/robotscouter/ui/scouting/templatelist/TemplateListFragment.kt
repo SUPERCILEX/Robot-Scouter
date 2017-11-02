@@ -155,11 +155,9 @@ class TemplateListFragment : FragmentBase(),
                 .filterIsInstance<TemplateFragment>()
                 .filter { pagerAdapter.currentTabId == it.metricsRef.parent.id }
                 .also {
-                    if (!it.isSingleton) {
-                        throw IllegalStateException(
-                                "Multiple fragments found with id ${it[0].metricsRef.parent.id}")
+                    check(it.isSingleton) {
+                        "Multiple fragments found with id ${it[0].metricsRef.parent.id}"
                     }
-
                     it[0].onClick(v)
                 }
     }

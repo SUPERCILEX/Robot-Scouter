@@ -74,8 +74,9 @@ class NotificationIntentForwarder : Activity() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 activeNotifications.filter { it.id == notificationId }.let {
-                    if (!it.isSingleton) throw IllegalStateException(
-                            "Couldn't find unique notification id ($notificationId) in $activeNotifications")
+                    check(it.isSingleton) {
+                        "Couldn't find unique notification id ($notificationId) in $activeNotifications"
+                    }
                     it[0]
                 }.notification.group?.let { key ->
                     val groupNotifications =

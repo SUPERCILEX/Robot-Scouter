@@ -168,9 +168,10 @@ class ExportNotificationManager(private val service: ExportService) {
 
     private fun NotificationCompat.Builder.updateProgress(
             maxProgress: Int, progress: Int): NotificationCompat.Builder {
-        if (progress < 0) throw IllegalArgumentException("Progress must be greater than 0")
-        if (maxProgress < progress) throw IllegalArgumentException(
-                "Max progress ($maxProgress) must be greater or equal to progress ($progress)")
+        require(progress >= 0) { "Progress must be greater than 0" }
+        require(maxProgress >= progress) {
+            "Max progress ($maxProgress) must be greater or equal to progress ($progress)"
+        }
 
         val percentage = (progress.toFloat() / maxProgress.toFloat() * 100).roundToInt()
         setProgress(maxProgress, progress, false).setSubText("$percentage%")

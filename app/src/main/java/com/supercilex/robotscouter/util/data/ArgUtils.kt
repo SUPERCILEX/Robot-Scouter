@@ -79,8 +79,8 @@ fun getScoutBundle(team: Team,
                    addScout: Boolean = false,
                    overrideTemplateId: String? = null,
                    scoutId: String? = null): Bundle {
-    if (!addScout && overrideTemplateId != null) {
-        throw IllegalArgumentException("Can't use an override id without adding a scout.")
+    require(addScout || overrideTemplateId == null) {
+        "Can't use an override id without adding a scout."
     }
 
     return team.toBundle().apply {
