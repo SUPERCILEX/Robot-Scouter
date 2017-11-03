@@ -6,10 +6,8 @@
 
     <include layout="@layout/template_base_reorder" />
 
-    <include layout="@layout/scout_base_checkbox" />
-
     <android.support.text.emoji.widget.EmojiAppCompatEditText
-        android:id="@+id/checkbox_name"
+        android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_normal"
@@ -18,5 +16,7 @@
         android:hint="@string/metric_checkbox_name_hint"
         android:inputType="textMultiLine|textCapSentences"
         tools:text="Name" />
+
+    <include layout="@layout/scout_base_checkbox" />
 
 </LinearLayout>

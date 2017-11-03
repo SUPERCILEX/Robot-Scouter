@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout style="@style/RobotScouter.ListItem">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.ListItem">
+
+    <android.support.text.emoji.widget.EmojiAppCompatTextView
+        android:id="@+id/name"
+        style="@style/RobotScouter.ListItemNameInLinearLayout"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/text_size_normal"
+        tools:text="Example" />
 
     <include layout="@layout/scout_base_checkbox" />
 
