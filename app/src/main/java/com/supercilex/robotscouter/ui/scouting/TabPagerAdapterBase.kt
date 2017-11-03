@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting
 
+import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.ViewModelProviders
@@ -105,7 +106,11 @@ abstract class TabPagerAdapterBase(
 
     fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(currentTabId))
 
-    private fun selectTab(index: Int) = tabLayout.getTabAt(index)?.select()
+    private fun selectTab(index: Int) {
+        ArchTaskExecutor.getInstance().postToMainThread {
+            tabLayout.getTabAt(index)?.select()
+        }
+    }
 
     override fun onStart(owner: LifecycleOwner) {
         if (owner === fragment) {
