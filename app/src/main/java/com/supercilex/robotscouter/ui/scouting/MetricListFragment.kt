@@ -20,7 +20,6 @@ abstract class MetricListFragment : FragmentBase() {
 
     protected val recyclerView by unsafeLazy { view as RecyclerView }
     protected abstract val adapter: MetricListAdapterBase
-    protected val manager by unsafeLazy { LinearLayoutManager(context) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +34,7 @@ abstract class MetricListFragment : FragmentBase() {
     ): View = View.inflate(context, R.layout.fragment_metric_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView.layoutManager = manager
+        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
     }

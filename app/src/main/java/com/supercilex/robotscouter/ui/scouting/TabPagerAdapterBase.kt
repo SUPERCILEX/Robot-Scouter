@@ -55,6 +55,8 @@ abstract class TabPagerAdapterBase(
     }
 
     override fun onDataChanged() {
+        if (holder.scouts == oldScouts) return
+
         val prevTabId = currentTabId
 
         noContentHint.visibility = if (holder.scouts.isEmpty()) View.VISIBLE else View.GONE
