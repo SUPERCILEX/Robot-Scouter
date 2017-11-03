@@ -83,6 +83,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
 
             if (snapshots == null) {
                 noContentHint.visibility = View.VISIBLE
+                fab.show()
                 selectTeam(null)
             } else {
                 adapter = TeamListAdapter(
