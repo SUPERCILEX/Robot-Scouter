@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
+import android.arch.core.executor.ArchTaskExecutor
 import android.support.design.widget.AppBarLayout
 import android.support.v4.app.FragmentActivity
 import android.support.v4.view.ViewCompat
@@ -19,9 +20,9 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
+import com.supercilex.robotscouter.util.ui.showKeyboard
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
 import java.util.Collections
 
 class TemplateItemTouchCallback<T : OrderedModel>(
@@ -54,32 +55,44 @@ class TemplateItemTouchCallback<T : OrderedModel>(
     }
 
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        viewHolder.itemView.find<View>(R.id.reorder)
-                .setOnTouchListener(View.OnTouchListener { v, event ->
-                    if (event.action == MotionEvent.ACTION_DOWN) {
-                        viewHolder.itemView.clearFocus() // Saves data
-                        itemTouchHelper.startDrag(viewHolder)
-                        v.performClick()
-                        return@OnTouchListener true
-                    }
-                    false
-                })
+        viewHolder as TemplateViewHolder
+
+        viewHolder.reorder.setOnTouchListener(View.OnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                viewHolder.itemView.clearFocus() // Saves data
+                itemTouchHelper.startDrag(viewHolder)
+                v.performClick()
+                return@OnTouchListener true
+            }
+            false
+        })
 
         if (position == scrollToPosition) {
-            if (recyclerView.areNoItemsOffscreen()) {
-                (viewHolder as TemplateViewHolder).requestFocus()
-            } else {
-                // Scroll a second time to account for the ViewHolder not having been added when the
-                // first scroll occurred.
-                recyclerView.smoothScrollToPosition(position)
-                recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        if (newState != RecyclerView.SCROLL_STATE_IDLE) return
-                        recyclerView.removeOnScrollListener(this)
-                        (recyclerView.findViewHolderForLayoutPosition(position) as? TemplateViewHolder)
-                                ?.requestFocus()
-                    }
-                })
+            // Posting to the main thread b/c the fam covers the screen which makes the LLM think
+            // there's only one item
+            ArchTaskExecutor.getInstance().postToMainThread {
+                if (recyclerView.areNoItemsOffscreen()) {
+                    viewHolder.requestFocus()
+                    viewHolder.nameEditor.showKeyboard()
+                } else {
+                    // Scroll a second time to account for the ViewHolder not having been added when the
+                    // first scroll occurred.
+                    recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(
+                                recyclerView: RecyclerView,
+                                newState: Int
+                        ) {
+                            if (newState != RecyclerView.SCROLL_STATE_IDLE) return
+
+                            recyclerView.removeOnScrollListener(this)
+                            (recyclerView.findViewHolderForLayoutPosition(position) as? TemplateViewHolder)?.apply {
+                                requestFocus()
+                                nameEditor.showKeyboard()
+                            }
+                        }
+                    })
+                    recyclerView.smoothScrollToPosition(position)
+                }
             }
 
             scrollToPosition = RecyclerView.NO_POSITION

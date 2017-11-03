@@ -125,7 +125,10 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         val position = adapter.itemCount
         val metricRef = metricsRef.document()
 
+        hasAddedItem = true
+        fam.close(true)
         itemTouchCallback.addItemToScrollQueue(position)
+
         when (v.id) {
             R.id.add_checkbox -> metricRef.set(Metric.Boolean(position = position))
             R.id.add_counter -> metricRef.set(Metric.Number(position = position))
@@ -135,9 +138,6 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             R.id.add_header -> metricRef.set(Metric.Header(position = position))
             else -> throw IllegalStateException("Unknown view id: $id")
         }
-
-        fam.close(true)
-        hasAddedItem = true
     }
 
     override fun onBackPressed(): Boolean = if (fam.isOpened) {

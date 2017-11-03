@@ -7,25 +7,22 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CheckboxView
 import kotterknife.bindView
 
 class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView), TemplateViewHolder {
-    private val checkBoxName: EditText by bindView(R.id.checkbox_name)
+    override val reorder: View by bindView(R.id.reorder)
+    override val nameEditor: EditText by bindView(R.id.checkbox_name)
 
     override fun bind() {
         super.bind()
         name.text = null
-        checkBoxName.setText(metric.name)
-        checkBoxName.onFocusChangeListener = this
+        nameEditor.setText(metric.name)
+        nameEditor.onFocusChangeListener = this
     }
 
     override fun onClick(v: View) {
-        if (checkBoxName.hasFocus()) updateMetricName(checkBoxName.text.toString())
+        if (nameEditor.hasFocus()) updateMetricName(nameEditor.text.toString())
         super.onClick(v)
     }
 
-    override fun requestFocus() {
-        checkBoxName.requestFocus()
-    }
-
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(checkBoxName.text.toString())
+        if (!hasFocus) updateMetricName(nameEditor.text.toString())
     }
 }

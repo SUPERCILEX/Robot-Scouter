@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
@@ -64,8 +63,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActi
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // Show keyboard
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.window.setKeyboardModeVisible()
     }
 
     protected fun createDialog(rootView: View, @StringRes title: Int, savedInstanceState: Bundle?) =

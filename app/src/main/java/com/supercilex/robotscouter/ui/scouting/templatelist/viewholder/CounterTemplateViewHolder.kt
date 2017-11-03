@@ -6,9 +6,12 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CounterViewHolder
+import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 
 class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), TemplateViewHolder {
+    override val reorder: View by bindView(R.id.reorder)
+    override val nameEditor: EditText by unsafeLazy { name as EditText }
     private val unit: EditText by bindView(R.id.unit)
 
     init {
@@ -33,10 +36,6 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView), T
 
     override fun setValue(value: Long) {
         count.text = metric.value.toString()
-    }
-
-    override fun requestFocus() {
-        name.requestFocus()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
