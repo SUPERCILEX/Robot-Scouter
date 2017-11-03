@@ -175,7 +175,7 @@ fun animateCircularReveal(
     }
 }
 
-internal fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
+fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
     if (attrs == null) return
 
     val attributeArray =

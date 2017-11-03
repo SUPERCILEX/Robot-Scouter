@@ -56,7 +56,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         }
     }
 
-    internal val mediaImageView: ImageView by bindView(R.id.media)
+    val mediaImageView: ImageView by bindView(R.id.media)
     private val mediaLoadProgress: ContentLoadingProgressBar by bindView(R.id.progress)
     private val numberTextView: TextView by bindView(R.id.number)
     private val nameTextView: TextView by bindView(R.id.name)
