@@ -189,7 +189,7 @@ interface ChangeEventListenerBase : ChangeEventListener {
 
 object KeepAliveListener : ChangeEventListenerBase
 
-abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotArray<T>>(),
+abstract class AuthObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotArray<T>>(),
         FirebaseAuth.AuthStateListener {
     protected abstract val items: ObservableSnapshotArray<T>
 
@@ -199,11 +199,16 @@ abstract class ObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnapshotA
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         value?.removeAllListeners()
-        value = if (auth.currentUser == null) null else items
+        value = if (auth.currentUser == null) {
+            null
+        } else {
+            if (value != null) value = null
+            items
+        }
     }
 }
 
-object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
+object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
         get() = FirestoreArray(teamsQuery, teamParser)
 
@@ -340,7 +345,7 @@ object TeamsLiveData : ObservableSnapshotArrayLiveData<Team>() {
     }
 }
 
-object PrefsLiveData : ObservableSnapshotArrayLiveData<Any>() {
+object PrefsLiveData : AuthObservableSnapshotArrayLiveData<Any>() {
     override val items: ObservableSnapshotArray<Any>
         get() = FirestoreArray<Any>(userPrefs) {
             val id = it.id

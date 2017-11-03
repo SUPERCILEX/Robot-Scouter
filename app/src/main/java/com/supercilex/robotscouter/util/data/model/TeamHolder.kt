@@ -12,24 +12,25 @@ import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.toBundle
-import com.supercilex.robotscouter.util.unsafeLazy
 
 class TeamHolder : ViewModelBase<Bundle>(),
         Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
     val teamListener: LiveData<Team> = Transformations.switchMap(TeamsLiveData, this)
 
     private val keepAliveListener = Observer<Team> {}
-    private val team: Team by unsafeLazy { teamListener.value!! }
+    private var team: Team by LateinitVal()
 
     override fun onCreate(args: Bundle) {
-        (teamListener as MutableLiveData).value = args.getTeam()
-        team
-        teamListener.observeForever(keepAliveListener)
+        team = args.getTeam()
+        (teamListener as MutableLiveData).value = team
+        teamListener.observe(ListenerRegistrationLifecycleOwner, keepAliveListener)
     }
 
     override fun apply(teams: ObservableSnapshotArray<Team>?): LiveData<Team> {
@@ -79,9 +80,4 @@ class TeamHolder : ViewModelBase<Bundle>(),
 
     fun onSaveInstanceState(outState: Bundle) =
             outState.putAll(teamListener.value?.toBundle() ?: Bundle())
-
-    override fun onCleared() {
-        super.onCleared()
-        teamListener.removeObserver(keepAliveListener)
-    }
 }

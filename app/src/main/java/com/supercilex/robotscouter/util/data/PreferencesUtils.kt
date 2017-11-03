@@ -1,5 +1,8 @@
 package com.supercilex.robotscouter.util.data
 
+import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
@@ -88,45 +91,8 @@ var hasShownSignInTutorial: Boolean
     get() = prefs.getBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
     set(value) = prefs.putBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
 
-fun initPrefs() = PrefsLiveData.observeForever {
-    it?.addChangeEventListener(object : ChangeEventListenerBase {
-        override fun onChildChanged(
-                type: ChangeEventType,
-                snapshot: DocumentSnapshot,
-                newIndex: Int,
-                oldIndex: Int
-        ) {
-            val id = snapshot.id
-
-            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
-                var hasDefaultTemplateChanged = false
-
-                localPrefs.updatePrefs {
-                    when (id) {
-                        FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                        FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
-                        -> putBoolean(id, it[newIndex] as Boolean)
-
-                        FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
-                        FIRESTORE_PREF_NIGHT_MODE,
-                        FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
-                        -> {
-                            val value = it[newIndex] as String
-
-                            hasDefaultTemplateChanged = id == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
-                                    && defaultTemplateId != value
-
-                            putString(id, value)
-                        }
-                    }
-                }
-
-                if (hasDefaultTemplateChanged) updateTeamTemplateIds()
-            } else if (type == ChangeEventType.REMOVED) {
-                localPrefs.updatePrefs { remove(id) }
-            }
-        }
-    }) ?: clearLocalPrefs()
+fun initPrefs() {
+    PrefUpdater
 }
 
 fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T {
@@ -162,4 +128,67 @@ private inline fun SharedPreferences.updatePrefs(
 ) = edit().run {
     transaction()
     apply()
+}
+
+object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
+        DefaultLifecycleObserver, ChangeEventListenerBase {
+    init {
+        PrefsLiveData.observeForever(this)
+    }
+
+    override fun onChanged(prefs: ObservableSnapshotArray<Any>?) {
+        val lifecycle = ListenerRegistrationLifecycleOwner.lifecycle
+        if (prefs == null) {
+            lifecycle.removeObserver(this)
+            onStop(ListenerRegistrationLifecycleOwner)
+            clearLocalPrefs()
+        } else {
+            lifecycle.addObserver(this)
+        }
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        PrefsLiveData.value?.addChangeEventListener(this@PrefUpdater)
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        PrefsLiveData.value?.removeChangeEventListener(this@PrefUpdater)
+    }
+
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
+        val id = snapshot.id
+
+        if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+            var hasDefaultTemplateChanged = false
+
+            localPrefs.updatePrefs {
+                when (id) {
+                    FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
+                    FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+                    -> putBoolean(id, PrefsLiveData.value!![newIndex] as Boolean)
+
+                    FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
+                    FIRESTORE_PREF_NIGHT_MODE,
+                    FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
+                    -> {
+                        val value = PrefsLiveData.value!![newIndex] as String
+
+                        hasDefaultTemplateChanged = id == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
+                                && defaultTemplateId != value
+
+                        putString(id, value)
+                    }
+                }
+            }
+
+            if (hasDefaultTemplateChanged) updateTeamTemplateIds()
+        } else if (type == ChangeEventType.REMOVED) {
+            localPrefs.updatePrefs { remove(id) }
+        }
+    }
 }

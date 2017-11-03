@@ -1,44 +1,55 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getPrefOrDefault
 
 class TutorialHelper : ViewModelBase<Nothing?>(),
-        Observer<ObservableSnapshotArray<Any>>, ChangeEventListenerBase {
+        DefaultLifecycleObserver, Observer<ObservableSnapshotArray<Any>>, ChangeEventListenerBase {
     val hasShownAddTeamTutorial = UniqueMutableLiveData<Boolean?>()
     val hasShownSignInTutorial = UniqueMutableLiveData<Boolean?>()
-
-    private var prefs: ObservableSnapshotArray<Any>? = null
 
     override fun onCreate(args: Nothing?) = PrefsLiveData.observeForever(this)
 
     override fun onChanged(prefs: ObservableSnapshotArray<Any>?) {
+        val lifecycle = ListenerRegistrationLifecycleOwner.lifecycle
         if (prefs == null) {
+            lifecycle.removeObserver(this)
+            onStop(ListenerRegistrationLifecycleOwner)
             hasShownAddTeamTutorial.setValue(null)
             hasShownSignInTutorial.setValue(null)
         } else {
-            this.prefs = prefs
-            prefs.addChangeEventListener(this)
+            lifecycle.addObserver(this)
         }
     }
 
+    override fun onStart(owner: LifecycleOwner) {
+        PrefsLiveData.value?.addChangeEventListener(this@TutorialHelper)
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        PrefsLiveData.value?.removeChangeEventListener(this@TutorialHelper)
+    }
+
     override fun onDataChanged() {
+        val prefs = PrefsLiveData.value!!
         hasShownAddTeamTutorial.setValue(
-                prefs!!.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
+                prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
         hasShownSignInTutorial.setValue(
-                prefs!!.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
+                prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
     }
 
     override fun onCleared() {
         super.onCleared()
         PrefsLiveData.removeObserver(this)
-        prefs?.removeChangeEventListener(this)
     }
 }

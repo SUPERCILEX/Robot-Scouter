@@ -16,6 +16,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
@@ -33,33 +34,36 @@ abstract class TabPagerAdapterBase(
 
     protected val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
     protected var oldScouts: List<Scout> = emptyList()
+    private var currentScouts: List<Scout> = emptyList()
 
     var currentTabId: String? = null
         set(value) {
             field = value
-            holder.scouts.indexOfFirst { it.id == field }.let { if (it != -1) selectTab(it) }
+            currentScouts.indexOfFirst { it.id == field }.let { if (it != -1) selectTab(it) }
         }
     val currentTab: TabLayout.Tab?
-        get() = tabLayout.getTabAt(holder.scouts.indexOfFirst { it.id == currentTabId })
+        get() = tabLayout.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
 
     init {
         fragment.lifecycle.addObserver(this)
+        ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 
-    override fun getCount() = holder.scouts.size
+    override fun getCount() = currentScouts.size
 
     override fun getItemPosition(any: Any) = PagerAdapter.POSITION_NONE
 
     override fun onTabSelected(tab: TabLayout.Tab) {
-        currentTabId = holder.scouts[tab.position].id
+        currentTabId = currentScouts[tab.position].id
     }
 
     override fun onDataChanged() {
-        if (holder.scouts == oldScouts) return
+        currentScouts = ArrayList(holder.scouts)
+        if (currentScouts.isNotEmpty() && currentScouts == oldScouts) return
 
         val prevTabId = currentTabId
 
-        noContentHint.visibility = if (holder.scouts.isEmpty()) View.VISIBLE else View.GONE
+        noContentHint.visibility = if (currentScouts.isEmpty()) View.VISIBLE else View.GONE
 
         tabLayout.removeOnTabSelectedListener(this)
         notifyDataSetChanged()
@@ -68,19 +72,19 @@ abstract class TabPagerAdapterBase(
         (0 until tabLayout.tabCount).map {
             tabLayout.getTabAt(it)!!
         }.forEachIndexed { index, tab ->
-            tab.text = holder.scouts[index].name ?: getPageTitle(index)
+            tab.text = currentScouts[index].name ?: getPageTitle(index)
 
             val tabView = (tabLayout.getChildAt(0) as LinearLayout).getChildAt(index)
             tabView.setOnLongClickListener(this@TabPagerAdapterBase)
             tabView.id = index
         }
 
-        if (holder.scouts.isNotEmpty()) {
+        if (currentScouts.isNotEmpty()) {
             if (TextUtils.isEmpty(prevTabId)) {
-                currentTabId = holder.scouts[0].id
+                currentTabId = currentScouts[0].id
             } else {
-                holder.scouts.find { it.id == prevTabId }?.let {
-                    selectTab(holder.scouts.indexOfFirst { it.id == currentTabId })
+                currentScouts.find { it.id == prevTabId }?.let {
+                    selectTab(currentScouts.indexOfFirst { it.id == currentTabId })
                 } ?: run {
                     val index = oldScouts.indexOfFirst { it.id == prevTabId }
                     currentTabId = if (oldScouts.isPolynomial) {
@@ -96,7 +100,7 @@ abstract class TabPagerAdapterBase(
             }
         }
 
-        oldScouts = ArrayList(holder.scouts)
+        oldScouts = ArrayList(currentScouts)
     }
 
     fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(currentTabId))
@@ -104,17 +108,29 @@ abstract class TabPagerAdapterBase(
     private fun selectTab(index: Int) = tabLayout.getTabAt(index)?.select()
 
     override fun onStart(owner: LifecycleOwner) {
-        holder.scouts.addChangeEventListener(this)
+        if (owner === fragment) {
+            holder.scouts.addChangeEventListener(this)
+        }
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        holder.scouts.removeChangeEventListener(this)
+        if (owner === fragment) {
+            holder.scouts.removeChangeEventListener(this)
+        } else if (owner === ListenerRegistrationLifecycleOwner) {
+            oldScouts = emptyList()
+            currentScouts = emptyList()
+            notifyDataSetChanged()
+        }
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        ListenerRegistrationLifecycleOwner.lifecycle.removeObserver(this)
     }
 
     override fun onLongClick(v: View): Boolean {
         TabNameDialog.show(
                 fragment.childFragmentManager,
-                dataRef.document(holder.scouts[v.id].id),
+                dataRef.document(currentScouts[v.id].id),
                 editTabNameRes,
                 tabLayout.getTabAt(v.id)!!.text!!.toString()
         )

@@ -6,6 +6,8 @@ import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.Application
+import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
@@ -32,6 +34,7 @@ import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
 import org.jetbrains.anko.configuration
@@ -45,47 +48,16 @@ private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
 fun initUi() {
     AppCompatDelegate.setDefaultNightMode(nightMode)
     PrefsLiveData.observeForever {
-        it?.addChangeEventListener(object : ChangeEventListenerBase {
-            override fun onDataChanged() {
-                AppCompatDelegate.setDefaultNightMode(nightMode)
-                visibleActivities.filterIsInstance<AppCompatActivity>()
-                        .forEach { it.delegate.setLocalNightMode(nightMode) }
-            }
-        })
+        val lifecycle = ListenerRegistrationLifecycleOwner.lifecycle
+        if (it == null) {
+            lifecycle.removeObserver(NightModeUpdateReceiver)
+            NightModeUpdateReceiver.onStop(ListenerRegistrationLifecycleOwner)
+        } else {
+            lifecycle.addObserver(NightModeUpdateReceiver)
+        }
     }
 
-    RobotScouter.INSTANCE.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            if (BuildConfig.DEBUG) {
-                val window = activity.window
-                if (Debug.isDebuggerConnected()) {
-                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                } else {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                }
-            }
-        }
-
-        override fun onActivityStarted(activity: Activity) {
-            visibleActivities += activity
-        }
-
-        override fun onActivityResumed(activity: Activity) {
-            activity.find<View>(android.R.id.content).post {
-                (activity as? AppCompatActivity ?: return@post).delegate.setLocalNightMode(nightMode)
-            }
-        }
-
-        override fun onActivityPaused(activity: Activity) = Unit
-
-        override fun onActivityStopped(activity: Activity) {
-            visibleActivities -= activity
-        }
-
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
-
-        override fun onActivityDestroyed(activity: Activity) = Unit
-    })
+    RobotScouter.INSTANCE.registerActivityLifecycleCallbacks(ActivityHandler)
 
     EmojiCompat.init(FontRequestEmojiCompatConfig(
             RobotScouter.INSTANCE,
@@ -223,4 +195,53 @@ fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
             this, drawableStart, drawableTop, drawableEnd, drawableBottom)
 
     attributeArray.recycle()
+}
+
+private object NightModeUpdateReceiver : DefaultLifecycleObserver, ChangeEventListenerBase {
+    override fun onStart(owner: LifecycleOwner) {
+        PrefsLiveData.value?.addChangeEventListener(this)
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        PrefsLiveData.value?.removeChangeEventListener(this)
+    }
+
+    override fun onDataChanged() {
+        AppCompatDelegate.setDefaultNightMode(nightMode)
+        visibleActivities.filterIsInstance<AppCompatActivity>()
+                .forEach { it.delegate.setLocalNightMode(nightMode) }
+    }
+}
+
+private object ActivityHandler : Application.ActivityLifecycleCallbacks {
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        if (BuildConfig.DEBUG) {
+            val window = activity.window
+            if (Debug.isDebuggerConnected()) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        }
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+        visibleActivities += activity
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        activity.find<View>(android.R.id.content).post {
+            (activity as? AppCompatActivity ?: return@post).delegate.setLocalNightMode(nightMode)
+        }
+    }
+
+    override fun onActivityPaused(activity: Activity) = Unit
+
+    override fun onActivityStopped(activity: Activity) {
+        visibleActivities -= activity
+    }
+
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+
+    override fun onActivityDestroyed(activity: Activity) = Unit
 }
