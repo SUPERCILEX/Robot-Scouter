@@ -23,7 +23,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.1.0-alpha01'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.1.1'
-        classpath 'com.google.firebase:firebase-plugins:1.1.0-alpha1'
+        classpath 'com.google.firebase:firebase-plugins:1.1.2'
         classpath 'io.fabric.tools:gradle:1.24.4'
         classpath 'com.github.SUPERCILEX:gradle-play-publisher:013f54c874'
     }
