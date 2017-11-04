@@ -1,2 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView style="@style/RobotScouter.List.Scouting" />
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
+        style="@style/RobotScouter.Tutorial.NoContentHint"
+        android:text="@string/tutorial_no_metrics_hint"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:drawableTopCompat="@drawable/ic_ruler_grey_96dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        style="@style/RobotScouter.List.Scouting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</android.support.constraint.ConstraintLayout>

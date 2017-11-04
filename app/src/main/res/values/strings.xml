@@ -24,6 +24,7 @@
     <string name="tutorial_no_teams_hint">Teams you add appear here</string>
     <string name="tutorial_no_scouts_hint">Scouts you add appear here</string>
     <string name="tutorial_no_templates_hint">Scout templates you add appear here</string>
+    <string name="tutorial_no_metrics_hint">Metrics you add appear here</string>
 
     <!-- Media upload -->
     <string name="media_should_upload_title">Upload media to The Blue Alliance</string>

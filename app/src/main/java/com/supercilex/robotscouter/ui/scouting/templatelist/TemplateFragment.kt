@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.v7.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
+import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.delete
 import com.supercilex.robotscouter.util.data.firestoreBatch
@@ -24,6 +26,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
@@ -42,13 +45,21 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         )
     }
     private val itemTouchCallback by unsafeLazy {
-        TemplateItemTouchCallback<Metric<*>>(recyclerView)
+        TemplateItemTouchCallback<Metric<*>>(view!!)
     }
     private val fam: FloatingActionMenu by unsafeLazy {
         parentFragment!!.find<FloatingActionMenu>(R.id.fab_menu)
     }
+    private val noContentHint: View by bindView(R.id.no_content_hint)
 
     private var hasAddedItem: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        holder.metrics.asLiveData().observe(this, Observer {
+            noContentHint.visibility = if (it!!.isEmpty()) View.VISIBLE else View.GONE
+        })
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -145,18 +145,25 @@ inline fun <T, R> LiveData<T>.observeOnce(
 
 fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(
 ): LiveData<ObservableSnapshotArray<T>> = Transformations.switchMap(this) {
-    object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
-        override fun onDataChanged() {
-            if (ArchTaskExecutor.getInstance().isMainThread) value = it
-            else postValue(it)
-        }
+    it.asLiveData()
+}
 
+fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArray<T>> {
+    return object : MutableLiveData<ObservableSnapshotArray<T>>(), ChangeEventListenerBase {
         override fun onActive() {
-            it.addChangeEventListener(this)
+            addChangeEventListener(this)
         }
 
         override fun onInactive() {
-            it.removeChangeEventListener(this)
+            removeChangeEventListener(this)
+        }
+
+        override fun onDataChanged() {
+            if (ArchTaskExecutor.getInstance().isMainThread) {
+                value = this@asLiveData
+            } else {
+                postValue(this@asLiveData)
+            }
         }
     }
 }

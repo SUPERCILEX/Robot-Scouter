@@ -11,6 +11,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotterknife.bindView
 
 abstract class MetricListFragment : FragmentBase() {
     protected val holder: MetricListHolder by unsafeLazy {
@@ -18,12 +19,15 @@ abstract class MetricListFragment : FragmentBase() {
     }
     protected abstract val metricsRef: CollectionReference
 
-    protected val recyclerView by unsafeLazy { view as RecyclerView }
+    protected val recyclerView: RecyclerView by bindView(R.id.list)
     protected abstract val adapter: MetricListAdapterBase
+
+    init {
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         holder.init(metricsRef)
     }
 
