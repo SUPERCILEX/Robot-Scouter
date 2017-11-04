@@ -25,7 +25,6 @@ import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.animatePopReveal
-import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
@@ -71,15 +70,6 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (hasAddedItem && recyclerView.areNoItemsOffscreen()) {
-                    fam.hideMenuButton(true)
-                }
-
-                hasAddedItem = false
-            }
-        })
         parentFragment!!.find<AppBarLayout>(R.id.app_bar)
                 .addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
                     var isShowing = false

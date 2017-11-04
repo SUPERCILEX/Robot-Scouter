@@ -6,9 +6,12 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import java.lang.Math.max
 
-fun RecyclerView.areNoItemsOffscreen(): Boolean = (layoutManager as LinearLayoutManager).let {
-    it.findFirstCompletelyVisibleItemPosition() == 0
-            && it.findLastCompletelyVisibleItemPosition() == adapter.itemCount - 1
+fun RecyclerView.isItemInRange(position: Int): Boolean = (layoutManager as LinearLayoutManager).let {
+    val first = it.findFirstCompletelyVisibleItemPosition()
+
+    // Only compute findLastCompletelyVisibleItemPosition if necessary
+    position in first..(adapter.itemCount - 1)
+            && position in first..it.findLastCompletelyVisibleItemPosition()
 }
 
 fun RecyclerView.ItemAnimator.maxAnimationDuration() =

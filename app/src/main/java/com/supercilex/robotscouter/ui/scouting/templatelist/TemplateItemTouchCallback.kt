@@ -18,7 +18,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
+import com.supercilex.robotscouter.util.ui.isItemInRange
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import com.supercilex.robotscouter.util.ui.showKeyboard
 import kotterknife.bindView
@@ -71,7 +71,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
             // Posting to the main thread b/c the fam covers the screen which makes the LLM think
             // there's only one item
             ArchTaskExecutor.getInstance().postToMainThread {
-                if (recyclerView.areNoItemsOffscreen()) {
+                if (recyclerView.isItemInRange(position)) {
                     viewHolder.requestFocus()
                     viewHolder.nameEditor.showKeyboard()
                 } else {
