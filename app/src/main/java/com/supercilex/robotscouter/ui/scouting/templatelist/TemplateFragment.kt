@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.areNoItemsOffscreen
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
@@ -57,7 +58,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         holder.metrics.asLiveData().observe(this, Observer {
-            noContentHint.visibility = if (it!!.isEmpty()) View.VISIBLE else View.GONE
+            noContentHint.animatePopReveal(it!!.isEmpty())
         })
     }
 

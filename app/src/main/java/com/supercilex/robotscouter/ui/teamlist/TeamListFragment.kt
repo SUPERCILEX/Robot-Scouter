@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
+import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.find
@@ -82,7 +83,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
             }
 
             if (snapshots == null) {
-                noContentHint.visibility = View.VISIBLE
+                noContentHint.animatePopReveal(true)
                 fab.show()
                 selectTeam(null)
             } else {

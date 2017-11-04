@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
-import com.supercilex.robotscouter.util.ui.animateCircularReveal
+import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import kotterknife.bindView
 
@@ -114,7 +114,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
                 .listener(mediaLoadProgressListener)
                 .into(mediaImageView)
 
-        animateCircularReveal(newScoutButton, !couldItemBeSelected)
+        newScoutButton.animatePopReveal(!couldItemBeSelected)
         itemView.isActivated = !isItemSelected && !couldItemBeSelected && isScouting
         itemView.isSelected = isItemSelected
     }

@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.util.ui
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
+import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.Application
@@ -19,6 +20,9 @@ import android.support.text.emoji.EmojiCompat
 import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.content.ContextCompat
 import android.support.v4.provider.FontRequest
+import android.support.v4.view.ViewCompat
+import android.support.v4.view.animation.FastOutLinearInInterpolator
+import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
@@ -42,6 +46,10 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.landscape
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.hypot
+
+val shortAnimationDuration: Long by lazy {
+    RobotScouter.INSTANCE.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+}
 
 private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
 
@@ -95,11 +103,10 @@ fun animateColorChange(
     }
 }
 
-fun animateCircularReveal(view: View, visible: Boolean) {
-    val centerX: Int = view.width / 2
-    val centerY: Int = view.height / 2
+fun View.animateCircularReveal(visible: Boolean) {
+    val centerX: Int = width / 2
+    val centerY: Int = height / 2
     val animator: Animator? = animateCircularReveal(
-            view,
             visible,
             centerX,
             centerY,
@@ -108,42 +115,71 @@ fun animateCircularReveal(view: View, visible: Boolean) {
     animator?.start()
 }
 
-fun animateCircularReveal(
-        view: View,
+fun View.animateCircularReveal(
         visible: Boolean,
         centerX: Int,
         centerY: Int,
         radius: Float
-): Animator? {
-    if (visible && view.visibility == View.VISIBLE || !visible && view.visibility == View.GONE) {
-        return null
+): Animator? = getRevealAnimation(visible) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        visibility = if (visible) View.VISIBLE else View.GONE
+        return@getRevealAnimation null
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        if (!view.isAttachedToWindow) {
-            view.visibility = if (visible) View.VISIBLE else View.GONE
-            return null
+    val anim: Animator = ViewAnimationUtils.createCircularReveal(
+            this,
+            centerX,
+            centerY,
+            if (visible) 0f else radius,
+            if (visible) radius else 0f
+    )
+
+    anim.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationStart(animation: Animator?) {
+            if (visible) visibility = View.VISIBLE
         }
 
-        val anim: Animator = ViewAnimationUtils.createCircularReveal(
-                view,
-                centerX,
-                centerY,
-                if (visible) 0f else radius,
-                if (visible) radius else 0f
-        )
+        override fun onAnimationEnd(animation: Animator) {
+            if (!visible) visibility = View.GONE
+        }
+    })
 
-        anim.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                if (!visible) view.visibility = View.GONE
-            }
-        })
-        if (visible) view.visibility = View.VISIBLE
+    anim
+}
 
-        return anim
-    } else {
-        view.visibility = if (visible) View.VISIBLE else View.GONE
-        return null
+fun View.animatePopReveal(visible: Boolean) {
+    getRevealAnimation(visible) {
+        if (visible) {
+            alpha = 0f
+            scaleY = 0f
+            scaleX = 0f
+        }
+
+        animate()
+                .scaleX(if (visible) 1f else 0f)
+                .scaleY(if (visible) 1f else 0f)
+                .alpha(if (visible) 1f else 0f)
+                .setDuration(shortAnimationDuration)
+                // Sadly, LookupTableInterpolator is package private in Java which makes Kotlin
+                // throw a IllegalAccessError. See https://youtrack.jetbrains.com/issue/KT-15315.
+                .setInterpolator(@Suppress("USELESS_CAST") if (visible) {
+                    LinearOutSlowInInterpolator() as Any
+                } else {
+                    FastOutLinearInInterpolator() as Any
+                } as TimeInterpolator)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator) {
+                        if (visible) visibility = View.VISIBLE
+                    }
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        if (!visible) visibility = View.GONE
+                        // Reset state
+                        alpha = 1f
+                        scaleY = 1f
+                        scaleX = 1f
+                    }
+                })
     }
 }
 
@@ -195,6 +231,17 @@ fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
             this, drawableStart, drawableTop, drawableEnd, drawableBottom)
 
     attributeArray.recycle()
+}
+
+private inline fun <T> View.getRevealAnimation(visible: Boolean, animator: () -> T?): T? {
+    return if (visible && visibility == View.VISIBLE || !visible && visibility != View.VISIBLE) {
+        null
+    } else if (!ViewCompat.isAttachedToWindow(this)) {
+        visibility = if (visible) View.VISIBLE else View.GONE
+        null
+    } else {
+        animator()
+    }
 }
 
 private object NightModeUpdateReceiver : DefaultLifecycleObserver, ChangeEventListenerBase {

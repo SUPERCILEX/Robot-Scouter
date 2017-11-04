@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.ui.CardListHelper
+import com.supercilex.robotscouter.util.ui.animatePopReveal
 import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
@@ -157,12 +158,11 @@ class TeamListAdapter(
     }
 
     override fun onDataChanged() {
-        noTeamsHint.visibility = if (itemCount == 0) View.VISIBLE else View.GONE
+        noTeamsHint.animatePopReveal(itemCount == 0)
     }
 
     override fun stopListening() {
         super.stopListening()
-        onDataChanged()
         recyclerView.removeOnScrollListener(preloader)
         selectedTeamIdListener.removeObserver(this)
     }

@@ -10,6 +10,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scoutlist.AppBarViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
+import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.findOptional
@@ -53,13 +54,13 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        noContentHint?.visibility = View.GONE
+        noContentHint?.animatePopReveal(false)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         (activity as TeamListActivity).teamListFragment.selectTeam(null)
-        noContentHint?.visibility = View.VISIBLE
+        noContentHint?.animatePopReveal(true)
     }
 
     override fun onTeamDeleted() = removeFragment()

@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
+import com.supercilex.robotscouter.util.ui.animatePopReveal
 import kotterknife.bindView
 
 abstract class TabPagerAdapterBase(
@@ -64,7 +65,7 @@ abstract class TabPagerAdapterBase(
 
         val prevTabId = currentTabId
 
-        noContentHint.visibility = if (currentScouts.isEmpty()) View.VISIBLE else View.GONE
+        noContentHint.animatePopReveal(currentScouts.isEmpty())
 
         tabLayout.removeOnTabSelectedListener(this)
         notifyDataSetChanged()
