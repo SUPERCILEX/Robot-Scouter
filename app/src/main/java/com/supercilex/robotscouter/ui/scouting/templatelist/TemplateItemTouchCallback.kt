@@ -232,7 +232,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
         localItems.removeAt(position)
         adapter.notifyItemRemoved(position)
 
-        viewHolder.itemView.clearFocus() // Save user data for undo
+        recyclerView.clearFocus() // Save user data for undo
         deletedRef.get().addOnSuccessListener(rootView.context as FragmentActivity) { snapshot ->
             firestoreBatch {
                 delete(deletedRef)
