@@ -28,6 +28,8 @@
         android:layout_marginRight="@dimen/spacing_large"
         android:layout_gravity="center_vertical"
         android:hint="@string/metric_counter_unit_hint"
+        android:inputType="textMultiLine|textCapWords"
+        android:maxWidth="50dp"
         tools:text="s" />
 
 </LinearLayout>
