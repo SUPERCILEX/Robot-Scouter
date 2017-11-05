@@ -60,6 +60,8 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         mToggleStopwatch = itemView.findViewById(R.id.stopwatch);
         mCycles = itemView.findViewById(R.id.list);
 
+        mToggleStopwatch.setOnClickListener(this);
+
         LinearLayoutManager manager = new LinearLayoutManager(
                 itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
         manager.setInitialPrefetchItemCount(5);
@@ -79,7 +81,6 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
     @Override
     protected void bind() {
         super.bind();
-        mToggleStopwatch.setOnClickListener(this);
         setText(R.string.metric_stopwatch_start_title);
 
         mCycles.setHasFixedSize(false);

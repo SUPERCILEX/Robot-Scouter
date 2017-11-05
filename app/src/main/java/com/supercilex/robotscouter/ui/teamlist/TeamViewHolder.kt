@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.annotation.Keep
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -30,12 +29,16 @@ import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.find
 
-class TeamViewHolder @Keep constructor(itemView: View) :
-        RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-    private val scrollStateListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) =
-                updateProgressVisibility()
+class TeamViewHolder(
+        itemView: View,
+        private val fragment: Fragment,
+        private val recyclerView: RecyclerView,
+        private val menuHelper: TeamMenuHelper
+) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    private val unknownName: String by unsafeLazy {
+        itemView.context.getString(R.string.team_unknown_team_title)
     }
+
     private val mediaLoadProgressListener = object : RequestListener<Drawable> {
         override fun onResourceReady(
                 resource: Drawable?,
@@ -70,9 +73,6 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private val newScoutButton: ImageButton by bindView(R.id.new_scout)
 
     private lateinit var team: Team
-    private lateinit var fragment: Fragment
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var menuHelper: TeamMenuHelper
     private var isItemSelected: Boolean = false
     private var couldItemBeSelected: Boolean = false
     private var isScouting: Boolean = false
@@ -83,28 +83,11 @@ class TeamViewHolder @Keep constructor(itemView: View) :
             updateProgressVisibility()
         }
 
-    fun bind(
-            team: Team,
-            fragment: Fragment,
-            recyclerView: RecyclerView,
-            menuManager: TeamMenuHelper,
-            isItemSelected: Boolean,
-            couldItemBeSelected: Boolean,
-            isScouting: Boolean
-    ) {
-        this.team = team
-        this.fragment = fragment
-        this.recyclerView = recyclerView
-        this.menuHelper = menuManager
-        this.isItemSelected = isItemSelected
-        this.couldItemBeSelected = couldItemBeSelected
-        this.isScouting = isScouting
-
-        setTeamNumber()
-        setTeamName()
-        updateItemStatus()
-        recyclerView.removeOnScrollListener(scrollStateListener)
-        recyclerView.addOnScrollListener(scrollStateListener)
+    init {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) =
+                    updateProgressVisibility()
+        })
 
         mediaImageView.setOnClickListener(this)
         mediaImageView.setOnLongClickListener(this)
@@ -112,6 +95,30 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         newScoutButton.setOnLongClickListener(this)
         itemView.setOnClickListener(this)
         itemView.setOnLongClickListener(this)
+    }
+
+    fun bind(
+            team: Team,
+            isItemSelected: Boolean,
+            couldItemBeSelected: Boolean,
+            isScouting: Boolean
+    ) {
+        this.team = team
+        this.isItemSelected = isItemSelected
+        this.couldItemBeSelected = couldItemBeSelected
+        this.isScouting = isScouting
+
+        setTeamNumber()
+        setTeamName()
+        updateItemStatus()
+    }
+
+    private fun setTeamNumber() {
+        numberTextView.text = team.number.toString()
+    }
+
+    private fun setTeamName() {
+        nameTextView.text = if (TextUtils.isEmpty(team.name)) unknownName else team.name
     }
 
     private fun updateItemStatus() {
@@ -124,16 +131,6 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         newScoutButton.animatePopReveal(!couldItemBeSelected)
         itemView.isActivated = !isItemSelected && !couldItemBeSelected && isScouting
         itemView.isSelected = isItemSelected
-    }
-
-    private fun setTeamNumber() {
-        numberTextView.text = team.number.toString()
-    }
-
-    private fun setTeamName() = if (TextUtils.isEmpty(team.name)) {
-        nameTextView.text = itemView.context.getString(R.string.team_unknown_team_title)
-    } else {
-        nameTextView.text = team.name
     }
 
     private fun updateProgressVisibility() {

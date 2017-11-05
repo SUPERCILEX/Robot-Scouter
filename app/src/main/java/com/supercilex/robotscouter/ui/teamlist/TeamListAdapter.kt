@@ -29,7 +29,7 @@ import java.util.Collections
 class TeamListAdapter(
         snapshots: ObservableSnapshotArray<Team>,
         private val fragment: Fragment,
-        private val menuManager: TeamMenuHelper,
+        private val menuHelper: TeamMenuHelper,
         private val selectedTeamIdListener: MutableLiveData<Team?>
 ) : FirestoreRecyclerAdapter<Team, TeamViewHolder>(
         FirestoreRecyclerOptions.Builder<Team>()
@@ -102,8 +102,16 @@ class TeamListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamViewHolder =
-            TeamViewHolder(LayoutInflater.from(parent.context)
-                                   .inflate(R.layout.team_list_row_layout, parent, false)).also {
+            TeamViewHolder(
+                    LayoutInflater.from(parent.context).inflate(
+                            R.layout.team_list_row_layout,
+                            parent,
+                            false
+                    ),
+                    fragment,
+                    recyclerView,
+                    menuHelper
+            ).also {
                 viewSizeProvider.setView(it.mediaImageView)
             }
 
@@ -111,16 +119,13 @@ class TeamListAdapter(
         cardListHelper.onBind(teamHolder)
         teamHolder.bind(
                 team,
-                fragment,
-                recyclerView,
-                menuManager,
                 isTeamSelected(team),
-                menuManager.areTeamsSelected(),
+                menuHelper.areTeamsSelected(),
                 TextUtils.equals(selectedTeamId, team.id)
         )
     }
 
-    private fun isTeamSelected(team: Team) = menuManager.selectedTeams.contains(team)
+    private fun isTeamSelected(team: Team) = menuHelper.selectedTeams.contains(team)
 
     override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
             TeamViewHolder.getTeamMediaRequestBuilder(
@@ -139,18 +144,18 @@ class TeamListAdapter(
         cardListHelper.onChildChanged(type, newIndex)
 
         if (type == ChangeEventType.CHANGED) {
-            for (oldTeam in menuManager.selectedTeams) {
+            for (oldTeam in menuHelper.selectedTeams) {
                 val team = getItem(newIndex)
                 if (TextUtils.equals(oldTeam.id, team.id)) {
-                    menuManager.onSelectedTeamChanged(oldTeam, team)
+                    menuHelper.onSelectedTeamChanged(oldTeam, team)
                     break
                 }
             }
-        } else if (type == ChangeEventType.REMOVED && menuManager.areTeamsSelected()) {
-            for (oldTeam in menuManager.selectedTeams) {
+        } else if (type == ChangeEventType.REMOVED && menuHelper.areTeamsSelected()) {
+            for (oldTeam in menuHelper.selectedTeams) {
                 if (snapshots.firstOrNull { it.id == oldTeam.id } == null) {
                     // We found the deleted item
-                    menuManager.onSelectedTeamRemoved(oldTeam)
+                    menuHelper.onSelectedTeamRemoved(oldTeam)
                     break
                 }
             }

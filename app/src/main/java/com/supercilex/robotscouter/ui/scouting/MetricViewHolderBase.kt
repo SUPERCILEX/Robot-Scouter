@@ -9,17 +9,17 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import kotterknife.bindView
 
-abstract class MetricViewHolderBase<FMetric : Metric<TMetric>, TMetric, out VView : TextView>(
+abstract class MetricViewHolderBase<M : Metric<T>, T, out V : TextView>(
         itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
-    lateinit var metric: FMetric
+    lateinit var metric: M
         private set
 
-    protected val name: VView by bindView(R.id.name)
+    protected val name: V by bindView(R.id.name)
     protected lateinit var manager: FragmentManager
         private set
 
-    fun bind(metric: FMetric, manager: FragmentManager) {
+    fun bind(metric: M, manager: FragmentManager) {
         this.metric = metric
         this.manager = manager
 

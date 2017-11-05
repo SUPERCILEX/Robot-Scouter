@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.ui
 
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -10,15 +9,6 @@ open class CardListHelper(
         private val adapter: FirestoreRecyclerAdapter<*, *>,
         private val recyclerView: RecyclerView
 ) {
-    private val dividerSingle =
-            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_single_item)!!
-    private val dividerFirst =
-            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_first_item)!!
-    private val dividerMiddle =
-            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_middle_item)!!
-    private val dividerLast =
-            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_last_item)!!
-
     fun onChildChanged(type: ChangeEventType, index: Int) {
         if (type == ChangeEventType.REMOVED) {
             recyclerView.notifyItemsChangedNoAnimation(index + if (index != 0) -1 else 0)
@@ -28,7 +18,7 @@ open class CardListHelper(
     fun onBind(viewHolder: RecyclerView.ViewHolder) {
         val position: Int = viewHolder.layoutPosition
 
-        setBackground(viewHolder, position)
+        viewHolder.setBackground(position)
 
         recyclerView.post {
             if (position > adapter.itemCount - 1) return@post
@@ -38,10 +28,10 @@ open class CardListHelper(
             val belowPos = position + 1
 
             recyclerView.findViewHolderForLayoutPosition(abovePos)?.let {
-                setBackground(it, abovePos)
+                it.setBackground(abovePos)
             }
             recyclerView.findViewHolderForLayoutPosition(belowPos)?.let {
-                setBackground(it, belowPos)
+                it.setBackground(belowPos)
             }
         }
     }
@@ -50,9 +40,7 @@ open class CardListHelper(
 
     protected open fun isLastItem(position: Int) = position == adapter.itemCount - 1
 
-    private fun setBackground(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        val itemView = viewHolder.itemView
-
+    private fun RecyclerView.ViewHolder.setBackground(position: Int) {
         val paddingLeft = itemView.paddingLeft
         val paddingTop = itemView.paddingTop
         val paddingRight = itemView.paddingRight
@@ -61,15 +49,18 @@ open class CardListHelper(
         val isFirstItem = isFirstItem(position)
         val isLastItem = isLastItem(position)
 
-        if (isFirstItem && isLastItem) {
-            itemView.background = dividerSingle.constantState.newDrawable()
+        // It turns out performance is improved by parsing the drawable again b/c
+        // setBackgroundResource can no-op if we are setting the same drawable instead of having
+        // to recompute everything.
+        itemView.setBackgroundResource(if (isFirstItem && isLastItem) {
+            R.drawable.list_divider_single_item
         } else if (isFirstItem) {
-            itemView.background = dividerFirst.constantState.newDrawable()
+            R.drawable.list_divider_first_item
         } else if (isLastItem) {
-            itemView.background = dividerLast.constantState.newDrawable()
+            R.drawable.list_divider_last_item
         } else {
-            itemView.background = dividerMiddle.constantState.newDrawable()
-        }
+            R.drawable.list_divider_middle_item
+        })
 
         itemView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     }

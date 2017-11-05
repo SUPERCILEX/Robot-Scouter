@@ -19,7 +19,7 @@ enum class MetricType(val id: Int) {
          */
         val values: List<MetricType> = Collections.unmodifiableList(values().toList())
 
-        fun valueOf(id: Int): MetricType = requireNotNull(MetricType.values.find { it.id == id }) {
+        fun valueOf(id: Int): MetricType = requireNotNull(values.find { it.id == id }) {
             "Unknown metric type: $id"
         }
     }

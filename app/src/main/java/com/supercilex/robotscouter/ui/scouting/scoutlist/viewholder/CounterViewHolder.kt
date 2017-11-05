@@ -28,12 +28,15 @@ open class CounterViewHolder(
             return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
         }
 
-    public override fun bind() {
-        super.bind()
-        updateValue()
+    init {
         increment.setOnClickListener(this)
         decrement.setOnClickListener(this)
         count.setOnLongClickListener(this)
+    }
+
+    public override fun bind() {
+        super.bind()
+        updateValue()
     }
 
     @CallSuper
@@ -52,9 +55,9 @@ open class CounterViewHolder(
     }
 
     protected open fun setValue() {
-        val value = metric.value
+        val value = metric.value.toString()
         val unit: String? = metric.unit
-        count.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
+        count.text = if (TextUtils.isEmpty(unit)) value else value + unit!!
     }
 
     private fun updateValue() {
