@@ -35,7 +35,6 @@ open class SpinnerViewHolder(
     @CallSuper
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
         if (indexOfKey(metric.selectedValueId) != itemPosition) {
-            disableAnimations()
             metric.selectedValueId = ids[itemPosition]
         }
     }

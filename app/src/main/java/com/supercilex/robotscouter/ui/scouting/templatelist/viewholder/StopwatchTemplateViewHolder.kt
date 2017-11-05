@@ -4,7 +4,6 @@ import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
 import android.view.View
 import android.widget.EditText
-
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.StopwatchViewHolder
 import com.supercilex.robotscouter.util.unsafeLazy
@@ -23,11 +22,11 @@ class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView
     }
 
     override fun bind() {
-        super.bind()
-        name.onFocusChangeListener = this
+        super<StopwatchViewHolder>.bind()
+        super<TemplateViewHolder>.bind()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(name.text.toString())
+        if (!hasFocus) metric.name = name.text.toString()
     }
 }

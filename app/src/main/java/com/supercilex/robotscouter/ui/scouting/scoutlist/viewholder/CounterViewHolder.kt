@@ -30,7 +30,7 @@ open class CounterViewHolder(
 
     public override fun bind() {
         super.bind()
-        updateValue(metric.value)
+        updateValue()
         increment.setOnClickListener(this)
         decrement.setOnClickListener(this)
         count.setOnLongClickListener(this)
@@ -41,23 +41,25 @@ open class CounterViewHolder(
         val id = v.id
         var value = valueWithoutUnit.toLong()
 
-        TransitionManager.beginDelayedTransition(itemView as ViewGroup)
         if (id == R.id.increment_counter) {
-            updateValue(++value)
+            metric.value = ++value
         } else if (id == R.id.decrement_counter) {
-            updateValue(--value)
+            metric.value = --value
         }
-        updateMetricValue(value)
+
+        TransitionManager.beginDelayedTransition(itemView as ViewGroup)
+        updateValue()
     }
 
-    protected open fun setValue(value: Long) {
+    protected open fun setValue() {
+        val value = metric.value
         val unit: String? = metric.unit
         count.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
     }
 
-    private fun updateValue(value: Long) {
-        setValue(value)
-        decrement.isEnabled = value > 0 // No negative values
+    private fun updateValue() {
+        setValue()
+        decrement.isEnabled = metric.value > 0 // No negative values
     }
 
     override fun onLongClick(v: View): Boolean {

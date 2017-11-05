@@ -82,7 +82,7 @@ class ExportService : IntentService(TAG) {
             val scout = scoutParser.parseSnapshot(it)
             scout.id to (scout.name ?: unknownTemplateName)
         }.toMutableMap().apply {
-            putAll(TemplateType.values().associate {
+            putAll(TemplateType.values.associate {
                 it.id.toString() to resources.getStringArray(R.array.template_new_options)[it.id]
             })
         }

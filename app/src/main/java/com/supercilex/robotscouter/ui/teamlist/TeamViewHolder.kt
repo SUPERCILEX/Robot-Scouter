@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
+import android.view.ViewStub
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,13 +26,15 @@ import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.find
 
 class TeamViewHolder @Keep constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
     private val scrollStateListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) =
-                setProgressVisibility()
+                updateProgressVisibility()
     }
     private val mediaLoadProgressListener = object : RequestListener<Drawable> {
         override fun onResourceReady(
@@ -57,7 +60,11 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     }
 
     val mediaImageView: ImageView by bindView(R.id.media)
-    private val mediaLoadProgress: ContentLoadingProgressBar by bindView(R.id.progress)
+    private val mediaLoadProgressStub: ViewStub by bindView(R.id.progress)
+    private val mediaLoadProgress by unsafeLazy {
+        mediaLoadProgressStub.visibility = View.VISIBLE
+        itemView.find<ContentLoadingProgressBar>(R.id.progress)
+    }
     private val numberTextView: TextView by bindView(R.id.number)
     private val nameTextView: TextView by bindView(R.id.name)
     private val newScoutButton: ImageButton by bindView(R.id.new_scout)
@@ -73,7 +80,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
     private var isMediaLoaded: Boolean = false
         set(value) {
             field = value
-            setProgressVisibility(field)
+            updateProgressVisibility()
         }
 
     fun bind(
@@ -109,7 +116,7 @@ class TeamViewHolder @Keep constructor(itemView: View) :
 
     private fun updateItemStatus() {
         isMediaLoaded = isItemSelected
-        setProgressVisibility()
+        updateProgressVisibility()
         getTeamMediaRequestBuilder(isItemSelected, mediaImageView.context, team)
                 .listener(mediaLoadProgressListener)
                 .into(mediaImageView)
@@ -129,9 +136,15 @@ class TeamViewHolder @Keep constructor(itemView: View) :
         nameTextView.text = team.name
     }
 
-    private fun setProgressVisibility(
-            isMediaLoaded: Boolean = recyclerView.isScrolling || this.isMediaLoaded
-    ) = if (isMediaLoaded) mediaLoadProgress.hide(true) else mediaLoadProgress.show()
+    private fun updateProgressVisibility() {
+        if (isMediaLoaded || recyclerView.isScrolling) {
+            if (mediaLoadProgressStub.visibility != View.GONE) {
+                mediaLoadProgress.hide(true)
+            }
+        } else {
+            mediaLoadProgress.show()
+        }
+    }
 
     override fun onClick(v: View) {
         if (v.id == R.id.media || isItemSelected || couldItemBeSelected) {

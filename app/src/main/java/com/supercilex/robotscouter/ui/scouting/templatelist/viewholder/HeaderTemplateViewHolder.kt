@@ -12,11 +12,11 @@ class HeaderTemplateViewHolder(itemView: View) : HeaderViewHolder(itemView), Tem
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 
     override fun bind() {
-        super.bind()
-        name.onFocusChangeListener = this
+        super<HeaderViewHolder>.bind()
+        super<TemplateViewHolder>.bind()
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(name.text.toString())
+        if (!hasFocus) metric.name = name.text.toString()
     }
 }

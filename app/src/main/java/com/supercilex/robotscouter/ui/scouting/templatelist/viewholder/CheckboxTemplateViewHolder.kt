@@ -12,18 +12,18 @@ class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView),
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 
     override fun bind() {
-        super.bind()
+        super<CheckboxViewHolder>.bind()
+        super<TemplateViewHolder>.bind()
         name.setOnClickListener(null)
         name.text = metric.name
-        name.onFocusChangeListener = this
     }
 
     override fun onClick(v: View) {
-        if (name.hasFocus()) updateMetricName(name.text.toString())
-        if (v.id == R.id.checkbox) updateMetricValue(checkbox.isChecked)
+        if (name.hasFocus()) metric.name = name.text.toString()
+        if (v.id == R.id.checkbox) metric.value = checkbox.isChecked
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(name.text.toString())
+        if (!hasFocus) metric.name = name.text.toString()
     }
 }

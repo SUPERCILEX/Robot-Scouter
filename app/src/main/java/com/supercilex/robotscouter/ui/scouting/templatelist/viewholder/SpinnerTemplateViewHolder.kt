@@ -18,8 +18,8 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 
     override fun bind() {
-        super.bind()
-        name.onFocusChangeListener = this
+        super<SpinnerViewHolder>.bind()
+        super<TemplateViewHolder>.bind()
     }
 
     override fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> {
@@ -35,8 +35,7 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
         if (itemPosition == 0) {
-            disableAnimations()
-            updateMetricName(name.text.toString())
+            metric.name = name.text.toString()
 
             spinner.setSelection(indexOfKey(metric.selectedValueId))
             // TODO Rewrite spinner item stuff
@@ -53,6 +52,6 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
     override fun indexOfKey(key: String?) = super.indexOfKey(key) + 1
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(name.text.toString())
+        if (!hasFocus) metric.name = name.text.toString()
     }
 }

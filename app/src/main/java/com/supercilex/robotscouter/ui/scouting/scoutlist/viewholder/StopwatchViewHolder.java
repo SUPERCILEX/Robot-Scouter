@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.transition.AutoTransition;
+import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,6 +29,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Metric;
@@ -56,6 +59,21 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         super(itemView);
         mToggleStopwatch = itemView.findViewById(R.id.stopwatch);
         mCycles = itemView.findViewById(R.id.list);
+
+        LinearLayoutManager manager = new LinearLayoutManager(
+                itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        manager.setInitialPrefetchItemCount(5);
+        mCycles.setLayoutManager(manager);
+        mCycles.setAdapter(new Adapter());
+        new GravitySnapHelper(Gravity.START).attachToRecyclerView(mCycles);
+
+        FragmentManager fragmentManager = ((FragmentActivity) itemView.getContext()).getSupportFragmentManager();
+        for (Fragment fragment : fragmentManager.getFragments()) {
+            if (fragment instanceof RecyclerPoolHolder) {
+                mCycles.setRecycledViewPool(((RecyclerPoolHolder) fragment).getRecyclerPool());
+                break;
+            }
+        }
     }
 
     @Override
@@ -64,22 +82,8 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         mToggleStopwatch.setOnClickListener(this);
         setText(R.string.metric_stopwatch_start_title);
 
-        LinearLayoutManager manager =
-                new LinearLayoutManager(itemView.getContext(),
-                                        LinearLayoutManager.HORIZONTAL,
-                                        false);
-        manager.setInitialPrefetchItemCount(5);
-        mCycles.setLayoutManager(manager);
-        new GravitySnapHelper(Gravity.START).attachToRecyclerView(mCycles);
-
-        FragmentManager fragmentManager = ((FragmentActivity) itemView.getContext()).getSupportFragmentManager();
-        for (Fragment fragment : fragmentManager.getFragments()) {
-            if (fragment instanceof RecyclerPoolHolder) {
-                mCycles.setRecycledViewPool(((RecyclerPoolHolder) fragment).getRecyclerPool());
-            }
-        }
-
-        mCycles.setAdapter(new Adapter());
+        mCycles.setHasFixedSize(false);
+        mCycles.getAdapter().notifyDataSetChanged();
 
         Timer timer = TIMERS.get(getMetric());
         if (timer != null) {
@@ -97,7 +101,23 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         } else {
             ArrayList<Long> newCycles = new ArrayList<>(getMetric().getValue());
             newCycles.add(mTimer.cancel());
-            updateMetricValue(newCycles);
+            getMetric().setValue(newCycles);
+
+            RecyclerView.Adapter adapter = mCycles.getAdapter();
+            int size = getMetric().getValue().size();
+
+            // Force RV to request layout when adding first item
+            mCycles.setHasFixedSize(size > 1);
+
+            if (size == 2) {
+                // Add the average metric
+                adapter.notifyItemInserted(0);
+                adapter.notifyItemInserted(size);
+            } else {
+                // Account for the average card being there or not
+                adapter.notifyItemInserted(size == 1 ? 0 : size);
+                adapter.notifyItemChanged(0);
+            }
         }
     }
 
@@ -105,10 +125,12 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         mToggleStopwatch.setText(itemView.getResources().getString(id, formatArgs));
     }
 
-    private static class Timer implements OnSuccessListener<Void>, OnFailureListener {
+    private static final class Timer implements OnSuccessListener<Void>, OnFailureListener {
         private static final int GAME_TIME = 3;
         private static final String COLON = ":";
         private static final String LEADING_ZERO = "0";
+
+        private static Transition sTransition;
 
         private final long mStartTimeMillis = System.currentTimeMillis();
 
@@ -117,6 +139,12 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
         private WeakReference<StopwatchViewHolder> mHolder;
 
+        static {
+            Transition transition = new AutoTransition();
+            transition.excludeTarget(RecyclerView.class, true);
+            sTransition = transition;
+        }
+
         public Timer(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
             mIsRunning = true;
@@ -124,9 +152,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
             updateStyle();
 
-            TaskCompletionSource<Void> start = new TaskCompletionSource<>();
-            start.getTask().addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
-            start.setResult(null);
+            Tasks.<Void>forResult(null).addOnSuccessListener(AsyncTaskExecutor.INSTANCE, this);
         }
 
         public static String getFormattedTime(long nanos) {
@@ -215,7 +241,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             StopwatchViewHolder holder = mHolder.get();
             if (holder == null) return;
 
-            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView);
+            TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView, sTransition);
 
             // There's a bug pre-L where changing the view state doesn't update the vector drawable.
             // Because of that, calling View#setActivated(isRunning) doesn't update the background
@@ -259,9 +285,9 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             } else {
                 if (containsAverageItems()) {
                     int realIndex = position - 1;
-                    holder.bind(cycles.get(realIndex), realIndex);
+                    holder.bind(StopwatchViewHolder.this, cycles.get(realIndex));
                 } else {
-                    holder.bind(cycles.get(position), position);
+                    holder.bind(StopwatchViewHolder.this, cycles.get(position));
                 }
             }
         }
@@ -277,29 +303,31 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             return containsAverageItems() && position == 0 ? AVERAGE_ITEM : DATA_ITEM;
         }
 
-        private boolean containsAverageItems() {
+        public boolean containsAverageItems() {
             return getMetric().getValue().size() > 1;
         }
     }
 
-    private class DataHolder extends RecyclerView.ViewHolder
+    private static class DataHolder extends RecyclerView.ViewHolder
             implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         protected TextView mTitle;
         protected TextView mValue;
-        private int mIndex;
+
+        private StopwatchViewHolder mHolder;
 
         public DataHolder(View itemView) {
             super(itemView);
             mTitle = itemView.findViewById(android.R.id.text1);
             mValue = itemView.findViewById(android.R.id.text2);
-        }
-
-        public void bind(long nanoTime, int index) {
-            mIndex = index;
 
             itemView.setOnCreateContextMenuListener(this);
+        }
+
+        public void bind(StopwatchViewHolder holder, long nanoTime) {
+            mHolder = holder;
+
             mTitle.setText(itemView.getContext().getString(
-                    R.string.metric_stopwatch_cycle_title, mIndex + 1));
+                    R.string.metric_stopwatch_cycle_title, getRealPosition() + 1));
             mValue.setText(Timer.getFormattedTime(nanoTime));
         }
 
@@ -312,21 +340,48 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            ArrayList<Long> newCycles = new ArrayList<>(getMetric().getValue());
-            newCycles.remove(mIndex);
-            updateMetricValue(newCycles);
+            Metric<List<Long>> metric = mHolder.getMetric();
+            boolean hadAverage = hasAverage();
+
+            ArrayList<Long> newCycles = new ArrayList<>(metric.getValue());
+            newCycles.remove(getRealPosition());
+            metric.setValue(newCycles);
+
+            RecyclerView.Adapter adapter = mHolder.mCycles.getAdapter();
+            int size = metric.getValue().size();
+
+            // Force RV to request layout when removing last item
+            mHolder.mCycles.setHasFixedSize(size > 0);
+
+            adapter.notifyItemRemoved(getAdapterPosition());
+            if (hadAverage && size == 1) {
+                // Remove the average card
+                adapter.notifyItemRemoved(0);
+            } else if (size > 1) {
+                adapter.notifyItemChanged(0);
+            }
+
             return true;
+        }
+
+        private int getRealPosition() {
+            return hasAverage() ? getAdapterPosition() - 1 : getAdapterPosition();
+        }
+
+        private boolean hasAverage() {
+            return ((Adapter) mHolder.mCycles.getAdapter()).containsAverageItems();
         }
     }
 
-    private class AverageHolder extends DataHolder {
+    private static class AverageHolder extends DataHolder {
         public AverageHolder(View itemView) {
             super(itemView);
+            mTitle.setText(R.string.metric_stopwatch_cycle_average_title);
+
+            itemView.setOnCreateContextMenuListener(null);
         }
 
         public void bind(List<Long> cycles) {
-            mTitle.setText(R.string.metric_stopwatch_cycle_average_title);
-
             long sum = 0;
             for (Long duration : cycles) sum += duration;
             long nanos = cycles.isEmpty() ? sum : sum / cycles.size();

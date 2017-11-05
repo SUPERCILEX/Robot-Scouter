@@ -16,13 +16,16 @@ open class CheckboxViewHolder(
 
     public override fun bind() {
         super.bind()
-        checkbox.isChecked = metric.value
-        checkbox.setOnClickListener(this)
+        checkbox.apply {
+            isChecked = metric.value
+            jumpDrawablesToCurrentState() // Skip animation on first load
+            setOnClickListener(this@CheckboxViewHolder)
+        }
         name.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.checkbox) updateMetricValue(checkbox.isChecked)
+        if (v.id == R.id.checkbox) metric.value = checkbox.isChecked
         if (v.id == R.id.name) checkbox.performClick()
     }
 }

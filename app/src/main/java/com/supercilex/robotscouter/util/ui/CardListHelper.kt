@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -9,6 +10,15 @@ open class CardListHelper(
         private val adapter: FirestoreRecyclerAdapter<*, *>,
         private val recyclerView: RecyclerView
 ) {
+    private val dividerSingle =
+            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_single_item)!!
+    private val dividerFirst =
+            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_first_item)!!
+    private val dividerMiddle =
+            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_middle_item)!!
+    private val dividerLast =
+            ContextCompat.getDrawable(recyclerView.context, R.drawable.list_divider_last_item)!!
+
     fun onChildChanged(type: ChangeEventType, index: Int) {
         if (type == ChangeEventType.REMOVED) {
             recyclerView.notifyItemsChangedNoAnimation(index + if (index != 0) -1 else 0)
@@ -52,13 +62,13 @@ open class CardListHelper(
         val isLastItem = isLastItem(position)
 
         if (isFirstItem && isLastItem) {
-            itemView.setBackgroundResource(R.drawable.list_divider_single_item)
+            itemView.background = dividerSingle.constantState.newDrawable()
         } else if (isFirstItem) {
-            itemView.setBackgroundResource(R.drawable.list_divider_first_item)
+            itemView.background = dividerFirst.constantState.newDrawable()
         } else if (isLastItem) {
-            itemView.setBackgroundResource(R.drawable.list_divider_last_item)
+            itemView.background = dividerLast.constantState.newDrawable()
         } else {
-            itemView.setBackgroundResource(R.drawable.list_divider_middle_item)
+            itemView.background = dividerMiddle.constantState.newDrawable()
         }
 
         itemView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)

@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.support.annotation.CallSuper
 import android.support.design.widget.TextInputLayout
@@ -16,10 +17,17 @@ open class EditTextViewHolder(
         View.OnFocusChangeListener {
     private val textLayout: TextInputLayout by bindView(R.id.text_layout)
 
+    /**
+     * Note: this implementation DOES NOT call super
+     */
+    // We set the text to the value instead of the name because the name goes in the hint
+    @SuppressLint("MissingSuperCall")
     public override fun bind() {
-        super.bind()
+        textLayout.isHintAnimationEnabled = false
         name.text = metric.value
         textLayout.hint = metric.name
+        textLayout.isHintAnimationEnabled = true
+
         name.onFocusChangeListener = this
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
@@ -32,6 +40,6 @@ open class EditTextViewHolder(
 
     @CallSuper
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricValue(name.text.toString())
+        if (!hasFocus) metric.value = name.text.toString()
     }
 }

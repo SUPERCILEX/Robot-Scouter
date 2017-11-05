@@ -17,14 +17,14 @@ class EditTextTemplateViewHolder(
     private val text: EditText by bindView(R.id.text)
 
     override fun bind() {
-        super.bind()
+        super<MetricViewHolderBase>.bind()
+        super<TemplateViewHolder>.bind()
         text.setText(metric.value)
-        name.onFocusChangeListener = this
         text.onFocusChangeListener = this
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus && v.id == R.id.name) updateMetricName(name.text.toString())
-        if (!hasFocus && v.id == R.id.text) updateMetricValue(text.text.toString())
+        if (!hasFocus && v.id == R.id.name) metric.name = name.text.toString()
+        if (!hasFocus && v.id == R.id.text) metric.value = text.text.toString()
     }
 }
