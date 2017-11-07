@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.data.model
 
 import com.supercilex.robotscouter.util.isNumber
+import java.util.Collections
 
 enum class TemplateType(val id: Int) {
     MATCH(0),
@@ -9,13 +10,20 @@ enum class TemplateType(val id: Int) {
 
     companion object {
         val DEFAULT: TemplateType = MATCH
+        /**
+         * Identical to the native values() method except that this one returns an immutable [List]
+         * instead of an [Array] which must be copied defensively.
+         *
+         * @see enumValues
+         */
+        val values: List<TemplateType> = Collections.unmodifiableList(values().toList())
 
         fun valueOf(id: Int): TemplateType = requireNotNull(coerce(id.toString())) {
             "Unknown template type: $id"
         }
 
         fun coerce(id: String?): TemplateType? = if (id?.isNumber() == true) {
-            TemplateType.values().find { it.id == id.toInt() }
+            values.find { it.id == id.toInt() }
         } else {
             null
         }

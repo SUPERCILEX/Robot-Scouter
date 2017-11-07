@@ -118,8 +118,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-crash:$playServicesVersion"
     implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') { transitive = true }
-    // Using compile b/c https://stackoverflow.com/q/47103774/4548500
-    compile "com.google.firebase:firebase-perf:$playServicesVersion"
+    implementation "com.google.firebase:firebase-perf:$playServicesVersion"
     implementation "com.google.firebase:firebase-storage:$playServicesVersion"
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
     implementation "com.google.firebase:firebase-appindexing:$playServicesVersion"

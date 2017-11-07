@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
+import com.supercilex.robotscouter.util.signIn as startSignInIntent
 
 class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
         DefaultLifecycleObserver, FirebaseAuth.AuthStateListener {
@@ -47,7 +48,7 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
 
     override fun onAuthStateChanged(auth: FirebaseAuth) = updateMenuState()
 
-    fun signIn() = com.supercilex.robotscouter.util.signIn(activity)
+    fun signIn() = startSignInIntent(activity)
 
     private fun signInAnonymously() = FirebaseAuth.getInstance().signInAnonymously()
             .addOnFailureListener(activity) {

@@ -61,7 +61,23 @@ abstract class TabPagerAdapterBase(
 
     override fun onDataChanged() {
         currentScouts = ArrayList(holder.scouts)
-        if (currentScouts.isNotEmpty() && currentScouts == oldScouts) return
+        if (currentScouts.isNotEmpty() && currentScouts.size == oldScouts.size) {
+            if (currentScouts == oldScouts) {
+                // This will occur when re-establishing a connection to the database
+                return
+            }
+
+            // Check to see if this update is just a name change
+            val newScoutsWithOldNames = currentScouts.mapIndexed { index, scout ->
+                scout.copy(name = oldScouts[index].name)
+            }
+            if (newScoutsWithOldNames == oldScouts) {
+                updateTabNames()
+
+                oldScouts = ArrayList(currentScouts)
+                return
+            }
+        }
 
         val prevTabId = currentTabId
 
@@ -71,15 +87,7 @@ abstract class TabPagerAdapterBase(
         notifyDataSetChanged()
         tabLayout.addOnTabSelectedListener(this)
 
-        (0 until tabLayout.tabCount).map {
-            tabLayout.getTabAt(it)!!
-        }.forEachIndexed { index, tab ->
-            tab.text = currentScouts[index].name ?: getPageTitle(index)
-
-            val tabView = (tabLayout.getChildAt(0) as LinearLayout).getChildAt(index)
-            tabView.setOnLongClickListener(this@TabPagerAdapterBase)
-            tabView.id = index
-        }
+        updateTabNames()
 
         if (currentScouts.isNotEmpty()) {
             if (TextUtils.isEmpty(prevTabId)) {
@@ -103,6 +111,18 @@ abstract class TabPagerAdapterBase(
         }
 
         oldScouts = ArrayList(currentScouts)
+    }
+
+    private fun updateTabNames() {
+        (0 until tabLayout.tabCount).map {
+            tabLayout.getTabAt(it)!!
+        }.forEachIndexed { index, tab ->
+            tab.text = currentScouts[index].name ?: getPageTitle(index)
+
+            val tabView = (tabLayout.getChildAt(0) as LinearLayout).getChildAt(index)
+            tabView.setOnLongClickListener(this@TabPagerAdapterBase)
+            tabView.id = index
+        }
     }
 
     fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(currentTabId))

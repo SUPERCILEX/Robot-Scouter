@@ -18,7 +18,7 @@ open class CardListHelper(
     fun onBind(viewHolder: RecyclerView.ViewHolder) {
         val position: Int = viewHolder.layoutPosition
 
-        setBackground(viewHolder, position)
+        viewHolder.setBackground(position)
 
         recyclerView.post {
             if (position > adapter.itemCount - 1) return@post
@@ -28,10 +28,10 @@ open class CardListHelper(
             val belowPos = position + 1
 
             recyclerView.findViewHolderForLayoutPosition(abovePos)?.let {
-                setBackground(it, abovePos)
+                it.setBackground(abovePos)
             }
             recyclerView.findViewHolderForLayoutPosition(belowPos)?.let {
-                setBackground(it, belowPos)
+                it.setBackground(belowPos)
             }
         }
     }
@@ -40,9 +40,7 @@ open class CardListHelper(
 
     protected open fun isLastItem(position: Int) = position == adapter.itemCount - 1
 
-    private fun setBackground(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        val itemView = viewHolder.itemView
-
+    private fun RecyclerView.ViewHolder.setBackground(position: Int) {
         val paddingLeft = itemView.paddingLeft
         val paddingTop = itemView.paddingTop
         val paddingRight = itemView.paddingRight
@@ -51,15 +49,18 @@ open class CardListHelper(
         val isFirstItem = isFirstItem(position)
         val isLastItem = isLastItem(position)
 
-        if (isFirstItem && isLastItem) {
-            itemView.setBackgroundResource(R.drawable.list_divider_single_item)
+        // It turns out performance is improved by parsing the drawable again b/c
+        // setBackgroundResource can no-op if we are setting the same drawable instead of having
+        // to recompute everything.
+        itemView.setBackgroundResource(if (isFirstItem && isLastItem) {
+            R.drawable.list_divider_single_item
         } else if (isFirstItem) {
-            itemView.setBackgroundResource(R.drawable.list_divider_first_item)
+            R.drawable.list_divider_first_item
         } else if (isLastItem) {
-            itemView.setBackgroundResource(R.drawable.list_divider_last_item)
+            R.drawable.list_divider_last_item
         } else {
-            itemView.setBackgroundResource(R.drawable.list_divider_middle_item)
-        }
+            R.drawable.list_divider_middle_item
+        })
 
         itemView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     }

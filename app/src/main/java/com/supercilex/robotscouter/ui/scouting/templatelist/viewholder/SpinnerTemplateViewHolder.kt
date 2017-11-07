@@ -10,33 +10,30 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.SpinnerViewH
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.longToast
-import java.util.ArrayList
-import java.util.LinkedHashMap
 
-class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), TemplateViewHolder {
+class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView),
+        MetricTemplateViewHolder<Metric.List, Map<String, String>> {
+    private val editTitle: String = itemView.context.getString(R.string.metric_spinner_edit_title)
+
     override val reorder: View by bindView(R.id.reorder)
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 
-    override fun bind() {
-        super.bind()
-        name.onFocusChangeListener = this
+    init {
+        init()
     }
 
-    override fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> {
-        val items = LinkedHashMap<String, String>()
-        items.put(
-                metric.ref.parent.document().id,
-                itemView.context.getString(R.string.metric_spinner_edit_title)
-        )
-        items.putAll(listMetric.value)
-        return ArrayAdapter(
-                itemView.context, android.R.layout.simple_spinner_item, ArrayList(items.values))
+    override fun updateAdapter() {
+        @Suppress("UNCHECKED_CAST") // See super
+        (spinner.adapter as ArrayAdapter<String>).apply {
+            clear()
+            add(editTitle)
+            addAll(metric.value.values)
+        }
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
         if (itemPosition == 0) {
-            disableAnimations()
-            updateMetricName(name.text.toString())
+            metric.name = name.text.toString()
 
             spinner.setSelection(indexOfKey(metric.selectedValueId))
             // TODO Rewrite spinner item stuff
@@ -51,8 +48,4 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView), T
     }
 
     override fun indexOfKey(key: String?) = super.indexOfKey(key) + 1
-
-    override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) updateMetricName(name.text.toString())
-    }
 }

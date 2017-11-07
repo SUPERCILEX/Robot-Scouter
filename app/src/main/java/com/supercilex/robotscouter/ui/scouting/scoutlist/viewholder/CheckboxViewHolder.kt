@@ -14,15 +14,19 @@ open class CheckboxViewHolder(
         View.OnClickListener {
     protected val checkbox: CheckBox by bindView(R.id.checkbox)
 
-    public override fun bind() {
-        super.bind()
-        checkbox.isChecked = metric.value
+    init {
         checkbox.setOnClickListener(this)
         name.setOnClickListener(this)
     }
 
+    public override fun bind() {
+        super.bind()
+        checkbox.isChecked = metric.value
+        checkbox.jumpDrawablesToCurrentState() // Skip animation on first load
+    }
+
     override fun onClick(v: View) {
-        if (v.id == R.id.checkbox) updateMetricValue(checkbox.isChecked)
+        if (v.id == R.id.checkbox) metric.value = checkbox.isChecked
         if (v.id == R.id.name) checkbox.performClick()
     }
 }

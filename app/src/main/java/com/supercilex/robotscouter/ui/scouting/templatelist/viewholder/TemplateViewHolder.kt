@@ -10,4 +10,8 @@ interface TemplateViewHolder : View.OnFocusChangeListener {
     fun requestFocus() {
         nameEditor.requestFocus()
     }
+
+    fun init() {
+        nameEditor.onFocusChangeListener = this
+    }
 }

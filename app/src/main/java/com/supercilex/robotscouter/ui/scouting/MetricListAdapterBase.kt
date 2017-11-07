@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scouting
 
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SimpleItemAnimator
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -11,6 +10,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.util.ui.CardListHelper
 
+@Suppress("UNCHECKED_CAST") // Needed to support extension
 abstract class MetricListAdapterBase(
         options: FirestoreRecyclerOptions<Metric<*>>,
         private val manager: FragmentManager,
@@ -25,21 +25,17 @@ abstract class MetricListAdapterBase(
 
         private fun isHeader(position: Int): Boolean = getItem(position).type == MetricType.HEADER
     }
-    private val animator: SimpleItemAnimator = recyclerView.itemAnimator as SimpleItemAnimator
 
-    @Suppress("UNCHECKED_CAST") // Needed to support extension
     override fun onBindViewHolder(
             viewHolder: MetricViewHolderBase<*, *, *>,
             position: Int,
             metric: Metric<*>
     ) {
-        animator.supportsChangeAnimations = true
-
         cardListHelper.onBind(viewHolder)
 
         viewHolder as MetricViewHolderBase<Metric<Any>, *, *>
         metric as Metric<Any>
-        viewHolder.bind(metric, manager, animator)
+        viewHolder.bind(metric, manager)
     }
 
     override fun getItemViewType(position: Int): Int = getItem(position).type.id
@@ -50,6 +46,21 @@ abstract class MetricListAdapterBase(
             newIndex: Int,
             oldIndex: Int
     ) {
+        if (type == ChangeEventType.CHANGED) {
+            // Check to see if this change comes from the device or the server. All ViewHolder have
+            // a contract to update the local copies of their backing Metric. Thus, we can find the
+            // ViewHolder at the specified position and see if the metric we get from the server is
+            // identical to the one on-device. If so, no-op.
+
+            val metric = snapshots[newIndex]
+            recyclerView.findViewHolderForAdapterPosition(newIndex)?.let {
+                val holder = it as MetricViewHolderBase<Metric<Any>, *, *>
+                if (holder.metric == metric && holder.metric.position == metric.position) {
+                    return
+                }
+            }
+        }
+
         super.onChildChanged(type, snapshot, newIndex, oldIndex)
         cardListHelper.onChildChanged(type, newIndex)
     }

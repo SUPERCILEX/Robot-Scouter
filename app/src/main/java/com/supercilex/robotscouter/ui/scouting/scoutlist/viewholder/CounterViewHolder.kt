@@ -28,12 +28,20 @@ open class CounterViewHolder(
             return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
         }
 
-    public override fun bind() {
-        super.bind()
-        updateValue(metric.value)
+    init {
         increment.setOnClickListener(this)
         decrement.setOnClickListener(this)
         count.setOnLongClickListener(this)
+    }
+
+    public override fun bind() {
+        super.bind()
+        update()
+    }
+
+    private fun update() {
+        setValue()
+        decrement.isEnabled = metric.value > 0 // No negative values
     }
 
     @CallSuper
@@ -41,27 +49,24 @@ open class CounterViewHolder(
         val id = v.id
         var value = valueWithoutUnit.toLong()
 
-        TransitionManager.beginDelayedTransition(itemView as ViewGroup)
         if (id == R.id.increment_counter) {
-            updateValue(++value)
+            metric.value = ++value
         } else if (id == R.id.decrement_counter) {
-            updateValue(--value)
+            metric.value = --value
         }
-        updateMetricValue(value)
+
+        TransitionManager.beginDelayedTransition(itemView as ViewGroup)
+        update()
     }
 
-    protected open fun setValue(value: Long) {
+    protected open fun setValue() {
+        val value = metric.value.toString()
         val unit: String? = metric.unit
-        count.text = if (TextUtils.isEmpty(unit)) value.toString() else value.toString() + unit!!
-    }
-
-    private fun updateValue(value: Long) {
-        setValue(value)
-        decrement.isEnabled = value > 0 // No negative values
+        count.text = if (TextUtils.isEmpty(unit)) value else value + unit!!
     }
 
     override fun onLongClick(v: View): Boolean {
-        CounterValueDialog.show(manager, metric.ref, valueWithoutUnit)
+        CounterValueDialog.show(fragmentManager, metric.ref, valueWithoutUnit)
         return true
     }
 }

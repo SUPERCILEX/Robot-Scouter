@@ -11,43 +11,49 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import kotterknife.bindView
-import java.util.ArrayList
 
 open class SpinnerViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView),
         AdapterView.OnItemSelectedListener {
     protected val spinner: Spinner by bindView(R.id.spinner)
-    private val ids: List<String> get() = ArrayList(metric.value.keys)
+    private val ids: Set<String>
+        get() = metric.value.keys
+
+    init {
+        spinner.adapter = ArrayAdapter<String>(
+                itemView.context,
+                android.R.layout.simple_spinner_item
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        spinner.onItemSelectedListener = this
+    }
 
     public override fun bind() {
         super.bind()
-        if (metric.value.isEmpty()) return
-
-        val spinnerArrayAdapter = getAdapter(metric)
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        spinner.adapter = spinnerArrayAdapter
-        spinner.onItemSelectedListener = this
+        updateAdapter()
         spinner.setSelection(indexOfKey(metric.selectedValueId))
+    }
+
+    protected open fun updateAdapter() {
+        @Suppress("UNCHECKED_CAST") // We know the metric type
+        (spinner.adapter as ArrayAdapter<String>).apply {
+            clear()
+            addAll(metric.value.values)
+        }
     }
 
     @CallSuper
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
-        if (indexOfKey(metric.selectedValueId) != itemPosition) {
-            disableAnimations()
-            metric.selectedValueId = ids[itemPosition]
-        }
+        metric.selectedValueId = ids.elementAt(itemPosition)
     }
 
-    protected open fun indexOfKey(key: String?): Int =
-            ids.indices.firstOrNull { TextUtils.equals(key, ids[it]) } ?: 0
-
-    protected open fun getAdapter(listMetric: Metric.List): ArrayAdapter<String> = ArrayAdapter(
-            itemView.context,
-            android.R.layout.simple_spinner_item,
-            ArrayList(listMetric.value.values)
-    )
+    protected open fun indexOfKey(key: String?): Int = ids.forEachIndexed { index, test ->
+        if (TextUtils.equals(test, key)) return index
+    }.run {
+        return 0
+    }
 
     override fun onNothingSelected(view: AdapterView<*>) = Unit
 }

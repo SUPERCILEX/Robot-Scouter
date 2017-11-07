@@ -16,13 +16,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+    <ViewStub
         android:id="@+id/progress"
-        style="@style/Base.Widget.AppCompat.ProgressBar"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:indeterminate="true"
-        android:visibility="gone"
+        android:inflatedId="@id/progress"
+        android:layout="@layout/progress_bar"
         app:layout_constraintStart_toStartOf="@id/media"
         app:layout_constraintEnd_toEndOf="@id/media"
         app:layout_constraintTop_toTopOf="@id/media"

@@ -11,20 +11,24 @@ import kotterknife.bindView
 
 class EditTextTemplateViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.Text, String?, TextView>(itemView), TemplateViewHolder {
+) : MetricViewHolderBase<Metric.Text, String?, TextView>(itemView),
+        MetricTemplateViewHolder<Metric.Text, String?> {
     override val reorder: View by bindView(R.id.reorder)
     override val nameEditor: EditText by unsafeLazy { name as EditText }
     private val text: EditText by bindView(R.id.text)
 
-    override fun bind() {
-        super.bind()
-        text.setText(metric.value)
-        name.onFocusChangeListener = this
+    init {
+        init()
         text.onFocusChangeListener = this
     }
 
+    override fun bind() {
+        super.bind()
+        text.setText(metric.value)
+    }
+
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus && v.id == R.id.name) updateMetricName(name.text.toString())
-        if (!hasFocus && v.id == R.id.text) updateMetricValue(text.text.toString())
+        super.onFocusChange(v, hasFocus)
+        if (!hasFocus && v.id == R.id.text) metric.value = text.text.toString()
     }
 }
