@@ -27,6 +27,11 @@ class TeamListHolder : ViewModelBase<Bundle?>() {
     fun onSaveInstanceState(outState: Bundle) =
             outState.putAll(selectedTeamIdListener.value?.toBundle() ?: Bundle())
 
+    override fun onCleared() {
+        super.onCleared()
+        TeamsLiveData.removeObserver(keepAliveListener)
+    }
+
     private companion object {
         const val TEAM_KEY = "team_key"
     }
