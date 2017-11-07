@@ -153,8 +153,10 @@ fun View.animatePopReveal(visible: Boolean) {
             alpha = 0f
             scaleY = 0f
             scaleX = 0f
+            visibility = View.VISIBLE
         }
 
+        animate().cancel()
         animate()
                 .scaleX(if (visible) 1f else 0f)
                 .scaleY(if (visible) 1f else 0f)
@@ -168,8 +170,8 @@ fun View.animatePopReveal(visible: Boolean) {
                     FastOutLinearInInterpolator() as Any
                 } as TimeInterpolator)
                 .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationStart(animation: Animator) {
-                        if (visible) visibility = View.VISIBLE
+                    override fun onAnimationCancel(animation: Animator) {
+                        visibility = if (visible) View.GONE else View.VISIBLE
                     }
 
                     override fun onAnimationEnd(animation: Animator) {
