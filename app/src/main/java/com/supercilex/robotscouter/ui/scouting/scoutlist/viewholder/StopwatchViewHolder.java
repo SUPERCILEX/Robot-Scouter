@@ -49,6 +49,7 @@ import java.util.concurrent.TimeoutException;
 public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>, List<Long>, TextView>
         implements View.OnClickListener {
     private static final Map<Metric.Stopwatch, Timer> TIMERS = new ConcurrentHashMap<>();
+    private static final int LIST_SIZE_WITH_AVERAGE = 2;
 
     private final Button mToggleStopwatch;
     private final RecyclerView mCycles;
@@ -110,7 +111,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             // Force RV to request layout when adding first item
             mCycles.setHasFixedSize(size > 1);
 
-            if (size == 2) {
+            if (size == LIST_SIZE_WITH_AVERAGE) {
                 // Add the average metric
                 adapter.notifyItemInserted(0);
                 adapter.notifyItemInserted(size);
@@ -358,7 +359,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             if (hadAverage && size == 1) {
                 // Remove the average card
                 adapter.notifyItemRemoved(0);
-            } else if (size > 1) {
+            } else if (size >= LIST_SIZE_WITH_AVERAGE) {
                 adapter.notifyItemChanged(0);
             }
 
