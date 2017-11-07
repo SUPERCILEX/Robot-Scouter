@@ -23,6 +23,7 @@ class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView),
     }
 
     override fun updateAdapter() {
+        @Suppress("UNCHECKED_CAST") // See super
         (spinner.adapter as ArrayAdapter<String>).apply {
             clear()
             add(editTitle)

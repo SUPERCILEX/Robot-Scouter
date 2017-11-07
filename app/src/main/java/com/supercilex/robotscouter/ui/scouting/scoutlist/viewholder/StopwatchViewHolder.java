@@ -82,13 +82,13 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
     @Override
     protected void bind() {
         super.bind();
-        setText(R.string.metric_stopwatch_start_title);
-
         mCycles.setHasFixedSize(false);
         mCycles.getAdapter().notifyDataSetChanged();
 
         Timer timer = TIMERS.get(getMetric());
-        if (timer != null) {
+        if (timer == null) {
+            setText(R.string.metric_stopwatch_start_title);
+        } else {
             timer.setHolder(this);
             mTimer = timer;
             mTimer.updateButtonTime();
@@ -109,15 +109,17 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             int size = getMetric().getValue().size();
 
             // Force RV to request layout when adding first item
-            mCycles.setHasFixedSize(size > 1);
+            mCycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE);
 
             if (size == LIST_SIZE_WITH_AVERAGE) {
-                // Add the average metric
+                // Add the average card
                 adapter.notifyItemInserted(0);
                 adapter.notifyItemInserted(size);
             } else {
-                // Account for the average card being there or not
+                // Account for the average card being there or not. Since we are adding a new lap,
+                // there are only two possible states: 1 item or n + 2 items.
                 adapter.notifyItemInserted(size == 1 ? 0 : size);
+                // Ensure the average card is updated if it's there
                 adapter.notifyItemChanged(0);
             }
         }
@@ -360,7 +362,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                 // Remove the average card
                 adapter.notifyItemRemoved(0);
             } else if (size >= LIST_SIZE_WITH_AVERAGE) {
-                adapter.notifyItemChanged(0);
+                adapter.notifyItemChanged(0); // Ensure the average card is updated
             }
 
             return true;

@@ -16,12 +16,12 @@ abstract class MetricViewHolderBase<M : Metric<T>, T, out V : TextView>(
         private set
 
     protected val name: V by bindView(R.id.name)
-    protected lateinit var manager: FragmentManager
+    protected lateinit var fragmentManager: FragmentManager
         private set
 
     fun bind(metric: M, manager: FragmentManager) {
         this.metric = metric
-        this.manager = manager
+        this.fragmentManager = manager
 
         bind()
     }

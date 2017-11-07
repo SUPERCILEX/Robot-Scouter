@@ -67,6 +67,7 @@ abstract class TabPagerAdapterBase(
                 return
             }
 
+            // Check to see if this update is just a name change
             val newScoutsWithOldNames = currentScouts.mapIndexed { index, scout ->
                 scout.copy(name = oldScouts[index].name)
             }

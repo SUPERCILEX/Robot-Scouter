@@ -36,7 +36,12 @@ open class CounterViewHolder(
 
     public override fun bind() {
         super.bind()
-        updateValue()
+        update()
+    }
+
+    private fun update() {
+        setValue()
+        decrement.isEnabled = metric.value > 0 // No negative values
     }
 
     @CallSuper
@@ -51,7 +56,7 @@ open class CounterViewHolder(
         }
 
         TransitionManager.beginDelayedTransition(itemView as ViewGroup)
-        updateValue()
+        update()
     }
 
     protected open fun setValue() {
@@ -60,13 +65,8 @@ open class CounterViewHolder(
         count.text = if (TextUtils.isEmpty(unit)) value else value + unit!!
     }
 
-    private fun updateValue() {
-        setValue()
-        decrement.isEnabled = metric.value > 0 // No negative values
-    }
-
     override fun onLongClick(v: View): Boolean {
-        CounterValueDialog.show(manager, metric.ref, valueWithoutUnit)
+        CounterValueDialog.show(fragmentManager, metric.ref, valueWithoutUnit)
         return true
     }
 }

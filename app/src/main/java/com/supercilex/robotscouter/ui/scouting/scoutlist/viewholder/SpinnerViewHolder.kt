@@ -11,14 +11,14 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import kotterknife.bindView
-import java.util.ArrayList
 
 open class SpinnerViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView),
         AdapterView.OnItemSelectedListener {
     protected val spinner: Spinner by bindView(R.id.spinner)
-    private lateinit var ids: List<String>
+    private val ids: Set<String>
+        get() = metric.value.keys
 
     init {
         spinner.adapter = ArrayAdapter<String>(
@@ -32,13 +32,12 @@ open class SpinnerViewHolder(
 
     public override fun bind() {
         super.bind()
-        ids = ArrayList(metric.value.keys)
-
         updateAdapter()
         spinner.setSelection(indexOfKey(metric.selectedValueId))
     }
 
     protected open fun updateAdapter() {
+        @Suppress("UNCHECKED_CAST") // We know the metric type
         (spinner.adapter as ArrayAdapter<String>).apply {
             clear()
             addAll(metric.value.values)
@@ -47,11 +46,14 @@ open class SpinnerViewHolder(
 
     @CallSuper
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
-        metric.selectedValueId = ids[itemPosition]
+        metric.selectedValueId = ids.elementAt(itemPosition)
     }
 
-    protected open fun indexOfKey(key: String?): Int =
-            ids.indices.firstOrNull { TextUtils.equals(key, ids[it]) } ?: 0
+    protected open fun indexOfKey(key: String?): Int = ids.forEachIndexed { index, test ->
+        if (TextUtils.equals(test, key)) return index
+    }.run {
+        return 0
+    }
 
     override fun onNothingSelected(view: AdapterView<*>) = Unit
 }

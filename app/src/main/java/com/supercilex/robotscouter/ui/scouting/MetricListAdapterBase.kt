@@ -47,6 +47,11 @@ abstract class MetricListAdapterBase(
             oldIndex: Int
     ) {
         if (type == ChangeEventType.CHANGED) {
+            // Check to see if this change comes from the device or the server. All ViewHolder have
+            // a contract to update the local copies of their backing Metric. Thus, we can find the
+            // ViewHolder at the specified position and see if the metric we get from the server is
+            // identical to the one on-device. If so, no-op.
+
             val metric = snapshots[newIndex]
             recyclerView.findViewHolderForAdapterPosition(newIndex)?.let {
                 val holder = it as MetricViewHolderBase<Metric<Any>, *, *>
