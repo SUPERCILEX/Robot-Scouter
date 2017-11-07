@@ -80,4 +80,9 @@ class TeamHolder : ViewModelBase<Bundle>(),
 
     fun onSaveInstanceState(outState: Bundle) =
             outState.putAll(teamListener.value?.toBundle() ?: Bundle())
+
+    override fun onCleared() {
+        super.onCleared()
+        teamListener.removeObserver(keepAliveListener)
+    }
 }
