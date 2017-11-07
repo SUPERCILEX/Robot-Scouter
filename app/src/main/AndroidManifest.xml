@@ -54,7 +54,7 @@
             android:label="${appName}"
             android:launchMode="singleTask"
             android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustResize">
 
             <meta-data
                 android:name="android.app.shortcuts"
@@ -73,7 +73,7 @@
             android:label="@string/scout_activity_title"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.scouting.templatelist.TemplateListActivity"
@@ -81,14 +81,14 @@
             android:launchMode="singleTop"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings_activity_title"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".data.client.LinkReceiverActivity"

@@ -85,6 +85,7 @@
         <item name="android:paddingRight">@dimen/list_item_padding_horizontal</item>
         <item name="android:paddingTop">@dimen/list_item_padding_vertical_within</item>
         <item name="android:paddingBottom">@dimen/list_item_padding_vertical_within</item>
+        <item name="android:focusableInTouchMode">true</item>
     </style>
 
     <style name="RobotScouter.ListItemNameInLinearLayout">

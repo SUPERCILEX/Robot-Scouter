@@ -32,6 +32,7 @@
         <item name="android:paddingHorizontal">@dimen/list_item_padding_horizontal</item>
         <item name="android:paddingVertical">@dimen/list_item_padding_vertical_within</item>
         <item name="android:elevation">@dimen/card_elevation</item>
+        <item name="android:focusableInTouchMode">true</item>
         <item name="android:importantForAutofill">noExcludeDescendants</item>
     </style>
 
