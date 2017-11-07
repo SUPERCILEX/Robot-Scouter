@@ -8,7 +8,7 @@
 
     <android.support.text.emoji.widget.EmojiAppCompatEditText
         android:id="@+id/name"
-        style="@style/RobotScouter.ListItemNameInLinearLayout"
+        style="@style/RobotScouter.ListItemNameInLinearLayout.Editable"
         android:layout_marginStart="@dimen/spacing_normal"
         android:layout_marginLeft="@dimen/spacing_normal"
         android:hint="@string/metric_checkbox_name_hint"

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     style="@style/RobotScouter.ListItem"
+    android:focusableInTouchMode="false"
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
