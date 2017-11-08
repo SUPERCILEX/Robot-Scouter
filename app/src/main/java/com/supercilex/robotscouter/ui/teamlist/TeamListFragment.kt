@@ -88,7 +88,12 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
                 selectTeam(null)
             } else {
                 adapter = TeamListAdapter(
-                        snapshots, this, menuHelper, holder.selectedTeamIdListener)
+                        snapshots,
+                        savedInstanceState,
+                        this,
+                        menuHelper,
+                        holder.selectedTeamIdListener
+                )
                 recyclerView.adapter = adapter
                 menuHelper.setAdapter(adapter)
                 menuHelper.restoreState(savedInstanceState)
@@ -100,6 +105,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
     override fun onSaveInstanceState(outState: Bundle) {
         holder.onSaveInstanceState(outState)
         menuHelper.saveState(outState)
+        adapter?.onSaveInstanceState()?.let { outState.putAll(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =

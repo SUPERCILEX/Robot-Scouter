@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
 import android.arch.lifecycle.LifecycleOwner
+import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -21,16 +22,18 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.StopwatchVie
 
 class ScoutAdapter(
         metrics: ObservableSnapshotArray<Metric<*>>,
+        owner: LifecycleOwner,
         manager: FragmentManager,
         recyclerView: RecyclerView,
-        owner: LifecycleOwner
+        savedInstanceState: Bundle?
 ) : MetricListAdapterBase(
         FirestoreRecyclerOptions.Builder<Metric<*>>()
                 .setSnapshotArray(metrics)
                 .setLifecycleOwner(owner)
                 .build(),
-        manager,
-        recyclerView
+        recyclerView,
+        savedInstanceState,
+        manager
 ) {
     override fun onCreateViewHolder(
             parent: ViewGroup,

@@ -77,9 +77,12 @@ class TemplateListFragment : FragmentBase(),
         adapter
     }
 
+    init {
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         FirebaseAuth.getInstance().addAuthStateListener(this)
     }
 

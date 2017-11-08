@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.arch.lifecycle.LifecycleOwner
+import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -23,17 +24,19 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.Stopwatch
 
 class TemplateAdapter(
         metrics: ObservableSnapshotArray<Metric<*>>,
+        owner: LifecycleOwner,
         manager: FragmentManager,
         recyclerView: RecyclerView,
-        owner: LifecycleOwner,
+        savedInstanceState: Bundle?,
         private val callback: TemplateItemTouchCallback<Metric<*>>
 ) : MetricListAdapterBase(
         FirestoreRecyclerOptions.Builder<Metric<*>>()
                 .setSnapshotArray(metrics)
                 .setLifecycleOwner(owner)
                 .build(),
-        manager,
-        recyclerView
+        recyclerView,
+        savedInstanceState,
+        manager
 ) {
     override fun getItem(position: Int) = callback.getItem(position)
 

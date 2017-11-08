@@ -1,21 +1,27 @@
 package com.supercilex.robotscouter.ui.scouting
 
+import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.RecyclerView
 import com.firebase.ui.common.ChangeEventType
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.util.ui.CardListHelper
+import com.supercilex.robotscouter.util.ui.SavedStateAdapter
 
 @Suppress("UNCHECKED_CAST") // Needed to support extension
 abstract class MetricListAdapterBase(
         options: FirestoreRecyclerOptions<Metric<*>>,
-        private val manager: FragmentManager,
-        private val recyclerView: RecyclerView
-) : FirestoreRecyclerAdapter<Metric<*>, MetricViewHolderBase<*, *, *>>(options) {
+        recyclerView: RecyclerView,
+        savedInstanceState: Bundle?,
+        private val manager: FragmentManager
+) : SavedStateAdapter<Metric<*>, MetricViewHolderBase<*, *, *>>(
+        options,
+        savedInstanceState,
+        recyclerView
+) {
     private val cardListHelper: CardListHelper = object : CardListHelper(this, recyclerView) {
         override fun isFirstItem(position: Int): Boolean =
                 super.isFirstItem(position) || isHeader(position)

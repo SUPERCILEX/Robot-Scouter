@@ -35,15 +35,6 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         getTemplateMetricsRef(getTabId(arguments)!!)
     }
 
-    override val adapter by unsafeLazy {
-        TemplateAdapter(
-                holder.metrics,
-                childFragmentManager,
-                recyclerView,
-                this,
-                itemTouchCallback
-        )
-    }
     private val itemTouchCallback by unsafeLazy {
         TemplateItemTouchCallback<Metric<*>>(view!!)
     }
@@ -66,7 +57,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
 
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
-        itemTouchCallback.adapter = adapter
+        itemTouchCallback.adapter = adapter as TemplateAdapter
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
@@ -94,6 +85,15 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             }
         })
     }
+
+    override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = TemplateAdapter(
+            holder.metrics,
+            this,
+            childFragmentManager,
+            recyclerView,
+            savedInstanceState,
+            itemTouchCallback
+    )
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             inflater.inflate(R.menu.template_options, menu)

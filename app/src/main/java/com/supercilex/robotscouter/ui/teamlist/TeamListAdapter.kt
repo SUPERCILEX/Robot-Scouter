@@ -2,9 +2,9 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -15,27 +15,30 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.firebase.ui.common.ChangeEventType
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.ui.CardListHelper
+import com.supercilex.robotscouter.util.ui.SavedStateAdapter
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
 class TeamListAdapter(
         snapshots: ObservableSnapshotArray<Team>,
+        savedInstanceState: Bundle?,
         private val fragment: Fragment,
         private val menuHelper: TeamMenuHelper,
         private val selectedTeamIdListener: MutableLiveData<Team?>
-) : FirestoreRecyclerAdapter<Team, TeamViewHolder>(
+) : SavedStateAdapter<Team, TeamViewHolder>(
         FirestoreRecyclerOptions.Builder<Team>()
                 .setSnapshotArray(snapshots)
                 .setLifecycleOwner(fragment)
-                .build()
+                .build(),
+        savedInstanceState,
+        fragment.find(R.id.list)
 ), ListPreloader.PreloadModelProvider<Team>, Observer<Team?> {
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(
@@ -45,7 +48,6 @@ class TeamListAdapter(
             5
     )
 
-    private val recyclerView = fragment.find<RecyclerView>(R.id.list)
     private val cardListHelper = CardListHelper(this, recyclerView)
     private val noTeamsHint: View = fragment.find(R.id.no_content_hint)
 
@@ -163,6 +165,7 @@ class TeamListAdapter(
     }
 
     override fun onDataChanged() {
+        super.onDataChanged()
         noTeamsHint.animatePopReveal(itemCount == 0)
     }
 
