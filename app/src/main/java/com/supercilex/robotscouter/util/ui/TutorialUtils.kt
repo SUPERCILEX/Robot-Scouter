@@ -13,7 +13,6 @@ import com.supercilex.robotscouter.ui.teamlist.TutorialHelper
 import com.supercilex.robotscouter.util.data.hasShownAddTeamTutorial
 import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import org.jetbrains.anko.find
-import org.jetbrains.anko.findOptional
 import uk.co.samuelwall.materialtaptargetprompt.ActivityResourceFinder
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 
@@ -32,8 +31,6 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
 
         override fun onChanged(hasShownTutorial: Boolean?) {
             if (hasShownTutorial == false) {
-                if (owner.findOptional<View>(R.id.material_target_prompt_view)?.visibility == View.VISIBLE) return
-
                 prompt.show()
                 val promptView: View = owner.find(R.id.material_target_prompt_view)
                 (promptView.layoutParams as CoordinatorLayout.LayoutParams).behavior =
