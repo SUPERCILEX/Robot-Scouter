@@ -152,7 +152,7 @@ fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(
             notifyOnDataChanged()
         }
 
-        override fun getSnapshots() = emptyList<DocumentSnapshot>()
+        override fun getSnapshots() = emptyList<DocumentSnapshot>().toMutableList()
     }.asLiveData()
 }
 
