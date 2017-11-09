@@ -33,9 +33,9 @@ class TemplateSharer private constructor(
                     getTemplateLink(templateId, token),
                     templateName,
                     it.result.format(activity.getString(R.string.template_share_cta, templateName)))
-        }).addOnSuccessListener {
+        }).addOnSuccessListener(activity) {
             activity.startActivityForResult(it, RC_SHARE)
-        }.logFailures().addOnFailureListener {
+        }.logFailures().addOnFailureListener(activity) {
             longSnackbar(activity.find(R.id.root), R.string.fui_general_error)
         }
     }

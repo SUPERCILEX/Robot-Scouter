@@ -51,9 +51,9 @@ class TeamSharer private constructor(
                     cache.teams.getTeamsLink(token),
                     it.result.format(cache.shareCta, cache.teams[0].media)
             )
-        }).addOnSuccessListener {
+        }).addOnSuccessListener(activity) {
             activity.startActivityForResult(it, RC_SHARE)
-        }.logFailures().addOnFailureListener {
+        }.logFailures().addOnFailureListener(activity) {
             longSnackbar(activity.find(R.id.root), R.string.fui_general_error)
         }
     }

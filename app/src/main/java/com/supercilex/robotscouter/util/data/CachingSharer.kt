@@ -36,7 +36,7 @@ abstract class CachingSharer(private val context: Context) {
             }.also {
                 if (it.isEmpty()) {
                     shareTemplateFile.delete()
-                    call()
+                    return call()
                 }
             }
         }
