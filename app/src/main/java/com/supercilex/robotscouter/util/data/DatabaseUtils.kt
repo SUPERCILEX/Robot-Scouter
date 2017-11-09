@@ -145,7 +145,15 @@ inline fun <T, R> LiveData<T>.observeOnce(
 
 fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(
 ): LiveData<ObservableSnapshotArray<T>> = Transformations.switchMap(this) {
-    it.asLiveData()
+    it?.asLiveData()
+            // This "cast" is safe because the list is empty and we will never parse anything
+            ?: object : ObservableSnapshotArray<T>(@Suppress("UNCHECKED_CAST") { Unit as T }) {
+        init {
+            notifyOnDataChanged()
+        }
+
+        override fun getSnapshots() = emptyList<DocumentSnapshot>()
+    }.asLiveData()
 }
 
 fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArray<T>> {
