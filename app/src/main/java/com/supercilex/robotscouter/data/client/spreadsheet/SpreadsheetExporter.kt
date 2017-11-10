@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.formula.WorkbookEvaluator
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Chart
@@ -196,14 +197,14 @@ class SpreadsheetExporter(
 
     @AddTrace(name = "getWorkbook")
     private fun getWorkbook(): Workbook {
-        val workbook: Workbook
-        if (isUnsupportedDevice) {
-            workbook = HSSFWorkbook()
+        val workbook = if (isUnsupportedDevice) {
             showToast(RobotScouter.INSTANCE.getString(R.string.export_unsupported_device_rationale))
+            HSSFWorkbook()
         } else {
-            workbook = XSSFWorkbook()
+            XSSFWorkbook()
+        }.also {
+            cache.workbook = it
         }
-        cache.workbook = workbook
 
         val averageSheet = run {
             if (cache.teams.isPolynomial) {
@@ -418,7 +419,7 @@ class SpreadsheetExporter(
                 plotArea.getCatAxArray(0).addNewTitle().setValue("Scouts")
 
                 val name = getMetricForChart(chart, chartPool).name
-                if (!TextUtils.isEmpty(name)) chart.setTitle(name)
+                if (!TextUtils.isEmpty(name)) chart.setTitleText(name)
             }
         }
     }
@@ -620,5 +621,21 @@ class SpreadsheetExporter(
         const val MIME_TYPE_ALL = "*/*"
         const val FILE_EXTENSION = ".xlsx"
         const val UNSUPPORTED_FILE_EXTENSION = ".xls"
+
+        init {
+            System.setProperty(
+                    "org.apache.poi.javax.xml.stream.XMLInputFactory",
+                    "com.fasterxml.aalto.stax.InputFactoryImpl"
+            )
+            System.setProperty(
+                    "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                    "com.fasterxml.aalto.stax.OutputFactoryImpl"
+            )
+            System.setProperty(
+                    "org.apache.poi.javax.xml.stream.XMLEventFactory",
+                    "com.fasterxml.aalto.stax.EventFactoryImpl"
+            )
+            WorkbookEvaluator.registerFunction("AVERAGEIF", averageifFunction)
+        }
     }
 }

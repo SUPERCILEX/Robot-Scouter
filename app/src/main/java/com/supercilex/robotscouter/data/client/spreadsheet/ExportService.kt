@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExportTeamsEvent
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
-import org.apache.poi.ss.formula.WorkbookEvaluator
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
@@ -128,22 +127,6 @@ class ExportService : IntentService(TAG) {
     companion object {
         private const val TAG = "ExportService"
         private const val TIMEOUT = 10L
-
-        init {
-            System.setProperty(
-                    "org.apache.poi.javax.xml.stream.XMLInputFactory",
-                    "com.fasterxml.aalto.stax.InputFactoryImpl"
-            )
-            System.setProperty(
-                    "org.apache.poi.javax.xml.stream.XMLOutputFactory",
-                    "com.fasterxml.aalto.stax.OutputFactoryImpl"
-            )
-            System.setProperty(
-                    "org.apache.poi.javax.xml.stream.XMLEventFactory",
-                    "com.fasterxml.aalto.stax.EventFactoryImpl"
-            )
-            WorkbookEvaluator.registerFunction("AVERAGEIF", averageifFunction)
-        }
 
         /** @return true if an export was attempted, false otherwise */
         fun exportAndShareSpreadSheet(fragment: Fragment,

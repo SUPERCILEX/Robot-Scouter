@@ -80,8 +80,6 @@ play {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs')
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "org.jetbrains.anko:anko-design:$ankoVersion"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
@@ -142,8 +140,10 @@ dependencies {
     implementation 'uk.co.samuelwall:material-tap-target-prompt:2.4.0'
     implementation 'com.github.rubensousa:gravitysnaphelper:1.3'
 
-    // Apache POI - to update, use https://github.com/SUPERCILEX/poi-on-android
-    compileOnly 'org.apache.poi:poi-ooxml:3.16-beta2' // Used for documentation
+    // Apache POI
+    implementation "com.github.SUPERCILEX.poi-android:poi:$poiVersion"
+    implementation "com.github.SUPERCILEX.poi-android:proguard:$poiVersion"
+    compileOnly "org.apache.poi:poi-ooxml:$poiVersion" // For sources
 
     // Leak canary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
