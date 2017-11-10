@@ -16,6 +16,8 @@ import android.view.View
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.supercilex.robotscouter.BuildConfig
+import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
