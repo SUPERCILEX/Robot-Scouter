@@ -37,7 +37,7 @@ data class Team(
         @get:Keep
         @set:Keep
         @set:RestrictTo(RestrictTo.Scope.TESTS)
-        var activeTokens: MutableMap<String, Date> = emptyMap<String, Date>().toMutableMap(),
+        var activeTokens: Map<String, Date> = emptyMap(),
 
         @Exclude
         @get:Keep

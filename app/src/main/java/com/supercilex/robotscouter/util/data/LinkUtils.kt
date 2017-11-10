@@ -5,6 +5,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.Indexable
+import com.google.firebase.appindexing.Scope
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
@@ -36,14 +37,18 @@ val Team.indexable: Indexable
             .setUrl(deepLink)
             .setName(toString())
             .apply { setImage(media ?: return@apply) }
-            .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
+            .setMetadata(Indexable.Metadata.Builder()
+                                 .setWorksOffline(true)
+                                 .setScope(Scope.CROSS_DEVICE))
             .build()
 
 fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
         Indexables.digitalDocumentBuilder()
                 .setUrl(getTemplateLink(templateId))
                 .setName(templateName)
-                .setMetadata(Indexable.Metadata.Builder().setWorksOffline(true))
+                .setMetadata(Indexable.Metadata.Builder()
+                                     .setWorksOffline(true)
+                                     .setScope(Scope.CROSS_DEVICE))
                 .build()
 
 fun List<Team>.getTeamsLink(token: String? = null): String =

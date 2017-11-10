@@ -13,13 +13,9 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.firebase.ui.auth.util.PlayServicesHelper
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.supercilex.robotscouter.BuildConfig
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
@@ -106,10 +102,6 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
     override fun onStart() {
         super.onStart()
-        PlayServicesHelper.makePlayServicesAvailable(this, API_AVAILABILITY_RC) { finish() }
-        val result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
-        GoogleApiAvailability.getInstance().showErrorNotification(this, result)
-
         fetchAndActivate().addOnSuccessListener(this, this)
     }
 
