@@ -16,7 +16,6 @@ import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.create
 import kotterknife.bindView
-import org.jetbrains.anko.support.v4.find
 
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     private val saveResponseCheckbox: CheckBox by bindView(R.id.save_response)
@@ -28,7 +27,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
             .create {
-                find<TextView>(android.R.id.message).movementMethod =
+                findViewById<TextView>(android.R.id.message)!!.movementMethod =
                         LinkMovementMethod.getInstance()
             }
 
