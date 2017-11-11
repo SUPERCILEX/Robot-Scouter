@@ -2,8 +2,8 @@ package com.supercilex.robotscouter.util.data.model
 
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
@@ -41,12 +41,10 @@ fun addTemplate(type: TemplateType): String {
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
     }
 
-    defaultTemplates.get().continueWithTask(
-            AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
+    defaultTemplates.document(type.id.toString()).get().continueWithTask(
+            AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         firestoreBatch {
-            it.result.map {
-                scoutParser.parseSnapshot(it)
-            }.find { it.id == type.id.toString() }!!.metrics.forEach {
+            scoutParser.parseSnapshot(it.result).metrics.forEach {
                 set(getTemplateMetricsRef(id).document(it.ref.id), it)
             }
         }

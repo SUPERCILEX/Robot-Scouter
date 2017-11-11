@@ -3,13 +3,17 @@ package com.supercilex.robotscouter.util.ui
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.view.ViewCompat
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SimpleItemAnimator
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import org.jetbrains.anko.bundleOf
 import java.lang.Math.max
+
+private val defaultMaxAnimationDuration: Long by lazy {
+    DefaultItemAnimator().maxAnimationDuration()
+}
 
 fun RecyclerView.isItemInRange(position: Int): Boolean = (layoutManager as LinearLayoutManager).let {
     val first = it.findFirstCompletelyVisibleItemPosition()
@@ -19,21 +23,22 @@ fun RecyclerView.isItemInRange(position: Int): Boolean = (layoutManager as Linea
             && position in first..it.findLastCompletelyVisibleItemPosition()
 }
 
-fun RecyclerView.ItemAnimator.maxAnimationDuration() =
-        max(max(addDuration, removeDuration), changeDuration)
-
 fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int = 1) {
-    val animator = itemAnimator as SimpleItemAnimator
+    val animator: RecyclerView.ItemAnimator? = itemAnimator
 
-    animator.supportsChangeAnimations = false
+    itemAnimator = null
     adapter.notifyItemRangeChanged(position, itemCount)
 
     ViewCompat.postOnAnimationDelayed(
             this,
-            { animator.supportsChangeAnimations = true },
+            { itemAnimator = animator },
             animator.maxAnimationDuration()
     )
 }
+
+fun RecyclerView.ItemAnimator?.maxAnimationDuration() = this?.let {
+    max(max(addDuration, removeDuration), changeDuration)
+} ?: defaultMaxAnimationDuration
 
 /**
  * A [FirestoreRecyclerAdapter] whose state can be saved regardless of database connection

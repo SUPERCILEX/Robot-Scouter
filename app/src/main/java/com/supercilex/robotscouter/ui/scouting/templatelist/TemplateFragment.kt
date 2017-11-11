@@ -15,6 +15,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
+import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.delete
@@ -22,6 +23,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.animatePopReveal
@@ -110,11 +112,13 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 recyclerView.clearFocus()
                 metricsRef.delete().addOnSuccessListener { documents ->
                     longSnackbar(fam, R.string.deleted, R.string.undo) {
-                        firestoreBatch {
-                            for (document in documents) {
-                                set(document.reference, document.data)
+                        async {
+                            firestoreBatch {
+                                for (document in documents) {
+                                    set(document.reference, document.data)
+                                }
                             }
-                        }
+                        }.logFailures()
                     }
                 }
             }

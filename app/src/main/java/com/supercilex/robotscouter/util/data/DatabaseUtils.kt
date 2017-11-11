@@ -31,7 +31,6 @@ import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -48,7 +47,6 @@ import com.supercilex.robotscouter.util.data.model.fetchLatestData
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScoutRef
 import com.supercilex.robotscouter.util.data.model.getScouts
-import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
@@ -257,17 +255,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                     nTeamUpdatesForTemplateId = team.id to 0
                 }
 
-                TemplateType.coerce(templateId)?.let {
-                    team.updateTemplateId(defaultTemplateId)
-                    return
-                }
-
-                getTemplatesQuery().get().addOnSuccessListener {
-                    if (it.documents.map { it.getString(FIRESTORE_TEMPLATE_ID) }
-                            .contains(templateId)) {
-                        team.updateTemplateId(defaultTemplateId)
-                    }
-                }.logFailures()
+                team.updateTemplateId(defaultTemplateId)
             }
         }
     }
