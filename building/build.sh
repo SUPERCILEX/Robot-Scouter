@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   ./gradlew clean build publishApkRelease
@@ -18,5 +18,3 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
 else
   ./gradlew clean assembleDebug check
 fi
-
-set +xe
