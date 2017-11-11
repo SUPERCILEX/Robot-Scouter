@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
@@ -29,16 +30,15 @@ fun Team.addScout(overrideId: String? = null): String {
 
     scoutRef.set(Scout(scoutRef.id, templateId))
     (TemplateType.coerce(templateId)?.let { type ->
-        defaultTemplates.get().continueWith(
-                AsyncTaskExecutor, Continuation<QuerySnapshot, String?> {
-            val scout = it.result.map { scoutParser.parseSnapshot(it) }
-                    .find { it.id == type.id.toString() }!!
+        defaultTemplates.document(type.id.toString()).get().continueWith(
+                AsyncTaskExecutor, Continuation<DocumentSnapshot, String?> {
+            val scout = scoutParser.parseSnapshot(it.result)
 
             firestoreBatch {
                 scout.metrics.forEach {
                     set(getScoutMetricsRef(scoutRef.id).document(it.ref.id), it)
                 }
-            }
+            }.logFailures()
 
             scout.name
         })

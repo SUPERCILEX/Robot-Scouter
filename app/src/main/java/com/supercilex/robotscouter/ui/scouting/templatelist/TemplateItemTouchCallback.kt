@@ -237,13 +237,13 @@ class TemplateItemTouchCallback<T : OrderedModel>(
             firestoreBatch {
                 delete(deletedRef)
                 updatePositions(itemsBelow, -1)
-            }
+            }.logFailures()
 
             longSnackbar(rootView, R.string.deleted, R.string.undo) {
                 firestoreBatch {
                     updatePositions(itemsBelow, 1)
                     set(deletedRef, snapshot.data)
-                }
+                }.logFailures()
             }
         }.logFailures()
     }
