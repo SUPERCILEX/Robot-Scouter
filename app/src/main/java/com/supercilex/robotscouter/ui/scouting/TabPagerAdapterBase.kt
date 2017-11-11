@@ -34,7 +34,7 @@ abstract class TabPagerAdapterBase(
     @get:StringRes protected abstract val editTabNameRes: Int
     private val noContentHint: View by fragment.bindView(R.id.no_content_hint)
 
-    protected val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
+    val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
     protected var oldScouts: List<Scout> = emptyList()
     private var currentScouts: List<Scout> = emptyList()
 
