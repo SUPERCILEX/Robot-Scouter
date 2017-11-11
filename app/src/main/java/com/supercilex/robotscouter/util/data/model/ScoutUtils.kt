@@ -61,7 +61,11 @@ fun Team.addScout(
         }).logFailures()
 
         getTemplateRef(templateId).get().continueWith {
-            scoutParser.parseSnapshot(it.result).name
+            if (it.result.exists()) {
+                scoutParser.parseSnapshot(it.result).name
+            } else {
+                null
+            }
         }
     }).logFailures().addOnCompleteListener(AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
