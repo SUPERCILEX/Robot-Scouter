@@ -1,51 +1,85 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 
+import android.support.v4.app.FragmentActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
-import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.SpinnerViewHolder
+import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
+import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
-import org.jetbrains.anko.longToast
 
-class SpinnerTemplateViewHolder(itemView: View) : SpinnerViewHolder(itemView),
-        MetricTemplateViewHolder<Metric.List, Map<String, String>> {
-    private val editTitle: String = itemView.context.getString(R.string.metric_spinner_edit_title)
-
+class SpinnerTemplateViewHolder(
+        itemView: View
+) : MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView),
+        MetricTemplateViewHolder<Metric.List, Map<String, String>>, View.OnClickListener {
     override val reorder: View by bindView(R.id.reorder)
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 
+    private val newItem: Button by bindView(R.id.new_item)
+    private val items: RecyclerView by bindView(R.id.list)
+
     init {
         init()
-    }
 
-    override fun updateAdapter() {
-        @Suppress("UNCHECKED_CAST") // See super
-        (spinner.adapter as ArrayAdapter<String>).apply {
-            clear()
-            add(editTitle)
-            addAll(metric.value.values)
+        newItem.setOnClickListener(this)
+
+        items.layoutManager = LinearLayoutManager(itemView.context)
+        items.adapter = Adapter()
+        for (fragment in (itemView.context as FragmentActivity).supportFragmentManager.fragments) {
+            if (fragment is RecyclerPoolHolder) {
+                items.recycledViewPool = (fragment as RecyclerPoolHolder).recyclerPool
+                break
+            }
         }
     }
 
-    override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
-        if (itemPosition == 0) {
-            metric.name = name.text.toString()
+    override fun onClick(v: View) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
-            spinner.setSelection(indexOfKey(metric.selectedValueId))
-            // TODO Rewrite spinner item stuff
-            itemView.context.longToast(
-                    "Sorry, updating item selectors hasn't been implemented in the Robot" +
-                            " Scouter v2.0 beta yet, but it will be by the time v2.0 reaches" +
-                            " the stable channel."
-            )
-        } else {
-            super.onItemSelected(parent, view, itemPosition - 1, id)
+    private inner class Adapter : RecyclerView.Adapter<ItemHolder>() {
+        override fun getItemCount() = metric.value.size
+
+        override fun getItemViewType(position: Int) = ITEM_TYPE
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ItemHolder(
+                LayoutInflater.from(parent.context)
+                        .inflate(R.layout.scout_template_spinner_item, parent, false))
+
+        override fun onBindViewHolder(holder: ItemHolder, position: Int) {
+            val id = metric.value.keys.elementAt(position)
+            holder.bind(metric.value[id]!!, metric.selectedValueId == id)
         }
     }
 
-    override fun indexOfKey(key: String?) = super.indexOfKey(key) + 1
+    private class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val name: EditText by bindView(R.id.name)
+        private val star: ImageButton by bindView(R.id.star)
+
+        init {
+
+        }
+
+        fun bind(name: String, isDefault: Boolean) {
+            this.name.text = name
+            star.setImageResource(if (isDefault) {
+                R.drawable.ic_star_accent_24dp
+            } else {
+                R.drawable.ic_star_outline_accent_24dp
+            })
+        }
+    }
+
+    private companion object {
+        const val ITEM_TYPE = 2000
+    }
 }

@@ -204,7 +204,7 @@
 
     <string name="metric_spinner_add_title">Add item selector</string>
     <string name="metric_spinner_name_hint">Item selector name</string>
-    <string name="metric_spinner_edit_title">Edit items</string>
+    <string name="metric_spinner_item_name_hint">Item name</string>
 
     <string name="template_remove_metrics_title">Remove all metrics</string>
     <string name="template_delete_title">Delete template</string>
@@ -295,6 +295,8 @@
     <string name="accessibility_reorder">
         The reorder icon. It can be used to change the order of scout metrics.
     </string>
+    <string name="accessibility_add_spinner_item">Add a new item selector item.</string>
+    <string name="accessibility_set_default_spinner_item">Set the default item selector item.</string>
 
     <!-- Other -->
     <string name="asset_statements" translatable="false">
