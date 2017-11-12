@@ -24,7 +24,7 @@ class ScoutPagerAdapter(
     }
 
     override fun getItem(position: Int) =
-            ScoutFragment.newInstance(holder.scouts[position].id, team)
+            ScoutFragment.newInstance(currentScouts[position].id, team)
 
     override fun getPageTitle(position: Int): String =
             fragment.getString(R.string.scout_tab_default_title, count - position)

@@ -33,7 +33,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
-    public override val metricsRef: CollectionReference by unsafeLazy {
+    override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(getTabId(arguments)!!)
     }
 

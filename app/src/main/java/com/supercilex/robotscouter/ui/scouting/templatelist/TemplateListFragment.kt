@@ -49,10 +49,10 @@ class TemplateListFragment : FragmentBase(),
     private val pagerAdapter by unsafeLazy {
         val tabLayout: TabLayout = find(R.id.tabs)
         val viewPager: ViewPager = find(R.id.viewpager)
-        val adapter = object : TemplatePagerAdapter(this, tabLayout) {
+        val adapter = object : TemplatePagerAdapter(this@TemplateListFragment, tabLayout) {
             override fun onDataChanged() {
                 super.onDataChanged()
-                if (holder.scouts.isEmpty()) {
+                if (currentScouts.isEmpty()) {
                     fam.hideMenuButton(true)
                 } else {
                     fam.showMenuButton(true)
