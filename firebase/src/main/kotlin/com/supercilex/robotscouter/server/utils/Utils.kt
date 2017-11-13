@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.server
+package com.supercilex.robotscouter.server.utils
 
 //import kotlin.js.Promise.Companion.resolve
 //

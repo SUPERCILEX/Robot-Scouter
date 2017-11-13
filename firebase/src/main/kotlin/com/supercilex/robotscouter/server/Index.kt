@@ -1,3 +1,8 @@
+package com.supercilex.robotscouter.server
+
+import com.supercilex.robotscouter.server.utils.LateinitVal
+import com.supercilex.robotscouter.server.utils.Modules
+
 external fun require(module: String): dynamic
 external val exports: dynamic
 
@@ -10,7 +15,7 @@ fun main(args: Array<String>) {
     admin.initializeApp(functions.config().firebase)
     val firestore = admin.firestore()
     val moment = require("moment")
-    modules = Modules(functions, admin, firestore, moment)
+    modules = Modules(firestore, moment)
 
     exports.cleanup = functions.pubsub.topic("monthly-tick").onPublish { cleanup() }
 }
