@@ -1,22 +1,16 @@
 external fun require(module: String): dynamic
 external val exports: dynamic
 
+var modules: Modules by LateinitVal()
+    private set
+
 fun main(args: Array<String>) {
     val functions = require("firebase-functions")
     val admin = require("firebase-admin")
     admin.initializeApp(functions.config().firebase)
     val firestore = admin.firestore()
+    val moment = require("moment")
+    modules = Modules(functions, admin, firestore, moment)
 
-    // TODO https://github.com/VerachadW/kotlin-cloud-functions/blob/master/src/main/kotlin/Index.kt
-    exports.cleanup = functions.pubsub.topic("monthly-tick").onPublish {
-        firestore.collection("users").where(
-                "lastLogin",
-                "<",
-                //language=js
-                js("""
-                    var sixtyDaysAgo = new Date();
-                    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60)
-                    """)
-        )
-    }
+    exports.cleanup = functions.pubsub.topic("monthly-tick").onPublish { cleanup() }
 }
