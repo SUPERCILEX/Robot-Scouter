@@ -3,10 +3,9 @@
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   ./gradlew clean build publishApkRelease
 
-# TODO It's broken in the latest release
-#  cd firebase
-#  firebase deploy
-#  cd ..
+  cd firebase
+  firebase deploy --only functions # TODO Fix Firestore rules
+  cd ..
 
   mv app/build/outputs/apk/release/app-release.apk app-release.apk
   # Duplicated in upload.sh
