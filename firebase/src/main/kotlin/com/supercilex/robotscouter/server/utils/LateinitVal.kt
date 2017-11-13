@@ -1,3 +1,5 @@
+package com.supercilex.robotscouter.server
+
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

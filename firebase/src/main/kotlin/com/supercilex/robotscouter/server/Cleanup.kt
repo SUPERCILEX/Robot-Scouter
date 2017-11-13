@@ -1,3 +1,5 @@
+package com.supercilex.robotscouter.server
+
 import kotlin.js.Promise
 
 private const val FIRESTORE_LAST_LOGIN = "lastLogin"

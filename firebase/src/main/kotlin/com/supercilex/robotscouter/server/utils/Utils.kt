@@ -1,3 +1,5 @@
+package com.supercilex.robotscouter.server
+
 //import kotlin.js.Promise.Companion.resolve
 //
 //function deleteCollection(db, collectionPath, batchSize) {

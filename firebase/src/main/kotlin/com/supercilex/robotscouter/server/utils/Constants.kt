@@ -1,3 +1,5 @@
+package com.supercilex.robotscouter.server
+
 private const val FIRESTORE_USERS = "users"
 private const val FIRESTORE_TEAMS = "teams"
 private const val FIRESTORE_TEMPLATES = "templates"
