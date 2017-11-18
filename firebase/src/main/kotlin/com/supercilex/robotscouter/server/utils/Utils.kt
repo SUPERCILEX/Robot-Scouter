@@ -1,44 +1,42 @@
 package com.supercilex.robotscouter.server.utils
 
-//import kotlin.js.Promise.Companion.resolve
-//
-//function deleteCollection(db, collectionPath, batchSize) {
-//    var collectionRef = db.collection(collectionPath);
-//    var query = collectionRef.orderBy('__name__').limit(batchSize);
-//
-//    return new Promise ((resolve, reject) => {
-//        deleteQueryBatch(db, query, batchSize, resolve, reject);
-//    });
-//}
-//
-//function deleteQueryBatch(db, query, batchSize, resolve, reject) {
-//    query.get()
-//            .then((snapshot) => {
-//                // When there are no documents left, we are done
-//                if (snapshot.size == 0) {
-//                    return 0;
-//                }
-//
-//                // Delete documents in a batch
-//                var batch = db.batch();
-//                snapshot.docs.forEach((doc) => {
-//                    batch.delete(doc.ref);
-//                });
-//
-//                return batch.commit().then(() => {
-//                    return snapshot.size;
-//                });
-//            }).then((numDeleted) => {
-//        if (numDeleted === 0) {
-//            resolve();
-//            return;
-//        }
-//
-//        // Recurse on the next process tick, to avoid
-//        // exploding the stack.
-//        process.nextTick(() => {
-//            deleteQueryBatch(db, query, batchSize, resolve, reject);
-//        });
-//    })
-//    .catch(reject);
-//}
+import com.supercilex.robotscouter.server.utils.types.CollectionReference
+import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
+import com.supercilex.robotscouter.server.utils.types.Firestore
+import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.WriteBatch
+import kotlin.js.Promise
+
+inline fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
+    transaction()
+    commit()
+}
+
+fun CollectionReference.delete(batchSize: Int = 100): Promise<List<DocumentSnapshot>> =
+        deleteQueryBatch(firestore, orderBy("__name__").limit(batchSize), batchSize)
+
+private fun deleteQueryBatch(
+        db: Firestore,
+        query: Query,
+        batchSize: Int,
+        deleted: MutableList<DocumentSnapshot> = ArrayList()
+): Promise<List<DocumentSnapshot>> = query.get().then {
+    if (it.size == 0) {
+        return@then Promise.resolve(0)
+    }
+
+    db.batch {
+        it.docs.forEach { delete(it.ref) }
+        deleted += it.docs
+    }.then {
+        it.size
+    }
+}.then { numDeleted ->
+    if (numDeleted == 0) {
+        return@then Promise.resolve(deleted)
+    }
+
+    deleteQueryBatch(db, query, batchSize, deleted)
+}.then { it }.catch {
+    emptyList<DocumentSnapshot>()
+}

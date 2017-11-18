@@ -19,38 +19,38 @@ fun cleanup(): Promise<*> {
         Promise.all(users.docs.map {
             deleteAllData(it)
         }.toTypedArray())
-    }
+    }.then { it }
 }
 
-private fun deleteAllData(user: DocumentSnapshot): Promise<Array<out Promise<Array<out String>>>> {
+private fun deleteAllData(user: DocumentSnapshot): Promise<Array<out Array<out String>>> {
     console.log("Deleting all data for user:\n${JSON.stringify(user.data())}")
     val id: String = user.id
     return Promise.all(arrayOf(
             deleteTeams(id),
             deleteTemplates(id)
-    ))
+    )).then { it }
 }
 
-private fun deleteTeams(userId: String): Promise<Promise<Array<out String>>> = teams.where(
+private fun deleteTeams(userId: String): Promise<Array<out String>> = teams.where(
         "owners.$userId", ">=", 0
 ).get().then { teams ->
     Promise.all(teams.docs.map {
         deleteTeam(it)
     }.toTypedArray())
-}
+}.then { it }
 
 private fun deleteTeam(team: DocumentSnapshot): Promise<String> {
     console.log("Deleting team: ${JSON.stringify(team.data())}")
     return Promise.resolve("null")
 }
 
-private fun deleteTemplates(userId: String): Promise<Promise<Array<out String>>> = templates.where(
+private fun deleteTemplates(userId: String): Promise<Array<out String>> = templates.where(
         "owners.$userId", ">=", modules.moment(0).toDate()
 ).get().then { templates ->
     Promise.all(templates.docs.map {
         deleteTemplate(it)
     }.toTypedArray())
-}
+}.then { it }
 
 private fun deleteTemplate(template: DocumentSnapshot): Promise<String> {
     console.log("Deleting template: ${JSON.stringify(template.data())}")

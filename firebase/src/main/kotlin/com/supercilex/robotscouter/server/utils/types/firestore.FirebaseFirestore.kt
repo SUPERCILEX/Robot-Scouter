@@ -85,7 +85,7 @@ external open class Query {
     open fun where(fieldPath: FieldPath, opStr: Any /* ">=" */, value: Any): Query = definedExternally
     open fun where(fieldPath: FieldPath, opStr: Any /* ">" */, value: Any): Query = definedExternally
     open fun orderBy(fieldPath: String, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
-    open fun orderBy(fieldPath: String, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
+    //    open fun orderBy(fieldPath: String, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
     open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
     open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
     open fun limit(limit: Number): Query = definedExternally
