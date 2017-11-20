@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     val moment = require("moment")
     modules = Modules(firestore, moment)
 
-    exports.wipeUserData = functions.pubsub.topic("monthly-tick").onPublish { wipeUserData() }
+    exports.deleteUnusedData = functions.pubsub.topic("monthly-tick").onPublish { deleteUnusedData() }
     exports.emptyTrash = functions.pubsub.topic("monthly-tick").onPublish { emptyTrash() }
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
     exports.logUserData = functions.pubsub.topic("log-user-data").onPublish { event: Event<dynamic> ->

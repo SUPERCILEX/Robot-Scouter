@@ -7,7 +7,7 @@ import com.supercilex.robotscouter.server.utils.types.Query
 import kotlin.js.Promise
 
 fun DocumentSnapshot.toTeamString() =
-        "${data()[FIRESTORE_NAME] ?: data()[FIRESTORE_NUMBER]}: $id"
+        "${data()[FIRESTORE_NUMBER]} - ${data()[FIRESTORE_NAME]}: $id"
 
 fun DocumentSnapshot.toTemplateString() = "${data()[FIRESTORE_NAME]}: $id"
 

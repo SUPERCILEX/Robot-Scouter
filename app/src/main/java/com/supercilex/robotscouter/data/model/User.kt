@@ -15,6 +15,10 @@ data class User(
 
         @Exclude
         @get:Keep
+        val phoneNumber: String? = null,
+
+        @Exclude
+        @get:Keep
         val name: String? = null,
 
         @Exclude

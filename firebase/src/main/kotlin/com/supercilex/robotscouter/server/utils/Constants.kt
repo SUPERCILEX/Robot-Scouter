@@ -9,6 +9,8 @@ import kotlin.js.Date
 
 const val FIRESTORE_OWNERS = "owners"
 const val FIRESTORE_NAME = "name"
+const val FIRESTORE_EMAIL = "email"
+const val FIRESTORE_PHONE_NUMBER = "phoneNumber"
 const val FIRESTORE_NUMBER = "number"
 
 private const val FIRESTORE_USERS = "users"
@@ -25,7 +27,7 @@ val teams: CollectionReference
 val templates: CollectionReference
     get() = modules.firestore.collection(FIRESTORE_TEMPLATES)
 
-private val epoch: Date = modules.moment(0).toDate()
+private val epoch: Date by lazy { modules.moment(0).toDate() }
 
 fun getTeamsQuery(uid: String): Query = teams.where("$FIRESTORE_OWNERS.$uid", ">=", 0)
 

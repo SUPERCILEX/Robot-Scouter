@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.server
 
+import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
@@ -12,23 +13,39 @@ import com.supercilex.robotscouter.server.utils.users
 import kotlin.js.Promise
 
 private const val FIRESTORE_LAST_LOGIN = "lastLogin"
-private const val MAX_INACTIVE_USER_DAYS = 30 // TODO
+private const val MAX_INACTIVE_USER_DAYS = 365
+private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 30 // TODO
 
-fun wipeUserData(): Promise<*> {
-    console.log("Looking for users that haven't opened Robot Scouter for over a year.")
-    return users.where(
-            FIRESTORE_LAST_LOGIN,
-            "<",
-            modules.moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
-    ).get().then { users ->
-        Promise.all(users.docs.map {
-            deleteAllData(it)
-        }.toTypedArray())
-    }.then { it }
+fun deleteUnusedData(): Promise<*> {
+    console.log("Looking for users that haven't opened Robot Scouter for over a year" +
+                        " or anonymous users that haven't opened Robot Scouter in over 60 days.")
+    return Promise.all(arrayOf(
+            deleteUnusedData(users.where(
+                    FIRESTORE_LAST_LOGIN,
+                    "<",
+                    modules.moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
+            )),
+            deleteUnusedData(users.where(
+                    FIRESTORE_LAST_LOGIN,
+                    "<",
+                    modules.moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate()
+            ).where(
+                    FIRESTORE_EMAIL, "==", null
+            )/*.where( // TODO
+                    FIRESTORE_PHONE_NUMBER, "==", null
+            )*/)
+    ))
 }
+
+private fun deleteUnusedData(query: Query): Promise<Unit> = query.get().then { users ->
+    Promise.all(users.docs.map {
+        deleteAllData(it)
+    }.toTypedArray())
+}.then { Unit }
 
 fun emptyTrash(): Promise<*> {
     console.log("Emptying trash for all users.")
+    return Promise.Companion.resolve(Unit) // TODO
     return users.get().then { users ->
         Promise.all(users.docs.map {
             val userId = it.id
@@ -52,7 +69,7 @@ private fun deleteAllData(user: DocumentSnapshot): Promise<Unit> {
 }
 
 private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
-    console.log("Deleting user: ${JSON.stringify(user.data())}")
+    console.log("Deleting user: ${user.id}")
 //    user.userPrefs.delete()
 //    user.ref.delete()
     return Promise.resolve(Unit)
