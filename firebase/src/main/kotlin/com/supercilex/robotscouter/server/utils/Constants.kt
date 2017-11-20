@@ -12,6 +12,8 @@ const val FIRESTORE_NAME = "name"
 const val FIRESTORE_EMAIL = "email"
 const val FIRESTORE_PHONE_NUMBER = "phoneNumber"
 const val FIRESTORE_NUMBER = "number"
+const val FIRESTORE_SCOUTS = "scouts"
+const val FIRESTORE_METRICS = "metrics"
 
 private const val FIRESTORE_USERS = "users"
 private const val FIRESTORE_PREFS = "prefs"

@@ -83,6 +83,11 @@ private fun deleteTeams(query: Query): Promise<Unit> = query.get().then { teams 
 
 private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting team: ${team.toTeamString()}")
+//    team.ref.collection(FIRESTORE_SCOUTS).delete {
+//        it.ref.collection(FIRESTORE_METRICS).delete()
+//    }.then {
+//        team.ref.delete()
+//    }
     return Promise.resolve(Unit)
 }
 

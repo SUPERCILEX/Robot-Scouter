@@ -4,6 +4,7 @@ import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.WriteBatch
 import kotlin.js.Promise
 
 fun DocumentSnapshot.toTeamString() =
@@ -11,32 +12,38 @@ fun DocumentSnapshot.toTeamString() =
 
 fun DocumentSnapshot.toTemplateString() = "${data()[FIRESTORE_NAME]}: $id"
 
-fun CollectionReference.delete(batchSize: Int = 100): Promise<List<DocumentSnapshot>> =
-        deleteQueryBatch(firestore, orderBy("__name__").limit(batchSize), batchSize)
+fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
+    transaction()
+    commit()
+}
+
+fun CollectionReference.delete(
+        batchSize: Int = 100,
+        middleMan: (DocumentSnapshot) -> Promise<*> = { Promise.resolve(Unit) }
+): Promise<Unit> =
+        deleteQueryBatch(firestore, orderBy("__name__").limit(batchSize), batchSize, middleMan)
 
 private fun deleteQueryBatch(
         db: Firestore,
         query: Query,
         batchSize: Int,
-        deleted: MutableList<DocumentSnapshot> = ArrayList()
-): Promise<List<DocumentSnapshot>> = query.get().then {
-    if (it.size == 0) {
+        middleMan: (DocumentSnapshot) -> Promise<*>
+): Promise<Unit> = query.get().then { snapshot ->
+    if (snapshot.size == 0) {
         return@then Promise.resolve(0)
     }
 
-    db.batch().run {
-        it.docs.forEach { delete(it.ref) }
-        deleted += it.docs
-        commit()
+    Promise.all(snapshot.docs.map(middleMan).toTypedArray()).then {
+        db.batch {
+            snapshot.docs.forEach { delete(it.ref) }
+        }
     }.then {
         it.size
     }
 }.then { numDeleted ->
     if (numDeleted == 0) {
-        return@then Promise.resolve(deleted)
+        return@then Promise.resolve(Unit)
     }
 
-    deleteQueryBatch(db, query, batchSize, deleted)
-}.then { it }.catch {
-    emptyList<DocumentSnapshot>()
-}
+    deleteQueryBatch(db, query, batchSize, middleMan)
+}.then { Unit }
