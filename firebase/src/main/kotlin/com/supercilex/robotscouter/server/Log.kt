@@ -1,11 +1,11 @@
 package com.supercilex.robotscouter.server
 
-import com.supercilex.robotscouter.server.utils.FIRESTORE_NAME
-import com.supercilex.robotscouter.server.utils.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTemplatesQuery
+import com.supercilex.robotscouter.server.utils.toTeamString
+import com.supercilex.robotscouter.server.utils.toTemplateString
 import com.supercilex.robotscouter.server.utils.types.QuerySnapshot
 import kotlin.js.Promise
 
@@ -25,7 +25,7 @@ fun logUserData(uid: String): Promise<*> {
                 it.logNameIds()
             },
             getTrashedTemplatesQuery(uid).get().then {
-                console.log("Trashed team ids:")
+                console.log("Trashed template ids:")
                 it.logNameIds()
             }
     ))
@@ -33,12 +33,12 @@ fun logUserData(uid: String): Promise<*> {
 
 private fun QuerySnapshot.logTeamIds() {
     console.log(docs.map {
-        "${it.data()[FIRESTORE_NAME] ?: it.data()[FIRESTORE_NUMBER]}: ${it.id}"
+        it.toTeamString()
     })
 }
 
 private fun QuerySnapshot.logNameIds() {
     console.log(docs.map {
-        "${it.data()[FIRESTORE_NAME]}: ${it.id}"
+        it.toTemplateString()
     })
 }

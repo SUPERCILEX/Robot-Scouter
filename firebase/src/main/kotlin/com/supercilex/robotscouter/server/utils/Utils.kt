@@ -6,6 +6,11 @@ import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
 import kotlin.js.Promise
 
+fun DocumentSnapshot.toTeamString() =
+        "${data()[FIRESTORE_NAME] ?: data()[FIRESTORE_NUMBER]}: $id"
+
+fun DocumentSnapshot.toTemplateString() = "${data()[FIRESTORE_NAME]}: $id"
+
 fun CollectionReference.delete(batchSize: Int = 100): Promise<List<DocumentSnapshot>> =
         deleteQueryBatch(firestore, orderBy("__name__").limit(batchSize), batchSize)
 

@@ -34,6 +34,7 @@ import java.util.Calendar
 import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 private const val FRESHNESS_DAYS = "team_freshness"
 
@@ -134,11 +135,9 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = Calendar.getInstance().get(Calendar.YEAR)
 }
 
-fun Team.delete() {
-    deleteAllScouts().addOnSuccessListener {
-        ref.delete()
-        FirebaseAppIndex.getInstance().remove(deepLink)
-    }.logFailures()
+fun Team.trash() {
+    ref.update("$FIRESTORE_OWNERS.${uid!!}", -abs(number)).logFailures()
+    FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
 }
 
 fun Team.fetchLatestData() {
@@ -152,7 +151,7 @@ fun Team.fetchLatestData() {
 
 @WorkerThread
 fun Team.getScouts(): Task<List<Scout>> = async {
-    val scouts = Tasks.await(getScoutRef().orderBy(FIRESTORE_TIMESTAMP).get()).map {
+    val scouts = Tasks.await(getScoutsRef().orderBy(FIRESTORE_TIMESTAMP).get()).map {
         scoutParser.parseSnapshot(it)
     }
     val metricTasks = scouts.map {

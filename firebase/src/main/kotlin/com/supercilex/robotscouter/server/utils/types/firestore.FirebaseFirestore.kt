@@ -73,7 +73,9 @@ external open class DocumentSnapshot {
 }
 external open class Query {
     open var firestore: Firestore = definedExternally
-    open fun where(fieldPath: String, opStr: Any /* "<" */, value: Any): Query = definedExternally
+    open fun where(fieldPath: String,
+                   opStr: String /* "<" */,
+                   value: Any?): Query = definedExternally
 //    open fun where(fieldPath: String, opStr: Any /* "<=" */, value: Any): Query = definedExternally
 //    open fun where(fieldPath: String, opStr: Any /* "==" */, value: Any): Query = definedExternally
 //    open fun where(fieldPath: String, opStr: Any /* ">=" */, value: Any): Query = definedExternally

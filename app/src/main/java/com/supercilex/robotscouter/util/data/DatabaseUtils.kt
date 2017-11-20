@@ -42,12 +42,12 @@ import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.async
-import com.supercilex.robotscouter.util.data.model.delete
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
-import com.supercilex.robotscouter.util.data.model.getScoutRef
 import com.supercilex.robotscouter.util.data.model.getScouts
+import com.supercilex.robotscouter.util.data.model.getScoutsRef
 import com.supercilex.robotscouter.util.data.model.teamsQuery
+import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
@@ -315,13 +315,13 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             firestoreBatch {
                 for (scout in scouts) {
                     val scoutId = scout.id
-                    existingTeam.getScoutRef().document(scoutId).set(scout)
+                    existingTeam.getScoutsRef().document(scoutId).set(scout)
                     for (metric in scout.metrics) {
                         existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).set(metric)
                     }
                 }
             }.addOnSuccessListener {
-                duplicate.delete()
+                duplicate.trash()
             }
         }
     }
