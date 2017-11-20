@@ -14,25 +14,31 @@ fun logUserData(uid: String): Promise<*> {
     return Promise.all(arrayOf(
             getTeamsQuery(uid).get().then {
                 console.log("Team ids:")
-                it.logIds()
+                it.logTeamIds()
             },
             getTrashedTeamsQuery(uid).get().then {
                 console.log("Trashed team ids:")
-                it.logIds()
+                it.logTeamIds()
             },
             getTemplatesQuery(uid).get().then {
                 console.log("Template ids:")
-                it.logIds()
+                it.logNameIds()
             },
             getTrashedTemplatesQuery(uid).get().then {
                 console.log("Trashed team ids:")
-                it.logIds()
+                it.logNameIds()
             }
     ))
 }
 
-private fun QuerySnapshot.logIds() {
+private fun QuerySnapshot.logTeamIds() {
     console.log(docs.map {
         "${it.data()[FIRESTORE_NAME] ?: it.data()[FIRESTORE_NUMBER]}: ${it.id}"
+    })
+}
+
+private fun QuerySnapshot.logNameIds() {
+    console.log(docs.map {
+        "${it.data()[FIRESTORE_NAME]}: ${it.id}"
     })
 }
