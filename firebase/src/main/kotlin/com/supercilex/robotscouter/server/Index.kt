@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.server
 
 import com.supercilex.robotscouter.server.utils.LateinitVal
 import com.supercilex.robotscouter.server.utils.Modules
+import com.supercilex.robotscouter.server.utils.types.Event
 
 external fun require(module: String): dynamic
 external val exports: dynamic
@@ -18,4 +19,7 @@ fun main(args: Array<String>) {
     modules = Modules(firestore, moment)
 
     exports.cleanup = functions.pubsub.topic("monthly-tick").onPublish { cleanup() }
+    exports.logUserData = functions.pubsub.topic("log-user-data").onPublish { event: Event<dynamic> ->
+        logUserData(event.data.json.uid)
+    }
 }

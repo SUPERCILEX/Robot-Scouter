@@ -3,10 +3,7 @@
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   ./gradlew clean build publishApkRelease
 
-  cd firebase
-  mv build/classes/kotlin/main/firebase.js functions/index.js
-  firebase deploy --only functions # TODO Fix Firestore rules
-  cd ..
+  building/deploy-firebase.sh
 
   mv app/build/outputs/apk/release/app-release.apk app-release.apk
   # Duplicated in upload.sh

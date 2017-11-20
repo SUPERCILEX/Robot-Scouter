@@ -7,7 +7,7 @@ import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.WriteBatch
 import kotlin.js.Promise
 
-inline fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
+inline fun Firestore.firestoreBatch(transaction: WriteBatch.() -> Unit) = batch().run {
     transaction()
     commit()
 }
@@ -25,7 +25,7 @@ private fun deleteQueryBatch(
         return@then Promise.resolve(0)
     }
 
-    db.batch {
+    db.firestoreBatch {
         it.docs.forEach { delete(it.ref) }
         deleted += it.docs
     }.then {
