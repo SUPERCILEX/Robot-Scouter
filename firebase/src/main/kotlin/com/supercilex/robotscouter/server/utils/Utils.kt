@@ -4,13 +4,7 @@ import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
-import com.supercilex.robotscouter.server.utils.types.WriteBatch
 import kotlin.js.Promise
-
-inline fun Firestore.firestoreBatch(transaction: WriteBatch.() -> Unit) = batch().run {
-    transaction()
-    commit()
-}
 
 fun CollectionReference.delete(batchSize: Int = 100): Promise<List<DocumentSnapshot>> =
         deleteQueryBatch(firestore, orderBy("__name__").limit(batchSize), batchSize)
@@ -25,9 +19,10 @@ private fun deleteQueryBatch(
         return@then Promise.resolve(0)
     }
 
-    db.firestoreBatch {
+    db.batch().run {
         it.docs.forEach { delete(it.ref) }
         deleted += it.docs
+        commit()
     }.then {
         it.size
     }
