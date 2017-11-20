@@ -19,6 +19,7 @@ fun main(args: Array<String>) {
     modules = Modules(firestore, moment)
 
     exports.cleanup = functions.pubsub.topic("monthly-tick").onPublish { cleanup() }
+    // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
     exports.logUserData = functions.pubsub.topic("log-user-data").onPublish { event: Event<dynamic> ->
         logUserData(event.data.json.uid)
     }

@@ -5,6 +5,9 @@ import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
 
+const val FIRESTORE_NAME = "name"
+const val FIRESTORE_NUMBER = "number"
+
 private const val FIRESTORE_USERS = "users"
 private const val FIRESTORE_TEAMS = "teams"
 private const val FIRESTORE_TEMPLATES = "templates"
