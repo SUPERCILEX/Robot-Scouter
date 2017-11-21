@@ -169,12 +169,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- TODO remove once https://github.com/googlesamples/android-play-billing/issues/63 is fixed -->
-        <activity
-            android:name="com.android.billingclient.util.ProxyBillingActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
     </application>
 
 </manifest>
