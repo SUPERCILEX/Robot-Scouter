@@ -15,20 +15,29 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import com.firebase.ui.common.ChangeEventType
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.TemplateType
+import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
+import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.TAB_KEY
+import com.supercilex.robotscouter.util.data.TOKEN_EXPIRATION_DAYS
+import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.isSingleton
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
@@ -38,6 +47,8 @@ import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
+import java.util.Calendar
+import java.util.Date
 
 class TemplateListFragment : FragmentBase(),
         View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder,
@@ -56,6 +67,40 @@ class TemplateListFragment : FragmentBase(),
                     fam.hideMenuButton(true)
                 } else {
                     fam.showMenuButton(true)
+                }
+            }
+
+            override fun onChildChanged(
+                    type: ChangeEventType,
+                    snapshot: DocumentSnapshot,
+                    newIndex: Int,
+                    oldIndex: Int
+            ) {
+                if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+                    @Suppress("UNCHECKED_CAST")
+                    val activeTokens = holder.scouts.getSnapshot(newIndex)
+                            .get(FIRESTORE_ACTIVE_TOKENS) as Map<String, Date>? ?: emptyMap()
+
+                    if (activeTokens.isEmpty()) return
+
+                    async {
+                        val newTokens = activeTokens.filter {
+                            it.value.after(Calendar.getInstance().apply {
+                                add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)
+                            }.time)
+                        }
+
+                        if (newTokens != activeTokens) {
+                            snapshot.reference.batch {
+                                update(it, FIRESTORE_PENDING_APPROVALS, FieldValue.delete())
+                                update(it, FIRESTORE_ACTIVE_TOKENS, if (newTokens.isEmpty()) {
+                                    FieldValue.delete()
+                                } else {
+                                    newTokens
+                                })
+                            }.logFailures()
+                        }
+                    }.logFailures()
                 }
             }
 
