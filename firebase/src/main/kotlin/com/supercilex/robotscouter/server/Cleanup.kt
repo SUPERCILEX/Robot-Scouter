@@ -63,7 +63,6 @@ private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.proces
 
 fun emptyTrash(): Promise<*> {
     console.log("Emptying trash for all users.")
-    return Promise.resolve(Unit) // TODO
     return users.process {
         val userId = id
         Promise.all(arrayOf(
@@ -79,7 +78,6 @@ fun emptyTrash(): Promise<*> {
 
 private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting user: ${user.id}")
-    return Promise.resolve(Unit) // TODO
     return user.userPrefs.delete().then {
         user.ref.delete()
     }.then { Unit }
@@ -89,7 +87,6 @@ private fun deleteTeams(query: Query): Promise<Unit> = query.process { deleteTea
 
 private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting team: ${team.toTeamString()}")
-    return Promise.resolve(Unit) // TODO
     return team.ref.collection(FIRESTORE_SCOUTS).delete {
         it.ref.collection(FIRESTORE_METRICS).delete()
     }.then {
@@ -101,7 +98,6 @@ private fun deleteTemplates(query: Query): Promise<Unit> = query.process { delet
 
 private fun deleteTemplate(template: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting template: ${template.toTemplateString()}")
-    return Promise.resolve(Unit) // TODO
     return template.ref.collection(FIRESTORE_METRICS).delete().then {
         template.ref.delete()
     }.then { Unit }
