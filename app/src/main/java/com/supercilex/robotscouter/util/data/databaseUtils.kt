@@ -19,13 +19,10 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
@@ -42,17 +39,19 @@ import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.async
-import com.supercilex.robotscouter.util.data.model.delete
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
+import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
-import com.supercilex.robotscouter.util.data.model.getScoutRef
 import com.supercilex.robotscouter.util.data.model.getScouts
+import com.supercilex.robotscouter.util.data.model.getScoutsRef
 import com.supercilex.robotscouter.util.data.model.teamsQuery
+import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
 import java.io.File
+import java.util.Calendar
 import java.util.Date
 
 val teamParser = SnapshotParser<Team> {
@@ -91,35 +90,6 @@ inline fun firestoreBatch(
 
 inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
         firestoreBatch { transaction(this@batch) }
-
-/**
- * Delete all documents in a collection. This does **not** automatically discover and delete
- * sub-collections.
- */
-fun CollectionReference.delete(batchSize: Long = 100): Task<List<DocumentSnapshot>> = async {
-    val deleted = ArrayList<DocumentSnapshot>()
-
-    var query = orderBy(FieldPath.documentId()).limit(batchSize)
-    var latestDeleted = deleteQueryBatch(query)
-    deleted += latestDeleted
-
-    while (latestDeleted.size >= batchSize) {
-        query = orderBy(FieldPath.documentId()).startAfter(latestDeleted.last()).limit(batchSize)
-        latestDeleted = deleteQueryBatch(query)
-    }
-
-    deleted as List<DocumentSnapshot>
-}.logFailures()
-
-/** Delete all results from a query in a single [WriteBatch]. */
-@WorkerThread
-private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await(query.get()).let {
-    Tasks.await(firestoreBatch {
-        // TODO remove this when moving to CF delete; breaks when offline
-        for (snapshot in it) delete(snapshot.reference)
-    })
-    it.documents
-}
 
 inline fun <T, R> LiveData<T>.observeOnce(
         crossinline block: (T) -> Task<R>
@@ -277,6 +247,33 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             }
         }
     }
+    private val tokenSanitizer = object : ChangeEventListenerBase {
+        override fun onChildChanged(
+                type: ChangeEventType,
+                snapshot: DocumentSnapshot,
+                newIndex: Int,
+                oldIndex: Int
+        ) {
+            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+                val team = value!![newIndex]
+
+                if (team.activeTokens.isEmpty()) return
+
+                async {
+                    val newTeam = team.copy(activeTokens = team.activeTokens.filter {
+                        it.value.after(Calendar.getInstance().apply {
+                            add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)
+                        }.time)
+                    })
+
+                    if (newTeam != team) {
+                        newTeam.pendingApprovals = emptyMap()
+                        newTeam.forceUpdate()
+                    }
+                }.logFailures()
+            }
+        }
+    }
     private val merger = object : ChangeEventListenerBase {
         override fun onChildChanged(
                 type: ChangeEventType,
@@ -315,13 +312,13 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             firestoreBatch {
                 for (scout in scouts) {
                     val scoutId = scout.id
-                    existingTeam.getScoutRef().document(scoutId).set(scout)
+                    existingTeam.getScoutsRef().document(scoutId).set(scout)
                     for (metric in scout.metrics) {
                         existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).set(metric)
                     }
                 }
             }.addOnSuccessListener {
-                duplicate.delete()
+                duplicate.trash()
             }
         }
     }
@@ -335,6 +332,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         value?.apply {
             if (!isListening(templateIdUpdater)) addChangeEventListener(templateIdUpdater)
             if (!isListening(updater)) addChangeEventListener(updater)
+            if (!isListening(tokenSanitizer)) addChangeEventListener(tokenSanitizer)
             if (!isListening(merger)) addChangeEventListener(merger)
         }
     }
@@ -343,6 +341,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         value?.apply {
             removeChangeEventListener(templateIdUpdater)
             removeChangeEventListener(updater)
+            removeChangeEventListener(tokenSanitizer)
             removeChangeEventListener(merger)
         }
     }

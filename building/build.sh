@@ -3,10 +3,7 @@
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   ./gradlew clean build publishApkRelease
 
-# TODO It's broken in the latest release
-#  cd firebase
-#  firebase deploy
-#  cd ..
+  building/deploy-firebase.sh
 
   mv app/build/outputs/apk/release/app-release.apk app-release.apk
   # Duplicated in upload.sh

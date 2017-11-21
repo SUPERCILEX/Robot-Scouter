@@ -66,7 +66,9 @@ fun initAnalytics() {
         analytics.setUserProperty(
                 FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providers.toString())
 
-        if (user != null) User(user.uid, user.email, user.displayName, user.photoUrl).add()
+        if (user != null) {
+            User(user.uid, user.email, user.phoneNumber, user.displayName, user.photoUrl).add()
+        }
     }
 
     // Use an IdTokenListener which updates every hour or so to ensure the last login time gets
