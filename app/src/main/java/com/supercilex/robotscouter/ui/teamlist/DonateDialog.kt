@@ -117,7 +117,9 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
                 .setAccountId(uid?.hashCode().toString())
                 .build())
 
-        if (result != BillingResponse.OK) {
+        if (result == BillingResponse.OK) {
+            purchaseStartTask.setResult(null)
+        } else {
             if (result == BillingResponse.ITEM_ALREADY_OWNED) {
                 billingClient.queryPurchaseHistoryAsync(type) { responseCode, purchasesList ->
                     if (responseCode != BillingResponse.OK) {
@@ -183,7 +185,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
 
     private fun updateProgress(isDoingAsyncWork: Boolean) {
         if (isDoingAsyncWork) progress.show(Runnable { content.visibility = View.GONE })
-        else progress.hide(callback = Runnable { content.visibility = View.VISIBLE })
+        else progress.hide(true, Runnable { content.visibility = View.VISIBLE })
 
         val dialog = if (dialog == null) return else dialog as AlertDialog
         fun setEnabled(button: Button) {
@@ -199,7 +201,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {
-        billingClientReadyTask.setResult(resultCode)
+        billingClientReadyTask.trySetResult(resultCode)
     }
 
     override fun onBillingServiceDisconnected() = billingClient.startConnection(this)
