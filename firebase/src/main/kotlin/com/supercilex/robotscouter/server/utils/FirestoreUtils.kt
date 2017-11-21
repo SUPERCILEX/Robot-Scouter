@@ -20,8 +20,12 @@ fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
 fun CollectionReference.delete(
         batchSize: Int = 100,
         middleMan: (DocumentSnapshot) -> Promise<*> = { Promise.resolve(Unit) }
-): Promise<Unit> =
-        deleteQueryBatch(firestore, orderBy("__name__").limit(batchSize), batchSize, middleMan)
+): Promise<Unit> = deleteQueryBatch(
+        firestore,
+        orderBy("__name__").limit(batchSize),
+        batchSize,
+        middleMan
+)
 
 private fun deleteQueryBatch(
         db: Firestore,

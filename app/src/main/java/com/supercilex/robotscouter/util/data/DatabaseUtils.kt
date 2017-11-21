@@ -19,13 +19,10 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
@@ -91,35 +88,6 @@ inline fun firestoreBatch(
 
 inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
         firestoreBatch { transaction(this@batch) }
-
-/**
- * Delete all documents in a collection. This does **not** automatically discover and delete
- * sub-collections.
- */
-fun CollectionReference.delete(batchSize: Long = 100): Task<List<DocumentSnapshot>> = async {
-    val deleted = ArrayList<DocumentSnapshot>()
-
-    var query = orderBy(FieldPath.documentId()).limit(batchSize)
-    var latestDeleted = deleteQueryBatch(query)
-    deleted += latestDeleted
-
-    while (latestDeleted.size >= batchSize) {
-        query = orderBy(FieldPath.documentId()).startAfter(latestDeleted.last()).limit(batchSize)
-        latestDeleted = deleteQueryBatch(query)
-    }
-
-    deleted as List<DocumentSnapshot>
-}.logFailures()
-
-/** Delete all results from a query in a single [WriteBatch]. */
-@WorkerThread
-private fun deleteQueryBatch(query: Query): List<DocumentSnapshot> = Tasks.await(query.get()).let {
-    Tasks.await(firestoreBatch {
-        // TODO remove this when moving to CF delete; breaks when offline
-        for (snapshot in it) delete(snapshot.reference)
-    })
-    it.documents
-}
 
 inline fun <T, R> LiveData<T>.observeOnce(
         crossinline block: (T) -> Task<R>

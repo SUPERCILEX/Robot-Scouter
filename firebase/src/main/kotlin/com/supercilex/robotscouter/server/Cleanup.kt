@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.server
 
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
+import com.supercilex.robotscouter.server.utils.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_PHONE_NUMBER
 import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUTS
@@ -18,7 +19,6 @@ import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
 import kotlin.js.Promise
 
-private const val FIRESTORE_LAST_LOGIN = "lastLogin"
 private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 60
 private const val TRASH_TIMEOUT = 30
@@ -51,56 +51,45 @@ fun deleteUnusedData(): Promise<*> {
     ))
 }
 
-private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.get().then { users ->
-    Promise.all(users.docs.map {
-        deleteAllData(it)
-    }.toTypedArray())
-}.then { Unit }
-
-fun emptyTrash(): Promise<*> {
-    console.log("Emptying trash for all users.")
-    return Promise.Companion.resolve(Unit) // TODO
-    return users.get().then { users ->
-        Promise.all(users.docs.map {
-            val userId = it.id
-            Promise.all(arrayOf(
-                    deleteTeams(getTrashedTeamsQuery(userId).where(
-                            FIRESTORE_TIMESTAMP,
-                            "<",
-                            modules.moment().subtract(TRASH_TIMEOUT, "days").toDate()
-                    )),
-                    deleteTemplates(getTrashedTemplatesQuery(userId))
-            ))
-        }.toTypedArray())
-    }
-}
-
-private fun deleteAllData(user: DocumentSnapshot): Promise<Unit> {
-    console.log("Deleting all data for user:\n${JSON.stringify(user.data())}")
-    val id: String = user.id
-    return Promise.all(arrayOf(
+private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.process {
+    console.log("Deleting all data for user:\n${JSON.stringify(data())}")
+    Promise.all(arrayOf(
             deleteTeams(getTeamsQuery(id)),
             deleteTemplates(getTemplatesQuery(id))
     )).then {
-        deleteUser(user)
-    }.then { Unit }
+        deleteUser(this)
+    }
+}
+
+fun emptyTrash(): Promise<*> {
+    console.log("Emptying trash for all users.")
+    return Promise.resolve(Unit) // TODO
+    return users.process {
+        val userId = id
+        Promise.all(arrayOf(
+                deleteTeams(getTrashedTeamsQuery(userId).where(
+                        FIRESTORE_TIMESTAMP,
+                        "<",
+                        modules.moment().subtract(TRASH_TIMEOUT, "days").toDate()
+                )),
+                deleteTemplates(getTrashedTemplatesQuery(userId))
+        ))
+    }
 }
 
 private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting user: ${user.id}")
+    return Promise.resolve(Unit) // TODO
     return user.userPrefs.delete().then {
         user.ref.delete()
     }.then { Unit }
 }
 
-private fun deleteTeams(query: Query): Promise<Unit> = query.get().then { teams ->
-    Promise.all(teams.docs.map {
-        deleteTeam(it)
-    }.toTypedArray())
-}.then { Unit }
+private fun deleteTeams(query: Query): Promise<Unit> = query.process { deleteTeam(this) }
 
 private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting team: ${team.toTeamString()}")
+    return Promise.resolve(Unit) // TODO
     return team.ref.collection(FIRESTORE_SCOUTS).delete {
         it.ref.collection(FIRESTORE_METRICS).delete()
     }.then {
@@ -108,16 +97,16 @@ private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
     }.then { Unit }
 }
 
-private fun deleteTemplates(query: Query): Promise<Unit> = query
-        .get().then { templates ->
-    Promise.all(templates.docs.map {
-        deleteTemplate(it)
-    }.toTypedArray())
-}.then { Unit }
+private fun deleteTemplates(query: Query): Promise<Unit> = query.process { deleteTemplate(this) }
 
 private fun deleteTemplate(template: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting template: ${template.toTemplateString()}")
+    return Promise.resolve(Unit) // TODO
     return template.ref.collection(FIRESTORE_METRICS).delete().then {
         template.ref.delete()
     }.then { Unit }
 }
+
+private fun Query.process(block: DocumentSnapshot.() -> Promise<*>): Promise<Unit> = get().then {
+    Promise.all(it.docs.map(block).toTypedArray())
+}.then { Unit }
