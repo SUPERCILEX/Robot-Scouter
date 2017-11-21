@@ -1,0 +1,19 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase experimental:functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "kotlin": "^1.2.0-rc-39",
+    "firebase-admin": "~5.4.2",
+    "firebase-functions": "^0.7.1",
+    "@google-cloud/firestore": "^0.9.0",
+    "moment": "^2.19.2"
+  },
+  "private": true
+}

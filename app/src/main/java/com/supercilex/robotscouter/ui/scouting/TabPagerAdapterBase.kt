@@ -27,7 +27,7 @@ import kotterknife.bindView
 abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,
         private val tabLayout: TabLayout,
-        protected val dataRef: CollectionReference
+        private val dataRef: CollectionReference
 ) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager),
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {

@@ -8,7 +8,7 @@ import android.support.v7.app.AlertDialog
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getTeamList
-import com.supercilex.robotscouter.util.data.model.delete
+import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
@@ -46,7 +46,7 @@ class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     }
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        for (team: Team in teams) team.delete()
+        for (team: Team in teams) team.trash()
     }
 
     companion object {

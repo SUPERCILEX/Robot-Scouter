@@ -3,8 +3,8 @@
 .idea/**
 !.idea/codeStyleSettings.xml
 build
-/app/keystore.properties
 /local.properties
+/app/keystore.properties
 /app/*.json
 /app/keystore.jks
 /app/src/main/res/values/config.xml
