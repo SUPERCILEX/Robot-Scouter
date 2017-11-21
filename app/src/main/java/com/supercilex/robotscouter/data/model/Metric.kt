@@ -149,12 +149,13 @@ sealed class Metric<T>(
 
         other as Metric<*>
 
-        return type == other.type && ref.path == other.ref.path
+        return type == other.type && position == other.position && ref.path == other.ref.path
                 && name == other.name && value == other.value
     }
 
     override fun hashCode(): Int {
         var result = type.hashCode()
+        result = 31 * result + position
         result = 31 * result + ref.path.hashCode()
         result = 31 * result + name.hashCode()
         result = 31 * result + (value?.hashCode() ?: 0)

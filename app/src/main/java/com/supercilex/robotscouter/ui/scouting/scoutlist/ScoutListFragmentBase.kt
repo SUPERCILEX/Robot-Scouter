@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
+import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
@@ -190,7 +191,9 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     fun addScoutWithSelector() = ScoutTemplateSelectorDialog.show(childFragmentManager)
 
     fun addScout(id: String? = null) {
-        pagerAdapter!!.currentTabId = team.addScout(id)
+        pagerAdapter!!.apply {
+            currentTabId = team.addScout(id, holder.scouts.asLiveData())
+        }
     }
 
     override fun onTemplateSelected(id: String) = addScout(id)

@@ -60,8 +60,7 @@ abstract class MetricListAdapterBase(
 
             val metric = snapshots[newIndex]
             recyclerView.findViewHolderForAdapterPosition(newIndex)?.let {
-                val holder = it as MetricViewHolderBase<Metric<Any>, *, *>
-                if (holder.metric == metric && holder.metric.position == metric.position) {
+                if ((it as MetricViewHolderBase<Metric<Any>, *, *>).metric == metric) {
                     return
                 }
             }

@@ -10,6 +10,9 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
 
   if [ $TRAVIS_BRANCH = 'master' ]; then
     npm install -g firebase-tools
+    cd firebase/functions
+    npm install
+    cd ../..
   fi
 else
   mv travis-dummies/google-services.json app/google-services.json

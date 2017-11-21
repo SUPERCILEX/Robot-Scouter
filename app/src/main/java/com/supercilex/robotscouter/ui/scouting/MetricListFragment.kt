@@ -19,7 +19,7 @@ abstract class MetricListFragment : FragmentBase() {
     protected val holder: MetricListHolder by unsafeLazy {
         ViewModelProviders.of(this).get(MetricListHolder::class.java)
     }
-    protected abstract val metricsRef: CollectionReference
+    abstract val metricsRef: CollectionReference
 
     protected val recyclerView: RecyclerView by bindView(R.id.list)
     protected var adapter: SavedStateAdapter<*, *> by LateinitVal()

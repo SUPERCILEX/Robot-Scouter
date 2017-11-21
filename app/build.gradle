@@ -23,7 +23,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1 // The version code is updated on each Travis build
-        versionName '2.0.0-beta4'
+        versionName '2.0.0-beta5'
         multiDexEnabled true
         resConfigs "en"
         vectorDrawables.useSupportLibrary = true
@@ -100,7 +100,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$archVersion"
     implementation "android.arch.lifecycle:common-java8:$archVersion"
 
-    implementation 'com.android.billingclient:billing:dp-1'
+    implementation 'com.android.billingclient:billing:1.0'
 
     // Firebase UI
     // Auth
@@ -115,7 +115,7 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-firestore:$playServicesVersion"
 
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.3'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.4'
 
     // Firebase
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
@@ -137,7 +137,7 @@ dependencies {
     implementation 'com.github.SUPERCILEX:kotterknife:5331f07fdf'
     implementation 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
     implementation 'com.github.clans:fab:1.6.4'
-    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.4.0'
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.4.1'
     implementation 'com.github.rubensousa:gravitysnaphelper:1.3'
 
     // Apache POI

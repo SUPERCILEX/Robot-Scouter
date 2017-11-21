@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.util.uid
 
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 const val KEYS = "keys"
+const val TOKEN_EXPIRATION_DAYS = 30
 
 private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teams.id}/"
 private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templates.id}/"

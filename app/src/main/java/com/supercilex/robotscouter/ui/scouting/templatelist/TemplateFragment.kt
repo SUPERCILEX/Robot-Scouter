@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import com.github.clans.fab.FloatingActionMenu
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
@@ -18,7 +19,6 @@ import com.supercilex.robotscouter.ui.scouting.MetricListFragment
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
-import com.supercilex.robotscouter.util.data.delete
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
@@ -33,7 +33,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
 class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPressedListener {
-    public override val metricsRef: CollectionReference by unsafeLazy {
+    override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(getTabId(arguments)!!)
     }
 
@@ -110,14 +110,20 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             }
             R.id.action_remove_metrics -> {
                 recyclerView.clearFocus()
-                metricsRef.delete().addOnSuccessListener { documents ->
+                metricsRef.get().addOnSuccessListener { metrics ->
+                    async {
+                        Tasks.await(firestoreBatch {
+                            for (metric in metrics) delete(metric.reference)
+                        })
+                    }.logFailures()
+
                     longSnackbar(fam, R.string.deleted, R.string.undo) {
                         async {
-                            firestoreBatch {
-                                for (document in documents) {
-                                    set(document.reference, document.data)
+                            Tasks.await(firestoreBatch {
+                                for (metric in metrics) {
+                                    set(metric.reference, metric.data)
                                 }
-                            }
+                            })
                         }.logFailures()
                     }
                 }

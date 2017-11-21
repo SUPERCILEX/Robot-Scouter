@@ -18,7 +18,7 @@ open class TemplatePagerAdapter(
         holder.init(getTemplatesQuery(Query.Direction.DESCENDING))
     }
 
-    override fun getItem(position: Int) = TemplateFragment.newInstance(holder.scouts[position].id)
+    override fun getItem(position: Int) = TemplateFragment.newInstance(currentScouts[position].id)
 
     override fun getPageTitle(position: Int): String =
             fragment.getString(R.string.template_tab_default_title, count - position)

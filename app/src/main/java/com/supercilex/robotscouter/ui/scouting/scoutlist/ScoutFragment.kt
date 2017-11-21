@@ -12,8 +12,8 @@ import com.supercilex.robotscouter.ui.scouting.MetricListFragment
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTeam
-import com.supercilex.robotscouter.util.data.model.deleteScout
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
+import com.supercilex.robotscouter.util.data.model.trashScout
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
@@ -45,7 +45,7 @@ class ScoutFragment : MetricListFragment() {
             toolbar.inflateMenu(R.menu.scout_options)
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
-        team.deleteScout(scoutId)
+        team.trashScout(scoutId)
         true
     } else {
         super.onOptionsItemSelected(item)

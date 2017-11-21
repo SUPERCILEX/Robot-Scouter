@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import android.text.TextUtils
 import android.view.View
@@ -21,22 +20,23 @@ import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
+import com.supercilex.robotscouter.util.ui.MovableFragmentStatePagerAdapter
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import kotterknife.bindView
 
 abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,
         private val tabLayout: TabLayout,
-        protected val dataRef: CollectionReference
-) : FragmentStatePagerAdapter(fragment.childFragmentManager),
+        private val dataRef: CollectionReference
+) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager),
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
     private val noContentHint: View by fragment.bindView(R.id.no_content_hint)
 
-    protected val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
+    val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
     protected var oldScouts: List<Scout> = emptyList()
-    private var currentScouts: List<Scout> = emptyList()
+    protected var currentScouts: List<Scout> = emptyList()
 
     var currentTabId: String? = null
         set(value) {
@@ -53,7 +53,15 @@ abstract class TabPagerAdapterBase(
 
     override fun getCount() = currentScouts.size
 
-    override fun getItemPosition(any: Any) = PagerAdapter.POSITION_NONE
+    override fun getItemPosition(any: Any): Int = if (any is MetricListFragment) {
+        val id = any.metricsRef.parent.id
+        val position = currentScouts.indexOfFirst { it.id == id }
+        if (position == -1) PagerAdapter.POSITION_NONE else position
+    } else {
+        PagerAdapter.POSITION_NONE
+    }
+
+    override fun getItemId(position: Int) = currentScouts[position].id
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         currentTabId = currentScouts[tab.position].id

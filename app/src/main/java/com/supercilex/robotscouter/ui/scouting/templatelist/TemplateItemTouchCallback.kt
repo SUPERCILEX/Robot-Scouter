@@ -156,24 +156,32 @@ class TemplateItemTouchCallback<T : OrderedModel>(
     }
 
     private fun isCatchingUpOnMove(type: ChangeEventType, index: Int): Boolean =
-            type == ChangeEventType.MOVED
-                    // Setting `position` causes an update.
-                    // Our model doesn't include positions in its equals implementation
-                    || type == ChangeEventType.CHANGED && localItems.contains(adapter.snapshots[index])
+            type == ChangeEventType.MOVED || hasOnlyPositionChanged(type, index)
 
     private fun isCatchingUpOnDelete(type: ChangeEventType, index: Int): Boolean {
         if (type == ChangeEventType.REMOVED || type == ChangeEventType.MOVED) {
             // Account for move events when we update lower item positions
             return true
         } else if (type == ChangeEventType.CHANGED) {
-            // See isCatchingUpOnMove
-            if (localItems.contains(adapter.snapshots[index])) return true
+            if (hasOnlyPositionChanged(type, index)) return true
 
             val path = adapter.snapshots[index].ref.path
             // Is this change event just an update to the deleted item?
             if (localItems.find { it.ref.path == path } == null) return true
         }
         return false
+    }
+
+    private fun hasOnlyPositionChanged(type: ChangeEventType, index: Int): Boolean {
+        val updatedModel = adapter.snapshots[index]
+        val originalModelPosition = updatedModel.position
+
+        val hasOnlyPositionChanged = type == ChangeEventType.CHANGED && localItems.find {
+            it == updatedModel.apply { position = it.position }
+        } != null
+        updatedModel.position = originalModelPosition
+
+        return hasOnlyPositionChanged
     }
 
     private inline fun postCleanup(crossinline cleanup: () -> Unit) {
@@ -221,13 +229,13 @@ class TemplateItemTouchCallback<T : OrderedModel>(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val position = viewHolder.adapterPosition
-        val deletedRef = adapter.snapshots.getSnapshot(position).reference
-        val itemsBelow: List<OrderedModel> =
-                ArrayList(adapter.snapshots.subList(position + 1, adapter.itemCount))
-
         if (!isDeletingItem) localItems.addAll(adapter.snapshots)
         isDeletingItem = true
+
+        val position = viewHolder.adapterPosition
+        val deletedRef = localItems[position].ref
+        val itemsBelow: List<OrderedModel> =
+                ArrayList(localItems.subList(position + 1, localItems.size))
 
         localItems.removeAt(position)
         adapter.notifyItemRemoved(position)

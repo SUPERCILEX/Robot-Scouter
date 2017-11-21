@@ -31,9 +31,9 @@ import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.longToast
-import java.lang.ref.WeakReference
 
-class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, BillingClientStateListener {
+class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
+        BillingClientStateListener, PurchasesUpdatedListener {
     private val content: View by bindView(R.id.content)
     private val progress: ContentLoadingProgressBar by bindView(R.id.progress)
     private val amountTextView: TextView by bindView(R.id.amount_textview)
@@ -41,7 +41,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     private val monthlyCheckBox: CheckBox by bindView(R.id.monthly)
 
     private val billingClient by unsafeLazy {
-        BillingClient.Builder(context!!).setListener(PURCHASE_LISTENER).build()
+        BillingClient.newBuilder(context!!).setListener(this).build()
     }
     private val billingClientReadyTask = TaskCompletionSource<@BillingResponse Int>()
 
@@ -107,23 +107,25 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun purchaseItem(
             sku: String,
-            type: String
+            @BillingClient.SkuType type: String
     ): Task<Nothing> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Nothing>> {
         val purchaseStartTask = TaskCompletionSource<Nothing>()
 
-        val result = billingClient.launchBillingFlow(activity, BillingFlowParams.Builder()
+        val result = billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
                 .setSku(sku)
                 .setType(type)
                 .setAccountId(uid?.hashCode().toString())
                 .build())
 
-        if (result != BillingResponse.OK) {
+        if (result == BillingResponse.OK) {
+            purchaseStartTask.setResult(null)
+        } else {
             if (result == BillingResponse.ITEM_ALREADY_OWNED) {
-                billingClient.queryPurchaseHistoryAsync(type) {
-                    if (it.responseCode != BillingResponse.OK) {
+                billingClient.queryPurchaseHistoryAsync(type) { responseCode, purchasesList ->
+                    if (responseCode != BillingResponse.OK) {
                         val e = PurchaseException(
-                                it.responseCode,
-                                message = "Purchase fetch failed with code ${it.responseCode} and sku $sku"
+                                responseCode,
+                                message = "Purchase fetch failed with code $responseCode and sku $sku"
                         )
                         FirebaseCrash.report(e)
                         Crashlytics.logException(e)
@@ -131,7 +133,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
                         return@queryPurchaseHistoryAsync
                     }
 
-                    getConsumePurchasesTask(it.purchasesList)
+                    getConsumePurchasesTask(purchasesList)
                             .continueWithTask { purchaseItem(sku, type) }
                             .addOnSuccessListener { purchaseStartTask.setResult(null) }
                 }
@@ -154,7 +156,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
             if (!purchase.sku.contains("single")) continue
 
             val consumption = TaskCompletionSource<String>()
-            billingClient.consumeAsync(purchase.purchaseToken) { purchaseToken, resultCode ->
+            billingClient.consumeAsync(purchase.purchaseToken) { resultCode, purchaseToken ->
                 if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
                     consumption.setResult(purchaseToken)
                 } else {
@@ -183,7 +185,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
 
     private fun updateProgress(isDoingAsyncWork: Boolean) {
         if (isDoingAsyncWork) progress.show(Runnable { content.visibility = View.GONE })
-        else progress.hide(callback = Runnable { content.visibility = View.VISIBLE })
+        else progress.hide(true, Runnable { content.visibility = View.VISIBLE })
 
         val dialog = if (dialog == null) return else dialog as AlertDialog
         fun setEnabled(button: Button) {
@@ -199,55 +201,35 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener, Bil
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {
-        PURCHASE_LISTENER.continuePurchase(this)
-        billingClientReadyTask.setResult(resultCode)
+        billingClientReadyTask.trySetResult(resultCode)
     }
 
     override fun onBillingServiceDisconnected() = billingClient.startConnection(this)
+
+    override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
+        updateProgress(true)
+        if (responseCode == BillingResponse.OK && purchases != null) {
+            handlePurchaseResponse(getConsumePurchasesTask(purchases).continueWith { responseCode })
+        } else {
+            handlePurchaseResponse(Tasks.forException(
+                    PurchaseException(responseCode, purchases?.map { it.sku }.toString())))
+        }
+    }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
 
     override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
 
+    private class PurchaseException(
+            val errorCode: Int,
+            sku: String = "",
+            message: String = "Purchase failed with error code $errorCode for sku $sku"
+    ) : Exception(message)
+
     companion object {
         private const val TAG = "DonateDialog"
         private const val SKU_BASE = "_donate_"
 
-        private val PURCHASE_LISTENER = object : PurchasesUpdatedListener {
-            private var dialog = WeakReference<DonateDialog>(null)
-            private var savedSate: Pair<Int, List<Purchase>?>? = null
-
-            fun continuePurchase(dialog: DonateDialog) {
-                this.dialog = WeakReference(dialog)
-                if (savedSate != null) onPurchasesUpdated(savedSate!!.first, savedSate!!.second)
-            }
-
-            override fun onPurchasesUpdated(responseCode: Int, purchases: List<Purchase>?) {
-                val dialog = dialog.get()
-                if (dialog == null) {
-                    savedSate = responseCode to purchases
-                    return
-                } else {
-                    savedSate = null
-                    dialog.updateProgress(true)
-                }
-
-                if (responseCode == BillingResponse.OK && purchases != null) {
-                    dialog.handlePurchaseResponse(
-                            dialog.getConsumePurchasesTask(purchases).continueWith { responseCode })
-                } else {
-                    dialog.handlePurchaseResponse(Tasks.forException(
-                            PurchaseException(responseCode, purchases?.map { it.sku }.toString())))
-                }
-            }
-        }
-
         fun show(manager: FragmentManager) = DonateDialog().show(manager, TAG)
-
-        private class PurchaseException(
-                val errorCode: Int,
-                sku: String = "",
-                message: String = "Purchase failed with error code $errorCode for sku $sku"
-        ) : Exception(message)
     }
 }

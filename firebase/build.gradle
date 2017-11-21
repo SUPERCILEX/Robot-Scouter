@@ -1,0 +1,10 @@
+apply plugin: 'kotlin2js'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+}
+
+compileKotlin2Js.kotlinOptions {
+    moduleKind = "commonjs"
+    outputFile = "firebase/build/classes/kotlin/main/firebase.js"
+}
