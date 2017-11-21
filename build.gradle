@@ -10,7 +10,7 @@ buildscript {
     ext {
         kotlinVersion = '1.2.0-rc-39'
         ankoVersion = '0.10.2'
-        supportLibVersion = '27.0.0'
+        supportLibVersion = '27.0.1'
         playServicesVersion = '11.6.0'
         archVersion = '1.0.0'
         firebaseUiVersion = '055d5c61f3'
@@ -21,7 +21,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0-alpha02'
+        classpath 'com.android.tools.build:gradle:3.1.0-alpha04'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.1.1'
         classpath 'com.google.firebase:firebase-plugins:1.1.4'
