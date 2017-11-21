@@ -53,19 +53,14 @@ abstract class MovableFragmentStatePagerAdapter(
             return f
         }
 
-        if (currentTransaction == null) {
-            // We commit the transaction later
-            @SuppressLint("CommitTransaction")
-            currentTransaction = manager.beginTransaction()
-        }
+        initTransaction()
 
         val fragment = getItem(position)
         fragmentsToItemIds.put(fragment, itemId)
         itemIdsToFragments.put(itemId, fragment)
 
-        val fss = savedStates[itemId]
-        if (fss != null) {
-            fragment.setInitialSavedState(fss)
+        savedStates[itemId]?.let {
+            fragment.setInitialSavedState(it)
         }
         fragment.setMenuVisibility(false)
         fragment.userVisibleHint = false
@@ -97,15 +92,12 @@ abstract class MovableFragmentStatePagerAdapter(
 
     /** @see android.support.v4.app.FragmentStatePagerAdapter.finishUpdate */
     override fun finishUpdate(container: ViewGroup) {
-        if (!unusedRestoredFragments.isEmpty()) {
-            for (fragment in unusedRestoredFragments) fragment.destroy()
-            unusedRestoredFragments.clear()
-        }
+        for (fragment in unusedRestoredFragments) fragment.destroy()
+        unusedRestoredFragments.clear()
 
         currentTransaction?.let {
-            it.commitAllowingStateLoss()
+            it.commitNowAllowingStateLoss()
             currentTransaction = null
-            manager.executePendingTransactions()
         }
     }
 
@@ -122,9 +114,7 @@ abstract class MovableFragmentStatePagerAdapter(
         )
 
         for ((f, id) in fragmentsToItemIds.entries) {
-            if (f.isAdded) {
-                manager.putFragment(this, "$KEY_FRAGMENT_STATE$id", f)
-            }
+            if (f.isAdded) manager.putFragment(this, "$KEY_FRAGMENT_STATE$id", f)
         }
     }
 
@@ -163,19 +153,23 @@ abstract class MovableFragmentStatePagerAdapter(
     }
 
     private fun Fragment.destroy() {
+        initTransaction()
+
+        val itemId = fragmentsToItemIds.remove(this)
+        itemIdsToFragments.remove(itemId)
+        if (itemId != null && isAdded) {
+            savedStates.put(itemId, manager.saveFragmentInstanceState(this))
+        }
+
+        currentTransaction!!.remove(this)
+    }
+
+    private fun initTransaction() {
         if (currentTransaction == null) {
             // We commit the transaction later
             @SuppressLint("CommitTransaction")
             currentTransaction = manager.beginTransaction()
         }
-
-        val itemId = fragmentsToItemIds.remove(this)
-        itemIdsToFragments.remove(itemId)
-        if (itemId != null) {
-            savedStates.put(itemId, manager.saveFragmentInstanceState(this))
-        }
-
-        currentTransaction!!.remove(this)
     }
 
     private companion object {
