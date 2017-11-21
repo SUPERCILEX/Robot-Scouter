@@ -5,7 +5,6 @@ import com.supercilex.robotscouter.server.utils.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_PHONE_NUMBER
 import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUTS
-import com.supercilex.robotscouter.server.utils.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
@@ -21,7 +20,6 @@ import kotlin.js.Promise
 
 private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 60
-private const val TRASH_TIMEOUT = 30
 
 fun deleteUnusedData(): Promise<*> {
     console.log("Looking for users that haven't opened Robot Scouter for over a year" +
@@ -66,11 +64,7 @@ fun emptyTrash(): Promise<*> {
     return users.process {
         val userId = id
         Promise.all(arrayOf(
-                deleteTeams(getTrashedTeamsQuery(userId).where(
-                        FIRESTORE_TIMESTAMP,
-                        "<",
-                        modules.moment().subtract(TRASH_TIMEOUT, "days").toDate()
-                )),
+                deleteTeams(getTrashedTeamsQuery(userId)),
                 deleteTemplates(getTrashedTemplatesQuery(userId))
         ))
     }

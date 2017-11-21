@@ -40,6 +40,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
+import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
@@ -50,6 +51,7 @@ import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
 import java.io.File
+import java.util.Calendar
 import java.util.Date
 
 val teamParser = SnapshotParser<Team> {
@@ -245,6 +247,33 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             }
         }
     }
+    private val tokenSanitizer = object : ChangeEventListenerBase {
+        override fun onChildChanged(
+                type: ChangeEventType,
+                snapshot: DocumentSnapshot,
+                newIndex: Int,
+                oldIndex: Int
+        ) {
+            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+                val team = value!![newIndex]
+
+                if (team.activeTokens.isEmpty()) return
+
+                async {
+                    val newTeam = team.copy(activeTokens = team.activeTokens.filter {
+                        it.value.after(Calendar.getInstance().apply {
+                            add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)
+                        }.time)
+                    })
+
+                    if (newTeam != team) {
+                        newTeam.pendingApprovals = emptyMap()
+                        newTeam.forceUpdate()
+                    }
+                }.logFailures()
+            }
+        }
+    }
     private val merger = object : ChangeEventListenerBase {
         override fun onChildChanged(
                 type: ChangeEventType,
@@ -303,6 +332,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         value?.apply {
             if (!isListening(templateIdUpdater)) addChangeEventListener(templateIdUpdater)
             if (!isListening(updater)) addChangeEventListener(updater)
+            if (!isListening(tokenSanitizer)) addChangeEventListener(tokenSanitizer)
             if (!isListening(merger)) addChangeEventListener(merger)
         }
     }
@@ -311,6 +341,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         value?.apply {
             removeChangeEventListener(templateIdUpdater)
             removeChangeEventListener(updater)
+            removeChangeEventListener(tokenSanitizer)
             removeChangeEventListener(merger)
         }
     }
