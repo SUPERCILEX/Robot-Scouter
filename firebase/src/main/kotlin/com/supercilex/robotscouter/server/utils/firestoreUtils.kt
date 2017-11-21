@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.server.utils
 
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
+import com.supercilex.robotscouter.server.utils.types.FieldPath
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.WriteBatch
@@ -22,7 +23,7 @@ fun CollectionReference.delete(
         middleMan: (DocumentSnapshot) -> Promise<*> = { Promise.resolve(Unit) }
 ): Promise<Unit> = deleteQueryBatch(
         firestore,
-        orderBy("__name__").limit(batchSize),
+        orderBy(FieldPath.documentId()).limit(batchSize),
         batchSize,
         middleMan
 )

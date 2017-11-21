@@ -1,5 +1,6 @@
 @file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS", "unused")
 @file:[JsQualifier("FirebaseFirestore") JsModule("@google-cloud/firestore")]
+
 package com.supercilex.robotscouter.server.utils.types
 
 import kotlin.js.Json
@@ -87,7 +88,7 @@ external open class Query {
     open fun where(fieldPath: FieldPath, opStr: Any /* ">" */, value: Any): Query = definedExternally
     open fun orderBy(fieldPath: String, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
     //    open fun orderBy(fieldPath: String, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
-    open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
+//    open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
     open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
     open fun limit(limit: Number): Query = definedExternally
     open fun offset(offset: Number): Query = definedExternally
