@@ -70,7 +70,7 @@ class SpinnerTemplateViewHolder(
         }
 
         fun bind(name: String, isDefault: Boolean) {
-            this.name.text = name
+            this.name.setText(name)
             star.setImageResource(if (isDefault) {
                 R.drawable.ic_star_accent_24dp
             } else {
