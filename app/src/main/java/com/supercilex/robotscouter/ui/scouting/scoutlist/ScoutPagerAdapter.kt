@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
@@ -19,7 +20,7 @@ class ScoutPagerAdapter(
     override val editTabNameRes = R.string.scout_edit_name_title
 
     init {
-        holder.init(team.getScoutsQuery())
+        holder.init(team.getScoutsQuery(Query.Direction.DESCENDING))
     }
 
     override fun getItem(position: Int) =

@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.util.data.model
 
 import android.content.Context
 import android.net.Uri
-import android.support.annotation.WorkerThread
 import android.text.TextUtils
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -151,9 +150,8 @@ fun Team.fetchLatestData() {
     }).logFailures()
 }
 
-@WorkerThread
 fun Team.getScouts(): Task<List<Scout>> = async {
-    val scouts = Tasks.await(getScoutsRef().orderBy(FIRESTORE_TIMESTAMP).get()).map {
+    val scouts = Tasks.await(getScoutsQuery().get()).map {
         scoutParser.parseSnapshot(it)
     }
     val metricTasks = scouts.map {
