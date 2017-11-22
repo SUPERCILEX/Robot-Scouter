@@ -23,7 +23,7 @@ sealed class Metric<T>(
         @Exclude
         @get:Keep
         override var position: Int
-) : OrderedModel {
+) : OrderedRemoteModel {
     class Header(
             name: String = "",
             position: Int
@@ -114,6 +114,12 @@ sealed class Metric<T>(
         }
 
         override fun toString(): String = "${super.toString()}, selectedValueId=$selectedValueId"
+
+        data class Item(
+                val id: String,
+                val name: String?,
+                override var position: Int
+        ) : OrderedModel
     }
 
     @get:PropertyName(FIRESTORE_TYPE)

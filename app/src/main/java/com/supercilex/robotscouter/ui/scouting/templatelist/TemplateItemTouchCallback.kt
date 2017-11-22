@@ -12,7 +12,7 @@ import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.OrderedModel
+import com.supercilex.robotscouter.data.model.OrderedRemoteModel
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateViewHolder
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
@@ -25,7 +25,7 @@ import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import java.util.Collections
 
-class TemplateItemTouchCallback<T : OrderedModel>(
+class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         private val rootView: View
 ) : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -234,7 +234,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
 
         val position = viewHolder.adapterPosition
         val deletedRef = localItems[position].ref
-        val itemsBelow: List<OrderedModel> =
+        val itemsBelow: List<OrderedRemoteModel> =
                 ArrayList(localItems.subList(position + 1, localItems.size))
 
         localItems.removeAt(position)
@@ -267,7 +267,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
         }
     }
 
-    private fun WriteBatch.updatePositions(items: List<OrderedModel>, offset: Int = 0) {
+    private fun WriteBatch.updatePositions(items: List<OrderedRemoteModel>, offset: Int = 0) {
         for (item in items) {
             item.position += offset
             update(item.ref, FIRESTORE_POSITION, item.position)

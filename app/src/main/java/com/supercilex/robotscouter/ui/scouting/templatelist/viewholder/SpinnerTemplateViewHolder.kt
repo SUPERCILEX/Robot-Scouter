@@ -53,7 +53,8 @@ class SpinnerTemplateViewHolder(
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ItemHolder(
                 LayoutInflater.from(parent.context)
-                        .inflate(R.layout.scout_template_spinner_item, parent, false))
+                        .inflate(R.layout.scout_template_spinner_item, parent, false)
+        )
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
             val id = metric.value.keys.elementAt(position)
