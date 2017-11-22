@@ -54,10 +54,10 @@ import java.io.File
 import java.util.Calendar
 import java.util.Date
 
-val teamParser = SnapshotParser<Team> {
+val teamParser = SnapshotParser {
     it.toObject(Team::class.java).apply { id = it.id }
 }
-val scoutParser = SnapshotParser<Scout> { snapshot ->
+val scoutParser = SnapshotParser { snapshot ->
     Scout(snapshot.id,
           snapshot.getString(FIRESTORE_TEMPLATE_ID),
           snapshot.getString(FIRESTORE_NAME),
@@ -68,7 +68,7 @@ val scoutParser = SnapshotParser<Scout> { snapshot ->
                       "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
           })
 }
-val metricParser = SnapshotParser<Metric<*>> { Metric.parse(it.data, it.reference) }
+val metricParser = SnapshotParser { Metric.parse(it.data, it.reference) }
 
 private const val REF_KEY = "com.supercilex.robotscouter.REF"
 

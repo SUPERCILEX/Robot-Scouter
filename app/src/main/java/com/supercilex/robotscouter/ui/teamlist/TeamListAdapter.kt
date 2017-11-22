@@ -143,7 +143,7 @@ class TeamListAdapter(
             oldIndex: Int
     ) {
         super.onChildChanged(type, snapshot, newIndex, oldIndex)
-        cardListHelper.onChildChanged(type, newIndex)
+        cardListHelper.onChildChanged(type, oldIndex)
 
         if (type == ChangeEventType.CHANGED) {
             for (oldTeam in menuHelper.selectedTeams) {

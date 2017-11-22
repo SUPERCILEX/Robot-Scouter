@@ -11,7 +11,7 @@ open class CardListHelper(
 ) {
     fun onChildChanged(type: ChangeEventType, index: Int) {
         if (type == ChangeEventType.REMOVED) {
-            recyclerView.notifyItemsChangedNoAnimation(index + if (index != 0) -1 else 0)
+            recyclerView.notifyItemsChangedNoChangeAnimation(index + if (index == 0) 0 else -1, 1)
         }
     }
 
@@ -27,12 +27,8 @@ open class CardListHelper(
             val abovePos = position - 1
             val belowPos = position + 1
 
-            recyclerView.findViewHolderForLayoutPosition(abovePos)?.let {
-                it.setBackground(abovePos)
-            }
-            recyclerView.findViewHolderForLayoutPosition(belowPos)?.let {
-                it.setBackground(belowPos)
-            }
+            recyclerView.findViewHolderForLayoutPosition(abovePos)?.setBackground(abovePos)
+            recyclerView.findViewHolderForLayoutPosition(belowPos)?.setBackground(belowPos)
         }
     }
 

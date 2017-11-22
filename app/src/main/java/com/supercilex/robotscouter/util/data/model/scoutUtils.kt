@@ -30,7 +30,7 @@ import kotlin.math.abs
 
 fun Team.getScoutsRef() = ref.collection(FIRESTORE_SCOUTS)
 
-fun Team.getScoutsQuery(direction: Query.Direction = Query.Direction.DESCENDING): Query =
+fun Team.getScoutsQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         FIRESTORE_TIMESTAMP.let {
             getScoutsRef().whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
         }
