@@ -221,7 +221,6 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
     private companion object {
         const val RC_SCOUT = 744
-        const val API_AVAILABILITY_RC = 65
         const val MINIMUM_APP_VERSION_KEY = "minimum_app_version"
 
         const val DONATE_EXTRA = "donate_extra"
