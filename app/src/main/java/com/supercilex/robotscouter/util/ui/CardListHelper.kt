@@ -11,7 +11,7 @@ open class CardListHelper(
 ) {
     fun onChildChanged(type: ChangeEventType, index: Int) {
         if (type == ChangeEventType.REMOVED) {
-            recyclerView.notifyItemsChangedNoAnimation(index + if (index != 0) -1 else 0)
+            recyclerView.notifyItemsChangedNoChangeAnimation(index + if (index != 0) -1 else 0, 1)
         }
     }
 

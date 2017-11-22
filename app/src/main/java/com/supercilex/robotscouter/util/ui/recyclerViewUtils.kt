@@ -6,6 +6,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SimpleItemAnimator
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import org.jetbrains.anko.bundleOf
@@ -23,7 +24,7 @@ fun RecyclerView.isItemInRange(position: Int): Boolean = (layoutManager as Linea
             && position in first..it.findLastCompletelyVisibleItemPosition()
 }
 
-fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int = 1) {
+fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int) {
     val animator: RecyclerView.ItemAnimator? = itemAnimator
 
     itemAnimator = null
@@ -32,6 +33,19 @@ fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int = 1
     ViewCompat.postOnAnimationDelayed(
             this,
             { itemAnimator = animator },
+            animator.maxAnimationDuration()
+    )
+}
+
+fun RecyclerView.notifyItemsChangedNoChangeAnimation(position: Int, itemCount: Int) {
+    val animator = itemAnimator as SimpleItemAnimator?
+
+    animator?.supportsChangeAnimations = false
+    adapter.notifyItemRangeChanged(position, itemCount)
+
+    ViewCompat.postOnAnimationDelayed(
+            this,
+            { animator?.supportsChangeAnimations = true },
             animator.maxAnimationDuration()
     )
 }

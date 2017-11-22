@@ -67,6 +67,6 @@ abstract class MetricListAdapterBase(
         }
 
         super.onChildChanged(type, snapshot, newIndex, oldIndex)
-        cardListHelper.onChildChanged(type, newIndex)
+        cardListHelper.onChildChanged(type, oldIndex)
     }
 }
