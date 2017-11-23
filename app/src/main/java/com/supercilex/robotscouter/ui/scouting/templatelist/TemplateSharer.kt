@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.logShareTemplateEvent
+import com.supercilex.robotscouter.util.logShareTemplate
 import com.supercilex.robotscouter.util.templates
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
@@ -66,8 +66,9 @@ class TemplateSharer private constructor(
                 return false
             }
 
+            logShareTemplate(templateId, templateName)
             TemplateSharer(activity).share(templateId, templateName)
-            logShareTemplateEvent(templateId)
+
             return true
         }
     }

@@ -29,7 +29,7 @@ import com.supercilex.robotscouter.util.fullVersionCode
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.logSelectTeamEvent
+import com.supercilex.robotscouter.util.logSelect
 import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
@@ -166,7 +166,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
     }
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
-        logSelectTeamEvent(args.getTeam())
+        args.getTeam().logSelect()
 
         if (isInTabletMode(this)) {
             supportFragmentManager.beginTransaction()

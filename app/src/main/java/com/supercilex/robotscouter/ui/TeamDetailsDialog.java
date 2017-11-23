@@ -42,7 +42,7 @@ import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar;
 
 import java.io.File;
 
-import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditTeamDetailsEvent;
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditDetails;
 import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
@@ -87,7 +87,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 team.getTimestamp())));
         dialog.show(manager, TAG);
 
-        logEditTeamDetailsEvent(team);
+        logEditDetails(team);
     }
 
     @Override

@@ -34,6 +34,7 @@ import java.util.List;
 import kotlin.Pair;
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logTakeMedia;
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.createFile;
 import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIoPerms;
@@ -145,6 +146,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             if (photoFile != null) {
                 mPhotoPath = photoFile.getAbsolutePath();
 
+                logTakeMedia(mTeam);
                 Uri photoUri = FileProvider.getUriForFile(
                         context, getProviderAuthority(), photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);

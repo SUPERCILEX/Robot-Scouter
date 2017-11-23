@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.logUpdateDefaultTemplateId
 
 private val localPrefs: SharedPreferences by lazy {
     RobotScouter.INSTANCE.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
@@ -62,7 +63,10 @@ var hasPerformedV1toV2Migration: Boolean
 var defaultTemplateId: String
     get() =
         prefs.getString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, TemplateType.DEFAULT.id.toString())!!
-    set(value) = prefs.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
+    set(value) {
+        logUpdateDefaultTemplateId(value)
+        prefs.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
+    }
 
 @get:AppCompatDelegate.NightMode
 val nightMode: Int
