@@ -83,10 +83,10 @@ sealed class Metric<T>(
 
     class List(
             name: String = "",
-            value: Map<String, String> = mapOf("a" to "Item 1"),
+            value: kotlin.collections.List<Item> = emptyList(),
             selectedValueId: String? = "a",
             position: Int
-    ) : Metric<Map<String, String>>(MetricType.LIST, name, value, position) {
+    ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position) {
         @Exclude
         @get:Keep
         var selectedValueId = selectedValueId
