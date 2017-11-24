@@ -245,11 +245,11 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                 }
 
                 StopwatchViewHolder holder = getHolder();
-                if (holder != null) { // NOPMD
+                if (holder != null) {
                     new Handler(holder.itemView.getContext()
                                         .getMainLooper()).post(this::updateButtonTime);
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD
                 FirebaseCrash.report(e);
                 Crashlytics.logException(e);
                 mTimerTask.setException(e);
