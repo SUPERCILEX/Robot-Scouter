@@ -36,7 +36,7 @@ fun addTemplate(type: TemplateType): String {
     val ref = templates.document()
     val id = ref.id
 
-    logAddTemplate(id)
+    logAddTemplate(id, type)
     ref.batch {
         val scout = Scout(id, id)
         set(it, scout)
