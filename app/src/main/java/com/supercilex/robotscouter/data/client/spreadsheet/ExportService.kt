@@ -21,7 +21,7 @@ import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.putExtra
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.logExportTeamsEvent
+import com.supercilex.robotscouter.util.logExport
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import org.jetbrains.anko.design.snackbar
@@ -143,7 +143,7 @@ class ExportService : IntentService(TAG) {
 
             snackbar(fragment.view!!, R.string.export_progress_hint)
 
-            logExportTeamsEvent(teams)
+            teams.logExport()
             ContextCompat.startForegroundService(
                     context,
                     context.intentFor<ExportService>().putExtra(teams)

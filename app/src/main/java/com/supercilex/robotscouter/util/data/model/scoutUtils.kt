@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
-import com.supercilex.robotscouter.util.logAddScoutEvent
+import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
 import java.util.Date
 import kotlin.math.abs
@@ -44,6 +44,7 @@ fun Team.addScout(
     val templateId = overrideId ?: templateId
     val scoutRef = getScoutsRef().document()
 
+    logAddScout(id, templateId)
     scoutRef.set(Scout(scoutRef.id, templateId))
     (TemplateType.coerce(templateId)?.let { type ->
         defaultTemplates.document(type.id.toString()).get().continueWith(
@@ -86,7 +87,6 @@ fun Team.addScout(
         scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates").logFailures()
     })
 
-    logAddScoutEvent(this, id, templateId)
     return scoutRef.id
 }
 

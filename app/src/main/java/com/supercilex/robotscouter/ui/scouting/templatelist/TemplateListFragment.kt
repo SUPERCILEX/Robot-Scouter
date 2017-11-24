@@ -18,8 +18,6 @@ import android.view.ViewGroup
 import com.firebase.ui.common.ChangeEventType
 import com.github.clans.fab.FloatingActionButton
 import com.github.clans.fab.FloatingActionMenu
-import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -34,11 +32,9 @@ import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
-import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.logViewTemplateEvent
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
@@ -107,12 +103,6 @@ class TemplateListFragment : FragmentBase(),
             override fun onTabSelected(tab: TabLayout.Tab) {
                 super.onTabSelected(tab)
                 fam.close(true)
-
-                currentTabId?.let {
-                    logViewTemplateEvent(it)
-                    FirebaseUserActions.getInstance().end(
-                            Actions.newView(tab.text?.toString()!!, getTemplateLink(it)))
-                }
             }
         }
 

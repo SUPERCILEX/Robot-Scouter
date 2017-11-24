@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
+import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
@@ -79,6 +80,7 @@ fun Team.add() {
     forceUpdate()
     forceRefresh()
 
+    logAdd()
     FirebaseUserActions.getInstance().end(
             Action.Builder(Action.Builder.ADD_ACTION)
                     .setObject(toString(), deepLink)

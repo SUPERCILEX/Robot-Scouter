@@ -16,7 +16,7 @@ import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
-import com.supercilex.robotscouter.util.logAddTemplateEvent
+import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
@@ -36,6 +36,7 @@ fun addTemplate(type: TemplateType): String {
     val ref = templates.document()
     val id = ref.id
 
+    logAddTemplate(id)
     ref.batch {
         val scout = Scout(id, id)
         set(it, scout)
@@ -51,7 +52,6 @@ fun addTemplate(type: TemplateType): String {
         }
     }).logFailures()
 
-    logAddTemplateEvent(id)
     return id
 }
 

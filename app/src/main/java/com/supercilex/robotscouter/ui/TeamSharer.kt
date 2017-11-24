@@ -18,7 +18,7 @@ import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.logShareTeamsEvent
+import com.supercilex.robotscouter.util.logShare
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Date
@@ -99,8 +99,9 @@ class TeamSharer private constructor(
             }
             if (teams.isEmpty()) return false
 
+            teams.logShare()
             TeamSharer(activity, teams)
-            logShareTeamsEvent(teams)
+
             return true
         }
     }

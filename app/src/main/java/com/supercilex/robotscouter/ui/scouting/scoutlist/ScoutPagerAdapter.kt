@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.util.data.model.getScoutsQuery
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
 import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.logSelectScout
 
 class ScoutPagerAdapter(
         fragment: Fragment,
@@ -39,5 +40,12 @@ class ScoutPagerAdapter(
                     .show()
         }
         super.onDataChanged()
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab) {
+        super.onTabSelected(tab)
+        currentTabId?.let { tabId ->
+            team.logSelectScout(tabId, currentScouts.find { it.id == tabId }!!.templateId)
+        }
     }
 }

@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
+import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
@@ -142,13 +143,16 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         itemTouchCallback.addItemToScrollQueue(position)
 
         when (v.id) {
-            R.id.add_checkbox -> metricRef.set(Metric.Boolean(position = position))
-            R.id.add_counter -> metricRef.set(Metric.Number(position = position))
-            R.id.add_stopwatch -> metricRef.set(Metric.Stopwatch(position = position))
-            R.id.add_note -> metricRef.set(Metric.Text(position = position))
-            R.id.add_spinner -> metricRef.set(Metric.List(position = position))
-            R.id.add_header -> metricRef.set(Metric.Header(position = position))
+            R.id.add_checkbox -> Metric.Boolean(position = position)
+            R.id.add_counter -> Metric.Number(position = position)
+            R.id.add_stopwatch -> Metric.Stopwatch(position = position)
+            R.id.add_note -> Metric.Text(position = position)
+            R.id.add_spinner -> Metric.List(position = position)
+            R.id.add_header -> Metric.Header(position = position)
             else -> throw IllegalStateException("Unknown view id: $id")
+        }.apply { ref = metricRef }.apply {
+            logAdd()
+            ref.set(this)
         }
     }
 

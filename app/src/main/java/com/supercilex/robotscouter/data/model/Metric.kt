@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_UNIT
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.LateinitVal
+import com.supercilex.robotscouter.util.logUpdate
 
 sealed class Metric<T>(
         @Exclude
@@ -93,6 +94,7 @@ sealed class Metric<T>(
             set(value) {
                 if (field != value) {
                     field = value
+                    logUpdate()
                     ref.update(FIRESTORE_SELECTED_VALUE_ID, field)
                 }
             }
@@ -145,6 +147,7 @@ sealed class Metric<T>(
         set(value) {
             if (field != value) {
                 field = value
+                logUpdate()
                 ref.update(FIRESTORE_VALUE, field)
             }
         }
