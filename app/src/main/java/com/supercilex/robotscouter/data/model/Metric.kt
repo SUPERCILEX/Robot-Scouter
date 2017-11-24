@@ -94,6 +94,7 @@ sealed class Metric<T>(
             set(value) {
                 if (field != value) {
                     field = value
+                    logUpdate()
                     ref.update(FIRESTORE_SELECTED_VALUE_ID, field)
                 }
             }
