@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.longToast
 
 class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
@@ -137,6 +138,8 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
                             .continueWithTask { purchaseItem(sku, type) }
                             .addOnSuccessListener { purchaseStartTask.setResult(null) }
                 }
+            } else if (result == BillingResponse.FEATURE_NOT_SUPPORTED) {
+                snackbar(content, R.string.fui_general_error)
             } else {
                 PurchaseException(result, sku).let {
                     FirebaseCrash.report(it)
