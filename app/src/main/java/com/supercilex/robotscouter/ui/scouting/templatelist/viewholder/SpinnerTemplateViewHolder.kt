@@ -4,6 +4,7 @@ import android.app.Activity
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,12 +14,14 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
+import java.util.Collections
 import kotlin.properties.Delegates
 
 class SpinnerTemplateViewHolder(
@@ -44,6 +47,10 @@ class SpinnerTemplateViewHolder(
                 break
             }
         }
+        val itemTouchCallback = ItemTouchCallback()
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchCallback.itemTouchHelper = itemTouchHelper
+        itemTouchHelper.attachToRecyclerView(items)
     }
 
     override fun bind() {
@@ -130,6 +137,54 @@ class SpinnerTemplateViewHolder(
                     item = it
                 }
             }
+        }
+    }
+
+    private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.LEFT
+    ) {
+        var itemTouchHelper: ItemTouchHelper by LateinitVal()
+        private var localItems: List<Metric.List.Item>? = null
+
+        override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+        ): Boolean {
+            val fromPos = viewHolder.adapterPosition
+            val toPos = target.adapterPosition
+
+            if (fromPos < toPos) {
+                for (i in fromPos until toPos) swapDown(i)
+            } else {
+                for (i in fromPos downTo toPos + 1) swapUp(i)
+            }
+            items.adapter.notifyItemMoved(fromPos, toPos)
+
+            return true
+        }
+
+        private fun swapDown(i: Int) = swap(i, i + 1)
+
+        private fun swapUp(i: Int) = swap(i, i - 1)
+
+        private fun swap(i: Int, j: Int) {
+            if (localItems == null) {
+                localItems = metric.value.toMutableList()
+            }
+
+            Collections.swap(localItems, i, j)
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
+            super.clearView(recyclerView, viewHolder)
+            metric.value = localItems!!
+            localItems = null
         }
     }
 
