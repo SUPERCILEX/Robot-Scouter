@@ -37,11 +37,11 @@ fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int) {
     )
 }
 
-fun RecyclerView.notifyItemsChangedNoChangeAnimation(position: Int, itemCount: Int) {
+inline fun RecyclerView.notifyItemsNoChangeAnimation(update: RecyclerView.Adapter<*>.() -> Unit) {
     val animator = itemAnimator as SimpleItemAnimator?
 
     animator?.supportsChangeAnimations = false
-    adapter.notifyItemRangeChanged(position, itemCount)
+    adapter.update()
 
     ViewCompat.postOnAnimationDelayed(
             this,

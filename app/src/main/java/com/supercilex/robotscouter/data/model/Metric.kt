@@ -86,9 +86,25 @@ sealed class Metric<T>(
     class List(
             name: String = "",
             value: kotlin.collections.List<Item> = emptyList(),
-            selectedValueId: String? = "a",
+            selectedValueId: String? = null,
             position: Int
     ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position) {
+        @Exclude
+        @get:Keep
+        override var value: kotlin.collections.List<Item> = value
+            set(value) {
+                if (field == value) return
+
+                field = value
+                ref.update(FIRESTORE_VALUE, field.map {
+                    mapOf(
+                            FIRESTORE_ID to it.id,
+                            FIRESTORE_NAME to it.name,
+                            FIRESTORE_POSITION to it.position
+                    )
+                })
+            }
+
         @Exclude
         @get:Keep
         var selectedValueId = selectedValueId
@@ -120,7 +136,7 @@ sealed class Metric<T>(
 
         data class Item(
                 val id: String,
-                val name: String?,
+                val name: String,
                 override var position: Int
         ) : OrderedModel
     }
@@ -144,7 +160,7 @@ sealed class Metric<T>(
 
     @Exclude
     @get:Keep
-    var value = value
+    open var value = value
         set(value) {
             if (field != value) {
                 field = value
@@ -205,8 +221,8 @@ sealed class Metric<T>(
                             (fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, Any?>>).map {
                                 List.Item(
                                         it[FIRESTORE_ID] as String,
-                                        it[FIRESTORE_NAME] as String?,
-                                        it[FIRESTORE_POSITION] as Int
+                                        it[FIRESTORE_NAME] as String,
+                                        (it[FIRESTORE_POSITION] as Long).toInt()
                                 )
                             }
                         } catch (e: ClassCastException) {

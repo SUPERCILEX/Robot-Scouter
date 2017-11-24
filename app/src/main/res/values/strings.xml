@@ -205,6 +205,7 @@
     <string name="metric_spinner_add_title">Add item selector</string>
     <string name="metric_spinner_name_hint">Item selector name</string>
     <string name="metric_spinner_item_name_hint">Item name</string>
+    <string name="metric_spinner_item_default_required_error">Default item required</string>
 
     <string name="template_remove_metrics_title">Remove all metrics</string>
     <string name="template_delete_title">Delete template</string>

@@ -3,7 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/RobotScouter.ListItem">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_item_padding_vertical_within"
+    android:paddingBottom="@dimen/list_item_padding_vertical_within">
 
     <include layout="@layout/scout_template_base_reorder" />
 
@@ -11,6 +14,8 @@
         android:id="@+id/star"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_mini"
+        android:layout_marginEnd="@dimen/spacing_mini"
         android:layout_gravity="center_vertical"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/accessibility_set_default_spinner_item"

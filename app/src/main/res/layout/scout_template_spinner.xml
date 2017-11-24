@@ -11,7 +11,9 @@
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/metric_stopwatch_name_hint"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:hint="@string/metric_spinner_name_hint"
         android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintStart_toEndOf="@id/reorder"
         app:layout_constraintEnd_toStartOf="@id/new_item"
@@ -21,16 +23,17 @@
 
     <ImageButton
         android:id="@+id/new_item"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/square_view_hw"
         android:layout_height="@dimen/square_view_hw"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/accessibility_add_spinner_item"
+        android:stateListAnimator="@null"
         app:layout_constraintStart_toEndOf="@id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
+        app:srcCompat="@drawable/ic_add_accent_24dp"
+        tools:ignore="UnusedAttribute" />
 
     <android.support.constraint.Barrier
         android:id="@+id/barrier"
@@ -45,6 +48,8 @@
         android:id="@+id/list"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
         android:clipToPadding="false"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
