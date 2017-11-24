@@ -166,7 +166,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
          * The ID of the metric who originally started the request. We need to validate it since
          * ViewHolders may be recycled across different instances.
          */
-        private String mMetricId;
+        private final Metric<?> mMetric;
 
         static {
             Transition transition = new AutoTransition();
@@ -176,7 +176,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
         public Timer(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
-            mMetricId = holder.getMetric().getRef().getId();
+            mMetric = holder.getMetric();
             mIsRunning = true;
             TIMERS.put((Metric.Stopwatch) (Object) holder.getMetric(), this);
 
@@ -205,8 +205,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         @Nullable
         private StopwatchViewHolder getHolder() {
             StopwatchViewHolder holder = mHolder.get();
-            return holder != null && holder.getMetric().getRef().getId().equals(mMetricId)
-                    ? holder : null;
+            return holder != null && holder.getMetric().equals(mMetric) ? holder : null;
         }
 
         public void updateButtonTime() {
@@ -246,11 +245,11 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                 }
 
                 StopwatchViewHolder holder = getHolder();
-                if (holder != null) {
+                if (holder != null) { // NOPMD
                     new Handler(holder.itemView.getContext()
                                         .getMainLooper()).post(this::updateButtonTime);
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 FirebaseCrash.report(e);
                 Crashlytics.logException(e);
                 mTimerTask.setException(e);
