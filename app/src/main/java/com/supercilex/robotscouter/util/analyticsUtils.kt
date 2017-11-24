@@ -16,6 +16,7 @@ import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
@@ -157,9 +158,9 @@ fun Team.logSelectScout(scoutId: String, templateId: String) = analytics.logEven
         )
 )
 
-fun logAddTemplate(templateId: String) = analytics.logEvent(
+fun logAddTemplate(templateId: String, type: TemplateType) = analytics.logEvent(
         "add_template",
-        bundleOf(ITEM_ID to templateId)
+        bundleOf(ITEM_ID to templateId, CONTENT_TYPE to type.id)
 )
 
 fun logSelectTemplate(templateId: String, templateName: String) = analytics.logEvent(
