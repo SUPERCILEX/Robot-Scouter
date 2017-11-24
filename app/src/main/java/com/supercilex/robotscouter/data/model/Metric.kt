@@ -218,22 +218,24 @@ sealed class Metric<T>(
                 MetricType.LIST -> Metric.List(
                         name,
                         try {
-                            (fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, Any?>>).map {
-                                List.Item(
-                                        it[FIRESTORE_ID] as String,
-                                        it[FIRESTORE_NAME] as String,
-                                        (it[FIRESTORE_POSITION] as Long).toInt()
-                                )
-                            }
+                            fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, Any>>
                         } catch (e: ClassCastException) {
                             // TODO remove at some point, used to support old model
                             (fields[FIRESTORE_VALUE] as kotlin.collections.Map<String, String>).map {
-                                List.Item(it.key, it.value, -1)
+                                mapOf<String, Any>(FIRESTORE_ID to it.key,
+                                                   FIRESTORE_NAME to it.value)
+                                        .toMutableMap()
                             }.apply {
                                 for ((index, item) in withIndex()) {
-                                    item.position = index
+                                    item.put(FIRESTORE_POSITION, index.toLong())
                                 }
                             }
+                        }.map {
+                            List.Item(
+                                    it[FIRESTORE_ID] as String,
+                                    (it[FIRESTORE_NAME] as String?).toString(),
+                                    (it[FIRESTORE_POSITION] as Long).toInt()
+                            )
                         },
                         fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
                         position

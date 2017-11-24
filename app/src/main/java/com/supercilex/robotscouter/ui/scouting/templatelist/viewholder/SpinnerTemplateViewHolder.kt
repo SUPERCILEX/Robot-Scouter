@@ -33,6 +33,7 @@ class SpinnerTemplateViewHolder(
 
     private val newItem: ImageButton by bindView(R.id.new_item)
     private val items: RecyclerView by bindView(R.id.list)
+    private val itemTouchCallback = ItemTouchCallback()
 
     init {
         init()
@@ -47,7 +48,6 @@ class SpinnerTemplateViewHolder(
                 break
             }
         }
-        val itemTouchCallback = ItemTouchCallback()
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(items)
@@ -76,8 +76,9 @@ class SpinnerTemplateViewHolder(
         )
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-            val item = metric.value[position]
+            val item = itemTouchCallback.getItem(position)
             holder.bind(this@SpinnerTemplateViewHolder, item, metric.selectedValueId == item.id)
+            itemTouchCallback.onBind(holder)
         }
     }
 
@@ -85,7 +86,7 @@ class SpinnerTemplateViewHolder(
             View.OnClickListener {
         override val reorder: View by bindView(R.id.reorder)
         override val nameEditor: EditText by bindView(R.id.name)
-        private val star: ImageButton by bindView(R.id.star)
+        private val default: ImageButton by bindView(R.id.default_)
 
         private lateinit var parent: SpinnerTemplateViewHolder
         private lateinit var item: Metric.List.Item
@@ -93,7 +94,7 @@ class SpinnerTemplateViewHolder(
 
         init {
             init()
-            star.setOnClickListener(this)
+            default.setOnClickListener(this)
         }
 
         fun bind(parent: SpinnerTemplateViewHolder, item: Metric.List.Item, isDefault: Boolean) {
@@ -102,14 +103,14 @@ class SpinnerTemplateViewHolder(
             this.isDefault = isDefault
 
             nameEditor.setText(item.name)
-            star.setImageResource(if (isDefault) {
+            default.setImageResource(if (isDefault) {
                 R.drawable.ic_star_accent_24dp
             } else {
                 R.drawable.ic_star_outline_accent_24dp
             })
         }
 
-        override fun onClick(v: View?) {
+        override fun onClick(v: View) {
             if (isDefault) {
                 snackbar(
                         (itemView.context as Activity).find(R.id.root),
@@ -142,16 +143,28 @@ class SpinnerTemplateViewHolder(
 
     private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.LEFT
+            0
     ) {
         var itemTouchHelper: ItemTouchHelper by LateinitVal()
         private var localItems: List<Metric.List.Item>? = null
+
+        fun getItem(position: Int): Metric.List.Item =
+                if (localItems == null) metric.value[position] else localItems!![position]
+
+        fun onBind(viewHolder: RecyclerView.ViewHolder) {
+            (viewHolder as TemplateViewHolder).enableDragToReorder(viewHolder, itemTouchHelper)
+        }
 
         override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
         ): Boolean {
+            if (localItems == null) {
+                localItems = metric.value.toMutableList()
+                items.setHasFixedSize(true)
+            }
+
             val fromPos = viewHolder.adapterPosition
             val toPos = target.adapterPosition
 
@@ -170,22 +183,22 @@ class SpinnerTemplateViewHolder(
         private fun swapUp(i: Int) = swap(i, i - 1)
 
         private fun swap(i: Int, j: Int) {
-            if (localItems == null) {
-                localItems = metric.value.toMutableList()
-            }
-
             Collections.swap(localItems, i, j)
         }
 
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+            items.setHasFixedSize(false)
+            localItems?.let {
+                metric.value = it
+                localItems = null
+            }
         }
 
-        override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
-            super.clearView(recyclerView, viewHolder)
-            metric.value = localItems!!
-            localItems = null
-        }
+        override fun isLongPressDragEnabled() = false
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int): Unit =
+                throw UnsupportedOperationException()
     }
 
     private companion object {

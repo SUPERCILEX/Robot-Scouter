@@ -298,6 +298,7 @@
     </string>
     <string name="accessibility_add_spinner_item">Add a new item selector item.</string>
     <string name="accessibility_set_default_spinner_item">Set the default item selector item.</string>
+    <string name="accessibility_delete_spinner_item">Delete the item selector item.</string>
 
     <!-- Other -->
     <string name="asset_statements" translatable="false">
