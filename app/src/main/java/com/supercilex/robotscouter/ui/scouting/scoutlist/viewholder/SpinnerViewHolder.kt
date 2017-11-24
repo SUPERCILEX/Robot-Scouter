@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
-import android.text.TextUtils
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -13,11 +12,9 @@ import kotterknife.bindView
 
 class SpinnerViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView),
+) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>, TextView>(itemView),
         AdapterView.OnItemSelectedListener {
     private val spinner: Spinner by bindView(R.id.spinner)
-    private val ids: Set<String>
-        get() = metric.value.keys
 
     init {
         spinner.adapter = ArrayAdapter<String>(
@@ -32,25 +29,21 @@ class SpinnerViewHolder(
     public override fun bind() {
         super.bind()
         updateAdapter()
-        spinner.setSelection(indexOfKey(metric.selectedValueId))
+        spinner.setSelection(metric.selectedValueId?.let { id ->
+            metric.value.indexOfFirst { it.id == id }
+        } ?: 0)
     }
 
     private fun updateAdapter() {
         @Suppress("UNCHECKED_CAST") // We know the metric type
         (spinner.adapter as ArrayAdapter<String>).apply {
             clear()
-            addAll(metric.value.values)
+            addAll(metric.value.map { it.name })
         }
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
-        metric.selectedValueId = ids.elementAt(itemPosition)
-    }
-
-    private fun indexOfKey(key: String?): Int = ids.forEachIndexed { index, test ->
-        if (TextUtils.equals(test, key)) return index
-    }.run {
-        return 0
+        metric.selectedValueId = metric.value[itemPosition].id
     }
 
     override fun onNothingSelected(view: AdapterView<*>) = Unit

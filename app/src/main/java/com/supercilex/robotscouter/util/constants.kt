@@ -23,6 +23,7 @@ val allProviders: List<AuthUI.IdpConfig> = listOf(
 
 // *** CAUTION--DO NOT TOUCH! ***
 // [START FIREBASE CHILD NAMES]
+const val FIRESTORE_ID = "id"
 const val FIRESTORE_OWNERS = "owners"
 const val FIRESTORE_ACTIVE_TOKENS = "activeTokens"
 const val FIRESTORE_PENDING_APPROVALS = "pendingApprovals"

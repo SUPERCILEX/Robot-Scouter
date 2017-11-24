@@ -4,6 +4,7 @@ import android.support.annotation.Keep
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import com.supercilex.robotscouter.util.FIRESTORE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_SELECTED_VALUE_ID
@@ -200,7 +201,13 @@ sealed class Metric<T>(
                 MetricType.TEXT -> Metric.Text(name, fields[FIRESTORE_VALUE] as String?, position)
                 MetricType.LIST -> Metric.List(
                         name,
-                        fields[FIRESTORE_VALUE] as Map<String, String>,
+                        (fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, Any?>>).map {
+                            List.Item(
+                                    it[FIRESTORE_ID] as String,
+                                    it[FIRESTORE_NAME] as String?,
+                                    it[FIRESTORE_POSITION] as Int
+                            )
+                        },
                         fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
                         position
                 )

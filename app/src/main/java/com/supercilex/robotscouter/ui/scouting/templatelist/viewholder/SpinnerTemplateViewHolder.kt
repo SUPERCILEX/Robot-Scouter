@@ -19,8 +19,8 @@ import kotterknife.bindView
 
 class SpinnerTemplateViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.List, Map<String, String>, TextView>(itemView),
-        MetricTemplateViewHolder<Metric.List, Map<String, String>>, View.OnClickListener {
+) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>, TextView>(itemView),
+        MetricTemplateViewHolder<Metric.List, List<Metric.List.Item>>, View.OnClickListener {
     override val reorder: View by bindView(R.id.reorder)
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 
@@ -57,8 +57,8 @@ class SpinnerTemplateViewHolder(
         )
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-            val id = metric.value.keys.elementAt(position)
-            holder.bind(metric.value[id]!!, metric.selectedValueId == id)
+            val item = metric.value[position]
+            holder.bind(item, metric.selectedValueId == item.id)
         }
     }
 
@@ -66,12 +66,8 @@ class SpinnerTemplateViewHolder(
         private val name: EditText by bindView(R.id.name)
         private val star: ImageButton by bindView(R.id.star)
 
-        init {
-
-        }
-
-        fun bind(name: String, isDefault: Boolean) {
-            this.name.setText(name)
+        fun bind(item: Metric.List.Item, isDefault: Boolean) {
+            this.name.setText(item.name)
             star.setImageResource(if (isDefault) {
                 R.drawable.ic_star_accent_24dp
             } else {
