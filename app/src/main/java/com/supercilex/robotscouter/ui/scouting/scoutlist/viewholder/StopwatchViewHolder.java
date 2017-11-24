@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.transition.AutoTransition;
 import android.support.transition.Transition;
@@ -88,8 +89,10 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         Timer timer = TIMERS.get(getMetric());
         if (timer == null) {
             setText(R.string.metric_stopwatch_start_title);
+            updateStyle(false);
         } else {
             timer.setHolder(this);
+            updateStyle(true);
             mTimer = timer;
             mTimer.updateButtonTime();
         }
@@ -129,6 +132,23 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         mToggleStopwatch.setText(itemView.getResources().getString(id, formatArgs));
     }
 
+    private void updateStyle(boolean isRunning) {
+        // There's a bug pre-L where changing the view state doesn't update the vector drawable.
+        // Because of that, calling View#setActivated(isRunning) doesn't update the background
+        // color and we end up with unreadable text.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
+
+        Button stopwatch = mToggleStopwatch;
+        stopwatch.setTextColor(isRunning ? ContextCompat.getColor(
+                stopwatch.getContext(), R.color.colorAccent) : Color.WHITE);
+        stopwatch.setActivated(isRunning);
+        stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                isRunning ? R.drawable.ic_timer_off_accent_24dp : R.drawable.ic_timer_white_24dp,
+                0,
+                0,
+                0);
+    }
+
     private static final class Timer implements OnSuccessListener<Void>, OnFailureListener {
         private static final int GAME_TIME = 3;
         private static final String COLON = ":";
@@ -142,6 +162,11 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         private boolean mIsRunning;
 
         private WeakReference<StopwatchViewHolder> mHolder;
+        /**
+         * The ID of the metric who originally started the request. We need to validate it since
+         * ViewHolders may be recycled across different instances.
+         */
+        private String mMetricId;
 
         static {
             Transition transition = new AutoTransition();
@@ -151,6 +176,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
         public Timer(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
+            mMetricId = holder.getMetric().getRef().getId();
             mIsRunning = true;
             TIMERS.put((Metric.Stopwatch) (Object) holder.getMetric(), this);
 
@@ -174,7 +200,13 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
 
         public void setHolder(StopwatchViewHolder holder) {
             mHolder = new WeakReference<>(holder);
-            updateStyle();
+        }
+
+        @Nullable
+        private StopwatchViewHolder getHolder() {
+            StopwatchViewHolder holder = mHolder.get();
+            return holder != null && holder.getMetric().getRef().getId().equals(mMetricId)
+                    ? holder : null;
         }
 
         public void updateButtonTime() {
@@ -184,7 +216,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         /** @return The time since this class was instantiated and then cancelled */
         public long cancel() {
             mIsRunning = false;
-            StopwatchViewHolder holder = mHolder.get();
+            StopwatchViewHolder holder = getHolder();
             if (holder != null) holder.mTimer = null;
             for (Map.Entry<Metric.Stopwatch, Timer> entry : TIMERS.entrySet()) {
                 if (entry.getValue().equals(this)) TIMERS.remove(entry.getKey());
@@ -213,7 +245,7 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
                     return;
                 }
 
-                StopwatchViewHolder holder = mHolder.get();
+                StopwatchViewHolder holder = getHolder();
                 if (holder != null) {
                     new Handler(holder.itemView.getContext()
                                         .getMainLooper()).post(this::updateButtonTime);
@@ -237,30 +269,16 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         }
 
         private void setText(@StringRes int id, Object... formatArgs) {
-            StopwatchViewHolder holder = mHolder.get();
+            StopwatchViewHolder holder = getHolder();
             if (holder != null) holder.setText(id, formatArgs);
         }
 
         private void updateStyle() {
-            StopwatchViewHolder holder = mHolder.get();
+            StopwatchViewHolder holder = getHolder();
             if (holder == null) return;
 
             TransitionManager.beginDelayedTransition((ViewGroup) holder.itemView, sTransition);
-
-            // There's a bug pre-L where changing the view state doesn't update the vector drawable.
-            // Because of that, calling View#setActivated(isRunning) doesn't update the background
-            // color and we end up with unreadable text.
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-
-            Button stopwatch = holder.mToggleStopwatch;
-            stopwatch.setTextColor(mIsRunning ? ContextCompat.getColor(
-                    stopwatch.getContext(), R.color.colorAccent) : Color.WHITE);
-            stopwatch.setActivated(mIsRunning);
-            stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    mIsRunning ? R.drawable.ic_timer_off_accent_24dp : R.drawable.ic_timer_white_24dp,
-                    0,
-                    0,
-                    0);
+            holder.updateStyle(mIsRunning);
         }
     }
 
@@ -317,6 +335,10 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         protected TextView mTitle;
         protected TextView mValue;
 
+        /**
+         * The outclass's instance. Used indirectly since this ViewHolder may be recycled across
+         * different instances.
+         */
         private StopwatchViewHolder mHolder;
 
         public DataHolder(View itemView) {
