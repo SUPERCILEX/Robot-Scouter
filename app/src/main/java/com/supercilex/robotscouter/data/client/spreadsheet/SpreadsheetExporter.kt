@@ -266,8 +266,8 @@ class SpreadsheetExporter(
                 }
                 MetricType.LIST -> {
                     val listMetric = metric as Metric.List
-                    val selectedItem = listMetric.value[listMetric.selectedValueId]
-                    valueCell.setCellValue(selectedItem)
+                    val selectedItem = listMetric.value.first { it.id == listMetric.selectedValueId }
+                    valueCell.setCellValue(selectedItem.name)
                 }
                 MetricType.TEXT -> {
                     valueCell.setCellValue(
