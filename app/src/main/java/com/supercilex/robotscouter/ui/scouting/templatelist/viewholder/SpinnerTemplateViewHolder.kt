@@ -168,10 +168,10 @@ class SpinnerTemplateViewHolder(
         }
 
         override fun onFocusChange(v: View, hasFocus: Boolean) {
-            if (hasFocus || v.id != nameEditor.id) return
-
             val metric = parent.metric
-            metric.value = getUpdatedItems(metric.value)
+            if (!hasFocus && v.id == nameEditor.id && metric.value.isNotEmpty()) {
+                metric.value = getUpdatedItems(metric.value)
+            }
         }
 
         private fun getUpdatedItems(
