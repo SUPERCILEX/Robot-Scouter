@@ -63,11 +63,21 @@ class SpinnerTemplateViewHolder(
 
     override fun onClick(v: View) {
         val position = metric.value.size
-        metric.value = metric.value.toMutableList().apply {
+        metric.value = gatherLatestItems().toMutableList().apply {
             add(Metric.List.Item(metric.ref.parent.document().id, ""))
         }
         itemTouchCallback.pendingScrollPosition = position
         items.adapter.notifyItemInserted(position)
+    }
+
+    private fun gatherLatestItems(): List<Metric.List.Item> {
+        var items: List<Metric.List.Item> = metric.value
+        val rv = this.items
+        for (i in 0..rv.childCount) {
+            items = (rv.getChildViewHolder(rv.getChildAt(i) ?: continue) as ItemHolder)
+                    .getUpdatedItems(items)
+        }
+        return items
     }
 
     private inner class Adapter : RecyclerView.Adapter<ItemHolder>() {
@@ -118,13 +128,7 @@ class SpinnerTemplateViewHolder(
         }
 
         override fun onClick(v: View) {
-            var items: List<Metric.List.Item> = parent.metric.value
-            val rv = parent.items
-            for (i in 0..rv.childCount) {
-                items = (rv.getChildViewHolder(rv.getChildAt(i) ?: continue) as ItemHolder)
-                        .getUpdatedItems(items)
-            }
-
+            val items = parent.gatherLatestItems()
             when (v.id) {
                 R.id._default -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)
@@ -174,7 +178,7 @@ class SpinnerTemplateViewHolder(
             }
         }
 
-        private fun getUpdatedItems(
+        fun getUpdatedItems(
                 value: List<Metric.List.Item>
         ): List<Metric.List.Item> = value.toMutableList().apply {
             this[adapterPosition] = item.copy(name = nameEditor.text.toString()).also {
