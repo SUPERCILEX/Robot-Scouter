@@ -150,7 +150,15 @@ sealed class Metric<T>(
 
         override fun toString(): String = "${super.toString()}, selectedValueId=$selectedValueId"
 
-        data class Item(val id: String, val name: String)
+        data class Item(
+                @Exclude
+                @get:Keep
+                val id: String,
+
+                @Exclude
+                @get:Keep
+                val name: String
+        )
     }
 
     @get:PropertyName(FIRESTORE_TYPE)
