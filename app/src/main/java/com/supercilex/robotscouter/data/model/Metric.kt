@@ -4,6 +4,7 @@ import android.support.annotation.Keep
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.util.FIRESTORE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
@@ -89,16 +90,51 @@ sealed class Metric<T>(
             selectedValueId: String? = null,
             position: Int
     ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position) {
+        @get:Exclude
+        @set:Exclude
+        override var value: kotlin.collections.List<Item>
+            get() = super.value
+            set(value) = updateValue(value)
+
         @Exclude
+        @get:Exclude
+        private var internalSelectedValueId = selectedValueId
+
         @get:Keep
-        var selectedValueId = selectedValueId
-            set(value) {
-                if (field != value) {
-                    field = value
-                    logUpdate()
-                    ref.update(FIRESTORE_SELECTED_VALUE_ID, field)
-                }
+        var selectedValueId
+            get() = internalSelectedValueId
+            set(value) = updateSelectedValueId(value)
+
+        @Exclude
+        fun updateValue(items: kotlin.collections.List<Item>, batch: WriteBatch? = null) {
+            if (internalValue == items) return
+            internalValue = items
+
+            // We'd like to just override the value setter, but Kotlin doesn't let us do that
+            // which breaks db serialization and causes other problems.
+            val dbWritableItems = items.map {
+                mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
             }
+
+            if (batch == null) {
+                ref.update(FIRESTORE_VALUE, dbWritableItems)
+            } else {
+                batch.update(ref, FIRESTORE_VALUE, dbWritableItems)
+            }
+        }
+
+        @Exclude
+        fun updateSelectedValueId(id: String?, batch: WriteBatch? = null) {
+            if (internalSelectedValueId == id) return
+            internalSelectedValueId = id
+
+            logUpdate()
+            if (batch == null) {
+                ref.update(FIRESTORE_SELECTED_VALUE_ID, id)
+            } else {
+                batch.update(ref, FIRESTORE_SELECTED_VALUE_ID, id)
+            }
+        }
 
         override fun equals(other: Any?): kotlin.Boolean {
             if (this === other) return true
@@ -139,21 +175,17 @@ sealed class Metric<T>(
         }
 
     @Exclude
+    @get:Exclude
+    protected var internalValue = value
+
     @get:Keep
-    var value = value
+    open var value
+        get() = internalValue
         set(value) {
-            if (field != value) {
-                field = value
+            if (internalValue != value) {
+                internalValue = value
                 logUpdate()
-                if (this is List) {
-                    // We'd like to just override the setter, but Kotlin doesn't let us do that
-                    // which breaks db serialization and causes other problems.
-                    ref.update(FIRESTORE_VALUE, this.value.map {
-                        mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
-                    })
-                } else {
-                    ref.update(FIRESTORE_VALUE, field)
-                }
+                ref.update(FIRESTORE_VALUE, internalValue)
             }
         }
 
@@ -164,7 +196,7 @@ sealed class Metric<T>(
         other as Metric<*>
 
         return type == other.type && position == other.position && ref.path == other.ref.path
-                && name == other.name && value == other.value
+                && name == other.name && internalValue == other.internalValue
     }
 
     override fun hashCode(): Int {
@@ -172,12 +204,12 @@ sealed class Metric<T>(
         result = 31 * result + position
         result = 31 * result + ref.path.hashCode()
         result = 31 * result + name.hashCode()
-        result = 31 * result + (value?.hashCode() ?: 0)
+        result = 31 * result + (internalValue?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String =
-            "${javaClass.simpleName}: ref=${ref.path}, position=$position, name=\"$name\", value=$value"
+    override fun toString(): String = "${javaClass.simpleName}: " +
+            "ref=${ref.path}, position=$position, name=\"$name\", value=$internalValue"
 
     companion object {
         @Suppress("UNCHECKED_CAST") // We know what our data types are

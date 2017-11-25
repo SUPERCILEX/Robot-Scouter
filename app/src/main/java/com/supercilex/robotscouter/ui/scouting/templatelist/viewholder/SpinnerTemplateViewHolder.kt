@@ -14,8 +14,8 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
-import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateAdapter
 import com.supercilex.robotscouter.util.LateinitVal
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.ui.showKeyboard
@@ -117,36 +117,35 @@ class SpinnerTemplateViewHolder(
         }
 
         override fun onClick(v: View) {
-            var view: View? = itemView
-            do {
-                if (view is RecyclerView && view.adapter is TemplateAdapter) {
-                    view.clearFocus() // Save data
-                    break
-                }
-
-                if (view != null) {
-                    view = view.parent as? View?
-                }
-            } while (view != null)
+            var items: List<Metric.List.Item> = parent.metric.value
+            val rv = parent.items
+            for (i in 0..rv.childCount) {
+                items = (rv.getChildViewHolder(rv.getChildAt(i) ?: continue) as ItemHolder)
+                        .getUpdatedItems(items)
+            }
 
             when (v.id) {
-                R.id.default_ -> updateDefaultStatus()
-                R.id.delete -> delete()
+                R.id.default_ -> updateDefaultStatus(items)
+                R.id.delete -> delete(items)
                 else -> throw IllegalStateException("Unknown id: ${v.id}")
             }
         }
 
-        private fun updateDefaultStatus() {
+        private fun updateDefaultStatus(items: List<Metric.List.Item>) {
             if (isDefault) {
                 snackbar(itemView, R.string.metric_spinner_item_default_required_error)
                 return
             }
 
-            val oldId = parent.metric.selectedValueId
-            parent.metric.selectedValueId = item.id
+            val metric = parent.metric
+            val oldDefaultId = metric.selectedValueId
+            firestoreBatch {
+                metric.updateSelectedValueId(item.id, this)
+                metric.updateValue(items, this)
+            }
             parent.items.notifyItemsNoChangeAnimation {
                 parent.items.setHasFixedSize(true)
-                notifyItemChanged(parent.metric.value.indexOfFirst { it.id == oldId }.let {
+                notifyItemChanged(items.indexOfFirst { it.id == oldDefaultId }.let {
                     if (it == -1) 0 else it
                 })
                 notifyItemChanged(adapterPosition)
@@ -154,16 +153,15 @@ class SpinnerTemplateViewHolder(
             }
         }
 
-        private fun delete() {
-            val oldItems = parent.metric.value
+        private fun delete(items: List<Metric.List.Item>) {
             val position = adapterPosition
-            parent.metric.value = oldItems.toMutableList().apply {
+            parent.metric.value = items.toMutableList().apply {
                 removeAt(position)
             }
             parent.items.adapter.notifyItemRemoved(position)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
-                parent.metric.value = oldItems
+                parent.metric.value = items
                 parent.items.adapter.notifyItemInserted(position)
             }
         }
@@ -172,12 +170,14 @@ class SpinnerTemplateViewHolder(
             if (hasFocus || v.id != nameEditor.id) return
 
             val metric = parent.metric
-            metric.value = metric.value.toMutableList().apply {
-                this[metric.value.indexOfFirst { it.id == item.id }] = item.copy(
-                        name = nameEditor.text.toString()
-                ).also {
-                    item = it
-                }
+            metric.value = getUpdatedItems(metric.value)
+        }
+
+        private fun getUpdatedItems(
+                value: List<Metric.List.Item>
+        ): List<Metric.List.Item> = value.toMutableList().apply {
+            this[adapterPosition] = item.copy(name = nameEditor.text.toString()).also {
+                item = it
             }
         }
     }
