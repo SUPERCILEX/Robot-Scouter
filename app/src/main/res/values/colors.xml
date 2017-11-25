@@ -13,6 +13,7 @@
     <color name="pale_white">#DCF1F1F1</color>
 
     <color name="material_grey_700">#616161</color>
+    <color name="material_red_500">#F44336</color>
 
     <!-- Uses -->
     <color name="list_item_normal">@android:color/white</color>
@@ -23,6 +24,7 @@
     <color name="selected_icon">@color/selected_toolbar</color>
 
     <color name="fam_background">@color/pale_white</color>
+    <color name="delete_background">@color/material_red_500</color>
 
     <color name="shortcut_background">@color/material_grey_100</color>
 </resources>
