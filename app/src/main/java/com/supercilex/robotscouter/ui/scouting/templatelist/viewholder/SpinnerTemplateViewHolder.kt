@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.ui.showKeyboard
+import com.supercilex.robotscouter.util.ui.swap
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
@@ -90,7 +91,7 @@ class SpinnerTemplateViewHolder(
             View.OnClickListener {
         override val reorder: View by bindView(R.id.reorder)
         override val nameEditor: EditText by bindView(R.id.name)
-        private val default: ImageButton by bindView(R.id.default_)
+        private val default: ImageButton by bindView(R.id._default)
         private val delete: ImageButton by bindView(R.id.delete)
 
         private lateinit var parent: SpinnerTemplateViewHolder
@@ -125,7 +126,7 @@ class SpinnerTemplateViewHolder(
             }
 
             when (v.id) {
-                R.id.default_ -> updateDefaultStatus(items)
+                R.id._default -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)
                 else -> throw IllegalStateException("Unknown id: ${v.id}")
             }
@@ -216,25 +217,11 @@ class SpinnerTemplateViewHolder(
                 items.setHasFixedSize(true)
             }
 
-            val fromPos = viewHolder.adapterPosition
-            val toPos = target.adapterPosition
-
-            if (fromPos < toPos) {
-                for (i in fromPos until toPos) swapDown(i)
-            } else {
-                for (i in fromPos downTo toPos + 1) swapUp(i)
+            items.adapter.swap(viewHolder, target) { i, j ->
+                Collections.swap(localItems, i, j)
             }
-            items.adapter.notifyItemMoved(fromPos, toPos)
 
             return true
-        }
-
-        private fun swapDown(i: Int) = swap(i, i + 1)
-
-        private fun swapUp(i: Int) = swap(i, i - 1)
-
-        private fun swap(i: Int, j: Int) {
-            Collections.swap(localItems, i, j)
         }
 
         override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {

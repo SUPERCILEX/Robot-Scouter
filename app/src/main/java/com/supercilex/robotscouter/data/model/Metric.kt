@@ -110,17 +110,9 @@ sealed class Metric<T>(
             if (internalValue == items) return
             internalValue = items
 
-            // We'd like to just override the value setter, but Kotlin doesn't let us do that
-            // which breaks db serialization and causes other problems.
-            val dbWritableItems = items.map {
+            batch.update(FIRESTORE_VALUE, items.map {
                 mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
-            }
-
-            if (batch == null) {
-                ref.update(FIRESTORE_VALUE, dbWritableItems)
-            } else {
-                batch.update(ref, FIRESTORE_VALUE, dbWritableItems)
-            }
+            })
         }
 
         @Exclude
@@ -129,10 +121,14 @@ sealed class Metric<T>(
             internalSelectedValueId = id
 
             logUpdate()
-            if (batch == null) {
-                ref.update(FIRESTORE_SELECTED_VALUE_ID, id)
+            batch.update(FIRESTORE_SELECTED_VALUE_ID, id as Any)
+        }
+
+        private fun WriteBatch?.update(id: String, o: Any) {
+            if (this == null) {
+                ref.update(id, o)
             } else {
-                batch.update(ref, FIRESTORE_SELECTED_VALUE_ID, id)
+                update(ref, id, o)
             }
         }
 
@@ -245,8 +241,7 @@ sealed class Metric<T>(
                                 mapOf(FIRESTORE_ID to it.key, FIRESTORE_NAME to it.value)
                             }
                         }.map {
-                            List.Item(it[FIRESTORE_ID] as String,
-                                      it[FIRESTORE_NAME].toString())
+                            List.Item(it[FIRESTORE_ID] as String, it[FIRESTORE_NAME] as String)
                         },
                         fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
                         position

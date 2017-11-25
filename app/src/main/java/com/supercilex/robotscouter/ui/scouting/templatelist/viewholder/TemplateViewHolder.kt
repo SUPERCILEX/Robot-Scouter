@@ -18,15 +18,16 @@ interface TemplateViewHolder : View.OnFocusChangeListener {
         nameEditor.requestFocus()
     }
 
-    fun enableDragToReorder(viewHolder: RecyclerView.ViewHolder, helper: ItemTouchHelper) {
-        reorder.setOnTouchListener(View.OnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                viewHolder.itemView.clearFocus() // Saves data
-                helper.startDrag(viewHolder)
-                v.performClick()
-                return@OnTouchListener true
-            }
-            false
-        })
-    }
+    fun enableDragToReorder(
+            viewHolder: RecyclerView.ViewHolder,
+            helper: ItemTouchHelper
+    ) = reorder.setOnTouchListener(View.OnTouchListener { v, event ->
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            viewHolder.itemView.clearFocus() // Saves data
+            helper.startDrag(viewHolder)
+            v.performClick()
+            return@OnTouchListener true
+        }
+        false
+    })
 }

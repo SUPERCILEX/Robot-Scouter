@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.isItemInRange
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import com.supercilex.robotscouter.util.ui.showKeyboard
+import com.supercilex.robotscouter.util.ui.swap
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import java.util.Collections
@@ -193,18 +194,14 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
     ): Boolean {
-        val fromPos = viewHolder.adapterPosition
-        val toPos = target.adapterPosition
-
         if (!isMovingItem) localItems.addAll(adapter.snapshots)
         isMovingItem = true
 
-        if (fromPos < toPos) {
-            for (i in fromPos until toPos) swapDown(i)
-        } else {
-            for (i in fromPos downTo toPos + 1) swapUp(i)
+        adapter.swap(viewHolder, target) { i, j ->
+            localItems[i].position = j
+            localItems[j].position = i
+            Collections.swap(localItems, i, j)
         }
-        adapter.notifyItemMoved(fromPos, toPos)
 
         return true
     }
