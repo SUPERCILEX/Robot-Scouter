@@ -43,7 +43,7 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
-        if (!hasFocus && v.id == R.id.unit) {
+        if (!hasFocus && v === unit) {
             var newUnit: String? = unit.text.toString()
 
             if (TextUtils.isEmpty(newUnit)) newUnit = null

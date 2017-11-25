@@ -71,11 +71,10 @@ class SpinnerTemplateViewHolder(
     }
 
     private fun gatherLatestItems(): List<Metric.List.Item> {
+        val rv = items
         var items: List<Metric.List.Item> = metric.value
-        val rv = this.items
-        for (i in 0..rv.childCount) {
-            items = (rv.getChildViewHolder(rv.getChildAt(i) ?: continue) as ItemHolder)
-                    .getUpdatedItems(items)
+        for (i in 0..items.lastIndex) {
+            items = (rv.getChildViewHolder(rv.getChildAt(i)) as ItemHolder).getUpdatedItems(items)
         }
         return items
     }
@@ -173,7 +172,7 @@ class SpinnerTemplateViewHolder(
 
         override fun onFocusChange(v: View, hasFocus: Boolean) {
             val metric = parent.metric
-            if (!hasFocus && v.id == nameEditor.id && adapterPosition != -1
+            if (!hasFocus && v === nameEditor && adapterPosition != -1
                     && metric.value.find { it.id == item.id } != null) {
                 metric.value = getUpdatedItems(metric.value)
             }

@@ -29,6 +29,6 @@ class EditTextTemplateViewHolder(
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
-        if (!hasFocus && v.id == R.id.text) metric.value = text.text.toString()
+        if (!hasFocus && v === text) metric.value = text.text.toString()
     }
 }

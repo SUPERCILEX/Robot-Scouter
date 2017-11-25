@@ -8,7 +8,7 @@ interface MetricTemplateViewHolder<M : Metric<T>, T> : TemplateViewHolder {
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         // Only save data when user is leaving metric
-        if (!hasFocus && v.id == nameEditor.id) {
+        if (!hasFocus && v === nameEditor) {
             metric.name = nameEditor.text.toString()
         }
     }
