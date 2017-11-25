@@ -238,7 +238,10 @@ sealed class Metric<T>(
                         } catch (e: ClassCastException) {
                             // TODO remove at some point, used to support old model
                             (fields[FIRESTORE_VALUE] as kotlin.collections.Map<String, String>).map {
-                                mapOf(FIRESTORE_ID to it.key, FIRESTORE_NAME to it.value)
+                                mapOf(
+                                        FIRESTORE_ID to it.key,
+                                        FIRESTORE_NAME to (it.value as String?).toString()
+                                )
                             }
                         }.map {
                             List.Item(it[FIRESTORE_ID] as String, it[FIRESTORE_NAME] as String)
