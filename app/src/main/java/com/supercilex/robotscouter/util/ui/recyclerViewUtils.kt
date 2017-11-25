@@ -37,11 +37,11 @@ fun RecyclerView.notifyItemsChangedNoAnimation(position: Int, itemCount: Int) {
     )
 }
 
-fun RecyclerView.notifyItemsChangedNoChangeAnimation(position: Int, itemCount: Int) {
+inline fun RecyclerView.notifyItemsNoChangeAnimation(update: RecyclerView.Adapter<*>.() -> Unit) {
     val animator = itemAnimator as SimpleItemAnimator?
 
     animator?.supportsChangeAnimations = false
-    adapter.notifyItemRangeChanged(position, itemCount)
+    adapter.update()
 
     ViewCompat.postOnAnimationDelayed(
             this,
@@ -53,6 +53,23 @@ fun RecyclerView.notifyItemsChangedNoChangeAnimation(position: Int, itemCount: I
 fun RecyclerView.ItemAnimator?.maxAnimationDuration() = this?.let {
     max(max(addDuration, removeDuration), changeDuration)
 } ?: defaultMaxAnimationDuration
+
+inline fun RecyclerView.Adapter<*>.swap(
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder,
+        swap: (Int, Int) -> Unit
+) {
+    val fromPos = viewHolder.adapterPosition
+    val toPos = target.adapterPosition
+
+    if (fromPos < toPos) {
+        for (i in fromPos until toPos) swap(i, i + 1) // Swap down
+    } else {
+        for (i in fromPos downTo toPos + 1) swap(i, i - 1) // Swap up
+    }
+
+    notifyItemMoved(fromPos, toPos)
+}
 
 /**
  * A [FirestoreRecyclerAdapter] whose state can be saved regardless of database connection

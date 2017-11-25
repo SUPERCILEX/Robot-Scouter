@@ -10,13 +10,12 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.view.MotionEvent
 import android.view.View
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.model.OrderedModel
+import com.supercilex.robotscouter.data.model.OrderedRemoteModel
 import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateViewHolder
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
@@ -25,16 +24,17 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.isItemInRange
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import com.supercilex.robotscouter.util.ui.showKeyboard
+import com.supercilex.robotscouter.util.ui.swap
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import java.util.Collections
 import kotlin.math.roundToInt
 
-class TemplateItemTouchCallback<T : OrderedModel>(
+class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         private val rootView: View
 ) : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-        ItemTouchHelper.LEFT
+        ItemTouchHelper.START
 ) {
     private val recyclerView: RecyclerView by rootView.bindView(R.id.list)
     private val appBar: AppBarLayout by (rootView.context as FragmentActivity).bindView(R.id.app_bar)
@@ -70,15 +70,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
     fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
         viewHolder as TemplateViewHolder
 
-        viewHolder.reorder.setOnTouchListener(View.OnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                viewHolder.itemView.clearFocus() // Saves data
-                itemTouchHelper.startDrag(viewHolder)
-                v.performClick()
-                return@OnTouchListener true
-            }
-            false
-        })
+        viewHolder.enableDragToReorder(viewHolder, itemTouchHelper)
 
         if (position == scrollToPosition) {
             // Posting to the main thread b/c the fam covers the screen which makes the LLM think
@@ -215,30 +207,16 @@ class TemplateItemTouchCallback<T : OrderedModel>(
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
     ): Boolean {
-        val fromPos = viewHolder.adapterPosition
-        val toPos = target.adapterPosition
-
         if (!isMovingItem) localItems.addAll(adapter.snapshots)
         isMovingItem = true
 
-        if (fromPos < toPos) {
-            for (i in fromPos until toPos) swapDown(i)
-        } else {
-            for (i in fromPos downTo toPos + 1) swapUp(i)
+        adapter.swap(viewHolder, target) { i, j ->
+            localItems[i].position = j
+            localItems[j].position = i
+            Collections.swap(localItems, i, j)
         }
-        adapter.notifyItemMoved(fromPos, toPos)
 
         return true
-    }
-
-    private fun swapDown(i: Int) = swap(i, i + 1)
-
-    private fun swapUp(i: Int) = swap(i, i - 1)
-
-    private fun swap(i: Int, j: Int) {
-        localItems[i].position = j
-        localItems[j].position = i
-        Collections.swap(localItems, i, j)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -247,7 +225,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
 
         val position = viewHolder.adapterPosition
         val deletedRef = localItems[position].ref
-        val itemsBelow: List<OrderedModel> =
+        val itemsBelow: List<OrderedRemoteModel> =
                 ArrayList(localItems.subList(position + 1, localItems.size))
 
         localItems.removeAt(position)
@@ -315,7 +293,7 @@ class TemplateItemTouchCallback<T : OrderedModel>(
         }
     }
 
-    private fun WriteBatch.updatePositions(items: List<OrderedModel>, offset: Int = 0) {
+    private fun WriteBatch.updatePositions(items: List<OrderedRemoteModel>, offset: Int = 0) {
         for (item in items) {
             item.position += offset
             update(item.ref, FIRESTORE_POSITION, item.position)

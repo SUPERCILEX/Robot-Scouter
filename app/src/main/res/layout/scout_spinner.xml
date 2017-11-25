@@ -10,6 +10,10 @@
         android:textIsSelectable="false"
         tools:text="Example" />
 
-    <include layout="@layout/scout_base_spinner" />
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
 
 </LinearLayout>

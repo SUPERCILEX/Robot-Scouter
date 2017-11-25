@@ -4,6 +4,8 @@ import android.support.annotation.Keep
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import com.google.firebase.firestore.WriteBatch
+import com.supercilex.robotscouter.util.FIRESTORE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_SELECTED_VALUE_ID
@@ -24,7 +26,7 @@ sealed class Metric<T>(
         @Exclude
         @get:Keep
         override var position: Int
-) : OrderedModel {
+) : OrderedRemoteModel {
     class Header(
             name: String = "",
             position: Int
@@ -84,20 +86,51 @@ sealed class Metric<T>(
 
     class List(
             name: String = "",
-            value: Map<String, String> = mapOf("a" to "Item 1"),
-            selectedValueId: String? = "a",
+            value: kotlin.collections.List<Item> = emptyList(),
+            selectedValueId: String? = null,
             position: Int
-    ) : Metric<Map<String, String>>(MetricType.LIST, name, value, position) {
+    ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position) {
+        @get:Exclude
+        @set:Exclude
+        override var value: kotlin.collections.List<Item>
+            get() = super.value
+            set(value) = updateValue(value)
+
         @Exclude
+        @get:Exclude
+        private var internalSelectedValueId = selectedValueId
+
         @get:Keep
-        var selectedValueId = selectedValueId
-            set(value) {
-                if (field != value) {
-                    field = value
-                    logUpdate()
-                    ref.update(FIRESTORE_SELECTED_VALUE_ID, field)
-                }
+        var selectedValueId
+            get() = internalSelectedValueId
+            set(value) = updateSelectedValueId(value)
+
+        @Exclude
+        fun updateValue(items: kotlin.collections.List<Item>, batch: WriteBatch? = null) {
+            if (internalValue == items) return
+            internalValue = items
+
+            batch.update(FIRESTORE_VALUE, items.map {
+                mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
+            })
+        }
+
+        @Exclude
+        fun updateSelectedValueId(id: String?, batch: WriteBatch? = null) {
+            if (internalSelectedValueId == id) return
+            internalSelectedValueId = id
+
+            logUpdate()
+            batch.update(FIRESTORE_SELECTED_VALUE_ID, id as Any)
+        }
+
+        private fun WriteBatch?.update(id: String, o: Any) {
+            if (this == null) {
+                ref.update(id, o)
+            } else {
+                update(ref, id, o)
             }
+        }
 
         override fun equals(other: Any?): kotlin.Boolean {
             if (this === other) return true
@@ -116,6 +149,8 @@ sealed class Metric<T>(
         }
 
         override fun toString(): String = "${super.toString()}, selectedValueId=$selectedValueId"
+
+        data class Item(val id: String, val name: String)
     }
 
     @get:PropertyName(FIRESTORE_TYPE)
@@ -136,13 +171,17 @@ sealed class Metric<T>(
         }
 
     @Exclude
+    @get:Exclude
+    protected var internalValue = value
+
     @get:Keep
-    var value = value
+    open var value
+        get() = internalValue
         set(value) {
-            if (field != value) {
-                field = value
+            if (internalValue != value) {
+                internalValue = value
                 logUpdate()
-                ref.update(FIRESTORE_VALUE, field)
+                ref.update(FIRESTORE_VALUE, internalValue)
             }
         }
 
@@ -153,7 +192,7 @@ sealed class Metric<T>(
         other as Metric<*>
 
         return type == other.type && position == other.position && ref.path == other.ref.path
-                && name == other.name && value == other.value
+                && name == other.name && internalValue == other.internalValue
     }
 
     override fun hashCode(): Int {
@@ -161,12 +200,12 @@ sealed class Metric<T>(
         result = 31 * result + position
         result = 31 * result + ref.path.hashCode()
         result = 31 * result + name.hashCode()
-        result = 31 * result + (value?.hashCode() ?: 0)
+        result = 31 * result + (internalValue?.hashCode() ?: 0)
         return result
     }
 
-    override fun toString(): String =
-            "${javaClass.simpleName}: ref=${ref.path}, position=$position, name=\"$name\", value=$value"
+    override fun toString(): String = "${javaClass.simpleName}: " +
+            "ref=${ref.path}, position=$position, name=\"$name\", value=$internalValue"
 
     companion object {
         @Suppress("UNCHECKED_CAST") // We know what our data types are
@@ -194,7 +233,19 @@ sealed class Metric<T>(
                 MetricType.TEXT -> Metric.Text(name, fields[FIRESTORE_VALUE] as String?, position)
                 MetricType.LIST -> Metric.List(
                         name,
-                        fields[FIRESTORE_VALUE] as Map<String, String>,
+                        try {
+                            fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, String>>
+                        } catch (e: ClassCastException) {
+                            // TODO remove at some point, used to support old model
+                            (fields[FIRESTORE_VALUE] as kotlin.collections.Map<String, String>).map {
+                                mapOf(
+                                        FIRESTORE_ID to it.key,
+                                        FIRESTORE_NAME to (it.value as String?).toString()
+                                )
+                            }
+                        }.map {
+                            List.Item(it[FIRESTORE_ID] as String, it[FIRESTORE_NAME] as String)
+                        },
                         fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
                         position
                 )
