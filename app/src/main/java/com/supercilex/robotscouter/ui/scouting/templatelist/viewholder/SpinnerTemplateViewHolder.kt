@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 
-import android.app.Activity
+import android.arch.core.executor.ArchTaskExecutor
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,13 +14,15 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
+import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateAdapter
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
+import com.supercilex.robotscouter.util.ui.showKeyboard
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
-import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.properties.Delegates
 
@@ -59,10 +61,12 @@ class SpinnerTemplateViewHolder(
     }
 
     override fun onClick(v: View) {
+        val position = metric.value.size
         metric.value = metric.value.toMutableList().apply {
-            add(Metric.List.Item(metric.ref.parent.document().id, "", size))
+            add(Metric.List.Item(metric.ref.parent.document().id, ""))
         }
-        items.adapter.notifyItemInserted(metric.value.size - 1)
+        itemTouchCallback.pendingScrollPosition = position
+        items.adapter.notifyItemInserted(position)
     }
 
     private inner class Adapter : RecyclerView.Adapter<ItemHolder>() {
@@ -87,6 +91,7 @@ class SpinnerTemplateViewHolder(
         override val reorder: View by bindView(R.id.reorder)
         override val nameEditor: EditText by bindView(R.id.name)
         private val default: ImageButton by bindView(R.id.default_)
+        private val delete: ImageButton by bindView(R.id.delete)
 
         private lateinit var parent: SpinnerTemplateViewHolder
         private lateinit var item: Metric.List.Item
@@ -95,6 +100,7 @@ class SpinnerTemplateViewHolder(
         init {
             init()
             default.setOnClickListener(this)
+            delete.setOnClickListener(this)
         }
 
         fun bind(parent: SpinnerTemplateViewHolder, item: Metric.List.Item, isDefault: Boolean) {
@@ -111,21 +117,54 @@ class SpinnerTemplateViewHolder(
         }
 
         override fun onClick(v: View) {
+            var view: View? = itemView
+            do {
+                if (view is RecyclerView && view.adapter is TemplateAdapter) {
+                    view.clearFocus() // Save data
+                    break
+                }
+
+                if (view != null) {
+                    view = view.parent as? View?
+                }
+            } while (view != null)
+
+            when (v.id) {
+                R.id.default_ -> updateDefaultStatus()
+                R.id.delete -> delete()
+                else -> throw IllegalStateException("Unknown id: ${v.id}")
+            }
+        }
+
+        private fun updateDefaultStatus() {
             if (isDefault) {
-                snackbar(
-                        (itemView.context as Activity).find(R.id.root),
-                        R.string.metric_spinner_item_default_required_error
-                )
+                snackbar(itemView, R.string.metric_spinner_item_default_required_error)
                 return
             }
 
             val oldId = parent.metric.selectedValueId
             parent.metric.selectedValueId = item.id
             parent.items.notifyItemsNoChangeAnimation {
+                parent.items.setHasFixedSize(true)
                 notifyItemChanged(parent.metric.value.indexOfFirst { it.id == oldId }.let {
                     if (it == -1) 0 else it
                 })
                 notifyItemChanged(adapterPosition)
+                parent.items.setHasFixedSize(false)
+            }
+        }
+
+        private fun delete() {
+            val oldItems = parent.metric.value
+            val position = adapterPosition
+            parent.metric.value = oldItems.toMutableList().apply {
+                removeAt(position)
+            }
+            parent.items.adapter.notifyItemRemoved(position)
+
+            longSnackbar(itemView, R.string.deleted, R.string.undo) {
+                parent.metric.value = oldItems
+                parent.items.adapter.notifyItemInserted(position)
             }
         }
 
@@ -134,7 +173,9 @@ class SpinnerTemplateViewHolder(
 
             val metric = parent.metric
             metric.value = metric.value.toMutableList().apply {
-                this[metric.value.indexOf(item)] = item.copy(name = nameEditor.text.toString()).also {
+                this[metric.value.indexOfFirst { it.id == item.id }] = item.copy(
+                        name = nameEditor.text.toString()
+                ).also {
                     item = it
                 }
             }
@@ -146,13 +187,23 @@ class SpinnerTemplateViewHolder(
             0
     ) {
         var itemTouchHelper: ItemTouchHelper by LateinitVal()
+        var pendingScrollPosition: Int = RecyclerView.NO_POSITION
         private var localItems: List<Metric.List.Item>? = null
 
         fun getItem(position: Int): Metric.List.Item =
                 if (localItems == null) metric.value[position] else localItems!![position]
 
         fun onBind(viewHolder: RecyclerView.ViewHolder) {
-            (viewHolder as TemplateViewHolder).enableDragToReorder(viewHolder, itemTouchHelper)
+            viewHolder as TemplateViewHolder
+
+            viewHolder.enableDragToReorder(viewHolder, itemTouchHelper)
+            if (viewHolder.adapterPosition == pendingScrollPosition) {
+                viewHolder.requestFocus()
+                ArchTaskExecutor.getInstance().postToMainThread {
+                    viewHolder.nameEditor.showKeyboard()
+                }
+                pendingScrollPosition = RecyclerView.NO_POSITION
+            }
         }
 
         override fun onMove(

@@ -91,22 +91,6 @@ sealed class Metric<T>(
     ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position) {
         @Exclude
         @get:Keep
-        override var value: kotlin.collections.List<Item> = value
-            set(value) {
-                if (field == value) return
-
-                field = value
-                ref.update(FIRESTORE_VALUE, field.map {
-                    mapOf(
-                            FIRESTORE_ID to it.id,
-                            FIRESTORE_NAME to it.name,
-                            FIRESTORE_POSITION to it.position
-                    )
-                })
-            }
-
-        @Exclude
-        @get:Keep
         var selectedValueId = selectedValueId
             set(value) {
                 if (field != value) {
@@ -134,11 +118,7 @@ sealed class Metric<T>(
 
         override fun toString(): String = "${super.toString()}, selectedValueId=$selectedValueId"
 
-        data class Item(
-                val id: String,
-                val name: String,
-                override var position: Int
-        ) : OrderedModel
+        data class Item(val id: String, val name: String)
     }
 
     @get:PropertyName(FIRESTORE_TYPE)
@@ -160,12 +140,20 @@ sealed class Metric<T>(
 
     @Exclude
     @get:Keep
-    open var value = value
+    var value = value
         set(value) {
             if (field != value) {
                 field = value
                 logUpdate()
-                ref.update(FIRESTORE_VALUE, field)
+                if (this is List) {
+                    // We'd like to just override the setter, but Kotlin doesn't let us do that
+                    // which breaks db serialization and causes other problems.
+                    ref.update(FIRESTORE_VALUE, this.value.map {
+                        mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
+                    })
+                } else {
+                    ref.update(FIRESTORE_VALUE, field)
+                }
             }
         }
 
@@ -218,24 +206,15 @@ sealed class Metric<T>(
                 MetricType.LIST -> Metric.List(
                         name,
                         try {
-                            fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, Any>>
+                            fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, String>>
                         } catch (e: ClassCastException) {
                             // TODO remove at some point, used to support old model
                             (fields[FIRESTORE_VALUE] as kotlin.collections.Map<String, String>).map {
-                                mapOf<String, Any>(FIRESTORE_ID to it.key,
-                                                   FIRESTORE_NAME to it.value)
-                                        .toMutableMap()
-                            }.apply {
-                                for ((index, item) in withIndex()) {
-                                    item.put(FIRESTORE_POSITION, index.toLong())
-                                }
+                                mapOf(FIRESTORE_ID to it.key, FIRESTORE_NAME to it.value)
                             }
                         }.map {
-                            List.Item(
-                                    it[FIRESTORE_ID] as String,
-                                    (it[FIRESTORE_NAME] as String?).toString(),
-                                    (it[FIRESTORE_POSITION] as Long).toInt()
-                            )
+                            List.Item(it[FIRESTORE_ID] as String,
+                                      it[FIRESTORE_NAME].toString())
                         },
                         fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
                         position

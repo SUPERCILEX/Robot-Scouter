@@ -13,7 +13,7 @@
     <ImageButton
         android:id="@+id/default_"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="@dimen/spacing_mini"
         android:layout_marginEnd="@dimen/spacing_mini"
         android:layout_gravity="center_vertical"
@@ -31,7 +31,7 @@
     <ImageButton
         android:id="@+id/delete"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="@dimen/spacing_mini"
         android:layout_marginLeft="@dimen/spacing_mini"
         android:layout_gravity="center_vertical"
