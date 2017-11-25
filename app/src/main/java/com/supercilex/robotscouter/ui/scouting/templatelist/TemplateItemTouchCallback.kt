@@ -206,16 +206,6 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         return true
     }
 
-    private fun swapDown(i: Int) = swap(i, i + 1)
-
-    private fun swapUp(i: Int) = swap(i, i - 1)
-
-    private fun swap(i: Int, j: Int) {
-        localItems[i].position = j
-        localItems[j].position = i
-        Collections.swap(localItems, i, j)
-    }
-
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         if (!isDeletingItem) localItems.addAll(adapter.snapshots)
         isDeletingItem = true
