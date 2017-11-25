@@ -22,7 +22,7 @@ fun CollectionReference.delete(
         middleMan: (DocumentSnapshot) -> Promise<*> = { Promise.resolve(Unit) }
 ): Promise<Unit> = deleteQueryBatch(
         firestore,
-        js("orderBy(FieldPath.documentId())").limit(batchSize),
+        orderBy("__name__").limit(batchSize),
         batchSize,
         middleMan
 )

@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.server
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
 import com.supercilex.robotscouter.server.utils.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
+import com.supercilex.robotscouter.server.utils.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_PHONE_NUMBER
 import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.server.utils.delete
@@ -16,6 +17,7 @@ import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
+import kotlin.js.Json
 import kotlin.js.Promise
 
 private const val MAX_INACTIVE_USER_DAYS = 365
@@ -51,9 +53,30 @@ fun deleteUnusedData(): Promise<*> {
 
 private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.process {
     console.log("Deleting all data for user:\n${JSON.stringify(data())}")
+    val userId = id
+
+    fun DocumentSnapshot.deleteIfSingleOwner(delete: (DocumentSnapshot) -> Promise<*>): Promise<*> {
+        @Suppress("UNCHECKED_CAST_TO_NATIVE_INTERFACE") // We know its type
+        val owners = get(FIRESTORE_OWNERS) as Json
+        //language=JavaScript
+        return if (js("Object.keys(owners).length") as Int > 1) {
+            //language=undefined
+            console.log("Removing $userId's ownership of $id")
+            //language=JavaScript
+            js("delete owners[userId]")
+            ref.update(FIRESTORE_OWNERS, owners)
+        } else {
+            delete(this)
+        }
+    }
+
     Promise.all(arrayOf(
-            deleteTeams(getTeamsQuery(id)),
-            deleteTemplates(getTemplatesQuery(id))
+            getTeamsQuery(userId).process {
+                deleteIfSingleOwner { deleteTeam(it) }
+            },
+            getTemplatesQuery(userId).process {
+                deleteIfSingleOwner { deleteTemplate(it) }
+            }
     )).then {
         deleteUser(this)
     }
@@ -64,8 +87,8 @@ fun emptyTrash(): Promise<*> {
     return users.process {
         val userId = id
         Promise.all(arrayOf(
-                deleteTeams(getTrashedTeamsQuery(userId)),
-                deleteTemplates(getTrashedTemplatesQuery(userId))
+                getTrashedTeamsQuery(userId).process { deleteTeam(this) },
+                getTrashedTemplatesQuery(userId).process { deleteTemplate(this) }
         ))
     }
 }
@@ -77,8 +100,6 @@ private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
     }.then { Unit }
 }
 
-private fun deleteTeams(query: Query): Promise<Unit> = query.process { deleteTeam(this) }
-
 private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting team: ${team.toTeamString()}")
     return team.ref.collection(FIRESTORE_SCOUTS).delete {
@@ -87,8 +108,6 @@ private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
         team.ref.delete()
     }.then { Unit }
 }
-
-private fun deleteTemplates(query: Query): Promise<Unit> = query.process { deleteTemplate(this) }
 
 private fun deleteTemplate(template: DocumentSnapshot): Promise<Unit> {
     console.log("Deleting template: ${template.toTemplateString()}")
