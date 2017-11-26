@@ -60,7 +60,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         ViewModelProviders.of(this).get(TeamHolder::class.java)
     }
     private lateinit var team: Team
-    private var pagerAdapter: ScoutPagerAdapter? = null
+    // It's not a lateinit because it could be used before initialization
+    var pagerAdapter: ScoutPagerAdapter? = null
 
     protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null

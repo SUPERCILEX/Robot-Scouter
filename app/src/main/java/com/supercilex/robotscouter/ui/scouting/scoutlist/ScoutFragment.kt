@@ -14,9 +14,11 @@ import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.trashScout
+import com.supercilex.robotscouter.util.data.model.untrashScout
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
 class ScoutFragment : MetricListFragment() {
@@ -46,6 +48,10 @@ class ScoutFragment : MetricListFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
         team.trashScout(scoutId)
+        longSnackbar(toolbar, R.string.scout_delete_message, R.string.undo) {
+            team.untrashScout(scoutId)
+            (parentFragment as ScoutListFragmentBase).pagerAdapter!!.currentTabId = scoutId
+        }
         true
     } else {
         super.onOptionsItemSelected(item)

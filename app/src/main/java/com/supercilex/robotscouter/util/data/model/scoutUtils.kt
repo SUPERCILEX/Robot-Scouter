@@ -90,11 +90,15 @@ fun Team.addScout(
     return scoutRef.id
 }
 
-fun Team.trashScout(id: String) {
+fun Team.trashScout(id: String) = updateScoutDate(id) { -abs(it) }
+
+fun Team.untrashScout(id: String) = updateScoutDate(id) { abs(it) }
+
+private inline fun Team.updateScoutDate(id: String, crossinline update: (Long) -> Long) {
     getScoutsRef().document(id).get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         val snapshot = it.result
-        val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
+        val oppositeDate = Date(update(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
         snapshot.reference.update(FIRESTORE_TIMESTAMP, oppositeDate)
     }).logFailures()
 }

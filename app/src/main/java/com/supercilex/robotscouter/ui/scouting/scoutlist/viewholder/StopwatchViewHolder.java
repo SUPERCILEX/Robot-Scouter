@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.transition.AutoTransition;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
@@ -367,9 +368,10 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
         public boolean onMenuItemClick(MenuItem item) {
             Metric<List<Long>> metric = mHolder.getMetric();
             boolean hadAverage = hasAverage();
+            int position = getRealPosition();
 
-            ArrayList<Long> newCycles = new ArrayList<>(metric.getValue());
-            newCycles.remove(getRealPosition());
+            List<Long> newCycles = new ArrayList<>(metric.getValue());
+            long deletedCycle = newCycles.remove(position);
             metric.setValue(newCycles);
 
             RecyclerView.Adapter adapter = mHolder.mCycles.getAdapter();
@@ -385,6 +387,27 @@ public class StopwatchViewHolder extends MetricViewHolderBase<Metric<List<Long>>
             } else if (size >= LIST_SIZE_WITH_AVERAGE) {
                 adapter.notifyItemChanged(0); // Ensure the average card is updated
             }
+
+            Snackbar.make(itemView, R.string.deleted, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo, v -> {
+                        Metric<List<Long>> latestMetric = mHolder.getMetric();
+                        boolean latestHadAverage = hasAverage();
+
+                        List<Long> undoneCycles = new ArrayList<>(latestMetric.getValue());
+                        undoneCycles.add(position, deletedCycle);
+                        latestMetric.setValue(undoneCycles);
+
+                        int latestSize = latestMetric.getValue().size();
+
+                        mHolder.mCycles.setHasFixedSize(latestSize > 1);
+                        adapter.notifyItemInserted(latestHadAverage ? position + 1 : position);
+                        if (!latestHadAverage && latestSize > 1) {
+                            adapter.notifyItemInserted(0);
+                        } else if (latestSize >= LIST_SIZE_WITH_AVERAGE) {
+                            adapter.notifyItemChanged(0);
+                        }
+                    })
+                    .show();
 
             return true;
         }

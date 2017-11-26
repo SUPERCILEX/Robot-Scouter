@@ -151,6 +151,7 @@
     <string name="scout_edit_name_title">Edit scout name</string>
     <string name="scout_name_title">Scout name</string>
     <string name="scout_delete_title">Delete scout</string>
+    <string name="scout_delete_message">Scout deleted</string>
     <string name="scout_edit_counter_value_title">Edit value</string>
     <string name="scout_counter_value_title">Value</string>
 
@@ -159,6 +160,7 @@
     <string name="template_new_title">New template</string>
     <string name="template_add_scout_selector_title">Add scout from template</string>
     <string name="template_set_default_title">Set as default template</string>
+    <string name="template_set_default_message">Default template updated</string>
     <string name="template_tab_default_title">Template %d</string>
     <string name="template_edit_name_title">Edit template name</string>
     <string name="template_added_title">Template added</string>

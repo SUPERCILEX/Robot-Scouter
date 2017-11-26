@@ -104,7 +104,14 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         when (id) {
-            R.id.action_set_default_template -> defaultTemplateId = metricsRef.parent.id
+            R.id.action_set_default_template -> {
+                val oldDefaultId = defaultTemplateId
+                defaultTemplateId = metricsRef.parent.id
+
+                longSnackbar(fam, R.string.template_set_default_message, R.string.undo) {
+                    defaultTemplateId = oldDefaultId
+                }
+            }
             R.id.action_delete_template -> {
                 recyclerView.clearFocus()
                 DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)
