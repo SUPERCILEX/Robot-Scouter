@@ -165,7 +165,9 @@ class SpinnerTemplateViewHolder(
             parent.items.adapter.notifyItemRemoved(position)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
-                parent.metric.value = items
+                parent.metric.value = parent.metric.value.toMutableList().apply {
+                    add(position, items[position])
+                }
                 parent.items.adapter.notifyItemInserted(position)
             }
         }
