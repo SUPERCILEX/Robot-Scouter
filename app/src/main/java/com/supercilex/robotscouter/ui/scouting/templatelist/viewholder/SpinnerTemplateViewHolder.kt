@@ -36,6 +36,7 @@ class SpinnerTemplateViewHolder(
 
     private val newItem: ImageButton by bindView(R.id.new_item)
     private val items: RecyclerView by bindView(R.id.list)
+    private val adapter = Adapter()
     private val itemTouchCallback = ItemTouchCallback()
 
     init {
@@ -44,7 +45,7 @@ class SpinnerTemplateViewHolder(
         newItem.setOnClickListener(this)
 
         items.layoutManager = LinearLayoutManager(itemView.context)
-        items.adapter = Adapter()
+        items.adapter = adapter
         for (fragment in (itemView.context as FragmentActivity).supportFragmentManager.fragments) {
             if (fragment is RecyclerPoolHolder) {
                 items.recycledViewPool = (fragment as RecyclerPoolHolder).recyclerPool
@@ -58,7 +59,8 @@ class SpinnerTemplateViewHolder(
 
     override fun bind() {
         super.bind()
-        items.adapter.notifyDataSetChanged()
+        adapter.items = metric.value
+        adapter.notifyDataSetChanged()
     }
 
     override fun onClick(v: View) {
@@ -66,8 +68,9 @@ class SpinnerTemplateViewHolder(
         metric.value = gatherLatestItems().toMutableList().apply {
             add(Metric.List.Item(metric.ref.parent.document().id, ""))
         }
+        adapter.items = metric.value
         itemTouchCallback.pendingScrollPosition = position
-        items.adapter.notifyItemInserted(position)
+        adapter.notifyItemInserted(position)
     }
 
     private fun gatherLatestItems(): List<Metric.List.Item> {
@@ -80,7 +83,9 @@ class SpinnerTemplateViewHolder(
     }
 
     private inner class Adapter : RecyclerView.Adapter<ItemHolder>() {
-        override fun getItemCount() = metric.value.size
+        lateinit var items: List<Metric.List.Item>
+
+        override fun getItemCount() = items.size
 
         override fun getItemViewType(position: Int) = ITEM_TYPE
 
@@ -90,7 +95,7 @@ class SpinnerTemplateViewHolder(
         )
 
         override fun onBindViewHolder(holder: ItemHolder, position: Int) {
-            val item = itemTouchCallback.getItem(position)
+            val item = items[position]
             holder.bind(this@SpinnerTemplateViewHolder, item, metric.selectedValueId == item.id)
             itemTouchCallback.onBind(holder)
         }
@@ -162,11 +167,13 @@ class SpinnerTemplateViewHolder(
             parent.metric.value = items.toMutableList().apply {
                 removeAt(position)
             }
-            parent.items.adapter.notifyItemRemoved(position)
+            parent.adapter.items = parent.metric.value
+            parent.adapter.notifyItemRemoved(position)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
                 parent.metric.value = items
-                parent.items.adapter.notifyItemInserted(position)
+                parent.adapter.items = parent.metric.value
+                parent.adapter.notifyItemInserted(position)
             }
         }
 
@@ -193,10 +200,7 @@ class SpinnerTemplateViewHolder(
     ) {
         var itemTouchHelper: ItemTouchHelper by LateinitVal()
         var pendingScrollPosition: Int = RecyclerView.NO_POSITION
-        private var localItems: List<Metric.List.Item>? = null
-
-        fun getItem(position: Int): Metric.List.Item =
-                if (localItems == null) metric.value[position] else localItems!![position]
+        private var localItems: MutableList<Metric.List.Item>? = null
 
         fun onBind(viewHolder: RecyclerView.ViewHolder) {
             viewHolder as TemplateViewHolder
@@ -218,10 +222,11 @@ class SpinnerTemplateViewHolder(
         ): Boolean {
             if (localItems == null) {
                 localItems = metric.value.toMutableList()
+                adapter.items = localItems!!
                 items.setHasFixedSize(true)
             }
 
-            items.adapter.swap(viewHolder, target) { i, j ->
+            adapter.swap(viewHolder, target) { i, j ->
                 Collections.swap(localItems, i, j)
             }
 
@@ -233,6 +238,7 @@ class SpinnerTemplateViewHolder(
             items.setHasFixedSize(false)
             localItems?.let {
                 metric.value = it
+                adapter.items = metric.value
                 localItems = null
             }
         }
