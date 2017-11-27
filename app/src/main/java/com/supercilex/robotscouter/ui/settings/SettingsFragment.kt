@@ -35,6 +35,7 @@ import com.supercilex.robotscouter.util.debugInfo
 import com.supercilex.robotscouter.util.fullVersionName
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.launchUrl
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
@@ -122,7 +123,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     .signOut(activity)
                     .addOnSuccessListener {
                         FirebaseAuth.getInstance().signInAnonymously()
-                        FirebaseAppIndex.getInstance().removeAll()
+                        FirebaseAppIndex.getInstance().removeAll().logFailures()
                         activity.finish()
                     }
             KEY_RELEASE_NOTES -> launchUrl(

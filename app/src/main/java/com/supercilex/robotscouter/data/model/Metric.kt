@@ -13,6 +13,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_UNIT
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.LateinitVal
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdate
 
 sealed class Metric<T>(
@@ -49,7 +50,7 @@ sealed class Metric<T>(
             set(value) {
                 if (field != value) {
                     field = value
-                    ref.update(FIRESTORE_UNIT, field)
+                    ref.update(FIRESTORE_UNIT, field).logFailures()
                 }
             }
 
@@ -126,7 +127,7 @@ sealed class Metric<T>(
 
         private fun WriteBatch?.update(id: String, o: Any) {
             if (this == null) {
-                ref.update(id, o)
+                ref.update(id, o).logFailures()
             } else {
                 update(ref, id, o)
             }
@@ -174,7 +175,7 @@ sealed class Metric<T>(
         set(value) {
             if (field != value) {
                 field = value
-                ref.update(FIRESTORE_NAME, field)
+                ref.update(FIRESTORE_NAME, field).logFailures()
             }
         }
 
@@ -189,7 +190,7 @@ sealed class Metric<T>(
             if (internalValue != value) {
                 internalValue = value
                 logUpdate()
-                ref.update(FIRESTORE_VALUE, internalValue)
+                ref.update(FIRESTORE_VALUE, internalValue).logFailures()
             }
         }
 

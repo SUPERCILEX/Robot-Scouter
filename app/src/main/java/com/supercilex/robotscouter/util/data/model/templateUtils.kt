@@ -41,7 +41,7 @@ fun addTemplate(type: TemplateType): String {
         val scout = Scout(id, id)
         set(it, scout)
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
-    }
+    }.logFailures()
 
     defaultTemplates.document(type.id.toString()).get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {

@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.ui.showKeyboard
@@ -146,7 +147,7 @@ class SpinnerTemplateViewHolder(
             firestoreBatch {
                 metric.updateSelectedValueId(item.id, this)
                 metric.updateValue(items, this)
-            }
+            }.logFailures()
             parent.items.notifyItemsNoChangeAnimation {
                 parent.items.setHasFixedSize(true)
                 notifyItemChanged(items.indexOfFirst { it.id == oldDefaultId }.let {

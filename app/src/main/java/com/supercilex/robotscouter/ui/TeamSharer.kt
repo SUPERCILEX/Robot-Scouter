@@ -45,7 +45,7 @@ class TeamSharer private constructor(
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
             val token = generateToken
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-            for (team in cache.teams) team.ref.update(tokenPath, Date())
+            for (team in cache.teams) team.ref.update(tokenPath, Date()).logFailures()
 
             getInvitationIntent(
                     cache.teams.getTeamsLink(token),

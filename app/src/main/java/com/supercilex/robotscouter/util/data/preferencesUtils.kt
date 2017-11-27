@@ -35,9 +35,9 @@ private val migrationPrefs: SharedPreferences by lazy {
 val prefs = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
         if (getString(key, null) != value) {
-            userPrefs.document(key).apply {
+            userPrefs.document(key).run {
                 if (value == null) delete() else set(mapOf(FIRESTORE_VALUE to value))
-            }
+            }.logFailures()
         }
     }
 
@@ -46,9 +46,9 @@ val prefs = object : PreferenceDataStore() {
 
     override fun putBoolean(key: String, value: Boolean) {
         if (getBoolean(key, false) != value) {
-            userPrefs.document(key).apply {
+            userPrefs.document(key).run {
                 if (value) set(mapOf(FIRESTORE_VALUE to true)) else delete()
-            }
+            }.logFailures()
         }
     }
 

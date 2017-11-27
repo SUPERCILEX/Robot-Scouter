@@ -312,14 +312,15 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             firestoreBatch {
                 for (scout in scouts) {
                     val scoutId = scout.id
-                    existingTeam.getScoutsRef().document(scoutId).set(scout)
+                    set(existingTeam.getScoutsRef().document(scoutId), scout)
                     for (metric in scout.metrics) {
-                        existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).set(metric)
+                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id),
+                            metric)
                     }
                 }
             }.addOnSuccessListener {
                 duplicate.trash()
-            }
+            }.logFailures()
         }
     }
 

@@ -92,7 +92,7 @@ fun Team.add() {
 fun Team.update(newTeam: Team) {
     checkForMatchingTeamDetails(this, newTeam)
     if (this == newTeam) {
-        ref.update(FIRESTORE_TIMESTAMP, getCurrentTimestamp())
+        ref.update(FIRESTORE_TIMESTAMP, getCurrentTimestamp()).logFailures()
         return
     }
 
@@ -116,7 +116,7 @@ fun Team.updateTemplateId(id: String) {
     if (id == templateId) return
 
     templateId = id
-    ref.update(FIRESTORE_TEMPLATE_ID, templateId)
+    ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures()
 }
 
 fun Team.updateMedia(newTeam: Team) {
@@ -126,11 +126,11 @@ fun Team.updateMedia(newTeam: Team) {
 }
 
 fun Team.forceUpdate() {
-    ref.set(this)
-    FirebaseAppIndex.getInstance().update(indexable)
+    ref.set(this).logFailures()
+    FirebaseAppIndex.getInstance().update(indexable).logFailures()
 }
 
-fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, Date(0))
+fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()
 
 fun Team.copyMediaInfo(newTeam: Team) {
     media = newTeam.media

@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.data.model.trashTemplate
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.putRef
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
 
@@ -37,7 +38,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
                 teams.filter { TextUtils.equals(templateId, it.templateId) }.forEach {
                     update(it.ref, FIRESTORE_TEMPLATE_ID, defaultTemplateId)
                 }
-            }
+            }.logFailures()
 
             if (templateId == defaultTemplateId) {
                 defaultTemplateId = TemplateType.DEFAULT.id.toString()

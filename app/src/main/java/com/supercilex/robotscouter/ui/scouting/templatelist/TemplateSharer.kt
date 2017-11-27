@@ -28,6 +28,7 @@ class TemplateSharer private constructor(
             val token = generateToken
             templates.document(templateId)
                     .update(FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
+                    .logFailures()
 
             getInvitationIntent(
                     getTemplateLink(templateId, token),

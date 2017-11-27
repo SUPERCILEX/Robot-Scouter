@@ -74,7 +74,7 @@ inline fun updateOwner(
             oldOwnerPath?.let { update(ref, it, FieldValue.delete()) }
             update(ref, newOwnerPath, newValue(ref))
         }.addOnSuccessListener {
-            ref.update(pendingApprovalPath, FieldValue.delete())
+            ref.update(pendingApprovalPath, FieldValue.delete()).logFailures()
         }.logFailures()
     })
 }

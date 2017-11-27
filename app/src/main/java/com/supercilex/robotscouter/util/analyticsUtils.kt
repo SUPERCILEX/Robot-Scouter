@@ -80,7 +80,7 @@ fun initAnalytics() {
     // restarted.
     FirebaseAuth.getInstance().addIdTokenListener {
         if (uid != null) {
-            userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
+            userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge()).logFailures()
         }
     }
 
