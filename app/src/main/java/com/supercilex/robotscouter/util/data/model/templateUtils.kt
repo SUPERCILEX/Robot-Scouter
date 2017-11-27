@@ -2,6 +2,9 @@ package com.supercilex.robotscouter.util.data.model
 
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.firebase.appindexing.Action
+import com.google.firebase.appindexing.FirebaseAppIndex
+import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.R
@@ -14,6 +17,8 @@ import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.firestoreBatch
+import com.supercilex.robotscouter.util.data.getTemplateIndexable
+import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddTemplate
@@ -37,6 +42,16 @@ fun addTemplate(type: TemplateType): String {
     val id = ref.id
 
     logAddTemplate(id, type)
+    FirebaseAppIndex.getInstance()
+            .update(getTemplateIndexable(id, "Template"))
+            .logFailures()
+    FirebaseUserActions.getInstance().end(
+            Action.Builder(Action.Builder.ADD_ACTION)
+                    .setObject("Template", getTemplateLink(id))
+                    .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
+                    .build()
+    ).logFailures()
+
     ref.batch {
         val scout = Scout(id, id)
         set(it, scout)
@@ -59,6 +74,7 @@ fun Scout.getTemplateName(index: Int): String =
         name ?: RobotScouter.INSTANCE.getString(R.string.template_tab_default_title, index + 1)
 
 fun trashTemplate(id: String) {
+    FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
     getTemplateRef(id).get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         val snapshot = it.result

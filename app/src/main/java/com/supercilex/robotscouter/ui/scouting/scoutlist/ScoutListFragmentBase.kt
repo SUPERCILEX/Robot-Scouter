@@ -127,12 +127,12 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     override fun onStart() {
         super.onStart()
-        FirebaseUserActions.getInstance().start(team.viewAction)
+        FirebaseUserActions.getInstance().start(team.viewAction).logFailures()
     }
 
     override fun onStop() {
         super.onStop()
-        FirebaseUserActions.getInstance().end(team.viewAction)
+        FirebaseUserActions.getInstance().end(team.viewAction).logFailures()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

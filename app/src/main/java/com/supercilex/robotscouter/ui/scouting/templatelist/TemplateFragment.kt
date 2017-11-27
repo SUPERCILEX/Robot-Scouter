@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.github.clans.fab.FloatingActionMenu
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
@@ -22,9 +23,11 @@ import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
+import com.supercilex.robotscouter.util.data.getTemplateViewAction
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.logSelectTemplate
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.animatePopReveal
@@ -168,6 +171,20 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         true
     } else {
         false
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        val pagerAdapter = (parentFragment as? TemplateListFragment ?: return).pagerAdapter
+        pagerAdapter.currentTabId!!.let {
+            val tabName = pagerAdapter.currentTab?.text.toString()
+            if (isVisibleToUser) {
+                logSelectTemplate(it, tabName)
+                FirebaseUserActions.getInstance().start(getTemplateViewAction(it, tabName))
+            } else {
+                FirebaseUserActions.getInstance().end(getTemplateViewAction(it, tabName))
+            }.logFailures()
+        }
     }
 
     companion object {

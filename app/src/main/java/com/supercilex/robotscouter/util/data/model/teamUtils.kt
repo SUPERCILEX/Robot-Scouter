@@ -86,7 +86,7 @@ fun Team.add() {
                     .setObject(toString(), deepLink)
                     .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
                     .build()
-    )
+    ).logFailures()
 }
 
 fun Team.update(newTeam: Team) {

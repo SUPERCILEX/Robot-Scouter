@@ -5,6 +5,8 @@ import android.net.Uri
 import android.support.v4.app.FragmentActivity
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
+import com.google.firebase.appindexing.Action
+import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FieldPath
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
@@ -68,6 +70,13 @@ class TemplateSharer private constructor(
             }
 
             logShareTemplate(templateId, templateName)
+            FirebaseUserActions.getInstance().end(
+                    Action.Builder(Action.Builder.SHARE_ACTION)
+                            .setObject(templateName, getTemplateLink(templateId))
+                            .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
+                            .build()
+            ).logFailures()
+
             TemplateSharer(activity).share(templateId, templateName)
 
             return true

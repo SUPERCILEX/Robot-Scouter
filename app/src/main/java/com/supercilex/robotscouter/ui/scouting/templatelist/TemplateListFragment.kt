@@ -53,7 +53,7 @@ class TemplateListFragment : FragmentBase(),
 
     private val toolbar: Toolbar by bindView(R.id.toolbar)
     private val fam: FloatingActionMenu by bindView(R.id.fab_menu)
-    private val pagerAdapter by unsafeLazy {
+    val pagerAdapter: TemplatePagerAdapter by unsafeLazy {
         val tabLayout: TabLayout = find(R.id.tabs)
         val viewPager: ViewPager = find(R.id.viewpager)
         val adapter = object : TemplatePagerAdapter(this@TemplateListFragment, tabLayout) {

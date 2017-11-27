@@ -6,6 +6,8 @@ import android.support.annotation.Size
 import android.support.v4.app.FragmentActivity
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
+import com.google.firebase.appindexing.Action
+import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FieldPath
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
@@ -15,6 +17,7 @@ import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTeamsLink
 import com.supercilex.robotscouter.util.data.model.TeamCache
+import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
@@ -100,6 +103,13 @@ class TeamSharer private constructor(
             if (teams.isEmpty()) return false
 
             teams.logShare()
+            FirebaseUserActions.getInstance().end(
+                    Action.Builder(Action.Builder.SHARE_ACTION)
+                            .setObject(teams.getNames(), teams.getTeamsLink())
+                            .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
+                            .build()
+            ).logFailures()
+
             TeamSharer(activity, teams)
 
             return true

@@ -32,7 +32,9 @@ private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templates.id}/"
 val generateToken: String get() = FirebaseFirestore.getInstance().collection("null").document().id
 
 val Team.deepLink: String get() = listOf(this).getTeamsLink()
+
 val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)
+
 val Team.indexable: Indexable
     get() = Indexables.digitalDocumentBuilder()
             .setUrl(deepLink)
@@ -43,6 +45,15 @@ val Team.indexable: Indexable
                                  .setScope(Scope.CROSS_DEVICE))
             .build()
 
+fun List<Team>.getTeamsLink(token: String? = null): String =
+        generateUrl(TEAMS_LINK_BASE, token) { id to number.toString() }
+
+fun getTemplateLink(templateId: String, token: String? = null): String =
+        listOf(templateId).generateUrl(TEMPLATES_LINK_BASE, token) { this to true.toString() }
+
+fun getTemplateViewAction(id: String, name: String): Action =
+        Actions.newView(name, getTemplateLink(id))
+
 fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
         Indexables.digitalDocumentBuilder()
                 .setUrl(getTemplateLink(templateId))
@@ -51,12 +62,6 @@ fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
                                      .setWorksOffline(true)
                                      .setScope(Scope.CROSS_DEVICE))
                 .build()
-
-fun List<Team>.getTeamsLink(token: String? = null): String =
-        generateUrl(TEAMS_LINK_BASE, token) { id to number.toString() }
-
-fun getTemplateLink(templateId: String, token: String? = null): String =
-        listOf(templateId).generateUrl(TEMPLATES_LINK_BASE, token) { this to true.toString() }
 
 inline fun updateOwner(
         refs: Iterable<DocumentReference>,
