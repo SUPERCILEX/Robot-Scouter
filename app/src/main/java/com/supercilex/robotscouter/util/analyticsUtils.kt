@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.util
 
 import android.os.Bundle
+import android.text.TextUtils
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
@@ -50,6 +51,8 @@ fun initAnalytics() {
     analytics.setAnalyticsCollectionEnabled(!isInTestMode)
 
     FirebaseAuth.getInstance().addAuthStateListener {
+        fun String?.nullOrFull() = if (TextUtils.isEmpty(this)) null else this
+
         val user = it.currentUser
 
         // Log uid to help debug db crashes
@@ -62,7 +65,13 @@ fun initAnalytics() {
                 FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providers.toString())
 
         if (user != null) {
-            User(user.uid, user.email, user.phoneNumber, user.displayName, user.photoUrl).add()
+            User(
+                    user.uid,
+                    user.email.nullOrFull(),
+                    user.phoneNumber.nullOrFull(),
+                    user.displayName.nullOrFull(),
+                    user.photoUrl
+            ).add()
         }
     }
 

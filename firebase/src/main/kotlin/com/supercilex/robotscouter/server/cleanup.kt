@@ -39,6 +39,22 @@ fun deleteUnusedData(): Promise<*> {
             ).where(
                     FIRESTORE_EMAIL, "==", null
             )),
+            deleteUnusedData(users.where( // TODO remove once enough people have upgraded
+                    FIRESTORE_LAST_LOGIN,
+                    "<",
+                    modules.moment().subtract(30, "days").toDate()
+            ).where(
+                    FIRESTORE_EMAIL, "==", ""
+            )),
+            deleteUnusedData(users.where( // TODO remove once enough people have upgraded
+                    FIRESTORE_LAST_LOGIN,
+                    "<",
+                    modules.moment().subtract(30, "days").toDate()
+            ).where(
+                    FIRESTORE_EMAIL, "==", ""
+            ).where(
+                    FIRESTORE_PHONE_NUMBER, "==", ""
+            )),
             deleteUnusedData(users.where(
                     FIRESTORE_LAST_LOGIN,
                     "<",
