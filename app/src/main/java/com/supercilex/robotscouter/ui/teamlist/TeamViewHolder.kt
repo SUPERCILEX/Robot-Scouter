@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.app.Fragment
@@ -28,6 +29,7 @@ import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.find
+import java.util.Locale
 
 class TeamViewHolder(
         itemView: View,
@@ -114,7 +116,7 @@ class TeamViewHolder(
     }
 
     private fun setTeamNumber() {
-        numberTextView.text = team.number.toString()
+        numberTextView.text = String.format(Locale.getDefault(), "%d", team.number)
     }
 
     private fun setTeamName() {
@@ -172,6 +174,7 @@ class TeamViewHolder(
     override fun toString() = team.toString()
 
     companion object {
+        @SuppressLint("CheckResult") // Used in prefetch and standard load
         fun getTeamMediaRequestBuilder(
                 isItemSelected: Boolean,
                 context: Context,

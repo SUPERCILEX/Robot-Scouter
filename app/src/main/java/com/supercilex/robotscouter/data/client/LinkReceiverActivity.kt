@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.data.client
 
+import android.annotation.SuppressLint
 import android.arch.core.executor.ArchTaskExecutor
 import android.net.Uri
 import android.os.Bundle
@@ -34,6 +35,7 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import java.util.Date
 
+@SuppressLint("GoogleAppIndexingApiWarning")
 class LinkReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

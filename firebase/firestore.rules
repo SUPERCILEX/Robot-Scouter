@@ -14,7 +14,10 @@ service cloud.firestore {
                  && request.resource.data.templateId is string;
       }
 
-      allow read: if request.auth != null; // TODO This and the others are bad but Firestore doesn't yet support an isOwner() call here
+      // Hack: we query the list of teams before the team is written to the database which
+      // Firestore doesn't support. Since adding a success listener for when the write completes
+      // would break offline support, we're kinda stuck here.
+      allow read: if request.auth != null;
       allow create: if request.resource.data.owners[request.auth.uid] is int && isValidTeam();
       allow update: if (isExistingOwner() || hasPendingApproval()) && isValidTeam();
       allow delete: if isExistingOwner();
@@ -24,8 +27,9 @@ service cloud.firestore {
           return get(/databases/$(database)/documents/teams/$(teamId)).data.owners[request.auth.uid] is int;
         }
 
-        allow read, delete: if isScoutOwner();
+        allow read: if request.auth != null;
         allow create, update: if isScoutOwner() && isValidScout();
+        allow delete: if isScoutOwner();
 
         match /metrics/{metricId} {
           allow read, delete: if isScoutOwner();
@@ -38,9 +42,6 @@ service cloud.firestore {
       function isExistingOwner() {
         return resource.data.owners[request.auth.uid] is timestamp;
       }
-      function isTemplateOwner() {
-        return get(/databases/$(database)/documents/templates/$(templateId)).data.owners[request.auth.uid] is timestamp;
-      }
 
       allow read: if request.auth != null;
       allow create: if request.resource.data.owners[request.auth.uid] is timestamp && isValidScout();
@@ -48,8 +49,14 @@ service cloud.firestore {
       allow delete: if isExistingOwner();
 
       match /metrics/{metricId} {
-        allow read, delete: if isTemplateOwner();
+        function isTemplateOwner() {
+          return get(/databases/$(database)/documents/templates/$(templateId))
+                   .data.owners[request.auth.uid] is timestamp;
+        }
+
+        allow read: if request.auth != null;
         allow create, update: if isTemplateOwner() && isValidMetric();
+        allow delete: if isTemplateOwner();
       }
     }
 
@@ -61,14 +68,12 @@ service cloud.firestore {
       allow read, write: if isMatchingUid();
 
       match /prefs {
-        match /{prefId} {
+        match /{pref} {
           allow read, delete: if isMatchingUid();
         }
 
         match /defaultTemplateId {
-          allow create, update: if isMatchingUid()
-                                    && (request.resource.data.value in ["-1", "0", "1"]
-                                    || get(/databases/$(database)/documents/templates/$(request.resource.data.value)).data.owners[request.auth.uid] is timestamp);
+          allow create, update: if isMatchingUid() && request.resource.data.value is string;
         }
 
         match /nightMode {

@@ -75,11 +75,14 @@ abstract class TemplateSelectorDialog : DialogFragment() {
                     ItemViewHolder(LayoutInflater.from(parent.context).inflate(
                             R.layout.select_dialog_item_material, parent, false))
 
-            override fun onBindViewHolder(holder: ItemViewHolder, position: Int, scout: Scout) =
-                    holder.bind(this@TemplateSelectorDialog, scout, when (position) {
-                        TemplateType.MATCH.id, TemplateType.PIT.id -> position.toString()
-                        else -> snapshots[position - EXTRA_ITEMS].id
-                    })
+            override fun onBindViewHolder(
+                    holder: ItemViewHolder,
+                    position: Int,
+                    scout: Scout
+            ) = holder.bind(this@TemplateSelectorDialog, scout, when (position) {
+                TemplateType.MATCH.id, TemplateType.PIT.id -> position.toString()
+                else -> snapshots[position - EXTRA_ITEMS].id
+            })
         }
     }
 
@@ -160,14 +163,20 @@ abstract class TemplateSelectorDialog : DialogFragment() {
                 itemView.compoundDrawablePadding = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
                         itemView.resources.getDimension(R.dimen.spacing_mini),
-                        itemView.resources.displayMetrics).toInt()
+                        itemView.resources.displayMetrics
+                ).toInt()
                 TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         itemView,
                         AppCompatResources.getDrawable(
                                 itemView.context, R.drawable.ic_star_accent_24dp),
                         null,
                         null,
-                        null)
+                        null
+                )
+            } else {
+                itemView.compoundDrawablePadding = 0
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        itemView, null, null, null, null)
             }
         }
 

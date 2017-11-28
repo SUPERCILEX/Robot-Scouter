@@ -48,6 +48,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Collections
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class SpreadsheetExporter(
@@ -189,7 +190,7 @@ class SpreadsheetExporter(
             middleMan: String? = null
     ): String {
         val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
-        val normalizedTemplateName = templateName.toUpperCase().replace(" ", "_")
+        val normalizedTemplateName = templateName.toUpperCase(Locale.getDefault()).replace(" ", "_")
 
         return if (middleMan == null) "[$normalizedTemplateName] ${cache.teamNames}$extension"
         else "[$normalizedTemplateName] ${cache.teamNames}$middleMan$extension"

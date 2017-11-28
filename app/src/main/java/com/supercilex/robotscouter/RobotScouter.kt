@@ -93,7 +93,7 @@ class RobotScouter : MultiDexApplication() {
                                 INSTANCE.longToast("Migration complete, restarting Robot Scouter...")
                                 // Ensure shared prefs were saved
                                 ArchTaskExecutor.getInstance().executeOnDiskIO { restartApp() }
-                            }, 500)
+                            }, 1000)
                 } catch (e: Exception) {
                     FirebaseCrash.report(e)
                     Crashlytics.logException(e)

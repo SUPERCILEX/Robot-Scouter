@@ -10,11 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
+import net.yslibrary.licenseadapter.Library
 import net.yslibrary.licenseadapter.LicenseAdapter
-import net.yslibrary.licenseadapter.LicenseEntry
 import net.yslibrary.licenseadapter.Licenses
 import org.jetbrains.anko.find
-import java.util.ArrayList
 
 class LicensesFragment : Fragment(), OnBackPressedListener {
     override fun onCreateView(inflater: LayoutInflater,
@@ -23,29 +22,34 @@ class LicensesFragment : Fragment(), OnBackPressedListener {
             View.inflate(context, R.layout.fragment_licenses, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val licenses: MutableList<LicenseEntry> = ArrayList()
-        licenses.apply {
-            add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
-            add(Licenses.noContent(
-                    "Google Play Services", "Google Inc.", "https://developers.google.com/terms/"))
-            add(Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"))
-            add(Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"))
-            add(Licenses.fromGitHubApacheV2("GoogleSamples/EasyPermissions"))
-            add(Licenses.fromGitHub("Bumptech/Glide", "Glide license", Licenses.FILE_AUTO))
-            add(Licenses.fromGitHub("Apache/POI", Licenses.LICENSE_APACHE_V2))
-            add(Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"))
-            add(Licenses.fromGitHubApacheV2("Sjwall/MaterialTapTargetPrompt"))
-            add(Licenses.fromGitHubApacheV2("Square/Retrofit"))
-            add(Licenses.fromGitHubApacheV2("Square/Leakcanary"))
-            add(Licenses.fromGitHubMIT("Triple-T/gradle-play-publisher"))
-            add(Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter"))
+        val libraries: List<Library> = listOf(
+                Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"),
+                Licenses.noContent(
+                        "Google Play Services",
+                        "Google Inc.",
+                        "https://developers.google.com/terms/"
+                ),
+                Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"),
+                Licenses.fromGitHubApacheV2("GoogleSamples/EasyPermissions"),
+                Licenses.fromGitHub(
+                        "Bumptech/Glide",
+                        "master/${Licenses.FILE_AUTO}",
+                        "Glide license"
+                ),
+                Licenses.fromGitHub("Apache/POI", Licenses.LICENSE_APACHE_V2),
+                Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"),
+                Licenses.fromGitHubApacheV2("Sjwall/MaterialTapTargetPrompt"),
+                Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"),
+                Licenses.fromGitHubApacheV2("Square/Retrofit"),
+                Licenses.fromGitHubApacheV2("Square/Leakcanary"),
+                Licenses.fromGitHubMIT("Triple-T/gradle-play-publisher"),
+                Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter")
+        )
+
+        view.find<RecyclerView>(R.id.list).apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = LicenseAdapter(libraries)
         }
-
-        val list: RecyclerView = view.find(R.id.list)
-        list.layoutManager = LinearLayoutManager(context)
-        list.adapter = LicenseAdapter(licenses)
-
-        Licenses.load(licenses)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

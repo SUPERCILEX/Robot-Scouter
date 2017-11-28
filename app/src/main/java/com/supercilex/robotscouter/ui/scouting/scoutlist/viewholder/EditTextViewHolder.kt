@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import java.util.Locale
 
 class EditTextViewHolder(
         itemView: View
@@ -35,7 +36,7 @@ class EditTextViewHolder(
         textLayout.isHintAnimationEnabled = true
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && metric.name.toUpperCase().contains(nameHint)) {
+                && metric.name.toUpperCase(Locale.ROOT).contains(nameHint)) {
             itemView.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_AUTO
             name.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
             name.setAutofillHints(View.AUTOFILL_HINT_NAME)

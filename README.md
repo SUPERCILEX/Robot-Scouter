@@ -47,6 +47,8 @@ scouting easy, efficient, and collaborative.
   - A global average sheet is included to compare teams against each other 📊
   - Fancy formatting on devices with Android Lollipop (21) and above 🎀
   - **Charts!** 📈
+  - PSA: Excel spreadsheets can easily be
+    [converted to Google Sheets](https://support.google.com/docs/answer/6055139).
 - And more!
 
 ## Contributing 💗

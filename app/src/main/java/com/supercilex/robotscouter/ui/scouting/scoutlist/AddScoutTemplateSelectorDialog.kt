@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.v7.widget.AppCompatCheckBox
@@ -17,6 +18,7 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
     override val title = R.string.template_add_scout_selector_title
     private val setAsDefaultCheckbox: CheckBox by unsafeLazy {
         AppCompatCheckBox(context).apply {
+            @SuppressLint("PrivateResource", "ResourceType") // I'm lazy
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                 val checkboxMarginCompensation =
                         resources.getDimension(R.dimen.spacing_checkbox_margin_hack).toInt()

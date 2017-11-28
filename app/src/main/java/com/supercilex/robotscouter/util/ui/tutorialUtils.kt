@@ -21,7 +21,7 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
                 .setPromptStateChangeListener { _, state ->
                     runIfPressed(state) { hasShownAddTeamTutorial = true }
                 }
-                .create()
+                .create()!!
 
         override fun onChanged(hasShownTutorial: Boolean?) {
             if (hasShownTutorial == false) prompt.show() else prompt.dismiss()
@@ -32,7 +32,7 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
 fun showSignInTutorial(helper: TutorialHelper, owner: FragmentActivity)
         = ArchTaskExecutor.getInstance().postToMainThread {
     helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
-        private val prompt: MaterialTapTargetPrompt?
+        private val prompt
             get() = MaterialTapTargetPrompt.Builder(owner, R.style.RobotScouter_Tutorial_Menu)
                     .setTarget(R.id.action_sign_in)
                     .setClipToView(owner.find(R.id.root))

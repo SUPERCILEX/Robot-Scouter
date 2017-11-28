@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.teamlist
 
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
-import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -206,8 +205,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
         // along to the LinkReceiverActivity
         FirebaseDynamicLinks.getInstance().getDynamicLink(intent).addOnSuccessListener(this) {
             it?.link?.let {
-                startActivity(Intent(intent).setComponent(
-                        ComponentName(this, LinkReceiverActivity::class.java)))
+                startActivity(Intent(this, LinkReceiverActivity::class.java).setData(it))
             }
         }.addOnFailureListener(this) {
             longToast(R.string.link_uri_parse_error)

@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CounterViewHolder
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import java.util.Locale
 
 class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
         MetricTemplateViewHolder<Metric.Number, Long> {
@@ -38,7 +39,7 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
     }
 
     override fun setValue() {
-        count.text = metric.value.toString()
+        count.text = String.format(Locale.getDefault(), "%d", metric.value)
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
