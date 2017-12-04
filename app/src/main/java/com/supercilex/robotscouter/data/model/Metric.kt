@@ -99,17 +99,17 @@ sealed class Metric<T>(
 
         @Exclude
         @get:Exclude
-        private var internalSelectedValueId = selectedValueId
+        private var _selectedValueId = selectedValueId
 
         @get:Keep
         var selectedValueId
-            get() = internalSelectedValueId
+            get() = _selectedValueId
             set(value) = updateSelectedValueId(value)
 
         @Exclude
         fun updateValue(items: kotlin.collections.List<Item>, batch: WriteBatch? = null) {
-            if (internalValue == items) return
-            internalValue = items
+            if (_value == items) return
+            _value = items
 
             batch.update(FIRESTORE_VALUE, items.map {
                 mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
@@ -118,8 +118,8 @@ sealed class Metric<T>(
 
         @Exclude
         fun updateSelectedValueId(id: String?, batch: WriteBatch? = null) {
-            if (internalSelectedValueId == id) return
-            internalSelectedValueId = id
+            if (_selectedValueId == id) return
+            _selectedValueId = id
 
             logUpdate()
             batch.update(FIRESTORE_SELECTED_VALUE_ID, id as Any)
@@ -181,16 +181,16 @@ sealed class Metric<T>(
 
     @Exclude
     @get:Exclude
-    protected var internalValue = value
+    protected var _value = value
 
     @get:Keep
     open var value
-        get() = internalValue
+        get() = _value
         set(value) {
-            if (internalValue != value) {
-                internalValue = value
+            if (_value != value) {
+                _value = value
                 logUpdate()
-                ref.update(FIRESTORE_VALUE, internalValue).logFailures()
+                ref.update(FIRESTORE_VALUE, _value).logFailures()
             }
         }
 
@@ -201,7 +201,7 @@ sealed class Metric<T>(
         other as Metric<*>
 
         return type == other.type && position == other.position && ref.path == other.ref.path
-                && name == other.name && internalValue == other.internalValue
+                && name == other.name && _value == other._value
     }
 
     override fun hashCode(): Int {
@@ -209,12 +209,12 @@ sealed class Metric<T>(
         result = 31 * result + position
         result = 31 * result + ref.path.hashCode()
         result = 31 * result + name.hashCode()
-        result = 31 * result + (internalValue?.hashCode() ?: 0)
+        result = 31 * result + (_value?.hashCode() ?: 0)
         return result
     }
 
     override fun toString(): String = "${javaClass.simpleName}: " +
-            "ref=${ref.path}, position=$position, name=\"$name\", value=$internalValue"
+            "ref=${ref.path}, position=$position, name=\"$name\", value=$_value"
 
     companion object {
         @Suppress("UNCHECKED_CAST") // We know what our data types are

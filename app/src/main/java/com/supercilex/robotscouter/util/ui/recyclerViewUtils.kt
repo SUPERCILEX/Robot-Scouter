@@ -94,13 +94,13 @@ abstract class SavedStateAdapter<T, VH : RecyclerView.ViewHolder>(
      * @see [android.support.v7.app.AppCompatActivity.onSaveInstanceState]
      * @see [android.support.v4.app.Fragment.onSaveInstanceState]
      */
-    fun onSaveInstanceState() = bundleOf(SAVED_STATE_KEY to onSaveInstanceStateInternal())
+    fun onSaveInstanceState() = bundleOf(SAVED_STATE_KEY to _onSaveInstanceState())
 
-    private fun onSaveInstanceStateInternal(): Parcelable =
+    private fun _onSaveInstanceState(): Parcelable =
             recyclerView.layoutManager.onSaveInstanceState()
 
     override fun stopListening() {
-        state = onSaveInstanceStateInternal()
+        state = _onSaveInstanceState()
         super.stopListening()
     }
 
