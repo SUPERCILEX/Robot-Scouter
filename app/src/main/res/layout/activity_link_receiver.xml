@@ -5,6 +5,6 @@
     style="@style/Base.Widget.AppCompat.ProgressBar"
     android:layout_width="@dimen/square_view_hw"
     android:layout_height="@dimen/square_view_hw"
-    android:gravity="center"
+    android:layout_gravity="center"
     android:indeterminate="true"
     android:visibility="gone" />
