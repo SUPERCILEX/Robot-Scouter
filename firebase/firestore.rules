@@ -32,8 +32,9 @@ service cloud.firestore {
         allow delete: if isScoutOwner();
 
         match /metrics/{metricId} {
-          allow read, delete: if isScoutOwner();
+          allow read: if request.auth != null
           allow create, update: if isScoutOwner() && isValidMetric();
+          allow delete: if isScoutOwner();
         }
       }
     }
