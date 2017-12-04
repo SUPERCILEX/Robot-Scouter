@@ -10,7 +10,7 @@ service cloud.firestore {
       }
       function isValidTeam() {
         return request.resource.data.number is int
-                 && request.resource.data.owners[request.auth.uid] == request.resource.data.number
+                 && request.resource.data.owners[request.auth.uid] is int
                  && request.resource.data.templateId is string;
       }
 
