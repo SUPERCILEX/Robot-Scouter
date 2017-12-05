@@ -293,13 +293,14 @@ class SpreadsheetExporter(
             metricCache[metric.ref.id] = index
             cache.putRootMetric(team, index, metric.let {
                 return@let when (metric.type) {
-                    MetricType.HEADER -> Metric.Header(it.name, position = index)
-                    MetricType.BOOLEAN -> Metric.Boolean(it.name, position = index)
-                    MetricType.NUMBER -> Metric.Number(it.name, position = index)
-                    MetricType.STOPWATCH -> Metric.Stopwatch(it.name, position = index)
-                    MetricType.TEXT -> Metric.Text(it.name, position = index)
-                    MetricType.LIST -> Metric.List(it.name, position = index)
-                }.apply { ref = it.ref }
+                    MetricType.HEADER -> Metric.Header(it.name, position = index, ref = it.ref)
+                    MetricType.BOOLEAN -> Metric.Boolean(it.name, position = index, ref = it.ref)
+                    MetricType.NUMBER -> Metric.Number(it.name, position = index, ref = it.ref)
+                    MetricType.STOPWATCH ->
+                        Metric.Stopwatch(it.name, position = index, ref = it.ref)
+                    MetricType.TEXT -> Metric.Text(it.name, position = index, ref = it.ref)
+                    MetricType.LIST -> Metric.List(it.name, position = index, ref = it.ref)
+                }
             })
 
             return teamSheet.createRow(index).apply {
@@ -477,9 +478,10 @@ class SpreadsheetExporter(
                 }
             }
 
-            return 0 to Metric.Header(position = 0).apply {
-                ref = FirebaseFirestore.getInstance().document("null/null")
-            }
+            return 0 to Metric.Header(
+                    position = 0,
+                    ref = FirebaseFirestore.getInstance().document("null/null")
+            )
         }.invoke()
 
         val data: LineChartData

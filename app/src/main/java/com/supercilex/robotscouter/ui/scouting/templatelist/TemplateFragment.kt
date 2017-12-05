@@ -153,14 +153,14 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         itemTouchCallback.addItemToScrollQueue(position)
 
         when (v.id) {
-            R.id.add_checkbox -> Metric.Boolean(position = position)
-            R.id.add_counter -> Metric.Number(position = position)
-            R.id.add_stopwatch -> Metric.Stopwatch(position = position)
-            R.id.add_note -> Metric.Text(position = position)
-            R.id.add_spinner -> Metric.List(position = position)
-            R.id.add_header -> Metric.Header(position = position)
+            R.id.add_checkbox -> Metric.Boolean(position = position, ref = metricRef)
+            R.id.add_counter -> Metric.Number(position = position, ref = metricRef)
+            R.id.add_stopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
+            R.id.add_note -> Metric.Text(position = position, ref = metricRef)
+            R.id.add_spinner -> Metric.List(position = position, ref = metricRef)
+            R.id.add_header -> Metric.Header(position = position, ref = metricRef)
             else -> throw IllegalStateException("Unknown view id: $id")
-        }.apply { ref = metricRef }.apply {
+        }.apply {
             logAdd()
             ref.set(this)
         }

@@ -9,5 +9,5 @@ interface OrderedRemoteModel : OrderedModel {
     override var position: Int
 
     @get:Exclude
-    var ref: DocumentReference
+    val ref: DocumentReference
 }

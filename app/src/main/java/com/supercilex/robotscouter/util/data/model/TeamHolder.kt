@@ -12,7 +12,6 @@ import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
-import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.TeamsLiveData
@@ -25,7 +24,7 @@ class TeamHolder : ViewModelBase<Bundle>(),
     val teamListener: LiveData<Team> = Transformations.switchMap(TeamsLiveData, this)
 
     private val keepAliveListener = Observer<Team> {}
-    private var team: Team by LateinitVal()
+    private lateinit var team: Team
 
     override fun onCreate(args: Bundle) {
         team = args.getTeam()

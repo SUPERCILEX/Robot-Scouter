@@ -7,14 +7,14 @@ import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
-import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.KeepAliveListener
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.metricParser
 
 class MetricListHolder : ViewModelBase<CollectionReference>(), DefaultLifecycleObserver {
-    var metrics: ObservableSnapshotArray<Metric<*>> by LateinitVal()
+    lateinit var metrics: ObservableSnapshotArray<Metric<*>>
+        private set
 
     override fun onCreate(args: CollectionReference) {
         metrics = FirestoreArray(args.orderBy(FIRESTORE_POSITION), metricParser)

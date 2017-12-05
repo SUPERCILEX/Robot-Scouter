@@ -151,6 +151,7 @@ class RobotScouter : MultiDexApplication() {
 
     companion object {
         var INSTANCE: RobotScouter by LateinitVal()
+            private set
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)

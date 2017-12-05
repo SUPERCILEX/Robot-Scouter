@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_UNIT
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
-import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdate
 
@@ -26,24 +25,31 @@ sealed class Metric<T>(
 
         @Exclude
         @get:Keep
-        override var position: Int
+        override var position: Int,
+
+        @Exclude
+        @get:Exclude
+        override val ref: DocumentReference
 ) : OrderedRemoteModel {
     class Header(
             name: String = "",
-            position: Int
-    ) : Metric<Nothing?>(MetricType.HEADER, name, null, position)
+            position: Int,
+            ref: DocumentReference
+    ) : Metric<Nothing?>(MetricType.HEADER, name, null, position, ref)
 
     class Boolean(
             name: String = "",
             value: kotlin.Boolean = false,
-            position: Int
-    ) : Metric<kotlin.Boolean>(MetricType.BOOLEAN, name, value, position)
+            position: Int,
+            ref: DocumentReference
+    ) : Metric<kotlin.Boolean>(MetricType.BOOLEAN, name, value, position, ref)
 
     class Number(
             name: String = "",
             value: Long = 0, unit: String? = null,
-            position: Int
-    ) : Metric<Long>(MetricType.NUMBER, name, value, position) {
+            position: Int,
+            ref: DocumentReference
+    ) : Metric<Long>(MetricType.NUMBER, name, value, position, ref) {
         @Exclude
         @get:Keep
         var unit = unit
@@ -76,21 +82,24 @@ sealed class Metric<T>(
     class Stopwatch(
             name: String = "",
             value: kotlin.collections.List<Long>? = emptyList(),
-            position: Int
-    ) : Metric<kotlin.collections.List<Long>?>(MetricType.STOPWATCH, name, value, position)
+            position: Int,
+            ref: DocumentReference
+    ) : Metric<kotlin.collections.List<Long>?>(MetricType.STOPWATCH, name, value, position, ref)
 
     class Text(
             name: String = "",
             value: String? = null,
-            position: Int
-    ) : Metric<String?>(MetricType.TEXT, name, value, position)
+            position: Int,
+            ref: DocumentReference
+    ) : Metric<String?>(MetricType.TEXT, name, value, position, ref)
 
     class List(
             name: String = "",
             value: kotlin.collections.List<Item> = emptyList(),
             selectedValueId: String? = null,
-            position: Int
-    ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position) {
+            position: Int,
+            ref: DocumentReference
+    ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position, ref) {
         @get:Exclude
         @set:Exclude
         override var value: kotlin.collections.List<Item>
@@ -164,10 +173,8 @@ sealed class Metric<T>(
 
     @get:PropertyName(FIRESTORE_TYPE)
     @get:Keep
-    val id get() = type.id
-
-    @get:Exclude
-    override var ref: DocumentReference by LateinitVal()
+    val id
+        get() = type.id
 
     @Exclude
     @get:Keep
@@ -224,22 +231,29 @@ sealed class Metric<T>(
             val name = (fields[FIRESTORE_NAME] as String?).orEmpty()
 
             return when (MetricType.valueOf(type)) {
-                MetricType.HEADER -> Metric.Header(name, position)
+                MetricType.HEADER -> Metric.Header(name, position, ref)
                 MetricType.BOOLEAN -> {
-                    Metric.Boolean(name, fields[FIRESTORE_VALUE] as kotlin.Boolean, position)
+                    Metric.Boolean(name, fields[FIRESTORE_VALUE] as kotlin.Boolean, position, ref)
                 }
                 MetricType.NUMBER -> Metric.Number(
                         name,
                         fields[FIRESTORE_VALUE] as Long,
                         fields[FIRESTORE_UNIT] as String?,
-                        position
+                        position,
+                        ref
                 )
                 MetricType.STOPWATCH -> Metric.Stopwatch(
                         name,
                         fields[FIRESTORE_VALUE] as kotlin.collections.List<Long>,
-                        position
+                        position,
+                        ref
                 )
-                MetricType.TEXT -> Metric.Text(name, fields[FIRESTORE_VALUE] as String?, position)
+                MetricType.TEXT -> Metric.Text(
+                        name,
+                        fields[FIRESTORE_VALUE] as String?,
+                        position,
+                        ref
+                )
                 MetricType.LIST -> Metric.List(
                         name,
                         try {
@@ -256,9 +270,10 @@ sealed class Metric<T>(
                             List.Item(it[FIRESTORE_ID] as String, it[FIRESTORE_NAME] as String)
                         },
                         fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
-                        position
+                        position,
+                        ref
                 )
-            }.also { it.ref = ref }
+            }
         }
     }
 }
