@@ -28,7 +28,7 @@ class ScoutsHolder : ViewModelBase<Query>(), DefaultLifecycleObserver {
         scouts.removeChangeEventListener(KeepAliveListener)
     }
 
-    override public fun onCleared() {
+    public override fun onCleared() {
         super.onCleared()
         ListenerRegistrationLifecycleOwner.lifecycle.removeObserver(this)
         onStop(ListenerRegistrationLifecycleOwner)
