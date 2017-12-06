@@ -63,7 +63,7 @@ public class TeamMenuHelper implements View.OnClickListener {
     private MenuItem mEditTeamDetailsItem;
     private MenuItem mDeleteItem;
 
-    private Snackbar mSelectAllSnackBar;
+    private final Snackbar mSelectAllSnackBar;
 
     public TeamMenuHelper(TeamListFragment fragment, RecyclerView recyclerView) {
         mFragment = fragment;
@@ -72,12 +72,6 @@ public class TeamMenuHelper implements View.OnClickListener {
         mFab = mActivity.findViewById(R.id.fab);
         mDrawerLayout = mActivity.findViewById(R.id.drawer_layout);
         mToolbar = mFragment.getView().findViewById(R.id.toolbar);
-        initSnackBar();
-
-        mToolbar.setNavigationOnClickListener(this);
-    }
-
-    private void initSnackBar() {
         mSelectAllSnackBar = Snackbar.make(mFragment.getView(),
                                            R.string.team_multiple_selected_message,
                                            Snackbar.LENGTH_INDEFINITE)
@@ -87,6 +81,8 @@ public class TeamMenuHelper implements View.OnClickListener {
                     updateState();
                     notifyItemsChanged();
                 });
+
+        mToolbar.setNavigationOnClickListener(this);
     }
 
     public void setAdapter(FirestoreRecyclerAdapter<Team, TeamViewHolder> adapter) {
@@ -142,7 +138,6 @@ public class TeamMenuHelper implements View.OnClickListener {
         setTeamSpecificItemsVisible(false);
         updateToolbarTitle();
         mSelectAllSnackBar.dismiss();
-        initSnackBar();
         notifyItemsChanged();
     }
 
@@ -199,6 +194,10 @@ public class TeamMenuHelper implements View.OnClickListener {
                 mSelectedTeams.add((Team) parcelable);
             }
             notifyItemsChanged();
+
+            if (mSelectedTeams.size() > 1 && mSelectedTeams.size() != mAdapter.getItemCount()) {
+                mSelectAllSnackBar.show();
+            }
         }
 
         if (mIsMenuReady) updateState();
@@ -227,7 +226,8 @@ public class TeamMenuHelper implements View.OnClickListener {
                 setTeamSpecificItemsVisible(true);
             } else {
                 setTeamSpecificItemsVisible(false);
-                if (newSize > oldSize) mSelectAllSnackBar.show();
+                if (newSize == mAdapter.getItemCount()) mSelectAllSnackBar.dismiss();
+                else mSelectAllSnackBar.show();
             }
         }
     }
