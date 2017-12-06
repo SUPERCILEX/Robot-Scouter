@@ -205,7 +205,6 @@ public class TeamMenuHelper implements View.OnClickListener {
 
     public void onTeamContextMenuRequested(Team team) {
         boolean hadNormalMenu = !areTeamsSelected();
-        int oldSize = mSelectedTeams.size();
 
         if (mSelectedTeams.contains(team)) { // Team already selected
             mSelectedTeams.remove(team);
