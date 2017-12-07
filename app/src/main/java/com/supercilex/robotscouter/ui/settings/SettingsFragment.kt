@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.ui.settings
 
 import android.app.Activity
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -23,6 +25,7 @@ import android.widget.TextView
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
@@ -39,11 +42,29 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
+import com.supercilex.robotscouter.util.ui.asLiveData
 import org.jetbrains.anko.support.v4.toast
 
 class SettingsFragment : PreferenceFragmentCompat(),
         TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        addSignOutListener()
+    }
+
+    private fun addSignOutListener() {
+        signOutListener?.observe(this, Observer {
+            if (it!!.isSuccessful) {
+                FirebaseAuth.getInstance().signInAnonymously()
+                FirebaseAppIndex.getInstance().removeAll().logFailures()
+                activity!!.finish()
+            } else {
+                toast(R.string.fui_general_error)
+            }
+        })
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.preferenceDataStore = prefs
         addPreferencesFromResource(R.xml.app_preferences)
@@ -119,13 +140,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 activity.finish()
             }
             KEY_LINK_ACCOUNT -> signIn(this)
-            KEY_SIGN_OUT -> AuthUI.getInstance()
-                    .signOut(activity)
-                    .addOnSuccessListener {
-                        FirebaseAuth.getInstance().signInAnonymously()
-                        FirebaseAppIndex.getInstance().removeAll().logFailures()
-                        activity.finish()
-                    }
+            KEY_SIGN_OUT -> {
+                signOutListener = AuthUI.getInstance().signOut(activity).asLiveData()
+                addSignOutListener()
+            }
             KEY_RELEASE_NOTES -> launchUrl(
                     activity,
                     Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases")
@@ -190,6 +208,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
         private const val KEY_TRANSLATE = "translate"
         private const val KEY_VERSION = "version"
         private const val KEY_LICENSES = "licenses"
+
+        private var signOutListener: LiveData<Task<Void>>? = null
 
         fun newInstance() = SettingsFragment()
     }
