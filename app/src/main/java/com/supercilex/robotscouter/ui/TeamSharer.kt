@@ -46,6 +46,8 @@ class TeamSharer private constructor(
 
     init {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
+            it.result // Skip token generation if task failed
+
             val token = generateToken
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
             for (team in cache.teams) team.ref.update(tokenPath, Date()).logFailures()

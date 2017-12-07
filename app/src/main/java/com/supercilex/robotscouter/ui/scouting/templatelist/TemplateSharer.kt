@@ -27,6 +27,8 @@ class TemplateSharer private constructor(
 ) : CachingSharer(activity) {
     fun share(templateId: String, templateName: String) {
         loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
+            it.result // Skip token generation if task failed
+
             val token = generateToken
             templates.document(templateId)
                     .update(FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
