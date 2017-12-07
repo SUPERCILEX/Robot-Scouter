@@ -21,7 +21,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.deepLink
-import com.supercilex.robotscouter.util.data.indexable
 import com.supercilex.robotscouter.util.data.metricParser
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.fetchAndActivate
@@ -127,7 +126,6 @@ fun Team.updateMedia(newTeam: Team) {
 
 fun Team.forceUpdate() {
     ref.set(this).logFailures()
-    FirebaseAppIndex.getInstance().update(indexable).logFailures()
 }
 
 fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()

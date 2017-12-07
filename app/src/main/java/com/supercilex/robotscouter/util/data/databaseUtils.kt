@@ -17,6 +17,7 @@ import com.firebase.ui.firestore.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.DocumentReference
@@ -236,15 +237,19 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 newIndex: Int,
                 oldIndex: Int
         ) {
-            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
+            if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
+
+            async {
                 val team = value!![newIndex]
 
                 team.fetchLatestData()
+                FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
+
                 val media = team.media
                 if (!TextUtils.isEmpty(media) && File(media).exists()) {
                     startUploadTeamMediaJob(team)
                 }
-            }
+            }.logFailures()
         }
     }
     private val tokenSanitizer = object : ChangeEventListenerBase {

@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.util.data
 
 import android.net.Uri
+import android.support.annotation.WorkerThread
+import android.text.TextUtils
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
@@ -21,6 +23,7 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
+import java.io.File
 
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 const val KEYS = "keys"
@@ -35,11 +38,17 @@ val Team.deepLink: String get() = listOf(this).getTeamsLink()
 
 val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)
 
+@get:WorkerThread
 val Team.indexable: Indexable
     get() = Indexables.digitalDocumentBuilder()
             .setUrl(deepLink)
             .setName(toString())
-            .apply { setImage(media ?: return@apply) }
+            .apply {
+                setImage(media.let {
+                    if (TextUtils.isEmpty(it) || File(it).exists()) return@apply
+                    it!!
+                })
+            }
             .setMetadata(Indexable.Metadata.Builder()
                                  .setWorksOffline(true)
                                  .setScope(Scope.CROSS_DEVICE))
