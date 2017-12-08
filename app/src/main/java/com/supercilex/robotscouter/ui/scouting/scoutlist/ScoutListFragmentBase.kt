@@ -46,6 +46,7 @@ import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
+import com.supercilex.robotscouter.util.user
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.longToast
@@ -128,6 +129,9 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onStart() {
         super.onStart()
         FirebaseUserActions.getInstance().start(team.viewAction).logFailures()
+        // Don't add an auth listener since it could get called after onStop which won't work if we
+        // try to remove a fragment.
+        if (user == null) onTeamDeleted()
     }
 
     override fun onStop() {
