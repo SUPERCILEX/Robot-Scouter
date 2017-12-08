@@ -280,7 +280,7 @@ private object ActivityHandler : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityResumed(activity: Activity) {
         activity.find<View>(android.R.id.content).post {
-            (activity as? AppCompatActivity ?: return@post).delegate.setLocalNightMode(nightMode)
+            (activity as? AppCompatActivity)?.delegate?.setLocalNightMode(nightMode)
         }
     }
 

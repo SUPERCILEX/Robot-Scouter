@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="RobotScouter" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Ignoring private b/c I'm lazy. -->
+        <item name="android:navigationBarColor" tools:ignore="PrivateResource">
+            @color/background_material_light
+        </item>
+        <item name="android:navigationBarDividerColor">@color/list_divider</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+</resources>
