@@ -137,6 +137,11 @@
     <string name="scout_new_title_long">Add a new scout or team</string>
     <string name="scout_new_team_number_hint">Team number</string>
     <string name="scout_add_title">Add scout</string>
+    <string name="scout_add_template_not_cached_error">
+        Error adding new scout:\nthe template you are attempting to use hasn\'t been cached yet.
+        Please add at least one scout while you have an internet connection so your template may be
+        cached for offline use.
+    </string>
     <string name="scout_add_media_title">Add media</string>
     <string name="scout_visit_team_website_title">Visit team %d’s website</string>
     <string name="scout_visit_team_tba_website_title">Visit team %d on The Blue Alliance</string>

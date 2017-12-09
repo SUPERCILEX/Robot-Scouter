@@ -7,8 +7,11 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
@@ -25,6 +28,7 @@ import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
+import org.jetbrains.anko.longToast
 import java.util.Date
 import kotlin.math.abs
 
@@ -45,7 +49,17 @@ fun Team.addScout(
     val scoutRef = getScoutsRef().document()
 
     logAddScout(id, templateId)
-    scoutRef.set(Scout(scoutRef.id, templateId))
+    scoutRef.set(Scout(scoutRef.id, templateId)).logFailures()
+
+    val errorIgnorer: (Exception) -> Boolean = {
+        (it is FirebaseFirestoreException
+                && it.code == FirebaseFirestoreException.Code.UNAVAILABLE).also {
+            if (it) {
+                RobotScouter.INSTANCE.longToast(R.string.scout_add_template_not_cached_error)
+                scoutRef.delete().logFailures()
+            }
+        }
+    }
     (TemplateType.coerce(templateId)?.let { type ->
         defaultTemplates.document(type.id.toString()).get().continueWith(
                 AsyncTaskExecutor, Continuation<DocumentSnapshot, String?> {
@@ -67,7 +81,7 @@ fun Team.addScout(
                     set(getScoutMetricsRef(scoutRef.id).document(it.key), it.value)
                 }
             }
-        }).logFailures()
+        }).logFailures(errorIgnorer)
 
         getTemplateRef(templateId).get().continueWith {
             if (it.result.exists()) {
@@ -76,7 +90,7 @@ fun Team.addScout(
                 null
             }
         }
-    }).logFailures().addOnCompleteListener(AsyncTaskExecutor, OnCompleteListener {
+    }).logFailures(errorIgnorer).addOnCompleteListener(AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(existingScouts.observeOnDataChanged().observeOnce {
             async {

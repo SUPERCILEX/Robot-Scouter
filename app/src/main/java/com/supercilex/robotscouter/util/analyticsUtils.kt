@@ -247,7 +247,11 @@ private fun segment(long: String): List<String> {
 
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 
-fun <T> Task<T>.logFailures(): Task<T> = addOnFailureListener(CrashLogger)
+fun <T> Task<T>.logFailures(
+        ignore: ((Exception) -> Boolean)? = null
+): Task<T> = addOnFailureListener(if (ignore == null) CrashLogger else OnFailureListener {
+    if (!ignore(it)) CrashLogger.accept(it)
+})
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any>, Consumer<Throwable> {
     override fun onFailure(e: Exception) {
