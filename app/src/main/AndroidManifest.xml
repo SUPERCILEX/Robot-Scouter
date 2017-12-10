@@ -71,7 +71,7 @@
             android:label="@string/scout_activity_title"
             android:parentActivityName=".ui.teamlist.TeamListActivity"
             android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.scouting.templatelist.TemplateListActivity"
