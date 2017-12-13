@@ -84,7 +84,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-design:$ankoVersion"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     // Support libraries
@@ -120,7 +120,7 @@ dependencies {
     // Firebase
     implementation "com.google.firebase:firebase-core:$playServicesVersion"
     implementation "com.google.firebase:firebase-crash:$playServicesVersion"
-    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') { transitive = true }
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') { transitive = true }
     implementation "com.google.firebase:firebase-perf:$playServicesVersion"
     implementation "com.google.firebase:firebase-storage:$playServicesVersion"
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
@@ -129,16 +129,16 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    implementation 'pub.devrel:easypermissions:1.0.1'
+    implementation 'pub.devrel:easypermissions:1.1.1'
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
 
     // Third party
     implementation 'com.github.SUPERCILEX:kotterknife:5331f07fdf'
-    implementation 'com.github.SUPERCILEX:LicenseAdapter:d55e63bb4e'
+    implementation 'net.yslibrary.licenseadapter:licenseadapter:2.0.2'
     implementation 'com.github.clans:fab:1.6.4'
-    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.5.0'
-    implementation 'com.github.rubensousa:gravitysnaphelper:1.3'
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.5.1'
+    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
 
     // Apache POI
     implementation "com.github.SUPERCILEX.poi-android:poi:$poiVersion"

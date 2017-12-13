@@ -18,7 +18,7 @@ class PermissionRequestHandler(
 
     fun onActivityResult(requestCode: Int) {
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE
-                && EasyPermissions.hasPermissions(fragment.context, *permsArray)) {
+                && EasyPermissions.hasPermissions(fragment.context!!, *permsArray)) {
             listener.onSuccess(null)
         }
     }

@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.support.annotation.CallSuper
 import android.support.annotation.RequiresApi
 import android.support.design.widget.TextInputLayout
 import android.view.View
@@ -43,7 +42,6 @@ class EditTextViewHolder(
         }
     }
 
-    @CallSuper
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         if (!hasFocus) metric.value = name.text.toString()
     }

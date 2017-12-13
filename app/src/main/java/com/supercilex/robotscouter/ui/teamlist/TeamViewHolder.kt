@@ -181,7 +181,7 @@ class TeamViewHolder(
                 team: Team
         ): RequestBuilder<Drawable> = if (isItemSelected) {
             Glide.with(context)
-                    .load(null)
+                    .load(null as String?)
                     .apply(RequestOptions.placeholderOf(ContextCompat.getDrawable(
                             context, R.drawable.ic_check_circle_grey_56dp)))
         } else {
