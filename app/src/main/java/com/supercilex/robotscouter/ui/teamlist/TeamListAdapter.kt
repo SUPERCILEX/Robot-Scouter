@@ -118,7 +118,7 @@ class TeamListAdapter(
             }
 
     override fun onBindViewHolder(teamHolder: TeamViewHolder, position: Int, team: Team) {
-        cardListHelper.onBind(teamHolder)
+        cardListHelper.onBind(teamHolder, position)
         teamHolder.bind(
                 team,
                 isTeamSelected(team),

@@ -37,7 +37,7 @@ abstract class MetricListAdapterBase(
             position: Int,
             metric: Metric<*>
     ) {
-        cardListHelper.onBind(viewHolder)
+        cardListHelper.onBind(viewHolder, position)
 
         viewHolder as MetricViewHolderBase<Metric<Any>, *, *>
         metric as Metric<Any>

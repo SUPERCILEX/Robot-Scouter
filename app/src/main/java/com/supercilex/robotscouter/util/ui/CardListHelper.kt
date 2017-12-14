@@ -17,15 +17,11 @@ open class CardListHelper(
         }
     }
 
-    fun onBind(viewHolder: RecyclerView.ViewHolder) {
-        val position: Int = viewHolder.layoutPosition
-
+    fun onBind(viewHolder: RecyclerView.ViewHolder, position: Int) {
         viewHolder.setBackground(position)
 
+        // Update the items above and below to ensure the correct corner configuration is shown
         recyclerView.post {
-            if (position > adapter.itemCount - 1) return@post
-
-            // Update the items above and below to ensure the correct corner configuration is shown
             val abovePos = position - 1
             val belowPos = position + 1
 
@@ -44,8 +40,17 @@ open class CardListHelper(
         val paddingRight = itemView.paddingRight
         val paddingBottom = itemView.paddingBottom
 
-        val isFirstItem = isFirstItem(position)
-        val isLastItem = isLastItem(position)
+        val isFirstItem: Boolean
+        val isLastItem: Boolean
+        try {
+            isFirstItem = isFirstItem(position)
+            isLastItem = isLastItem(position)
+        } catch (e: IndexOutOfBoundsException) {
+            // Ideally, we'd like to check whether or not `position == adapterPosition`, but getting
+            // the adapter position is an expensive computation. Instead, we use a try block which
+            // is way cheaper and reserve the expensive catch for the rare IOOBE.
+            return
+        }
 
         // It turns out performance is improved by parsing the drawable again b/c
         // setBackgroundResource can no-op if we are setting the same drawable instead of having
