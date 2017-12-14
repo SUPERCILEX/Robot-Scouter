@@ -25,6 +25,7 @@ private val signInIntent: Intent
                         allProviders
                     }
             )
+            .setTheme(R.style.RobotScouter)
             .setLogo(R.drawable.ic_logo)
             .setPrivacyPolicyUrl("https://supercilex.github.io/Robot-Scouter/privacy-policy/")
             .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
