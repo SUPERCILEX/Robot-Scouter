@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import kotterknife.bindView
+import java.lang.ref.WeakReference
 
 abstract class MetricViewHolderBase<M : Metric<T>, T, out V : TextView>(
         itemView: View
@@ -16,12 +17,13 @@ abstract class MetricViewHolderBase<M : Metric<T>, T, out V : TextView>(
         private set
 
     protected val name: V by bindView(R.id.name)
-    protected lateinit var fragmentManager: FragmentManager
-        private set
+    private lateinit var _fragmentManager: WeakReference<FragmentManager>
+    // This is safe b/c we're only using it to show dialogs. Anyways, we'll be getting rid of those.
+    protected val fragmentManager get() = _fragmentManager.get()!!
 
     fun bind(metric: M, manager: FragmentManager) {
         this.metric = metric
-        this.fragmentManager = manager
+        this._fragmentManager = WeakReference(manager)
 
         bind()
     }

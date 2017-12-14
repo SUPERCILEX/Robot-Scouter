@@ -44,11 +44,28 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     private val itemTouchCallback by unsafeLazy {
         TemplateItemTouchCallback<Metric<*>>(view!!)
     }
+    private val appBar: AppBarLayout by unsafeLazy {
+        parentFragment!!.find<AppBarLayout>(R.id.app_bar)
+    }
     private val fam: FloatingActionMenu by unsafeLazy {
         parentFragment!!.find<FloatingActionMenu>(R.id.fab_menu)
     }
     private val noContentHint: View by bindView(R.id.no_content_hint)
 
+    private val appBarOffsetListener = object : AppBarLayout.OnOffsetChangedListener {
+        var isShowing = false
+
+        override fun onOffsetChanged(appBar: AppBarLayout, offset: Int) {
+            if (offset >= -10) { // Account for small variations
+                if (!isShowing) fam.showMenuButton(true)
+                isShowing = true
+            } else {
+                isShowing = false
+                // User scrolled down -> hide the FAB
+                fam.hideMenuButton(true)
+            }
+        }
+    }
     private var hasAddedItem: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,21 +84,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
-        parentFragment!!.find<AppBarLayout>(R.id.app_bar)
-                .addOnOffsetChangedListener(object : AppBarLayout.OnOffsetChangedListener {
-                    var isShowing = false
-
-                    override fun onOffsetChanged(appBar: AppBarLayout, offset: Int) {
-                        if (offset >= -10) { // Account for small variations
-                            if (!isShowing) fam.showMenuButton(true)
-                            isShowing = true
-                        } else {
-                            isShowing = false
-                            // User scrolled down -> hide the FAB
-                            fam.hideMenuButton(true)
-                        }
-                    }
-                })
+        appBar.addOnOffsetChangedListener(appBarOffsetListener)
 
         // This lets us close the fam when the RecyclerView it touched
         recyclerView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
@@ -103,6 +106,11 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             inflater.inflate(R.menu.template_options, menu)
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        appBar.removeOnOffsetChangedListener(appBarOffsetListener)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
