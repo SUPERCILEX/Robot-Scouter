@@ -21,7 +21,7 @@ import kotlin.js.Json
 import kotlin.js.Promise
 
 private const val MAX_INACTIVE_USER_DAYS = 365
-private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 60
+private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
 
 fun deleteUnusedData(): Promise<*> {
     console.log("Looking for users that haven't opened Robot Scouter for over a year" +
@@ -31,29 +31,6 @@ fun deleteUnusedData(): Promise<*> {
                     FIRESTORE_LAST_LOGIN,
                     "<",
                     modules.moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
-            )),
-            deleteUnusedData(users.where( // TODO remove once enough people have upgraded
-                    FIRESTORE_LAST_LOGIN,
-                    "<",
-                    modules.moment().subtract(30, "days").toDate()
-            ).where(
-                    FIRESTORE_EMAIL, "==", null
-            )),
-            deleteUnusedData(users.where( // TODO remove once enough people have upgraded
-                    FIRESTORE_LAST_LOGIN,
-                    "<",
-                    modules.moment().subtract(30, "days").toDate()
-            ).where(
-                    FIRESTORE_EMAIL, "==", ""
-            )),
-            deleteUnusedData(users.where( // TODO remove once enough people have upgraded
-                    FIRESTORE_LAST_LOGIN,
-                    "<",
-                    modules.moment().subtract(30, "days").toDate()
-            ).where(
-                    FIRESTORE_EMAIL, "==", ""
-            ).where(
-                    FIRESTORE_PHONE_NUMBER, "==", ""
             )),
             deleteUnusedData(users.where(
                     FIRESTORE_LAST_LOGIN,
