@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.text.TextUtils
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.perf.metrics.AddTrace
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
@@ -196,7 +195,6 @@ class SpreadsheetExporter(
         else "[$normalizedTemplateName] ${cache.teamNames}$middleMan$extension"
     }
 
-    @AddTrace(name = "getWorkbook")
     private fun getWorkbook(): Workbook {
         val workbook = if (isUnsupportedDevice) {
             showToast(RobotScouter.INSTANCE.getString(R.string.export_unsupported_device_rationale))
