@@ -257,7 +257,7 @@ class SpreadsheetExporter(
                     }
                 }
                 MetricType.STOPWATCH -> {
-                    val cycles = (metric as Metric.Stopwatch).value ?: return
+                    val cycles = (metric as Metric.Stopwatch).value
                     val average = if (cycles.isEmpty()) 0 else cycles.sum() / cycles.size
 
                     valueCell.setCellValue(TimeUnit.MILLISECONDS.toSeconds(average).toDouble())

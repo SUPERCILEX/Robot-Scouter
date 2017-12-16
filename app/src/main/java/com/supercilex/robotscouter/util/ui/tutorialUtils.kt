@@ -29,8 +29,10 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
     })
 }
 
-fun showSignInTutorial(helper: TutorialHelper, owner: FragmentActivity)
-        = ArchTaskExecutor.getInstance().postToMainThread {
+fun showSignInTutorial(
+        helper: TutorialHelper,
+        owner: FragmentActivity
+) = ArchTaskExecutor.getInstance().postToMainThread {
     helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt
             get() = MaterialTapTargetPrompt.Builder(owner, R.style.RobotScouter_Tutorial_Menu)

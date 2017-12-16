@@ -81,10 +81,10 @@ sealed class Metric<T>(
 
     class Stopwatch(
             name: String = "",
-            value: kotlin.collections.List<Long>? = emptyList(),
+            value: kotlin.collections.List<Long> = emptyList(),
             position: Int,
             ref: DocumentReference
-    ) : Metric<kotlin.collections.List<Long>?>(MetricType.STOPWATCH, name, value, position, ref)
+    ) : Metric<kotlin.collections.List<Long>>(MetricType.STOPWATCH, name, value, position, ref)
 
     class Text(
             name: String = "",

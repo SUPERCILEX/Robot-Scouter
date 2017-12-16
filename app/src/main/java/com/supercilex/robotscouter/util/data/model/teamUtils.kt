@@ -108,7 +108,6 @@ private fun checkForMatchingTeamDetails(team: Team, newTeam: Team) {
     if (TextUtils.equals(team.name, newTeam.name)) team.hasCustomName = false
     if (TextUtils.equals(team.media, newTeam.media)) team.hasCustomMedia = false
     if (TextUtils.equals(team.website, newTeam.website)) team.hasCustomWebsite = false
-
 }
 
 fun Team.updateTemplateId(id: String) {

@@ -11,7 +11,7 @@ import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 
 class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView),
-        MetricTemplateViewHolder<Metric<List<Long>>, List<Long>> {
+        MetricTemplateViewHolder<Metric.Stopwatch, List<Long>> {
     override val reorder: View by bindView(R.id.reorder)
     override val nameEditor: EditText by unsafeLazy { name as EditText }
 

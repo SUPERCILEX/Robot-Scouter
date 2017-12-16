@@ -70,7 +70,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
                 if (dy > 0) {
                     // User scrolled down -> hide the FAB
                     fab.hide()
-                } else if (dy < 0 && !menuHelper.areTeamsSelected()) {
+                } else if (dy < 0 && menuHelper.selectedTeams.isEmpty()) {
                     fab.show()
                 }
             }
@@ -95,7 +95,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
                         holder.selectedTeamIdListener
                 )
                 recyclerView.adapter = adapter
-                menuHelper.setAdapter(adapter)
+                menuHelper.adapter = adapter!!
                 menuHelper.restoreState(savedInstanceState)
                 savedInstanceState?.clear()
             }
@@ -122,13 +122,13 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
     fun exportAllTeams() = onSuccess(null)
 
     override fun onSuccess(nothing: Nothing?) {
-        if (menuHelper.areTeamsSelected()) {
-            menuHelper.exportTeams()
-        } else {
+        if (menuHelper.selectedTeams.isEmpty()) {
             TeamsLiveData.observeOnDataChanged().observeOnce {
                 ExportService.exportAndShareSpreadSheet(this, permHandler, it)
                 Tasks.forResult(null)
             }
+        } else {
+            menuHelper.exportTeams()
         }
     }
 

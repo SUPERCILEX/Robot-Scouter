@@ -31,8 +31,8 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     }
 
     override fun removeObserver(observer: Observer<T>) {
-        (observer as? EventFilterObserver ?:
-                observers.map { it.originalObserver }.single { it === observer }).let {
+        (observer as? EventFilterObserver
+                ?: observers.map { it.originalObserver }.single { it === observer }).let {
             observers.remove(it)
             super.removeObserver(it)
         }

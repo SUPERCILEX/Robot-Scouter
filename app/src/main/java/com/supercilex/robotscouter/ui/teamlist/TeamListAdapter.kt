@@ -122,7 +122,7 @@ class TeamListAdapter(
         teamHolder.bind(
                 team,
                 isTeamSelected(team),
-                menuHelper.areTeamsSelected(),
+                menuHelper.selectedTeams.isNotEmpty(),
                 TextUtils.equals(selectedTeamId, team.id)
         )
     }
@@ -153,7 +153,7 @@ class TeamListAdapter(
                     break
                 }
             }
-        } else if (type == ChangeEventType.REMOVED && menuHelper.areTeamsSelected()) {
+        } else if (type == ChangeEventType.REMOVED && menuHelper.selectedTeams.isNotEmpty()) {
             for (oldTeam in menuHelper.selectedTeams) {
                 if (snapshots.firstOrNull { it.id == oldTeam.id } == null) {
                     // We found the deleted item

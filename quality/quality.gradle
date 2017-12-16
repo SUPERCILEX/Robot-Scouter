@@ -1,7 +1,5 @@
 apply plugin: 'checkstyle'
-apply plugin: 'findbugs'
-apply plugin: 'pmd'
-check.dependsOn 'ktlint', 'checkstyle', 'pmd'
+check.dependsOn 'ktlint', 'checkstyle'
 
 def configDir = "${project.rootDir}/quality"
 def reportsDir = "${project.buildDir}/reports"
@@ -11,15 +9,11 @@ configurations {
 }
 
 dependencies {
-    ktlint 'com.github.shyiko:ktlint:0.10.1'
+    ktlint 'com.github.shyiko:ktlint:0.14.0'
 }
 
 checkstyle {
-    toolVersion = '8.3'
-}
-
-pmd {
-    toolVersion = '5.8.1'
+    toolVersion = '8.5'
 }
 
 task ktlint(type: JavaExec) {
@@ -33,52 +27,6 @@ task checkstyle(type: Checkstyle) {
     source 'src'
     include '**/*.*'
     exclude '**/gen/**', '**/*.png'
-    classpath = files()
-}
-
-task pmd(type: Pmd) {
-    ignoreFailures = false
-    ruleSetFiles = files("$configDir/pmd-ruleset.xml")
-    ruleSets = []
-
-    source 'src'
-    include '**/*.java'
-    exclude '**/gen/**'
-
-    reports {
-        xml.enabled = false
-        html.enabled = true
-        xml {
-            destination file("$reportsDir/pmd.xml")
-        }
-        html {
-            destination file("$reportsDir/pmd.html")
-        }
-    }
-}
-
-task findbugs(type: FindBugs, dependsOn: "assembleDebug") {
-    ignoreFailures = false
-    effort = "max"
-    reportLevel = "high"
-    classes = files("${project.rootDir}/app/build/intermediates/classes")
-
-    source 'src'
-    include '**/*.java'
-    exclude '**/gen/**'
-    excludeFilter = file("$configDir/findbugs-filter.xml")
-
-    reports {
-        xml.enabled = false
-        html.enabled = true
-        xml {
-            destination file("$reportsDir/findbugs.xml")
-        }
-        html {
-            destination file("$reportsDir/findbugs.html")
-        }
-    }
-
     classpath = files()
 }
 
