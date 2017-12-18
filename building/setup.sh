@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo y | ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 "build-tools;${BUILD_TOOLS_VERSION}"
-
 if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   cd app
   openssl aes-256-cbc -K $encrypted_8e2b28f9b71e_key -iv $encrypted_8e2b28f9b71e_iv -in secrets.tar.enc -out secrets.tar -d &> /dev/null
