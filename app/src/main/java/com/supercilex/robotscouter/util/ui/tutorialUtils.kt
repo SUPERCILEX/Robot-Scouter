@@ -19,7 +19,9 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
                 .setPrimaryText(R.string.tutorial_create_first_team_title)
                 .setAutoDismiss(false)
                 .setPromptStateChangeListener { _, state ->
-                    runIfPressed(state) { hasShownAddTeamTutorial = true }
+                    if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                        hasShownAddTeamTutorial = true
+                    }
                 }
                 .create()!!
 
@@ -41,7 +43,10 @@ fun showSignInTutorial(
                     .setPrimaryText(R.string.tutorial_sign_in_title)
                     .setSecondaryText(R.string.tutorial_sign_in_rationale)
                     .setPromptStateChangeListener { _, state ->
-                        runIfPressed(state) { hasShownSignInTutorial = true }
+                        if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED
+                                || state == MaterialTapTargetPrompt.STATE_NON_FOCAL_PRESSED) {
+                            hasShownSignInTutorial = true
+                        }
                     }
                     .create()
 
@@ -50,8 +55,4 @@ fun showSignInTutorial(
             else prompt?.dismiss()
         }
     })
-}
-
-private inline fun runIfPressed(state: Int, block: () -> Unit) {
-    if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) block()
 }

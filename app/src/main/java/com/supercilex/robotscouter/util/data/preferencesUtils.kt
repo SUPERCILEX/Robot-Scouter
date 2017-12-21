@@ -17,6 +17,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.async
@@ -24,41 +25,27 @@ import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdateDefaultTemplateId
+import com.supercilex.robotscouter.util.showRatingDialog
 
 private val localPrefs: SharedPreferences by lazy {
     RobotScouter.INSTANCE.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
 }
-private val migrationPrefs: SharedPreferences by lazy {
-    RobotScouter.INSTANCE.getSharedPreferences("migrations", Context.MODE_PRIVATE)
-}
 
 val prefs = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
-        if (getString(key, null) != value) {
-            userPrefs.document(key).run {
-                if (value == null) delete() else set(mapOf(FIRESTORE_VALUE to value))
-            }.logFailures()
-        }
+        userPrefs.document(key).set(mapOf(FIRESTORE_VALUE to value)).logFailures()
     }
 
     override fun getString(key: String, defValue: String?): String? =
             localPrefs.getString(key, defValue)
 
     override fun putBoolean(key: String, value: Boolean) {
-        if (getBoolean(key, false) != value) {
-            userPrefs.document(key).run {
-                if (value) set(mapOf(FIRESTORE_VALUE to true)) else delete()
-            }.logFailures()
-        }
+        userPrefs.document(key).set(mapOf(FIRESTORE_VALUE to value)).logFailures()
     }
 
     override fun getBoolean(key: String, defValue: Boolean): Boolean =
             localPrefs.getBoolean(key, defValue)
 }
-
-var hasPerformedV1toV2Migration: Boolean
-    get() = migrationPrefs.getBoolean("v1...v2", false)
-    set(value) = migrationPrefs.updatePrefs { putBoolean("v1...v2", value) }
 
 var defaultTemplateId: String
     get() =
@@ -94,6 +81,10 @@ var hasShownAddTeamTutorial: Boolean
 var hasShownSignInTutorial: Boolean
     get() = prefs.getBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
     set(value) = prefs.putBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
+
+var shouldShowRatingDialog: Boolean
+    get() = showRatingDialog && prefs.getBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, true)
+    set(value) = prefs.putBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, value)
 
 fun initPrefs() {
     PrefUpdater
@@ -173,7 +164,8 @@ object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
             localPrefs.updatePrefs {
                 when (id) {
                     FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                    FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+                    FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
+                    FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
                     -> putBoolean(id, PrefsLiveData.value!![newIndex] as Boolean)
 
                     FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,

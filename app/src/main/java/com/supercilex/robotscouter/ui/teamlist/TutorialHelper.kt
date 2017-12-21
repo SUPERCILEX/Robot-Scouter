@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIA
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.PrefsLiveData
+import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getPrefOrDefault
@@ -45,11 +46,19 @@ class TutorialHelper : ViewModelBase<Nothing?>(),
         hasShownAddTeamTutorial.setValue(
                 prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
         hasShownSignInTutorial.setValue(
-                prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false))
+                prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
+                        && TeamsLiveData.value?.size?.let {
+                    it >= MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL
+                } == true
+        )
     }
 
     override fun onCleared() {
         super.onCleared()
         PrefsLiveData.removeObserver(this)
+    }
+
+    private companion object {
+        const val MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL = 3
     }
 }

@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.StringRes
-import android.support.v4.app.DialogFragment
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.content.res.AppCompatResources
@@ -36,7 +35,7 @@ import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import kotlin.math.roundToInt
 
-abstract class TemplateSelectorDialog : DialogFragment() {
+abstract class TemplateSelectorDialog : DialogFragmentBase() {
     @get:StringRes protected abstract val title: Int
 
     private val holder: ScoutsHolder by unsafeLazy {

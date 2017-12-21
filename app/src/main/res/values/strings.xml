@@ -34,6 +34,15 @@
     </string>
     <string name="media_save_response_title">Save response</string>
 
+    <!-- Rating dialog -->
+    <string name="rate_title">Enjoying Robot Scouter?</string>
+    <string name="rate_message">
+        While you\'re waiting to get your scouting results, please rate Robot Scouter!
+    </string>
+    <string name="rate_positive">Rate</string>
+    <string name="rate_negative">Never mind</string>
+    <string name="rate_neutral">Remind me later</string>
+
     <!-- Team list activity -->
     <string name="team_navigation_drawer_open_desc">Open navigation drawer</string>
     <string name="team_navigation_drawer_close_desc">Close navigation drawer</string>

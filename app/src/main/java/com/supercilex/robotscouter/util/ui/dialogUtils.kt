@@ -40,7 +40,7 @@ abstract class DialogFragmentBase : DialogFragment() {
  * **Note:** for this class to work correctly, the dialog must be an [AlertDialog] and set a
  * [DialogInterface.OnShowListener].
  */
-abstract class ManualDismissDialog : DialogFragment() {
+abstract class ManualDismissDialog : DialogFragmentBase() {
     /** @return true if the dialog should be dismissed, false otherwise */
     protected abstract fun onAttemptDismiss(): Boolean
 

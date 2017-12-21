@@ -12,9 +12,9 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.LinkReceiverActivity
@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logSelect
+import com.supercilex.robotscouter.util.minimumAppVersion
 import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
@@ -42,7 +43,7 @@ import org.jetbrains.anko.longToast
 
 class TeamListActivity : ActivityBase(), View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener,
-        TeamSelectionListener, OnSuccessListener<Nothing?> {
+        TeamSelectionListener, OnCompleteListener<Nothing?> {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
         override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {
             when (keyCode) {
@@ -103,12 +104,11 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
     override fun onStart() {
         super.onStart()
-        fetchAndActivate().addOnSuccessListener(this, this)
+        fetchAndActivate().addOnCompleteListener(this, this).logFailures()
     }
 
-    override fun onSuccess(nothing: Nothing?) {
-        val minimum = FirebaseRemoteConfig.getInstance().getDouble(MINIMUM_APP_VERSION_KEY)
-        if (!BuildConfig.DEBUG && fullVersionCode < minimum && !isOffline()) {
+    override fun onComplete(task: Task<Nothing?>) {
+        if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && !isOffline()) {
             UpdateDialog.show(supportFragmentManager)
         }
     }
@@ -219,7 +219,6 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
     private companion object {
         const val RC_SCOUT = 744
-        const val MINIMUM_APP_VERSION_KEY = "minimum_app_version"
 
         const val DONATE_EXTRA = "donate_extra"
         const val UPDATE_EXTRA = "update_extra"

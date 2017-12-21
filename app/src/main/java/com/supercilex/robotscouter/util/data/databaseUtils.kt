@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.WriteBatch
+import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
@@ -35,6 +36,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
@@ -74,6 +76,7 @@ val metricParser = SnapshotParser { Metric.parse(it.data, it.reference) }
 private const val REF_KEY = "com.supercilex.robotscouter.REF"
 
 fun initDatabase() {
+    FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
     PrefsLiveData
     TeamsLiveData
 }
@@ -359,7 +362,8 @@ object PrefsLiveData : AuthObservableSnapshotArrayLiveData<Any>() {
             val id = it.id
             when (id) {
                 FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-                FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+                FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
+                FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
                 -> it.getBoolean(FIRESTORE_VALUE)
 
                 FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,

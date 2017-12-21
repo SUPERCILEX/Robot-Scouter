@@ -20,10 +20,13 @@ import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.putExtra
 import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
+import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExport
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
+import com.supercilex.robotscouter.util.ui.RatingDialog
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
@@ -128,10 +131,13 @@ class ExportService : IntentService(TAG) {
         private const val TAG = "ExportService"
         private const val TIMEOUT = 10L
 
+        private const val MIN_TEAMS_TO_RATE = 10
+
         /** @return true if an export was attempted, false otherwise */
         fun exportAndShareSpreadSheet(fragment: Fragment,
                                       permHandler: PermissionRequestHandler,
-                                      @Size(min = 1) teams: List<Team>): Boolean {
+                                      @Size(min = 1) mutableTeams: List<Team>): Boolean {
+            val teams = mutableTeams.toList()
             if (teams.isEmpty()) return false
 
             val context = fragment.context!!
@@ -148,6 +154,13 @@ class ExportService : IntentService(TAG) {
                     context,
                     context.intentFor<ExportService>().putExtra(teams)
             )
+
+            if (teams.size >= MIN_TEAMS_TO_RATE) {
+                async {
+                    Tasks.await(fetchAndActivate())
+                    if (shouldShowRatingDialog) RatingDialog.show(fragment.childFragmentManager)
+                }.logFailures()
+            }
 
             return true
         }

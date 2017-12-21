@@ -10,7 +10,6 @@ import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
@@ -28,6 +27,7 @@ import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.teamFreshnessDays
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
 import java.util.ArrayList
@@ -36,8 +36,6 @@ import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
-
-private const val FRESHNESS_DAYS = "team_freshness"
 
 val teamsQuery
     get() = "$FIRESTORE_OWNERS.${uid!!}".let {
@@ -143,9 +141,7 @@ fun Team.trash() {
 fun Team.fetchLatestData() {
     fetchAndActivate().continueWith(AsyncTaskExecutor, Continuation<Nothing?, Unit> {
         val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp.time)
-        val freshness = FirebaseRemoteConfig.getInstance().getDouble(FRESHNESS_DAYS)
-
-        if (differenceDays >= freshness) startDownloadTeamDataJob(this)
+        if (differenceDays >= teamFreshnessDays) startDownloadTeamDataJob(this)
     }).logFailures()
 }
 
