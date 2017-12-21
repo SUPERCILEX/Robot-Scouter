@@ -104,14 +104,14 @@ dependencies {
 
     // Firebase UI
     // Auth
-//    implementation 'com.firebaseui:firebase-ui-auth:3.0.0'
+//    implementation "com.firebaseui:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
     implementation 'com.facebook.android:facebook-login:4.28.0'
     implementation("com.twitter.sdk.android:twitter-core:3.1.1@aar") { transitive = true }
     // Database
-//    implementation 'com.firebaseui:firebase-ui-firestore:3.0.0'
+//    implementation "com.firebaseui:firebase-ui-firestore:$firebaseUiVersion"
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-firestore:$playServicesVersion"
 
@@ -137,7 +137,7 @@ dependencies {
     implementation 'com.github.SUPERCILEX:kotterknife:5331f07fdf'
     implementation 'net.yslibrary.licenseadapter:licenseadapter:2.0.2'
     implementation 'com.github.clans:fab:1.6.4'
-    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.5.1'
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.5.2'
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
 
     // Apache POI
