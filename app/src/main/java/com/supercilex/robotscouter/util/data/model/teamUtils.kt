@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.deepLink
+import com.supercilex.robotscouter.util.data.getInBatches
 import com.supercilex.robotscouter.util.data.metricParser
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.fetchAndActivate
@@ -145,11 +146,11 @@ fun Team.fetchLatestData() {
 }
 
 fun Team.getScouts(): Task<List<Scout>> = async {
-    val scouts = Tasks.await(getScoutsQuery().get()).map {
+    val scouts = Tasks.await(getScoutsQuery().getInBatches()).map {
         scoutParser.parseSnapshot(it)
     }
     val metricTasks = scouts.map {
-        getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).get()
+        getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches()
     }
     Tasks.await(Tasks.whenAll(metricTasks))
 

@@ -45,12 +45,13 @@ class ExportService : IntentService(TAG) {
 
         val teams = intent.getTeamListExtra()
         try {
-            val scoutTasks = teams.map { it.getScouts() }
-            Tasks.await(Tasks.whenAll(scoutTasks), TIMEOUT, TimeUnit.MINUTES)
-            onHandleScouts(
-                    notificationManager,
-                    scoutTasks.withIndex().associate { teams[it.index] to it.value.result }
-            )
+            onHandleScouts(notificationManager, teams.chunked(SYNCHRONOUS_QUERY_CHUNK) {
+                val scoutTasks = it.map { it.getScouts() }
+                Tasks.await(Tasks.whenAll(scoutTasks), TIMEOUT, TimeUnit.MINUTES)
+                scoutTasks
+            }.flatten().withIndex().associate {
+                teams[it.index] to it.value.result
+            })
         } catch (e: Exception) {
             abortCritical(e, notificationManager)
         }
@@ -129,6 +130,7 @@ class ExportService : IntentService(TAG) {
 
     companion object {
         private const val TAG = "ExportService"
+        private const val SYNCHRONOUS_QUERY_CHUNK = 10
         private const val TIMEOUT = 10L
 
         private const val MIN_TEAMS_TO_RATE = 10
