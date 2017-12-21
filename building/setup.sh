@@ -7,6 +7,8 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   cd ..
 
   if [ $TRAVIS_BRANCH = 'master' ]; then
+    echo y | ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 "build-tools;${BUILD_TOOLS_VERSION}"
+
     npm install -g firebase-tools
     cd firebase/functions
     npm install
