@@ -432,7 +432,7 @@ class SpreadsheetExporter(
             chartData: MutableMap<Chart, Pair<LineChartData, List<ChartAxis>>>,
             chartPool: MutableMap<Metric<*>, Chart>
     ) {
-        fun getChartRowIndex(defaultIndex: Int, charts: List<Chart>): Int {
+        fun getChartRowIndex(defaultIndex: Int, charts: Collection<Chart>): Int {
             if (charts.isEmpty()) return defaultIndex
 
             val anchors = ArrayList<ClientAnchor>()
@@ -487,7 +487,7 @@ class SpreadsheetExporter(
             val drawing = row.sheet.createDrawingPatriarch()
             val startChartIndex = lastDataCellNum + 3
             val newChart = drawing.createChart(drawing.createChartAnchor(
-                    getChartRowIndex(nearestHeader.first, ArrayList(chartData.keys)),
+                    getChartRowIndex(nearestHeader.first, chartData.keys),
                     startChartIndex,
                     startChartIndex + 10)
             )

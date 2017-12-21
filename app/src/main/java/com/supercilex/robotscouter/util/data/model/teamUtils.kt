@@ -30,7 +30,6 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teamFreshnessDays
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
-import java.util.ArrayList
 import java.util.Calendar
 import java.util.Collections
 import java.util.Date
@@ -48,7 +47,7 @@ val Team.isOutdatedMedia: Boolean
     get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || TextUtils.isEmpty(media)
 
 fun Collection<Team>.getNames(): String {
-    val sortedTeams = ArrayList(this)
+    val sortedTeams = toMutableList()
     Collections.sort(sortedTeams)
 
     return when {

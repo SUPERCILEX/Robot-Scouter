@@ -83,7 +83,7 @@ open class StopwatchViewHolder(
             setText(R.string.metric_stopwatch_stop_title, "0:00")
             timer = Timer(this)
         } else {
-            metric.value = ArrayList(metric.value).apply {
+            metric.value = metric.value.toMutableList().apply {
                 add(timer!!.cancel())
             }
 
@@ -290,7 +290,7 @@ open class StopwatchViewHolder(
             val hadAverage = hasAverage
             val position = realPosition
 
-            val newCycles = ArrayList(metric.value)
+            val newCycles = metric.value.toMutableList()
             val deletedCycle = newCycles.removeAt(position)
             metric.value = newCycles
 
@@ -312,7 +312,7 @@ open class StopwatchViewHolder(
                 val latestMetric = holder.metric
                 val latestHadAverage = hasAverage
 
-                latestMetric.value = ArrayList(latestMetric.value).apply {
+                latestMetric.value = latestMetric.value.toMutableList().apply {
                     add(position, deletedCycle)
                 }
 

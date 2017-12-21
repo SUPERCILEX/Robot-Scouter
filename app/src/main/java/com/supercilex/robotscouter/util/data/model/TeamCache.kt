@@ -5,9 +5,9 @@ import java.util.Collections
 
 open class TeamCache(teams: Collection<Team>) {
     val teams: List<Team> by lazy {
-        val sortedTeams = ArrayList(teams)
-        Collections.sort(sortedTeams)
-        Collections.unmodifiableList(sortedTeams)
+        Collections.unmodifiableList(teams.toMutableList().apply {
+            Collections.sort(this)
+        })
     }
     val teamNames: String by lazy { this.teams.getNames() }
 }

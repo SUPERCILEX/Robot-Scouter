@@ -293,7 +293,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 return
             }
 
-            val teams = ArrayList(value!!)
+            val teams = value!!.toList()
             async {
                 val rawTeams = ArrayList<Team>()
                 for (team in teams) {

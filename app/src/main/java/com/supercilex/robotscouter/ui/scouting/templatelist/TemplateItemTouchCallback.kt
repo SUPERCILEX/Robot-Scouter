@@ -226,7 +226,7 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         val position = viewHolder.adapterPosition
         val deletedRef = localItems[position].ref
         val itemsBelow: List<OrderedRemoteModel> =
-                ArrayList(localItems.subList(position + 1, localItems.size))
+                localItems.subList(position + 1, localItems.size).toList()
 
         localItems.removeAt(position)
         adapter.notifyItemRemoved(position)

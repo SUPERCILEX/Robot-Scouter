@@ -68,7 +68,7 @@ abstract class TabPagerAdapterBase(
     }
 
     override fun onDataChanged() {
-        currentScouts = ArrayList(holder.scouts)
+        currentScouts = holder.scouts.toList()
         if (currentScouts.isNotEmpty() && currentScouts.size == oldScouts.size) {
             if (currentScouts == oldScouts) {
                 // This will occur when re-establishing a connection to the database
@@ -82,7 +82,7 @@ abstract class TabPagerAdapterBase(
             if (newScoutsWithOldNames == oldScouts) {
                 updateTabNames()
 
-                oldScouts = ArrayList(currentScouts)
+                oldScouts = currentScouts.toList()
                 return
             }
         }
@@ -118,7 +118,7 @@ abstract class TabPagerAdapterBase(
             }
         }
 
-        oldScouts = ArrayList(currentScouts)
+        oldScouts = currentScouts.toList()
     }
 
     private fun updateTabNames() {

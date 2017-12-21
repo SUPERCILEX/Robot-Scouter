@@ -71,7 +71,7 @@ class TeamMenuHelper(
             R.string.team_multiple_selected_message,
             Snackbar.LENGTH_INDEFINITE
     ).setAction(R.string.team_select_all_title) {
-        _selectedTeams = ArrayList(adapter.snapshots)
+        _selectedTeams = adapter.snapshots.toMutableList()
         updateState()
         notifyItemsChanged()
     }
