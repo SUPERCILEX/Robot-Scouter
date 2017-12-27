@@ -46,12 +46,10 @@ class SpinnerTemplateViewHolder(
 
         items.layoutManager = LinearLayoutManager(itemView.context)
         items.adapter = Adapter()
-        for (fragment in (itemView.context as FragmentActivity).supportFragmentManager.fragments) {
-            if (fragment is RecyclerPoolHolder) {
-                items.recycledViewPool = (fragment as RecyclerPoolHolder).recyclerPool
-                break
-            }
-        }
+        items.recycledViewPool = (itemView.context as FragmentActivity).supportFragmentManager
+                .fragments
+                .filterIsInstance<RecyclerPoolHolder>()
+                .single().recyclerPool
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(items)
@@ -64,14 +62,15 @@ class SpinnerTemplateViewHolder(
 
     override fun onClick(v: View) {
         val position = metric.value.size
-        metric.value = gatherLatestItems().toMutableList().apply {
-            add(Metric.List.Item(metric.ref.parent.document().id, ""))
-        }
+        metric.value = mutableListOf(
+                *getLatestItems().toTypedArray(),
+                Metric.List.Item(metric.ref.parent.document().id, "")
+        )
         itemTouchCallback.pendingScrollPosition = position
         items.adapter.notifyItemInserted(position)
     }
 
-    private fun gatherLatestItems(): List<Metric.List.Item> {
+    private fun getLatestItems(): List<Metric.List.Item> {
         val rv = items
         var items: List<Metric.List.Item> = metric.value
         for (i in 0..items.lastIndex) {
@@ -128,7 +127,7 @@ class SpinnerTemplateViewHolder(
         }
 
         override fun onClick(v: View) {
-            val items = parent.gatherLatestItems()
+            val items = parent.getLatestItems()
             when (v.id) {
                 R.id._default -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)

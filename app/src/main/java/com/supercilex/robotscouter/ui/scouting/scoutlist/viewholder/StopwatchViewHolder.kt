@@ -175,8 +175,8 @@ open class StopwatchViewHolder(
         /** @return the time since this class was instantiated and then cancelled */
         fun cancel(): Long {
             holder?.timer = null
-            for ((key, value) in TIMERS) {
-                if (value == this) TIMERS.remove(key)
+            TIMERS.filter { it.value == this }.forEach {
+                TIMERS.remove(it.key)
             }
 
             executor.shutdownNow()

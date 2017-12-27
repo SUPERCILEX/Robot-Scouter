@@ -99,9 +99,7 @@ inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReferen
 
 fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = async {
     var query = orderBy(FieldPath.documentId()).limit(batchSize)
-    val docs = ArrayList<DocumentSnapshot>().apply {
-        addAll(Tasks.await(query.get()).documents)
-    }
+    val docs = mutableListOf<DocumentSnapshot>(*Tasks.await(query.get()).documents.toTypedArray())
     var lastResultSize = docs.size
 
     while (lastResultSize >= batchSize) {
@@ -314,7 +312,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
 
             val teams = value!!.toList()
             async {
-                val rawTeams = ArrayList<Team>()
+                val rawTeams = mutableListOf<Team>()
                 for (team in teams) {
                     val rawTeam = team.copy(id = "", timestamp = Date(0))
 

@@ -153,26 +153,24 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
     })
 
     private fun getConsumePurchasesTask(purchases: List<Purchase>): Task<Nothing> {
-        val consumptions: MutableList<Task<String>> = ArrayList()
-
-        for (purchase in purchases) {
-            if (!purchase.sku.contains("single")) continue
-
+        val consumptions = purchases.filter {
+            it.sku.contains("single")
+        }.map {
             val consumption = TaskCompletionSource<String>()
-            billingClient.consumeAsync(purchase.purchaseToken) { resultCode, purchaseToken ->
+            billingClient.consumeAsync(it.purchaseToken) { resultCode, purchaseToken ->
                 if (resultCode == BillingResponse.OK || resultCode == BillingResponse.ITEM_NOT_OWNED) {
                     consumption.setResult(purchaseToken)
                 } else {
                     val e = PurchaseException(
                             resultCode,
-                            message = "Consumption failed with code $resultCode and sku ${purchase.sku}"
+                            message = "Consumption failed with code $resultCode and sku ${it.sku}"
                     )
                     FirebaseCrash.report(e)
                     Crashlytics.logException(e)
                     consumption.setException(e)
                 }
             }
-            consumptions += consumption.task
+            consumption.task
         }
 
         return Tasks.whenAll(consumptions).continueWithTask(Continuation<Void, Task<Nothing>> {

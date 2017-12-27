@@ -90,7 +90,7 @@ class ExportService : IntentService(TAG) {
             })
         }
 
-        val usedTemplates = HashMap<String, Int>()
+        val usedTemplates = mutableMapOf<String, Int>()
         return templateIds.associate {
             // Getting the name will be null if the user deletes a template
             it to (allPossibleTemplateNames[it] ?: unknownTemplateName)
@@ -106,16 +106,12 @@ class ExportService : IntentService(TAG) {
     }
 
     private fun zipScouts(map: Map<Team, List<Scout>>): Map<String, Map<Team, List<Scout>>> {
-        fun initMap(map: HashMap<Team, ArrayList<Scout>>, team: Team, scout: Scout) =
-                map.put(team, ArrayList<Scout>().also { it += scout })
-
-        val zippedScouts = HashMap<String, HashMap<Team, ArrayList<Scout>>>()
+        val zippedScouts = mutableMapOf<String, MutableMap<Team, MutableList<Scout>>>()
         for ((team, scouts) in map) {
             for (scout in scouts) {
                 zippedScouts[scout.templateId]?.also {
-                    it[team]?.also { it += scout } ?: initMap(it, team, scout)
-                } ?: zippedScouts.put(scout.templateId, HashMap<Team, ArrayList<Scout>>()
-                        .also { initMap(it, team, scout) })
+                    it[team]?.also { it += scout } ?: it.put(team, mutableListOf(scout))
+                } ?: zippedScouts.put(scout.templateId, mutableMapOf(team to mutableListOf(scout)))
             }
         }
         return zippedScouts

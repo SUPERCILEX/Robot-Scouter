@@ -49,7 +49,7 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     private val deleteIconPadding =
             rootView.resources.getDimension(R.dimen.spacing_large).toInt()
 
-    private val localItems = ArrayList<T>()
+    private val localItems = mutableListOf<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null
     private var scrollToPosition = RecyclerView.NO_POSITION
     private var isMovingItem = false

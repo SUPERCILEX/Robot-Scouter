@@ -13,11 +13,10 @@ import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.usermodel.Workbook
-import java.util.HashMap
 
 class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
-    private val metricCache = HashMap<Team, HashMap<Int, Metric<*>>>()
-    private val formatStyles = HashMap<String, Short>()
+    private val metricCache = mutableMapOf<Team, MutableMap<Int, Metric<*>>>()
+    private val formatStyles = mutableMapOf<String, Short>()
 
     var workbook: Workbook by LateinitVal()
     val creationHelper: CreationHelper by lazy { workbook.creationHelper }
@@ -42,7 +41,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
 
     fun putRootMetric(team: Team, index: Int, metric: Metric<*>) {
-        (metricCache[team] ?: HashMap<Int, Metric<*>>().also {
+        (metricCache[team] ?: mutableMapOf<Int, Metric<*>>().also {
             metricCache.put(team, it)
         })[index] = metric
     }
@@ -51,9 +50,10 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         if (isUnsupportedDevice) return
 
         cell.cellStyle = workbook.createCellStyle().apply {
-            dataFormat = formatStyles[format] ?: workbook.createDataFormat().getFormat(format).also {
-                formatStyles.put(format, it)
-            }
+            dataFormat = formatStyles[format]
+                    ?: workbook.createDataFormat().getFormat(format).also {
+                        formatStyles.put(format, it)
+                    }
         }
     }
 

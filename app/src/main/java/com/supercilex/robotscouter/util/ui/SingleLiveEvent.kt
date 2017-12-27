@@ -3,8 +3,6 @@ package com.supercilex.robotscouter.util.ui
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
-
-import java.util.ArrayList
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -20,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 class SingleLiveEvent<T> : MutableLiveData<T>() {
     private val observerStatuses = ConcurrentHashMap<Class<out Observer<*>>, AtomicBoolean>()
-    private val observers = ArrayList<EventFilterObserver>()
+    private val observers = mutableListOf<EventFilterObserver>()
 
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
         observerStatuses.putIfAbsent(observer.javaClass, AtomicBoolean())

@@ -47,15 +47,18 @@ class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase,
 
         isPersistent = false
 
-        entries = TemplateType.values.map {
-            context.resources.getStringArray(R.array.template_new_options)[it.id]
-        }.toMutableList().apply {
-            addAll(namesListener.mapIndexed { index, _ ->
-                namesListener[index].getTemplateName(index)
-            })
-        }.toTypedArray()
-        entryValues = TemplateType.values.map { it.id.toString() }.toMutableList()
-                .apply { addAll(namesListener.map { it.id }) }.toTypedArray()
+        entries = arrayOf(
+                *TemplateType.values.map {
+                    context.resources.getStringArray(R.array.template_new_options)[it.id]
+                }.toTypedArray(),
+                *namesListener.mapIndexed { index, _ ->
+                    namesListener[index].getTemplateName(index)
+                }.toTypedArray()
+        )
+        entryValues = arrayOf(
+                *TemplateType.values.map { it.id.toString() }.toTypedArray(),
+                *namesListener.map { it.id }.toTypedArray()
+        )
         value = defaultTemplateId
         notifyChanged()
 

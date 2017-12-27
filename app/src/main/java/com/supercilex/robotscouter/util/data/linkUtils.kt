@@ -96,17 +96,15 @@ inline fun updateOwner(
 private inline fun <T> List<T>.generateUrl(
         linkBase: String,
         token: String?,
-        queryParamsGenerator: T.() -> Pair<String, String>
+        crossinline queryParamsGenerator: T.() -> Pair<String, String>
 ): String {
     val builder = Uri.Builder().path(linkBase).encodeToken(token)
 
-    val keys = ArrayList<String>(size)
-    for (item in this) {
-        val (key, value) = item.queryParamsGenerator()
+    builder.appendQueryParameter(KEYS, joinToString(",") {
+        val (key, value) = it.queryParamsGenerator()
         builder.appendQueryParameter(key, value)
-        keys += key
-    }
-    builder.appendQueryParameter(KEYS, keys.joinToString(","))
+        key
+    })
 
     return Uri.decode(builder.build().toString())
 }

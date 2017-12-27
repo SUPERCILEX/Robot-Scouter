@@ -29,7 +29,6 @@ import org.apache.poi.ss.formula.WorkbookEvaluator
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Chart
-import org.apache.poi.ss.usermodel.ClientAnchor
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy.CREATE_NULL_AS_BLANK
 import org.apache.poi.ss.usermodel.Sheet
@@ -239,7 +238,7 @@ class SpreadsheetExporter(
             return
         }
 
-        val metricCache = HashMap<String, Int>()
+        val metricCache = mutableMapOf<String, Int>()
 
         fun setRowValue(metric: Metric<*>, row: Row, column: Int) {
             val valueCell = row.getCell(column, CREATE_NULL_AS_BLANK)
@@ -364,8 +363,8 @@ class SpreadsheetExporter(
             cellStyle = cache.columnHeaderStyle
         }
 
-        val chartData = HashMap<Chart, Pair<LineChartData, List<ChartAxis>>>()
-        val chartPool = HashMap<Metric<*>, Chart>()
+        val chartData = mutableMapOf<Chart, Pair<LineChartData, List<ChartAxis>>>()
+        val chartPool = mutableMapOf<Metric<*>, Chart>()
 
         for (i in 1..sheet.lastRowNum) {
             val type = (cache.getRootMetric(team, i) ?: continue).type
@@ -435,11 +434,10 @@ class SpreadsheetExporter(
         fun getChartRowIndex(defaultIndex: Int, charts: Collection<Chart>): Int {
             if (charts.isEmpty()) return defaultIndex
 
-            val anchors = ArrayList<ClientAnchor>()
-            for (chart in charts) {
-                if (chart is XSSFChart) anchors += chart.graphicFrame.anchor
-                else return defaultIndex
+            val anchors = charts.filterIsInstance<XSSFChart>().mapTo(mutableListOf()) {
+                it.graphicFrame.anchor
             }
+            if (anchors.isEmpty()) return defaultIndex
 
             Collections.sort(anchors) { o1, o2 ->
                 val endRow1 = o1.row2
@@ -538,7 +536,7 @@ class SpreadsheetExporter(
         val headerRow = averageSheet.createRow(0)
         headerRow.createCell(0)
 
-        val metricCache = HashMap<String, Int>()
+        val metricCache = mutableMapOf<String, Int>()
 
         val sheetList = workbook.toList()
         for (i in 1 until workbook.numberOfSheets) { // Excluding the average sheet

@@ -9,7 +9,6 @@ import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import org.jetbrains.anko.bundleOf
-import java.util.ArrayList
 
 const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
 const val TEAMS_KEY = "com.supercilex.robotscouter.data.util.Teams"

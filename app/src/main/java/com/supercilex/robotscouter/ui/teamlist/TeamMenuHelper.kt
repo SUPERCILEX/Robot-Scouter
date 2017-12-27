@@ -43,7 +43,7 @@ class TeamMenuHelper(
 ) : View.OnClickListener, OnBackPressedListener {
     private val activity = fragment.activity as AppCompatActivity
 
-    private var _selectedTeams: MutableList<Team> = ArrayList()
+    private var _selectedTeams = mutableListOf<Team>()
     val selectedTeams: List<Team> get() = _selectedTeams
     lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
 
@@ -115,7 +115,7 @@ class TeamMenuHelper(
     }
 
     fun resetMenu() {
-        _selectedTeams = ArrayList()
+        _selectedTeams = mutableListOf()
         setNormalMenuItemsVisible(true)
         setContextMenuItemsVisible(false)
         setTeamSpecificItemsVisible(false)

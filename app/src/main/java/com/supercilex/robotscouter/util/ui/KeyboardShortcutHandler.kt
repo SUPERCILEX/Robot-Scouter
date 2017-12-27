@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.util.ui
 import android.view.KeyEvent
 
 abstract class KeyboardShortcutHandler : KeyEvent.Callback {
-    private val filteredEvents = HashMap<Long, KeyEvent>()
+    private val filteredEvents = mutableMapOf<Long, KeyEvent>()
 
     override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent): Boolean = false
 
