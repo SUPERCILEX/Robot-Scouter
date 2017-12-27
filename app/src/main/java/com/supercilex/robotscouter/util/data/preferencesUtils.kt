@@ -33,7 +33,9 @@ private val localPrefs: SharedPreferences by lazy {
 
 val prefs = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
-        userPrefs.document(key).set(mapOf(FIRESTORE_VALUE to value)).logFailures()
+        if (value != null) {
+            userPrefs.document(key).set(mapOf(FIRESTORE_VALUE to value)).logFailures()
+        }
     }
 
     override fun getString(key: String, defValue: String?): String? =
@@ -125,7 +127,7 @@ private inline fun SharedPreferences.updatePrefs(
     apply()
 }
 
-object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
+private object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
         DefaultLifecycleObserver, ChangeEventListenerBase {
     init {
         PrefsLiveData.observeForever(this)
@@ -143,11 +145,11 @@ object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
     }
 
     override fun onStart(owner: LifecycleOwner) {
-        PrefsLiveData.value?.addChangeEventListener(this@PrefUpdater)
+        PrefsLiveData.value?.addChangeEventListener(this)
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        PrefsLiveData.value?.removeChangeEventListener(this@PrefUpdater)
+        PrefsLiveData.value?.removeChangeEventListener(this)
     }
 
     override fun onChildChanged(
