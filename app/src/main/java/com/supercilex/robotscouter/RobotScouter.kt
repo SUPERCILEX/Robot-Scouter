@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter
 
+import android.os.Build
+import android.os.StrictMode
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
 import com.squareup.leakcanary.LeakCanary
@@ -24,6 +26,33 @@ class RobotScouter : MultiDexApplication() {
         initPrefs()
         initUi()
         initNotifications()
+
+        if (BuildConfig.DEBUG) {
+            // Purposefully put this after initialization since Google is terrible with disk I/O.
+            val vmBuilder = StrictMode.VmPolicy.Builder()
+                    .detectActivityLeaks()
+                    .detectLeakedClosableObjects()
+                    .detectLeakedRegistrationObjects()
+                    .detectLeakedSqlLiteObjects()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                vmBuilder.detectCleartextNetwork()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vmBuilder.detectContentUriWithoutPermission()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                vmBuilder.detectFileUriExposure()
+            }
+            StrictMode.setVmPolicy(vmBuilder.penaltyDeath().build())
+
+            StrictMode.setThreadPolicy(
+                    StrictMode.ThreadPolicy.Builder()
+                            .detectAll()
+                            .penaltyFlashScreen()
+                            .penaltyDeath()
+                            .build()
+            )
+        }
     }
 
     companion object {
