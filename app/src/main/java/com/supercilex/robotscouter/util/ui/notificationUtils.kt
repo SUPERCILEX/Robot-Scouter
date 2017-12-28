@@ -12,8 +12,19 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.isSingleton
+import com.supercilex.robotscouter.util.logFailures
 import org.jetbrains.anko.intentFor
+import java.util.LinkedList
+import java.util.Queue
+import java.util.concurrent.CancellationException
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 const val EXPORT_GROUP = "export_group"
 const val EXPORT_CHANNEL = "export"
@@ -67,6 +78,97 @@ fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
     setShowBadge(false)
     enableVibration(false)
     enableLights(false)
+}
+
+/**
+ * Notification manager that throws away excess notifications in compliance with Android N's
+ * rate limits.
+ *
+ * @see SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS
+ */
+class FilteringNotificationManager : Runnable {
+    private val lock = ReentrantReadWriteLock()
+    private val executor = ScheduledThreadPoolExecutor(1)
+    private val notifications: MutableMap<Int, Notification> = ConcurrentHashMap()
+    private val vips: Queue<Int> = LinkedList()
+
+    private var isStopped = false
+
+    /**
+     * Post a notification on the next available pass. Both the first and last (complete)
+     * notifications are guaranteed to be posted.
+     *
+     * @see NotificationManager.notify
+     */
+    fun notify(id: Int, notification: Notification, isComplete: Boolean = false) {
+        lock.read {
+            check(!isStopped) { "Cannot notify a stopped notification filter." }
+        }
+
+        lock.write {
+            if ((isComplete || !notifications.contains(id)) && !vips.contains(id)) {
+                vips.add(id)
+            }
+            notifications[id] = notification
+        }
+    }
+
+    /**
+     * Starts the notification looper.
+     *
+     * @throws IllegalStateException if the looper has been stopped
+     */
+    fun start() {
+        lock.read {
+            check(!isStopped) { "Cannot start a previously stopped notification filter." }
+        }
+
+        async {
+            executor.scheduleWithFixedDelay(
+                    this,
+                    0,
+                    SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS,
+                    TimeUnit.MILLISECONDS
+            ).get()
+        }.logFailures { it is CancellationException }
+    }
+
+    /**
+     * Stops the looper as soon as possible. All posted notifications will be processed before
+     * stopping.
+     *
+     * @throws IllegalStateException if there are incomplete notifications
+     */
+    fun stop() = lock.write {
+        check(vips.size == notifications.size && vips.all { notifications[it] != null }) {
+            "Cannot stop a notification filter with incomplete notifications."
+        }
+
+        isStopped = true
+    }
+
+    fun stopNow() {
+        executor.shutdownNow()
+        lock.write {
+            vips.clear()
+            notifications.clear()
+            isStopped = true
+        }
+    }
+
+    override fun run() {
+        lock.write {
+            vips.poll()?.let {
+                notificationManager.notify(it, notifications.remove(it)!!)
+            } ?: notifications.keys.firstOrNull()?.let {
+                notificationManager.notify(it, notifications.remove(it)!!)
+            }
+        }
+
+        lock.read {
+            if (isStopped && notifications.isEmpty()) executor.shutdown()
+        }
+    }
 }
 
 class NotificationIntentForwarder : Activity() {

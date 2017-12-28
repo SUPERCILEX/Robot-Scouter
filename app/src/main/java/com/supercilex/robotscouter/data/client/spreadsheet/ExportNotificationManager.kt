@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.client.spreadsheet
 
-import android.app.Notification
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.ServiceCompat
 import android.support.v4.content.ContextCompat
@@ -11,16 +10,14 @@ import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
-import com.supercilex.robotscouter.util.ui.SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS
+import com.supercilex.robotscouter.util.ui.FilteringNotificationManager
 import com.supercilex.robotscouter.util.ui.notificationManager
-import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 class ExportNotificationManager(private val service: ExportService) {
-    private val notificationPublisher = PublishSubject.create<Pair<Int, Notification>>()
+    private val notificationFilter = FilteringNotificationManager()
 
     private val masterNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
@@ -51,6 +48,7 @@ class ExportNotificationManager(private val service: ExportService) {
                 .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
                 .updateProgress(ESTIMATED_MASTER_OPS, 0)
                 .build())
+        notificationFilter.start()
     }
 
     fun setData(nTemplates: Int, teams: Set<Team>) {
@@ -67,20 +65,6 @@ class ExportNotificationManager(private val service: ExportService) {
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
-
-        notificationPublisher
-                .groupBy { it.first }
-                .flatMap {
-                    it.sample(
-                            // Multiply to ensure the overall rate limitation
-                            SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS * nTemplates,
-                            TimeUnit.MILLISECONDS,
-                            true
-                    )
-                }
-                .subscribe {
-                    notificationManager.notify(it.first, it.second)
-                }
     }
 
     @Synchronized
@@ -92,12 +76,12 @@ class ExportNotificationManager(private val service: ExportService) {
         val maxProgress = teams.size +
                 if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
-        notificationPublisher.onNext(id to exportNotification
+        notificationFilter.notify(id, exportNotification
                 .setContentText(RobotScouter.INSTANCE.getString(R.string.export_initialize_status))
                 .updateProgress(maxProgress, 0)
                 .build())
         if (pendingTaskCount == nTemplates && exporters.isEmpty()) {
-            notificationPublisher.onNext(hashCode() to masterNotification
+            notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.INSTANCE.getString(
                             R.string.export_template_status, exporter.templateName))
@@ -106,7 +90,7 @@ class ExportNotificationManager(private val service: ExportService) {
                     .build())
         }
 
-        exporters.put(exporter, NotificationHolder(id, maxProgress))
+        exporters[exporter] = NotificationHolder(id, maxProgress)
 
         return id
     }
@@ -129,21 +113,21 @@ class ExportNotificationManager(private val service: ExportService) {
         val (id) = exporters.remove(exporter)!!
         // The original notification must be cancelled because we're changing channels
         notificationManager.cancel(id)
-        notificationPublisher.onNext(id to notification.setGroup(hashCode().toString()).build())
+        notificationFilter.notify(id, notification.setGroup(hashCode().toString()).build(), true)
 
         if (--pendingTaskCount == 0) {
-            notificationPublisher.onNext(hashCode() to masterNotification
+            notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(R.drawable.ic_logo)
                     .setContentText(RobotScouter.INSTANCE.resources.getQuantityString(
                             R.plurals.export_complete_message, teams.size, teams.getNames()))
                     .setSubText(RobotScouter.INSTANCE.resources.getQuantityString(
                             R.plurals.export_complete_subtitle, nTemplates, nTemplates))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build())
-            notificationPublisher.onComplete()
+                    .build(), true)
+            notificationFilter.stop()
             ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_DETACH)
         } else {
-            notificationPublisher.onNext(hashCode() to masterNotification
+            notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.INSTANCE.getString(
                             R.string.export_template_status,
@@ -156,13 +140,14 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     fun abort() {
+        notificationFilter.stopNow()
         for ((_, holder) in exporters) notificationManager.cancel(holder.id)
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
     private fun next(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
         val holder = exporters[exporter]!!
-        notificationPublisher.onNext(holder.id to notification
+        notificationFilter.notify(holder.id, notification
                 .updateProgress(holder.maxProgress, ++holder.progress)
                 .build())
     }

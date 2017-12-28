@@ -8,12 +8,14 @@ import android.support.annotation.Size
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import com.crashlytics.android.Crashlytics
+import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
+import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
@@ -70,9 +72,9 @@ class ExportService : IntentService(TAG) {
             async {
                 SpreadsheetExporter(scouts, notificationManager, templateNames[templateId]!!)
                         .export()
-            }.addOnFailureListener {
+            }.addOnFailureListener(AsyncTaskExecutor, OnFailureListener {
                 abortCritical(it, notificationManager)
-            }
+            })
         }), TIMEOUT, TimeUnit.MINUTES)
     }
 
@@ -99,7 +101,7 @@ class ExportService : IntentService(TAG) {
                 usedTemplates[name] = it + 1
                 "$name ($it)"
             } ?: run {
-                usedTemplates.put(name, 1)
+                usedTemplates[name] = 1
                 name
             }
         }
@@ -121,7 +123,7 @@ class ExportService : IntentService(TAG) {
         FirebaseCrash.report(e)
         Crashlytics.logException(e)
         showToast("${getString(R.string.fui_general_error)}\n\n${e.message}")
-        async { notificationManager.abort() }.logFailures()
+        notificationManager.abort()
     }
 
     companion object {

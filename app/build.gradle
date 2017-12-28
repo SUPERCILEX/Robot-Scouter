@@ -84,9 +84,6 @@ dependencies {
     implementation "org.jetbrains.anko:anko-design:$ankoVersion"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-
     // Support libraries
     implementation 'com.android.support:multidex:1.0.2'
     implementation "com.android.support:design:$supportLibVersion"
@@ -108,7 +105,7 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
-    implementation 'com.facebook.android:facebook-login:4.28.0'
+    implementation 'com.facebook.android:facebook-login:4.29.0'
     implementation("com.twitter.sdk.android:twitter-core:3.1.1@aar") { transitive = true }
     // Database
 //    implementation "com.firebaseui:firebase-ui-firestore:$firebaseUiVersion"

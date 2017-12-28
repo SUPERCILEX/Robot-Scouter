@@ -22,8 +22,6 @@ import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
-import io.reactivex.functions.Consumer
-import io.reactivex.plugins.RxJavaPlugins
 import org.jetbrains.anko.bundleOf
 import java.lang.Exception
 import java.util.Date
@@ -83,8 +81,6 @@ fun initAnalytics() {
             userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge()).logFailures()
         }
     }
-
-    RxJavaPlugins.setErrorHandler(CrashLogger)
 }
 
 fun Team.logSelect() = analytics.logEvent(
@@ -250,20 +246,16 @@ fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 fun <T> Task<T>.logFailures(
         ignore: ((Exception) -> Boolean)? = null
 ): Task<T> = addOnFailureListener(if (ignore == null) CrashLogger else OnFailureListener {
-    if (!ignore(it)) CrashLogger.accept(it)
+    if (!ignore(it)) CrashLogger.onFailure(it)
 })
 
-object CrashLogger : OnFailureListener, OnCompleteListener<Any>, Consumer<Throwable> {
+object CrashLogger : OnFailureListener, OnCompleteListener<Any> {
     override fun onFailure(e: Exception) {
-        accept(e)
+        FirebaseCrash.report(e)
+        Crashlytics.logException(e)
     }
 
     override fun onComplete(task: Task<Any>) {
-        accept(task.exception ?: return)
-    }
-
-    override fun accept(t: Throwable) {
-        FirebaseCrash.report(t)
-        Crashlytics.logException(t)
+        onFailure(task.exception ?: return)
     }
 }
