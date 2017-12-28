@@ -147,7 +147,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
                     R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
                     R.id.action_edit_templates -> startActivity(TemplateListActivity.createIntent())
                     R.id.action_settings -> SettingsActivity.show(this)
-                    else -> throw IllegalStateException("Unknown item id: ${item.itemId}")
+                    else -> error("Unknown item id: ${item.itemId}")
                 }
             }
         }

@@ -22,7 +22,7 @@ abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) : Callable<Tea
     protected fun cannotContinue(response: Response<*>): Boolean = when {
         response.isSuccessful -> false
         response.code() == ERROR_404 -> true
-        else -> throw IllegalStateException(response.toString())
+        else -> error(response.toString())
     }
 
     protected companion object {

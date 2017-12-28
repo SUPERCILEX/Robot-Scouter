@@ -131,7 +131,7 @@ class SpinnerTemplateViewHolder(
             when (v.id) {
                 R.id._default -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)
-                else -> throw IllegalStateException("Unknown id: ${v.id}")
+                else -> error("Unknown id: ${v.id}")
             }
         }
 

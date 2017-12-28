@@ -152,7 +152,7 @@ open class StopwatchViewHolder(
             get() = System.currentTimeMillis() - startTimeMillis
 
         init {
-            TIMERS.put(holder.metric, this)
+            TIMERS[holder.metric] = this
             updateStyle()
             async {
                 executor.scheduleWithFixedDelay(this, 0, 1, TimeUnit.SECONDS).get()

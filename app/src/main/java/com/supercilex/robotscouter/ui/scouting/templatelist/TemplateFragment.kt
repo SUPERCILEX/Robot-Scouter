@@ -167,7 +167,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             R.id.add_note -> Metric.Text(position = position, ref = metricRef)
             R.id.add_spinner -> Metric.List(position = position, ref = metricRef)
             R.id.add_header -> Metric.Header(position = position, ref = metricRef)
-            else -> throw IllegalStateException("Unknown view id: $id")
+            else -> error("Unknown view id: $id")
         }.apply {
             logAdd()
             ref.set(this)

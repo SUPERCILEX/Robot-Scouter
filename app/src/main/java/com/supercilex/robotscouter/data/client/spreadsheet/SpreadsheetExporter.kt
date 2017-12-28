@@ -499,8 +499,8 @@ class SpreadsheetExporter(
             val legend = newChart.orCreateLegend
             legend.position = LegendPosition.RIGHT
 
-            chartData.put(newChart, data to listOf(bottomAxis, leftAxis))
-            chartPool.put(nearestHeader.second, newChart)
+            chartData[newChart] = data to listOf(bottomAxis, leftAxis)
+            chartPool[nearestHeader.second] = newChart
         } else {
             data = chartData[chart!!]!!.first
         }

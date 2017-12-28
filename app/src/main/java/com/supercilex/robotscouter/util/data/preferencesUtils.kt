@@ -65,7 +65,7 @@ val nightMode: Int
             "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
             "yes" -> AppCompatDelegate.MODE_NIGHT_YES
             "no" -> AppCompatDelegate.MODE_NIGHT_NO
-            else -> throw IllegalStateException("Unknown night mode value: $mode")
+            else -> error("Unknown night mode value: $mode")
         }
     }
 
@@ -105,8 +105,7 @@ fun clearPrefs() {
         when (value) {
             is Boolean -> prefs.putBoolean(key, false)
             is String -> prefs.putString(key, null)
-            else -> throw IllegalStateException(
-                    "Unknown value type: ${value?.let { it::class.java }}")
+            else -> error("Unknown value type: ${value?.let { it::class.java }}")
         }
     }
     clearLocalPrefs()

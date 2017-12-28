@@ -116,11 +116,8 @@ fun autoFitColumnWidths(sheetIterator: Iterable<Sheet>) {
     }
 }
 
-fun getMetricForChart(chart: Chart, pool: Map<Metric<*>, Chart>): Metric<*> {
-    pool.keys.filter { pool[it] === chart }.forEach { return it }
-
-    throw IllegalStateException("Chart not found in pool")
-}
+fun getMetricForChart(chart: Chart, pool: Map<Metric<*>, Chart>): Metric<*> =
+        pool.keys.find { pool[it] === chart }!!
 
 fun CTTitle.setValue(text: String) {
     addNewLayout()

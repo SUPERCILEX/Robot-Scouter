@@ -54,8 +54,8 @@ abstract class MovableFragmentStatePagerAdapter(
         initTransaction()
 
         val fragment = getItem(position)
-        fragmentsToItemIds.put(fragment, itemId)
-        itemIdsToFragments.put(itemId, fragment)
+        fragmentsToItemIds[fragment] = itemId
+        itemIdsToFragments[itemId] = fragment
 
         savedStates[itemId]?.let {
             fragment.setInitialSavedState(it)
@@ -131,7 +131,7 @@ abstract class MovableFragmentStatePagerAdapter(
                     state.getParcelableArrayList(KEY_FRAGMENT_STATES)
 
             for ((index, id) in fragmentIds.withIndex()) {
-                savedStates.put(id, fragmentStates[index])
+                savedStates[id] = fragmentStates[index]
             }
 
             for (key: String in state.keySet()) {
@@ -140,8 +140,8 @@ abstract class MovableFragmentStatePagerAdapter(
 
                     manager.getFragment(state, key)?.let {
                         it.setMenuVisibility(false)
-                        fragmentsToItemIds.put(it, itemId)
-                        itemIdsToFragments.put(itemId, it)
+                        fragmentsToItemIds[it] = itemId
+                        itemIdsToFragments[itemId] = it
                     }
                 }
             }
@@ -156,7 +156,7 @@ abstract class MovableFragmentStatePagerAdapter(
         val itemId = fragmentsToItemIds.remove(this)
         itemIdsToFragments.remove(itemId)
         if (itemId != null && isAdded) {
-            savedStates.put(itemId, manager.saveFragmentInstanceState(this))
+            savedStates[itemId] = manager.saveFragmentInstanceState(this)
         }
 
         currentTransaction!!.remove(this)

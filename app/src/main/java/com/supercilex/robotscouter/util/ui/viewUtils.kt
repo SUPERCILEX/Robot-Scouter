@@ -163,7 +163,7 @@ fun View.animatePopReveal(visible: Boolean) {
                 .alpha(if (visible) 1f else 0f)
                 .setDuration(shortAnimationDuration)
                 // Sadly, LookupTableInterpolator is package private in Java which makes Kotlin
-                // throw a IllegalAccessError. See https://youtrack.jetbrains.com/issue/KT-15315.
+                // throw an IllegalAccessError. See https://youtrack.jetbrains.com/issue/KT-15315.
                 .setInterpolator(@Suppress("USELESS_CAST") if (visible) {
                     LinearOutSlowInInterpolator() as Any
                 } else {

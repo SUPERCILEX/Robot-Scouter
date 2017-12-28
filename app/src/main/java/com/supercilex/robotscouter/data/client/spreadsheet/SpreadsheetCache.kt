@@ -42,7 +42,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
 
     fun putRootMetric(team: Team, index: Int, metric: Metric<*>) {
         (metricCache[team] ?: mutableMapOf<Int, Metric<*>>().also {
-            metricCache.put(team, it)
+            metricCache[team] = it
         })[index] = metric
     }
 
@@ -52,7 +52,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         cell.cellStyle = workbook.createCellStyle().apply {
             dataFormat = formatStyles[format]
                     ?: workbook.createDataFormat().getFormat(format).also {
-                        formatStyles.put(format, it)
+                        formatStyles[format] = it
                     }
         }
     }

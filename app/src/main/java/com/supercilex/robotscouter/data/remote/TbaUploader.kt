@@ -29,7 +29,7 @@ class TbaUploader private constructor(
                 )
                 .execute()
 
-        if (cannotContinue(response)) throw IllegalStateException(response.toString())
+        if (cannotContinue(response)) error(response.toString())
 
         var link: String = response.body()!!.get("data").asJsonObject.get("link").asString
         // Oh Imgur, why don't you use https by default? 😢
