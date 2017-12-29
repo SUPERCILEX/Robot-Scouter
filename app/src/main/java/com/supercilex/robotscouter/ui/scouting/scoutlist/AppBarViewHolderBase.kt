@@ -43,7 +43,7 @@ open class AppBarViewHolderBase(
         rootView: View,
         listener: LiveData<Team>,
         private val onScoutingReadyTask: Task<*>
-) : OnSuccessListener<Void?>, View.OnLongClickListener,
+) : OnSuccessListener<List<Void?>>, View.OnLongClickListener,
         TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
     protected var team: Team = listener.value!!
 
@@ -152,11 +152,11 @@ open class AppBarViewHolderBase(
     }
 
     private fun bindMenu() {
-        val onReady = Tasks.whenAll(onMenuReadyTask.task, onScoutingReadyTask)
-        if (onReady.isSuccessful) onSuccess(null) else onReady.addOnSuccessListener(this)
+        Tasks.whenAllSuccess<Void?>(onMenuReadyTask.task, onScoutingReadyTask)
+                .addOnSuccessListener(this)
     }
 
-    override fun onSuccess(void: Void?) {
+    override fun onSuccess(voids: List<Void?>) {
         newScoutItem.isVisible = true
         addMediaItem.isVisible = team.isOutdatedMedia
         visitTeamWebsiteItem.isVisible = !TextUtils.isEmpty(team.website)

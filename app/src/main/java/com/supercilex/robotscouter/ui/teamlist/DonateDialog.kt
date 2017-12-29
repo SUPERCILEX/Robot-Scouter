@@ -152,7 +152,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
         return@Continuation purchaseStartTask.task
     })
 
-    private fun getConsumePurchasesTask(purchases: List<Purchase>): Task<Nothing> {
+    private fun getConsumePurchasesTask(purchases: List<Purchase>): Task<*> {
         val consumptions = purchases.filter {
             it.sku.contains("single")
         }.map {
@@ -173,15 +173,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
             consumption.task
         }
 
-        return Tasks.whenAll(consumptions).continueWithTask(Continuation<Void, Task<Nothing>> {
-            val unsuccessfulConsumption = consumptions.find { !it.isSuccessful }
-
-            return@Continuation if (unsuccessfulConsumption == null) {
-                Tasks.forResult(null)
-            } else {
-                Tasks.forException(unsuccessfulConsumption.exception!!)
-            }
-        })
+        return Tasks.whenAllSuccess<String>(consumptions)
     }
 
     private fun updateProgress(isDoingAsyncWork: Boolean) {

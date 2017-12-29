@@ -10,6 +10,7 @@ import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
@@ -149,13 +150,12 @@ fun Team.getScouts(): Task<List<Scout>> = async {
     val scouts = Tasks.await(getScoutsQuery().getInBatches()).map {
         scoutParser.parseSnapshot(it)
     }
-    val metricTasks = scouts.map {
+    val metricTasks = Tasks.await(Tasks.whenAllSuccess<List<DocumentSnapshot>>(scouts.map {
         getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches()
-    }
-    Tasks.await(Tasks.whenAll(metricTasks))
+    }))
 
     scouts.mapIndexed { index, scout ->
-        scout.copy(metrics = metricTasks[index].result.map { metricParser.parseSnapshot(it) })
+        scout.copy(metrics = metricTasks[index].map { metricParser.parseSnapshot(it) })
     }
 }
 
