@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.settings
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -9,13 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import net.yslibrary.licenseadapter.Library
 import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.Licenses
 import org.jetbrains.anko.find
 
-class LicensesFragment : Fragment(), OnBackPressedListener {
+class LicensesFragment : FragmentBase(), OnBackPressedListener {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View =

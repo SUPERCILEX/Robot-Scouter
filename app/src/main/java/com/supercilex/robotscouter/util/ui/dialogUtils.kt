@@ -12,6 +12,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.util.refWatcher
 
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
@@ -28,6 +29,12 @@ fun DialogFragment.show(
 }
 
 abstract class DialogFragmentBase : DialogFragment() {
+    override fun onResume() {
+        super.onResume()
+        FirebaseAnalytics.getInstance(context)
+                .setCurrentScreen(activity!!, null, javaClass.simpleName)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         refWatcher.watch(this)

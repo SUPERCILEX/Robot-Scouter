@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.refWatcher
 
@@ -59,6 +60,12 @@ abstract class ActivityBase : AppCompatActivity() {
 }
 
 abstract class FragmentBase : Fragment() {
+    override fun onResume() {
+        super.onResume()
+        FirebaseAnalytics.getInstance(context)
+                .setCurrentScreen(activity!!, null, javaClass.simpleName)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         refWatcher.watch(this)
