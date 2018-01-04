@@ -20,7 +20,7 @@ private val signInIntent: Intent
     get() = AuthUI.getInstance().createSignInIntentBuilder()
             .setAvailableProviders(
                     if (isInTestMode) {
-                        listOf(AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build())
+                        listOf(AuthUI.IdpConfig.GoogleBuilder().build())
                     } else {
                         allProviders
                     }
