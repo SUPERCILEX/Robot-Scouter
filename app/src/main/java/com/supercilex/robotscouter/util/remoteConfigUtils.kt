@@ -1,13 +1,10 @@
 package com.supercilex.robotscouter.util
 
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchThrottledException
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 
 // Mirrored in remote_config_defaults.xml
@@ -35,7 +32,7 @@ fun initRemoteConfig() {
     }
 }
 
-fun fetchAndActivate(): Task<Nothing?> = async {
+suspend fun fetchAndActivate() {
     val config: FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
     val cacheExpiration: Long = if (config.info.configSettings.isDeveloperModeEnabled) {
         0
@@ -44,20 +41,15 @@ fun fetchAndActivate(): Task<Nothing?> = async {
     }
 
     try {
-        Tasks.await(config.fetch(cacheExpiration))
-        FirebaseRemoteConfig.getInstance().activateFetched()
-    } catch (e: ExecutionException) {
+        config.fetch(cacheExpiration).await()
+    } catch (e: FirebaseRemoteConfigFetchException) {
         // Ignore throttling since it shouldn't happen on release builds and isn't really a public
         // API error.
-        var cause = e.cause
-        do {
-            if (cause is FirebaseRemoteConfigFetchThrottledException) {
-                cause = null
-                break
-            }
-        } while (cause?.cause != null && cause.cause != cause)
-        if (cause != null) throw cause
+        return
+    } catch (e: Exception) {
+        CrashLogger.onFailure(e)
+        return
     }
 
-    null
+    FirebaseRemoteConfig.getInstance().activateFetched()
 }

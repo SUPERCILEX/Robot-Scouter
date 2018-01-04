@@ -67,22 +67,20 @@ const val FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG = "shouldShowRatingDialog"
 val fullVersionName: String by lazy {
     // Get it from the package manager instead of the BuildConfig to support injected version names
     // from the automated build system.
-    RobotScouter.INSTANCE.packageManager
-            .getPackageInfo(RobotScouter.INSTANCE.packageName, 0).versionName
+    RobotScouter.packageManager.getPackageInfo(RobotScouter.packageName, 0).versionName
 }
 val fullVersionCode: Int by lazy {
     // See fullVersionName
-    RobotScouter.INSTANCE.packageManager
-            .getPackageInfo(RobotScouter.INSTANCE.packageName, 0).versionCode
+    RobotScouter.packageManager.getPackageInfo(RobotScouter.packageName, 0).versionCode
 }
-val providerAuthority: String by lazy { "${RobotScouter.INSTANCE.packageName}.provider" }
-val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter.INSTANCE) }
+val providerAuthority: String by lazy { "${RobotScouter.packageName}.provider" }
+val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter) }
 val isLowRamDevice: Boolean by lazy {
     ActivityManagerCompat.isLowRamDevice(
-            RobotScouter.INSTANCE.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
+            RobotScouter.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
 }
 val isInTestMode: Boolean by lazy {
-    Settings.System.getString(RobotScouter.INSTANCE.contentResolver, "firebase.test.lab") == "true"
+    Settings.System.getString(RobotScouter.contentResolver, "firebase.test.lab") == "true"
 }
 val debugInfo: String
     get() =

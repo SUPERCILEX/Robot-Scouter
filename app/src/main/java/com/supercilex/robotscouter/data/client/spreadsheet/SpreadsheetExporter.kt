@@ -73,7 +73,7 @@ class SpreadsheetExporter(
         val viewIntent = Intent(baseIntent).setAction(Intent.ACTION_VIEW)
                 .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        if (viewIntent.resolveActivity(RobotScouter.INSTANCE.packageManager) == null) {
+        if (viewIntent.resolveActivity(RobotScouter.packageManager) == null) {
             viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL)
         }
 
@@ -91,25 +91,25 @@ class SpreadsheetExporter(
         }
 
         val sharePendingIntent = PendingIntent.getActivity(
-                RobotScouter.INSTANCE, exportId, shareIntent, PendingIntent.FLAG_ONE_SHOT)
+                RobotScouter, exportId, shareIntent, PendingIntent.FLAG_ONE_SHOT)
 
-        val builder = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_CHANNEL)
+        val builder = NotificationCompat.Builder(RobotScouter, EXPORT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_done_white_24dp)
-                .setContentTitle(RobotScouter.INSTANCE.getString(
+                .setContentTitle(RobotScouter.getString(
                         R.string.export_complete_title, templateName))
                 .setSubText(getPluralTeams(R.plurals.export_complete_summary, cache.teams.size))
                 .setContentText(getPluralTeams(R.plurals.export_complete_message))
                 .setContentIntent(sharePendingIntent)
                 .addAction(
                         R.drawable.ic_share_white_24dp,
-                        RobotScouter.INSTANCE.getString(R.string.share),
+                        RobotScouter.getString(R.string.share),
                         PendingIntent.getActivity(
-                                RobotScouter.INSTANCE,
+                                RobotScouter,
                                 exportId,
                                 NotificationIntentForwarder.getCancelIntent(exportId, shareIntent),
                                 PendingIntent.FLAG_ONE_SHOT)
                 )
-                .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -117,9 +117,9 @@ class SpreadsheetExporter(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             builder.addAction(
                     R.drawable.ic_launch_white_24dp,
-                    RobotScouter.INSTANCE.getString(R.string.open),
+                    RobotScouter.getString(R.string.open),
                     PendingIntent.getActivity(
-                            RobotScouter.INSTANCE,
+                            RobotScouter,
                             exportId,
                             viewIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT)
@@ -132,10 +132,10 @@ class SpreadsheetExporter(
     private fun getPluralTeams(@PluralsRes id: Int) = getPluralTeams(id, cache.teamNames)
 
     private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
-            RobotScouter.INSTANCE.resources.getQuantityString(id, cache.teams.size, *args)
+            RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
 
     private fun getFileUri(): Uri = FileProvider.getUriForFile(
-            RobotScouter.INSTANCE, providerAuthority, writeFile(checkNotNull(rootFolder) {
+            RobotScouter, providerAuthority, writeFile(checkNotNull(rootFolder) {
         "Couldn't get write access"
     }))
 
@@ -196,7 +196,7 @@ class SpreadsheetExporter(
 
     private fun getWorkbook(): Workbook {
         val workbook = if (isUnsupportedDevice) {
-            showToast(RobotScouter.INSTANCE.getString(R.string.export_unsupported_device_rationale))
+            showToast(RobotScouter.getString(R.string.export_unsupported_device_rationale))
             HSSFWorkbook()
         } else {
             XSSFWorkbook()

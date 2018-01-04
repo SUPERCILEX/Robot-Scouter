@@ -23,7 +23,7 @@ class TbaUploader private constructor(
         val response: Response<JsonObject> = TbaTeamMediaApi.IMGUR_RETROFIT
                 .create(TbaTeamMediaApi::class.java)
                 .postToImgur(
-                        RobotScouter.INSTANCE.getString(R.string.imgur_client_id),
+                        RobotScouter.getString(R.string.imgur_client_id),
                         team.toString(),
                         RequestBody.create(MediaType.parse("image/*"), File(team.media))
                 )

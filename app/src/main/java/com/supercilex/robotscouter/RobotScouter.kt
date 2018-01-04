@@ -13,12 +13,18 @@ import com.supercilex.robotscouter.util.initRemoteConfig
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
 
-class RobotScouter : MultiDexApplication() {
+private var app: RobotScouterApp by LateinitVal()
+
+@Suppress("PropertyName")
+val RobotScouter
+    get() = app
+
+class RobotScouterApp : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) return
 
-        INSTANCE = this
+        app = this
 
         initAnalytics()
         initRemoteConfig()
@@ -43,12 +49,13 @@ class RobotScouter : MultiDexApplication() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 vmBuilder.detectFileUriExposure()
             }
-            StrictMode.setVmPolicy(vmBuilder.penaltyDeath().build())
+            StrictMode.setVmPolicy(vmBuilder.penaltyLog().build())
 
             StrictMode.setThreadPolicy(
                     StrictMode.ThreadPolicy.Builder()
                             .detectAll()
                             .penaltyFlashScreen()
+                            .penaltyLog()
                             .penaltyDeath()
                             .build()
             )
@@ -56,9 +63,6 @@ class RobotScouter : MultiDexApplication() {
     }
 
     companion object {
-        var INSTANCE: RobotScouter by LateinitVal()
-            private set
-
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }

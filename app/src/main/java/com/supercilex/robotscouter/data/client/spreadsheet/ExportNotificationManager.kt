@@ -20,18 +20,18 @@ class ExportNotificationManager(private val service: ExportService) {
     private val notificationFilter = FilteringNotificationManager()
 
     private val masterNotification: NotificationCompat.Builder
-        get() = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
+        get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
                 .setGroup(hashCode().toString())
                 .setGroupSummary(true)
-                .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_overall_progress_title))
-                .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
+                .setContentTitle(RobotScouter.getString(R.string.export_overall_progress_title))
+                .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
     private val exportNotification: NotificationCompat.Builder
-        get() = NotificationCompat.Builder(RobotScouter.INSTANCE, EXPORT_IN_PROGRESS_CHANNEL)
+        get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
                 .setGroup(hashCode().toString())
-                .setContentTitle(RobotScouter.INSTANCE.getString(R.string.export_progress_title))
+                .setContentTitle(RobotScouter.getString(R.string.export_progress_title))
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setColor(ContextCompat.getColor(RobotScouter.INSTANCE, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 
@@ -45,7 +45,7 @@ class ExportNotificationManager(private val service: ExportService) {
     init {
         service.startForeground(hashCode(), masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
+                .setContentText(RobotScouter.getString(R.string.export_load_status))
                 .updateProgress(ESTIMATED_MASTER_OPS, 0)
                 .build())
         notificationFilter.start()
@@ -61,7 +61,7 @@ class ExportNotificationManager(private val service: ExportService) {
 
         notificationManager.notify(hashCode(), masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_load_status))
+                .setContentText(RobotScouter.getString(R.string.export_load_status))
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
@@ -77,13 +77,13 @@ class ExportNotificationManager(private val service: ExportService) {
                 if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
         notificationFilter.notify(id, exportNotification
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_initialize_status))
+                .setContentText(RobotScouter.getString(R.string.export_initialize_status))
                 .updateProgress(maxProgress, 0)
                 .build())
         if (pendingTaskCount == nTemplates && exporters.isEmpty()) {
             notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
-                    .setContentText(RobotScouter.INSTANCE.getString(
+                    .setContentText(RobotScouter.getString(
                             R.string.export_template_status, exporter.templateName))
                     .updateProgress(
                             masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
@@ -100,12 +100,12 @@ class ExportNotificationManager(private val service: ExportService) {
 
     fun onStartBuildingAverageSheet(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_average_status)))
+                .setContentText(RobotScouter.getString(R.string.export_average_status)))
     }
 
     fun onStartCleanup(exporter: SpreadsheetExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.INSTANCE.getString(R.string.export_cleanup_status)))
+                .setContentText(RobotScouter.getString(R.string.export_cleanup_status)))
     }
 
     @Synchronized
@@ -118,9 +118,9 @@ class ExportNotificationManager(private val service: ExportService) {
         if (--pendingTaskCount == 0) {
             notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(R.drawable.ic_logo)
-                    .setContentText(RobotScouter.INSTANCE.resources.getQuantityString(
+                    .setContentText(RobotScouter.resources.getQuantityString(
                             R.plurals.export_complete_message, teams.size, teams.getNames()))
-                    .setSubText(RobotScouter.INSTANCE.resources.getQuantityString(
+                    .setSubText(RobotScouter.resources.getQuantityString(
                             R.plurals.export_complete_subtitle, nTemplates, nTemplates))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .build(), true)
@@ -129,7 +129,7 @@ class ExportNotificationManager(private val service: ExportService) {
         } else {
             notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
-                    .setContentText(RobotScouter.INSTANCE.getString(
+                    .setContentText(RobotScouter.getString(
                             R.string.export_template_status,
                             exporters.keys.first().templateName))
                     .updateProgress(

@@ -4,10 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v4.app.Fragment
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.AccountMergeService
+import kotlin.coroutines.experimental.suspendCoroutine
 
 const val RC_SIGN_IN = 100
 
@@ -18,31 +19,30 @@ val isFullUser get() = isSignedIn && !user!!.isAnonymous
 
 private val signInIntent: Intent
     get() = AuthUI.getInstance().createSignInIntentBuilder()
-            .setAvailableProviders(
-                    if (isInTestMode) {
-                        listOf(AuthUI.IdpConfig.GoogleBuilder().build())
-                    } else {
-                        allProviders
-                    }
-            )
+            .setAvailableProviders(if (isInTestMode) {
+                listOf(AuthUI.IdpConfig.GoogleBuilder().build())
+            } else {
+                allProviders
+            })
             .setTheme(R.style.RobotScouter)
             .setLogo(R.drawable.ic_logo)
             .setPrivacyPolicyUrl("https://supercilex.github.io/Robot-Scouter/privacy-policy/")
             .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
             .build()
 
-fun onSignedIn() = TaskCompletionSource<FirebaseAuth>().also {
+suspend fun onSignedIn(): FirebaseUser = suspendCoroutine {
     FirebaseAuth.getInstance().addAuthStateListener(object : FirebaseAuth.AuthStateListener {
         override fun onAuthStateChanged(auth: FirebaseAuth) {
-            if (auth.currentUser == null) {
+            val user = auth.currentUser
+            if (user == null) {
                 FirebaseAuth.getInstance().signInAnonymously()
             } else {
-                it.trySetResult(auth)
                 auth.removeAuthStateListener(this)
+                it.resume(user)
             }
         }
     })
-}.task
+}
 
 fun signIn(activity: Activity) = activity.startActivityForResult(signInIntent, RC_SIGN_IN)
 

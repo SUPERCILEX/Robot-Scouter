@@ -8,7 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import com.supercilex.robotscouter.RobotScouter
 
 val inputMethodManager: InputMethodManager by lazy {
-    RobotScouter.INSTANCE.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    RobotScouter.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 }
 
 fun Window.setKeyboardModeVisible() {

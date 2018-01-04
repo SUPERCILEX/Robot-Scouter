@@ -20,15 +20,15 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdateDefaultTemplateId
 import com.supercilex.robotscouter.util.showRatingDialog
 
 private val localPrefs: SharedPreferences by lazy {
-    RobotScouter.INSTANCE.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
+    RobotScouter.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
 }
 
 val prefs = object : PreferenceDataStore() {
@@ -115,7 +115,7 @@ private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
 
 private fun updateTeamTemplateIds() {
     TeamsLiveData.observeOnDataChanged().observeOnce {
-        async { for (team in it) team.updateTemplateId(defaultTemplateId) }.logFailures()
+        doAsync { for (team in it) team.updateTemplateId(defaultTemplateId) }.logFailures()
     }
 }
 

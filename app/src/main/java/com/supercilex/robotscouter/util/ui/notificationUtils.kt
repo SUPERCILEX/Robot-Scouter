@@ -12,7 +12,7 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logFailures
 import org.jetbrains.anko.intentFor
@@ -37,7 +37,7 @@ const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
 const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200L
 
 val notificationManager: NotificationManager by lazy {
-    RobotScouter.INSTANCE.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    RobotScouter.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 }
 
 fun initNotifications() {
@@ -46,7 +46,7 @@ fun initNotifications() {
     notificationManager.createNotificationChannelGroups(
             listOf(NotificationChannelGroup(
                     EXPORT_GROUP,
-                    RobotScouter.INSTANCE.getString(R.string.export_group_title)))
+                    RobotScouter.getString(R.string.export_group_title)))
     )
 
     notificationManager.createNotificationChannels(
@@ -57,11 +57,11 @@ fun initNotifications() {
 @RequiresApi(Build.VERSION_CODES.O)
 fun getExportChannel(): NotificationChannel = NotificationChannel(
         EXPORT_CHANNEL,
-        RobotScouter.INSTANCE.getString(R.string.export_channel_title),
+        RobotScouter.getString(R.string.export_channel_title),
         NotificationManager.IMPORTANCE_HIGH
 ).apply {
     group = EXPORT_GROUP
-    description = RobotScouter.INSTANCE.getString(R.string.export_channel_desc)
+    description = RobotScouter.getString(R.string.export_channel_desc)
     setShowBadge(true)
     enableVibration(true)
     enableLights(true)
@@ -70,11 +70,11 @@ fun getExportChannel(): NotificationChannel = NotificationChannel(
 @RequiresApi(Build.VERSION_CODES.O)
 fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
         EXPORT_IN_PROGRESS_CHANNEL,
-        RobotScouter.INSTANCE.getString(R.string.export_progress_channel_title),
+        RobotScouter.getString(R.string.export_progress_channel_title),
         NotificationManager.IMPORTANCE_LOW
 ).apply {
     group = EXPORT_GROUP
-    description = RobotScouter.INSTANCE.getString(R.string.export_progress_channel_desc)
+    description = RobotScouter.getString(R.string.export_progress_channel_desc)
     setShowBadge(false)
     enableVibration(false)
     enableLights(false)
@@ -123,7 +123,7 @@ class FilteringNotificationManager : Runnable {
             check(!isStopped) { "Cannot start a previously stopped notification filter." }
         }
 
-        async {
+        doAsync {
             executor.scheduleWithFixedDelay(
                     this,
                     0,
@@ -207,7 +207,7 @@ class NotificationIntentForwarder : Activity() {
         private const val KEY_NOTIFICATION_ID = "notification_id"
 
         fun getCancelIntent(notificationId: Int, forwardedIntent: Intent): Intent =
-                RobotScouter.INSTANCE.intentFor<NotificationIntentForwarder>(
+                RobotScouter.intentFor<NotificationIntentForwarder>(
                         KEY_INTENT to forwardedIntent,
                         KEY_NOTIFICATION_ID to notificationId
                 )

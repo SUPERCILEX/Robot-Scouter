@@ -23,7 +23,7 @@
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
-        android:name=".RobotScouter"
+        android:name=".RobotScouterApp"
         android:label="${appName}"
         android:allowBackup="true"
         android:appCategory="productivity"

@@ -45,7 +45,7 @@ class ScoutListActivity : ActivityBase() {
 
     companion object {
         fun createIntent(args: Bundle): Intent =
-                RobotScouter.INSTANCE.intentFor<ScoutListActivity>(SCOUT_ARGS_KEY to args)
+                RobotScouter.intentFor<ScoutListActivity>(SCOUT_ARGS_KEY to args)
                         .multipleTask()
                         .addNewDocumentFlags()
     }

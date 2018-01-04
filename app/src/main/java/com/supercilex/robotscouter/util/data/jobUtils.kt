@@ -44,7 +44,7 @@ private fun Job.Builder.buildAndSchedule(dispatcher: FirebaseJobDispatcher) {
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
-    val scheduler = RobotScouter.INSTANCE.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+    val scheduler = RobotScouter.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     val result: Int = scheduler.schedule(build())
     check(result == JobScheduler.RESULT_SUCCESS) {
         getErrorMessage(clazz, result)
@@ -56,7 +56,7 @@ fun startInternetJob14(
         jobId: Int,
         clazz: Class<out com.firebase.jobdispatcher.JobService>
 ) {
-    val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(RobotScouter.INSTANCE))
+    val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(RobotScouter))
 
     dispatcher.newJobBuilder()
             .setService(clazz)
@@ -69,7 +69,7 @@ fun startInternetJob14(
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
-    JobInfo.Builder(jobId, ComponentName(RobotScouter.INSTANCE.packageName, clazz.name))
+    JobInfo.Builder(jobId, ComponentName(RobotScouter.packageName, clazz.name))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setExtras(team.toRawPersistableBundle())
             .buildAndSchedule(clazz.name)

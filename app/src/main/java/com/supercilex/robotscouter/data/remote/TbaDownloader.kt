@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.remote
 
-import android.os.Handler
 import android.text.TextUtils
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Task
@@ -9,6 +8,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import org.jetbrains.anko.runOnUiThread
 import retrofit2.Response
 
 class TbaDownloader private constructor(
@@ -71,8 +71,8 @@ class TbaDownloader private constructor(
     private fun setAndCacheMedia(url: String, year: Int) {
         team.media = url
         team.mediaYear = year
-        Handler(RobotScouter.INSTANCE.mainLooper).post {
-            Glide.with(RobotScouter.INSTANCE).load(url).preload()
+        RobotScouter.runOnUiThread {
+            Glide.with(this).load(url).preload()
         }
     }
 

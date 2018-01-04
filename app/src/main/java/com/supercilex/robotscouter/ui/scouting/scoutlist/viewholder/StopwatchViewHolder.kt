@@ -22,7 +22,7 @@ import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
-import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import kotterknife.bindView
@@ -154,7 +154,7 @@ open class StopwatchViewHolder(
         init {
             TIMERS[holder.metric] = this
             updateStyle()
-            async {
+            doAsync {
                 executor.scheduleWithFixedDelay(this, 0, 1, TimeUnit.SECONDS).get()
             }.logFailures { it is CancellationException }
         }

@@ -1,22 +1,19 @@
 package com.supercilex.robotscouter.data.client
 
 import android.annotation.SuppressLint
-import android.arch.core.executor.ArchTaskExecutor
 import android.net.Uri
 import android.os.Bundle
-import android.support.annotation.WorkerThread
 import android.support.v7.app.AppCompatActivity
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.teamlist.TeamListActivity
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.util.data.KEYS
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
@@ -30,9 +27,11 @@ import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 
 @SuppressLint("GoogleAppIndexingApiWarning")
@@ -42,10 +41,12 @@ class LinkReceiverActivity : AppCompatActivity() {
         setContentView(R.layout.activity_link_receiver)
         find<ContentLoadingProgressBar>(R.id.progress).show()
 
-        onSignedIn().continueWithTask {
-            FirebaseDynamicLinks.getInstance().getDynamicLink(intent)
-        }.continueWith(AsyncTaskExecutor, Continuation<PendingDynamicLinkData, Unit> {
-            val link: Uri = it.result?.link ?: intent.data ?: Uri.Builder().build()
+        async {
+            onSignedIn()
+
+            val dynamicLink: PendingDynamicLinkData? =
+                    FirebaseDynamicLinks.getInstance().getDynamicLink(intent).await()
+            val link: Uri = dynamicLink?.link ?: intent.data ?: Uri.Builder().build()
             val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
 
             when (link.lastPathSegment) {
@@ -53,20 +54,18 @@ class LinkReceiverActivity : AppCompatActivity() {
                 templates.id -> processTemplates(link, token)
                 else -> showErrorAndContinue()
             }
-        }).addOnFailureListener {
-            showErrorAndContinue()
-        }.addOnCompleteListener {
+        }.logFailures().invokeOnCompletion {
+            if (it != null) showErrorAndContinue()
             finish()
-        }.logFailures()
+        }
     }
 
-    @WorkerThread
-    private fun processTeams(link: Uri, token: String?) {
+    private suspend fun processTeams(link: Uri, token: String?) {
         val refs = link.getQueryParameter(KEYS).split(",").map { teams.document(it) }
 
-        if (token != null) Tasks.await(updateOwner(refs, token, null) { ref ->
+        if (token != null) updateOwner(refs, token, null) { ref ->
             link.getQueryParameter(ref.id).toLong()
-        })
+        }.await()
 
         if (refs.isSingleton) {
             val id = refs.single().id
@@ -80,18 +79,15 @@ class LinkReceiverActivity : AppCompatActivity() {
                 startActivity(ScoutListActivity.createIntent(data).setAction(ACTION_FROM_DEEP_LINK))
             }
         } else {
-            ArchTaskExecutor.getInstance().executeOnMainThread {
-                longToast(R.string.link_teams_imported_message)
-            }
+            RobotScouter.runOnUiThread { longToast(R.string.link_teams_imported_message) }
             startTeamListActivityNoArgs()
         }
     }
 
-    @WorkerThread
-    private fun processTemplates(link: Uri, token: String?) {
+    private suspend fun processTemplates(link: Uri, token: String?) {
         val refs = link.getQueryParameter(KEYS).split(",").map { templates.document(it) }
 
-        if (token != null) Tasks.await(updateOwner(refs, token, null) { Date() })
+        if (token != null) updateOwner(refs, token, null) { Date() }.await()
 
         startActivity(TemplateListActivity.createIntent(refs.single().id)
                               .addNewDocumentFlags()
@@ -104,9 +100,9 @@ class LinkReceiverActivity : AppCompatActivity() {
                                   .setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
-        ArchTaskExecutor.getInstance().executeOnMainThread {
+        startTeamListActivityNoArgs()
+        RobotScouter.runOnUiThread {
             longToast(R.string.link_uri_parse_error)
         }
-        startTeamListActivityNoArgs()
     }
 }

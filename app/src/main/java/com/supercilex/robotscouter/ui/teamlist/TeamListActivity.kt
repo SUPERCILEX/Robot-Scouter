@@ -12,8 +12,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
@@ -37,13 +35,16 @@ import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotterknife.bindView
+import org.jetbrains.anko.coroutines.experimental.asReference
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
 class TeamListActivity : ActivityBase(), View.OnClickListener,
-        NavigationView.OnNavigationItemSelectedListener,
-        TeamSelectionListener, OnCompleteListener<Nothing?> {
+        NavigationView.OnNavigationItemSelectedListener, TeamSelectionListener {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
         override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {
             when (keyCode) {
@@ -104,12 +105,12 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
     override fun onStart() {
         super.onStart()
-        fetchAndActivate().addOnCompleteListener(this, this).logFailures()
-    }
-
-    override fun onComplete(task: Task<Nothing?>) {
-        if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && !isOffline()) {
-            UpdateDialog.show(supportFragmentManager)
+        val ref = asReference()
+        launch(UI) {
+            async { fetchAndActivate() }.await()
+            if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && !isOffline()) {
+                UpdateDialog.show(ref().supportFragmentManager)
+            }
         }
     }
 

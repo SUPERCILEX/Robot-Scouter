@@ -48,7 +48,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.hypot
 
 val shortAnimationDuration: Long by lazy {
-    RobotScouter.INSTANCE.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+    RobotScouter.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 }
 
 private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
@@ -65,10 +65,10 @@ fun initUi() {
         }
     }
 
-    RobotScouter.INSTANCE.registerActivityLifecycleCallbacks(ActivityHandler)
+    RobotScouter.registerActivityLifecycleCallbacks(ActivityHandler)
 
     EmojiCompat.init(FontRequestEmojiCompatConfig(
-            RobotScouter.INSTANCE,
+            RobotScouter,
             FontRequest(
                     "com.google.android.gms.fonts",
                     "com.google.android.gms",
@@ -96,8 +96,8 @@ fun animateColorChange(
 ) {
     ValueAnimator.ofObject(
             ArgbEvaluator(),
-            ContextCompat.getColor(RobotScouter.INSTANCE, from),
-            ContextCompat.getColor(RobotScouter.INSTANCE, to)).apply {
+            ContextCompat.getColor(RobotScouter, from),
+            ContextCompat.getColor(RobotScouter, to)).apply {
         addUpdateListener(listener)
         start()
     }

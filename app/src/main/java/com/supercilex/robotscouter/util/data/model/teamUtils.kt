@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.util.data.model
 import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
@@ -14,16 +13,15 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.deepLink
 import com.supercilex.robotscouter.util.data.getInBatches
 import com.supercilex.robotscouter.util.data.metricParser
 import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
@@ -32,6 +30,7 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teamFreshnessDays
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
+import kotlinx.coroutines.experimental.async
 import java.util.Calendar
 import java.util.Collections
 import java.util.Date
@@ -139,14 +138,13 @@ fun Team.trash() {
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
 }
 
-fun Team.fetchLatestData() {
-    fetchAndActivate().continueWith(AsyncTaskExecutor, Continuation<Nothing?, Unit> {
-        val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp.time)
-        if (differenceDays >= teamFreshnessDays) startDownloadTeamDataJob(this)
-    }).logFailures()
-}
+fun Team.fetchLatestData() = async {
+    fetchAndActivate()
+    val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp.time)
+    if (differenceDays >= teamFreshnessDays) startDownloadTeamDataJob(this@fetchLatestData)
+}.logFailures()
 
-fun Team.getScouts(): Task<List<Scout>> = async {
+fun Team.getScouts(): Task<List<Scout>> = doAsync {
     val scouts = Tasks.await(getScoutsQuery().getInBatches()).map {
         scoutParser.parseSnapshot(it)
     }

@@ -11,12 +11,12 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.updateOwner
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.uid
 import java.util.Date
@@ -51,7 +51,7 @@ class AccountMergeService : ManualMergeService() {
         }).logFailures()
     }
 
-    override fun onTransferData(response: IdpResponse): Task<Void?>? = async {
+    override fun onTransferData(response: IdpResponse): Task<Void?>? = doAsync {
         for (snapshot in userPrefs.result) {
             userPrefsRef.document(snapshot.id).set(snapshot.data).logFailures()
         }

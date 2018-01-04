@@ -14,6 +14,7 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.SetOptions
+import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
@@ -22,7 +23,12 @@ import com.supercilex.robotscouter.data.model.User
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
+import kotlinx.coroutines.experimental.CompletionHandler
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.error
 import java.lang.Exception
 import java.util.Date
 import kotlin.math.ceil
@@ -41,9 +47,7 @@ private const val MAX_VALUE_LENGTH = 100
 private const val SEGMENT_SIZE = 98
 private const val SEGMENT = "…"
 
-private val analytics: FirebaseAnalytics by lazy {
-    FirebaseAnalytics.getInstance(RobotScouter.INSTANCE)
-}
+private val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(RobotScouter) }
 
 fun initAnalytics() {
     analytics.setAnalyticsCollectionEnabled(!isInTestMode)
@@ -119,26 +123,22 @@ fun Team.logTakeMedia() = analytics.logEvent(
         )
 )
 
-fun List<Team>.logShare() {
-    async {
-        safeLog(this) { ids, name ->
-            analytics.logEvent(
-                    "share_teams",
-                    bundleOf(ITEM_ID to ids, ITEM_NAME to name)
-            )
-        }
-    }.logFailures()
+fun List<Team>.logShare() = launch {
+    safeLog(this@logShare) { ids, name ->
+        analytics.logEvent(
+                "share_teams",
+                bundleOf(ITEM_ID to ids, ITEM_NAME to name)
+        )
+    }
 }
 
-fun List<Team>.logExport() {
-    async {
-        safeLog(this) { ids, name ->
-            analytics.logEvent(
-                    "export_teams",
-                    bundleOf(ITEM_ID to ids, ITEM_NAME to name)
-            )
-        }
-    }.logFailures()
+fun List<Team>.logExport() = launch {
+    safeLog(this@logExport) { ids, name ->
+        analytics.logEvent(
+                "export_teams",
+                bundleOf(ITEM_ID to ids, ITEM_NAME to name)
+        )
+    }
 }
 
 fun Team.logAddScout(scoutId: String, templateId: String) = analytics.logEvent(
@@ -249,13 +249,26 @@ fun <T> Task<T>.logFailures(
     if (!ignore(it)) CrashLogger.onFailure(it)
 })
 
-object CrashLogger : OnFailureListener, OnCompleteListener<Any> {
+fun <T> Deferred<T>.logFailures(): Deferred<T> {
+    invokeOnCompletion(CrashLogger)
+    return this
+}
+
+object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {
     override fun onFailure(e: Exception) {
-        FirebaseCrash.report(e)
-        Crashlytics.logException(e)
+        invoke(e)
     }
 
     override fun onComplete(task: Task<Any>) {
-        onFailure(task.exception ?: return)
+        invoke(task.exception)
+    }
+
+    override fun invoke(cause: Throwable?) {
+        cause ?: return
+        FirebaseCrash.report(cause)
+        Crashlytics.logException(cause)
+        if (BuildConfig.DEBUG || isInTestMode) {
+            error("An unknown error occurred", cause)
+        }
     }
 }

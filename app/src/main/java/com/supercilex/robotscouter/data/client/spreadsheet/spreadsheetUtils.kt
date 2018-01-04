@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.client.spreadsheet
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.graphics.Paint
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -24,6 +23,7 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.util.WorkbookUtil
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.runOnUiThread
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
 
 val averageifFunction: FreeRefFunction = object : FreeRefFunction {
@@ -136,6 +136,4 @@ fun CTTitle.setValue(text: String) {
 fun Drawing<*>.createChartAnchor(startRow: Int, startColumn: Int, endColumn: Int): ClientAnchor =
         createAnchor(0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2)
 
-fun showToast(message: String) = ArchTaskExecutor.getInstance().executeOnMainThread {
-    RobotScouter.INSTANCE.longToast(message)
-}
+fun showToast(message: String) = RobotScouter.runOnUiThread { longToast(message) }

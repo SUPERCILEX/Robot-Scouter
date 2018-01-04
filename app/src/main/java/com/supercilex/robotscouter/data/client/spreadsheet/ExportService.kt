@@ -16,19 +16,22 @@ import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.putExtra
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logExport
-import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.RatingDialog
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.coroutines.experimental.asReference
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
@@ -71,7 +74,7 @@ class ExportService : IntentService(TAG) {
 
         val templateNames = getTemplateNames(zippedScouts.keys)
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
-            async {
+            doAsync {
                 SpreadsheetExporter(scouts, notificationManager, templateNames[templateId]!!)
                         .export()
             }.addOnFailureListener(AsyncTaskExecutor, OnFailureListener {
@@ -158,10 +161,11 @@ class ExportService : IntentService(TAG) {
             )
 
             if (teams.size >= MIN_TEAMS_TO_RATE) {
-                async {
-                    Tasks.await(fetchAndActivate())
-                    if (shouldShowRatingDialog) RatingDialog.show(fragment.childFragmentManager)
-                }.logFailures()
+                val f = fragment.asReference()
+                launch(UI) {
+                    async { fetchAndActivate() }.await()
+                    if (shouldShowRatingDialog) RatingDialog.show(f().childFragmentManager)
+                }
             }
 
             return true

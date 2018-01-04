@@ -4,11 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
-import com.crashlytics.android.Crashlytics
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
-import com.google.firebase.crash.FirebaseCrash
-import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.indexable
@@ -18,33 +16,38 @@ import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.onSignedIn
-import java.util.concurrent.ExecutionException
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 
 class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
-        try {
-            Tasks.await(Tasks.whenAll(onSignedIn(), FirebaseAppIndex.getInstance().removeAll()))
-            Tasks.await(Tasks.whenAll(getUpdateTeamsTask(), getUpdateTemplatesTask()))
-        } catch (e: ExecutionException) {
-            FirebaseCrash.report(e)
-            Crashlytics.logException(e)
+        runBlocking {
+            try {
+                onSignedIn()
+                FirebaseAppIndex.getInstance().removeAll().await()
+
+                await(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
+            } catch (e: Exception) {
+                CrashLogger.onFailure(e)
+            }
         }
     }
 
-    private fun getUpdateTeamsTask() = FirebaseAppIndex.getInstance().update(
-            *Tasks.await(TeamsLiveData.observeOnDataChanged().observeOnce {
-                async { it.map { it.indexable }.toTypedArray() }
-            })
-    )
+    private suspend fun getUpdateTeamsTask() {
+        val indexables =
+                TeamsLiveData.observeOnDataChanged().observeOnce()?.map { it.indexable } ?: return
+        FirebaseAppIndex.getInstance().update(*indexables.toTypedArray()).await()
+    }
 
-    private fun getUpdateTemplatesTask() = FirebaseAppIndex.getInstance().update(
-            *Tasks.await(getTemplatesQuery().get()).mapIndexed { index, snapshot ->
-                getTemplateIndexable(
-                        snapshot.id,
-                        scoutParser.parseSnapshot(snapshot).getTemplateName(index)
-                )
-            }.toTypedArray()
-    )
+    private suspend fun getUpdateTemplatesTask() {
+        val indexables = getTemplatesQuery().get().await().mapIndexed { index, snapshot ->
+            getTemplateIndexable(
+                    snapshot.id,
+                    scoutParser.parseSnapshot(snapshot).getTemplateName(index)
+            )
+        }
+        FirebaseAppIndex.getInstance().update(*indexables.toTypedArray()).await()
+    }
 
     companion object {
         private const val JOB_ID = 387

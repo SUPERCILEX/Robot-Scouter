@@ -25,7 +25,6 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.TAB_KEY
 import com.supercilex.robotscouter.util.data.TOKEN_EXPIRATION_DAYS
 import com.supercilex.robotscouter.util.data.batch
@@ -33,6 +32,7 @@ import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.addTemplate
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.FragmentBase
@@ -79,7 +79,7 @@ class TemplateListFragment : FragmentBase(),
 
                     if (activeTokens.isEmpty()) return
 
-                    async {
+                    doAsync {
                         val newTokens = activeTokens.filter {
                             it.value.after(Calendar.getInstance().apply {
                                 add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)

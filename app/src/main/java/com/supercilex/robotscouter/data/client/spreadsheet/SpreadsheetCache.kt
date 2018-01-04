@@ -36,7 +36,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         }
     }
 
-    val averageString: String by lazy { RobotScouter.INSTANCE.getString(R.string.metric_stopwatch_cycle_average_title) }
+    val averageString: String by lazy { RobotScouter.getString(R.string.metric_stopwatch_cycle_average_title) }
 
     fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
 

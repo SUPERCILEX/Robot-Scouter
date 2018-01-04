@@ -1,13 +1,12 @@
 package com.supercilex.robotscouter.util.data
 
-import android.arch.core.executor.ArchTaskExecutor
-import android.arch.lifecycle.DefaultLifecycleObserver
+import android.arch.lifecycle.GenericLifecycleObserver
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.ProcessLifecycleOwner
-import java.util.Timer
-import java.util.TimerTask
+import android.os.Handler
+import android.os.Looper
 
 /**
  * Provides lifecycle for suggested listener registration status.
@@ -17,47 +16,30 @@ import java.util.TimerTask
  *
  * @see ProcessLifecycleOwner
  */
-object ListenerRegistrationLifecycleOwner : LifecycleOwner, DefaultLifecycleObserver {
-    private const val TIMEOUT_IN_MILLIS = 60000L
+object ListenerRegistrationLifecycleOwner : LifecycleOwner, Runnable, GenericLifecycleObserver {
+    private const val TIMEOUT_IN_MILLIS = 300000L // 5 minutes
 
     private val registry = LifecycleRegistry(this)
 
-    private val unregisterTask
-        get() = object : TimerTask() {
-            override fun run() {
-                ArchTaskExecutor.getInstance().executeOnMainThread {
-                    registry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
-                }
-            }
-        }
-    private var timeout: Timer? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     init {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     }
 
-    override fun onCreate(owner: LifecycleOwner) {
-        registry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        timeout?.cancel()
-        timeout = null
-        registry.handleLifecycleEvent(Lifecycle.Event.ON_START)
-    }
-
-    override fun onResume(owner: LifecycleOwner) {
-        registry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    }
-
-    override fun onPause(owner: LifecycleOwner) {
-        registry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        timeout = Timer().apply {
-            schedule(unregisterTask, TIMEOUT_IN_MILLIS)
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event === Lifecycle.Event.ON_START) {
+            handler.removeCallbacks(this)
+        } else if (event === Lifecycle.Event.ON_STOP) {
+            handler.postDelayed(this, TIMEOUT_IN_MILLIS)
+            return
         }
+
+        registry.handleLifecycleEvent(event)
+    }
+
+    override fun run() {
+        registry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
     }
 
     override fun getLifecycle(): Lifecycle = registry

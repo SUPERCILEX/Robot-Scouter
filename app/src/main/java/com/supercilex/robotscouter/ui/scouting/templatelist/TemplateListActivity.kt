@@ -48,7 +48,6 @@ class TemplateListActivity : AppCompatActivity() {
 
     companion object {
         fun createIntent(templateId: String? = null): Intent =
-                RobotScouter.INSTANCE.intentFor<TemplateListActivity>()
-                        .putExtras(getTabIdBundle(templateId))
+                RobotScouter.intentFor<TemplateListActivity>().putExtras(getTabIdBundle(templateId))
     }
 }

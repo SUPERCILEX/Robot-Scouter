@@ -71,7 +71,7 @@ fun addTemplate(type: TemplateType): String {
 }
 
 fun Scout.getTemplateName(index: Int): String =
-        name ?: RobotScouter.INSTANCE.getString(R.string.template_tab_default_title, index + 1)
+        name ?: RobotScouter.getString(R.string.template_tab_default_title, index + 1)
 
 fun trashTemplate(id: String) {
     FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()

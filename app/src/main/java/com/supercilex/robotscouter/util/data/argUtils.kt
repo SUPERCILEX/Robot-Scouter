@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
-import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.RobotScouterApp
 import com.supercilex.robotscouter.data.model.Team
 import org.jetbrains.anko.bundleOf
 
@@ -36,7 +36,7 @@ private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
 fun <T> Parcel.readBundleAsMap(): Map<String, T> = readBundleAsMap { get(it) as T }
 
 inline fun <T> Parcel.readBundleAsMap(parse: Bundle.(String) -> T): Map<String, T> =
-        readBundle(RobotScouter::class.java.classLoader).let { bundleToMap(it, parse) }
+        readBundle(RobotScouterApp::class.java.classLoader).let { bundleToMap(it, parse) }
 
 @Suppress("UNCHECKED_CAST") // Trust the client
 fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundleAsMap(key) { get(it) as T }

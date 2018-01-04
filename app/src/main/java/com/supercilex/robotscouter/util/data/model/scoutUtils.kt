@@ -20,12 +20,12 @@ import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
 import org.jetbrains.anko.longToast
@@ -55,7 +55,7 @@ fun Team.addScout(
         (it is FirebaseFirestoreException
                 && it.code == FirebaseFirestoreException.Code.UNAVAILABLE).also {
             if (it) {
-                RobotScouter.INSTANCE.longToast(R.string.scout_add_template_not_cached_error)
+                RobotScouter.longToast(R.string.scout_add_template_not_cached_error)
                 scoutRef.delete().logFailures()
             }
         }
@@ -93,7 +93,7 @@ fun Team.addScout(
     }).logFailures(errorIgnorer).addOnCompleteListener(AsyncTaskExecutor, OnCompleteListener {
         val templateName = it.result!! // Blow up if we failed so as not to wastefully query for scouts
         val nExistingTemplates = Tasks.await(existingScouts.observeOnDataChanged().observeOnce {
-            async {
+            doAsync {
                 it.map { it.templateId }.groupBy { it }[templateId]!!.size
             }
         })

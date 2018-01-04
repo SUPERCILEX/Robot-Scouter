@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
-import android.support.annotation.WorkerThread
 import android.text.TextUtils
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.common.ChangeEventType
@@ -28,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.BuildConfig
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
@@ -43,7 +43,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
-import com.supercilex.robotscouter.util.async
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
 import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
@@ -53,11 +53,17 @@ import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.experimental.suspendCoroutine
 
 val teamParser = SnapshotParser {
     it.toObject(Team::class.java).apply { id = it.id }
@@ -97,7 +103,7 @@ inline fun firestoreBatch(
 inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
         firestoreBatch { transaction(this@batch) }
 
-fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = async {
+fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = doAsync {
     var query = orderBy(FieldPath.documentId()).limit(batchSize)
     val docs = mutableListOf<DocumentSnapshot>(*Tasks.await(query.get()).documents.toTypedArray())
     var lastResultSize = docs.size
@@ -112,10 +118,11 @@ fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = as
     docs
 }
 
+@Deprecated("Use the coroutine version instead")
 inline fun <T, R> LiveData<T>.observeOnce(
         crossinline block: (T) -> Task<R>
 ): Task<R> = TaskCompletionSource<R>().apply {
-    ArchTaskExecutor.getInstance().executeOnMainThread {
+    RobotScouter.runOnUiThread {
         observeForever(object : Observer<T> {
             private var hasChanged = false
 
@@ -131,6 +138,19 @@ inline fun <T, R> LiveData<T>.observeOnce(
         })
     }
 }.task
+
+suspend fun <T> LiveData<T>.observeOnce(): T? = suspendCoroutine {
+    RobotScouter.runOnUiThread {
+        observeForever(object : Observer<T> {
+            private val hasChanged = AtomicBoolean()
+
+            override fun onChanged(t: T?) {
+                if (hasChanged.compareAndSet(false, true)) it.resume(t)
+                removeObserver(this)
+            }
+        })
+    }
+}
 
 fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(
 ): LiveData<ObservableSnapshotArray<T>> = Transformations.switchMap(this) {
@@ -260,7 +280,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
             val team = value!![newIndex]
-            async {
+            launch {
                 team.fetchLatestData()
                 FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
 
@@ -268,7 +288,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 if (!TextUtils.isEmpty(media) && File(media).exists()) {
                     startUploadTeamMediaJob(team)
                 }
-            }.logFailures()
+            }
         }
     }
     private val tokenSanitizer = object : ChangeEventListenerBase {
@@ -278,23 +298,23 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 newIndex: Int,
                 oldIndex: Int
         ) {
-            if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
-                val team = value!![newIndex]
+            if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
-                if (team.activeTokens.isEmpty()) return
+            val team = value!![newIndex]
 
-                async {
-                    val newTeam = team.copy(activeTokens = team.activeTokens.filter {
-                        it.value.after(Calendar.getInstance().apply {
-                            add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)
-                        }.time)
-                    })
+            if (team.activeTokens.isEmpty()) return
 
-                    if (newTeam != team) {
-                        newTeam.pendingApprovals = emptyMap()
-                        newTeam.forceUpdate()
-                    }
-                }.logFailures()
+            launch {
+                val newTeam = team.copy(activeTokens = team.activeTokens.filter {
+                    it.value.after(Calendar.getInstance().apply {
+                        add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)
+                    }.time)
+                })
+
+                if (newTeam != team) {
+                    newTeam.pendingApprovals = emptyMap()
+                    newTeam.forceUpdate()
+                }
             }
         }
     }
@@ -330,9 +350,8 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             }.logFailures()
         }
 
-        @WorkerThread
-        private fun mergeTeams(existingTeam: Team, duplicate: Team) {
-            val scouts = Tasks.await(duplicate.getScouts())
+        private suspend fun mergeTeams(existingTeam: Team, duplicate: Team) {
+            val scouts = duplicate.getScouts().await()
             firestoreBatch {
                 for (scout in scouts) {
                     val scoutId = scout.id
@@ -342,9 +361,8 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                             metric)
                     }
                 }
-            }.addOnSuccessListener {
-                duplicate.trash()
-            }.logFailures()
+            }.await()
+            duplicate.trash()
         }
     }
 

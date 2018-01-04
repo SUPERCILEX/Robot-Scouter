@@ -17,7 +17,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
-import com.supercilex.robotscouter.util.async
 import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.firestoreBatch
@@ -25,6 +24,7 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTemplateViewAction
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
+import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logSelectTemplate
@@ -130,14 +130,14 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             R.id.action_remove_metrics -> {
                 recyclerView.clearFocus()
                 metricsRef.get().addOnSuccessListener { metrics ->
-                    async {
+                    doAsync {
                         Tasks.await(firestoreBatch {
                             for (metric in metrics) delete(metric.reference)
                         })
                     }.logFailures()
 
                     longSnackbar(fam, R.string.deleted, R.string.undo) {
-                        async {
+                        doAsync {
                             Tasks.await(firestoreBatch {
                                 for (metric in metrics) {
                                     set(metric.reference, metric.data)

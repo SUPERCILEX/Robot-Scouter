@@ -15,7 +15,7 @@ abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) : Callable<Tea
     protected val team: Team = team.copy()
     protected val api: T = TBA_RETROFIT.create(clazz)
 
-    protected val tbaApiKey: String = RobotScouter.INSTANCE.getString(R.string.tba_api_key)
+    protected val tbaApiKey: String = RobotScouter.getString(R.string.tba_api_key)
 
     protected val year: Int get() = Calendar.getInstance().get(Calendar.YEAR)
 
