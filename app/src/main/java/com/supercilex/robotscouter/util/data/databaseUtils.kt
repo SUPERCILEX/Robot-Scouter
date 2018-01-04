@@ -259,9 +259,8 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         ) {
             if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
+            val team = value!![newIndex]
             async {
-                val team = value!![newIndex]
-
                 team.fetchLatestData()
                 FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
 
