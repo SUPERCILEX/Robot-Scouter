@@ -90,6 +90,7 @@
 
         <activity
             android:name=".data.client.LinkReceiverActivity"
+            android:label=""
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:excludeFromRecents="true"
             android:taskAffinity=""
