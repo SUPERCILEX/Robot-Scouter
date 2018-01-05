@@ -20,7 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
-import com.supercilex.robotscouter.util.data.IoUtilsKt;
+import com.supercilex.robotscouter.util.data.IoKt;
 
 import org.jetbrains.anko.ToastsKt;
 
@@ -34,11 +34,11 @@ import java.util.List;
 import kotlin.Pair;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logTakeMedia;
+import static com.supercilex.robotscouter.util.AnalyticsKt.logTakeMedia;
 import static com.supercilex.robotscouter.util.ConstantsKt.getProviderAuthority;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.createFile;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.getIoPerms;
-import static com.supercilex.robotscouter.util.data.IoUtilsKt.getMediaFolder;
+import static com.supercilex.robotscouter.util.data.IoKt.createFile;
+import static com.supercilex.robotscouter.util.data.IoKt.getIoPerms;
+import static com.supercilex.robotscouter.util.data.IoKt.getMediaFolder;
 import static org.jetbrains.anko.ContextUtilsKt.bundleOf;
 
 public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Void>, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -163,7 +163,7 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
             Context context = mFragment.get().getContext();
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    photo = IoUtilsKt.unhide(photo);
+                    photo = IoKt.unhide(photo);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -186,10 +186,10 @@ public final class TeamMediaCreator implements Parcelable, OnSuccessListener<Voi
     }
 
     private File createImageFile(File mediaFolder) {
-        return IoUtilsKt.hide(createFile(mTeam.toString(),
-                                         "jpg",
-                                         mediaFolder,
-                                         String.valueOf(System.currentTimeMillis())));
+        return IoKt.hide(createFile(mTeam.toString(),
+                                    "jpg",
+                                    mediaFolder,
+                                    String.valueOf(System.currentTimeMillis())));
     }
 
     @Override

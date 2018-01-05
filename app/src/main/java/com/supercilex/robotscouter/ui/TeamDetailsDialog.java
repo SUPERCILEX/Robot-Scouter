@@ -33,17 +33,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
-import com.supercilex.robotscouter.util.data.ArgUtilsKt;
+import com.supercilex.robotscouter.util.data.ArgsKt;
 import com.supercilex.robotscouter.util.data.model.TeamHolder;
-import com.supercilex.robotscouter.util.data.model.TeamUtilsKt;
+import com.supercilex.robotscouter.util.data.model.TeamsKt;
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase;
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar;
 
 import java.io.File;
 
-import static com.supercilex.robotscouter.util.AnalyticsUtilsKt.logEditDetails;
-import static com.supercilex.robotscouter.util.ui.ViewUtilsKt.animateCircularReveal;
+import static com.supercilex.robotscouter.util.AnalyticsKt.logEditDetails;
+import static com.supercilex.robotscouter.util.ui.ViewsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnClickListener, View.OnFocusChangeListener,
@@ -69,7 +69,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
     public static void show(FragmentManager manager, Team team) {
         TeamDetailsDialog dialog = new TeamDetailsDialog();
-        dialog.setArguments(ArgUtilsKt.toBundle(new Team(
+        dialog.setArguments(ArgsKt.toBundle(new Team(
                 team.getNumber(),
                 team.getId(),
                 team.getOwners(),
@@ -93,7 +93,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTeam = ArgUtilsKt.getTeam(getArguments());
+        mTeam = ArgsKt.getTeam(getArguments());
 
         if (savedInstanceState == null) {
             mMediaCapture = TeamMediaCreator.newInstance(this, mTeam, this);
@@ -259,8 +259,8 @@ public class TeamDetailsDialog extends KeyboardDialogBase
                 mTeam.setWebsite(website);
             }
 
-            TeamUtilsKt.forceUpdate(mTeam);
-            TeamUtilsKt.forceRefresh(mTeam);
+            TeamsKt.forceUpdate(mTeam);
+            TeamsKt.forceRefresh(mTeam);
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             Fragment fragment = getParentFragment();
@@ -293,7 +293,7 @@ public class TeamDetailsDialog extends KeyboardDialogBase
 
     @Override
     public void onSuccess(Team team) {
-        TeamUtilsKt.copyMediaInfo(mTeam, team);
+        TeamsKt.copyMediaInfo(mTeam, team);
         updateUi();
     }
 
