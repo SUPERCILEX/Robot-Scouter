@@ -40,6 +40,7 @@ import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
@@ -173,7 +174,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                     return true
                 }
 
-                getTemplatesQuery().get().continueWith(
+                getTemplatesQuery().log().get().continueWith(
                         AsyncTaskExecutor, Continuation<QuerySnapshot, Boolean> {
                     it.result.map { scoutParser.parseSnapshot(it) }
                             .find { it.id == templateId } != null

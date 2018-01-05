@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logExport
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.RatingDialog
@@ -87,7 +88,7 @@ class ExportService : IntentService(TAG) {
         val unknownTemplateName: String = getString(R.string.export_unknown_template_title)
 
         val allPossibleTemplateNames: Map<String, String> = Tasks.await(
-                getTemplatesQuery().get()
+                getTemplatesQuery().log().get()
         ).associate {
             val scout = scoutParser.parseSnapshot(it)
             scout.id to (scout.name ?: unknownTemplateName)

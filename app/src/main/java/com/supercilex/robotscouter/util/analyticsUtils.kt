@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.util
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
@@ -13,6 +14,9 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
@@ -82,7 +86,8 @@ fun initAnalytics() {
     // restarted.
     FirebaseAuth.getInstance().addIdTokenListener {
         if (uid != null) {
-            userRef.set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge()).logFailures()
+            userRef.log().set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
+                    .logFailures()
         }
     }
 }
@@ -252,6 +257,36 @@ fun <T> Task<T>.logFailures(
 fun <T> Deferred<T>.logFailures(): Deferred<T> {
     invokeOnCompletion(CrashLogger)
     return this
+}
+
+fun DocumentReference.log(): DocumentReference {
+    logDbUse(path)
+    return this
+}
+
+fun Query.log(): Query {
+    if (this is CollectionReference) return log()
+
+    logDbUse("")
+    return this
+}
+
+fun CollectionReference.log(): CollectionReference {
+    logDbUse(path)
+    return this
+}
+
+private fun logDbUse(path: String) {
+    val trace = Thread.currentThread().stackTrace.filter {
+        it.className.contains("supercilex")
+    }.let {
+        it.subList(2, it.size)
+    }
+    "Used reference '$path' at $trace".let {
+        FirebaseCrash.log(it)
+        Crashlytics.log(it)
+        if (BuildConfig.DEBUG) Log.d("DatabaseLogger", it)
+    }
 }
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {

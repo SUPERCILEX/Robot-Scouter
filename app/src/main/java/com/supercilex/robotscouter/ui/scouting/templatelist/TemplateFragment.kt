@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTemplateViewAction
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.util.doAsync
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logSelectTemplate
@@ -129,10 +130,10 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             }
             R.id.action_remove_metrics -> {
                 recyclerView.clearFocus()
-                metricsRef.get().addOnSuccessListener { metrics ->
+                metricsRef.log().get().addOnSuccessListener { metrics ->
                     doAsync {
                         Tasks.await(firestoreBatch {
-                            for (metric in metrics) delete(metric.reference)
+                            for (metric in metrics) delete(metric.reference.log())
                         })
                     }.logFailures()
 
@@ -140,7 +141,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                         doAsync {
                             Tasks.await(firestoreBatch {
                                 for (metric in metrics) {
-                                    set(metric.reference, metric.data)
+                                    set(metric.reference.log(), metric.data)
                                 }
                             })
                         }.logFailures()
@@ -170,7 +171,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             else -> error("Unknown view id: $id")
         }.apply {
             logAdd()
-            ref.set(this)
+            ref.log().set(this)
         }
     }
 

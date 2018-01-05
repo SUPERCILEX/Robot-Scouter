@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.doAsync
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
 import org.jetbrains.anko.longToast
@@ -49,41 +50,41 @@ fun Team.addScout(
     val scoutRef = getScoutsRef().document()
 
     logAddScout(id, templateId)
-    scoutRef.set(Scout(scoutRef.id, templateId)).logFailures()
+    scoutRef.log().set(Scout(scoutRef.id, templateId)).logFailures()
 
     val errorIgnorer: (Exception) -> Boolean = {
         (it is FirebaseFirestoreException
                 && it.code == FirebaseFirestoreException.Code.UNAVAILABLE).also {
             if (it) {
                 RobotScouter.longToast(R.string.scout_add_template_not_cached_error)
-                scoutRef.delete().logFailures()
+                scoutRef.log().delete().logFailures()
             }
         }
     }
     (TemplateType.coerce(templateId)?.let { type ->
-        defaultTemplates.document(type.id.toString()).get().continueWith(
+        defaultTemplates.document(type.id.toString()).log().get().continueWith(
                 AsyncTaskExecutor, Continuation<DocumentSnapshot, String?> {
             val scout = scoutParser.parseSnapshot(it.result)
 
             firestoreBatch {
                 scout.metrics.forEach {
-                    set(getScoutMetricsRef(scoutRef.id).document(it.ref.id), it)
+                    set(getScoutMetricsRef(scoutRef.id).document(it.ref.id).log(), it)
                 }
             }.logFailures()
 
             scout.name
         })
     } ?: run {
-        getTemplateRef(templateId).collection(FIRESTORE_METRICS).get().continueWithTask(
+        getTemplateRef(templateId).collection(FIRESTORE_METRICS).log().get().continueWithTask(
                 AsyncTaskExecutor, Continuation<QuerySnapshot, Task<Void>> {
             firestoreBatch {
                 it.result.documents.associate { it.id to it.data }.forEach {
-                    set(getScoutMetricsRef(scoutRef.id).document(it.key), it.value)
+                    set(getScoutMetricsRef(scoutRef.id).document(it.key).log(), it.value)
                 }
             }
         }).logFailures(errorIgnorer)
 
-        getTemplateRef(templateId).get().continueWith {
+        getTemplateRef(templateId).log().get().continueWith {
             if (it.result.exists()) {
                 scoutParser.parseSnapshot(it.result).name
             } else {
@@ -98,7 +99,7 @@ fun Team.addScout(
             }
         })
 
-        scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates").logFailures()
+        scoutRef.log().update(FIRESTORE_NAME, "$templateName $nExistingTemplates").logFailures()
     })
 
     return scoutRef.id
@@ -109,10 +110,10 @@ fun Team.trashScout(id: String) = updateScoutDate(id) { -abs(it) }
 fun Team.untrashScout(id: String) = updateScoutDate(id) { abs(it) }
 
 private inline fun Team.updateScoutDate(id: String, crossinline update: (Long) -> Long) {
-    getScoutsRef().document(id).get().continueWithTask(
+    getScoutsRef().document(id).log().get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         val snapshot = it.result
         val oppositeDate = Date(update(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
-        snapshot.reference.update(FIRESTORE_TIMESTAMP, oppositeDate)
+        snapshot.reference.log().update(FIRESTORE_TIMESTAMP, oppositeDate)
     }).logFailures()
 }

@@ -55,6 +55,7 @@ import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
@@ -101,16 +102,17 @@ inline fun firestoreBatch(
 }
 
 inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
-        firestoreBatch { transaction(this@batch) }
+        firestoreBatch { transaction(this@batch) }.also { log() }
 
 fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = doAsync {
     var query = orderBy(FieldPath.documentId()).limit(batchSize)
-    val docs = mutableListOf<DocumentSnapshot>(*Tasks.await(query.get()).documents.toTypedArray())
+    val docs = mutableListOf<DocumentSnapshot>(
+            *Tasks.await(query.log().get()).documents.toTypedArray())
     var lastResultSize = docs.size
 
     while (lastResultSize >= batchSize) {
         query = orderBy(FieldPath.documentId()).startAfter(docs.last()).limit(batchSize)
-        docs += Tasks.await(query.get()).documents.also {
+        docs += Tasks.await(query.log().get()).documents.also {
             lastResultSize = it.size
         }
     }
@@ -234,7 +236,7 @@ abstract class AuthObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnaps
 
 object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
-        get() = FirestoreArray(teamsQuery, teamParser)
+        get() = FirestoreArray(teamsQuery.log(), teamParser)
 
     private val templateIdUpdater = object : ChangeEventListenerBase {
         private var nTeamUpdatesForTemplateId = "" to -1
@@ -355,9 +357,9 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             firestoreBatch {
                 for (scout in scouts) {
                     val scoutId = scout.id
-                    set(existingTeam.getScoutsRef().document(scoutId), scout)
+                    set(existingTeam.getScoutsRef().document(scoutId).log(), scout)
                     for (metric in scout.metrics) {
-                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id),
+                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).log(),
                             metric)
                     }
                 }
@@ -392,7 +394,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
 
 object PrefsLiveData : AuthObservableSnapshotArrayLiveData<Any>() {
     override val items: ObservableSnapshotArray<Any>
-        get() = FirestoreArray<Any>(userPrefs) {
+        get() = FirestoreArray<Any>(userPrefs.log()) {
             val id = it.id
             when (id) {
                 FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,

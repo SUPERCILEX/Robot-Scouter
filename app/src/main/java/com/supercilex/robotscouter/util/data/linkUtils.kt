@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.APP_LINK_BASE
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
@@ -84,11 +85,11 @@ inline fun updateOwner(
 
     return Tasks.whenAll(refs.map { ref ->
         firestoreBatch {
-            update(ref, pendingApprovalPath, token)
-            oldOwnerPath?.let { update(ref, it, FieldValue.delete()) }
-            update(ref, newOwnerPath, newValue(ref))
+            update(ref.log(), pendingApprovalPath, token)
+            oldOwnerPath?.let { update(ref.log(), it, FieldValue.delete()) }
+            update(ref.log(), newOwnerPath, newValue(ref))
         }.addOnSuccessListener {
-            ref.update(pendingApprovalPath, FieldValue.delete()).logFailures()
+            ref.log().update(pendingApprovalPath, FieldValue.delete()).logFailures()
         }.logFailures()
     })
 }

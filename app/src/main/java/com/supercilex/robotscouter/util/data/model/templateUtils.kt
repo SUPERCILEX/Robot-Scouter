@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.templates
@@ -58,11 +59,11 @@ fun addTemplate(type: TemplateType): String {
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
     }.logFailures()
 
-    defaultTemplates.document(type.id.toString()).get().continueWithTask(
+    defaultTemplates.document(type.id.toString()).log().get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         firestoreBatch {
             scoutParser.parseSnapshot(it.result).metrics.forEach {
-                set(getTemplateMetricsRef(id).document(it.ref.id), it)
+                set(getTemplateMetricsRef(id).document(it.ref.id).log(), it)
             }
         }
     }).logFailures()
@@ -75,10 +76,10 @@ fun Scout.getTemplateName(index: Int): String =
 
 fun trashTemplate(id: String) {
     FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
-    getTemplateRef(id).get().continueWithTask(
+    getTemplateRef(id).log().get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         val snapshot = it.result
         val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
-        snapshot.reference.update("$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
+        snapshot.reference.log().update("$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
     }).logFailures()
 }

@@ -10,13 +10,14 @@ import com.supercilex.robotscouter.util.data.KeepAliveListener
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.log
 
 class ScoutsHolder : ViewModelBase<Query>(), DefaultLifecycleObserver {
     lateinit var scouts: ObservableSnapshotArray<Scout>
         private set
 
     override fun onCreate(args: Query) {
-        scouts = FirestoreArray(args, scoutParser)
+        scouts = FirestoreArray(args.log(), scoutParser)
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 

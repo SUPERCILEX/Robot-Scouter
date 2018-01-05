@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teamFreshnessDays
@@ -32,7 +33,6 @@ import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
 import kotlinx.coroutines.experimental.async
 import java.util.Calendar
-import java.util.Collections
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -49,7 +49,7 @@ val Team.isOutdatedMedia: Boolean
 
 fun Collection<Team>.getNames(): String {
     val sortedTeams = toMutableList()
-    Collections.sort(sortedTeams)
+    sortedTeams.sort()
 
     return when {
         sortedTeams.isSingleton -> sortedTeams[0].toString()
@@ -89,7 +89,7 @@ fun Team.add() {
 fun Team.update(newTeam: Team) {
     checkForMatchingTeamDetails(this, newTeam)
     if (this == newTeam) {
-        ref.update(FIRESTORE_TIMESTAMP, getCurrentTimestamp()).logFailures()
+        ref.log().update(FIRESTORE_TIMESTAMP, getCurrentTimestamp()).logFailures()
         return
     }
 
@@ -112,7 +112,7 @@ fun Team.updateTemplateId(id: String) {
     if (id == templateId) return
 
     templateId = id
-    ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures()
+    ref.log().update(FIRESTORE_TEMPLATE_ID, templateId).logFailures()
 }
 
 fun Team.updateMedia(newTeam: Team) {
@@ -122,10 +122,10 @@ fun Team.updateMedia(newTeam: Team) {
 }
 
 fun Team.forceUpdate() {
-    ref.set(this).logFailures()
+    ref.log().set(this).logFailures()
 }
 
-fun Team.forceRefresh(): Task<Void?> = ref.update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()
+fun Team.forceRefresh(): Task<Void?> = ref.log().update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()
 
 fun Team.copyMediaInfo(newTeam: Team) {
     media = newTeam.media
@@ -134,7 +134,7 @@ fun Team.copyMediaInfo(newTeam: Team) {
 }
 
 fun Team.trash() {
-    ref.update("$FIRESTORE_OWNERS.${uid!!}", -abs(number)).logFailures()
+    ref.log().update("$FIRESTORE_OWNERS.${uid!!}", -abs(number)).logFailures()
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
 }
 

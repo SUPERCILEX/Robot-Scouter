@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShare
 import org.jetbrains.anko.design.longSnackbar
@@ -50,7 +51,7 @@ class TeamSharer private constructor(
 
             val token = generateToken
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-            for (team in cache.teams) team.ref.update(tokenPath, Date()).logFailures()
+            for (team in cache.teams) team.ref.log().update(tokenPath, Date()).logFailures()
 
             getInvitationIntent(
                     cache.teams.getTeamsLink(token),

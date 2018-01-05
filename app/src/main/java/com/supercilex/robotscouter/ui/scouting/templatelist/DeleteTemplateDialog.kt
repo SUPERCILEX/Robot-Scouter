@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.util.data.model.trashTemplate
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.putRef
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
@@ -36,7 +37,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
         TeamsLiveData.observeOnDataChanged().observeOnce { teams ->
             firestoreBatch {
                 teams.filter { TextUtils.equals(templateId, it.templateId) }.forEach {
-                    update(it.ref, FIRESTORE_TEMPLATE_ID, defaultTemplateId)
+                            update(it.ref.log(), FIRESTORE_TEMPLATE_ID, defaultTemplateId)
                 }
             }.logFailures()
 

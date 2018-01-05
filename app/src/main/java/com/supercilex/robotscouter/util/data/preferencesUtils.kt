@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.doAsync
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdateDefaultTemplateId
 import com.supercilex.robotscouter.util.showRatingDialog
@@ -34,7 +35,7 @@ private val localPrefs: SharedPreferences by lazy {
 val prefs = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
         if (value != null) {
-            userPrefs.document(key).set(mapOf(FIRESTORE_VALUE to value)).logFailures()
+            userPrefs.document(key).log().set(mapOf(FIRESTORE_VALUE to value)).logFailures()
         }
     }
 
@@ -42,7 +43,7 @@ val prefs = object : PreferenceDataStore() {
             localPrefs.getString(key, defValue)
 
     override fun putBoolean(key: String, value: Boolean) {
-        userPrefs.document(key).set(mapOf(FIRESTORE_VALUE to value)).logFailures()
+        userPrefs.document(key).log().set(mapOf(FIRESTORE_VALUE to value)).logFailures()
     }
 
     override fun getBoolean(key: String, defValue: Boolean): Boolean =

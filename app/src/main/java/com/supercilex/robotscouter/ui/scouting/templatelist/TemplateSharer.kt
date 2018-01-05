@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTemplate
 import com.supercilex.robotscouter.util.templates
@@ -30,7 +31,7 @@ class TemplateSharer private constructor(
             it.result // Skip token generation if task failed
 
             val token = generateToken
-            templates.document(templateId)
+            templates.document(templateId).log()
                     .update(FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
                     .logFailures()
 

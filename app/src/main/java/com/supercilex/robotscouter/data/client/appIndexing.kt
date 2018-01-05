@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.onSignedIn
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
@@ -40,7 +41,7 @@ class AppIndexingService : JobIntentService() {
     }
 
     private suspend fun getUpdateTemplatesTask() {
-        val indexables = getTemplatesQuery().get().await().mapIndexed { index, snapshot ->
+        val indexables = getTemplatesQuery().log().get().await().mapIndexed { index, snapshot ->
             getTemplateIndexable(
                     snapshot.id,
                     scoutParser.parseSnapshot(snapshot).getTemplateName(index)
