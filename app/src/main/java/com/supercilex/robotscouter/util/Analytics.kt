@@ -250,9 +250,19 @@ fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 
 fun <T> Task<T>.logFailures(
         ignore: ((Exception) -> Boolean)? = null
-): Task<T> = addOnFailureListener(if (ignore == null) CrashLogger else OnFailureListener {
-    if (!ignore(it)) CrashLogger.onFailure(it)
-})
+): Task<T> {
+    val trace = Thread.currentThread().stackTrace.filter {
+        it.className.contains("supercilex")
+    }.let {
+        it.subList(1, it.size)
+    }
+    return addOnFailureListener {
+        if (ignore?.invoke(it)?.not() != false) {
+            logCrashLog("Crash source: $trace")
+            CrashLogger.onFailure(it)
+        }
+    }
+}
 
 fun <T> Deferred<T>.logFailures(): Deferred<T> {
     invokeOnCompletion(CrashLogger)
@@ -282,11 +292,13 @@ private fun logDbUse(path: String) {
     }.let {
         it.subList(2, it.size)
     }
-    "Used reference '$path' at $trace".let {
-        FirebaseCrash.log(it)
-        Crashlytics.log(it)
-        if (BuildConfig.DEBUG) Log.d("DatabaseLogger", it)
-    }
+    logCrashLog("Used reference '$path' at $trace")
+}
+
+private fun logCrashLog(message: String) {
+    Crashlytics.log(message)
+    FirebaseCrash.log(message)
+    if (BuildConfig.DEBUG) Log.d("CrashLogs", message)
 }
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {

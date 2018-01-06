@@ -53,13 +53,10 @@ fun Team.addScout(
     scoutRef.log().set(Scout(scoutRef.id, templateId)).logFailures()
 
     val errorIgnorer: (Exception) -> Boolean = {
-        (it is FirebaseFirestoreException
-                && it.code == FirebaseFirestoreException.Code.UNAVAILABLE).also {
-            if (it) {
-                RobotScouter.longToast(R.string.scout_add_template_not_cached_error)
-                scoutRef.log().delete().logFailures()
-            }
-        }
+        scoutRef.log().delete().logFailures()
+        RobotScouter.longToast(R.string.scout_add_template_not_cached_error)
+        it is FirebaseFirestoreException
+                && it.code == FirebaseFirestoreException.Code.UNAVAILABLE
     }
     (TemplateType.coerce(templateId)?.let { type ->
         defaultTemplates.document(type.id.toString()).log().get().continueWith(
