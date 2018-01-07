@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist
 
-import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import com.google.firebase.firestore.Query
@@ -9,8 +8,6 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
 import com.supercilex.robotscouter.util.data.model.getScoutsQuery
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
-import com.supercilex.robotscouter.util.data.model.trash
-import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logSelectScout
 
 class ScoutPagerAdapter(
@@ -29,18 +26,6 @@ class ScoutPagerAdapter(
 
     override fun getPageTitle(position: Int): String =
             fragment.getString(R.string.scout_tab_default_title, count - position)
-
-    override fun onDataChanged() {
-        if (oldScouts.isNotEmpty() && holder.scouts.isEmpty()
-                && !isOffline() && fragment.isResumed) {
-            Snackbar.make(fragment.view!!,
-                          fragment.getString(R.string.scout_should_delete_team_message, team),
-                          Snackbar.LENGTH_LONG)
-                    .setAction(R.string.scout_delete_team_title) { team.trash() }
-                    .show()
-        }
-        super.onDataChanged()
-    }
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         super.onTabSelected(tab)

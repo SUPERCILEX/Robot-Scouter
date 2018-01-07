@@ -139,8 +139,6 @@
     <string name="scout_activity_title">Scout editor</string>
     <string name="scout_tab_default_title">Scout %d</string>
     <string name="scout_offline_rationale">Offline. Data will be saved</string>
-    <string name="scout_should_delete_team_message">You have deleted the last scout for team %s.</string>
-    <string name="scout_delete_team_title">Delete team</string>
 
     <string name="scout_new_title">New scout/team</string>
     <string name="scout_new_title_long">Add a new scout or team</string>
