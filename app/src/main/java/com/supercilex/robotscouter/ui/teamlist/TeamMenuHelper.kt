@@ -33,7 +33,7 @@ import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.animateColorChange
-import com.supercilex.robotscouter.util.ui.notifyItemsChangedNoAnimation
+import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import org.jetbrains.anko.find
 import java.util.Locale
 
@@ -317,7 +317,7 @@ class TeamMenuHelper(
     }
 
     private fun notifyItemsChanged() {
-        recyclerView.notifyItemsChangedNoAnimation(0, recyclerView.adapter.itemCount)
+        recyclerView.notifyItemsNoChangeAnimation()
     }
 
     private companion object {

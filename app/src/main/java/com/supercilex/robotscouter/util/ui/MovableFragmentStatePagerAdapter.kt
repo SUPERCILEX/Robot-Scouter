@@ -118,9 +118,7 @@ abstract class MovableFragmentStatePagerAdapter(
 
     /** @see android.support.v4.app.FragmentStatePagerAdapter.restoreState */
     override fun restoreState(state: Parcelable?, loader: ClassLoader?) {
-        if ((state as Bundle?)?.apply { classLoader = loader }?.isEmpty == false) {
-            state!!
-
+        if ((state as? Bundle)?.apply { classLoader = loader }?.isEmpty == false) {
             fragmentsToItemIds.clear()
             itemIdsToFragments.clear()
             unusedRestoredFragments.clear()
