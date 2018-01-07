@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.AccountMergeService
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.experimental.suspendCoroutine
 
 const val RC_SIGN_IN = 100
@@ -32,13 +33,17 @@ private val signInIntent: Intent
 
 suspend fun onSignedIn(): FirebaseUser = suspendCoroutine {
     FirebaseAuth.getInstance().addAuthStateListener(object : FirebaseAuth.AuthStateListener {
+        private val called = AtomicBoolean()
+
         override fun onAuthStateChanged(auth: FirebaseAuth) {
             val user = auth.currentUser
             if (user == null) {
                 FirebaseAuth.getInstance().signInAnonymously()
             } else {
                 auth.removeAuthStateListener(this)
-                it.resume(user)
+                if (called.compareAndSet(false, true)) {
+                    it.resume(user)
+                }
             }
         }
     })
