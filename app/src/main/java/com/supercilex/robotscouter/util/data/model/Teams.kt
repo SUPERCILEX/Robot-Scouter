@@ -36,6 +36,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import kotlin.math.sign
 
 val teamsQuery
     get() = "$FIRESTORE_OWNERS.${uid!!}".let {
@@ -46,6 +47,11 @@ val Team.ref: DocumentReference get() = teams.document(id)
 
 val Team.isOutdatedMedia: Boolean
     get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || TextUtils.isEmpty(media)
+
+val Team.isTrashed: Boolean?
+    get() {
+        return owners[uid ?: return null]?.sign == -1
+    }
 
 fun Collection<Team>.getNames(): String {
     val sortedTeams = toMutableList()

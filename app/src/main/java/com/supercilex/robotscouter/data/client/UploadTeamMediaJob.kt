@@ -23,7 +23,7 @@ interface UploadTeamMediaJob : TeamJob {
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.updateMedia(newTeam) }
 
-    override fun startTask(previousTeam: Team): Task<Team> = TbaUploader.upload(previousTeam)
+    override fun startTask(existingTeam: Team): Task<Team> = TbaUploader.upload(existingTeam)
 }
 
 class UploadTeamMediaJob14 : TbaJobBase14(), UploadTeamMediaJob
