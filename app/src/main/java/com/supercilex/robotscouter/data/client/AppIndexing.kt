@@ -35,8 +35,8 @@ class AppIndexingService : JobIntentService() {
     }
 
     private suspend fun getUpdateTeamsTask() {
-        val indexables =
-                TeamsLiveData.observeOnDataChanged().observeOnce()?.map { it.indexable } ?: return
+        val indexables = TeamsLiveData.observeOnDataChanged().observeOnce()?.toList()
+                ?.map { it.indexable } ?: return
         FirebaseAppIndex.getInstance().update(*indexables.toTypedArray()).await()
     }
 
