@@ -134,10 +134,13 @@ class SpreadsheetExporter(
     private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
             RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
 
-    private fun getFileUri(): Uri = FileProvider.getUriForFile(
-            RobotScouter, providerAuthority, writeFile(checkNotNull(rootFolder) {
-        "Couldn't get write access"
-    }))
+    private fun getFileUri(): Uri {
+        val folder = synchronized(notificationManager) {
+            checkNotNull(rootFolder) { "Couldn't get write access" }
+        }
+
+        return FileProvider.getUriForFile(RobotScouter, providerAuthority, writeFile(folder))
+    }
 
     private fun writeFile(rsFolder: File): File {
         var stream: FileOutputStream? = null
@@ -439,12 +442,12 @@ class SpreadsheetExporter(
             }
             if (anchors.isEmpty()) return defaultIndex
 
-            Collections.sort(anchors) { o1, o2 ->
+            anchors.sortWith(Comparator { o1, o2 ->
                 val endRow1 = o1.row2
                 val endRow2 = o2.row2
 
                 if (endRow1 == endRow2) 0 else if (endRow1 > endRow2) 1 else -1
-            }
+            })
 
             val lastRow = anchors[anchors.lastIndex].row2
             return if (defaultIndex > lastRow) defaultIndex else lastRow
