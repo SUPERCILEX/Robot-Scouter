@@ -49,14 +49,18 @@ class ExportService : IntentService(TAG) {
 
         if (isOffline()) showToast(getString(R.string.export_offline_rationale))
 
-        val teams = intent.getTeamListExtra()
+        val teams: List<Team> = intent.getTeamListExtra().toMutableList().apply { sort() }
+        val chunks = teams.chunked(SYNCHRONOUS_QUERY_CHUNK)
+        notificationManager.startLoading(chunks.size)
+
         try {
-            onHandleScouts(notificationManager, teams.chunked(SYNCHRONOUS_QUERY_CHUNK) {
+            onHandleScouts(notificationManager, chunks.map {
+                notificationManager.loading(it)
                 Tasks.await(
                         Tasks.whenAllSuccess<List<Scout>>(it.map { it.getScouts() }),
                         TIMEOUT,
                         TimeUnit.MINUTES
-                )
+                ).also { notificationManager.updateLoadProgress() }
             }.flatten().withIndex().associate {
                 teams[it.index] to it.value
             })

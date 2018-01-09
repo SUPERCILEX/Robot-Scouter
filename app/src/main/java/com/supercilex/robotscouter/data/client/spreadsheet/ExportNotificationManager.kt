@@ -38,6 +38,7 @@ class ExportNotificationManager(private val service: ExportService) {
     private val masterNotificationHolder = MasterNotificationHolder()
     private val exporters = ConcurrentHashMap<SpreadsheetExporter, NotificationHolder>()
 
+    private var nLoadingChunks: Int by LateinitVal()
     private var nTemplates: Int by LateinitVal()
     private var teams: Set<Team> by LateinitVal()
     private var pendingTaskCount: Int by Delegates.notNull()
@@ -51,15 +52,44 @@ class ExportNotificationManager(private val service: ExportService) {
         notificationFilter.start()
     }
 
+    fun startLoading(chunks: Int) {
+        nLoadingChunks = chunks
+        masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nLoadingChunks
+
+        notificationFilter.notify(hashCode(), masterNotification
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setContentText(RobotScouter.getString(R.string.export_load_status))
+                .updateProgress(
+                        masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
+                .build())
+    }
+
+    fun updateLoadProgress() {
+        masterNotificationHolder.progress++
+    }
+
+    fun loading(teams: List<Team>) {
+        notificationFilter.notify(hashCode(), masterNotification
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setContentText(RobotScouter.getString(
+                        R.string.export_load_status_detail,
+                        teams.first().number,
+                        teams.last().number
+                ))
+                .updateProgress(
+                        masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
+                .build())
+    }
+
     fun setData(nTemplates: Int, teams: Set<Team>) {
         this.nTemplates = nTemplates
         this.teams = teams
         pendingTaskCount = nTemplates
 
-        masterNotificationHolder.progress = EXTRA_MASTER_OPS
-        masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nTemplates
+        masterNotificationHolder.progress = EXTRA_MASTER_OPS + nLoadingChunks
+        masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nLoadingChunks + nTemplates
 
-        notificationManager.notify(hashCode(), masterNotification
+        notificationFilter.notify(hashCode(), masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentText(RobotScouter.getString(R.string.export_load_status))
                 .updateProgress(
@@ -165,7 +195,7 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     private data class MasterNotificationHolder(var progress: Int = 0) {
-        var maxProgress: Int by LateinitVal()
+        var maxProgress: Int by Delegates.notNull()
     }
 
     private data class NotificationHolder(val id: Int, val maxProgress: Int, var progress: Int = 0)

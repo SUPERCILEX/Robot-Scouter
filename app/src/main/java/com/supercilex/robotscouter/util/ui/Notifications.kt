@@ -19,7 +19,6 @@ import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
 import java.util.concurrent.CancellationException
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -89,7 +88,7 @@ fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
 class FilteringNotificationManager : Runnable {
     private val lock = ReentrantReadWriteLock()
     private val executor = ScheduledThreadPoolExecutor(1)
-    private val notifications: MutableMap<Int, Notification> = ConcurrentHashMap()
+    private val notifications: MutableMap<Int, Notification> = LinkedHashMap()
     private val vips: Queue<Int> = LinkedList()
 
     private var isStopped = false
