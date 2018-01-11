@@ -223,13 +223,13 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         if (!isDeletingItem) localItems.addAll(adapter.snapshots)
         isDeletingItem = true
+        val localItems = localItems.toList()
 
         val position = viewHolder.adapterPosition
         val deletedRef = localItems[position].ref
-        val itemsBelow: List<OrderedRemoteModel> =
-                localItems.subList(position + 1, localItems.size).toList()
+        val itemsBelow: List<OrderedRemoteModel> = localItems.subList(position + 1, localItems.size)
 
-        localItems.removeAt(position)
+        this.localItems.removeAt(position)
         adapter.notifyItemRemoved(position)
 
         recyclerView.clearFocus() // Save user data for undo
