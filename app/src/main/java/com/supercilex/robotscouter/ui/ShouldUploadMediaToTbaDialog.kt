@@ -34,7 +34,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
     override fun onClick(dialog: DialogInterface, which: Int) {
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
-        if (saveResponseCheckbox.isChecked) shouldUploadMediaToTba = true
+        if (saveResponseCheckbox.isChecked) shouldUploadMediaToTba = isYes
         (parentFragment as TeamMediaCreator.StartCaptureListener).onStartCapture(isYes)
     }
 
