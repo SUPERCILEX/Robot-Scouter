@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import com.crashlytics.android.Crashlytics
+import com.firebase.ui.common.ChangeEventType
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.BuildConfig
@@ -24,6 +26,8 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.data.model.User
+import com.supercilex.robotscouter.util.data.PrefObserver
+import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
@@ -55,6 +59,7 @@ private val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance
 
 fun initAnalytics() {
     analytics.setAnalyticsCollectionEnabled(!isInTestMode)
+    PrefLogger
 
     FirebaseAuth.getInstance().addAuthStateListener {
         fun String?.nullOrFull() = if (TextUtils.isEmpty(this)) null else this
@@ -316,6 +321,28 @@ object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandl
         Crashlytics.logException(cause)
         if (BuildConfig.DEBUG || isInTestMode) {
             error("An unknown error occurred", cause)
+        }
+    }
+}
+
+private object PrefLogger : PrefObserver() {
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
+        if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
+
+        val id = snapshot.id
+        val pref = PrefsLiveData.value!![newIndex]
+        when (pref) {
+            is Boolean -> Crashlytics.setBool(id, pref)
+            is String -> Crashlytics.setString(id, pref)
+            is Int -> Crashlytics.setInt(id, pref)
+            is Long -> Crashlytics.setLong(id, pref)
+            is Double -> Crashlytics.setDouble(id, pref)
+            is Float -> Crashlytics.setFloat(id, pref)
         }
     }
 }

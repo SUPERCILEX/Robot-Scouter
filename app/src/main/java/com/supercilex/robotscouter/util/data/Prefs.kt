@@ -127,7 +127,7 @@ private inline fun SharedPreferences.updatePrefs(
     apply()
 }
 
-private object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
+abstract class PrefObserver : Observer<ObservableSnapshotArray<Any>>,
         DefaultLifecycleObserver, ChangeEventListenerBase {
     init {
         PrefsLiveData.observeForever(this)
@@ -151,7 +151,9 @@ private object PrefUpdater : Observer<ObservableSnapshotArray<Any>>,
     override fun onStop(owner: LifecycleOwner) {
         PrefsLiveData.value?.removeChangeEventListener(this)
     }
+}
 
+private object PrefUpdater : PrefObserver() {
     override fun onChildChanged(
             type: ChangeEventType,
             snapshot: DocumentSnapshot,
