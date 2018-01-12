@@ -49,10 +49,13 @@ fun showSignInTutorial(
                         }
                     }
                     .create()
+        private var latestPrompt: MaterialTapTargetPrompt? = null
 
         override fun onChanged(hasShownTutorial: Boolean?) {
-            if (hasShownAddTeamTutorial && hasShownTutorial == false) prompt?.show()
-            else prompt?.dismiss()
+            if (hasShownAddTeamTutorial && hasShownTutorial == false) prompt?.apply {
+                show()
+                latestPrompt = this
+            } else latestPrompt?.dismiss()
         }
     })
 }

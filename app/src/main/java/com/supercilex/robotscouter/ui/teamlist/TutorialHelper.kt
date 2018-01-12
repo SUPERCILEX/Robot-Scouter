@@ -19,6 +19,15 @@ class TutorialHelper : ViewModelBase<Nothing?>(),
     val hasShownAddTeamTutorial = UniqueMutableLiveData<Boolean?>()
     val hasShownSignInTutorial = UniqueMutableLiveData<Boolean?>()
 
+    private val signInPrefUpdater = object : ChangeEventListenerBase {
+        override fun onDataChanged() {
+            hasShownSignInTutorial.setValue(PrefsLiveData.value!!.getPrefOrDefault(
+                    FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false) || TeamsLiveData.value?.size
+                    ?.let { it >= MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL } != true
+            )
+        }
+    }
+
     override fun onCreate(args: Nothing?) = PrefsLiveData.observeForever(this)
 
     override fun onChanged(prefs: ObservableSnapshotArray<Any>?) {
@@ -38,19 +47,17 @@ class TutorialHelper : ViewModelBase<Nothing?>(),
     }
 
     override fun onStop(owner: LifecycleOwner) {
+        TeamsLiveData.value?.removeChangeEventListener(signInPrefUpdater)
         PrefsLiveData.value?.removeChangeEventListener(this@TutorialHelper)
     }
 
     override fun onDataChanged() {
-        val prefs = PrefsLiveData.value!!
-        hasShownAddTeamTutorial.setValue(
-                prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
-        hasShownSignInTutorial.setValue(
-                prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
-                        && TeamsLiveData.value?.size?.let {
-                    it >= MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL
-                } == true
-        )
+        TeamsLiveData.value?.apply {
+            removeChangeEventListener(signInPrefUpdater)
+            addChangeEventListener(signInPrefUpdater)
+        }
+        hasShownAddTeamTutorial.setValue(PrefsLiveData.value!!.getPrefOrDefault(
+                FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
     }
 
     override fun onCleared() {
