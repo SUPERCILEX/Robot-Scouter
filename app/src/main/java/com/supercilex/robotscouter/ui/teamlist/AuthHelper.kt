@@ -18,12 +18,13 @@ import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
+import com.supercilex.robotscouter.util.ui.OnActivityResult
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.util.signIn as startSignInIntent
 
 class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
-        DefaultLifecycleObserver, FirebaseAuth.AuthStateListener {
+        DefaultLifecycleObserver, FirebaseAuth.AuthStateListener, OnActivityResult {
     private val rootView: View by activity.bindView(R.id.root)
 
     private var signInMenuItem: MenuItem? = null
@@ -32,7 +33,7 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
         activity.lifecycle.addObserver(this)
     }
 
-    fun init(): Task<Nothing> =
+    fun init(): Task<Unit?> =
             if (isSignedIn) Tasks.forResult(null) else signInAnonymously().continueWith { null }
 
     fun initMenu(menu: Menu) {
@@ -64,7 +65,7 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
         longSnackbar(rootView, R.string.sign_in_required, R.string.team_sign_in_title, this)
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
                 longSnackbar(rootView, R.string.team_signed_in_message)

@@ -12,8 +12,8 @@ import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.shouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.util.data.shouldUploadMediaToTba
+import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
-import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.create
 import kotterknife.bindView
 
@@ -35,17 +35,18 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
         if (saveResponseCheckbox.isChecked) shouldUploadMediaToTba = isYes
-        (parentFragment as TeamMediaCreator.StartCaptureListener).onStartCapture(isYes)
+        (parentFragment as CaptureTeamMediaListener).startCapture(isYes)
     }
 
     companion object {
         private const val TAG = "ShouldUploadMediaToTbaD"
 
-        fun show(fragment: Fragment) = if (shouldAskToUploadMediaToTba) {
+        fun <F> show(
+                fragment: F
+        ) where F : Fragment, F : CaptureTeamMediaListener = if (shouldAskToUploadMediaToTba) {
             ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
         } else {
-            (fragment as TeamMediaCreator.StartCaptureListener)
-                    .onStartCapture(shouldUploadMediaToTba)
+            fragment.startCapture(shouldUploadMediaToTba)
         }
     }
 }

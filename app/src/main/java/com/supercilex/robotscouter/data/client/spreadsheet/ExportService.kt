@@ -152,8 +152,8 @@ class ExportService : IntentService(TAG) {
 
             val context = fragment.context!!
 
-            if (!EasyPermissions.hasPermissions(context, *permHandler.permsArray)) {
-                permHandler.requestPerms(R.string.export_write_storage_rationale)
+            if (!EasyPermissions.hasPermissions(context, *permHandler.perms.toTypedArray())) {
+                permHandler.requestPerms(fragment, R.string.export_write_storage_rationale)
                 return false
             }
 

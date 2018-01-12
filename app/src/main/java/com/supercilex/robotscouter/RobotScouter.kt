@@ -56,7 +56,6 @@ class RobotScouterApp : MultiDexApplication() {
                             .detectAll()
                             .penaltyFlashScreen()
                             .penaltyLog()
-                            .penaltyDeath()
                             .build()
             )
         }

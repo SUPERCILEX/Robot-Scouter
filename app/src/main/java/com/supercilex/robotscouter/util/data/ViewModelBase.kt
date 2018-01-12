@@ -2,14 +2,14 @@ package com.supercilex.robotscouter.util.data
 
 import android.arch.lifecycle.ViewModel
 import android.support.annotation.CallSuper
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class ViewModelBase<in T> : ViewModel() {
-    private var isInitialized = false
+    private val isInitialized = AtomicBoolean()
 
     fun init(args: T) {
-        if (!isInitialized) {
+        if (isInitialized.compareAndSet(false, true)) {
             onCreate(args)
-            isInitialized = true
         }
     }
 
@@ -17,6 +17,6 @@ abstract class ViewModelBase<in T> : ViewModel() {
 
     @CallSuper
     override fun onCleared() {
-        isInitialized = false
+        isInitialized.set(false)
     }
 }

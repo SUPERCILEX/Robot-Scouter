@@ -1,12 +1,17 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.content.Intent
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.util.refWatcher
 
-abstract class ActivityBase : AppCompatActivity() {
+interface OnActivityResult {
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+}
+
+abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
     protected open val keyboardShortcutHandler: KeyboardShortcutHandler =
             object : KeyboardShortcutHandler() {
                 override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) = Unit
@@ -31,9 +36,14 @@ abstract class ActivityBase : AppCompatActivity() {
         keyboardShortcutHandler.onKeyLongPress(keyCode, event)
         return super.onKeyLongPress(keyCode, event)
     }
+
+    @Suppress("RedundantOverride") // Needed to relax visibility
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }
 
-abstract class FragmentBase : Fragment() {
+abstract class FragmentBase : Fragment(), OnActivityResult {
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)

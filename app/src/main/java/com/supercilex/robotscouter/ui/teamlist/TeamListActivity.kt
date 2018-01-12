@@ -53,7 +53,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
                 } else {
                     NewTeamDialog.show(supportFragmentManager)
                 }
-                KeyEvent.KEYCODE_E -> teamListFragment.exportAllTeams()
+                KeyEvent.KEYCODE_E -> teamListFragment.exportTeams()
                 KeyEvent.KEYCODE_D -> scoutListFragment?.showTeamDetails()
             }
         }
@@ -93,9 +93,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
         find<View>(R.id.fab).setOnClickListener(this)
         showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
-        authHelper.init().addOnSuccessListener(this) {
-            handleIntent(intent)
-        }
+        authHelper.init().addOnSuccessListener(this) { handleIntent(intent) }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -145,7 +143,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             else -> runIfSignedIn {
                 when (item.itemId) {
-                    R.id.action_export_all_teams -> teamListFragment.exportAllTeams()
+                    R.id.action_export_all_teams -> teamListFragment.exportTeams()
                     R.id.action_edit_templates -> startActivity(TemplateListActivity.createIntent())
                     R.id.action_settings -> SettingsActivity.show(this)
                     else -> error("Unknown item id: ${item.itemId}")
@@ -197,7 +195,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
                 NewTeamDialog.show(supportFragmentManager)
             }
             if (it.toString() == EXPORT_ALL_TEAMS_INTENT) runIfSignedIn {
-                teamListFragment.exportAllTeams()
+                teamListFragment.exportTeams()
             }
         }
 

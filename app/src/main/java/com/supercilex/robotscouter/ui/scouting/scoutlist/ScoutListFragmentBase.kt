@@ -42,9 +42,9 @@ import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
-import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
 import com.supercilex.robotscouter.util.user
@@ -53,7 +53,7 @@ import org.jetbrains.anko.support.v4.find
 import org.jetbrains.anko.support.v4.longToast
 
 abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
-        TemplateSelectionListener, Observer<Team>, TeamMediaCreator.StartCaptureListener {
+        TemplateSelectionListener, Observer<Team>, CaptureTeamMediaListener {
     override val recyclerPool = RecyclerView.RecycledViewPool()
 
     protected abstract val viewHolder: AppBarViewHolderBase
@@ -115,7 +115,6 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewHolder // Force initialize
-        if (savedInstanceState != null) viewHolder.restoreState(savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -143,7 +142,6 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onSaveInstanceState(outState: Bundle) {
         pagerAdapter?.onSaveInstanceState(outState)
         dataHolder.onSaveInstanceState(outState)
-        viewHolder.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(
@@ -152,11 +150,11 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
             grantResults: IntArray
     ) = viewHolder.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-    override fun onStartCapture(shouldUploadMediaToTba: Boolean) =
-            viewHolder.onStartCapture(shouldUploadMediaToTba)
+    override fun startCapture(shouldUploadMediaToTba: Boolean) =
+        viewHolder.startCapture(shouldUploadMediaToTba)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-            viewHolder.onActivityResult(requestCode, resultCode)
+        viewHolder.onActivityResult(requestCode, resultCode, data)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val activity = activity!!

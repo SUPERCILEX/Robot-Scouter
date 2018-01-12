@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.ui;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -29,14 +30,15 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.supercilex.robotscouter.R;
 import com.supercilex.robotscouter.data.model.Team;
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment;
 import com.supercilex.robotscouter.util.data.ArgsKt;
 import com.supercilex.robotscouter.util.data.model.TeamHolder;
 import com.supercilex.robotscouter.util.data.model.TeamsKt;
+import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener;
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase;
+import com.supercilex.robotscouter.util.ui.PermissionRequestHandler;
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator;
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar;
 
@@ -46,11 +48,11 @@ import static com.supercilex.robotscouter.util.AnalyticsKt.logEditDetails;
 import static com.supercilex.robotscouter.util.ui.ViewsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
-        implements View.OnClickListener, View.OnFocusChangeListener,
-        OnSuccessListener<Team>, TeamMediaCreator.StartCaptureListener {
+        implements View.OnClickListener, View.OnFocusChangeListener, CaptureTeamMediaListener {
     private static final String TAG = "TeamDetailsDialog";
 
     private Team mTeam;
+    private PermissionRequestHandler mPermissionHandler;
     private TeamMediaCreator mMediaCapture;
 
     private ViewGroup mRootView;
@@ -95,13 +97,19 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         super.onCreate(savedInstanceState);
         mTeam = ArgsKt.getTeam(getArguments());
 
-        if (savedInstanceState == null) {
-            mMediaCapture = TeamMediaCreator.newInstance(this, mTeam, this);
-        } else {
-            mMediaCapture = TeamMediaCreator.get(savedInstanceState, this, this);
-        }
+        ViewModelProvider provider = ViewModelProviders.of(this);
 
-        TeamHolder holder = ViewModelProviders.of(this).get(TeamHolder.class);
+        mPermissionHandler = provider.get(PermissionRequestHandler.class);
+        mPermissionHandler.init(TeamMediaCreator.Companion.getPerms());
+        mPermissionHandler.getOnGranted().observe(this, o -> mMediaCapture.capture(this, null));
+        mMediaCapture = provider.get(TeamMediaCreator.class);
+        mMediaCapture.init(mPermissionHandler);
+        mMediaCapture.getOnMediaCaptured().observe(this, team -> {
+            TeamsKt.copyMediaInfo(mTeam, team);
+            updateUi();
+        });
+
+        TeamHolder holder = provider.get(TeamHolder.class);
         holder.init(getArguments());
         holder.getTeamListener().observe(this, team -> {
             if (team == null) {
@@ -148,11 +156,6 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow()
                 .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putAll(mMediaCapture.toBundle());
     }
 
     private void updateUi() {
@@ -274,32 +277,22 @@ public class TeamDetailsDialog extends KeyboardDialogBase
         }
     }
 
-    /**
-     * Used in {@link TeamMediaCreator#startCapture(boolean)}
-     * <p>
-     * {@inheritDoc}
-     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        mMediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mPermissionHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mMediaCapture.onActivityResult(requestCode, resultCode);
+        mPermissionHandler.onActivityResult(requestCode, resultCode, data);
+        mMediaCapture.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
-    public void onSuccess(Team team) {
-        TeamsKt.copyMediaInfo(mTeam, team);
-        updateUi();
-    }
-
-    @Override
-    public void onStartCapture(boolean shouldUploadMediaToTba) {
-        mMediaCapture.startCapture(shouldUploadMediaToTba);
+    public void startCapture(boolean shouldUploadMediaToTba) {
+        mMediaCapture.capture(this, shouldUploadMediaToTba);
     }
 
     @Override

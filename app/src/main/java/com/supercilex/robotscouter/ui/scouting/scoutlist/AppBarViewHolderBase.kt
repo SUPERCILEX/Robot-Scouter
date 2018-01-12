@@ -2,14 +2,14 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
@@ -32,6 +32,9 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
+import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
+import com.supercilex.robotscouter.util.ui.OnActivityResult
+import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import org.jetbrains.anko.find
@@ -39,12 +42,13 @@ import org.jetbrains.anko.support.v4.findOptional
 import kotlin.math.roundToInt
 
 open class AppBarViewHolderBase(
-        private val fragment: Fragment,
+        private val fragment: ScoutListFragmentBase,
         rootView: View,
         listener: LiveData<Team>,
         private val onScoutingReadyTask: Task<*>
 ) : OnSuccessListener<List<Void?>>, View.OnLongClickListener,
-        TeamMediaCreator.StartCaptureListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        CaptureTeamMediaListener, ActivityCompat.OnRequestPermissionsResultCallback,
+        OnActivityResult {
     protected var team: Team = listener.value!!
 
     val toolbar: Toolbar = rootView.find(R.id.toolbar)
@@ -52,12 +56,18 @@ open class AppBarViewHolderBase(
     private val backdrop: ImageView = rootView.find(R.id.backdrop)
     private val mediaLoadProgress: ContentLoadingProgressBar = rootView.find(R.id.progress)
 
-    private val mediaCaptureListener = OnSuccessListener<Team> {
-        team.copyMediaInfo(it)
-        team.forceUpdate()
-    }
-    private var mediaCapture: TeamMediaCreator =
-            TeamMediaCreator.newInstance(fragment, team, mediaCaptureListener)
+    private val permissionHandler = ViewModelProviders.of(fragment)
+            .get(PermissionRequestHandler::class.java).apply {
+                init(TeamMediaCreator.perms)
+            }
+    private val mediaCapture = ViewModelProviders.of(fragment)
+            .get(TeamMediaCreator::class.java).apply {
+                init(permissionHandler)
+                onMediaCaptured.observe(fragment, Observer {
+                    team.copyMediaInfo(it!!)
+                    team.forceUpdate()
+                })
+            }
 
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()
     private lateinit var newScoutItem: MenuItem
@@ -67,6 +77,7 @@ open class AppBarViewHolderBase(
     init {
         backdrop.setOnLongClickListener(this)
 
+        permissionHandler.onGranted.observe(fragment, Observer { mediaCapture.capture(fragment) })
         listener.observe(fragment, Observer {
             team = it ?: return@Observer
             bind()
@@ -76,7 +87,7 @@ open class AppBarViewHolderBase(
     @CallSuper
     protected open fun bind() {
         toolbar.title = team.toString()
-        mediaCapture.setTeam(team)
+        mediaCapture.team = team
         loadImages()
         bindMenu()
     }
@@ -179,25 +190,19 @@ open class AppBarViewHolderBase(
         return true
     }
 
-    override fun onStartCapture(shouldUploadMediaToTba: Boolean) =
-            mediaCapture.startCapture(shouldUploadMediaToTba)
+    override fun startCapture(shouldUploadMediaToTba: Boolean) =
+        mediaCapture.capture(fragment, shouldUploadMediaToTba)
 
-    @CallSuper
-    fun onActivityResult(requestCode: Int, resultCode: Int) =
-            mediaCapture.onActivityResult(requestCode, resultCode)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        permissionHandler.onActivityResult(requestCode, resultCode, data)
+        mediaCapture.onActivityResult(requestCode, resultCode, data)
+    }
 
     @CallSuper
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<String>,
             grantResults: IntArray
-    ) = mediaCapture.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-    @CallSuper
-    fun onSaveInstanceState(outState: Bundle) = outState.putAll(mediaCapture.toBundle())
-
-    @CallSuper
-    fun restoreState(savedInstanceState: Bundle) {
-        mediaCapture = TeamMediaCreator.get(savedInstanceState, fragment, mediaCaptureListener)
-    }
+    ) = permissionHandler.onRequestPermissionsResult(
+            fragment, requestCode, permissions, grantResults)
 }

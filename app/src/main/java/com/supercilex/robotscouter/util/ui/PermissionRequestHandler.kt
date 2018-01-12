@@ -1,50 +1,65 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.arch.lifecycle.LiveData
+import android.content.Intent
 import android.support.annotation.StringRes
 import android.support.v4.app.Fragment
-import com.google.android.gms.tasks.OnSuccessListener
+import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.util.data.ViewModelBase
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.util.Collections
 
-class PermissionRequestHandler(
-        perms: List<String>,
-        private val fragment: Fragment,
-        private val listener: OnSuccessListener<Nothing?>
-) : EasyPermissions.PermissionCallbacks {
-    val permsArray: Array<String> get() = perms.toTypedArray()
+class PermissionRequestHandler : ViewModelBase<List<String>>(), OnActivityResult {
+    private val _onGranted = SingleLiveEvent<List<String>>()
+    val onGranted: LiveData<List<String>> get() = _onGranted
 
-    private val perms: List<String> = Collections.unmodifiableList(perms)
+    lateinit var perms: List<String>
+        private set
 
-    fun onActivityResult(requestCode: Int) {
+    override fun onCreate(args: List<String>) {
+        perms = args.toList()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE
-                && EasyPermissions.hasPermissions(fragment.context!!, *permsArray)) {
-            listener.onSuccess(null)
+                && EasyPermissions.hasPermissions(RobotScouter, *perms.toTypedArray())) {
+            _onGranted.value = perms
         }
     }
 
-    fun requestPerms(@StringRes rationaleId: Int) = EasyPermissions.requestPermissions(
-            fragment,
-            fragment.getString(rationaleId),
-            WRITE_RC,
-            *perms.toTypedArray())
-
-    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        if (requestCode == WRITE_RC) listener.onSuccess(null)
+    fun requestPerms(host: Fragment, @StringRes rationaleId: Int) {
+        EasyPermissions.requestPermissions(
+                host, RobotScouter.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
     }
 
-    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        if (requestCode == WRITE_RC
-                && EasyPermissions.somePermissionPermanentlyDenied(fragment, perms)) {
-            AppSettingsDialog.Builder(fragment).build().show()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
+    fun onRequestPermissionsResult(
+            host: Fragment,
             requestCode: Int,
             permissions: Array<String>,
             grantResults: IntArray
-    ) = EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    ) = EasyPermissions.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults,
+            object : EasyPermissions.PermissionCallbacks {
+                override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+                    if (requestCode == WRITE_RC) _onGranted.value = perms
+                }
+
+                override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+                    if (requestCode == WRITE_RC
+                            && EasyPermissions.somePermissionPermanentlyDenied(host, perms)) {
+                        AppSettingsDialog.Builder(host).build().show()
+                    }
+                }
+
+                override fun onRequestPermissionsResult(
+                        requestCode: Int,
+                        permissions: Array<out String>,
+                        grantResults: IntArray
+                ) = Unit
+            }
+    )
 
     private companion object {
         const val WRITE_RC = 8653

@@ -13,7 +13,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
@@ -31,7 +30,7 @@ import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.find
 
-class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListener<Nothing?> {
+class TeamListFragment : FragmentBase(), OnBackPressedListener {
     private val holder: TeamListHolder by unsafeLazy {
         ViewModelProviders.of(this).get(TeamListHolder::class.java)
                 .also { onHolderReadyTask.setResult(it) }
@@ -41,8 +40,8 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
     private val recyclerView: RecyclerView by bindView(R.id.list)
     private var adapter: TeamListAdapter? = null
     private val menuHelper: TeamMenuHelper by unsafeLazy { TeamMenuHelper(this, recyclerView) }
-    val permHandler: PermissionRequestHandler by unsafeLazy {
-        PermissionRequestHandler(ioPerms, this, this)
+    private val permHandler: PermissionRequestHandler by unsafeLazy {
+        ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
     }
 
     private val noContentHint: View by bindView(R.id.no_content_hint)
@@ -54,6 +53,10 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         holder.init(savedInstanceState)
+        permHandler.apply {
+            init(ioPerms)
+            onGranted.observe(this@TeamListFragment, Observer { exportTeams() })
+        }
     }
 
     override fun onCreateView(
@@ -119,16 +122,17 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
 
     fun resetMenu() = menuHelper.resetMenu()
 
-    fun exportAllTeams() = onSuccess(null)
-
-    override fun onSuccess(nothing: Nothing?) {
-        if (menuHelper.selectedTeams.isEmpty()) {
+    fun exportTeams() {
+        val teams = menuHelper.selectedTeams
+        if (teams.isEmpty()) {
             TeamsLiveData.observeOnDataChanged().observeOnce {
-                ExportService.exportAndShareSpreadSheet(this, permHandler, it)
+                ExportService.exportAndShareSpreadSheet(this@TeamListFragment, permHandler, it)
                 Tasks.forResult(null)
             }
         } else {
-            menuHelper.exportTeams()
+            if (ExportService.exportAndShareSpreadSheet(this, permHandler, teams)) {
+                resetMenu()
+            }
         }
     }
 
@@ -136,10 +140,10 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener, OnSuccessListene
             requestCode: Int,
             permissions: Array<String>,
             grantResults: IntArray
-    ) = permHandler.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    ) = permHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-            permHandler.onActivityResult(requestCode)
+        permHandler.onActivityResult(requestCode, resultCode, data)
 
     companion object {
         const val TAG = "TeamListFragment"

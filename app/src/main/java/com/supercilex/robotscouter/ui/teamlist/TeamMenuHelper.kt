@@ -23,7 +23,6 @@ import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.client.spreadsheet.ExportService
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
@@ -76,13 +75,6 @@ class TeamMenuHelper(
         notifyItemsChanged()
     }
 
-    fun exportTeams() {
-        if (ExportService.exportAndShareSpreadSheet(
-                fragment, fragment.permHandler, selectedTeams)) {
-            resetMenu()
-        }
-    }
-
     override fun onClick(view: View) = if (selectedTeams.isEmpty()) {
         drawerLayout.openDrawer(GravityCompat.START)
     } else {
@@ -129,7 +121,7 @@ class TeamMenuHelper(
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         val team = selectedTeams[0]
         when (item.itemId) {
-            R.id.action_export_teams -> exportTeams()
+            R.id.action_export_teams -> fragment.exportTeams()
             R.id.action_share -> if (TeamSharer.shareTeams(activity, selectedTeams)) {
                 resetMenu()
             }
