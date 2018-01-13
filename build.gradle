@@ -8,7 +8,7 @@ buildscript {
 
     ext {
         kotlinVersion = '1.2.10'
-        ankoVersion = '0.10.3'
+        ankoVersion = '0.10.4'
         supportLibVersion = '27.0.2'
         playServicesVersion = '11.8.0'
         archVersion = '1.0.0'
@@ -16,11 +16,11 @@ buildscript {
         poiVersion = '3.17'
         leakCanaryVersion = '1.5.4'
         retrofitVersion = '2.3.0'
-        glideVersion = '4.4.0'
+        glideVersion = '4.5.0'
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0-alpha07'
+        classpath 'com.android.tools.build:gradle:3.1.0-alpha08'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.1.2'
         classpath 'com.google.firebase:firebase-plugins:1.1.5'

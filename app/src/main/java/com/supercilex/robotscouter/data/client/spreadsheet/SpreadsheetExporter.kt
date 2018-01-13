@@ -17,8 +17,8 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.data.exportsFolder
 import com.supercilex.robotscouter.util.data.hide
-import com.supercilex.robotscouter.util.data.rootFolder
 import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.providerAuthority
@@ -136,7 +136,7 @@ class SpreadsheetExporter(
 
     private fun getFileUri(): Uri {
         val folder = synchronized(notificationManager) {
-            checkNotNull(rootFolder) { "Couldn't get write access" }
+            checkNotNull(exportsFolder) { "Couldn't get write access" }
         }
 
         return FileProvider.getUriForFile(RobotScouter, providerAuthority, writeFile(folder))

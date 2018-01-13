@@ -8,8 +8,9 @@ import java.io.IOException
 
 val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-private val root = File(Environment.getExternalStorageDirectory(), "Robot Scouter")
-private val media = File(root, "Media")
+private val exports = // Environment.DIRECTORY_DOCUMENTS can be used after API 19
+    File(Environment.getExternalStorageDirectory(), "Documents")
+private val media = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_PICTURES)
 
 fun createFile(
         prefix: String,
@@ -24,12 +25,12 @@ fun createFile(
 }
 
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-val rootFolder: File?
-    get() = if (isExternalStorageMounted() && (root.exists() || root.mkdirs())) root else null
+val exportsFolder: File?
+    get() = getFolder(exports)
 
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 val mediaFolder: File?
-    get() = if (rootFolder != null && (media.exists() || media.mkdirs())) media else null
+    get() = getFolder(media)
 
 fun File.hide() = File(parentFile, ".$name")
 
@@ -41,6 +42,9 @@ fun File.unhide(): File {
     }
     return unhidden
 }
+
+private fun getFolder(folder: File) =
+        if (isExternalStorageMounted() && (folder.exists() || folder.mkdirs())) folder else null
 
 private fun isExternalStorageMounted(): Boolean =
         Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED

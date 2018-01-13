@@ -2,8 +2,8 @@
 <paths>
     <external-path
         name="team_media"
-        path="Robot Scouter/Media" />
+        path="Pictures" />
     <external-path
-        name="spreadsheets"
-        path="Robot Scouter" />
+        name="exports"
+        path="Documents" />
 </paths>

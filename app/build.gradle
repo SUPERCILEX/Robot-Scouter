@@ -100,7 +100,7 @@ dependencies {
     implementation "com.android.support:palette-v7:$supportLibVersion"
     implementation "com.android.support:preference-v14:$supportLibVersion"
     implementation "com.android.support:support-emoji-appcompat:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta4'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta5'
 
     implementation "android.arch.lifecycle:extensions:$archVersion"
     implementation "android.arch.lifecycle:common-java8:$archVersion"
@@ -134,7 +134,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 
     // From Google-ish
-    implementation 'pub.devrel:easypermissions:1.1.1'
+    implementation 'pub.devrel:easypermissions:1.1.2'
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
 
@@ -142,7 +142,7 @@ dependencies {
     implementation 'com.github.SUPERCILEX:kotterknife:5331f07fdf'
     implementation 'net.yslibrary.licenseadapter:licenseadapter:2.0.2'
     implementation 'com.github.clans:fab:1.6.4'
-    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.5.2'
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.6.0'
     implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
 
     // Apache POI
