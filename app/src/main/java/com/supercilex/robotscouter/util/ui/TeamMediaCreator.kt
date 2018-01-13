@@ -8,11 +8,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
-import com.crashlytics.android.Crashlytics
-import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.createFile
 import com.supercilex.robotscouter.util.data.hide
@@ -65,8 +64,7 @@ class TeamMediaCreator : ViewModelBase<PermissionRequestHandler>(), OnActivityRe
                     System.currentTimeMillis().toString()
             ).hide()
         } catch (e: Exception) {
-            FirebaseCrash.report(e)
-            Crashlytics.logException(e)
+            CrashLogger.onFailure(e)
             RobotScouter.longToast(e.toString())
             return
         }

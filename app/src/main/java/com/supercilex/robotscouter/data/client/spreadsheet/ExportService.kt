@@ -7,15 +7,14 @@ import android.support.annotation.RequiresPermission
 import android.support.annotation.Size
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
@@ -132,8 +131,7 @@ class ExportService : IntentService(TAG) {
     }
 
     private fun abortCritical(e: Exception, notificationManager: ExportNotificationManager) {
-        FirebaseCrash.report(e)
-        Crashlytics.logException(e)
+        CrashLogger.onFailure(e)
         showToast("${getString(R.string.fui_general_error)}\n\n${e.message}")
         notificationManager.abort()
     }

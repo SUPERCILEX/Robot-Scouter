@@ -16,13 +16,12 @@ import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.isInTestMode
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
@@ -100,8 +99,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
             longSnackbar(content, R.string.donate_cancel_message)
         } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED // User owns subscription
                 && !isInTestMode) {
-            FirebaseCrash.report(it)
-            Crashlytics.logException(it)
+            CrashLogger.onFailure(it)
             showError()
         }
     }
@@ -128,8 +126,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
                                 responseCode,
                                 message = "Purchase fetch failed with code $responseCode and sku $sku"
                         )
-                        FirebaseCrash.report(e)
-                        Crashlytics.logException(e)
+                        CrashLogger.onFailure(e)
                         purchaseStartTask.setException(e)
                         return@queryPurchaseHistoryAsync
                     }
@@ -142,8 +139,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
                 snackbar(content, R.string.fui_general_error)
             } else {
                 PurchaseException(result, sku).let {
-                    FirebaseCrash.report(it)
-                    Crashlytics.logException(it)
+                    CrashLogger.onFailure(it)
                     purchaseStartTask.setException(it)
                 }
             }
@@ -165,8 +161,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
                             resultCode,
                             message = "Consumption failed with code $resultCode and sku ${it.sku}"
                     )
-                    FirebaseCrash.report(e)
-                    Crashlytics.logException(e)
+                    CrashLogger.onFailure(e)
                     consumption.setException(e)
                 }
             }

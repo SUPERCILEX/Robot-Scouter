@@ -7,7 +7,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import android.text.TextUtils
-import com.crashlytics.android.Crashlytics
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ChangeEventListener
 import com.firebase.ui.firestore.FirestoreArray
@@ -18,7 +17,6 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
@@ -32,6 +30,7 @@ import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -207,10 +206,7 @@ interface ChangeEventListenerBase : ChangeEventListener {
 
     override fun onDataChanged() = Unit
 
-    override fun onError(e: FirebaseFirestoreException) {
-        FirebaseCrash.report(e)
-        Crashlytics.logException(e)
-    }
+    override fun onError(e: FirebaseFirestoreException) = CrashLogger.onFailure(e)
 }
 
 object KeepAliveListener : ChangeEventListenerBase
