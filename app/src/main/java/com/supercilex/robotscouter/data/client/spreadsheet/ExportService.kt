@@ -80,8 +80,10 @@ class ExportService : IntentService(TAG) {
         val templateNames = getTemplateNames(zippedScouts.keys)
         Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
             doAsync {
-                SpreadsheetExporter(scouts, notificationManager, templateNames[templateId]!!)
-                        .export()
+                if (!notificationManager.isStopped()) {
+                    SpreadsheetExporter(scouts, notificationManager, templateNames[templateId]!!)
+                            .export()
+                }
             }.addOnFailureListener(AsyncTaskExecutor, OnFailureListener {
                 abortCritical(it, notificationManager)
             })

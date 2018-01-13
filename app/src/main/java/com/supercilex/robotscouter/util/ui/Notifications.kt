@@ -132,6 +132,8 @@ class FilteringNotificationManager : Runnable {
         }.logFailures { it is CancellationException }
     }
 
+    fun isStopped(): Boolean = lock.read { isStopped }
+
     /**
      * Stops the looper as soon as possible. All posted notifications will be processed before
      * stopping.

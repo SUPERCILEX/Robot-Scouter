@@ -47,6 +47,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Collections
 import java.util.Locale
+import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 
 class SpreadsheetExporter(
@@ -60,7 +61,7 @@ class SpreadsheetExporter(
     fun export() {
         val exportId = notificationManager.addExporter(this)
 
-        val spreadsheetUri = getFileUri()
+        val spreadsheetUri = getFileUri() ?: return
 
         val baseIntent = Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -126,7 +127,9 @@ class SpreadsheetExporter(
             )
         }
 
-        notificationManager.removeExporter(this, builder)
+        if (!notificationManager.isStopped()) {
+            notificationManager.removeExporter(this, builder)
+        }
     }
 
     private fun getPluralTeams(@PluralsRes id: Int) = getPluralTeams(id, cache.teamNames)
@@ -134,15 +137,16 @@ class SpreadsheetExporter(
     private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
             RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
 
-    private fun getFileUri(): Uri {
+    private fun getFileUri(): Uri? {
         val folder = synchronized(notificationManager) {
             checkNotNull(exportsFolder) { "Couldn't get write access" }
         }
 
-        return FileProvider.getUriForFile(RobotScouter, providerAuthority, writeFile(folder))
+        return FileProvider.getUriForFile(
+                RobotScouter, providerAuthority, writeFile(folder) ?: return null)
     }
 
-    private fun writeFile(rsFolder: File): File {
+    private fun writeFile(rsFolder: File): File? {
         var stream: FileOutputStream? = null
         var file = File(rsFolder, getFullyQualifiedFileName())
 
@@ -160,7 +164,7 @@ class SpreadsheetExporter(
                 getWorkbook()
             } catch (e: Exception) {
                 file.delete()
-                throw e
+                if (e is CancellationException) return null else throw e
             }.write(stream)
 
             return file.unhide()
@@ -198,6 +202,10 @@ class SpreadsheetExporter(
     }
 
     private fun getWorkbook(): Workbook {
+        fun checkStatus() {
+            if (notificationManager.isStopped()) throw CancellationException()
+        }
+
         val workbook = if (isUnsupportedDevice) {
             showToast(RobotScouter.getString(R.string.export_unsupported_device_rationale))
             HSSFWorkbook()
@@ -216,6 +224,7 @@ class SpreadsheetExporter(
         }
 
         for (team in cache.teams) {
+            checkStatus()
             notificationManager.updateProgress(this, team)
             buildTeamSheet(team, workbook.createSheet(getSafeSheetName(workbook, team)).apply {
                 createFreezePane(1, 1)
@@ -223,10 +232,12 @@ class SpreadsheetExporter(
         }
 
         if (averageSheet != null) {
+            checkStatus()
             notificationManager.onStartBuildingAverageSheet(this)
             buildTeamAveragesSheet(averageSheet)
         }
 
+        checkStatus()
         notificationManager.onStartCleanup(this)
         autoFitColumnWidths(workbook)
 

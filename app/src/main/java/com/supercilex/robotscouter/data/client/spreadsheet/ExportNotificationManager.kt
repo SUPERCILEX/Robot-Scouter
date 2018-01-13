@@ -169,6 +169,8 @@ class ExportNotificationManager(private val service: ExportService) {
         }
     }
 
+    fun isStopped() = notificationFilter.isStopped()
+
     fun abort() {
         notificationFilter.stopNow()
         for ((_, holder) in exporters) notificationManager.cancel(holder.id)
