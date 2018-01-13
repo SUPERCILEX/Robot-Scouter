@@ -71,8 +71,9 @@ class ExportNotificationManager(private val service: ExportService) {
     fun loading(teams: List<Team>) {
         notificationFilter.notify(hashCode(), masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.getString(
-                        R.string.export_load_status_detail,
+                .setContentText(RobotScouter.resources.getQuantityString(
+                        R.plurals.export_load_status_detail,
+                        teams.size,
                         teams.first().number,
                         teams.last().number
                 ))

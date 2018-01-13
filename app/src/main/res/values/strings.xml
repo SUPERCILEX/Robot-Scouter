@@ -126,7 +126,10 @@
 
     <string name="export_initialize_status">Initializing</string>
     <string name="export_load_status">Loading teams</string>
-    <string name="export_load_status_detail">Loading teams %d-%d</string>
+    <plurals name="export_load_status_detail">
+        <item quantity="one">Loading team %d</item>
+        <item quantity="other">Loading teams %d-%d</item>
+    </plurals>
     <string name="export_template_status">Exporting teams for %s</string>
     <string name="export_average_status">Exporting average sheet</string>
     <string name="export_cleanup_status">Cleanup</string>
