@@ -37,7 +37,7 @@
     <!-- Rating dialog -->
     <string name="rate_title">Enjoying Robot Scouter?</string>
     <string name="rate_message">
-        While you\'re waiting to get your scouting results, please rate Robot Scouter!
+        While you’re waiting to get your scouting results, please rate Robot Scouter!
     </string>
     <string name="rate_positive">Rate</string>
     <string name="rate_negative">Never mind</string>
@@ -61,8 +61,8 @@
         <item quantity="other">Share teams %s</item>
     </plurals>
     <plurals name="team_share_message">
-        <item quantity="one">You were invited to edit team %s with me in Robot Scouter!</item>
-        <item quantity="other">You were invited to edit teams %s with me in Robot Scouter!</item>
+        <item quantity="one">You’re invited to edit team %s with me in Robot Scouter!</item>
+        <item quantity="other">You’re invited to edit teams %s with me in Robot Scouter!</item>
     </plurals>
     <plurals name="team_share_cta">
         <item quantity="one">Import team %s into Robot Scouter</item>
@@ -79,7 +79,7 @@
     <string name="donate_amount">$%d</string>
     <string name="donate_monthly_message">Automatically donate each month</string>
     <string name="donate_cancel_message">
-        Are you sure you don\'t want to donate? We appreciate any donation no matter how small!
+        Are you sure you don’t want to donate? We appreciate any donation no matter how small!
     </string>
     <string name="donate_thanks_message">Thank you!!! Any and all help is greatly appreciated!</string>
 
@@ -137,7 +137,7 @@
     <!-- Link activity -->
 
     <string name="link_teams_imported_message">Teams successfully imported</string>
-    <string name="link_uri_parse_error">Error: couldn\'t parse URL</string>
+    <string name="link_uri_parse_error">Error: couldn’t parse URL</string>
 
     <!-- Scout editor activity -->
     <string name="scout_activity_title">Scout editor</string>
@@ -149,7 +149,7 @@
     <string name="scout_new_team_number_hint">Team number</string>
     <string name="scout_add_title">Add scout</string>
     <string name="scout_add_template_not_cached_error">
-        Error adding new scout:\nthe template you are attempting to use hasn\'t been cached yet.
+        Error adding new scout:\nthe template you are attempting to use hasn’t been cached yet.
         Please add at least one scout while you have an internet connection so your template may be
         cached for offline use.
     </string>
@@ -184,7 +184,7 @@
 
     <string name="template_share_title">Share the %s template</string>
     <string name="template_share_message">
-        You were invited to edit the %s scouting template with me in Robot Scouter!
+        You’re invited to edit the %s template with me in Robot Scouter!
     </string>
     <string name="template_share_cta">Import the %s scouting template into Robot Scouter</string>
     <string name="template_access_denied_error">Access denied: template owned by another user</string>
@@ -230,8 +230,8 @@
     <string name="template_delete_title">Delete template</string>
     <string name="template_delete_dialog_title">Delete template?</string>
     <string name="template_delete_message">
-        This template will be permanently removed and all teams using it will instead begin using the
-        default template for future scouts. Any existing scouts won\'t be affected.
+        This template will be permanently removed and all teams using it will instead begin using
+        the default template for future scouts. Any existing scouts won’t be affected.
     </string>
 
     <!-- Settings activity -->
