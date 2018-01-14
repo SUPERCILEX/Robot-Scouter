@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShare
@@ -35,11 +36,22 @@ class TeamSharer private constructor(
     private val safeMessage: String
         get() {
             val fullMessage = cache.shareMessage
-            return if (fullMessage.length >= MAX_MESSAGE_LENGTH) {
-                activity.resources.getQuantityString(
-                        R.plurals.team_share_message,
-                        1,
-                        "${cache.teams[0]} and more")
+            return if (fullMessage.length > MAX_MESSAGE_LENGTH) {
+                val safe: (Any) -> String = {
+                    activity.resources.getQuantityString(R.plurals.team_share_message, 1, it)
+                }
+                val first = cache.teams.first()
+
+                if (cache.teams.isSingleton) {
+                    safe(first.number).take(MAX_MESSAGE_LENGTH)
+                } else {
+                    val possibleSafe = safe("$first and more")
+                    if (possibleSafe.length > MAX_MESSAGE_LENGTH) {
+                        safe(first.number).take(MAX_MESSAGE_LENGTH)
+                    } else {
+                        possibleSafe
+                    }
+                }
             } else {
                 fullMessage
             }
