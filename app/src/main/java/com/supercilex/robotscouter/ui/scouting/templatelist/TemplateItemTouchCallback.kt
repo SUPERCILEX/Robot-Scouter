@@ -161,8 +161,11 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         }
     }
 
-    private fun isCatchingUpOnMove(type: ChangeEventType, index: Int): Boolean =
-            type == ChangeEventType.MOVED || hasOnlyPositionChanged(type, index)
+    private fun isCatchingUpOnMove(
+            type: ChangeEventType,
+            index: Int
+    ): Boolean = type != ChangeEventType.REMOVED
+            && (type == ChangeEventType.MOVED || hasOnlyPositionChanged(type, index))
 
     private fun isCatchingUpOnDelete(type: ChangeEventType, index: Int): Boolean {
         if (type == ChangeEventType.REMOVED || type == ChangeEventType.MOVED) {
