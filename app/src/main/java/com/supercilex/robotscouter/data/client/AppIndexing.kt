@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
+import com.supercilex.robotscouter.util.data.safeCopy
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.onSignedIn
@@ -35,7 +36,7 @@ class AppIndexingService : JobIntentService() {
     }
 
     private suspend fun getUpdateTeamsTask() {
-        val indexables = TeamsLiveData.observeOnDataChanged().observeOnce()?.toList()
+        val indexables = TeamsLiveData.observeOnDataChanged().observeOnce()?.safeCopy()
                 ?.map { it.indexable } ?: return
         FirebaseAppIndex.getInstance().update(*indexables.toTypedArray()).await()
     }

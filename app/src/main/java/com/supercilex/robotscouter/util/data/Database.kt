@@ -119,6 +119,10 @@ fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = do
     docs
 }
 
+suspend fun <T> ObservableSnapshotArray<T>.safeCopy(): List<T> = suspendCoroutine {
+    RobotScouter.runOnUiThread { it.resume(toList()) }
+}
+
 @Deprecated("Use the coroutine version instead")
 inline fun <T, R> LiveData<T>.observeOnce(
         crossinline block: (T) -> Task<R>
