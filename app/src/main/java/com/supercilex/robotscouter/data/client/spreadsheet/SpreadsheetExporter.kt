@@ -25,7 +25,6 @@ import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.formula.WorkbookEvaluator
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Chart
@@ -271,9 +270,17 @@ class SpreadsheetExporter(
                 }
                 MetricType.STOPWATCH -> {
                     val cycles = (metric as Metric.Stopwatch).value
-                    val average = if (cycles.isEmpty()) 0 else cycles.sum() / cycles.size
+                    if (cycles.isNotEmpty()) {
+                        val builder = StringBuilder("AVERAGE(")
+                                .append(TimeUnit.MILLISECONDS.toSeconds(cycles.first()))
+                        for (cycle in cycles.subList(1, cycles.size)) {
+                            builder.append(", ").append(TimeUnit.MILLISECONDS.toSeconds(cycle))
+                        }
+                        builder.append(')')
 
-                    valueCell.setCellValue(TimeUnit.MILLISECONDS.toSeconds(average).toDouble())
+                        valueCell.cellFormula = builder.toString()
+                    }
+
                     cache.setCellFormat(valueCell, "#0\"s\"")
                 }
                 MetricType.LIST -> {
@@ -366,16 +373,32 @@ class SpreadsheetExporter(
             }
         }
 
+        cache.putLastDataOrAverageColumnIndex(team, teamSheet.getRow(0).lastCellNum
+                + if (scouts.isPolynomial) 0 else -1)
         if (scouts.isPolynomial) buildTeamAverageColumn(teamSheet, team)
     }
 
     private fun buildTeamAverageColumn(sheet: Sheet, team: Team) {
-        val farthestColumn = sheet.map { it.lastCellNum.toInt() }.max()!!
-
-        sheet.getRow(0).getCell(farthestColumn, CREATE_NULL_AS_BLANK).apply {
-            setCellValue(cache.averageString)
-            cellStyle = cache.columnHeaderStyle
+        fun createHeader(column: Int, title: String) {
+            sheet.getRow(0).getCell(column, CREATE_NULL_AS_BLANK).apply {
+                setCellValue(title)
+                cellStyle = cache.columnHeaderStyle
+            }
         }
+
+        fun Row.createCellWithStyle(column: Int): Cell = createCell(column).apply {
+            cellStyle = getCell(1, CREATE_NULL_AS_BLANK).cellStyle
+        }
+
+        fun Cell.rangeAddress() = CellRangeAddress(rowIndex, rowIndex, columnIndex, columnIndex)
+
+        infix fun Cell.to(other: Cell) = "$address:${other.address}"
+
+        val averageColumn = sheet.getRow(0).lastCellNum.toInt()
+        val medianColumn = averageColumn + 1
+
+        createHeader(averageColumn, cache.averageString)
+        createHeader(medianColumn, cache.medianString)
 
         val chartData = mutableMapOf<Chart, Pair<LineChartData, List<ChartAxis>>>()
         val chartPool = mutableMapOf<Metric<*>, Chart>()
@@ -383,43 +406,45 @@ class SpreadsheetExporter(
         for (i in 1..sheet.lastRowNum) {
             val type = (cache.getRootMetric(team, i) ?: continue).type
             val row = sheet.getRow(i)
-            val first = row.getCell(1, CREATE_NULL_AS_BLANK)
 
-            val cell = row.createCell(farthestColumn).apply { cellStyle = first.cellStyle }
-            val rangeAddress = getCellRangeAddress(
-                    first,
-                    row.getCell(cell.columnIndex - 1, CREATE_NULL_AS_BLANK)
-            )
+            val averageCell = row.createCellWithStyle(averageColumn)
+            val medianCell = row.createCellWithStyle(medianColumn)
+            val address = row.getCell(1, CREATE_NULL_AS_BLANK) to
+                    row.getCell(averageColumn - 1, CREATE_NULL_AS_BLANK)
 
             when (type) {
                 MetricType.BOOLEAN -> {
-                    cell.cellFormula = "COUNTIF($rangeAddress, TRUE) / COUNTA($rangeAddress)"
-                    cache.setCellFormat(cell, "0.00%")
+                    sheet.setArrayFormula("AVERAGE(IF($address, 1, 0))", averageCell.rangeAddress())
+                    cache.setCellFormat(averageCell, "0.00%")
+
+                    val averageAddress = averageCell.address
+                    medianCell.cellFormula = "IF($averageAddress > 0.5, TRUE, " +
+                            "IF($averageAddress < 0.5, FALSE, \"INDETERMINATE\"))"
                 }
                 MetricType.NUMBER -> {
-                    cell.cellFormula = "SUM($rangeAddress) / COUNT($rangeAddress)"
+                    averageCell.cellFormula = "AVERAGE($address)"
+                    medianCell.cellFormula = "MEDIAN($address)"
                     buildTeamChart(row, team, chartData, chartPool)
                 }
                 MetricType.STOPWATCH -> {
-                    val excludeZeros = "\"<>0\""
-                    cell.cellFormula = "IF(COUNTIF($rangeAddress, $excludeZeros) = 0, 0, " +
-                            "AVERAGEIF($rangeAddress, $excludeZeros))"
-
+                    val computeIfPresent: (String) -> String = {
+                        "IF(COUNT($address) = 0, NA(), $it)"
+                    }
+                    averageCell.cellFormula = computeIfPresent("AVERAGE($address)")
+                    medianCell.cellFormula = computeIfPresent("MEDIAN($address)")
                     buildTeamChart(row, team, chartData, chartPool)
                 }
                 MetricType.LIST -> {
                     sheet.setArrayFormula(
-                            "INDEX($rangeAddress, MATCH(MAX(COUNTIF($rangeAddress, $rangeAddress)), " +
-                                    "COUNTIF($rangeAddress, $rangeAddress), 0))",
-                            CellRangeAddress(
-                                    cell.rowIndex,
-                                    cell.rowIndex,
-                                    cell.columnIndex,
-                                    cell.columnIndex
-                            )
+                            "INDEX($address, MATCH(MAX(COUNTIF($address, $address)), " +
+                                    "COUNTIF($address, $address), 0))",
+                            averageCell.rangeAddress()
                     )
+                    medianCell.cellFormula = "NA()"
                 }
-                MetricType.HEADER, MetricType.TEXT -> { // Nothing to average
+                MetricType.HEADER, MetricType.TEXT -> {
+                    averageCell.cellFormula = "NA()"
+                    medianCell.cellFormula = "NA()"
                 }
             }
         }
@@ -466,8 +491,6 @@ class SpreadsheetExporter(
 
         if (isUnsupportedDevice) return
 
-        val lastDataCellNum = row.sheet.getRow(0).lastCellNum - 2
-
         var chart: Chart? = null
         val nearestHeader = fun(): Pair<Int, Metric<*>> {
             for (i in row.rowNum downTo 1) {
@@ -493,6 +516,8 @@ class SpreadsheetExporter(
                     ref = FirebaseFirestore.getInstance().document("null/null")
             )
         }.invoke()
+
+        val lastDataCellNum = cache.getLastDataOrAverageColumnIndex(team)
 
         val data: LineChartData
         if (chart == null) {
@@ -565,9 +590,11 @@ class SpreadsheetExporter(
             for (j in 1..scoutSheet.lastRowNum) {
                 val rootMetric = cache.getRootMetric(team, j) ?: continue
                 val metricIndex = metricCache[rootMetric.ref.id]
-                val averageCell = scoutSheet.getRow(j).run { getCell(lastCellNum - 1) }
+                val averageCell = scoutSheet.getRow(j)
+                        .getCell(cache.getLastDataOrAverageColumnIndex(team))
 
                 if (TextUtils.isEmpty(averageCell.stringValue)
+                        || rootMetric.type == MetricType.HEADER
                         || rootMetric.type == MetricType.TEXT) {
                     continue
                 }
@@ -650,7 +677,6 @@ class SpreadsheetExporter(
                     "org.apache.poi.javax.xml.stream.XMLEventFactory",
                     "com.fasterxml.aalto.stax.EventFactoryImpl"
             )
-            WorkbookEvaluator.registerFunction("AVERAGEIF", averageifFunction)
         }
     }
 }

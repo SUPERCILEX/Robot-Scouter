@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook
 
 class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     private val metricCache = mutableMapOf<Team, MutableMap<Int, Metric<*>>>()
+    private val lastDataOrAverageColumnIndices = mutableMapOf<Team, Int>()
     private val formatStyles = mutableMapOf<String, Short>()
 
     var workbook: Workbook by LateinitVal()
@@ -37,6 +38,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     }
 
     val averageString: String by lazy { RobotScouter.getString(R.string.metric_stopwatch_cycle_average_title) }
+    val medianString: String by lazy { RobotScouter.getString(R.string.metric_stopwatch_cycle_median_title) }
 
     fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
 
@@ -44,6 +46,12 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         (metricCache[team] ?: mutableMapOf<Int, Metric<*>>().also {
             metricCache[team] = it
         })[index] = metric
+    }
+
+    fun getLastDataOrAverageColumnIndex(team: Team): Int = lastDataOrAverageColumnIndices[team]!!
+
+    fun putLastDataOrAverageColumnIndex(team: Team, i: Int) {
+        lastDataOrAverageColumnIndices[team] = i
     }
 
     fun setCellFormat(cell: Cell, format: String) {

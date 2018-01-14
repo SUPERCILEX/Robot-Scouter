@@ -7,13 +7,6 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.isLowRamDevice
-import org.apache.poi.ss.formula.OperationEvaluationContext
-import org.apache.poi.ss.formula.eval.ErrorEval
-import org.apache.poi.ss.formula.eval.NumberEval
-import org.apache.poi.ss.formula.eval.ValueEval
-import org.apache.poi.ss.formula.functions.Countif
-import org.apache.poi.ss.formula.functions.FreeRefFunction
-import org.apache.poi.ss.formula.functions.Sumif
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Chart
@@ -25,40 +18,6 @@ import org.apache.poi.ss.util.WorkbookUtil
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
-
-val averageifFunction: FreeRefFunction = object : FreeRefFunction {
-    override fun evaluate(args: Array<ValueEval>, context: OperationEvaluationContext): ValueEval {
-        return if (args.size >= 2 && args.size % 2 == 0) {
-            var result = 0.0
-
-            var i = 0
-            while (i < args.size) {
-                val firstArg = args[i]
-                val secondArg = args[i + 1]
-                val evaluate = evaluate(context.rowIndex, context.columnIndex, firstArg, secondArg)
-
-                result = evaluate.numberValue
-                i += 2
-            }
-
-            NumberEval(result)
-        } else {
-            ErrorEval.VALUE_INVALID
-        }
-    }
-
-    private fun evaluate(
-            srcRowIndex: Int,
-            srcColumnIndex: Int,
-            arg0: ValueEval,
-            arg1: ValueEval
-    ): NumberEval {
-        val totalEval = Sumif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1) as NumberEval
-        val countEval = Countif().evaluate(srcRowIndex, srcColumnIndex, arg0, arg1) as NumberEval
-
-        return NumberEval(totalEval.numberValue / countEval.numberValue)
-    }
-}
 
 private const val MAX_SHEET_LENGTH = 31
 private const val COLUMN_WIDTH_SCALE_FACTOR = 46
@@ -77,8 +36,6 @@ val Cell?.stringValue: String
             else -> ""
         }
     }
-
-fun getCellRangeAddress(first: Cell, last: Cell) = "${first.address}:${last.address}"
 
 fun getSafeSheetName(workbook: Workbook, team: Team): String {
     var originalName = WorkbookUtil.createSafeSheetName(team.toString())

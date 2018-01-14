@@ -215,6 +215,7 @@
     <string name="metric_stopwatch_stop_title">Stop (%s)</string>
     <string name="metric_stopwatch_cycle_title">Cycle %d</string>
     <string name="metric_stopwatch_cycle_average_title">Average</string>
+    <string name="metric_stopwatch_cycle_median_title">Median</string>
 
     <string name="metric_note_add_title">Add note</string>
     <string name="metric_note_name_hint">Note name</string>
