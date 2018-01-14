@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
 import android.graphics.Color
 import android.os.Build
-import android.os.Handler
 import android.support.annotation.StringRes
 import android.support.transition.AutoTransition
 import android.support.transition.TransitionManager
@@ -20,6 +19,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.util.doAsync
@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
+import org.jetbrains.anko.runOnUiThread
 import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
@@ -165,7 +166,7 @@ open class StopwatchViewHolder(
                 return
             }
 
-            post { updateButtonTime() }
+            RobotScouter.runOnUiThread { updateButtonTime() }
         }
 
         fun updateButtonTime() {
@@ -180,7 +181,7 @@ open class StopwatchViewHolder(
             }
 
             executor.shutdownNow()
-            post {
+            RobotScouter.runOnUiThread {
                 updateStyle()
                 setText(R.string.metric_stopwatch_start_title)
             }
@@ -196,12 +197,6 @@ open class StopwatchViewHolder(
             val holder = holder ?: return
             TransitionManager.beginDelayedTransition(holder.itemView as ViewGroup, transition)
             holder.updateStyle(!executor.isShutdown)
-        }
-
-        private inline fun post(crossinline run: () -> Unit) {
-            Handler(holder?.itemView?.context?.mainLooper ?: return).post {
-                run()
-            }
         }
 
         private companion object {
