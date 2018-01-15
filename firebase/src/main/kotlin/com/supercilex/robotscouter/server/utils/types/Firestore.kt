@@ -7,18 +7,20 @@ import kotlin.js.Json
 import kotlin.js.Promise
 
 external fun setLogFunction(logger: (msg: String) -> Unit): Unit = definedExternally
-external open class Firestore(options: Any? = definedExternally /* null */) {
+open external class Firestore(options: Any? = definedExternally /* null */) {
     open fun collection(collectionPath: String): CollectionReference = definedExternally
     open fun doc(documentPath: String): DocumentReference = definedExternally
     open fun getAll(vararg documentRef: DocumentReference): Promise<Array<DocumentSnapshot>> = definedExternally
     open fun <T> runTransaction(updateFunction: (transaction: Transaction) -> Promise<T>): Promise<T> = definedExternally
     open fun batch(): WriteBatch = definedExternally
 }
-external open class GeoPoint(latitude: Number, longitude: Number) {
+
+open external class GeoPoint(latitude: Number, longitude: Number) {
     open var latitude: Number = definedExternally
     open var longitude: Number = definedExternally
 }
-external open class Transaction {
+
+open external class Transaction {
     open fun get(documentRef: DocumentReference): Promise<DocumentSnapshot> = definedExternally
     open fun get(query: Query): Promise<QuerySnapshot> = definedExternally
     open fun create(documentRef: DocumentReference, data: Json): Transaction = definedExternally
@@ -28,7 +30,8 @@ external open class Transaction {
     open fun update(documentRef: DocumentReference, field: FieldPath, value: Any, vararg fieldsOrPrecondition: Any): Transaction = definedExternally
     open fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally /* null */): Transaction = definedExternally
 }
-external open class WriteBatch {
+
+open external class WriteBatch {
     open fun create(documentRef: DocumentReference, data: Json): WriteBatch = definedExternally
     open fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally /* null */): WriteBatch = definedExternally
     open fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally /* null */): WriteBatch = definedExternally
@@ -43,10 +46,12 @@ external interface Precondition {
 external interface SetOptions {
     var merge: Boolean? get() = definedExternally; set(value) = definedExternally
 }
-external open class WriteResult {
+
+open external class WriteResult {
     open var writeTime: String = definedExternally
 }
-external open class DocumentReference {
+
+open external class DocumentReference {
     open var id: String = definedExternally
     open var firestore: Firestore = definedExternally
     open var parent: CollectionReference = definedExternally
@@ -61,7 +66,8 @@ external open class DocumentReference {
     open fun get(): Promise<DocumentSnapshot> = definedExternally
     open fun onSnapshot(onNext: (snapshot: DocumentSnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally /* null */): () -> Unit = definedExternally
 }
-external open class DocumentSnapshot {
+
+open external class DocumentSnapshot {
     open var exists: Boolean = definedExternally
     open var ref: DocumentReference = definedExternally
     open var id: String = definedExternally
@@ -72,7 +78,8 @@ external open class DocumentSnapshot {
     open fun get(fieldPath: String): Any = definedExternally
     open fun get(fieldPath: FieldPath): Any = definedExternally
 }
-external open class Query {
+
+open external class Query {
     open var firestore: Firestore = definedExternally
     open fun where(fieldPath: String,
                    opStr: String /* "<" */,
@@ -100,7 +107,8 @@ external open class Query {
     open fun get(): Promise<QuerySnapshot> = definedExternally
     open fun onSnapshot(onNext: (snapshot: QuerySnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally /* null */): () -> Unit = definedExternally
 }
-external open class QuerySnapshot {
+
+open external class QuerySnapshot {
     open var query: Query = definedExternally
     open var docChanges: Array<DocumentChange> = definedExternally
     open var docs: Array<DocumentSnapshot> = definedExternally
@@ -115,20 +123,23 @@ external interface DocumentChange {
     var oldIndex: Number
     var newIndex: Number
 }
-external open class CollectionReference : Query {
+
+open external class CollectionReference : Query {
     open var id: String = definedExternally
     open var parent: DocumentReference? = definedExternally
     open var path: String = definedExternally
     open fun doc(documentPath: String? = definedExternally /* null */): DocumentReference = definedExternally
     open fun add(data: Json): Promise<DocumentReference> = definedExternally
 }
-external open class FieldValue {
+
+open external class FieldValue {
     companion object {
         fun serverTimestamp(): FieldValue = definedExternally
         fun delete(): FieldValue = definedExternally
     }
 }
-external open class FieldPath(vararg fieldNames: String) {
+
+open external class FieldPath(vararg fieldNames: String) {
     companion object {
         fun documentId(): FieldPath = definedExternally
     }

@@ -1,5 +1,9 @@
 package com.supercilex.robotscouter.server
 
+import com.supercilex.robotscouter.server.functions.deleteUnusedData
+import com.supercilex.robotscouter.server.functions.emptyTrash
+import com.supercilex.robotscouter.server.functions.logUserData
+import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
 import com.supercilex.robotscouter.server.utils.LateinitVal
 import com.supercilex.robotscouter.server.utils.Modules
 import com.supercilex.robotscouter.server.utils.types.Event
@@ -23,5 +27,8 @@ fun main(args: Array<String>) {
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
     exports.logUserData = functions.pubsub.topic("log-user-data").onPublish { event: Event<dynamic> ->
         logUserData(event.data.json.uid)
+    }
+    exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates").onPublish {
+        updateDefaultTemplates()
     }
 }

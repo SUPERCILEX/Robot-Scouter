@@ -13,6 +13,11 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
     cd firebase/functions
     npm install
     cd ../..
+
+    wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-184.0.0-linux-x86_64.tar.gz
+    tar xf google-cloud-sdk-184.0.0-linux-x86_64.tar.gz
+    echo "y" | ./google-cloud-sdk/bin/gcloud components update alpha
+    ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file app/google-play-auto-publisher.json
   fi
 else
   mv travis-dummies/google-services.json app/google-services.json

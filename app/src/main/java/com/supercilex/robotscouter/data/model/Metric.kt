@@ -16,6 +16,9 @@ import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdate
 
+private typealias IntrinsicBoolean = Boolean
+private typealias IntrinsicList <T> = List<T>
+
 sealed class Metric<T>(
         @Exclude
         @get:Exclude
@@ -40,14 +43,15 @@ sealed class Metric<T>(
 
     class Boolean(
             name: String = "",
-            value: kotlin.Boolean = false,
+            value: IntrinsicBoolean = false,
             position: Int,
             ref: DocumentReference
-    ) : Metric<kotlin.Boolean>(MetricType.BOOLEAN, name, value, position, ref)
+    ) : Metric<IntrinsicBoolean>(MetricType.BOOLEAN, name, value, position, ref)
 
     class Number(
             name: String = "",
-            value: Long = 0, unit: String? = null,
+            value: Long = 0,
+            unit: String? = null,
             position: Int,
             ref: DocumentReference
     ) : Metric<Long>(MetricType.NUMBER, name, value, position, ref) {
@@ -61,7 +65,7 @@ sealed class Metric<T>(
                 }
             }
 
-        override fun equals(other: Any?): kotlin.Boolean {
+        override fun equals(other: Any?): IntrinsicBoolean {
             if (this === other) return true
             if (other?.javaClass != javaClass) return false
             if (!super.equals(other)) return false
@@ -82,10 +86,10 @@ sealed class Metric<T>(
 
     class Stopwatch(
             name: String = "",
-            value: kotlin.collections.List<Long> = emptyList(),
+            value: IntrinsicList<Long> = emptyList(),
             position: Int,
             ref: DocumentReference
-    ) : Metric<kotlin.collections.List<Long>>(MetricType.STOPWATCH, name, value, position, ref)
+    ) : Metric<IntrinsicList<Long>>(MetricType.STOPWATCH, name, value, position, ref)
 
     class Text(
             name: String = "",
@@ -96,14 +100,14 @@ sealed class Metric<T>(
 
     class List(
             name: String = "",
-            value: kotlin.collections.List<Item> = emptyList(),
+            value: IntrinsicList<Item> = emptyList(),
             selectedValueId: String? = null,
             position: Int,
             ref: DocumentReference
-    ) : Metric<kotlin.collections.List<List.Item>>(MetricType.LIST, name, value, position, ref) {
+    ) : Metric<IntrinsicList<List.Item>>(MetricType.LIST, name, value, position, ref) {
         @get:Exclude
         @set:Exclude
-        override var value: kotlin.collections.List<Item>
+        override var value: IntrinsicList<Item>
             get() = super.value
             set(value) = updateValue(value)
 
@@ -117,7 +121,7 @@ sealed class Metric<T>(
             set(value) = updateSelectedValueId(value)
 
         @Exclude
-        fun updateValue(items: kotlin.collections.List<Item>, batch: WriteBatch? = null) {
+        fun updateValue(items: IntrinsicList<Item>, batch: WriteBatch? = null) {
             if (_value == items) return
             _value = items
 
@@ -143,7 +147,7 @@ sealed class Metric<T>(
             }
         }
 
-        override fun equals(other: Any?): kotlin.Boolean {
+        override fun equals(other: Any?): IntrinsicBoolean {
             if (this === other) return true
             if (other?.javaClass != javaClass) return false
             if (!super.equals(other)) return false
@@ -202,7 +206,7 @@ sealed class Metric<T>(
             }
         }
 
-    override fun equals(other: Any?): kotlin.Boolean {
+    override fun equals(other: Any?): IntrinsicBoolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
@@ -234,7 +238,7 @@ sealed class Metric<T>(
             return when (MetricType.valueOf(type)) {
                 MetricType.HEADER -> Metric.Header(name, position, ref)
                 MetricType.BOOLEAN -> {
-                    Metric.Boolean(name, fields[FIRESTORE_VALUE] as kotlin.Boolean, position, ref)
+                    Metric.Boolean(name, fields[FIRESTORE_VALUE] as IntrinsicBoolean, position, ref)
                 }
                 MetricType.NUMBER -> Metric.Number(
                         name,
@@ -245,7 +249,7 @@ sealed class Metric<T>(
                 )
                 MetricType.STOPWATCH -> Metric.Stopwatch(
                         name,
-                        fields[FIRESTORE_VALUE] as kotlin.collections.List<Long>,
+                        fields[FIRESTORE_VALUE] as IntrinsicList<Long>,
                         position,
                         ref
                 )
@@ -258,10 +262,10 @@ sealed class Metric<T>(
                 MetricType.LIST -> Metric.List(
                         name,
                         try {
-                            fields[FIRESTORE_VALUE] as kotlin.collections.List<Map<String, String>>
+                            fields[FIRESTORE_VALUE] as IntrinsicList<Map<String, String>>
                         } catch (e: ClassCastException) {
                             // TODO remove at some point, used to support old model
-                            (fields[FIRESTORE_VALUE] as kotlin.collections.Map<String, String>).map {
+                            (fields[FIRESTORE_VALUE] as Map<String, String>).map {
                                 mapOf(
                                         FIRESTORE_ID to it.key,
                                         FIRESTORE_NAME to (it.value as String?).toString()

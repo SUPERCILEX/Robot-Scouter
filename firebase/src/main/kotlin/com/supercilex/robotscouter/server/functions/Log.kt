@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.server
+package com.supercilex.robotscouter.server.functions
 
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery

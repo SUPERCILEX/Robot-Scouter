@@ -1,5 +1,6 @@
-package com.supercilex.robotscouter.server
+package com.supercilex.robotscouter.server.functions
 
+import com.supercilex.robotscouter.server.modules
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
 import com.supercilex.robotscouter.server.utils.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
