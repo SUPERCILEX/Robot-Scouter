@@ -4,6 +4,7 @@ import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_NAME
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.ListItem
 import com.supercilex.robotscouter.server.utils.checkbox
 import com.supercilex.robotscouter.server.utils.counter
@@ -15,7 +16,6 @@ import com.supercilex.robotscouter.server.utils.stopwatch
 import com.supercilex.robotscouter.server.utils.text
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.WriteResult
-import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
 import kotlin.js.json
@@ -32,7 +32,7 @@ private fun CollectionReference.updateMatchTemplate(): Promise<WriteResult> {
     return doc("0").set(json(
             FIRESTORE_TEMPLATE_ID to "0",
             FIRESTORE_NAME to "Match Scout",
-            FIRESTORE_TIMESTAMP to Date(),
+            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
             FIRESTORE_METRICS to matchTemplateMetrics()
     ).log("Match"))
 }
@@ -77,7 +77,7 @@ private fun CollectionReference.updatePitTemplate(): Promise<WriteResult> {
     return doc("1").set(json(
             FIRESTORE_TEMPLATE_ID to "1",
             FIRESTORE_NAME to "Pit Scout",
-            FIRESTORE_TIMESTAMP to Date(),
+            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
             FIRESTORE_METRICS to pitTemplateMetrics()
     ).log("Pit"))
 }
@@ -118,7 +118,7 @@ private fun CollectionReference.updateEmptyTemplate(): Promise<WriteResult> {
     return doc("2").set(json(
             FIRESTORE_TEMPLATE_ID to "2",
             FIRESTORE_NAME to "Blank Scout",
-            FIRESTORE_TIMESTAMP to Date()
+            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp()
     ).log("Blank"))
 }
 

@@ -22,7 +22,7 @@ fun CollectionReference.delete(
         middleMan: (DocumentSnapshot) -> Promise<*> = { Promise.resolve(Unit) }
 ): Promise<Unit> = deleteQueryBatch(
         firestore,
-        orderBy("__name__").limit(batchSize),
+        orderBy(FieldPath.documentId()).limit(batchSize),
         batchSize,
         middleMan
 )
@@ -51,3 +51,18 @@ private fun deleteQueryBatch(
 
     deleteQueryBatch(db, query, batchSize, middleMan)
 }.then { Unit }
+
+class FieldValue {
+    //language=JavaScript
+    companion object {
+        fun serverTimestamp(): dynamic = js("require(\"firebase-admin\").firestore.FieldValue.serverTimestamp()")
+        fun delete(): dynamic = js("require(\"firebase-admin\").firestore.FieldValue.delete()")
+    }
+}
+
+class FieldPath {
+    //language=JavaScript
+    companion object {
+        fun documentId(): dynamic = js("require(\"firebase-admin\").firestore.FieldPath.documentId()")
+    }
+}
