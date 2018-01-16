@@ -33,7 +33,6 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.addTemplate
 import com.supercilex.robotscouter.util.doAsync
-import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
@@ -194,12 +193,7 @@ class TemplateListFragment : FragmentBase(),
         childFragmentManager.fragments
                 .filterIsInstance<TemplateFragment>()
                 .filter { pagerAdapter.currentTabId == it.metricsRef.parent.id }
-                .also {
-                    check(it.isSingleton) {
-                        "Multiple fragments found with id ${it[0].metricsRef.parent.id}"
-                    }
-                    it[0].onClick(v)
-                }
+                .also { it.firstOrNull()?.onClick(v) }
     }
 
     fun onTemplateCreated(id: String) {

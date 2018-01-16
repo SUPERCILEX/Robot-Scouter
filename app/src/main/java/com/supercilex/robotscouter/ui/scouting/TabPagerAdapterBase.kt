@@ -99,7 +99,7 @@ abstract class TabPagerAdapterBase(
 
         if (currentScouts.isNotEmpty()) {
             if (TextUtils.isEmpty(prevTabId)) {
-                currentTabId = currentScouts[0].id
+                currentTabId = currentScouts.first().id
             } else {
                 currentScouts.find { it.id == prevTabId }?.let {
                     selectTab(currentScouts.indexOfFirst { it.id == currentTabId })

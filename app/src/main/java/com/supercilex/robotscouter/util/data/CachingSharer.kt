@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.second
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
@@ -13,7 +14,7 @@ abstract class CachingSharer(private val context: Context) {
         private val tempShareTemplateFile: File
             get() {
                 val nameSplit = fileName.split(".")
-                return createFile(nameSplit[0], nameSplit[1], context.cacheDir, null)
+                return createFile(nameSplit.first(), nameSplit.second(), context.cacheDir, null)
             }
 
         override fun call(): String {

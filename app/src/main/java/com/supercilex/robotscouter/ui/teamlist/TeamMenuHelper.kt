@@ -119,7 +119,7 @@ class TeamMenuHelper(
     }
 
     fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val team = selectedTeams[0]
+        val team = selectedTeams.first()
         when (item.itemId) {
             R.id.action_export_teams -> fragment.exportTeams()
             R.id.action_share -> if (TeamSharer.shareTeams(activity, selectedTeams)) {
@@ -221,11 +221,12 @@ class TeamMenuHelper(
 
     private fun setTeamSpecificItemsVisible(visible: Boolean) {
         visitTbaWebsiteItem.isVisible = visible
-        visitTeamWebsiteItem.isVisible = visible && !TextUtils.isEmpty(selectedTeams[0].website)
+        visitTeamWebsiteItem.isVisible =
+                visible && !TextUtils.isEmpty(selectedTeams.single().website)
         editTeamDetailsItem.isVisible = visible
 
         if (visible) {
-            val (number) = selectedTeams[0]
+            val (number) = selectedTeams.single()
             visitTbaWebsiteItem.title = activity.getString(
                     R.string.scout_visit_team_tba_website_title, number)
             visitTeamWebsiteItem.title = activity.getString(

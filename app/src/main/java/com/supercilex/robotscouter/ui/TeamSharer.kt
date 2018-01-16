@@ -67,7 +67,7 @@ class TeamSharer private constructor(
 
             getInvitationIntent(
                     cache.teams.getTeamsLink(token),
-                    it.result.format(cache.shareCta, cache.teams[0].media)
+                    it.result.format(cache.shareCta, cache.teams.first().media)
             )
         }).addOnSuccessListener(activity) {
             activity.startActivityForResult(it, RC_SHARE)

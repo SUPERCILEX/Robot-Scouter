@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
@@ -355,10 +356,10 @@ open class StopwatchViewHolder(
                 val split = it.split(COLON.toRegex()).dropLastWhile {
                     it.isEmpty()
                 }.toTypedArray()
-                if (split[1].length > 1) {
+                if (split.second().length > 1) {
                     it
                 } else {
-                    split[0] + COLON + LEADING_ZERO + split[1]
+                    split.first() + COLON + LEADING_ZERO + split.second()
                 }
             }
         }

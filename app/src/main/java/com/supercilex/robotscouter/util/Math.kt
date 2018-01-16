@@ -20,3 +20,13 @@ fun String.isNumber(): Boolean = try {
 } catch (e: NumberFormatException) {
     false
 }
+
+fun <T> Array<T>.second(): T {
+    if (size < 2) throw NoSuchElementException("List is has less than 2 elements.")
+    return this[1]
+}
+
+fun <T> List<T>.second(): T {
+    if (size < 2) throw NoSuchElementException("List is has less than 2 elements.")
+    return this[1]
+}

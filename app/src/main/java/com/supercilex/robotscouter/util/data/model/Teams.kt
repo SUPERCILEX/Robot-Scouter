@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.teamFreshnessDays
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
@@ -58,8 +59,8 @@ fun Collection<Team>.getNames(): String {
     sortedTeams.sort()
 
     return when {
-        sortedTeams.isSingleton -> sortedTeams[0].toString()
-        sortedTeams.size == 2 -> "${sortedTeams[0]} and ${sortedTeams[1]}"
+        sortedTeams.isSingleton -> sortedTeams.single().toString()
+        sortedTeams.size == 2 -> "${sortedTeams.first()} and ${sortedTeams.second()}"
         else -> {
             val teamsMaxedOut = sortedTeams.size > 10
             val size = if (teamsMaxedOut) 10 else sortedTeams.size
