@@ -10,6 +10,19 @@
         <item name="android:paddingBottom">@dimen/spacing_normal</item>
     </style>
 
+    <style name="RobotScouter.Dialog.BottomSheet">
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingTop">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">@dimen/spacing_large</item>
+        <item name="android:paddingEnd">@dimen/spacing_large</item>
+    </style>
+
     <style name="RobotScouter.List">
         <item name="android:id">@id/list</item>
         <item name="android:layout_width">match_parent</item>

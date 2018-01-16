@@ -4,4 +4,5 @@
     <dimen name="list_item_padding_vertical">@dimen/spacing_normal</dimen>
     <dimen name="list_item_padding_horizontal_scout">@dimen/spacing_xlarge</dimen>
     <dimen name="list_item_padding_vertical_scout">@dimen/spacing_large</dimen>
+    <dimen name="bottom_sheet_width">600dp</dimen>
 </resources>

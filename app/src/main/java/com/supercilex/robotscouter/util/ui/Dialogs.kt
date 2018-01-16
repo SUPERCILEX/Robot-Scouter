@@ -1,18 +1,23 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.StringRes
+import android.support.design.widget.BottomSheetDialog
+import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.refWatcher
 
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
@@ -41,6 +46,33 @@ abstract class DialogFragmentBase : DialogFragment() {
     }
 }
 
+abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
+    override fun onCreateDialog(
+            savedInstanceState: Bundle?
+    ): Dialog = object : BottomSheetDialog(context!!, theme) {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            val width = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_width)
+            window.setLayout(if (width > 0) {
+                width
+            } else {
+                ViewGroup.LayoutParams.MATCH_PARENT
+            }, ViewGroup.LayoutParams.MATCH_PARENT)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        FirebaseAnalytics.getInstance(context)
+                .setCurrentScreen(activity!!, null, javaClass.simpleName)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        refWatcher.watch(this)
+    }
+}
+
 /**
  * Enables choosing whether or not to dismiss the dialog when the positive button is clicked.
  *
@@ -57,7 +89,9 @@ abstract class ManualDismissDialog : DialogFragmentBase() {
     @CallSuper
     open fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         dialog as AlertDialog
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener { handleOnAttemptDismiss() }
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            handleOnAttemptDismiss()
+        }
     }
 
     protected fun handleOnAttemptDismiss() {

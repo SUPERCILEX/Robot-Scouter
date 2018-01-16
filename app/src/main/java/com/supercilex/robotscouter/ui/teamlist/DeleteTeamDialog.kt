@@ -1,52 +1,65 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.app.Dialog
-import android.content.DialogInterface
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
+import android.view.View
+import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getTeamList
 import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.isSingleton
-import com.supercilex.robotscouter.util.ui.DialogFragmentBase
+import com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.unsafeLazy
-import java.util.Collections
+import org.jetbrains.anko.find
 
-class DeleteTeamDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val teams: List<Team> by unsafeLazy { arguments!!.getTeamList() }
+class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
+    private val teams: List<Team> by unsafeLazy { arguments!!.getTeamList().sorted() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Collections.sort(teams)
-    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val view = View.inflate(context, R.layout.dialog_delete_team, null)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val deletedTeams = StringBuilder()
-        for ((i: Int, team: Team) in teams.withIndex()) {
-            deletedTeams.append(i + 1)
-                    .append(". ")
-                    .append(team)
-                    .append('\n')
+        view.find<TextView>(R.id.message).text = run {
+            val message = resources.getQuantityString(
+                    R.plurals.team_delete_message,
+                    teams.size,
+                    teams.first()
+            )
+
+            if (teams.isSingleton) return@run message
+
+            val deletedTeams = SpannableStringBuilder(message).append('\n')
+            for ((i, team) in teams.withIndex()) {
+                val pre = deletedTeams.length
+                deletedTeams.apply {
+                    append('\n').append("${i + 1}. ")
+                    setSpan(
+                            StyleSpan(Typeface.BOLD),
+                            pre,
+                            length,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+
+                    append(team.toString())
+                }
+            }
+            deletedTeams
         }
+        view.find<View>(R.id.delete).setOnClickListener(this@DeleteTeamDialog)
 
-        return AlertDialog.Builder(context!!)
-                .setTitle(R.string.team_delete_dialog_title)
-                .setMessage(if (teams.isSingleton) {
-                    null
-                } else {
-                    getString(R.string.team_delete_rationale, deletedTeams)
-                })
-                .setPositiveButton(R.string.delete, this)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
+        dialog.setContentView(view)
     }
 
-    override fun onClick(dialog: DialogInterface, which: Int) {
-        for (team: Team in teams) team.trash()
+    override fun onClick(v: View) {
+        for (team in teams) team.trash()
+        dismiss()
     }
 
     companion object {

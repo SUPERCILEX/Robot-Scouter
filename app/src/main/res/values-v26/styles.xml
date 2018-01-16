@@ -10,6 +10,31 @@
         <item name="android:importantForAutofill">noExcludeDescendants</item>
     </style>
 
+    <style name="RobotScouter.Dialog.BottomSheet">
+        <item name="android:paddingHorizontal">0dp</item>
+        <item name="android:paddingTop">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">@dimen/spacing_large</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Text">
+        <item name="android:paddingVertical">15dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Button">
+        <item name="android:paddingVertical">12dp</item>
+        <item name="android:drawablePadding">@dimen/spacing_large</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
+    </style>
+
     <style name="RobotScouter.List">
         <item name="android:id">@id/list</item>
         <item name="android:layout_width">match_parent</item>

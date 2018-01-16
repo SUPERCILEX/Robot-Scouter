@@ -39,6 +39,35 @@
         <item name="android:paddingBottom">@dimen/spacing_normal</item>
     </style>
 
+    <style name="RobotScouter.Dialog.BottomSheet">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/spacing_large</item>
+        <item name="android:paddingRight">@dimen/spacing_large</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Text">
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Button">
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:drawablePadding">@dimen/spacing_large</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
+    </style>
+
     <style name="RobotScouter.Tutorial">
         <item name="mttp_backgroundColour">@color/colorPrimary</item>
     </style>

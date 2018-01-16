@@ -5,6 +5,7 @@
     <dimen name="list_item_padding_vertical_within">@dimen/spacing_normal</dimen>
     <dimen name="list_item_padding_horizontal_scout">@dimen/list_item_padding_horizontal</dimen>
     <dimen name="list_item_padding_vertical_scout">@dimen/list_item_padding_vertical</dimen>
+    <dimen name="bottom_sheet_width">0dp</dimen> <!-- match_parent -->
 
     <dimen name="spacing_mini">4dp</dimen>
     <dimen name="spacing_normal">8dp</dimen>
@@ -20,6 +21,7 @@
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="corner_radius">2dp</dimen>
 
+    <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
 
     <dimen name="shortcut_inset">25%</dimen>
