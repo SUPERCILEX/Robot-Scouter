@@ -1,7 +1,7 @@
 *.iml
 .gradle
-.idea/**
-!.idea/codeStyleSettings.xml
+.idea/*
+!.idea/codeStyles
 build
 /local.properties
 /app/keystore.properties
