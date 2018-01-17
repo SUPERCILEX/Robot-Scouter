@@ -141,7 +141,11 @@ fun Team.copyMediaInfo(newTeam: Team) {
 }
 
 fun Team.trash() {
-    ref.log().update("$FIRESTORE_OWNERS.${uid!!}", -abs(number)).logFailures()
+    ref.log().update("$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
+        -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
+    } else {
+        -abs(number)
+    }).logFailures()
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
 }
 
