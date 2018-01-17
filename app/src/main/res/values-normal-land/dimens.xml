@@ -2,4 +2,5 @@
 <resources>
     <dimen name="list_item_padding_horizontal">@dimen/spacing_xlarge</dimen>
     <dimen name="list_item_padding_vertical">@dimen/spacing_large</dimen>
+    <dimen name="bottom_sheet_width">600dp</dimen>
 </resources>

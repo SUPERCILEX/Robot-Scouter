@@ -7,7 +7,7 @@ buildscript {
     }
 
     ext {
-        kotlinVersion = '1.2.10'
+        kotlinVersion = '1.2.20'
         ankoVersion = '0.10.4'
         supportLibVersion = '27.0.2'
         playServicesVersion = '11.8.0'
