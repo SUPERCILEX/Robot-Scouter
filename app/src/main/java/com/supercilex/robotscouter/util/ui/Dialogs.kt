@@ -49,7 +49,7 @@ abstract class DialogFragmentBase : DialogFragment() {
 abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
     override fun onCreateDialog(
             savedInstanceState: Bundle?
-    ): Dialog = object : BottomSheetDialog(context!!, theme) {
+    ): Dialog = object : BottomSheetDialog(context!!, R.style.RobotScouter_Tmp_72076683) {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val width = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_width)
