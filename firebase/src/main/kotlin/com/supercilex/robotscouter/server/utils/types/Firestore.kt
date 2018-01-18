@@ -27,7 +27,6 @@ open external class Transaction {
     open fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally /* null */): Transaction = definedExternally
     open fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally /* null */): Transaction = definedExternally
     open fun update(documentRef: DocumentReference, field: String, value: Any, vararg fieldsOrPrecondition: Any): Transaction = definedExternally
-    //    open fun update(documentRef: DocumentReference, field: FieldPath, value: Any, vararg fieldsOrPrecondition: Any): Transaction = definedExternally
     open fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally /* null */): Transaction = definedExternally
 }
 
@@ -36,7 +35,6 @@ open external class WriteBatch {
     open fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally /* null */): WriteBatch = definedExternally
     open fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally /* null */): WriteBatch = definedExternally
     open fun update(documentRef: DocumentReference, field: String, value: Any, vararg fieldsOrPrecondition: Any): WriteBatch = definedExternally
-    //    open fun update(documentRef: DocumentReference, field: FieldPath, value: Any, vararg fieldsOrPrecondition: Any): WriteBatch = definedExternally
     open fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally /* null */): WriteBatch = definedExternally
     open fun commit(): Promise<Array<WriteResult>> = definedExternally
 }
@@ -61,7 +59,6 @@ open external class DocumentReference {
     open fun set(data: Json, options: SetOptions? = definedExternally /* null */): Promise<WriteResult> = definedExternally
     open fun update(data: Json, precondition: Precondition? = definedExternally /* null */): Promise<WriteResult> = definedExternally
     open fun update(field: String, value: Any, vararg moreFieldsOrPrecondition: Any): Promise<WriteResult> = definedExternally
-    //    open fun update(field: FieldPath, value: Any, vararg moreFieldsOrPrecondition: Any): Promise<WriteResult> = definedExternally
     open fun delete(precondition: Precondition? = definedExternally /* null */): Promise<WriteResult> = definedExternally
     open fun get(): Promise<DocumentSnapshot> = definedExternally
     open fun onSnapshot(onNext: (snapshot: DocumentSnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally /* null */): () -> Unit = definedExternally
@@ -76,27 +73,12 @@ open external class DocumentSnapshot {
     open var readTime: String = definedExternally
     open fun data(): Json = definedExternally
     open fun get(fieldPath: String): Any = definedExternally
-//    open fun get(fieldPath: FieldPath): Any = definedExternally
 }
 
 open external class Query {
     open var firestore: Firestore = definedExternally
-    open fun where(fieldPath: String,
-                   opStr: String /* "<" */,
-                   value: Any?): Query = definedExternally
-//    open fun where(fieldPath: String, opStr: Any /* "<=" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: String, opStr: Any /* "==" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: String, opStr: Any /* ">=" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: String, opStr: Any /* ">" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: FieldPath, opStr: Any /* "<" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: FieldPath, opStr: Any /* "<=" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: FieldPath, opStr: Any /* "==" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: FieldPath, opStr: Any /* ">=" */, value: Any): Query = definedExternally
-//    open fun where(fieldPath: FieldPath, opStr: Any /* ">" */, value: Any): Query = definedExternally
+    open fun where(fieldPath: String, opStr: String /* "<" */, value: Any?): Query = definedExternally
     open fun orderBy(fieldPath: String, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
-    //    open fun orderBy(fieldPath: String, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
-//    open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
-//    open fun orderBy(fieldPath: FieldPath, directionStr: Any? /* "asc" */ = definedExternally /* null */): Query = definedExternally
     open fun limit(limit: Number): Query = definedExternally
     open fun offset(offset: Number): Query = definedExternally
     open fun select(vararg field: dynamic /* String | com.supercilex.robotscouter.server.utils.types.FieldPath */): Query = definedExternally

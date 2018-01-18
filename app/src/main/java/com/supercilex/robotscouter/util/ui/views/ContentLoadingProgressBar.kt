@@ -37,7 +37,7 @@ class ContentLoadingProgressBar : ProgressBar {
         super.onAttachedToWindow()
         _isAttachedToWindow = true
 
-        if (_isShown && visibility != View.VISIBLE) postDelayed(delayedShow, MIN_DELAY)
+        if (_isShown && visibility != View.VISIBLE) postDelayed(delayedShow, MIN_DELAY_MILLIS)
     }
 
     override fun onDetachedFromWindow() {
@@ -62,7 +62,7 @@ class ContentLoadingProgressBar : ProgressBar {
             if (_isAttachedToWindow) removeCallbacks(delayedShow)
 
             val diff = SystemClock.uptimeMillis() - startTime
-            if (startTime == -1L || diff >= MIN_SHOW_TIME || force) {
+            if (startTime == -1L || diff >= MIN_SHOW_TIME_MILLIS || force) {
                 // The progress spinner has been shown long enough OR was not shown yet.
                 // If it wasn't shown yet, it will just never be shown.
                 visibility = View.GONE
@@ -71,7 +71,7 @@ class ContentLoadingProgressBar : ProgressBar {
             } else {
                 // The progress spinner is shown, but not long enough,
                 // so put a delayed message in to hide it when its been shown long enough.
-                postDelayeds(MIN_SHOW_TIME - diff, delayedHide, callback)
+                postDelayeds(MIN_SHOW_TIME_MILLIS - diff, delayedHide, callback)
             }
         }
     }
@@ -85,7 +85,7 @@ class ContentLoadingProgressBar : ProgressBar {
             _isShown = true
             if (_isAttachedToWindow) {
                 removeCallbacks(delayedHide)
-                if (startTime == -1L) postDelayeds(MIN_DELAY, delayedShow, callback)
+                if (startTime == -1L) postDelayeds(MIN_DELAY_MILLIS, delayedShow, callback)
             } else {
                 callback?.run()
             }
@@ -96,7 +96,7 @@ class ContentLoadingProgressBar : ProgressBar {
             actions.filterNotNull().forEach { postDelayed(it, delayMillis) }
 
     private companion object {
-        const val MIN_SHOW_TIME = 500L // ms
-        const val MIN_DELAY = 500L // ms
+        const val MIN_SHOW_TIME_MILLIS = 500L
+        const val MIN_DELAY_MILLIS = 500L
     }
 }

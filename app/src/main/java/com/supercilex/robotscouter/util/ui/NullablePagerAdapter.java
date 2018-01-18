@@ -17,5 +17,6 @@ public abstract class NullablePagerAdapter extends PagerAdapter {
         // `object` is actually nullable. It's even in the dang source code which is hilariously
         // ridiculous:
         // `mAdapter.setPrimaryItem(this, mCurItem, curItem != null ? curItem.object : null);`
+        // TODO remove after support lib update
     }
 }

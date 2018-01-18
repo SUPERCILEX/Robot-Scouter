@@ -294,8 +294,7 @@ class SpreadsheetExporter(
                     valueCell.setCellValue(
                             cache.creationHelper.createRichTextString((metric as Metric.Text).value))
                 }
-                MetricType.HEADER -> { // No data
-                }
+                MetricType.HEADER -> Unit // No data
             }
         }
 
