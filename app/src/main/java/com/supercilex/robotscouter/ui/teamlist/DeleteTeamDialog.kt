@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist
 
+import android.app.Dialog
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
@@ -22,8 +23,7 @@ import org.jetbrains.anko.find
 class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
     private val teams: List<Team> by unsafeLazy { arguments!!.getTeamList().sorted() }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
         val view = View.inflate(context, R.layout.dialog_delete_team, null)
 
         view.find<TextView>(R.id.message).text = run {

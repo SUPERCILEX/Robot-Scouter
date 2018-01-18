@@ -49,9 +49,15 @@ abstract class DialogFragmentBase : DialogFragment() {
 abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
     override fun onCreateDialog(
             savedInstanceState: Bundle?
-    ): Dialog = object : BottomSheetDialog(context!!, R.style.RobotScouter_Tmp_72076683) {
+    ): Dialog = object : BottomSheetDialog(context!!, R.style.RobotScouter_Tmp_72076683),
+            DialogInterface.OnShowListener {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            onDialogCreated(this, savedInstanceState)
+            setOnShowListener(this)
+        }
+
+        override fun onShow(dialog: DialogInterface) {
             val width = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_width)
             window.setLayout(if (width > 0) {
                 width
@@ -60,6 +66,8 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
             }, ViewGroup.LayoutParams.MATCH_PARENT)
         }
     }
+
+    open fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) = Unit
 
     override fun onResume() {
         super.onResume()
