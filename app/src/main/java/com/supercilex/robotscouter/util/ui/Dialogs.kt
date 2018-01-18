@@ -7,6 +7,7 @@ import android.support.annotation.CallSuper
 import android.support.annotation.StringRes
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.BottomSheetDialogFragment
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
@@ -19,6 +20,7 @@ import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.refWatcher
+import java.lang.reflect.Field
 
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
         create().apply { setOnShowListener { (it as AlertDialog).listener() } }
@@ -57,6 +59,16 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
             setOnShowListener(this)
         }
 
+        override fun onStart() {
+            // Save state
+            behavior.apply {
+                val old = behavior.get(dialog) as CoordinatorLayout.Behavior<*>?
+                behavior.set(dialog, null)
+                super.onStart()
+                behavior.set(dialog, old)
+            }
+        }
+
         override fun onShow(dialog: DialogInterface) {
             val width = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_width)
             window.setLayout(if (width > 0) {
@@ -78,6 +90,12 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         refWatcher.watch(this)
+    }
+
+    companion object {
+        val behavior: Field = BottomSheetDialog::class.java.getDeclaredField("mBehavior").apply {
+            isAccessible = true
+        }
     }
 }
 
