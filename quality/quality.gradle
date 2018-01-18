@@ -37,7 +37,7 @@ android {
         baseline file("$configDir/lint-baseline.xml")
         checkAllWarnings true
         warningsAsErrors true
-        abortOnError true
+        abortOnError false
         htmlOutput file("$reportsDir/lint-results.html")
         xmlOutput file("$reportsDir/lint-results.xml")
     }
