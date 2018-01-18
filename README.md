@@ -1,5 +1,7 @@
 <p align="center">
-    <img alt="Logo" src="https://supercilex.github.io/Robot-Scouter/assets/logo.svg" width="30%" />
+    <a href="https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/">
+        <img alt="Logo" src="https://supercilex.github.io/Robot-Scouter/assets/logo.svg" width="30%" />
+    </a>
 </p>
 
 <h1 align="center">
