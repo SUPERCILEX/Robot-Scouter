@@ -5,6 +5,7 @@ import android.text.TextUtils
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.common.ChangeEventType
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
@@ -68,6 +69,7 @@ fun initAnalytics() {
 
         // Log uid to help debug db crashes
         FirebaseCrash.log("User id: ${user?.uid}")
+        Crashlytics.log("User id: ${user?.uid}")
         Crashlytics.setUserIdentifier(user?.uid)
         Crashlytics.setUserEmail(user?.email)
         Crashlytics.setUserName(user?.displayName)
@@ -90,6 +92,13 @@ fun initAnalytics() {
     // updated accurately. If we used an AuthStateListener, it would only update when the app is
     // restarted.
     FirebaseAuth.getInstance().addIdTokenListener {
+        val available =
+                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(RobotScouter)
+        "Play Services availability: $available".also {
+            FirebaseCrash.log(it)
+            Crashlytics.log(it)
+        }
+
         if (uid != null) {
             userRef.log().set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
                     .logFailures()

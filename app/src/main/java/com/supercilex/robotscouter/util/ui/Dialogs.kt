@@ -62,10 +62,10 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
         override fun onStart() {
             // Save state TODO remove after https://issuetracker.google.com/issues/72125225
             behavior.apply {
-                val old = behavior.get(dialog) as CoordinatorLayout.Behavior<*>?
-                behavior.set(dialog, null)
+                val old = get(dialog) as CoordinatorLayout.Behavior<*>?
+                set(dialog, null)
                 super.onStart()
-                behavior.set(dialog, old)
+                set(dialog, old)
             }
         }
 
