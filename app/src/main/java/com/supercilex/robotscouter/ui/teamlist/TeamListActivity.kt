@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
@@ -94,6 +95,8 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
         find<View>(R.id.fab).setOnClickListener(this)
         showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
         authHelper.init().addOnSuccessListener(this) { handleIntent(intent) }
+
+        Credentials.getClient(this) // Ensure the Play Services update dialog is shown
     }
 
     override fun onNewIntent(intent: Intent) {
