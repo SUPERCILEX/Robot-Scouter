@@ -48,6 +48,7 @@ import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
+import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
@@ -353,6 +354,16 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         }
 
         private suspend fun mergeTeams(existingTeam: Team, duplicate: Team) {
+            try {
+                // Blow up if an error occurs retrieving these teams
+                Tasks.whenAllSuccess<Any?>(
+                        existingTeam.ref.log().get(),
+                        duplicate.ref.log().get()
+                ).await()
+            } catch (e: Exception) {
+                return
+            }
+
             val scouts = duplicate.getScouts().await()
             firestoreBatch {
                 for (scout in scouts) {
