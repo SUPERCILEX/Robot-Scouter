@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ./gradlew firebase:clean firebase:build
 

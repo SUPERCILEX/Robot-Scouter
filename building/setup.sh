@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   cd app
