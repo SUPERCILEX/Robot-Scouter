@@ -4,7 +4,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   ./gradlew clean build publishApkRelease
 
   building/deploy-firebase.sh
-  ./google-cloud-sdk/bin/gcloud alpha pubsub topics publish update-default-templates '{}'
+  ./google-cloud-sdk/bin/gcloud alpha pubsub topics publish update-default-templates --message '{}'
 
   mv app/build/outputs/apk/release/app-release.apk app-release.apk
   # Duplicated in upload.sh
