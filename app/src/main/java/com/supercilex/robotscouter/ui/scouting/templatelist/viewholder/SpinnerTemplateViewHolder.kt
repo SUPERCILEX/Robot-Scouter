@@ -158,7 +158,7 @@ class SpinnerTemplateViewHolder(
         }
 
         private fun delete(items: List<Metric.List.Item>) {
-            val position = adapterPosition
+            val position = items.indexOf(item)
             parent.metric.value = items.toMutableList().apply {
                 removeAt(position)
             }
