@@ -9,29 +9,36 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.data.model.isTrashed
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.teamParser
+import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.uid
 
 interface TeamJob {
     val updateTeam: (team: Team, newTeam: Team) -> Unit
 
-    fun startJob(team: Team): Task<Unit> = team.ref.get().logFailures()
-            .continueWithTask(AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Team>> {
-                val snapshot = it.result
-                if (snapshot.exists()) {
-                    val existingTeam = teamParser.parseSnapshot(snapshot)
+    fun startJob(team: Team): Task<Unit?> {
+        // Ensure this job isn't being scheduled after the user has signed out
+        if (team.owners[uid] == null) return Tasks.forResult(null)
 
-                    if (existingTeam.isTrashed != false) {
-                        return@Continuation Tasks.forResult(null)
-                    }
+        return team.ref.log().get().logFailures().continueWithTask(
+                AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Team>> {
+            val snapshot = it.result
+            if (snapshot.exists()) {
+                val existingTeam = teamParser.parseSnapshot(snapshot)
 
-                    startTask(existingTeam)
-                } else {
-                    snapshot.reference.delete() // Ensure zombies cached on-device die
-                    Tasks.forResult(null)
+                if (existingTeam.isTrashed != false) {
+                    return@Continuation Tasks.forResult(null)
                 }
-            }).continueWith(AsyncTaskExecutor, Continuation<Team, Unit> {
-                updateTeam(team, it.result ?: return@Continuation)
-            })
+
+                startTask(existingTeam)
+            } else {
+                snapshot.reference.delete() // Ensure zombies cached on-device die
+                Tasks.forResult(null)
+            }
+        }).continueWith(AsyncTaskExecutor, Continuation<Team, Unit> {
+            updateTeam(team, it.result ?: return@Continuation)
+        })
+    }
 
     fun startTask(existingTeam: Team): Task<Team>
 }

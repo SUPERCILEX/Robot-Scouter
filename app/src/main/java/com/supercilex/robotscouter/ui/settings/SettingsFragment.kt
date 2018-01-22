@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.RC_SIGN_IN
+import com.supercilex.robotscouter.util.data.cancelAllJobs
 import com.supercilex.robotscouter.util.data.clearPrefs
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.prefs
@@ -141,6 +142,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             KEY_LINK_ACCOUNT -> signIn(this)
             KEY_SIGN_OUT -> {
+                cancelAllJobs()
                 signOutListener = AuthUI.getInstance().signOut(activity).asLiveData()
                 addSignOutListener()
             }

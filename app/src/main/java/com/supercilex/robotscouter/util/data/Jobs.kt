@@ -35,37 +35,23 @@ private const val SHOULD_UPLOAD_MEDIA = "should-upload-media-to-tba"
 private const val MEDIA_YEAR = "media-year"
 private const val TIMESTAMP = "timestamp"
 
-private fun Job.Builder.buildAndSchedule(dispatcher: FirebaseJobDispatcher) {
-    val result: Int = dispatcher.schedule(build())
-    check(result == FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
-        getErrorMessage(service, result)
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
-    val scheduler = RobotScouter.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-    val result: Int = scheduler.schedule(build())
-    check(result == JobScheduler.RESULT_SUCCESS) {
-        getErrorMessage(clazz, result)
-    }
+private val fjd by lazy { FirebaseJobDispatcher(GooglePlayDriver(RobotScouter)) }
+@get:RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+private val scheduler by lazy {
+    RobotScouter.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 }
 
 fun startInternetJob14(
         team: Team,
         jobId: Int,
         clazz: Class<out com.firebase.jobdispatcher.JobService>
-) {
-    val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(RobotScouter))
-
-    dispatcher.newJobBuilder()
-            .setService(clazz)
-            .setTag(jobId.toString())
-            .setTrigger(Trigger.executionWindow(0, 0))
-            .setExtras(team.toRawBundle())
-            .setConstraints(Constraint.ON_ANY_NETWORK)
-            .buildAndSchedule(dispatcher)
-}
+) = fjd.newJobBuilder()
+        .setService(clazz)
+        .setTag(jobId.toString())
+        .setTrigger(Trigger.executionWindow(0, 0))
+        .setExtras(team.toRawBundle())
+        .setConstraints(Constraint.ON_ANY_NETWORK)
+        .buildAndSchedule()
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
@@ -75,7 +61,13 @@ fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
             .buildAndSchedule(clazz.name)
 }
 
-private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"
+fun cancelAllJobs() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        scheduler.cancelAll()
+    } else {
+        fjd.cancelAll()
+    }
+}
 
 fun parseRawBundle(args: Bundle) = Team(
         args.getLong(NUMBER),
@@ -113,6 +105,23 @@ fun parseRawBundle(args: PersistableBundle) = Team(
         args.getInt(MEDIA_YEAR),
         Date(args.getLong(TIMESTAMP))
 )
+
+private fun Job.Builder.buildAndSchedule() {
+    val result: Int = fjd.schedule(build())
+    check(result == FirebaseJobDispatcher.SCHEDULE_RESULT_SUCCESS) {
+        getErrorMessage(service, result)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
+    val result: Int = scheduler.schedule(build())
+    check(result == JobScheduler.RESULT_SUCCESS) {
+        getErrorMessage(clazz, result)
+    }
+}
+
+private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with error code $result"
 
 private fun Team.toRawBundle() = bundleOf(
         NUMBER to number,
