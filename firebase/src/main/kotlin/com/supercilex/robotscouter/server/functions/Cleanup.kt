@@ -47,29 +47,14 @@ fun deleteUnusedData(): Promise<*> {
 
 private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.process {
     console.log("Deleting all data for user:\n${JSON.stringify(data())}")
+
     val userId = id
-
-    fun DocumentSnapshot.deleteIfSingleOwner(delete: (DocumentSnapshot) -> Promise<*>): Promise<*> {
-        @Suppress("UNCHECKED_CAST_TO_NATIVE_INTERFACE") // We know its type
-        val owners = get(FIRESTORE_OWNERS) as Json
-        //language=JavaScript
-        return if (js("Object.keys(owners).length") as Int > 1) {
-            //language=undefined
-            console.log("Removing $userId's ownership of $id")
-            //language=JavaScript
-            js("delete owners[userId]")
-            ref.update(FIRESTORE_OWNERS, owners)
-        } else {
-            delete(this)
-        }
-    }
-
     Promise.all(arrayOf(
             getTeamsQuery(userId).process {
-                deleteIfSingleOwner { deleteTeam(it) }
+                deleteIfSingleOwner(userId) { deleteTeam(it) }
             },
             getTemplatesQuery(userId).process {
-                deleteIfSingleOwner { deleteTemplate(it) }
+                deleteIfSingleOwner(userId) { deleteTemplate(it) }
             }
     )).then {
         deleteUser(this)
@@ -81,8 +66,12 @@ fun emptyTrash(): Promise<*> {
     return users.process {
         val userId = id
         Promise.all(arrayOf(
-                getTrashedTeamsQuery(userId).process { deleteTeam(this) },
-                getTrashedTemplatesQuery(userId).process { deleteTemplate(this) }
+                getTrashedTeamsQuery(userId).process {
+                    deleteIfSingleOwner(userId) { deleteTeam(this) }
+                },
+                getTrashedTemplatesQuery(userId).process {
+                    deleteIfSingleOwner(userId) { deleteTemplate(this) }
+                }
         ))
     }
 }
@@ -113,3 +102,21 @@ private fun deleteTemplate(template: DocumentSnapshot): Promise<Unit> {
 private fun Query.process(block: DocumentSnapshot.() -> Promise<*>): Promise<Unit> = get().then {
     Promise.all(it.docs.map(block).toTypedArray())
 }.then { Unit }
+
+fun DocumentSnapshot.deleteIfSingleOwner(
+        userId: String,
+        delete: (DocumentSnapshot) -> Promise<*>
+): Promise<*> {
+    @Suppress("UNCHECKED_CAST_TO_NATIVE_INTERFACE") // We know its type
+    val owners = get(FIRESTORE_OWNERS) as Json
+    //language=JavaScript
+    return if (js("Object.keys(owners).length") as Int > 1) {
+        //language=undefined
+        console.log("Removing $userId's ownership of $id")
+        //language=JavaScript
+        js("delete owners[userId]")
+        ref.update(FIRESTORE_OWNERS, owners)
+    } else {
+        delete(this)
+    }
+}
