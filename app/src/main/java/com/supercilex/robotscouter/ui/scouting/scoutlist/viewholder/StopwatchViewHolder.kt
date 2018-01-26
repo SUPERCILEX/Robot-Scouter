@@ -38,7 +38,8 @@ import java.util.concurrent.TimeUnit
 
 open class StopwatchViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.Stopwatch, List<Long>, TextView>(itemView), View.OnClickListener {
+) : MetricViewHolderBase<Metric.Stopwatch, List<Long>, TextView>(itemView),
+        View.OnClickListener, View.OnLongClickListener {
     private val toggleStopwatch: Button by bindView(R.id.stopwatch)
     private val cycles: RecyclerView by bindView(R.id.list)
 
@@ -46,6 +47,7 @@ open class StopwatchViewHolder(
 
     init {
         toggleStopwatch.setOnClickListener(this)
+        toggleStopwatch.setOnLongClickListener(this)
 
         cycles.layoutManager = LinearLayoutManager(
                 itemView.context,
@@ -81,31 +83,70 @@ open class StopwatchViewHolder(
     }
 
     override fun onClick(v: View) {
-        if (timer == null) {
-            setText(R.string.metric_stopwatch_stop_title, "0:00")
+        val currentTimer = timer
+        if (currentTimer == null) {
             timer = Timer(this)
         } else {
             metric.value = metric.value.toMutableList().apply {
-                add(timer!!.cancel())
+                add(currentTimer.cancel())
             }
 
-            val adapter = cycles.adapter
             val size = metric.value.size
+            notifyCycleAdded(size)
 
-            // Force RV to request layout when adding first item
-            cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
+            longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, R.string.undo) {
+                val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
+                val newCycles = metric.value.toMutableList().apply {
+                    removeAt(size - 1)
+                }
+                metric.value = newCycles
 
-            if (size == LIST_SIZE_WITH_AVERAGE) {
-                // Add the average card
-                adapter.notifyItemInserted(0)
-                adapter.notifyItemInserted(size)
-            } else {
-                // Account for the average card being there or not. Since we are adding a new lap,
-                // there are only two possible states: 1 item or n + 2 items.
-                adapter.notifyItemInserted(if (size == 1) 0 else size)
-                // Ensure the average card is updated if it's there
-                adapter.notifyItemChanged(0)
+                notifyCycleRemoved(metric.value.size, hadAverage)
+                timer = Timer(this, currentTimer.startTimeMillis)
             }
+        }
+    }
+
+    override fun onLongClick(v: View): Boolean {
+        val currentTimer = timer ?: return false
+
+        currentTimer.cancel()
+        longSnackbar(itemView, R.string.cancelled, R.string.undo) {
+            timer = Timer(this, currentTimer.startTimeMillis)
+        }
+
+        return true
+    }
+
+    private fun notifyCycleAdded(size: Int) {
+        // Force RV to request layout when adding first item
+        cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
+
+        val adapter = cycles.adapter
+        if (size == LIST_SIZE_WITH_AVERAGE) {
+            // Add the average card
+            adapter.notifyItemInserted(0)
+            adapter.notifyItemInserted(size)
+        } else {
+            // Account for the average card being there or not. Since we are adding a new lap,
+            // there are only two possible states: 1 item or n + 2 items.
+            adapter.notifyItemInserted(if (size == 1) 0 else size)
+            // Ensure the average card is updated if it's there
+            adapter.notifyItemChanged(0)
+        }
+    }
+
+    private fun notifyCycleRemoved(size: Int, hadAverage: Boolean) {
+        // Force RV to request layout when removing last item
+        cycles.setHasFixedSize(size > 0)
+
+        val adapter = cycles.adapter
+        adapter.notifyItemRemoved(adapterPosition)
+        if (hadAverage && size == 1) {
+            // Remove the average card
+            adapter.notifyItemRemoved(0)
+        } else if (size >= LIST_SIZE_WITH_AVERAGE) {
+            adapter.notifyItemChanged(0) // Ensure the average card is updated
         }
     }
 
@@ -132,8 +173,10 @@ open class StopwatchViewHolder(
         )
     }
 
-    private class Timer(holder: StopwatchViewHolder) : Runnable {
-        private val startTimeMillis = System.currentTimeMillis()
+    private class Timer(
+            holder: StopwatchViewHolder,
+            val startTimeMillis: Long = System.currentTimeMillis()
+    ) : Runnable {
         private val executor = ScheduledThreadPoolExecutor(1)
 
         /**
@@ -156,6 +199,7 @@ open class StopwatchViewHolder(
         init {
             TIMERS[holder.metric] = this
             updateStyle()
+            updateButtonTime()
             doAsync {
                 executor.scheduleWithFixedDelay(this, 0, 1, TimeUnit.SECONDS).get()
             }.logFailures { it is CancellationException }
@@ -290,37 +334,16 @@ open class StopwatchViewHolder(
             val deletedCycle = newCycles.removeAt(position)
             metric.value = newCycles
 
-            val adapter = holder.cycles.adapter
-            val size = metric.value.size
-
-            // Force RV to request layout when removing last item
-            holder.cycles.setHasFixedSize(size > 0)
-
-            adapter.notifyItemRemoved(adapterPosition)
-            if (hadAverage && size == 1) {
-                // Remove the average card
-                adapter.notifyItemRemoved(0)
-            } else if (size >= LIST_SIZE_WITH_AVERAGE) {
-                adapter.notifyItemChanged(0) // Ensure the average card is updated
-            }
+            holder.notifyCycleRemoved(metric.value.size, hadAverage)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
                 val latestMetric = holder.metric
-                val latestHadAverage = hasAverage
 
                 latestMetric.value = latestMetric.value.toMutableList().apply {
                     add(position, deletedCycle)
                 }
 
-                val latestSize = latestMetric.value.size
-
-                holder.cycles.setHasFixedSize(latestSize > 1)
-                adapter.notifyItemInserted(if (latestHadAverage) position + 1 else position)
-                if (!latestHadAverage && latestSize > 1) {
-                    adapter.notifyItemInserted(0)
-                } else if (latestSize >= LIST_SIZE_WITH_AVERAGE) {
-                    adapter.notifyItemChanged(0)
-                }
+                holder.notifyCycleAdded(latestMetric.value.size)
             }
 
             return true

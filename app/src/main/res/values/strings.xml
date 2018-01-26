@@ -12,6 +12,7 @@
     <string name="open">Open</string>
     <string name="delete">Delete</string>
     <string name="deleted">Deleted</string>
+    <string name="cancelled">Cancelled</string>
     <string name="number_too_big_error">Please enter a number between 0 and 2^63 – 1</string>
 
     <!-- Tutorials -->
@@ -170,6 +171,8 @@
     <string name="scout_delete_message">Scout deleted</string>
     <string name="scout_edit_counter_value_title">Edit value</string>
     <string name="scout_counter_value_title">Value</string>
+
+    <string name="scout_stopwatch_lap_added_message">Added stopwatch lap</string>
 
     <!-- Template editor activity -->
     <string name="template_activity_title">Scout template editor</string>
