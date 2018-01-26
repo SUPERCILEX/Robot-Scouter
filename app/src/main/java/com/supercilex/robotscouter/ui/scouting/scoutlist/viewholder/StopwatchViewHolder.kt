@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
@@ -47,7 +48,7 @@ open class StopwatchViewHolder(
 
     init {
         toggleStopwatch.setOnClickListener(this)
-        toggleStopwatch.setOnLongClickListener(this)
+        toggleStopwatch.setOnLongClickListenerCompat(this)
 
         cycles.layoutManager = LinearLayoutManager(
                 itemView.context,

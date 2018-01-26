@@ -28,7 +28,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val activity = activity!!
-        if (activity.callingActivity != null && isInTabletMode(activity)) {
+        if (activity.callingActivity != null && activity.isInTabletMode()) {
             activity.setResult(Activity.RESULT_OK, Intent().putExtra(SCOUT_ARGS_KEY, bundle))
             activity.finish()
         }

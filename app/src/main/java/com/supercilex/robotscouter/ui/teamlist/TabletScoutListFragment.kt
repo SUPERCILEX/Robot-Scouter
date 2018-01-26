@@ -40,7 +40,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!isInTabletMode(context!!)) {
+        if (!context!!.isInTabletMode()) {
             val listener = context as TeamSelectionListener
             listener.onTeamSelected(bundle, true)
             removeFragment()

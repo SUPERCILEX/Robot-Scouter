@@ -71,7 +71,7 @@ class LinkReceiverActivity : AppCompatActivity() {
             val id = refs.single().id
             val data = getScoutBundle(Team(link.getQueryParameter(id).toLong(), id))
 
-            if (isInTabletMode(this)) {
+            if (isInTabletMode()) {
                 startActivity(intentFor<TeamListActivity>(SCOUT_ARGS_KEY to data)
                                       .addNewDocumentFlags()
                                       .setAction(ACTION_FROM_DEEP_LINK))

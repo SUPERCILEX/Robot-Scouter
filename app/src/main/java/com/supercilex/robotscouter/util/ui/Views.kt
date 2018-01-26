@@ -82,11 +82,17 @@ fun initUi() {
             }))
 }
 
-fun isInTabletMode(context: Context): Boolean {
-    val config: Configuration = context.configuration
-    val size: Int = config.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
-    return size == Configuration.SCREENLAYOUT_SIZE_LARGE && config.landscape
+fun Context.isInTabletMode(): Boolean {
+    val size: Int = configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+    return size == Configuration.SCREENLAYOUT_SIZE_LARGE && configuration.landscape
             || size > Configuration.SCREENLAYOUT_SIZE_LARGE
+}
+
+fun View.setOnLongClickListenerCompat(listener: View.OnLongClickListener) {
+    setOnLongClickListener(listener)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        setOnContextClickListener { listener.onLongClick(this) }
+    }
 }
 
 fun animateColorChange(

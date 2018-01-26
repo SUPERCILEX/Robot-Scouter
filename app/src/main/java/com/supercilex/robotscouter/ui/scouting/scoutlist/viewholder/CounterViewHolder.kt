@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.CounterValueDialog
+import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotterknife.bindView
 
 open class CounterViewHolder(
@@ -31,7 +32,7 @@ open class CounterViewHolder(
     init {
         increment.setOnClickListener(this)
         decrement.setOnClickListener(this)
-        count.setOnLongClickListener(this)
+        count.setOnLongClickListenerCompat(this)
     }
 
     public override fun bind() {

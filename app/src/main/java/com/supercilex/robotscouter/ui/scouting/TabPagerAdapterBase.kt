@@ -22,6 +22,7 @@ import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.ui.MovableFragmentStatePagerAdapter
 import com.supercilex.robotscouter.util.ui.animatePopReveal
+import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotterknife.bindView
 
 abstract class TabPagerAdapterBase(
@@ -128,7 +129,7 @@ abstract class TabPagerAdapterBase(
             tab.text = currentScouts[index].name ?: getPageTitle(index)
 
             val tabView = (tabLayout.getChildAt(0) as LinearLayout).getChildAt(index)
-            tabView.setOnLongClickListener(this@TabPagerAdapterBase)
+            tabView.setOnLongClickListenerCompat(this@TabPagerAdapterBase)
             tabView.id = index
         }
     }

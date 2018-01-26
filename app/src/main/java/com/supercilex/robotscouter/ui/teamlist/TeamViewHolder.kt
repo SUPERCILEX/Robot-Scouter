@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animatePopReveal
+import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
@@ -92,11 +93,11 @@ class TeamViewHolder(
         })
 
         mediaImageView.setOnClickListener(this)
-        mediaImageView.setOnLongClickListener(this)
+        mediaImageView.setOnLongClickListenerCompat(this)
         newScoutButton.setOnClickListener(this)
-        newScoutButton.setOnLongClickListener(this)
+        newScoutButton.setOnLongClickListenerCompat(this)
         itemView.setOnClickListener(this)
-        itemView.setOnLongClickListener(this)
+        itemView.setOnLongClickListenerCompat(this)
     }
 
     fun bind(

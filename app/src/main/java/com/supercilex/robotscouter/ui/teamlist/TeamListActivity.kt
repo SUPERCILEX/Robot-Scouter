@@ -169,7 +169,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
         args.getTeam().logSelect()
 
-        if (isInTabletMode(this)) {
+        if (isInTabletMode()) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.scout_list,
                              TabletScoutListFragment.newInstance(args),

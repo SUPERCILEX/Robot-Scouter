@@ -36,6 +36,7 @@ import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.OnActivityResult
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
+import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.findOptional
@@ -75,7 +76,7 @@ open class AppBarViewHolderBase(
     private lateinit var visitTeamWebsiteItem: MenuItem
 
     init {
-        backdrop.setOnLongClickListener(this)
+        backdrop.setOnLongClickListenerCompat(this)
 
         permissionHandler.onGranted.observe(fragment, Observer { mediaCapture.capture(fragment) })
         listener.observe(fragment, Observer {
@@ -155,7 +156,7 @@ open class AppBarViewHolderBase(
                 fragment.getString(R.string.scout_visit_team_website_title, team.number)
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
         toolbar.post {
-            fragment.findOptional<View>(R.id.action_new_scout)?.setOnLongClickListener(this)
+            fragment.findOptional<View>(R.id.action_new_scout)?.setOnLongClickListenerCompat(this)
         }
 
         onMenuReadyTask.trySetResult(null)
