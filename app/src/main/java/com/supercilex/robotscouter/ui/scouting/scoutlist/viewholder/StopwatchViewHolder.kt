@@ -23,7 +23,7 @@ import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.util.doAsync
-import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.logIgnorableFailures
 import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
@@ -203,7 +203,7 @@ open class StopwatchViewHolder(
             updateButtonTime()
             doAsync {
                 executor.scheduleWithFixedDelay(this, 0, 1, TimeUnit.SECONDS).get()
-            }.logFailures { it is CancellationException }
+            }.logIgnorableFailures<Any?, CancellationException>()
         }
 
         override fun run() {

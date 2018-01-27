@@ -7,6 +7,7 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.second
 import java.io.File
 import java.util.concurrent.Callable
+import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 
 abstract class CachingSharer(private val context: Context) {
@@ -37,7 +38,7 @@ abstract class CachingSharer(private val context: Context) {
             }.also {
                 if (it.isEmpty()) {
                     shareTemplateFile.delete()
-                    return call()
+                    throw CancellationException("Couldn't load template")
                 }
             }
         }

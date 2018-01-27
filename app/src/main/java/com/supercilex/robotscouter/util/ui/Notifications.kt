@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.isSingleton
-import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.logIgnorableFailures
 import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
@@ -129,7 +129,7 @@ class FilteringNotificationManager : Runnable {
                     SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS,
                     TimeUnit.MILLISECONDS
             ).get()
-        }.logFailures { it is CancellationException }
+        }.logIgnorableFailures<Any?, CancellationException>()
     }
 
     fun isStopped(): Boolean = lock.read { isStopped }

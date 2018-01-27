@@ -17,11 +17,13 @@ import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.logIgnorableFailures
 import com.supercilex.robotscouter.util.logShareTemplate
 import com.supercilex.robotscouter.util.templates
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Date
+import java.util.concurrent.CancellationException
 
 class TemplateSharer private constructor(
         private val activity: FragmentActivity
@@ -41,7 +43,7 @@ class TemplateSharer private constructor(
                     it.result.format(activity.getString(R.string.template_share_cta, templateName)))
         }).addOnSuccessListener(activity) {
             activity.startActivityForResult(it, RC_SHARE)
-        }.logFailures().addOnFailureListener(activity) {
+        }.logIgnorableFailures<Intent, CancellationException>().addOnFailureListener(activity) {
             longSnackbar(activity.find(R.id.root), R.string.fui_general_error)
         }
     }

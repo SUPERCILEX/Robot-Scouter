@@ -262,6 +262,8 @@ private fun segment(long: String): List<String> {
 
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
 
+inline fun <T, reified E> Task<T>.logIgnorableFailures() = logFailures { it is E }
+
 fun <T> Task<T>.logFailures(
         ignore: ((Exception) -> Boolean)? = null
 ): Task<T> {

@@ -23,10 +23,12 @@ import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.logIgnorableFailures
 import com.supercilex.robotscouter.util.logShare
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Date
+import java.util.concurrent.CancellationException
 
 class TeamSharer private constructor(
         private val activity: FragmentActivity,
@@ -71,7 +73,7 @@ class TeamSharer private constructor(
             )
         }).addOnSuccessListener(activity) {
             activity.startActivityForResult(it, RC_SHARE)
-        }.logFailures().addOnFailureListener(activity) {
+        }.logIgnorableFailures<Intent, CancellationException>().addOnFailureListener(activity) {
             longSnackbar(activity.find(R.id.root), R.string.fui_general_error)
         }
     }
