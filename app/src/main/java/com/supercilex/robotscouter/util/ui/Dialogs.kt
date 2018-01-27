@@ -48,7 +48,8 @@ abstract class DialogFragmentBase : DialogFragment() {
     }
 }
 
-abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
+abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
+        DialogInterface.OnShowListener {
     override fun onCreateDialog(
             savedInstanceState: Bundle?
     ): Dialog = object : BottomSheetDialog(context!!, R.style.RobotScouter_Tmp_72076683),
@@ -76,10 +77,14 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment() {
             } else {
                 ViewGroup.LayoutParams.MATCH_PARENT
             }, ViewGroup.LayoutParams.MATCH_PARENT)
+
+            this@BottomSheetDialogFragmentBase.onShow(dialog)
         }
     }
 
     open fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) = Unit
+
+    override fun onShow(dialog: DialogInterface) = Unit
 
     override fun onResume() {
         super.onResume()

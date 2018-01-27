@@ -4,9 +4,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
 import android.view.View
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.SeekBar
 import android.widget.TextView
@@ -22,8 +20,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.CrashLogger
-import com.supercilex.robotscouter.util.isInTestMode
-import com.supercilex.robotscouter.util.ui.ManualDismissDialog
+import com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.unsafeLazy
@@ -32,9 +29,10 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.longToast
 
-class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
-        BillingClientStateListener, PurchasesUpdatedListener {
+class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
+        SeekBar.OnSeekBarChangeListener, BillingClientStateListener, PurchasesUpdatedListener {
     private val content: View by bindView(R.id.content)
+    private val donate: View by bindView(R.id.donate)
     private val progress: ContentLoadingProgressBar by bindView(R.id.progress)
     private val amountTextView: TextView by bindView(R.id.amount_textview)
     private val amountSeekBar: SeekBar by bindView(R.id.amount)
@@ -50,16 +48,13 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
         billingClient.startConnection(this)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
-            .setTitle(R.string.donate_title)
-            .setView(View.inflate(context, R.layout.dialog_donate, null))
-            .setPositiveButton(R.string.donate_title, null)
-            .setNegativeButton(android.R.string.cancel, null)
-            .createAndSetup(savedInstanceState)
-
-    override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
-        super.onShow(dialog, savedInstanceState)
+    override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
+        dialog.setContentView(View.inflate(context, R.layout.dialog_donate, null))
+        donate.setOnClickListener(this)
         amountSeekBar.setOnSeekBarChangeListener(this)
+    }
+
+    override fun onShow(dialog: DialogInterface) {
         onProgressChanged(amountSeekBar, 0, false) // Init state
     }
 
@@ -77,15 +72,13 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
         billingClient.endConnection()
     }
 
-    override fun onAttemptDismiss(): Boolean {
+    override fun onClick(v: View) {
         updateProgress(true)
 
         val sku = "${amountSeekBar.progress + 1}${DonateDialog.SKU_BASE}" +
                 if (monthlyCheckBox.isChecked) "monthly" else "single"
         val type = if (monthlyCheckBox.isChecked) BillingClient.SkuType.SUBS else BillingClient.SkuType.INAPP
         purchaseItem(sku, type).addOnFailureListener { showError() }
-
-        return false
     }
 
     private fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
@@ -94,13 +87,14 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
         longToast(R.string.donate_thanks_message)
         dismiss()
     }.addOnFailureListener {
-        it as PurchaseException
-        if (it.errorCode == BillingResponse.USER_CANCELED) {
-            longSnackbar(content, R.string.donate_cancel_message)
-        } else if (it.errorCode != BillingResponse.ITEM_ALREADY_OWNED // User owns subscription
-                && !isInTestMode) {
-            CrashLogger.onFailure(it)
-            showError()
+        when ((it as PurchaseException).errorCode) {
+            BillingResponse.USER_CANCELED -> longSnackbar(content, R.string.donate_cancel_message)
+            BillingResponse.SERVICE_UNAVAILABLE -> longSnackbar(content, R.string.no_connection)
+            BillingResponse.ITEM_ALREADY_OWNED, BillingResponse.ERROR -> Unit
+            else -> {
+                CrashLogger.onFailure(it)
+                showError()
+            }
         }
     }
 
@@ -174,13 +168,7 @@ class DonateDialog : ManualDismissDialog(), SeekBar.OnSeekBarChangeListener,
     private fun updateProgress(isDoingAsyncWork: Boolean) {
         if (isDoingAsyncWork) progress.show(Runnable { content.visibility = View.GONE })
         else progress.hide(true, Runnable { content.visibility = View.VISIBLE })
-
-        val dialog = if (dialog == null) return else dialog as AlertDialog
-        fun setEnabled(button: Button) {
-            button.isEnabled = !isDoingAsyncWork
-        }
-        setEnabled(dialog.getButton(AlertDialog.BUTTON_POSITIVE))
-        setEnabled(dialog.getButton(AlertDialog.BUTTON_NEGATIVE))
+        donate.isEnabled = !isDoingAsyncWork
     }
 
     private fun showError() {
