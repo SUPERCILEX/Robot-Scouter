@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -49,7 +50,7 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        val v = currentFocus
+        val v: View? = currentFocus
         if (ev.action == MotionEvent.ACTION_DOWN && v is EditText) {
             val outRect = Rect()
             v.getGlobalVisibleRect(outRect)
@@ -64,7 +65,7 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
                 }
             }
         } else if (ev.action == MotionEvent.ACTION_MOVE) {
-            v.removeCallbacks(clearFocus)
+            v?.removeCallbacks(clearFocus)
         }
         return super.dispatchTouchEvent(ev)
     }
