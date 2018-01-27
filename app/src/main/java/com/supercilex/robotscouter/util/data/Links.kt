@@ -73,7 +73,7 @@ fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
                                      .setScope(Scope.CROSS_DEVICE))
                 .build()
 
-inline fun updateOwner(
+fun updateOwner(
         refs: Iterable<DocumentReference>,
         token: String,
         prevUid: String?,

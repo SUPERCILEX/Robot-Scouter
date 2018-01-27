@@ -1,14 +1,18 @@
 package com.supercilex.robotscouter.server.functions
 
 import com.supercilex.robotscouter.server.modules
+import com.supercilex.robotscouter.server.utils.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.server.utils.FIRESTORE_CONTENT_ID
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
 import com.supercilex.robotscouter.server.utils.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_OWNERS
+import com.supercilex.robotscouter.server.utils.FIRESTORE_PENDING_APPROVALS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_PHONE_NUMBER
 import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUT_TYPE
-import com.supercilex.robotscouter.server.utils.FIRESTORE_TEAM_ID
+import com.supercilex.robotscouter.server.utils.FIRESTORE_SHARE_TOKEN_TYPE
+import com.supercilex.robotscouter.server.utils.FIRESTORE_SHARE_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TEAM_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TEMPLATE_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TIMESTAMP
@@ -25,6 +29,7 @@ import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.toTemplateString
+import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.userPrefs
@@ -89,7 +94,7 @@ fun emptyTrash(): Promise<*> {
                 FIRESTORE_TEAM_TYPE -> teams.doc(key).get().then {
                     it.deleteIfSingleOwner(userId) { deleteTeam(this) }
                 }
-                FIRESTORE_SCOUT_TYPE -> teams.doc(data[FIRESTORE_TEAM_ID] as String)
+                FIRESTORE_SCOUT_TYPE -> teams.doc(data[FIRESTORE_CONTENT_ID] as String)
                         .collection(FIRESTORE_SCOUTS)
                         .doc(key)
                         .run {
@@ -98,6 +103,22 @@ fun emptyTrash(): Promise<*> {
                         }
                 FIRESTORE_TEMPLATE_TYPE -> templates.doc(key).get().then {
                     it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+                }
+                FIRESTORE_SHARE_TOKEN_TYPE -> {
+                    fun CollectionReference.deleteShareToken(
+                    ) = doc(data[FIRESTORE_CONTENT_ID] as String).run {
+                        Promise.all(arrayOf(
+                                update("$FIRESTORE_ACTIVE_TOKENS.$key", FieldValue.delete()),
+                                update(FIRESTORE_PENDING_APPROVALS, FieldValue.delete())
+                        ))
+                    }.then { Unit }
+
+                    console.log("Deleting share token: $key")
+                    when (data[FIRESTORE_SHARE_TYPE] as Int) {
+                        FIRESTORE_TEAM_TYPE -> teams.deleteShareToken()
+                        FIRESTORE_TEMPLATE_TYPE -> templates.deleteShareToken()
+                        else -> error("Unknown share type: ${data[FIRESTORE_SHARE_TYPE]}")
+                    }
                 }
                 else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
             }.then {

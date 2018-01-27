@@ -69,41 +69,41 @@ fun cancelAllJobs() {
     }
 }
 
-fun parseRawBundle(args: Bundle) = Team(
-        args.getLong(NUMBER),
-        args.getString(ID),
-        args.getBundleAsMap(OWNERS),
-        args.getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
-        args.getBundleAsMap(PENDING_APPROVALS),
-        args.getString(TEMPLATE_ID),
-        args.getString(NAME),
-        args.getString(MEDIA),
-        args.getString(WEBSITE),
-        args.getBoolean(CUSTOM_NAME),
-        args.getBoolean(CUSTOM_MEDIA),
-        args.getBoolean(CUSTOM_WEBSITE),
-        args.getBoolean(SHOULD_UPLOAD_MEDIA),
-        args.getInt(MEDIA_YEAR),
-        Date(args.getLong(TIMESTAMP))
+fun Bundle.parseTeam() = Team(
+        getLong(NUMBER),
+        getString(ID),
+        getBundleAsMap(OWNERS),
+        getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
+        getBundleAsMap(PENDING_APPROVALS),
+        getString(TEMPLATE_ID),
+        getString(NAME),
+        getString(MEDIA),
+        getString(WEBSITE),
+        getBoolean(CUSTOM_NAME),
+        getBoolean(CUSTOM_MEDIA),
+        getBoolean(CUSTOM_WEBSITE),
+        getBoolean(SHOULD_UPLOAD_MEDIA),
+        getInt(MEDIA_YEAR),
+        Date(getLong(TIMESTAMP))
 )
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun parseRawBundle(args: PersistableBundle) = Team(
-        args.getLong(NUMBER),
-        args.getString(ID),
-        args.getBundleAsMap(OWNERS),
-        args.getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
-        args.getBundleAsMap(PENDING_APPROVALS),
-        args.getString(TEMPLATE_ID),
-        args.getString(NAME),
-        args.getString(MEDIA),
-        args.getString(WEBSITE),
-        args.getBooleanCompat(CUSTOM_NAME),
-        args.getBooleanCompat(CUSTOM_MEDIA),
-        args.getBooleanCompat(CUSTOM_WEBSITE),
-        args.getBooleanCompat(SHOULD_UPLOAD_MEDIA),
-        args.getInt(MEDIA_YEAR),
-        Date(args.getLong(TIMESTAMP))
+fun PersistableBundle.parseTeam() = Team(
+        getLong(NUMBER),
+        getString(ID),
+        getBundleAsMap(OWNERS),
+        getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
+        getBundleAsMap(PENDING_APPROVALS),
+        getString(TEMPLATE_ID),
+        getString(NAME),
+        getString(MEDIA),
+        getString(WEBSITE),
+        getBooleanCompat(CUSTOM_NAME),
+        getBooleanCompat(CUSTOM_MEDIA),
+        getBooleanCompat(CUSTOM_WEBSITE),
+        getBooleanCompat(SHOULD_UPLOAD_MEDIA),
+        getInt(MEDIA_YEAR),
+        Date(getLong(TIMESTAMP))
 )
 
 private fun Job.Builder.buildAndSchedule() {

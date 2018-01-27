@@ -63,7 +63,8 @@ const val FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
 const val FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
 const val FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG = "shouldShowRatingDialog"
 
-const val FIRESTORE_TEAM_ID = "teamId"
+const val FIRESTORE_CONTENT_ID = "contentId"
+const val FIRESTORE_SHARE_TYPE = "shareType"
 val deletionQueue = FirebaseFirestore.getInstance().collection("deletion-queue")
 // [END FIREBASE CHILD NAMES]
 

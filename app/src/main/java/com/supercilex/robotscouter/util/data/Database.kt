@@ -31,6 +31,7 @@ import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.FIRESTORE_CONTENT_ID
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -39,14 +40,13 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIA
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
-import com.supercilex.robotscouter.util.FIRESTORE_TEAM_ID
+import com.supercilex.robotscouter.util.FIRESTORE_SHARE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
-import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
@@ -63,7 +63,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
-import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -202,9 +201,20 @@ sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, A
 
     class Team(id: String) : QueuedDeletion(id, 0)
 
-    class Scout(id: String, teamId: String) : QueuedDeletion(id, 1, FIRESTORE_TEAM_ID to teamId)
+    class Scout(id: String, teamId: String) : QueuedDeletion(id, 1, FIRESTORE_CONTENT_ID to teamId)
 
     class Template(id: String) : QueuedDeletion(id, 2)
+
+    abstract class ShareToken(token: String, shareType: Int, contentId: String) : QueuedDeletion(
+            token,
+            3,
+            FIRESTORE_SHARE_TYPE to shareType,
+            FIRESTORE_CONTENT_ID to contentId
+    ) {
+        class Team(token: String, teamId: String) : ShareToken(token, 0, teamId)
+
+        class Template(token: String, templateId: String) : ShareToken(token, 2, templateId)
+    }
 }
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {
@@ -310,33 +320,6 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             }
         }
     }
-    private val tokenSanitizer = object : ChangeEventListenerBase {
-        override fun onChildChanged(
-                type: ChangeEventType,
-                snapshot: DocumentSnapshot,
-                newIndex: Int,
-                oldIndex: Int
-        ) {
-            if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
-
-            val team = value!![newIndex]
-
-            if (team.activeTokens.isEmpty()) return
-
-            launch {
-                val newTeam = team.copy(activeTokens = team.activeTokens.filter {
-                    it.value.after(Calendar.getInstance().apply {
-                        add(Calendar.DAY_OF_MONTH, -TOKEN_EXPIRATION_DAYS)
-                    }.time)
-                })
-
-                if (newTeam != team) {
-                    newTeam.pendingApprovals = emptyMap()
-                    newTeam.forceUpdate()
-                }
-            }
-        }
-    }
     private val merger = object : ChangeEventListenerBase {
         override fun onChildChanged(
                 type: ChangeEventType,
@@ -404,7 +387,6 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         value?.apply {
             if (!isListening(templateIdUpdater)) addChangeEventListener(templateIdUpdater)
             if (!isListening(updater)) addChangeEventListener(updater)
-            if (!isListening(tokenSanitizer)) addChangeEventListener(tokenSanitizer)
             if (!isListening(merger)) addChangeEventListener(merger)
         }
     }
@@ -413,7 +395,6 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         value?.apply {
             removeChangeEventListener(templateIdUpdater)
             removeChangeEventListener(updater)
-            removeChangeEventListener(tokenSanitizer)
             removeChangeEventListener(merger)
         }
     }

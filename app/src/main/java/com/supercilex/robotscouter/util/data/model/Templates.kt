@@ -23,7 +23,6 @@ import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
-import com.supercilex.robotscouter.util.deletionQueue
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
@@ -85,9 +84,7 @@ fun trashTemplate(id: String) {
         val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
         firestoreBatch {
             update(snapshot.reference.log(), "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
-            set(deletionQueue.document(uid!!).log(),
-                QueuedDeletion.Template(id).data,
-                SetOptions.merge())
+            set(userDeletionQueue.log(), QueuedDeletion.Template(id).data, SetOptions.merge())
         }
     }).logFailures()
 }

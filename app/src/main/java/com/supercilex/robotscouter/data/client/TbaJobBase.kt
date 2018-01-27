@@ -4,11 +4,11 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
-import com.supercilex.robotscouter.util.data.parseRawBundle
+import com.supercilex.robotscouter.util.data.parseTeam
 
 abstract class TbaJobBase14 : JobService(), TeamJob {
     override fun onStartJob(params: JobParameters): Boolean {
-        startJob(parseRawBundle(params.extras!!)).addOnCompleteListener {
+        startJob(params.extras!!.parseTeam()).addOnCompleteListener {
             jobFinished(params, !it.isSuccessful)
         }
         return true
@@ -20,7 +20,7 @@ abstract class TbaJobBase14 : JobService(), TeamJob {
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 abstract class TbaJobBase21 : android.app.job.JobService(), TeamJob {
     override fun onStartJob(params: android.app.job.JobParameters): Boolean {
-        startJob(parseRawBundle(params.extras)).addOnCompleteListener {
+        startJob(params.extras.parseTeam()).addOnCompleteListener {
             jobFinished(params, !it.isSuccessful)
         }
         return true

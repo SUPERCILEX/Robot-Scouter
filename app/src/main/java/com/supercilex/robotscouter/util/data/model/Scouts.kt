@@ -27,12 +27,10 @@ import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
-import com.supercilex.robotscouter.util.deletionQueue
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.uid
 import org.jetbrains.anko.longToast
 import java.util.Date
 import kotlin.math.abs
@@ -117,7 +115,7 @@ private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
         val oppositeDate = Date(update(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
         firestoreBatch {
             this.update(snapshot.reference.log(), FIRESTORE_TIMESTAMP, oppositeDate)
-            set(deletionQueue.document(uid!!).log(),
+            set(userDeletionQueue.log(),
                 QueuedDeletion.Scout(id, this@updateScoutDate.id).data,
                 SetOptions.merge())
         }

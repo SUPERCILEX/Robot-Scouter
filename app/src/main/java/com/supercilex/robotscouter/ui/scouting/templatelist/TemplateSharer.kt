@@ -8,12 +8,16 @@ import com.google.android.gms.tasks.Continuation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.data.CachingSharer
+import com.supercilex.robotscouter.util.data.QueuedDeletion
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTemplateLink
+import com.supercilex.robotscouter.util.data.model.userDeletionQueue
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
@@ -33,9 +37,14 @@ class TemplateSharer private constructor(
             it.result // Skip token generation if task failed
 
             val token = generateToken
-            templates.document(templateId).log()
-                    .update(FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
-                    .logFailures()
+            firestoreBatch {
+                update(templates.document(templateId).log(),
+                       FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token),
+                       Date())
+                set(userDeletionQueue.log(),
+                    QueuedDeletion.ShareToken.Template(token, templateId).data,
+                    SetOptions.merge())
+            }.logFailures()
 
             getInvitationIntent(
                     getTemplateLink(templateId, token),

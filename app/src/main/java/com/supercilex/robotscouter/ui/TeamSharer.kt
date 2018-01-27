@@ -9,16 +9,20 @@ import com.google.android.gms.tasks.Continuation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.data.CachingSharer
+import com.supercilex.robotscouter.util.data.QueuedDeletion
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTeamsLink
 import com.supercilex.robotscouter.util.data.model.TeamCache
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.ref
+import com.supercilex.robotscouter.util.data.model.userDeletionQueue
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.log
@@ -65,7 +69,14 @@ class TeamSharer private constructor(
 
             val token = generateToken
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-            for (team in cache.teams) team.ref.log().update(tokenPath, Date()).logFailures()
+            for (team in cache.teams) {
+                firestoreBatch {
+                    update(team.ref.log(), tokenPath, Date())
+                    set(userDeletionQueue.log(),
+                        QueuedDeletion.ShareToken.Team(token, team.id).data,
+                        SetOptions.merge())
+                }.logFailures()
+            }
 
             getInvitationIntent(
                     cache.teams.getTeamsLink(token),

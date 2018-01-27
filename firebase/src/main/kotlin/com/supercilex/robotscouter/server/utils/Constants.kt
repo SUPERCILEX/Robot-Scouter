@@ -22,11 +22,15 @@ const val FIRESTORE_SCOUTS = "scouts"
 const val FIRESTORE_METRICS = "metrics"
 const val FIRESTORE_LAST_LOGIN = "lastLogin"
 const val FIRESTORE_TIMESTAMP = "timestamp"
-const val FIRESTORE_TEAM_ID = "teamId"
+const val FIRESTORE_ACTIVE_TOKENS = "activeTokens"
+const val FIRESTORE_PENDING_APPROVALS = "pendingApprovals"
+const val FIRESTORE_CONTENT_ID = "contentId"
+const val FIRESTORE_SHARE_TYPE = "shareType"
 
 const val FIRESTORE_TEAM_TYPE = 0
 const val FIRESTORE_SCOUT_TYPE = 1
 const val FIRESTORE_TEMPLATE_TYPE = 2
+const val FIRESTORE_SHARE_TOKEN_TYPE = 3
 
 val defaultTemplates: CollectionReference
     get() = modules.firestore.collection("default-templates")
