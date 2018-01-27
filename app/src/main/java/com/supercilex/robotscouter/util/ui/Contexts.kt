@@ -56,15 +56,18 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
             v.getGlobalVisibleRect(outRect)
             if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                 clearFocus = Runnable {
-                    v.clearFocus()
-                    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                            .hideSoftInputFromWindow(v.windowToken, 0)
+                    if (currentFocus === v || currentFocus !is EditText) {
+                        v.clearFocus()
+                        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                                .hideSoftInputFromWindow(v.windowToken, 0)
+                    }
                     clearFocus = null
                 }.also {
                     v.postDelayed(it, shortAnimationDuration)
                 }
             }
-        } else if (ev.action == MotionEvent.ACTION_MOVE) {
+        } else if (ev.action == MotionEvent.ACTION_MOVE && clearFocus != null
+                && ev.eventTime - ev.downTime > shortAnimationDuration / 2) {
             v?.removeCallbacks(clearFocus)
         }
         return super.dispatchTouchEvent(ev)

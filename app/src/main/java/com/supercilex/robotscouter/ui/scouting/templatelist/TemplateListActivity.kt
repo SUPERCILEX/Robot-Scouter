@@ -2,17 +2,17 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
+import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
 import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.intentFor
 
-class TemplateListActivity : AppCompatActivity() {
+class TemplateListActivity : ActivityBase() {
     private val templateListFragment: TemplateListFragment by unsafeLazy {
         supportFragmentManager.findFragmentByTag(TemplateListFragment.TAG) as TemplateListFragment
     }

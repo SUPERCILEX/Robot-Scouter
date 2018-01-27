@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.data.client
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.supercilex.robotscouter.R
@@ -24,6 +23,7 @@ import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.onSignedIn
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
+import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
@@ -35,7 +35,7 @@ import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-class LinkReceiverActivity : AppCompatActivity() {
+class LinkReceiverActivity : ActivityBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_receiver)
