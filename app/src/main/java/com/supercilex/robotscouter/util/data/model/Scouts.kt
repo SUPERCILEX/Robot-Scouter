@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -115,9 +116,13 @@ private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
         val oppositeDate = Date(update(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
         firestoreBatch {
             this.update(snapshot.reference.log(), FIRESTORE_TIMESTAMP, oppositeDate)
-            set(userDeletionQueue.log(),
-                QueuedDeletion.Scout(id, this@updateScoutDate.id).data,
-                SetOptions.merge())
+            if (oppositeDate.time > 0) {
+                this.update(userDeletionQueue.log(), id, FieldValue.delete())
+            } else {
+                set(userDeletionQueue.log(),
+                    QueuedDeletion.Scout(id, this@updateScoutDate.id).data,
+                    SetOptions.merge())
+            }
         }
     }).logFailures()
 }
