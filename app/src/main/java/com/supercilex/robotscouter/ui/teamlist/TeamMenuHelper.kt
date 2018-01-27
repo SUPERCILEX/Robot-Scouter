@@ -176,10 +176,10 @@ class TeamMenuHelper(
     fun onTeamContextMenuRequested(team: Team) {
         val hadNormalMenu = selectedTeams.isEmpty()
 
-        if (selectedTeams.contains(team)) { // Team already selected
-            _selectedTeams.remove(team)
-        } else {
+        if (selectedTeams.find { it.id == team.id } == null) {
             _selectedTeams.add(team)
+        } else {
+            _selectedTeams.removeAll { it.id == team.id }
         }
 
         updateToolbarTitle()
