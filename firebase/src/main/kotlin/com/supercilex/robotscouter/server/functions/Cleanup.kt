@@ -7,22 +7,35 @@ import com.supercilex.robotscouter.server.utils.FIRESTORE_METRICS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_PHONE_NUMBER
 import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUTS
+import com.supercilex.robotscouter.server.utils.FIRESTORE_SCOUT_TYPE
+import com.supercilex.robotscouter.server.utils.FIRESTORE_TEAM_ID
+import com.supercilex.robotscouter.server.utils.FIRESTORE_TEAM_TYPE
+import com.supercilex.robotscouter.server.utils.FIRESTORE_TEMPLATE_TYPE
+import com.supercilex.robotscouter.server.utils.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.server.utils.FIRESTORE_TYPE
+import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.delete
+import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTemplatesQuery
+import com.supercilex.robotscouter.server.utils.teams
+import com.supercilex.robotscouter.server.utils.templates
+import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.toTemplateString
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
+import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
 
 private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
+private const val TRASH_TIMEOUT_DAYS = 30
 
 fun deleteUnusedData(): Promise<*> {
     console.log("Looking for users that haven't opened Robot Scouter for over a year" +
@@ -51,10 +64,10 @@ private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.proces
     val userId = id
     Promise.all(arrayOf(
             getTeamsQuery(userId).process {
-                deleteIfSingleOwner(userId) { deleteTeam(it) }
+                deleteIfSingleOwner(userId) { deleteTeam(this) }
             },
             getTemplatesQuery(userId).process {
-                deleteIfSingleOwner(userId) { deleteTemplate(it) }
+                deleteIfSingleOwner(userId) { deleteTemplate(this) }
             }
     )).then {
         deleteUser(this)
@@ -63,7 +76,39 @@ private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.proces
 
 fun emptyTrash(): Promise<*> {
     console.log("Emptying trash for all users.")
-    return users.process {
+
+    val new = deletionQueue.process {
+        val userId = id
+        Promise.all(data().toMap<Json>().map { (key, data) ->
+            val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
+            if ((modules.moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
+                return@map Promise.resolve<Unit?>(null)
+            }
+
+            when (data[FIRESTORE_TYPE]) {
+                FIRESTORE_TEAM_TYPE -> teams.doc(key).get().then {
+                    it.deleteIfSingleOwner(userId) { deleteTeam(this) }
+                }
+                FIRESTORE_SCOUT_TYPE -> teams.doc(data[FIRESTORE_TEAM_ID] as String)
+                        .collection(FIRESTORE_SCOUTS)
+                        .doc(key)
+                        .run {
+                            console.log("Deleting scout: $id")
+                            Promise.all(arrayOf(delete(), collection(FIRESTORE_METRICS).delete()))
+                        }
+                FIRESTORE_TEMPLATE_TYPE -> templates.doc(key).get().then {
+                    it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+                }
+                else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
+            }.then {
+                ref.update(key, FieldValue.delete())
+            }.then { Unit }
+        }.toTypedArray()).then {
+            if (it.none { it == null }) ref.delete()
+        }
+    }
+    // TODO remove at some point
+    val deprecated = users.process {
         val userId = id
         Promise.all(arrayOf(
                 getTrashedTeamsQuery(userId).process {
@@ -74,6 +119,8 @@ fun emptyTrash(): Promise<*> {
                 }
         ))
     }
+
+    return Promise.all(arrayOf(new, deprecated))
 }
 
 private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
@@ -105,9 +152,9 @@ private fun Query.process(block: DocumentSnapshot.() -> Promise<*>): Promise<Uni
 
 fun DocumentSnapshot.deleteIfSingleOwner(
         userId: String,
-        delete: (DocumentSnapshot) -> Promise<*>
+        delete: DocumentSnapshot.() -> Promise<*>
 ): Promise<*> {
-    @Suppress("UNCHECKED_CAST_TO_NATIVE_INTERFACE") // We know its type
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // We know its type
     val owners = get(FIRESTORE_OWNERS) as Json
     //language=JavaScript
     return if (js("Object.keys(owners).length") as Int > 1) {

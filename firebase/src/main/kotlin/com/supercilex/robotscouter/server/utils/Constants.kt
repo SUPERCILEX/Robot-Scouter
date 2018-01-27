@@ -22,23 +22,24 @@ const val FIRESTORE_SCOUTS = "scouts"
 const val FIRESTORE_METRICS = "metrics"
 const val FIRESTORE_LAST_LOGIN = "lastLogin"
 const val FIRESTORE_TIMESTAMP = "timestamp"
+const val FIRESTORE_TEAM_ID = "teamId"
 
-private const val FIRESTORE_DEFAULT_TEMPLATES = "default-templates"
-private const val FIRESTORE_USERS = "users"
-private const val FIRESTORE_PREFS = "prefs"
-private const val FIRESTORE_TEAMS = "teams"
-private const val FIRESTORE_TEMPLATES = "templates"
+const val FIRESTORE_TEAM_TYPE = 0
+const val FIRESTORE_SCOUT_TYPE = 1
+const val FIRESTORE_TEMPLATE_TYPE = 2
 
 val defaultTemplates: CollectionReference
-    get() = modules.firestore.collection(FIRESTORE_DEFAULT_TEMPLATES)
+    get() = modules.firestore.collection("default-templates")
 val users: CollectionReference
-    get() = modules.firestore.collection(FIRESTORE_USERS)
+    get() = modules.firestore.collection("users")
 val DocumentSnapshot.userPrefs: CollectionReference
-    get() = ref.collection(FIRESTORE_PREFS)
+    get() = ref.collection("prefs")
 val teams: CollectionReference
-    get() = modules.firestore.collection(FIRESTORE_TEAMS)
+    get() = modules.firestore.collection("teams")
 val templates: CollectionReference
-    get() = modules.firestore.collection(FIRESTORE_TEMPLATES)
+    get() = modules.firestore.collection("templates")
+val deletionQueue: CollectionReference
+    get() = modules.firestore.collection("deletion-queue")
 
 private val epoch: Date by lazy { modules.moment(0).toDate() }
 

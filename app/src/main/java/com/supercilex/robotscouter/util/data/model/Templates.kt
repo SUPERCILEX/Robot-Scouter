@@ -7,6 +7,7 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
@@ -15,12 +16,14 @@ import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
+import com.supercilex.robotscouter.util.deletionQueue
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
@@ -80,6 +83,11 @@ fun trashTemplate(id: String) {
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         val snapshot = it.result
         val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
-        snapshot.reference.log().update("$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
+        firestoreBatch {
+            update(snapshot.reference.log(), "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
+            set(deletionQueue.document(uid!!).log(),
+                QueuedDeletion.Template(id).data,
+                SetOptions.merge())
+        }
     }).logFailures()
 }

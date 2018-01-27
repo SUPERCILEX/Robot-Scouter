@@ -10,6 +10,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
@@ -20,15 +21,18 @@ import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
+import com.supercilex.robotscouter.util.deletionQueue
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.uid
 import org.jetbrains.anko.longToast
 import java.util.Date
 import kotlin.math.abs
@@ -106,11 +110,16 @@ fun Team.trashScout(id: String) = updateScoutDate(id) { -abs(it) }
 
 fun Team.untrashScout(id: String) = updateScoutDate(id) { abs(it) }
 
-private inline fun Team.updateScoutDate(id: String, crossinline update: (Long) -> Long) {
+private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
     getScoutsRef().document(id).log().get().continueWithTask(
             AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
         val snapshot = it.result
         val oppositeDate = Date(update(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
-        snapshot.reference.log().update(FIRESTORE_TIMESTAMP, oppositeDate)
+        firestoreBatch {
+            this.update(snapshot.reference.log(), FIRESTORE_TIMESTAMP, oppositeDate)
+            set(deletionQueue.document(uid!!).log(),
+                QueuedDeletion.Scout(id, this@updateScoutDate.id).data,
+                SetOptions.merge())
+        }
     }).logFailures()
 }

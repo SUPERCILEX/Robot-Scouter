@@ -62,6 +62,9 @@ const val FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"
 const val FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL = "hasShownAddTeamTutorial"
 const val FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL = "hasShownSignInTutorial"
 const val FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG = "shouldShowRatingDialog"
+
+const val FIRESTORE_TEAM_ID = "teamId"
+val deletionQueue = FirebaseFirestore.getInstance().collection("deletion-queue")
 // [END FIREBASE CHILD NAMES]
 
 val fullVersionName: String by lazy {

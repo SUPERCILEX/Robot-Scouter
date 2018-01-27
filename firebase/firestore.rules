@@ -106,6 +106,10 @@ service cloud.firestore {
         }
       }
     }
+
+    match /deletion-queue/{uid} {
+      allow write: if uid == request.auth.uid;
+    }
   }
 }
 

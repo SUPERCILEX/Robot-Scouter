@@ -39,8 +39,10 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIA
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
+import com.supercilex.robotscouter.util.FIRESTORE_TEAM_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
@@ -189,6 +191,20 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
             }
         }
     }
+}
+
+sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, Any>) {
+    val data = mapOf(id to mapOf(
+            FIRESTORE_TYPE to type,
+            FIRESTORE_TIMESTAMP to Date(),
+            *extras
+    ))
+
+    class Team(id: String) : QueuedDeletion(id, 0)
+
+    class Scout(id: String, teamId: String) : QueuedDeletion(id, 1, FIRESTORE_TEAM_ID to teamId)
+
+    class Template(id: String) : QueuedDeletion(id, 2)
 }
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {

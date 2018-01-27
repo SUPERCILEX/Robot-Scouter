@@ -10,6 +10,7 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
@@ -17,10 +18,13 @@ import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.deepLink
+import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getInBatches
 import com.supercilex.robotscouter.util.data.metricParser
 import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.deletionQueue
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
@@ -141,11 +145,16 @@ fun Team.copyMediaInfo(newTeam: Team) {
 }
 
 fun Team.trash() {
-    ref.log().update("$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
-        -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
-    } else {
-        -abs(number)
-    }).logFailures()
+    firestoreBatch {
+        update(ref.log(), "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
+            -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
+        } else {
+            -abs(number)
+        })
+        set(deletionQueue.document(uid!!).log(),
+            QueuedDeletion.Team(ref.id).data,
+            SetOptions.merge())
+    }.logFailures()
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
 }
 
