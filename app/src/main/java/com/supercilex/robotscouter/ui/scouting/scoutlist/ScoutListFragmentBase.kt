@@ -107,7 +107,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     ): View = View.inflate(context, R.layout.fragment_scout_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (savedInstanceState == null && isOffline()) {
+        if (savedInstanceState == null && isOffline) {
             longSnackbar(view, R.string.scout_offline_rationale)
         }
     }

@@ -327,7 +327,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 newIndex: Int,
                 oldIndex: Int
         ) {
-            if (isOffline() || !(type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED)) {
+            if (isOffline || !(type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED)) {
                 return
             }
 

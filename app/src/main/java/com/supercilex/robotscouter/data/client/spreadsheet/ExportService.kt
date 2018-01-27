@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
 import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.isOnline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logExport
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
@@ -46,7 +47,7 @@ class ExportService : IntentService(TAG) {
     override fun onHandleIntent(intent: Intent) {
         val notificationManager = ExportNotificationManager(this)
 
-        if (isOffline()) showToast(getString(R.string.export_offline_rationale))
+        if (isOffline) showToast(getString(R.string.export_offline_rationale))
 
         val teams: List<Team> = intent.getTeamListExtra().toMutableList().apply { sort() }
         val chunks = teams.chunked(SYNCHRONOUS_QUERY_CHUNK)
@@ -165,7 +166,7 @@ class ExportService : IntentService(TAG) {
                     context.intentFor<ExportService>().putExtra(teams)
             )
 
-            if (teams.size >= MIN_TEAMS_TO_RATE) {
+            if (teams.size >= MIN_TEAMS_TO_RATE && isOnline) {
                 val f = fragment.asReference()
                 launch(UI) {
                     async { fetchAndActivate() }.await()

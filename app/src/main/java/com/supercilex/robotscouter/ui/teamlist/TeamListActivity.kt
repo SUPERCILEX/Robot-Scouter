@@ -24,7 +24,7 @@ import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.fullVersionCode
-import com.supercilex.robotscouter.util.isOffline
+import com.supercilex.robotscouter.util.isOnline
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logSelect
@@ -109,7 +109,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
         val ref = asReference()
         launch(UI) {
             async { fetchAndActivate() }.await()
-            if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && !isOffline()) {
+            if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
                 UpdateDialog.show(ref().supportFragmentManager)
             }
         }

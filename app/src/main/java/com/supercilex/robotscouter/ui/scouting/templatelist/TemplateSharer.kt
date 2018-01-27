@@ -78,7 +78,7 @@ class TemplateSharer private constructor(
                 templateId: String,
                 templateName: String
         ): Boolean {
-            if (isOffline()) {
+            if (isOffline) {
                 longSnackbar(activity.find(R.id.root), R.string.no_connection)
                 return false
             }

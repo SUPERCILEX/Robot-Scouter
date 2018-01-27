@@ -124,7 +124,7 @@ class TeamSharer private constructor(
          * @return true if a share intent was launched, false otherwise
          */
         fun shareTeams(activity: FragmentActivity, @Size(min = 1) teams: List<Team>): Boolean {
-            if (isOffline()) {
+            if (isOffline) {
                 longSnackbar(activity.find(R.id.root), R.string.no_connection)
                 return false
             }
