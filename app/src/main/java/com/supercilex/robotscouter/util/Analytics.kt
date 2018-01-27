@@ -302,6 +302,12 @@ fun CollectionReference.log(): CollectionReference {
     return this
 }
 
+fun logCrashLog(message: String) {
+    Crashlytics.log(message)
+    FirebaseCrash.log(message)
+    if (BuildConfig.DEBUG) Log.d("CrashLogs", message)
+}
+
 private fun logDbUse(path: String) {
     val trace = Thread.currentThread().stackTrace.filter {
         it.className.contains("supercilex")
@@ -309,12 +315,6 @@ private fun logDbUse(path: String) {
         it.subList(2, it.size)
     }
     logCrashLog("Used reference '$path' at $trace")
-}
-
-private fun logCrashLog(message: String) {
-    Crashlytics.log(message)
-    FirebaseCrash.log(message)
-    if (BuildConfig.DEBUG) Log.d("CrashLogs", message)
 }
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {
