@@ -1,9 +1,14 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.util.refWatcher
 
@@ -16,6 +21,7 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
             object : KeyboardShortcutHandler() {
                 override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) = Unit
             }
+    private var clearFocus: Runnable? = null
 
     override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent): Boolean {
         keyboardShortcutHandler.onKeyMultiple(keyCode, count, event)
@@ -40,6 +46,27 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
     @Suppress("RedundantOverride") // Needed to relax visibility
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val v = currentFocus
+        if (ev.action == MotionEvent.ACTION_DOWN && v is EditText) {
+            val outRect = Rect()
+            v.getGlobalVisibleRect(outRect)
+            if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                clearFocus = Runnable {
+                    v.clearFocus()
+                    (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                            .hideSoftInputFromWindow(v.windowToken, 0)
+                    clearFocus = null
+                }.also {
+                    v.postDelayed(it, shortAnimationDuration)
+                }
+            }
+        } else if (ev.action == MotionEvent.ACTION_MOVE) {
+            v.removeCallbacks(clearFocus)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }
 
