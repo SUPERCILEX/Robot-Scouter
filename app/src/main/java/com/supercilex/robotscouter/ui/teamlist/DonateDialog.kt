@@ -50,6 +50,7 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
         dialog.setContentView(View.inflate(context, R.layout.dialog_donate, null))
+        content // Force initialization
         donate.setOnClickListener(this)
         amountSeekBar.setOnSeekBarChangeListener(this)
     }
