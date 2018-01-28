@@ -1,13 +1,7 @@
 # Keeps line numbers and file name obfuscation
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
-
-# Kotlin
--dontwarn kotlin.**
--dontwarn com.supercilex.robotscouter.util.data.TeamsLiveData$merger$1$mergeTeams$2$1$1
-
-# In-app billing
--keep class com.android.vending.billing.**
+-keepnames public class * extends com.supercilex.robotscouter.util.ui.FragmentBase
 
 # Retrofit
 -dontnote retrofit2.Platform
@@ -18,6 +12,7 @@
 # Other
 -dontnote com.google.**
 -dontnote com.facebook.**
+-dontnote com.twitter.**
 
 # Remove logging
 -assumenosideeffects class android.util.Log {
