@@ -328,10 +328,11 @@ object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandl
 
     override fun invoke(cause: Throwable?) {
         cause ?: return
-        FirebaseCrash.report(cause)
-        Crashlytics.logException(cause)
         if (BuildConfig.DEBUG || isInTestMode) {
             error("An unknown error occurred", cause)
+        } else {
+            FirebaseCrash.report(cause)
+            Crashlytics.logException(cause)
         }
     }
 }
