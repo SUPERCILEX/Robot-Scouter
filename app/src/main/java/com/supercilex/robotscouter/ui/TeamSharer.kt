@@ -69,14 +69,12 @@ class TeamSharer private constructor(
 
             val token = generateToken
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-            for (team in cache.teams) {
-                firestoreBatch {
-                    update(team.ref.log(), tokenPath, Date())
-                    set(userDeletionQueue.log(),
-                        QueuedDeletion.ShareToken.Team(token, team.id).data,
-                        SetOptions.merge())
-                }.logFailures()
-            }
+            firestoreBatch {
+                for (team in cache.teams) update(team.ref.log(), tokenPath, Date())
+                set(userDeletionQueue.log(),
+                    QueuedDeletion.ShareToken.Team(token, cache.teams.map { it.id }).data,
+                    SetOptions.merge())
+            }.logFailures()
 
             getInvitationIntent(
                     cache.teams.getTeamsLink(token),

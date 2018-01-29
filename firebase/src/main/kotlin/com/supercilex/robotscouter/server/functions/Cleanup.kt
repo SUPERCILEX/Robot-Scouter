@@ -106,12 +106,14 @@ fun emptyTrash(): Promise<*> {
                 }
                 FIRESTORE_SHARE_TOKEN_TYPE -> {
                     fun CollectionReference.deleteShareToken(
-                    ) = doc(data[FIRESTORE_CONTENT_ID] as String).run {
-                        Promise.all(arrayOf(
-                                update("$FIRESTORE_ACTIVE_TOKENS.$key", FieldValue.delete()),
-                                update(FIRESTORE_PENDING_APPROVALS, FieldValue.delete())
-                        ))
-                    }.then { Unit }
+                    ) = Promise.all((data[FIRESTORE_CONTENT_ID] as Array<String>).map {
+                        doc(it).run {
+                            Promise.all(arrayOf(
+                                    update("$FIRESTORE_ACTIVE_TOKENS.$key", FieldValue.delete()),
+                                    update(FIRESTORE_PENDING_APPROVALS, FieldValue.delete())
+                            ))
+                        }
+                    }.toTypedArray()).then { Unit }
 
                     console.log("Deleting share token: $key")
                     when (data[FIRESTORE_SHARE_TYPE] as Int) {

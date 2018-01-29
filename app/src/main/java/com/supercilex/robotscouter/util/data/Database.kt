@@ -205,15 +205,19 @@ sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, A
 
     class Template(id: String) : QueuedDeletion(id, 2)
 
-    abstract class ShareToken(token: String, shareType: Int, contentId: String) : QueuedDeletion(
+    abstract class ShareToken(
+            token: String,
+            shareType: Int,
+            contentIds: List<String>
+    ) : QueuedDeletion(
             token,
             3,
             FIRESTORE_SHARE_TYPE to shareType,
-            FIRESTORE_CONTENT_ID to contentId
+            FIRESTORE_CONTENT_ID to contentIds
     ) {
-        class Team(token: String, teamId: String) : ShareToken(token, 0, teamId)
+        class Team(token: String, teamIds: List<String>) : ShareToken(token, 0, teamIds)
 
-        class Template(token: String, templateId: String) : ShareToken(token, 2, templateId)
+        class Template(token: String, templateId: String) : ShareToken(token, 2, listOf(templateId))
     }
 }
 
