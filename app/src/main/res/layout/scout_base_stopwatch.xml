@@ -12,12 +12,12 @@
         android:background="@drawable/button_outline_colored"
         android:drawablePadding="@dimen/spacing_mini"
         android:stateListAnimator="@null"
-        android:textColor="@android:color/white"
+        android:textColor="@color/activatable_button_text"
         app:layout_constraintStart_toEndOf="@id/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:drawableStartCompat="@drawable/ic_timer_white_24dp"
+        app:drawableStartCompat="@drawable/ic_stopwatch_24dp"
         tools:ignore="UnusedAttribute"
         tools:text="Start (0:00)" />
 

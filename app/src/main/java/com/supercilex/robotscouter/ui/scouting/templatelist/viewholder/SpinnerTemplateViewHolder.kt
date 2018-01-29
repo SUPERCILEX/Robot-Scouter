@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.util.ui.getDrawableCompat
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.ui.showKeyboard
 import com.supercilex.robotscouter.util.ui.swap
@@ -111,6 +112,7 @@ class SpinnerTemplateViewHolder(
             init()
             default.setOnClickListener(this)
             delete.setOnClickListener(this)
+            default.setImageDrawable(itemView.context.getDrawableCompat(R.drawable.ic_default_24dp))
         }
 
         fun bind(parent: SpinnerTemplateViewHolder, item: Metric.List.Item, isDefault: Boolean) {
@@ -119,11 +121,7 @@ class SpinnerTemplateViewHolder(
             this.isDefault = isDefault
 
             nameEditor.setText(item.name)
-            default.setImageResource(if (isDefault) {
-                R.drawable.ic_star_accent_24dp
-            } else {
-                R.drawable.ic_star_outline_accent_24dp
-            })
+            default.isActivated = isDefault
         }
 
         override fun onClick(v: View) {

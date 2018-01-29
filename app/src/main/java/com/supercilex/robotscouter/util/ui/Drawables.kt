@@ -1,0 +1,75 @@
+package com.supercilex.robotscouter.util.ui
+
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.StateListDrawable
+import android.support.annotation.DrawableRes
+import android.support.v4.widget.TextViewCompat
+import android.support.v7.content.res.AppCompatResources
+import android.util.AttributeSet
+import android.widget.TextView
+import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.LateinitVal
+import org.xmlpull.v1.XmlPullParser
+
+private const val SELECTOR_ATTR_NAME = "selector"
+private const val ITEM_ATTR_NAME = "item"
+private const val STATE_ATTR_NAME = "state"
+private const val DRAWABLE_ATTR_NAME = "drawable"
+
+fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
+    if (attrs == null) return
+
+    val attributeArray =
+            context.obtainStyledAttributes(attrs, R.styleable.SupportVectorDrawablesTextView)
+
+    val compute: Int.() -> Drawable? = {
+        if (this == -1) null else context.getDrawableCompat(this)
+    }
+    val drawableStart = attributeArray.getResourceId(
+            R.styleable.SupportVectorDrawablesTextView_drawableStartCompat, -1).compute()
+    val drawableEnd = attributeArray.getResourceId(
+            R.styleable.SupportVectorDrawablesTextView_drawableEndCompat, -1).compute()
+    val drawableBottom = attributeArray.getResourceId(
+            R.styleable.SupportVectorDrawablesTextView_drawableBottomCompat, -1).compute()
+    val drawableTop = attributeArray.getResourceId(
+            R.styleable.SupportVectorDrawablesTextView_drawableTopCompat, -1).compute()
+
+    TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            this, drawableStart, drawableTop, drawableEnd, drawableBottom)
+
+    attributeArray.recycle()
+}
+
+fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
+    val parser = resources.getXml(resId)
+    var type = parser.next()
+    while (type != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+        type = parser.next()
+    }
+
+    if (type != XmlPullParser.START_TAG || parser.name != SELECTOR_ATTR_NAME) {
+        return AppCompatResources.getDrawable(this, resId)
+    }
+
+    val states = StateListDrawable()
+
+    type = parser.next()
+    while (type != XmlPullParser.END_DOCUMENT) {
+        if (type == XmlPullParser.START_TAG && parser.name == ITEM_ATTR_NAME) {
+            var stateType = 0
+            var drawableId: Int by LateinitVal()
+            for (i in 0 until parser.attributeCount) {
+                if (parser.getAttributeName(i).startsWith(STATE_ATTR_NAME)) {
+                    stateType = parser.getAttributeNameResource(i)
+                } else if (parser.getAttributeName(i) == DRAWABLE_ATTR_NAME) {
+                    drawableId = parser.getAttributeResourceValue(i, -1)
+                }
+            }
+            states.addState(intArrayOf(stateType), AppCompatResources.getDrawable(this, drawableId))
+        }
+        type = parser.next()
+    }
+
+    return states
+}

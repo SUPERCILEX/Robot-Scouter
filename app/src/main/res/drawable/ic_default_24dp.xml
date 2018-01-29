@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <item
+        android:drawable="@drawable/ic_star_accent_24dp"
+        android:state_activated="true" />
+
+    <item>
+        <aapt:attr name="android:drawable">
+            <vector
+                android:width="24dp"
+                android:height="24dp"
+                android:viewportHeight="24.0"
+                android:viewportWidth="24.0">
+
+                <path
+                    android:pathData="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-0.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                    android:strokeColor="@color/colorAccent"
+                    android:strokeWidth="1" />
+
+            </vector>
+        </aapt:attr>
+    </item>
+
+</selector>

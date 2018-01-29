@@ -1,12 +1,10 @@
 package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
-import android.graphics.Color
 import android.os.Build
 import android.support.annotation.StringRes
 import android.support.transition.AutoTransition
 import android.support.transition.TransitionManager
 import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ContextMenu
@@ -159,19 +157,9 @@ open class StopwatchViewHolder(
         // There's a bug pre-L where changing the view state doesn't update the vector drawable.
         // Because of that, calling View#setActivated(isRunning) doesn't update the background
         // color and we end up with unreadable text.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return
-
-        val stopwatch = toggleStopwatch
-        stopwatch.setTextColor(if (isRunning) {
-            ContextCompat.getColor(stopwatch.context, R.color.colorAccent)
-        } else {
-            Color.WHITE
-        })
-        stopwatch.isActivated = isRunning
-        stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                if (isRunning) R.drawable.ic_timer_off_accent_24dp else R.drawable.ic_timer_white_24dp,
-                0, 0, 0
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toggleStopwatch.isActivated = isRunning
+        }
     }
 
     private class Timer(
@@ -188,7 +176,7 @@ open class StopwatchViewHolder(
 
         private var _holder: WeakReference<StopwatchViewHolder> = WeakReference(holder)
         var holder: StopwatchViewHolder?
-            get() = _holder.get()?.takeIf { it.metric == metric }
+            get() = _holder.get()?.takeIf { it.metric.ref == metric.ref }
             set(holder) {
                 _holder = WeakReference<StopwatchViewHolder>(holder)
             }

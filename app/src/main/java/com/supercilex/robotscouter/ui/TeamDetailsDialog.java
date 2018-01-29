@@ -45,7 +45,7 @@ import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar;
 import java.io.File;
 
 import static com.supercilex.robotscouter.util.AnalyticsKt.logEditDetails;
-import static com.supercilex.robotscouter.util.ui.ViewsKt.animateCircularReveal;
+import static com.supercilex.robotscouter.util.ui.AnimationsKt.animateCircularReveal;
 
 public class TeamDetailsDialog extends KeyboardDialogBase
         implements View.OnClickListener, View.OnFocusChangeListener, CaptureTeamMediaListener {
