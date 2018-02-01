@@ -9,7 +9,6 @@ import android.support.annotation.PluralsRes
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
-import android.text.TextUtils
 import com.google.firebase.firestore.FirebaseFirestore
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -262,7 +261,7 @@ class SpreadsheetExporter(
                     valueCell.setCellValue(numberMetric.value.toDouble())
 
                     val unit = numberMetric.unit
-                    if (TextUtils.isEmpty(unit)) {
+                    if (unit.isNullOrBlank()) {
                         cache.setCellFormat(valueCell, "0.00")
                     } else {
                         cache.setCellFormat(valueCell, "#0\"$unit\"")
@@ -341,7 +340,7 @@ class SpreadsheetExporter(
             val scout = scouts[i]
 
             header.createCell(i + 1).apply {
-                setCellValue(scout.name.let { if (TextUtils.isEmpty(it)) "Scout ${i + 1}" else it })
+                setCellValue(scout.name.let { if (it.isNullOrBlank()) "Scout ${i + 1}" else it })
                 cellStyle = cache.columnHeaderStyle
             }
 
@@ -458,7 +457,7 @@ class SpreadsheetExporter(
                 plotArea.getCatAxArray(0).addNewTitle().setValue("Scouts")
 
                 val name = getMetricForChart(chart, chartPool).name
-                if (!TextUtils.isEmpty(name)) chart.setTitleText(name)
+                if (name.isNotBlank()) chart.setTitleText(name)
             }
         }
     }
@@ -592,7 +591,7 @@ class SpreadsheetExporter(
                 val averageCell = scoutSheet.getRow(j)
                         .getCell(cache.getLastDataOrAverageColumnIndex(team))
 
-                if (TextUtils.isEmpty(averageCell.stringValue)
+                if (averageCell.stringValue.isBlank()
                         || rootMetric.type == MetricType.HEADER
                         || rootMetric.type == MetricType.TEXT) {
                     continue

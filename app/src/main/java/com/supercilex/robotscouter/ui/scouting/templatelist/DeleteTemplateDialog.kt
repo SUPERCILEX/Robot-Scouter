@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
-import android.text.TextUtils
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.R
@@ -36,8 +35,8 @@ class DeleteTemplateDialog : ManualDismissDialog() {
         val templateId = arguments!!.getRef().id
         TeamsLiveData.observeOnDataChanged().observeOnce { teams ->
             firestoreBatch {
-                teams.filter { TextUtils.equals(templateId, it.templateId) }.forEach {
-                            update(it.ref.log(), FIRESTORE_TEMPLATE_ID, defaultTemplateId)
+                teams.filter { templateId == it.templateId }.forEach {
+                    update(it.ref.log(), FIRESTORE_TEMPLATE_ID, defaultTemplateId)
                 }
             }.logFailures()
 

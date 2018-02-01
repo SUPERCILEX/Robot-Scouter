@@ -12,7 +12,6 @@ import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -171,7 +170,7 @@ open class AppBarViewHolderBase(
     override fun onSuccess(voids: List<Void?>) {
         newScoutItem.isVisible = true
         addMediaItem.isVisible = team.isOutdatedMedia
-        visitTeamWebsiteItem.isVisible = !TextUtils.isEmpty(team.website)
+        visitTeamWebsiteItem.isVisible = team.website?.isNotEmpty() == true
     }
 
     private fun getTransparentColor(@ColorInt opaque: Int): Int = Color.argb(

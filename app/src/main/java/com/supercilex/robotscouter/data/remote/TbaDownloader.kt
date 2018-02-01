@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.remote
 
-import android.text.TextUtils
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Task
 import com.google.gson.JsonArray
@@ -49,12 +48,12 @@ class TbaDownloader private constructor(
             val mediaObject: JsonObject = element.asJsonObject
             val mediaType: String = mediaObject.get("type").asString
 
-            if (TextUtils.equals(mediaType, IMGUR)) {
+            if (mediaType == IMGUR) {
                 media = "https://i.imgur.com/${mediaObject.get("foreign_key").asString}.png"
 
                 setAndCacheMedia(media, year)
                 break
-            } else if (TextUtils.equals(mediaType, CHIEF_DELPHI)) {
+            } else if (mediaType == CHIEF_DELPHI) {
                 media = "https://www.chiefdelphi.com/media/img/" + mediaObject.get("details")
                         .asJsonObject
                         .get("image_partial")
@@ -65,7 +64,7 @@ class TbaDownloader private constructor(
             }
         }
 
-        if (TextUtils.isEmpty(media) && year > MAX_HISTORY) getTeamMedia(year - 1)
+        if (media.isNullOrBlank() && year > MAX_HISTORY) getTeamMedia(year - 1)
     }
 
     private fun setAndCacheMedia(url: String, year: Int) {

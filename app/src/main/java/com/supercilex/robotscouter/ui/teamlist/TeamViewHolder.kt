@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewStub
 import android.widget.ImageButton
@@ -120,7 +119,7 @@ class TeamViewHolder(
     }
 
     private fun setTeamName() {
-        nameTextView.text = if (TextUtils.isEmpty(team.name)) unknownName else team.name
+        nameTextView.text = if (team.name?.isNotBlank() == true) team.name else unknownName
     }
 
     private fun updateItemStatus() {

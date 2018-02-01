@@ -9,7 +9,6 @@ import android.support.annotation.StringRes
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.PagerAdapter
-import android.text.TextUtils
 import android.view.View
 import android.widget.LinearLayout
 import com.google.firebase.firestore.CollectionReference
@@ -99,7 +98,7 @@ abstract class TabPagerAdapterBase(
         updateTabNames()
 
         if (currentScouts.isNotEmpty()) {
-            if (TextUtils.isEmpty(prevTabId)) {
+            if (prevTabId.isNullOrBlank()) {
                 currentTabId = currentScouts.first().id
             } else {
                 currentScouts.find { it.id == prevTabId }?.let {

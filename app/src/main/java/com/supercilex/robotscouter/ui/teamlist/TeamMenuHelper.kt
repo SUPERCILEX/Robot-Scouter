@@ -16,7 +16,6 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -222,7 +221,7 @@ class TeamMenuHelper(
     private fun setTeamSpecificItemsVisible(visible: Boolean) {
         visitTbaWebsiteItem.isVisible = visible
         visitTeamWebsiteItem.isVisible =
-                visible && !TextUtils.isEmpty(selectedTeams.single().website)
+                visible && selectedTeams.single().website?.isNotBlank() == true
         editTeamDetailsItem.isVisible = visible
 
         if (visible) {
@@ -257,7 +256,7 @@ class TeamMenuHelper(
         if (visible) {
             toggle.isDrawerIndicatorEnabled = true
         } else {
-            activity.getSupportActionBar()!!.apply {
+            activity.supportActionBar!!.apply {
                 // Replace hamburger icon with back button
                 setDisplayHomeAsUpEnabled(false)
                 toggle.isDrawerIndicatorEnabled = false

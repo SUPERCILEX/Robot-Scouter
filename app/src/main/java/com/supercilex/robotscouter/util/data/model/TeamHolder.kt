@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
-import android.text.TextUtils
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
@@ -35,7 +34,7 @@ class TeamHolder : ViewModelBase<Bundle>(),
     override fun apply(teams: ObservableSnapshotArray<Team>?): LiveData<Team> {
         if (teams == null) return MutableLiveData()
 
-        if (TextUtils.isEmpty(team.id)) {
+        if (team.id.isBlank()) {
             for ((number, id) in teams) {
                 if (number == team.number) {
                     team.id = id
@@ -62,7 +61,7 @@ class TeamHolder : ViewModelBase<Bundle>(),
                     newIndex: Int,
                     oldIndex: Int
             ) {
-                if (!TextUtils.equals(teamListener.value?.id, snapshot.id)) return
+                if (teamListener.value?.id != snapshot.id) return
 
                 if (type == ChangeEventType.REMOVED) {
                     value = null

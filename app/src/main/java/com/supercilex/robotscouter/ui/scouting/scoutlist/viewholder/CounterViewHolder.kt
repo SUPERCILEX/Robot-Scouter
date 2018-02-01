@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
 import android.support.annotation.CallSuper
 import android.support.transition.TransitionManager
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -26,7 +25,7 @@ open class CounterViewHolder(
         get() {
             val unit: String? = metric.unit
             val count = count.text.toString()
-            return if (TextUtils.isEmpty(unit)) count else count.replace(unit!!, "")
+            return if (unit?.isNotBlank() == true) count.replace(unit, "") else count
         }
 
     init {
@@ -63,7 +62,7 @@ open class CounterViewHolder(
     protected open fun setValue() {
         val value = metric.value.toString()
         val unit: String? = metric.unit
-        count.text = if (TextUtils.isEmpty(unit)) value else value + unit!!
+        count.text = if (unit?.isNotBlank() == true) value + unit else value
     }
 
     override fun onLongClick(v: View): Boolean {

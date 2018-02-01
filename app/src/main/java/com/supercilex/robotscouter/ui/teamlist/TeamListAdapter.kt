@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,7 +69,7 @@ class TeamListAdapter(
     override fun onChanged(team: Team?) {
         val oldId = selectedTeamId
         selectedTeamId = team?.id.let {
-            if (TextUtils.equals(selectedTeamId, it)) return else it
+            if (selectedTeamId == it) return else it
         }
 
         var hasScrolledToPos = false
@@ -80,19 +79,19 @@ class TeamListAdapter(
 
         for (i in 0 until itemCount) {
             val id = getItem(i).id
-            if (TextUtils.equals(id, selectedTeamId)) {
+            if (id == selectedTeamId) {
                 if (!hasScrolledToPos) {
                     if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
                     hasScrolledToPos = true
                 }
 
                 notifyItemChanged(i)
-            } else if (TextUtils.equals(id, oldId)) {
+            } else if (id == oldId) {
                 notifyItemChanged(i)
             }
         }
 
-        if (!hasScrolledToPos && !TextUtils.isEmpty(selectedTeamId)) {
+        if (!hasScrolledToPos && selectedTeamId?.isNotBlank() == true) {
             for (i in 0 until itemCount) {
                 if (team != null && getItem(i).number >= team.number) {
                     if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
@@ -123,7 +122,7 @@ class TeamListAdapter(
                 team,
                 isTeamSelected(team),
                 menuHelper.selectedTeams.isNotEmpty(),
-                TextUtils.equals(selectedTeamId, team.id)
+                selectedTeamId == team.id
         )
     }
 
@@ -148,7 +147,7 @@ class TeamListAdapter(
         if (type == ChangeEventType.CHANGED) {
             for (oldTeam in menuHelper.selectedTeams) {
                 val team = getItem(newIndex)
-                if (TextUtils.equals(oldTeam.id, team.id)) {
+                if (oldTeam.id == team.id) {
                     menuHelper.onSelectedTeamChanged(oldTeam, team)
                     break
                 }

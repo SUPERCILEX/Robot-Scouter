@@ -3,11 +3,12 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 import android.arch.core.executor.ArchTaskExecutor
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.support.design.widget.AppBarLayout
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
+import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
@@ -42,8 +43,8 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 
-    private val deleteIcon = VectorDrawableCompat.create(
-            rootView.resources, R.drawable.ic_delete_black_24dp, rootView.context.theme)!!
+    private val deleteIcon: Drawable = AppCompatResources.getDrawable(
+            rootView.context, R.drawable.ic_delete_black_24dp)!!
     private val deletePaint = Paint().apply {
         color = ContextCompat.getColor(rootView.context, R.color.delete_background)
     }

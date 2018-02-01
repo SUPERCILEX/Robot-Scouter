@@ -5,7 +5,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.Keep
 import android.support.annotation.RestrictTo
-import android.text.TextUtils
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
@@ -103,7 +102,7 @@ data class Team(
     @PropertyName(FIRESTORE_TIMESTAMP)
     fun getCurrentTimestamp() = Date()
 
-    override fun toString() = if (TextUtils.isEmpty(name)) {
+    override fun toString() = if (name.isNullOrBlank()) {
         number.toString()
     } else {
         "$number - $name"

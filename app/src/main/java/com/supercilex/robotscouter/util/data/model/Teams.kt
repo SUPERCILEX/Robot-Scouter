@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.util.data.model
 
 import android.content.Context
 import android.net.Uri
-import android.text.TextUtils
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
@@ -50,7 +49,7 @@ val teamsQuery
 val Team.ref: DocumentReference get() = teams.document(id)
 
 val Team.isOutdatedMedia: Boolean
-    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || TextUtils.isEmpty(media)
+    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
 
 val Team.isTrashed: Boolean?
     get() {
@@ -97,7 +96,7 @@ fun Team.add() {
 }
 
 fun Team.update(newTeam: Team) {
-    checkForMatchingTeamDetails(this, newTeam)
+    checkForMatchingTeamDetails(newTeam)
     if (this == newTeam) {
         ref.log().update(FIRESTORE_TIMESTAMP, getCurrentTimestamp()).logFailures()
         return
@@ -112,10 +111,10 @@ fun Team.update(newTeam: Team) {
     forceUpdate()
 }
 
-private fun checkForMatchingTeamDetails(team: Team, newTeam: Team) {
-    if (TextUtils.equals(team.name, newTeam.name)) team.hasCustomName = false
-    if (TextUtils.equals(team.media, newTeam.media)) team.hasCustomMedia = false
-    if (TextUtils.equals(team.website, newTeam.website)) team.hasCustomWebsite = false
+private fun Team.checkForMatchingTeamDetails(newTeam: Team) {
+    if (name == newTeam.name) hasCustomName = false
+    if (media == newTeam.media) hasCustomMedia = false
+    if (website == newTeam.website) hasCustomWebsite = false
 }
 
 fun Team.updateTemplateId(id: String) {

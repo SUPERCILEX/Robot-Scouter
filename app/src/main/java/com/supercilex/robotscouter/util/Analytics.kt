@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.util
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.common.ChangeEventType
@@ -32,6 +31,7 @@ import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
+import com.supercilex.robotscouter.util.data.nullOrFull
 import kotlinx.coroutines.experimental.CompletionHandler
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.launch
@@ -63,8 +63,6 @@ fun initAnalytics() {
     PrefLogger
 
     FirebaseAuth.getInstance().addAuthStateListener {
-        fun String?.nullOrFull() = if (TextUtils.isEmpty(this)) null else this
-
         val user = it.currentUser
 
         // Log uid to help debug db crashes

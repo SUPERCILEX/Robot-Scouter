@@ -17,6 +17,8 @@ const val SCOUT_ARGS_KEY = "scout_args"
 const val KEY_ADD_SCOUT = "add_scout"
 const val KEY_OVERRIDE_TEMPLATE_KEY = "override_template_key"
 
+fun <T : CharSequence> T?.nullOrFull() = if (isNullOrBlank()) null else this
+
 fun Parcel.readBooleanCompat() = getBooleanForInt(readInt())
 
 fun Parcel.writeBooleanCompat(value: Boolean) = writeInt(getIntForBoolean(value))

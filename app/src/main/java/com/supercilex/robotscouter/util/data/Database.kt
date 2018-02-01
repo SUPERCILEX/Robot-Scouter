@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import android.os.Bundle
-import android.text.TextUtils
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ChangeEventListener
 import com.firebase.ui.firestore.FirestoreArray
@@ -318,7 +317,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
 
                 val media = team.media
-                if (!TextUtils.isEmpty(media) && File(media).exists()) {
+                if (media?.isNotBlank() == true && File(media).exists()) {
                     startUploadTeamMediaJob(team)
                 }
             }

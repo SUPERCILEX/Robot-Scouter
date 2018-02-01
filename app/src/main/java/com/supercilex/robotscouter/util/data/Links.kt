@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.util.data
 
 import android.net.Uri
 import android.support.annotation.WorkerThread
-import android.text.TextUtils
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
@@ -46,7 +45,7 @@ val Team.indexable: Indexable
             .setName(toString())
             .apply {
                 setImage(media.let {
-                    if (TextUtils.isEmpty(it) || File(it).exists()) return@apply
+                    if (it.isNullOrBlank() || File(it).exists()) return@apply
                     it!!
                 })
             }

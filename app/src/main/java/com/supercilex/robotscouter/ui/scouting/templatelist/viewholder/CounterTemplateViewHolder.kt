@@ -1,12 +1,12 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 
-import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CounterViewHolder
+import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import java.util.Locale
@@ -45,13 +45,7 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
         if (!hasFocus && v === unit) {
-            var newUnit: String? = unit.text.toString()
-
-            if (TextUtils.isEmpty(newUnit)) newUnit = null
-
-            if (!TextUtils.equals(metric.unit, newUnit)) {
-                metric.unit = newUnit
-            }
+            metric.unit = unit.text.nullOrFull()?.toString()
         }
     }
 }
