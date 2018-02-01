@@ -13,11 +13,11 @@ import com.supercilex.robotscouter.util.initRemoteConfig
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
 
-private var app: RobotScouterApp by LateinitVal()
-
 @Suppress("PropertyName")
 val RobotScouter
     get() = app
+
+private var app: RobotScouterApp by LateinitVal()
 
 class RobotScouterApp : MultiDexApplication() {
     override fun onCreate() {

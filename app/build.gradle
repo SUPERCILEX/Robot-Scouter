@@ -87,7 +87,7 @@ play {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.1'
     implementation "org.jetbrains.anko:anko-coroutines:$ankoVersion"
     implementation "org.jetbrains.anko:anko-design:$ankoVersion"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
@@ -148,7 +148,6 @@ dependencies {
     // Apache POI
     implementation "com.github.SUPERCILEX.poi-android:poi:$poiVersion"
     implementation "com.github.SUPERCILEX.poi-android:proguard:$poiVersion"
-    compileOnly "org.apache.poi:poi-ooxml:$poiVersion" // For sources
 
     // Leak canary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
