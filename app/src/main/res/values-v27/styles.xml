@@ -11,6 +11,7 @@
         </item>
         <item name="android:navigationBarDividerColor">@color/list_divider</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="iconColor">@android:color/white</item>
     </style>
 
 </resources>

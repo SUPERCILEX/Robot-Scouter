@@ -21,7 +21,7 @@
         app:layout_constraintBottom_toTopOf="@id/barrier"
         tools:text="Example" />
 
-    <ImageButton
+    <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesImageButton
         android:id="@+id/new_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +32,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:srcCompat="@drawable/ic_add_accent_24dp"
+        app:iconDrawable="@drawable/ic_add_white_24dp"
+        app:iconStyle="@style/Icon.Accent"
         tools:ignore="UnusedAttribute" />
 
     <android.support.constraint.Barrier

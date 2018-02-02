@@ -66,7 +66,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="SERT" />
 
-    <ImageButton
+    <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesImageButton
         android:id="@+id/new_scout"
         android:layout_width="@dimen/square_view_hw"
         android:layout_height="@dimen/square_view_hw"
@@ -75,6 +75,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
+        app:iconStyle="@style/Icon.Black"
+        app:iconDrawable="@drawable/ic_add_white_24dp" />
 
 </android.support.constraint.ConstraintLayout>

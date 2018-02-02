@@ -1,12 +1,14 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import android.support.annotation.DrawableRes
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
+import android.view.ContextThemeWrapper
 import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.LateinitVal
@@ -20,25 +22,33 @@ private const val DRAWABLE_ATTR_NAME = "drawable"
 fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
     if (attrs == null) return
 
-    val attributeArray =
-            context.obtainStyledAttributes(attrs, R.styleable.SupportVectorDrawablesTextView)
+    context.obtainStyledAttributes(attrs, R.styleable.SupportVectorDrawables) {
+        val compute: Int.() -> Drawable? = {
+            if (this == -1) {
+                null
+            } else {
+                context.obtainStyledAttributes(attrs, R.styleable.Icon) {
+                    getThemedContext(context)
+                }.getDrawableCompat(this)
+            }
+        }
+        val drawableStart = getResourceId(
+                R.styleable.SupportVectorDrawables_drawableStartCompat, -1).compute()
+        val drawableEnd = getResourceId(
+                R.styleable.SupportVectorDrawables_drawableEndCompat, -1).compute()
+        val drawableBottom = getResourceId(
+                R.styleable.SupportVectorDrawables_drawableBottomCompat, -1).compute()
+        val drawableTop = getResourceId(
+                R.styleable.SupportVectorDrawables_drawableTopCompat, -1).compute()
 
-    val compute: Int.() -> Drawable? = {
-        if (this == -1) null else context.getDrawableCompat(this)
+        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                this@initSupportVectorDrawablesAttrs,
+                drawableStart,
+                drawableTop,
+                drawableEnd,
+                drawableBottom
+        )
     }
-    val drawableStart = attributeArray.getResourceId(
-            R.styleable.SupportVectorDrawablesTextView_drawableStartCompat, -1).compute()
-    val drawableEnd = attributeArray.getResourceId(
-            R.styleable.SupportVectorDrawablesTextView_drawableEndCompat, -1).compute()
-    val drawableBottom = attributeArray.getResourceId(
-            R.styleable.SupportVectorDrawablesTextView_drawableBottomCompat, -1).compute()
-    val drawableTop = attributeArray.getResourceId(
-            R.styleable.SupportVectorDrawablesTextView_drawableTopCompat, -1).compute()
-
-    TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            this, drawableStart, drawableTop, drawableEnd, drawableBottom)
-
-    attributeArray.recycle()
 }
 
 fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
@@ -73,3 +83,8 @@ fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
 
     return states
 }
+
+fun TypedArray.getThemedContext(context: Context) = ContextThemeWrapper(
+        context,
+        getResourceId(R.styleable.Icon_iconStyle, R.style.RobotScouter)
+)

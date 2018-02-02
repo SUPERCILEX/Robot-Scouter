@@ -6,6 +6,7 @@ import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.TypedArray
 import android.os.Build
 import android.os.Bundle
 import android.os.Debug
@@ -14,6 +15,7 @@ import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.provider.FontRequest
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
+import android.util.AttributeSet
 import android.view.View
 import android.view.WindowManager
 import com.crashlytics.android.Crashlytics
@@ -65,6 +67,15 @@ fun Context.isInTabletMode(): Boolean {
     val size: Int = configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
     return size == Configuration.SCREENLAYOUT_SIZE_LARGE && configuration.landscape
             || size > Configuration.SCREENLAYOUT_SIZE_LARGE
+}
+
+inline fun <T> Context.obtainStyledAttributes(
+        set: AttributeSet,
+        attrs: IntArray,
+        block: TypedArray.() -> T
+): T {
+    val a = obtainStyledAttributes(set, attrs)
+    return a.block().also { a.recycle() }
 }
 
 fun View.setOnLongClickListenerCompat(listener: View.OnLongClickListener) {

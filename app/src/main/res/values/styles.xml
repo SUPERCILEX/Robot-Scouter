@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="iconColor">@android:color/white</item>
     </style>
 
     <style name="RobotScouter.NoActionBar">
@@ -157,6 +158,20 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
         <item name="bottomSheetStyle">@style/Widget.Design.BottomSheet.Modal</item>
+    </style>
+
+    <style name="Icon" />
+
+    <style name="Icon.Black">
+        <item name="iconColor">@color/night_black</item>
+    </style>
+
+    <style name="Icon.Grey">
+        <item name="iconColor">@color/night_grey</item>
+    </style>
+
+    <style name="Icon.Accent">
+        <item name="iconColor">@color/colorAccent</item>
     </style>
 
 </resources>

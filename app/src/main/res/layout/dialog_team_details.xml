@@ -64,7 +64,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <ImageButton
+            <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesImageButton
                 android:id="@+id/edit_name_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,8 +76,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/name"
                 app:layout_constraintBottom_toBottomOf="@id/name"
-                app:layout_constraintHorizontal_bias="0"
-                app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+                app:iconDrawable="@drawable/ic_mode_edit_white_24dp"
+                app:iconStyle="@style/Icon.Black"
+                app:layout_constraintHorizontal_bias="0" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/name_layout"
