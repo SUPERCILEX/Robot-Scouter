@@ -5,6 +5,7 @@
     <!-- Common -->
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="save">Save</string>
     <string name="undo">Undo</string>
     <string name="no_connection">No internet connection</string>
     <string name="sign_in_required">Sign in required</string>

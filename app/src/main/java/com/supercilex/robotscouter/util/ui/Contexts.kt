@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.ui
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.support.v4.app.Fragment
@@ -8,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.util.refWatcher
@@ -58,8 +56,7 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult {
                 clearFocus = Runnable {
                     if (currentFocus === v || currentFocus !is EditText) {
                         v.clearFocus()
-                        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                                .hideSoftInputFromWindow(v.windowToken, 0)
+                        inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
                     }
                     clearFocus = null
                 }.also {

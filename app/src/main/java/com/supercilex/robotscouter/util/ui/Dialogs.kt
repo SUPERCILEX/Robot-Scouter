@@ -11,12 +11,9 @@ import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
-import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.TextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.refWatcher
@@ -130,7 +127,7 @@ abstract class ManualDismissDialog : DialogFragmentBase() {
     }
 }
 
-abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActionListener {
+abstract class KeyboardDialogBase : ManualDismissDialog() {
     protected abstract val lastEditText: EditText
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -148,14 +145,6 @@ abstract class KeyboardDialogBase : ManualDismissDialog(), TextView.OnEditorActi
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)
-        lastEditText.setOnEditorActionListener(this)
-    }
-
-    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
-        if (event?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
-            handleOnAttemptDismiss()
-            return true
-        }
-        return false
+        lastEditText.setImeOnDoneListener { handleOnAttemptDismiss() }
     }
 }

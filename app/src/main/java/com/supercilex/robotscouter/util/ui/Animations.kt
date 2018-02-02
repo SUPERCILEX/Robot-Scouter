@@ -14,7 +14,6 @@ import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.view.View
 import android.view.ViewAnimationUtils
 import com.supercilex.robotscouter.RobotScouter
-import kotlin.math.hypot
 
 val shortAnimationDuration: Long by lazy {
     RobotScouter.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
@@ -32,18 +31,6 @@ fun animateColorChange(
         addUpdateListener(listener)
         start()
     }
-}
-
-fun View.animateCircularReveal(visible: Boolean) {
-    val centerX: Int = width / 2
-    val centerY: Int = height / 2
-    val animator: Animator? = animateCircularReveal(
-            visible,
-            centerX,
-            centerY,
-            hypot(centerX.toDouble(), centerY.toDouble()).toFloat()
-    )
-    animator?.start()
 }
 
 fun View.animateCircularReveal(

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/RobotScouter.Dialog">
@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <android.support.constraint.ConstraintLayout
@@ -15,8 +16,8 @@
 
             <ImageView
                 android:id="@+id/media"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
+                android:layout_width="144dp"
+                android:layout_height="144dp"
                 android:contentDescription="@string/accessibility_robot_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -129,6 +130,12 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
+            android:id="@+id/save"
+            style="@style/RobotScouter.BottomSheet.Button.Compat"
+            android:text="@string/save"
+            app:drawableStartCompat="@drawable/ic_check_grey_24dp" />
+
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>
