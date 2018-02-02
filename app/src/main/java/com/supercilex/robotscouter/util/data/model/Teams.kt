@@ -174,6 +174,6 @@ fun Team.getScouts(): Task<List<Scout>> = doAsync {
 }
 
 fun Team.visitTbaWebsite(context: Context) =
-        launchUrl(context, Uri.parse("https://www.thebluealliance.com/team/$number"))
+        launchUrl(context, Uri.parse("http://www.thebluealliance.com/team/$number"))
 
 fun Team.visitTeamWebsite(context: Context) = launchUrl(context, Uri.parse(website))
