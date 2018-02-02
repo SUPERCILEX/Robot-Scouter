@@ -33,15 +33,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_normal"
-            android:layout_marginBottom="@dimen/spacing_large"
             android:text="@string/donate_monthly_message" />
 
         <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
             android:id="@+id/donate"
-            style="@style/RobotScouter.BottomSheet.Button"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:paddingHorizontal="0dp"
+            style="@style/RobotScouter.BottomSheet.Button.Compat"
             android:text="@string/donate_title"
             app:drawableStartCompat="@drawable/ic_donate_grey_24dp" />
 

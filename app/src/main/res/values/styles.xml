@@ -68,6 +68,12 @@
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
+    <style name="RobotScouter.BottomSheet.Button.Compat">
+        <item name="android:layout_marginTop">@dimen/spacing_large</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
     <style name="RobotScouter.Tutorial">
         <item name="mttp_backgroundColour">@color/colorPrimary</item>
     </style>

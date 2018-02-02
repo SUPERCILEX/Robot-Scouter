@@ -35,6 +35,11 @@
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
+    <style name="RobotScouter.BottomSheet.Button.Compat">
+        <item name="android:layout_marginTop">@dimen/spacing_large</item>
+        <item name="android:paddingHorizontal">0dp</item>
+    </style>
+
     <style name="RobotScouter.List">
         <item name="android:id">@id/list</item>
         <item name="android:layout_width">match_parent</item>
