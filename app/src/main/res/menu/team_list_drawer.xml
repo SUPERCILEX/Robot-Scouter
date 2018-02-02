@@ -20,7 +20,7 @@
     <group android:id="@+id/two">
         <item
             android:id="@+id/action_donate"
-            android:icon="@drawable/ic_donate_white_24dp"
+            android:icon="@drawable/ic_donate_grey_24dp"
             android:title="@string/donate_title" />
 
         <item

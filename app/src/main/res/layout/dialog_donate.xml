@@ -43,7 +43,7 @@
             android:paddingRight="0dp"
             android:paddingHorizontal="0dp"
             android:text="@string/donate_title"
-            app:drawableStartCompat="@drawable/ic_donate_white_24dp" />
+            app:drawableStartCompat="@drawable/ic_donate_grey_24dp" />
 
     </LinearLayout>
 
