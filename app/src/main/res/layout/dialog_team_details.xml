@@ -99,6 +99,45 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginBottom="@dimen/spacing_large">
+
+            <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesButton
+                android:id="@+id/link_tba"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/spacing_large"
+                android:text="@string/details_action_visit_tba_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/center"
+                app:drawableStartCompat="@drawable/ic_launch_white_24dp"
+                app:iconStyle="@style/Icon.Accent" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesButton
+                android:id="@+id/link_website"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/spacing_large"
+                android:text="@string/details_action_visit_website_title"
+                app:layout_constraintStart_toEndOf="@id/center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:drawableStartCompat="@drawable/ic_launch_white_24dp"
+                app:iconStyle="@style/Icon.Accent" />
+
+        </android.support.constraint.ConstraintLayout>
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/media_layout"
             style="@style/Widget.Design.TextInputLayout"

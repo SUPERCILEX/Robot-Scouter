@@ -25,18 +25,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_visit_tba_website"
-        android:icon="@drawable/ic_launch_white_24dp"
-        app:showAsAction="ifRoom"
-        tools:ignore="MenuTitle" />
-
-    <item
-        android:id="@+id/action_visit_team_website"
-        android:icon="@drawable/ic_launch_white_24dp"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_edit_template"
         android:icon="@drawable/ic_mode_edit_white_24dp"
         android:title="@string/scout_edit_template_title"

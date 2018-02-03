@@ -156,8 +156,6 @@
         cached for offline use.
     </string>
     <string name="scout_add_media_title">Add media</string>
-    <string name="scout_visit_team_website_title">Visit team %d’s website</string>
-    <string name="scout_visit_team_tba_website_title">Visit team %d on The Blue Alliance</string>
     <string name="scout_edit_template_title">Edit next scout template</string>
 
     <string name="details_title">Team details</string>
@@ -165,6 +163,8 @@
     <string name="details_media_hint">Team media url</string>
     <string name="details_website_hint">Team website</string>
     <string name="details_malformed_url_error">Make sure you have a valid url.</string>
+    <string name="details_action_visit_tba_title">TBA</string>
+    <string name="details_action_visit_website_title">Website</string>
 
     <string name="scout_edit_name_title">Edit scout name</string>
     <string name="scout_name_title">Scout name</string>

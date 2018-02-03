@@ -171,7 +171,7 @@
     </style>
 
     <style name="Icon.Accent">
-        <item name="iconColor">@color/colorAccent</item>
+        <item name="iconColor">@color/enablable_button_icon</item>
     </style>
 
 </resources>

@@ -25,8 +25,6 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
-import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
-import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
@@ -57,8 +55,6 @@ class TeamMenuHelper(
 
     private lateinit var exportItem: MenuItem
     private lateinit var shareItem: MenuItem
-    private lateinit var visitTbaWebsiteItem: MenuItem
-    private lateinit var visitTeamWebsiteItem: MenuItem
     private lateinit var editTeamDetailsItem: MenuItem
     private lateinit var deleteItem: MenuItem
 
@@ -87,8 +83,6 @@ class TeamMenuHelper(
 
         exportItem = menu.findItem(R.id.action_export_teams)
         shareItem = menu.findItem(R.id.action_share)
-        visitTbaWebsiteItem = menu.findItem(R.id.action_visit_tba_website)
-        visitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website)
         editTeamDetailsItem = menu.findItem(R.id.action_edit_team_details)
         deleteItem = menu.findItem(R.id.action_delete)
 
@@ -122,14 +116,6 @@ class TeamMenuHelper(
         when (item.itemId) {
             R.id.action_export_teams -> fragment.exportTeams()
             R.id.action_share -> if (TeamSharer.shareTeams(activity, selectedTeams)) {
-                resetMenu()
-            }
-            R.id.action_visit_tba_website -> {
-                team.visitTbaWebsite(activity)
-                resetMenu()
-            }
-            R.id.action_visit_team_website -> {
-                team.visitTeamWebsite(activity)
                 resetMenu()
             }
             R.id.action_edit_team_details ->
@@ -219,20 +205,8 @@ class TeamMenuHelper(
     }
 
     private fun setTeamSpecificItemsVisible(visible: Boolean) {
-        visitTbaWebsiteItem.isVisible = visible
-        visitTeamWebsiteItem.isVisible =
-                visible && selectedTeams.single().website?.isNotBlank() == true
         editTeamDetailsItem.isVisible = visible
-
-        if (visible) {
-            val (number) = selectedTeams.single()
-            visitTbaWebsiteItem.title = activity.getString(
-                    R.string.scout_visit_team_tba_website_title, number)
-            visitTeamWebsiteItem.title = activity.getString(
-                    R.string.scout_visit_team_website_title, number)
-
-            selectAllSnackBar.dismiss()
-        }
+        if (visible) selectAllSnackBar.dismiss()
     }
 
     private fun setNormalMenuItemsVisible(visible: Boolean) {

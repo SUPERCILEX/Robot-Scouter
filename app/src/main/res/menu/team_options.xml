@@ -18,18 +18,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_visit_tba_website"
-        android:icon="@drawable/ic_launch_white_24dp"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_visit_team_website"
-        android:icon="@drawable/ic_launch_white_24dp"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_edit_team_details"
         android:icon="@drawable/ic_mode_edit_white_24dp"
         android:title="@string/details_title"

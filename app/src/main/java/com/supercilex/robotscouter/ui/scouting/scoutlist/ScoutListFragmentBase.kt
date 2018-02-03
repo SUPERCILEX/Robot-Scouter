@@ -35,8 +35,6 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.util.data.model.visitTbaWebsite
-import com.supercilex.robotscouter.util.data.model.visitTeamWebsite
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
@@ -162,8 +160,6 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
             R.id.action_new_scout -> addScout()
             R.id.action_add_media -> ShouldUploadMediaToTbaDialog.show(this)
             R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
-            R.id.action_visit_tba_website -> team.visitTbaWebsite(activity)
-            R.id.action_visit_team_website -> team.visitTeamWebsite(activity)
             R.id.action_edit_template -> {
                 val templateId = team.templateId
 

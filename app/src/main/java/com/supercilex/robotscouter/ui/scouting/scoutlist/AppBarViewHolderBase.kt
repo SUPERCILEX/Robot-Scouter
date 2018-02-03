@@ -72,7 +72,6 @@ open class AppBarViewHolderBase(
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()
     private lateinit var newScoutItem: MenuItem
     private lateinit var addMediaItem: MenuItem
-    private lateinit var visitTeamWebsiteItem: MenuItem
 
     init {
         backdrop.setOnLongClickListenerCompat(this)
@@ -147,12 +146,7 @@ open class AppBarViewHolderBase(
 
         newScoutItem = menu.findItem(R.id.action_new_scout)
         addMediaItem = menu.findItem(R.id.action_add_media)
-        visitTeamWebsiteItem = menu.findItem(R.id.action_visit_team_website)
 
-        menu.findItem(R.id.action_visit_tba_website).title =
-                fragment.getString(R.string.scout_visit_team_tba_website_title, team.number)
-        visitTeamWebsiteItem.title =
-                fragment.getString(R.string.scout_visit_team_website_title, team.number)
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
         toolbar.post {
             fragment.findOptional<View>(R.id.action_new_scout)?.setOnLongClickListenerCompat(this)
@@ -170,7 +164,6 @@ open class AppBarViewHolderBase(
     override fun onSuccess(voids: List<Void?>) {
         newScoutItem.isVisible = true
         addMediaItem.isVisible = team.isOutdatedMedia
-        visitTeamWebsiteItem.isVisible = team.website?.isNotEmpty() == true
     }
 
     private fun getTransparentColor(@ColorInt opaque: Int): Int = Color.argb(
@@ -191,7 +184,7 @@ open class AppBarViewHolderBase(
     }
 
     override fun startCapture(shouldUploadMediaToTba: Boolean) =
-        mediaCapture.capture(fragment, shouldUploadMediaToTba)
+            mediaCapture.capture(fragment, shouldUploadMediaToTba)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         permissionHandler.onActivityResult(requestCode, resultCode, data)

@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager
 import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -31,6 +32,8 @@ import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceRefresh
 import com.supercilex.robotscouter.util.data.model.forceUpdate
+import com.supercilex.robotscouter.util.data.model.launchTba
+import com.supercilex.robotscouter.util.data.model.launchWebsite
 import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.logEditDetails
@@ -72,6 +75,9 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     private val name: TextView by bindView(R.id.name)
     private val editNameButton: ImageButton by bindView(R.id.edit_name_button)
 
+    private val launchTbaButton: Button by bindView(R.id.link_tba)
+    private val launchWebsiteButton: Button by bindView(R.id.link_website)
+
     private val nameInputLayout: TextInputLayout by bindView(R.id.name_layout)
     private val mediaInputLayout: TextInputLayout by bindView(R.id.media_layout)
     private val websiteInputLayout: TextInputLayout by bindView(R.id.website_layout)
@@ -107,6 +113,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
         media.setOnClickListener(this)
         editNameButton.setOnClickListener(this)
+        launchTbaButton.setOnClickListener(this)
+        launchWebsiteButton.setOnClickListener(this)
         save.setOnClickListener(this)
 
         mediaEditText.onFocusChangeListener = this
@@ -117,6 +125,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     private fun updateUi() {
+        launchWebsiteButton.isEnabled = !team.website.isNullOrBlank()
+
         TransitionManager.beginDelayedTransition(content)
 
         mediaLoadProgress.show()
@@ -156,6 +166,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     override fun onClick(v: View) = when (v.id) {
         R.id.media -> ShouldUploadMediaToTbaDialog.show(this)
         R.id.edit_name_button -> revealNameEditor()
+        R.id.link_tba -> team.launchTba(content.context)
+        R.id.link_website -> team.launchWebsite(content.context)
         R.id.save -> save()
         else -> error("Unknown id: ${v.id}")
     }
