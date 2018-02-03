@@ -18,7 +18,7 @@ interface TeamJob {
 
     fun startJob(team: Team): Task<Unit?> {
         // Ensure this job isn't being scheduled after the user has signed out
-        if (team.owners[uid] == null) return Tasks.forResult(null)
+        if (!team.owners.contains(uid)) return Tasks.forResult(null)
 
         return team.ref.log().get().logFailures().continueWithTask(
                 AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Team>> {
@@ -36,7 +36,7 @@ interface TeamJob {
                 Tasks.forResult(null)
             }
         }).continueWith(AsyncTaskExecutor, Continuation<Team, Unit> {
-            updateTeam(team, it.result ?: return@Continuation)
+            if (team.owners.contains(uid)) updateTeam(team, it.result ?: return@Continuation)
         })
     }
 
