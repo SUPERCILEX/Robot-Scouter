@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.preference.PreferenceDataStore
+import androidx.content.edit
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
@@ -112,19 +113,12 @@ fun clearPrefs() {
     clearLocalPrefs()
 }
 
-private fun clearLocalPrefs() = localPrefs.updatePrefs { clear() }
+private fun clearLocalPrefs() = localPrefs.edit { clear() }
 
 private fun updateTeamTemplateIds() {
     TeamsLiveData.observeOnDataChanged().observeOnce {
         doAsync { for (team in it) team.updateTemplateId(defaultTemplateId) }.logFailures()
     }
-}
-
-private inline fun SharedPreferences.updatePrefs(
-        transaction: SharedPreferences.Editor.() -> Unit
-) = edit().run {
-    transaction()
-    apply()
 }
 
 abstract class PrefObserver : Observer<ObservableSnapshotArray<Any>>,
@@ -165,7 +159,7 @@ private object PrefUpdater : PrefObserver() {
         if (type == ChangeEventType.ADDED || type == ChangeEventType.CHANGED) {
             var hasDefaultTemplateChanged = false
 
-            localPrefs.updatePrefs {
+            localPrefs.edit {
                 when (id) {
                     FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
                     FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
@@ -188,7 +182,7 @@ private object PrefUpdater : PrefObserver() {
 
             if (hasDefaultTemplateChanged) updateTeamTemplateIds()
         } else if (type == ChangeEventType.REMOVED) {
-            localPrefs.updatePrefs { remove(id) }
+            localPrefs.edit { remove(id) }
         }
     }
 }
