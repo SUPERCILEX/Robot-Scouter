@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
+import androidx.net.toUri
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 
@@ -25,7 +26,8 @@ private fun CustomTabsIntent.Builder.buildWithReferrer(): CustomTabsIntent {
         // Add referrer intent
         customTabsIntent.intent.putExtra(
                 Intent.EXTRA_REFERRER,
-                Uri.parse("${Intent.URI_ANDROID_APP_SCHEME}//${RobotScouter.packageName}"))
+                "${Intent.URI_ANDROID_APP_SCHEME}//${RobotScouter.packageName}".toUri()
+        )
     }
     return customTabsIntent
 }

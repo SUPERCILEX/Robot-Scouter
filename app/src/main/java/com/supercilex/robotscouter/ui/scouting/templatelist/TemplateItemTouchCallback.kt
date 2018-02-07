@@ -7,11 +7,11 @@ import android.graphics.drawable.Drawable
 import android.support.design.widget.AppBarLayout
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
 import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
+import androidx.view.postOnAnimationDelayed
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.firestore.WriteBatch
@@ -195,10 +195,9 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     }
 
     private inline fun postCleanup(crossinline cleanup: () -> Unit) {
-        ViewCompat.postOnAnimationDelayed(
-                recyclerView,
-                { cleanup(); this.cleanup() },
-                (animatorPointer ?: recyclerView.itemAnimator).maxAnimationDuration())
+        recyclerView.postOnAnimationDelayed(
+                (animatorPointer ?: recyclerView.itemAnimator).maxAnimationDuration()
+        ) { cleanup(); this.cleanup() }
     }
 
     private fun cleanupFailure() {

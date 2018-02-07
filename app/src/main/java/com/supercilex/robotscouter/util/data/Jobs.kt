@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
+import androidx.os.bundleOf
 import com.firebase.jobdispatcher.Constraint
 import com.firebase.jobdispatcher.FirebaseJobDispatcher
 import com.firebase.jobdispatcher.GooglePlayDriver
@@ -16,7 +17,6 @@ import com.firebase.jobdispatcher.Job
 import com.firebase.jobdispatcher.Trigger
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
-import org.jetbrains.anko.bundleOf
 import java.util.Date
 
 private const val NUMBER = "number"

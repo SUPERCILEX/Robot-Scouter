@@ -2,14 +2,14 @@ package com.supercilex.robotscouter.util.ui
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.v4.view.ViewCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
+import androidx.os.bundleOf
+import androidx.view.postOnAnimationDelayed
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import org.jetbrains.anko.bundleOf
 import java.lang.Math.max
 
 private val defaultMaxAnimationDuration: Long by lazy {
@@ -32,11 +32,9 @@ inline fun RecyclerView.notifyItemsNoChangeAnimation(update: RecyclerView.Adapte
     animator?.supportsChangeAnimations = false
     adapter.update()
 
-    ViewCompat.postOnAnimationDelayed(
-            this,
-            { animator?.supportsChangeAnimations = true },
-            animator.maxAnimationDuration()
-    )
+    postOnAnimationDelayed(animator.maxAnimationDuration()) {
+        animator?.supportsChangeAnimations = true
+    }
 }
 
 fun RecyclerView.ItemAnimator?.maxAnimationDuration() = this?.let {

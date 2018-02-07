@@ -1,14 +1,12 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.app.Dialog
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
-import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.style.StyleSpan
 import android.view.View
 import android.widget.TextView
+import androidx.text.bold
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getTeamList
@@ -37,18 +35,9 @@ class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
 
             val deletedTeams = SpannableStringBuilder(message).append('\n')
             for ((i, team) in teams.withIndex()) {
-                val pre = deletedTeams.length
-                deletedTeams.apply {
+                deletedTeams.bold {
                     append('\n').append("${i + 1}. ")
-                    setSpan(
-                            StyleSpan(Typeface.BOLD),
-                            pre,
-                            length,
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-
-                    append(team.toString())
-                }
+                }.append(team.toString())
             }
             deletedTeams
         }

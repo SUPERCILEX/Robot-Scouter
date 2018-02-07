@@ -10,6 +10,7 @@ import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
 import android.widget.TextView
+import androidx.content.withStyledAttributes
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.LateinitVal
 import org.xmlpull.v1.XmlPullParser
@@ -22,14 +23,16 @@ private const val DRAWABLE_ATTR_NAME = "drawable"
 fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
     if (attrs == null) return
 
-    context.obtainStyledAttributes(attrs, R.styleable.SupportVectorDrawables) {
-        val compute: Int.() -> Drawable? = {
+    context.withStyledAttributes(attrs, R.styleable.SupportVectorDrawables) {
+        val compute: Int.() -> Drawable? = compute@ {
             if (this == -1) {
                 null
             } else {
-                context.obtainStyledAttributes(attrs, R.styleable.Icon) {
-                    getThemedContext(context)
-                }.getDrawableCompat(this)
+                var result: Drawable? = null
+                context.withStyledAttributes(attrs, R.styleable.Icon) {
+                    result = getIconThemedContext(context).getDrawableCompat(this@compute)
+                }
+                result
             }
         }
         val drawableStart = getResourceId(
@@ -84,7 +87,7 @@ fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
     return states
 }
 
-fun TypedArray.getThemedContext(context: Context) = ContextThemeWrapper(
+fun TypedArray.getIconThemedContext(context: Context) = ContextThemeWrapper(
         context,
         getResourceId(R.styleable.Icon_iconStyle, R.style.RobotScouter)
 )

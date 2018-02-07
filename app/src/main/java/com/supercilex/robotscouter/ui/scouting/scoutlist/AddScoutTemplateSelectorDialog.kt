@@ -9,6 +9,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import androidx.content.withStyledAttributes
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog
@@ -23,11 +24,13 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
                 val checkboxMarginCompensation =
                         resources.getDimension(R.dimen.spacing_checkbox_margin_hack).toInt()
 
-                val a = context.obtainStyledAttributes(intArrayOf(
-                        R.attr.listPreferredItemPaddingLeft, R.attr.listPreferredItemPaddingRight))
-                leftMargin = a.getDimensionPixelSize(0, 0) + checkboxMarginCompensation
-                rightMargin = a.getDimensionPixelSize(1, 0) + checkboxMarginCompensation
-                a.recycle()
+                context.withStyledAttributes(null, intArrayOf(
+                        R.attr.listPreferredItemPaddingLeft,
+                        R.attr.listPreferredItemPaddingRight
+                )) {
+                    leftMargin = getDimensionPixelSize(0, 0) + checkboxMarginCompensation
+                    rightMargin = getDimensionPixelSize(1, 0) + checkboxMarginCompensation
+                }
             }
             setText(R.string.template_set_default_title)
         }

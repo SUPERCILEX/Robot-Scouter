@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.os.Parcel
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
+import androidx.os.bundleOf
 import com.supercilex.robotscouter.RobotScouterApp
 import com.supercilex.robotscouter.data.model.Team
-import org.jetbrains.anko.bundleOf
 
 const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
 const val TEAMS_KEY = "com.supercilex.robotscouter.data.util.Teams"

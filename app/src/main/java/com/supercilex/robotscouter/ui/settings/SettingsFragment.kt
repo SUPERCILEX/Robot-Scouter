@@ -7,7 +7,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.content.res.AppCompatResources
@@ -22,6 +21,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.net.toUri
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
@@ -148,11 +148,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             KEY_RELEASE_NOTES -> launchUrl(
                     activity,
-                    Uri.parse("https://github.com/SUPERCILEX/Robot-Scouter/releases")
+                    "https://github.com/SUPERCILEX/Robot-Scouter/releases".toUri()
             )
             KEY_TRANSLATE -> launchUrl(
                     activity,
-                    Uri.parse("https://www.transifex.com/supercilex/robot-scouter/")
+                    "https://www.transifex.com/supercilex/robot-scouter/".toUri()
             )
             KEY_VERSION -> {
                 (activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =

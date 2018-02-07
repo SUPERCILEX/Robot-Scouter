@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.content.Intent
-import android.net.Uri
 import android.support.v4.app.FragmentActivity
+import androidx.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
 import com.google.firebase.appindexing.Action
@@ -61,7 +61,7 @@ class TemplateSharer private constructor(
             AppInviteInvitation.IntentBuilder(
                     activity.getString(R.string.template_share_title, templateName))
                     .setMessage(activity.getString(R.string.template_share_message, templateName))
-                    .setDeepLink(Uri.parse(deepLink))
+                    .setDeepLink(deepLink.toUri())
                     .setEmailSubject(activity.getString(R.string.template_share_cta, templateName))
                     .setEmailHtmlContent(html)
                     .build()

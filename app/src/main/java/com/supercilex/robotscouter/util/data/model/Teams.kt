@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.util.data.model
 
 import android.content.Context
-import android.net.Uri
+import androidx.net.toUri
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
@@ -174,6 +174,6 @@ fun Team.getScouts(): Task<List<Scout>> = doAsync {
 }
 
 fun Team.launchTba(context: Context) =
-        launchUrl(context, Uri.parse("http://www.thebluealliance.com/team/$number"))
+        launchUrl(context, "http://www.thebluealliance.com/team/$number".toUri())
 
-fun Team.launchWebsite(context: Context) = launchUrl(context, Uri.parse(website))
+fun Team.launchWebsite(context: Context) = launchUrl(context, website!!.toUri())

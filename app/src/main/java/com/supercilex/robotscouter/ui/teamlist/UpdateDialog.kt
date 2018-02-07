@@ -5,12 +5,12 @@ import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.Html
+import androidx.net.toUri
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
@@ -39,8 +39,9 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     companion object {
         private const val TAG = "UpdateDialog"
 
-        private val STORE_LISTING_URI: Uri = Uri.parse("market://details?id=${BuildConfig.APPLICATION_ID}")
-        private val LATEST_APK_URI: Uri = Uri.parse("https://github.com/SUPERCILEX/app-version-history/blob/master/Robot-Scouter/app-release.apk")
+        private val STORE_LISTING_URI = "market://details?id=${BuildConfig.APPLICATION_ID}".toUri()
+        private val LATEST_APK_URI =
+                "https://github.com/SUPERCILEX/app-version-history/blob/master/Robot-Scouter/app-release.apk".toUri()
 
         fun show(manager: FragmentManager) {
             if (manager.findFragmentByTag(TAG) == null) {

@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.support.annotation.Size
 import android.support.v4.app.FragmentActivity
+import androidx.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.tasks.Continuation
 import com.google.firebase.appindexing.Action
@@ -90,7 +90,7 @@ class TeamSharer private constructor(
     private fun getInvitationIntent(deepLink: String, shareTemplate: String) =
             AppInviteInvitation.IntentBuilder(cache.shareTitle)
                     .setMessage(safeMessage)
-                    .setDeepLink(Uri.parse(deepLink))
+                    .setDeepLink(deepLink.toUri())
                     .setEmailSubject(cache.shareCta)
                     .setEmailHtmlContent(shareTemplate)
                     .build()

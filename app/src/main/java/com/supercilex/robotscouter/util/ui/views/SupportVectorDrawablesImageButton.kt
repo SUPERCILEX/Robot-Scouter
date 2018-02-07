@@ -3,10 +3,10 @@ package com.supercilex.robotscouter.util.ui.views
 import android.content.Context
 import android.support.v7.widget.AppCompatImageButton
 import android.util.AttributeSet
+import androidx.content.withStyledAttributes
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.getDrawableCompat
-import com.supercilex.robotscouter.util.ui.getThemedContext
-import com.supercilex.robotscouter.util.ui.obtainStyledAttributes
+import com.supercilex.robotscouter.util.ui.getIconThemedContext
 
 /** @see SupportVectorDrawablesTextView */
 class SupportVectorDrawablesImageButton : AppCompatImageButton {
@@ -22,8 +22,8 @@ class SupportVectorDrawablesImageButton : AppCompatImageButton {
     }
 
     private fun applyDrawable(set: AttributeSet) {
-        context.obtainStyledAttributes(set, R.styleable.Icon) {
-            setImageDrawable(getThemedContext(context).getDrawableCompat(
+        context.withStyledAttributes(set, R.styleable.Icon) {
+            setImageDrawable(getIconThemedContext(context).getDrawableCompat(
                     getResourceId(R.styleable.Icon_iconDrawable, -1)
             ))
         }

@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.util
 
 import android.os.Bundle
 import android.util.Log
+import androidx.os.bundleOf
 import com.crashlytics.android.Crashlytics
 import com.firebase.ui.common.ChangeEventType
 import com.google.android.gms.common.GoogleApiAvailability
@@ -36,7 +37,6 @@ import kotlinx.coroutines.experimental.CompletionHandler
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.error
 import java.lang.Exception
 import java.util.Date
