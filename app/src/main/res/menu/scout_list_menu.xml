@@ -25,15 +25,15 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_edit_template"
-        android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/scout_edit_template_title"
+        android:id="@+id/action_edit_team_details"
+        android:icon="@drawable/ic_description_white_24dp"
+        android:title="@string/details_title"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_edit_team_details"
+        android:id="@+id/action_edit_template"
         android:icon="@drawable/ic_mode_edit_white_24dp"
-        android:title="@string/details_title"
+        android:title="@string/scout_edit_template_title"
         app:showAsAction="ifRoom" />
 
 </menu>
