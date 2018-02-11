@@ -238,14 +238,14 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         recyclerView.clearFocus() // Save user data for undo
         deletedRef.log().get().addOnSuccessListener(rootView.context as FragmentActivity) { snapshot ->
             firestoreBatch {
-                delete(deletedRef.log())
                 updatePositions(itemsBelow, -1)
+                delete(deletedRef.log())
             }.logFailures()
 
             longSnackbar(rootView, R.string.deleted, R.string.undo) {
                 firestoreBatch {
-                    updatePositions(itemsBelow, 1)
                     set(deletedRef.log(), snapshot.data)
+                    updatePositions(itemsBelow, 1)
                 }.logFailures()
             }
         }.logFailures()
