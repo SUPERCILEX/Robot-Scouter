@@ -6,6 +6,7 @@ import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
@@ -28,6 +29,7 @@ import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
+import org.jetbrains.anko.longToast
 import java.util.Date
 import kotlin.math.abs
 
@@ -68,7 +70,12 @@ fun addTemplate(type: TemplateType): String {
                 set(getTemplateMetricsRef(id).document(it.ref.id).log(), it)
             }
         }
-    }).logFailures()
+    }).logFailures {
+        ref.log().delete().logFailures()
+        RobotScouter.longToast(R.string.scout_add_template_not_cached_error)
+        it is FirebaseFirestoreException
+                && it.code == FirebaseFirestoreException.Code.UNAVAILABLE
+    }
 
     return id
 }
