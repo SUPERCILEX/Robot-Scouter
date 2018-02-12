@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import androidx.view.doOnNextLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -148,8 +147,8 @@ open class AppBarViewHolderBase(
         addMediaItem = menu.findItem(R.id.action_add_media)
 
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
-        toolbar.doOnNextLayout {
-            it.find<View>(R.id.action_new_scout).setOnLongClickListenerCompat(this)
+        toolbar.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+            v.find<View>(R.id.action_new_scout).setOnLongClickListenerCompat(this)
         }
 
         onMenuReadyTask.trySetResult(null)
