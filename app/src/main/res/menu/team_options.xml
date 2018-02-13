@@ -19,7 +19,7 @@
 
     <item
         android:id="@+id/action_edit_team_details"
-        android:icon="@drawable/ic_description_white_24dp"
+        android:icon="@drawable/ic_info_white_24dp"
         android:title="@string/details_title"
         android:visible="false"
         app:showAsAction="ifRoom" />
