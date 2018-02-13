@@ -24,9 +24,8 @@
     <application
         android:name=".RobotScouterApp"
         android:label="${appName}"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:appCategory="productivity"
-        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
