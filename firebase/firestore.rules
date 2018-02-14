@@ -25,7 +25,8 @@ service cloud.firestore {
       // Hack: we query the list of teams before the team is written to the database which
       // Firestore doesn't support. Since adding a success listener for when the write completes
       // would break offline support, we're kinda stuck here.
-      allow read: if request.auth != null;
+      allow get: if isExistingOwner();
+      allow list: if request.auth != null;
       allow create: if isValidTeam();
       allow update: if (isExistingOwner() || hasPendingApproval()) && isValidTeam();
       allow delete: if isExistingOwner();
@@ -52,7 +53,8 @@ service cloud.firestore {
         return resource.data.owners[request.auth.uid] is timestamp;
       }
 
-      allow read: if request.auth != null;
+      allow get: if isExistingOwner();
+      allow list: if request.auth != null;
       allow create: if request.resource.data.owners[request.auth.uid] is timestamp && isValidScout();
       allow update: if (isExistingOwner() || hasPendingApproval()) && isValidScout();
       allow delete: if isExistingOwner();
