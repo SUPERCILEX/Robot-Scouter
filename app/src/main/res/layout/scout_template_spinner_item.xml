@@ -18,7 +18,8 @@
         android:layout_marginEnd="@dimen/spacing_mini"
         android:layout_gravity="center_vertical"
         android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="@string/accessibility_set_default_spinner_item" />
+        android:contentDescription="@string/accessibility_set_default_spinner_item"
+        tools:src="@drawable/ic_default_24dp" />
 
     <android.support.text.emoji.widget.EmojiAppCompatEditText
         android:id="@+id/name"

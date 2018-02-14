@@ -42,7 +42,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:drawableTopCompat="@drawable/ic_content_paste_grey_96dp" />
+            app:drawableTopCompat="@drawable/ic_content_paste_grey_96dp"
+            tools:visibility="visible" />
 
         <com.supercilex.robotscouter.util.ui.views.UnscrollableViewPager
             android:id="@+id/viewpager"

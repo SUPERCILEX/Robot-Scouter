@@ -2,7 +2,10 @@
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/RobotScouter.Dialog">
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.Dialog"
+    tools:layout_height="match_parent"
+    tools:layout_width="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +23,8 @@
                 android:layout_height="144dp"
                 android:contentDescription="@string/accessibility_robot_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:src="@tools:sample/avatars" />
 
             <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
                 android:id="@+id/progress"
@@ -62,7 +66,8 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="2521 - SERT" />
 
             <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesImageButton
                 android:id="@+id/edit_name_button"

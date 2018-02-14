@@ -15,7 +15,8 @@
         android:contentDescription="@string/accessibility_robot_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@tools:sample/avatars" />
 
     <ViewStub
         android:id="@+id/progress"
@@ -46,7 +47,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/name"
         app:layout_constraintHorizontal_chainStyle="packed"
-        tools:text="2521" />
+        tools:text="@tools:sample/us_zipcodes" />
 
     <android.support.text.emoji.widget.EmojiAppCompatTextView
         android:id="@+id/name"
@@ -64,7 +65,7 @@
         app:layout_constraintEnd_toStartOf="@id/new_scout"
         app:layout_constraintTop_toBottomOf="@id/number"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="SERT" />
+        tools:text="@tools:sample/full_names" />
 
     <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesImageButton
         android:id="@+id/new_scout"
@@ -75,7 +76,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:iconStyle="@style/Icon.Black"
-        app:iconDrawable="@drawable/ic_add_colorable_24dp" />
+        app:iconDrawable="@drawable/ic_add_colorable_24dp"
+        app:iconStyle="@style/Icon.Black" />
 
 </android.support.constraint.ConstraintLayout>

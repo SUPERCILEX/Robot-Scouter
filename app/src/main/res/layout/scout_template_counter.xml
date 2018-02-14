@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
     <include layout="@layout/scout_template_base_reorder" />
@@ -12,8 +11,7 @@
         android:layout_marginEnd="@dimen/spacing_normal"
         android:layout_marginRight="@dimen/spacing_normal"
         android:hint="@string/metric_counter_name_hint"
-        android:inputType="textMultiLine|textCapSentences"
-        tools:text="Example" />
+        android:inputType="textMultiLine|textCapSentences" />
 
     <include layout="@layout/scout_base_counter" />
 
@@ -26,7 +24,6 @@
         android:layout_gravity="center_vertical"
         android:hint="@string/metric_counter_unit_hint"
         android:inputType="textMultiLine|textCapWords"
-        android:maxWidth="50dp"
-        tools:text="s" />
+        android:maxWidth="50dp" />
 
 </LinearLayout>

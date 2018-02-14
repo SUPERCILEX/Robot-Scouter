@@ -32,7 +32,8 @@
                 android:contentDescription="@string/accessibility_robot_icon"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                tools:src="@tools:sample/backgrounds/scenic" />
 
             <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
                 android:id="@+id/progress"
@@ -76,7 +77,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:drawableTopCompat="@drawable/ic_assignment_grey_96dp" />
+            app:drawableTopCompat="@drawable/ic_assignment_grey_96dp"
+            tools:visibility="visible" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"

@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
     <include layout="@layout/scout_template_base_reorder" />
@@ -16,8 +15,7 @@
         app:layout_constraintStart_toEndOf="@id/reorder"
         app:layout_constraintEnd_toStartOf="@id/stopwatch"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/barrier"
-        tools:text="Example" />
+        app:layout_constraintBottom_toTopOf="@id/barrier" />
 
     <include layout="@layout/scout_base_stopwatch" />
 

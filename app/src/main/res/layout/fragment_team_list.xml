@@ -34,9 +34,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:drawableTopCompat="@drawable/ic_group_grey_96dp" />
+            app:drawableTopCompat="@drawable/ic_group_grey_96dp"
+            tools:visibility="visible" />
 
-        <include layout="@layout/recycler_view" />
+        <android.support.v7.widget.RecyclerView
+            style="@style/RobotScouter.List"
+            tools:listitem="@layout/team_list_row_layout" />
 
     </android.support.constraint.ConstraintLayout>
 

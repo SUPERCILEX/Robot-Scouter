@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.text.emoji.widget.EmojiAppCompatTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/name"
     style="@style/RobotScouter.ListItem"
     android:textIsSelectable="false"
     android:textSize="18sp"
-    android:textStyle="bold" />
+    android:textStyle="bold"
+    tools:text="Title" />
