@@ -150,7 +150,7 @@ class SpreadsheetExporter(
 
         try {
             file = findAvailableFile(file, rsFolder).hide().apply {
-                if (!createNewFile()
+                if (!parentFile.exists() && !parentFile.mkdirs() || !createNewFile()
                         // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
                         && (!delete() || !createNewFile())) {
                     throw IOException("Failed to create file: $this")
