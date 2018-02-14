@@ -23,7 +23,7 @@
         style="@style/RobotScouter.BottomSheet.Button"
         android:layout_weight="0"
         android:text="@string/delete"
-        app:drawableStartCompat="@drawable/ic_delete_forever_white_24dp"
+        app:drawableStartCompat="@drawable/ic_delete_forever_colorable_24dp"
         app:iconStyle="@style/Icon.Grey" />
 
 </LinearLayout>

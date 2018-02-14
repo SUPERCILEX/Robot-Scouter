@@ -19,6 +19,6 @@
         </aapt:attr>
     </item>
 
-    <item android:drawable="@drawable/ic_timer_white_24dp" />
+    <item android:drawable="@drawable/ic_timer_colorable_24dp" />
 
 </selector>

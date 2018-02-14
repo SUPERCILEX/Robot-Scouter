@@ -62,7 +62,7 @@
         app:menu_colorNormal="@color/colorAccent"
         app:menu_colorPressed="@color/colorAccent"
         app:menu_colorRipple="@color/colorAccent"
-        app:srcCompat="@drawable/ic_add_white_24dp">
+        app:srcCompat="@drawable/ic_add_colorable_24dp">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/add_header"

@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/action_sign_in"
-        android:icon="@drawable/ic_sign_in_white_24dp"
+        android:icon="@drawable/ic_sign_in_colorable_24dp"
         android:title="@string/team_sign_in_title"
         android:visible="false"
         app:showAsAction="ifRoom" />

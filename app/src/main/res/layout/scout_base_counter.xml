@@ -12,7 +12,7 @@
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_decrement_counter"
         android:stateListAnimator="@null"
-        app:srcCompat="@drawable/ic_remove_white_24dp"
+        app:srcCompat="@drawable/ic_remove_colorable_24dp"
         tools:ignore="UnusedAttribute" />
 
     <android.support.text.emoji.widget.EmojiAppCompatTextView
@@ -38,7 +38,7 @@
         android:layout_gravity="center_vertical"
         android:contentDescription="@string/accessibility_increment_counter"
         android:stateListAnimator="@null"
-        app:srcCompat="@drawable/ic_add_white_24dp"
+        app:srcCompat="@drawable/ic_add_colorable_24dp"
         tools:ignore="UnusedAttribute" />
 
 </merge>

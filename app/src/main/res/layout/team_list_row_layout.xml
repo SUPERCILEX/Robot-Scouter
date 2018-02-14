@@ -76,6 +76,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:iconStyle="@style/Icon.Black"
-        app:iconDrawable="@drawable/ic_add_white_24dp" />
+        app:iconDrawable="@drawable/ic_add_colorable_24dp" />
 
 </android.support.constraint.ConstraintLayout>

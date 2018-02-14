@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/action_new_template"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:icon="@drawable/ic_add_colorable_24dp"
         android:title="@string/template_new_title"
         app:showAsAction="ifRoom" />
 

@@ -8,12 +8,12 @@
     <group android:id="@+id/one">
         <item
             android:id="@+id/action_export_all_teams"
-            android:icon="@drawable/ic_import_export_white_24dp"
+            android:icon="@drawable/ic_import_export_colorable_24dp"
             android:title="@string/export_all_teams_title" />
 
         <item
             android:id="@+id/action_edit_templates"
-            android:icon="@drawable/ic_content_paste_white_24dp"
+            android:icon="@drawable/ic_content_paste_colorable_24dp"
             android:title="@string/template_activity_title" />
     </group>
 
@@ -25,7 +25,7 @@
 
         <item
             android:id="@+id/action_settings"
-            android:icon="@drawable/ic_settings_white_24dp"
+            android:icon="@drawable/ic_settings_colorable_24dp"
             android:title="@string/settings_activity_title" />
     </group>
 

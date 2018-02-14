@@ -87,12 +87,12 @@ class TemplateListFragment : FragmentBase(),
                     it.setOnClickListener(this)
                     it.setImageDrawable(AppCompatResources.getDrawable(it.context, icon))
                 }
-        initFab(R.id.add_header, R.drawable.ic_title_white_24dp)
+        initFab(R.id.add_header, R.drawable.ic_title_colorable_24dp)
         initFab(R.id.add_checkbox, R.drawable.ic_done_white_24dp)
-        initFab(R.id.add_stopwatch, R.drawable.ic_timer_white_24dp)
-        initFab(R.id.add_note, R.drawable.ic_note_white_24dp)
-        initFab(R.id.add_counter, R.drawable.ic_count_white_24dp)
-        initFab(R.id.add_spinner, R.drawable.ic_list_white_24dp)
+        initFab(R.id.add_stopwatch, R.drawable.ic_timer_colorable_24dp)
+        initFab(R.id.add_note, R.drawable.ic_note_colorable_24dp)
+        initFab(R.id.add_counter, R.drawable.ic_count_colorable_24dp)
+        initFab(R.id.add_spinner, R.drawable.ic_list_colorable_24dp)
 
         fam.hideMenuButton(false)
 

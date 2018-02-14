@@ -9,7 +9,7 @@
             android:defaultValue="auto"
             android:entries="@array/settings_pref_night_mode_entries"
             android:entryValues="@array/settings_pref_night_mode_values"
-            android:icon="@drawable/ic_settings_white_24dp"
+            android:icon="@drawable/ic_settings_colorable_24dp"
             android:key="nightMode"
             android:summary="%s"
             android:title="@string/settings_pref_night_mode_title" />
@@ -19,7 +19,7 @@
     <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_general_title">
 
         <com.supercilex.robotscouter.ui.settings.DefaultTemplatePreference
-            android:icon="@drawable/ic_content_paste_white_24dp"
+            android:icon="@drawable/ic_content_paste_colorable_24dp"
             android:key="defaultTemplateId"
             android:summary="@string/settings_pref_default_template_summary"
             android:title="@string/settings_pref_default_template_title" />
@@ -34,18 +34,18 @@
             android:title="@string/settings_pref_should_upload_to_tba_title" />
 
         <android.support.v7.preference.Preference
-            android:icon="@drawable/ic_replay_white_24dp"
+            android:icon="@drawable/ic_replay_colorable_24dp"
             android:key="reset_tutorials"
             android:title="@string/settings_pref_reset_tutorials_title" />
 
         <android.support.v7.preference.Preference
-            android:icon="@drawable/ic_link_white_24dp"
+            android:icon="@drawable/ic_link_colorable_24dp"
             android:key="link_account"
             android:summary="@string/settings_pref_link_account_summary"
             android:title="@string/settings_pref_link_account_title" />
 
         <android.support.v7.preference.Preference
-            android:icon="@drawable/ic_sign_out_white_24dp"
+            android:icon="@drawable/ic_sign_out_colorable_24dp"
             android:key="sign_out"
             android:title="@string/settings_pref_sign_out_title" />
 
