@@ -27,7 +27,6 @@ import java.io.File
 
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 const val KEYS = "keys"
-const val TOKEN_EXPIRATION_DAYS = 30
 
 private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teams.id}/"
 private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templates.id}/"
@@ -44,10 +43,10 @@ val Team.indexable: Indexable
             .setUrl(deepLink)
             .setName(toString())
             .apply {
-                setImage(media.let {
-                    if (it.isNullOrBlank() || File(it).exists()) return@apply
-                    it!!
-                })
+                val media = media
+                if (media?.isNotBlank() == true && !File(media).exists()) {
+                    setImage(media)
+                }
             }
             .setMetadata(Indexable.Metadata.Builder()
                                  .setWorksOffline(true)

@@ -314,11 +314,12 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             val team = value!![newIndex]
             launch {
                 team.fetchLatestData()
-                FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
 
                 val media = team.media
                 if (media?.isNotBlank() == true && File(media).exists()) {
                     startUploadTeamMediaJob(team)
+                } else {
+                    FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
                 }
             }
         }
