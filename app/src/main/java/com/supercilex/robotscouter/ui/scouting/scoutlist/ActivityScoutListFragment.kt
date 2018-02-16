@@ -18,13 +18,8 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
 import com.supercilex.robotscouter.util.ui.isInTabletMode
-import com.supercilex.robotscouter.util.unsafeLazy
 
 class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
-    override val viewHolder: AppBarViewHolderBase by unsafeLazy {
-        ActivityAppBarViewHolder(dataHolder.teamListener, onScoutingReadyTask.task)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val activity = activity!!
@@ -34,6 +29,13 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
         }
         FirebaseAuth.getInstance().addAuthStateListener(this)
     }
+
+    override fun newViewModel(savedInstanceState: Bundle?): AppBarViewHolderBase =
+            ActivityAppBarViewHolder(
+                    savedInstanceState,
+                    dataHolder.teamListener,
+                    onScoutingReadyTask.task
+            )
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val activity = activity as AppCompatActivity
@@ -61,10 +63,12 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     override fun onTeamDeleted() = activity!!.finish()
 
     private inner class ActivityAppBarViewHolder(
+            savedInstanceState: Bundle?,
             listener: LiveData<Team>,
             onScoutingReadyTask: Task<Nothing?>
     ) : AppBarViewHolderBase(
             this@ActivityScoutListFragment,
+            savedInstanceState,
             view!!,
             listener,
             onScoutingReadyTask

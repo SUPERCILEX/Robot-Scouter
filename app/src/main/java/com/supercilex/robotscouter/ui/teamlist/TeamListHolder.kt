@@ -9,8 +9,9 @@ import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.ui.Saveable
 
-class TeamListHolder : ViewModelBase<Bundle?>() {
+class TeamListHolder : ViewModelBase<Bundle?>(), Saveable {
     val selectedTeamIdListener = UniqueMutableLiveData<Team?>()
 
     private val keepAliveListener = Observer<ObservableSnapshotArray<Team>> {}
@@ -24,7 +25,7 @@ class TeamListHolder : ViewModelBase<Bundle?>() {
         selectedTeamIdListener.setValue(team)
     }
 
-    fun onSaveInstanceState(outState: Bundle) =
+    override fun onSaveInstanceState(outState: Bundle) =
             outState.putAll(selectedTeamIdListener.value?.toBundle() ?: Bundle())
 
     override fun onCleared() {

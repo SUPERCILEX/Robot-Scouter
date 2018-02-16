@@ -52,7 +52,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team>, CaptureTeamMediaListener {
     override val recyclerPool = RecyclerView.RecycledViewPool()
 
-    protected abstract val viewHolder: AppBarViewHolderBase
+    protected lateinit var viewHolder: AppBarViewHolderBase
+        private set
 
     protected val dataHolder: TeamHolder by unsafeLazy {
         ViewModelProviders.of(this).get(TeamHolder::class.java)
@@ -110,7 +111,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewHolder // Force initialize
+        viewHolder = newViewModel(savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -207,6 +208,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
             }
         }
     }
+
+    protected abstract fun newViewModel(savedInstanceState: Bundle?): AppBarViewHolderBase
 
     protected abstract fun onTeamDeleted()
 }

@@ -17,8 +17,9 @@ import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.ui.Saveable
 
-class TeamHolder : ViewModelBase<Bundle>(),
+class TeamHolder : ViewModelBase<Bundle>(), Saveable,
         Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
     val teamListener: LiveData<Team> = Transformations.switchMap(TeamsLiveData, this)
 
@@ -76,7 +77,7 @@ class TeamHolder : ViewModelBase<Bundle>(),
         }
     }
 
-    fun onSaveInstanceState(outState: Bundle) =
+    override fun onSaveInstanceState(outState: Bundle) =
             outState.putAll(teamListener.value?.toBundle() ?: Bundle())
 
     override fun onCleared() {

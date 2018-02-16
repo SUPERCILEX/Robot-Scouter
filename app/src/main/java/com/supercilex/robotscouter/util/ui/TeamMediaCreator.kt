@@ -5,6 +5,7 @@ import android.app.Activity
 import android.arch.lifecycle.LiveData
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
@@ -24,23 +25,34 @@ import org.jetbrains.anko.longToast
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.util.Collections
-import kotlin.properties.Delegates
 
 interface CaptureTeamMediaListener {
     fun startCapture(shouldUploadMediaToTba: Boolean)
 }
 
-class TeamMediaCreator : ViewModelBase<PermissionRequestHandler>(), OnActivityResult {
+class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(),
+        OnActivityResult, Saveable {
     private val _onMediaCaptured = SingleLiveEvent<Team>()
     val onMediaCaptured: LiveData<Team> get() = _onMediaCaptured
     lateinit var team: Team
 
     private lateinit var handler: PermissionRequestHandler
-    private lateinit var photoFile: File
-    private var shouldUploadMediaToTba: Boolean by Delegates.notNull()
+    private var photoFile: File? = null
+    private var shouldUploadMediaToTba: Boolean? = null
 
-    override fun onCreate(args: PermissionRequestHandler) {
-        handler = args
+    override fun onCreate(args: Pair<PermissionRequestHandler, Bundle?>) {
+        handler = args.first
+        args.second?.let {
+            photoFile = it.getSerializable(PHOTO_FILE_KEY) as File?
+            shouldUploadMediaToTba = it.getBoolean(PHOTO_SHOULD_UPLOAD)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.apply {
+            putSerializable(PHOTO_FILE_KEY, photoFile)
+            shouldUploadMediaToTba?.let { putBoolean(PHOTO_SHOULD_UPLOAD, it) }
+        }
     }
 
     fun capture(host: Fragment, shouldUploadMediaToTba: Boolean? = null) {
@@ -56,7 +68,7 @@ class TeamMediaCreator : ViewModelBase<PermissionRequestHandler>(), OnActivityRe
             return
         }
 
-        photoFile = try {
+        val photoFile = try {
             createFile(
                     team.toString(),
                     "jpg",
@@ -67,6 +79,8 @@ class TeamMediaCreator : ViewModelBase<PermissionRequestHandler>(), OnActivityRe
             CrashLogger.onFailure(e)
             RobotScouter.longToast(e.toString())
             return
+        }.also {
+            this.photoFile = it
         }
 
         team.logTakeMedia()
@@ -79,12 +93,13 @@ class TeamMediaCreator : ViewModelBase<PermissionRequestHandler>(), OnActivityRe
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode != TAKE_PHOTO_RC) return
 
+        val photoFile = photoFile!!
         if (resultCode == Activity.RESULT_OK) {
             val contentUri = Uri.fromFile(photoFile.unhide())
 
             _onMediaCaptured.value = team.copy().apply {
                 hasCustomMedia = true
-                shouldUploadMediaToTba = this@TeamMediaCreator.shouldUploadMediaToTba
+                shouldUploadMediaToTba = this@TeamMediaCreator.shouldUploadMediaToTba!!
                 media = contentUri.path
             }
 
@@ -99,6 +114,9 @@ class TeamMediaCreator : ViewModelBase<PermissionRequestHandler>(), OnActivityRe
 
     companion object {
         private const val TAKE_PHOTO_RC = 334
+        private const val PHOTO_FILE_KEY = "photo_file_key"
+        private const val PHOTO_SHOULD_UPLOAD = "photo_should_upload"
+
         val perms: List<String> = Collections.unmodifiableList(ioPerms.toMutableList().apply {
             this += Manifest.permission.CAMERA
         })

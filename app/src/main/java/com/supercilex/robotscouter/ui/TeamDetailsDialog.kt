@@ -63,7 +63,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         }
     }
     private val mediaCreator by unsafeLazy {
-        ViewModelProviders.of(this).get(TeamMediaCreator::class.java).apply { init(permHandler) }
+        ViewModelProviders.of(this).get(TeamMediaCreator::class.java)
     }
 
     private val content by unsafeLazy {
@@ -90,10 +90,13 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         team = arguments!!.getTeam()
-        mediaCreator.onMediaCaptured.observe(this, Observer {
-            team.copyMediaInfo(it!!)
-            updateUi()
-        })
+        mediaCreator.apply {
+            init(permHandler to savedInstanceState)
+            onMediaCaptured.observe(this@TeamDetailsDialog, Observer {
+                team.copyMediaInfo(it!!)
+                updateUi()
+            })
+        }
         ViewModelProviders.of(this).get(TeamHolder::class.java).apply {
             init(team.toBundle())
             teamListener.observe(this@TeamDetailsDialog, Observer {
@@ -224,6 +227,11 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         (parentFragment as? TeamListFragment)?.resetMenu()
 
         dismiss()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mediaCreator.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(

@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.ui.MovableFragmentStatePagerAdapter
+import com.supercilex.robotscouter.util.ui.Saveable
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotterknife.bindView
@@ -29,6 +30,7 @@ abstract class TabPagerAdapterBase(
         private val tabLayout: TabLayout,
         private val dataRef: CollectionReference
 ) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager),
+        Saveable,
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
@@ -133,7 +135,8 @@ abstract class TabPagerAdapterBase(
         }
     }
 
-    fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(currentTabId))
+    override fun onSaveInstanceState(outState: Bundle) =
+            outState.putAll(getTabIdBundle(currentTabId))
 
     private fun selectTab(index: Int) {
         ArchTaskExecutor.getInstance().postToMainThread {

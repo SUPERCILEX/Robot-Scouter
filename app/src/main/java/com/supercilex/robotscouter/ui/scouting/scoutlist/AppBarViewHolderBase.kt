@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.design.widget.CollapsingToolbarLayout
@@ -34,6 +35,7 @@ import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.OnActivityResult
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
+import com.supercilex.robotscouter.util.ui.Saveable
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
@@ -42,12 +44,13 @@ import kotlin.math.roundToInt
 
 open class AppBarViewHolderBase(
         private val fragment: ScoutListFragmentBase,
+        savedInstanceState: Bundle?,
         rootView: View,
         listener: LiveData<Team>,
         private val onScoutingReadyTask: Task<*>
 ) : OnSuccessListener<List<Void?>>, View.OnLongClickListener,
         CaptureTeamMediaListener, ActivityCompat.OnRequestPermissionsResultCallback,
-        OnActivityResult {
+        OnActivityResult, Saveable {
     protected var team: Team = listener.value!!
 
     val toolbar: Toolbar = rootView.find(R.id.toolbar)
@@ -61,7 +64,7 @@ open class AppBarViewHolderBase(
             }
     private val mediaCapture = ViewModelProviders.of(fragment)
             .get(TeamMediaCreator::class.java).apply {
-                init(permissionHandler)
+        init(permissionHandler to savedInstanceState)
                 onMediaCaptured.observe(fragment, Observer {
                     team.copyMediaInfo(it!!)
                     team.forceUpdate()
@@ -184,6 +187,8 @@ open class AppBarViewHolderBase(
 
     override fun startCapture(shouldUploadMediaToTba: Boolean) =
             mediaCapture.capture(fragment, shouldUploadMediaToTba)
+
+    override fun onSaveInstanceState(outState: Bundle) = mediaCapture.onSaveInstanceState(outState)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         permissionHandler.onActivityResult(requestCode, resultCode, data)

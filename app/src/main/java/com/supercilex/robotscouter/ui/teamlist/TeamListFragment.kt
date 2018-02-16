@@ -108,7 +108,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     override fun onSaveInstanceState(outState: Bundle) {
         holder.onSaveInstanceState(outState)
         menuHelper.saveState(outState)
-        adapter?.onSaveInstanceState()?.let { outState.putAll(it) }
+        adapter?.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =

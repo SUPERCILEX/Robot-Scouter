@@ -62,8 +62,10 @@ abstract class MetricListFragment : FragmentBase() {
     abstract fun onCreateRecyclerAdapter(savedInstanceState: Bundle?): SavedStateAdapter<*, *>
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putAll(tmpSavedAdapterState ?: adapter.onSaveInstanceState().also {
-            tmpSavedAdapterState = it
+        outState.putAll(tmpSavedAdapterState ?: run {
+            adapter.onSaveInstanceState(outState)
+            tmpSavedAdapterState = outState
+            outState
         })
     }
 

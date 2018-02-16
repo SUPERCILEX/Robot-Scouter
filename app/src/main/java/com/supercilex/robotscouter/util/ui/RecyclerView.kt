@@ -6,7 +6,6 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
-import androidx.os.bundleOf
 import androidx.view.postOnAnimationDelayed
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -70,24 +69,20 @@ abstract class SavedStateAdapter<T, VH : RecyclerView.ViewHolder>(
         options: FirestoreRecyclerOptions<T>,
         savedInstanceState: Bundle?,
         protected val recyclerView: RecyclerView
-) : FirestoreRecyclerAdapter<T, VH>(options) {
+) : FirestoreRecyclerAdapter<T, VH>(options), Saveable {
     private var state: Parcelable?
+    private val RecyclerView.state get() = layoutManager.onSaveInstanceState()
 
     init {
         state = savedInstanceState?.getParcelable(SAVED_STATE_KEY)
     }
 
-    /**
-     * @see [android.support.v7.app.AppCompatActivity.onSaveInstanceState]
-     * @see [android.support.v4.app.Fragment.onSaveInstanceState]
-     */
-    fun onSaveInstanceState() = bundleOf(SAVED_STATE_KEY to _onSaveInstanceState())
-
-    private fun _onSaveInstanceState(): Parcelable =
-            recyclerView.layoutManager.onSaveInstanceState()
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable(SAVED_STATE_KEY, recyclerView.state)
+    }
 
     override fun stopListening() {
-        state = _onSaveInstanceState()
+        state = recyclerView.state
         super.stopListening()
     }
 

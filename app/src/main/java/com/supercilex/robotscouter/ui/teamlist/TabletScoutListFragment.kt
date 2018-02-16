@@ -12,26 +12,9 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.isInTabletMode
-import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.findOptional
 
 class TabletScoutListFragment : ScoutListFragmentBase() {
-    override val viewHolder: AppBarViewHolderBase by unsafeLazy {
-        object : AppBarViewHolderBase(
-                this, view!!, dataHolder.teamListener, onScoutingReadyTask.task) {
-            init {
-                toolbar.setOnMenuItemClickListener {
-                    // We need to be able to guarantee that our `onOptionsItemSelected`s are called
-                    // before that of TeamListActivity because of duplicate menu item ids
-                    Fragment::class.java
-                            .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)
-                            .apply { isAccessible = true }
-                            .invoke(this@TabletScoutListFragment, it) as Boolean
-                            || activity!!.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, it)
-                }
-            }
-        }
-    }
     private var noContentHint: View? = null
         get() {
             if (field == null) field = activity!!.findOptional(R.id.no_team_selected_hint)
@@ -44,6 +27,21 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
             val listener = context as TeamSelectionListener
             listener.onTeamSelected(bundle, true)
             removeFragment()
+        }
+    }
+
+    override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
+            this, savedInstanceState, view!!, dataHolder.teamListener, onScoutingReadyTask.task) {
+        init {
+            toolbar.setOnMenuItemClickListener {
+                // We need to be able to guarantee that our `onOptionsItemSelected`s are called
+                // before that of TeamListActivity because of duplicate menu item ids
+                Fragment::class.java
+                        .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)
+                        .apply { isAccessible = true }
+                        .invoke(this@TabletScoutListFragment, it) as Boolean
+                        || activity!!.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, it)
+            }
         }
     }
 
