@@ -89,7 +89,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        team = arguments!!.getTeam()
+        team = savedInstanceState?.getTeam() ?: arguments!!.getTeam()
         mediaCreator.apply {
             init(permHandler to savedInstanceState)
             onMediaCaptured.observe(this@TeamDetailsDialog, Observer {
@@ -99,13 +99,18 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         }
         ViewModelProviders.of(this).get(TeamHolder::class.java).apply {
             init(team.toBundle())
+            var firstOverwrite = savedInstanceState
             teamListener.observe(this@TeamDetailsDialog, Observer {
                 if (it == null) {
                     dismiss()
                 } else {
                     team = it
                     mediaCreator.team = it
-                    updateUi()
+
+                    // Skip the first UI update if this fragment is being restored since the views
+                    // will know how to restore themselves.
+                    if (firstOverwrite == null) updateUi()
+                    firstOverwrite = null
                 }
             })
         }
@@ -229,10 +234,10 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         dismiss()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        mediaCreator.onSaveInstanceState(outState)
-    }
+    override fun onSaveInstanceState(outState: Bundle) = super.onSaveInstanceState(outState.apply {
+        putAll(team.toBundle())
+        mediaCreator.onSaveInstanceState(this)
+    })
 
     override fun onRequestPermissionsResult(
             requestCode: Int,
