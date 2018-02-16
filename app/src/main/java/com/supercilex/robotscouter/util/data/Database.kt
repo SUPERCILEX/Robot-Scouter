@@ -46,9 +46,11 @@ import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
+import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
+import com.supercilex.robotscouter.util.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.model.trash
@@ -318,8 +320,14 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 val media = team.media
                 if (media?.isNotBlank() == true && File(media).exists()) {
                     startUploadTeamMediaJob(team)
-                } else {
+                } else if (media == null || media.isValidTeamUrl()) {
                     FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
+                } else {
+                    team.apply {
+                        hasCustomMedia = false
+                        this.media = null
+                        forceUpdate()
+                    }
                 }
             }
         }

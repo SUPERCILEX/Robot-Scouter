@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.util.data.model
 
 import android.content.Context
+import android.support.annotation.WorkerThread
+import android.util.Patterns
 import androidx.net.toUri
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -35,6 +37,7 @@ import com.supercilex.robotscouter.util.teamFreshnessDays
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.uid
 import kotlinx.coroutines.experimental.async
+import java.io.File
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -177,3 +180,21 @@ fun Team.launchTba(context: Context) =
         launchUrl(context, "http://www.thebluealliance.com/team/$number".toUri())
 
 fun Team.launchWebsite(context: Context) = launchUrl(context, website!!.toUri())
+
+@WorkerThread
+fun CharSequence.isValidTeamUrl() = toString().formatAsTeamUrl().let {
+    it == null || Patterns.WEB_URL.matcher(it).matches() || File(it).exists()
+}
+
+@WorkerThread
+fun String.formatAsTeamUrl(): String? {
+    if (File(this).exists()) return this
+
+    val trimmedUrl = trim()
+    if (trimmedUrl.isBlank()) return null
+    return if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
+        trimmedUrl
+    } else {
+        "http://" + trimmedUrl
+    }
+}

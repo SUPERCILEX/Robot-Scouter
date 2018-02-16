@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.transition.TransitionManager
 import android.support.v4.app.FragmentManager
-import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -32,6 +31,8 @@ import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceRefresh
 import com.supercilex.robotscouter.util.data.model.forceUpdate
+import com.supercilex.robotscouter.util.data.model.formatAsTeamUrl
+import com.supercilex.robotscouter.util.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.util.data.model.launchTba
 import com.supercilex.robotscouter.util.data.model.launchWebsite
 import com.supercilex.robotscouter.util.data.nullOrFull
@@ -47,7 +48,6 @@ import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
-import java.io.File
 import kotlin.math.hypot
 
 class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListener,
@@ -206,14 +206,14 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             }
         }
 
-        formatUrl(mediaEditText.text.toString()).also {
+        mediaEditText.text.toString().formatAsTeamUrl().also {
             if (it != team.media) {
                 team.hasCustomMedia = it?.isNotBlank() == true
                 team.media = it
             }
         }
 
-        formatUrl(websiteEditText.text.toString()).also {
+        websiteEditText.text.toString().formatAsTeamUrl().also {
             if (it != team.website) {
                 team.hasCustomWebsite = it?.isNotBlank() == true
                 team.website = it
@@ -258,31 +258,11 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         validateUrl(websiteEditText.text, websiteInputLayout)
     }
 
-    private fun validateUrl(url: CharSequence, inputLayout: TextInputLayout) =
-            validateUrl(url.toString(), inputLayout)
-
-    private fun validateUrl(url: String, inputLayout: TextInputLayout): Boolean {
-        val formatted = formatUrl(url)
-        return if (formatted == null || Patterns.WEB_URL.matcher(formatted).matches()
-            || File(formatted).exists()) {
-            inputLayout.error = null
-            true
-        } else {
-            inputLayout.error = getString(R.string.details_malformed_url_error)
-            false
-        }
-    }
-
-    private fun formatUrl(url: String): String? {
-        if (File(url).exists()) return url
-
-        val trimmedUrl = url.trim()
-        if (trimmedUrl.isBlank()) return null
-        return if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
-            trimmedUrl
-        } else {
-            "http://" + trimmedUrl
-        }
+    private fun validateUrl(
+            url: CharSequence,
+            inputLayout: TextInputLayout
+    ) = url.isValidTeamUrl().also {
+        inputLayout.error = if (it) null else getString(R.string.details_malformed_url_error)
     }
 
     companion object {

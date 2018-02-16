@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.util.data
 import android.Manifest
 import android.os.Environment
 import android.support.annotation.RequiresPermission
+import android.support.annotation.WorkerThread
 import java.io.File
 import java.io.IOException
 
@@ -12,6 +13,7 @@ private val exports = // TODO Environment.DIRECTORY_DOCUMENTS can be used after 
     File(Environment.getExternalStorageDirectory(), "Documents")
 private val media = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_PICTURES)
 
+@WorkerThread
 fun createFile(
         prefix: String,
         suffix: String,
@@ -24,16 +26,20 @@ fun createFile(
     else throw IOException("Unable to create temporary file")
 }
 
+@get:WorkerThread
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 val exportsFolder: File?
     get() = getFolder(exports)
 
+@get:WorkerThread
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 val mediaFolder: File?
     get() = getFolder(media)
 
+@WorkerThread
 fun File.hide() = File(parentFile, ".$name")
 
+@WorkerThread
 @Throws(IOException::class)
 fun File.unhide(): File {
     val unhidden = File(parentFile, name.substring(1))

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.annotation.WorkerThread
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
 import com.supercilex.robotscouter.R
@@ -55,6 +56,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         }
     }
 
+    @WorkerThread
     fun capture(host: Fragment, shouldUploadMediaToTba: Boolean? = null) {
         shouldUploadMediaToTba?.let { this.shouldUploadMediaToTba = it }
 

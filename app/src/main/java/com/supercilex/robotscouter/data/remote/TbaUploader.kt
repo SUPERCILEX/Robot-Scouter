@@ -14,6 +14,8 @@ class TbaUploader private constructor(
         team: Team
 ) : TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
     override fun call(): Team {
+        if (!File(team.media).exists()) return team
+
         uploadToImgur()
         if (team.shouldUploadMediaToTba) uploadToTba()
         return team
