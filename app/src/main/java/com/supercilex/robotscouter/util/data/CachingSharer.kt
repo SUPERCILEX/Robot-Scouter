@@ -43,9 +43,10 @@ abstract class CachingSharer(private val context: Context) {
             }
         }
 
-        private fun getShareTemplateFromServer(to: File): String = to.also {
+        private fun getShareTemplateFromServer(to: File): String {
             Tasks.await(FirebaseStorage.getInstance().reference.child(fileName).getFile(to))
-        }.readText()
+            return to.readText()
+        }
     })
 
     private companion object {
