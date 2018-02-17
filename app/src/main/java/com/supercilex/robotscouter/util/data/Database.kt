@@ -25,7 +25,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.data.client.startUploadTeamMediaJob
+import com.supercilex.robotscouter.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
@@ -46,6 +46,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.model.fetchLatestData
+import com.supercilex.robotscouter.util.data.model.forceRefresh
 import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScouts
@@ -319,7 +320,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
 
                 val media = team.media
                 if (media?.isNotBlank() == true && File(media).exists()) {
-                    startUploadTeamMediaJob(team)
+                    team.startUploadMediaJob()
                 } else if (media == null || media.isValidTeamUrl()) {
                     FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
                 } else {
@@ -327,6 +328,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                         hasCustomMedia = false
                         this.media = null
                         forceUpdate()
+                        forceRefresh()
                     }
                 }
             }

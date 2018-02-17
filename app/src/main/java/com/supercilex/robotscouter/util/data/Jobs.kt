@@ -41,23 +41,24 @@ private val scheduler by lazy {
     RobotScouter.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 }
 
-fun startInternetJob14(
-        team: Team,
+fun Team.startInternetJob14(
         jobId: Int,
         clazz: Class<out com.firebase.jobdispatcher.JobService>
-) = fjd.newJobBuilder()
-        .setService(clazz)
-        .setTag(jobId.toString())
-        .setTrigger(Trigger.executionWindow(0, 0))
-        .setExtras(team.toRawBundle())
-        .setConstraints(Constraint.ON_ANY_NETWORK)
-        .buildAndSchedule()
+) {
+    fjd.newJobBuilder()
+            .setService(clazz)
+            .setTag(jobId.toString())
+            .setTrigger(Trigger.executionWindow(0, 0))
+            .setExtras(toRawBundle())
+            .setConstraints(Constraint.ON_ANY_NETWORK)
+            .buildAndSchedule()
+}
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun startInternetJob21(team: Team, jobId: Int, clazz: Class<out JobService>) {
+fun Team.startInternetJob21(jobId: Int, clazz: Class<out JobService>) {
     JobInfo.Builder(jobId, ComponentName(RobotScouter.packageName, clazz.name))
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setExtras(team.toRawPersistableBundle())
+            .setExtras(toRawPersistableBundle())
             .buildAndSchedule(clazz.name)
 }
 

@@ -24,6 +24,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment
 import com.supercilex.robotscouter.util.data.getTeam
@@ -48,6 +49,7 @@ import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
+import java.io.File
 import kotlin.math.hypot
 
 class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListener,
@@ -225,6 +227,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             }
         }
 
+        team.media?.let { if (File(it).exists()) team.startUploadMediaJob() }
         team.forceUpdate()
         team.forceRefresh()
 

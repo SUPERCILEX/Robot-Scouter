@@ -12,7 +12,7 @@ import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
-import com.supercilex.robotscouter.data.client.startDownloadTeamDataJob
+import com.supercilex.robotscouter.data.client.startDownloadDataJob
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
@@ -160,7 +160,7 @@ fun Team.trash() {
 fun Team.fetchLatestData() = async {
     fetchAndActivate()
     val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp.time)
-    if (differenceDays >= teamFreshnessDays) startDownloadTeamDataJob(this@fetchLatestData)
+    if (differenceDays >= teamFreshnessDays) startDownloadDataJob()
 }.logFailures()
 
 fun Team.getScouts(): Task<List<Scout>> = doAsync {
