@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
@@ -57,11 +58,20 @@ class AccountMergeService : ManualMergeService() {
             userPrefsRef.document(snapshot.id).log().set(snapshot.data).logFailures()
         }
 
-        updateOwner(teams.result.map { it.reference }, token, prevUid) { ref ->
+        val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
+
+        val teamRefs = teams.result.map { it.reference }
+        updateOwner(teamRefs, token, prevUid) { ref ->
             teams.result.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)
+        }.continueWithTask {
+            Tasks.whenAll(teamRefs.map { it.log().update(tokenPath, FieldValue.delete()) })
         }.logFailures()
-        updateOwner(templates.result.map { it.reference }, token, prevUid) { ref ->
+
+        val templateRefs = templates.result.map { it.reference }
+        updateOwner(templateRefs, token, prevUid) { ref ->
             templates.result.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)
+        }.continueWithTask {
+            Tasks.whenAll(templateRefs.map { it.log().update(tokenPath, FieldValue.delete()) })
         }.logFailures()
 
         null
