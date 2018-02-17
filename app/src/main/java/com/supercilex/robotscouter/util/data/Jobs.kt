@@ -43,23 +43,23 @@ private val scheduler by lazy {
 
 fun Team.startInternetJob14(
         jobId: Int,
-        clazz: Class<out com.firebase.jobdispatcher.JobService>
-) {
-    fjd.newJobBuilder()
-            .setService(clazz)
-            .setTag(jobId.toString())
-            .setTrigger(Trigger.executionWindow(0, 0))
-            .setExtras(toRawBundle())
-            .setConstraints(Constraint.ON_ANY_NETWORK)
-            .buildAndSchedule()
+        clazz: Class<out com.firebase.jobdispatcher.JobService>,
+        config: (Job.Builder.() -> Unit)? = null
+) = startJob14(jobId, clazz) {
+    setConstraints(Constraint.ON_ANY_NETWORK)
+    extras = toRawBundle()
+    if (config != null) config()
 }
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun Team.startInternetJob21(jobId: Int, clazz: Class<out JobService>) {
-    JobInfo.Builder(jobId, ComponentName(RobotScouter.packageName, clazz.name))
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setExtras(toRawPersistableBundle())
-            .buildAndSchedule(clazz.name)
+fun Team.startInternetJob21(
+        jobId: Int,
+        clazz: Class<out JobService>,
+        config: (JobInfo.Builder.() -> Unit)? = null
+) = startJob21(jobId, clazz) {
+    setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+    setExtras(toRawPersistableBundle())
+    if (config != null) config()
 }
 
 fun cancelAllJobs() {
@@ -106,6 +106,30 @@ fun PersistableBundle.parseTeam() = Team(
         getInt(MEDIA_YEAR),
         Date(getLong(TIMESTAMP))
 )
+
+private inline fun startJob14(
+        jobId: Int,
+        clazz: Class<out com.firebase.jobdispatcher.JobService>,
+        config: Job.Builder.() -> Unit
+) {
+    fjd.newJobBuilder()
+            .setService(clazz)
+            .setTag(jobId.toString())
+            .setTrigger(Trigger.NOW)
+            .apply { config() }
+            .buildAndSchedule()
+}
+
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+private inline fun startJob21(
+        jobId: Int,
+        clazz: Class<out JobService>,
+        config: JobInfo.Builder.() -> Unit
+) {
+    JobInfo.Builder(jobId, ComponentName(RobotScouter.packageName, clazz.name))
+            .apply { config() }
+            .buildAndSchedule(clazz.name)
+}
 
 private fun Job.Builder.buildAndSchedule() {
     val result: Int = fjd.schedule(build())

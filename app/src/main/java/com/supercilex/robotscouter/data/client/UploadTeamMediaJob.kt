@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.data.client
 
 import android.os.Build
 import android.support.annotation.RequiresApi
+import com.firebase.jobdispatcher.Lifetime
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaUploader
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
@@ -13,9 +14,13 @@ fun Team.startUploadMediaJob() {
     val mediaHash: Int = media!!.hashCode()
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        startInternetJob21(mediaHash, UploadTeamMediaJob21::class.java)
+        startInternetJob21(mediaHash, UploadTeamMediaJob21::class.java) {
+            setPersisted(true)
+        }
     } else {
-        startInternetJob14(mediaHash, UploadTeamMediaJob14::class.java)
+        startInternetJob14(mediaHash, UploadTeamMediaJob14::class.java) {
+            lifetime = Lifetime.FOREVER
+        }
     }
 }
 
