@@ -51,6 +51,11 @@ val teamsQuery
 
 val Team.ref: DocumentReference get() = teams.document(id)
 
+val Team.isStale: Boolean
+    get() = TimeUnit.MILLISECONDS.toDays(
+            System.currentTimeMillis() - timestamp.time
+    ) >= teamFreshnessDays
+
 val Team.isOutdatedMedia: Boolean
     get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
 
@@ -159,8 +164,7 @@ fun Team.trash() {
 
 fun Team.fetchLatestData() = async {
     fetchAndActivate()
-    val differenceDays = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - timestamp.time)
-    if (differenceDays >= teamFreshnessDays) startDownloadDataJob()
+    if (isStale) startDownloadDataJob()
 }.logFailures()
 
 fun Team.getScouts(): Task<List<Scout>> = doAsync {

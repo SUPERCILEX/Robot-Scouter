@@ -44,7 +44,7 @@ class TeamHolder : ViewModelBase<Bundle>(), Saveable,
             }
 
             team.add()
-            TbaDownloader.load(team).addOnSuccessListener { team.update(it) }
+            TbaDownloader.load(team).addOnSuccessListener { it?.let { team.update(it) } }
         }
 
         return object : MutableLiveData<Team>(), ChangeEventListenerBase {

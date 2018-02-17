@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.data.remote
 
-import com.google.android.gms.tasks.Task
 import com.google.gson.JsonObject
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -13,8 +12,8 @@ import java.io.File
 class TbaUploader private constructor(
         team: Team
 ) : TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
-    override fun call(): Team {
-        if (!File(team.media ?: return team).exists()) return team
+    override fun call(): Team? {
+        if (!File(team.media ?: return null).exists()) return null
 
         uploadToImgur()
         if (team.shouldUploadMediaToTba) uploadToTba()
@@ -65,6 +64,6 @@ class TbaUploader private constructor(
             ".${url.split(".").dropLastWhile { it.isEmpty() }.last()}"
 
     companion object {
-        fun upload(team: Team): Task<Team> = TbaServiceBase.executeAsync(TbaUploader(team))
+        fun upload(team: Team) = TbaServiceBase.executeAsync(TbaUploader(team))
     }
 }

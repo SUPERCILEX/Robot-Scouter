@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Calendar
 import java.util.concurrent.Callable
 
-abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) : Callable<Team> {
+abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) : Callable<Team?> {
     protected val team: Team = team.copy()
     protected val api: T = TBA_RETROFIT.create(clazz)
 
@@ -33,7 +33,7 @@ abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) : Callable<Tea
 
         private const val ERROR_404 = 404
 
-        fun executeAsync(service: TbaServiceBase<*>): Task<Team> =
+        fun executeAsync(service: TbaServiceBase<*>): Task<Team?> =
                 AsyncTaskExecutor.execute(service)
     }
 }

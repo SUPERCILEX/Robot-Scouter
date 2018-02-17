@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.data.client
 
 import android.os.Build
 import android.support.annotation.RequiresApi
-import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaUploader
 import com.supercilex.robotscouter.util.data.model.updateMedia
@@ -23,7 +22,7 @@ interface UploadTeamMediaJob : TeamJob {
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.updateMedia(newTeam) }
 
-    override fun startTask(existingTeam: Team): Task<Team> = TbaUploader.upload(existingTeam)
+    override fun startTask(existingTeam: Team) = TbaUploader.upload(existingTeam)
 }
 
 class UploadTeamMediaJob14 : TbaJobBase14(), UploadTeamMediaJob

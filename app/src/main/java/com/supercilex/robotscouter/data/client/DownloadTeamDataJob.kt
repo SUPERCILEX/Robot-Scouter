@@ -2,8 +2,11 @@ package com.supercilex.robotscouter.data.client
 
 import android.os.Build
 import android.support.annotation.RequiresApi
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
+import com.supercilex.robotscouter.util.data.model.isStale
 import com.supercilex.robotscouter.util.data.model.update
 import com.supercilex.robotscouter.util.data.startInternetJob14
 import com.supercilex.robotscouter.util.data.startInternetJob21
@@ -20,7 +23,11 @@ interface DownloadTeamDataJob : TeamJob {
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.update(newTeam) }
 
-    override fun startTask(existingTeam: Team) = TbaDownloader.load(existingTeam)
+    override fun startTask(existingTeam: Team): Task<Team?> = if (existingTeam.isStale) {
+        TbaDownloader.load(existingTeam)
+    } else {
+        Tasks.forResult(null)
+    }
 }
 
 class DownloadTeamDataJob14 : TbaJobBase14(), DownloadTeamDataJob

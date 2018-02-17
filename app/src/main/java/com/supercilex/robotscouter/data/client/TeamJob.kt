@@ -21,7 +21,7 @@ interface TeamJob {
         if (!team.owners.contains(uid)) return Tasks.forResult(null)
 
         return team.ref.log().get().logFailures().continueWithTask(
-                AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Team>> {
+                AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Team?>> {
             val snapshot = it.result
             if (snapshot.exists()) {
                 val existingTeam = teamParser.parseSnapshot(snapshot)
@@ -35,10 +35,10 @@ interface TeamJob {
                 snapshot.reference.delete() // Ensure zombies cached on-device die
                 Tasks.forResult(null)
             }
-        }).continueWith(AsyncTaskExecutor, Continuation<Team, Unit> {
+        }).continueWith(AsyncTaskExecutor, Continuation<Team?, Unit> {
             if (team.owners.contains(uid)) updateTeam(team, it.result ?: return@Continuation)
         })
     }
 
-    fun startTask(existingTeam: Team): Task<Team>
+    fun startTask(existingTeam: Team): Task<Team?>
 }
