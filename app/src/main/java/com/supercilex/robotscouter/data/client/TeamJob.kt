@@ -30,7 +30,7 @@ interface TeamJob {
                     return@Continuation Tasks.forResult(null)
                 }
 
-                startTask(existingTeam)
+                startTask(team, existingTeam)
             } else {
                 snapshot.reference.delete() // Ensure zombies cached on-device die
                 Tasks.forResult(null)
@@ -40,5 +40,5 @@ interface TeamJob {
         })
     }
 
-    fun startTask(existingTeam: Team): Task<Team?>
+    fun startTask(originalTeam: Team, existingFetchedTeam: Team): Task<Team?>
 }

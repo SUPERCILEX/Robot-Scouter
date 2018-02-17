@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.util.providerAuthority
 import org.jetbrains.anko.longToast
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
+import java.util.Calendar
 import java.util.Collections
 
 interface CaptureTeamMediaListener {
@@ -100,9 +101,10 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             val contentUri = Uri.fromFile(photoFile.unhide())
 
             _onMediaCaptured.value = team.copy().apply {
+                media = contentUri.path
                 hasCustomMedia = true
                 shouldUploadMediaToTba = this@TeamMediaCreator.shouldUploadMediaToTba!!
-                media = contentUri.path
+                mediaYear = Calendar.getInstance().get(Calendar.YEAR)
             }
 
             // Tell gallery that we have a new photo

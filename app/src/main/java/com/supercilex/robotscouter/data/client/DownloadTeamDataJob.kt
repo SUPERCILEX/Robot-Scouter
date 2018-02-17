@@ -23,8 +23,11 @@ interface DownloadTeamDataJob : TeamJob {
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.update(newTeam) }
 
-    override fun startTask(existingTeam: Team): Task<Team?> = if (existingTeam.isStale) {
-        TbaDownloader.load(existingTeam)
+    override fun startTask(
+            originalTeam: Team,
+            existingFetchedTeam: Team
+    ): Task<Team?> = if (existingFetchedTeam.isStale) {
+        TbaDownloader.load(existingFetchedTeam)
     } else {
         Tasks.forResult(null)
     }

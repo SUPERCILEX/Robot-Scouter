@@ -146,8 +146,9 @@ fun Team.forceRefresh(): Task<Void?> = ref.log().update(FIRESTORE_TIMESTAMP, Dat
 
 fun Team.copyMediaInfo(newTeam: Team) {
     media = newTeam.media
+    hasCustomMedia = newTeam.hasCustomMedia
     shouldUploadMediaToTba = newTeam.shouldUploadMediaToTba
-    mediaYear = Calendar.getInstance().get(Calendar.YEAR)
+    mediaYear = newTeam.mediaYear
 }
 
 fun Team.trash() {
