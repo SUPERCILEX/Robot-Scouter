@@ -38,10 +38,11 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
             )
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val activity = activity as AppCompatActivity
-        activity.setSupportActionBar(viewHolder.toolbar)
-        activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         super.onActivityCreated(savedInstanceState)
+        (activity as AppCompatActivity).apply {
+            setSupportActionBar(viewHolder.toolbar)
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     override fun onDestroy() {
