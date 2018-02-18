@@ -50,6 +50,7 @@ import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import java.io.File
+import java.util.Calendar
 import kotlin.math.hypot
 
 class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListener,
@@ -208,22 +209,23 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
         nameEditText.text.nullOrFull()?.toString().also {
             if (it != team.name) {
-                team.hasCustomName = it?.isNotBlank() == true
                 team.name = it
+                team.hasCustomName = it?.isNotBlank() == true
             }
         }
 
         mediaEditText.text.toString().formatAsTeamUrl().also {
             if (it != team.media) {
-                team.hasCustomMedia = it?.isNotBlank() == true
                 team.media = it
+                team.hasCustomMedia = it?.isNotBlank() == true
+                team.mediaYear = Calendar.getInstance().get(Calendar.YEAR)
             }
         }
 
         websiteEditText.text.toString().formatAsTeamUrl().also {
             if (it != team.website) {
-                team.hasCustomWebsite = it?.isNotBlank() == true
                 team.website = it
+                team.hasCustomWebsite = it?.isNotBlank() == true
             }
         }
 
