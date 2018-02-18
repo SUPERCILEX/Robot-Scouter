@@ -104,7 +104,6 @@ fun Team.add() {
 }
 
 fun Team.update(newTeam: Team) {
-    checkForMatchingTeamDetails(newTeam)
     if (this == newTeam) {
         ref.log().update(FIRESTORE_TIMESTAMP, getCurrentTimestamp()).logFailures()
         return
@@ -117,12 +116,6 @@ fun Team.update(newTeam: Team) {
     }
     if (!hasCustomWebsite) website = newTeam.website
     forceUpdate()
-}
-
-private fun Team.checkForMatchingTeamDetails(newTeam: Team) {
-    if (name == newTeam.name) hasCustomName = false
-    if (media == newTeam.media) hasCustomMedia = false
-    if (website == newTeam.website) hasCustomWebsite = false
 }
 
 fun Team.updateTemplateId(id: String) {

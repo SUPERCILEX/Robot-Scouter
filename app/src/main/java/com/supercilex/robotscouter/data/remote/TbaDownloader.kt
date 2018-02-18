@@ -27,11 +27,21 @@ class TbaDownloader private constructor(
         val result: JsonObject = response.body()!!
         val teamNickname: JsonElement? = result.get(TEAM_NICKNAME)
         if (teamNickname?.isJsonNull == false) {
-            team.name = teamNickname.asString
+            val newName = teamNickname.asString
+            if (team.name == newName) {
+                team.hasCustomName = false
+            } else {
+                team.name = newName
+            }
         }
         val teamWebsite: JsonElement? = result.get(TEAM_WEBSITE)
         if (teamWebsite?.isJsonNull == false) {
-            team.website = teamWebsite.asString
+            val newWebsite = teamWebsite.asString
+            if (team.website == newWebsite) {
+                team.hasCustomWebsite = false
+            } else {
+                team.website = newWebsite
+            }
         }
     }
 
@@ -67,7 +77,11 @@ class TbaDownloader private constructor(
     }
 
     private fun setAndCacheMedia(url: String, year: Int) {
-        team.media = url
+        if (team.media == url) {
+            team.hasCustomMedia = false
+        } else {
+            team.media = url
+        }
         team.mediaYear = year
         RobotScouter.runOnUiThread {
             Glide.with(this).load(url).preload()
