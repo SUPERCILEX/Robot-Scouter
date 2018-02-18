@@ -151,8 +151,9 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = newTeam.mediaYear
 }
 
-fun Team.trash() {
-    firestoreBatch {
+fun Team.trash(): Task<Void?> {
+    FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
+    return firestoreBatch {
         update(ref.log(), "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
         } else {
@@ -160,7 +161,6 @@ fun Team.trash() {
         })
         set(userDeletionQueue.log(), QueuedDeletion.Team(ref.id).data, SetOptions.merge())
     }.logFailures()
-    FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
 }
 
 fun Team.fetchLatestData() = async {

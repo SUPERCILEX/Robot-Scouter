@@ -11,6 +11,7 @@ import com.firebase.ui.firestore.ChangeEventListener
 import com.firebase.ui.firestore.FirestoreArray
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
@@ -51,6 +52,7 @@ import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getScoutsRef
+import com.supercilex.robotscouter.util.data.model.isTrashed
 import com.supercilex.robotscouter.util.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.teamsQuery
@@ -67,6 +69,8 @@ import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.coroutines.experimental.suspendCoroutine
 
 val teamParser = SnapshotParser {
@@ -335,6 +339,8 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         }
     }
     private val merger = object : ChangeEventListenerBase {
+        private val lock = ReentrantLock()
+
         override fun onChildChanged(
                 type: ChangeEventType,
                 snapshot: DocumentSnapshot,
@@ -367,28 +373,33 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         }
 
         private suspend fun mergeTeams(existingTeam: Team, duplicate: Team) {
-            try {
-                // Blow up if an error occurs retrieving these teams
-                Tasks.whenAllSuccess<Any?>(
-                        existingTeam.ref.log().get(),
-                        duplicate.ref.log().get()
-                ).await()
-            } catch (e: Exception) {
-                return
-            }
-
-            val scouts = duplicate.getScouts().await()
-            firestoreBatch {
-                for (scout in scouts) {
-                    val scoutId = scout.id
-                    set(existingTeam.getScoutsRef().document(scoutId).log(), scout)
-                    for (metric in scout.metrics) {
-                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).log(),
-                            metric)
+            lock.withLock {
+                try {
+                    // Blow up if an error occurs retrieving these teams
+                    val ensureNotTrashed = Continuation<DocumentSnapshot, Any?> {
+                        if (teamParser.parseSnapshot(it.result).isTrashed!!) error("Invalid")
                     }
+                    Tasks.whenAllSuccess<Any?>(
+                            existingTeam.ref.log().get().continueWith(ensureNotTrashed),
+                            duplicate.ref.log().get().continueWith(ensureNotTrashed)
+                    ).await()
+                } catch (e: Exception) {
+                    return
                 }
-            }.await()
-            duplicate.trash()
+
+                val scouts = duplicate.getScouts().await()
+                firestoreBatch {
+                    for (scout in scouts) {
+                        val scoutId = scout.id
+                        set(existingTeam.getScoutsRef().document(scoutId).log(), scout)
+                        for (metric in scout.metrics) {
+                            set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).log(),
+                                metric)
+                        }
+                    }
+                }.await()
+                duplicate.trash().await()
+            }
         }
     }
 
