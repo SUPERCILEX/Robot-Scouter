@@ -37,6 +37,7 @@ import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class ExportService : IntentService(TAG) {
     init {
@@ -132,7 +133,7 @@ class ExportService : IntentService(TAG) {
     }
 
     private fun abortCritical(e: Exception, notificationManager: ExportNotificationManager) {
-        CrashLogger.onFailure(e)
+        if (e !is TimeoutException) CrashLogger.onFailure(e)
         showToast("${getString(R.string.fui_general_error)}\n\n${e.message}")
         notificationManager.abort()
     }
