@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
@@ -32,7 +33,6 @@ import com.supercilex.robotscouter.util.ui.RatingDialog
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.coroutines.experimental.asReference
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
@@ -168,7 +168,7 @@ class ExportService : IntentService(TAG) {
             )
 
             if (teams.size >= MIN_TEAMS_TO_RATE && isOnline) {
-                val f = fragment.asReference()
+                val f = fragment.asLifecycleReference()
                 launch(UI) {
                     async { fetchAndActivate() }.await()
                     if (shouldShowRatingDialog) RatingDialog.show(f().childFragmentManager)

@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
+import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.fetchAndActivate
@@ -40,7 +41,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotterknife.bindView
-import org.jetbrains.anko.coroutines.experimental.asReference
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
@@ -106,7 +106,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
     override fun onStart() {
         super.onStart()
-        val ref = asReference()
+        val ref = asLifecycleReference()
         launch(UI) {
             async { fetchAndActivate() }.await()
             if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
