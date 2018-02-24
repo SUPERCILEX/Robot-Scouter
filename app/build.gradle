@@ -87,7 +87,7 @@ play {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.3'
     implementation "org.jetbrains.anko:anko-coroutines:$ankoVersion"
     implementation "org.jetbrains.anko:anko-design:$ankoVersion"
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
