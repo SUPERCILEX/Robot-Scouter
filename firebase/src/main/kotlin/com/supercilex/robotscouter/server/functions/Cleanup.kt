@@ -182,7 +182,7 @@ fun DocumentSnapshot.deleteIfSingleOwner(
     //language=JavaScript
     return if (js("Object.keys(owners).length") as Int > 1) {
         //language=undefined
-        console.log("Removing $userId's ownership of $id")
+        console.log("Removing $userId's ownership of ${ref.path}")
         //language=JavaScript
         js("delete owners[userId]")
         ref.update(FIRESTORE_OWNERS, owners)
