@@ -22,8 +22,6 @@ import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
-import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
-import com.supercilex.robotscouter.server.utils.getTrashedTemplatesQuery
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
@@ -81,8 +79,7 @@ private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.proces
 
 fun emptyTrash(): Promise<*> {
     console.log("Emptying trash for all users.")
-
-    val new = deletionQueue.process {
+    return deletionQueue.process {
         val userId = id
         Promise.all(data().toMap<Json>().map { (key, data) ->
             val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
@@ -130,20 +127,6 @@ fun emptyTrash(): Promise<*> {
             if (it.none { it == null }) ref.delete()
         }
     }
-    // TODO remove at some point
-    val deprecated = users.process {
-        val userId = id
-        Promise.all(arrayOf(
-                getTrashedTeamsQuery(userId).process {
-                    deleteIfSingleOwner(userId) { deleteTeam(this) }
-                },
-                getTrashedTemplatesQuery(userId).process {
-                    deleteIfSingleOwner(userId) { deleteTemplate(this) }
-                }
-        ))
-    }
-
-    return Promise.all(arrayOf(new, deprecated))
 }
 
 private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
