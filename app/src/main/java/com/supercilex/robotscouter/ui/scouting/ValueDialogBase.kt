@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.StringRes
@@ -19,7 +18,7 @@ abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
     @get:StringRes protected abstract val title: Int
     @get:StringRes protected abstract val hint: Int
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = createDialog(
+    override fun onCreateDialog(savedInstanceState: Bundle?) = createDialog(
             View.inflate(context, R.layout.dialog_value, null),
             title,
             savedInstanceState

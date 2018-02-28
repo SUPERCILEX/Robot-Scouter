@@ -114,7 +114,7 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
-    implementation 'com.facebook.android:facebook-login:4.30.0'
+    implementation 'com.facebook.android:facebook-login:4.31.0'
     implementation("com.twitter.sdk.android:twitter-core:3.1.1@aar") { transitive = true }
     // Database
 //    implementation "com.firebaseui:firebase-ui-firestore:$firebaseUiVersion"

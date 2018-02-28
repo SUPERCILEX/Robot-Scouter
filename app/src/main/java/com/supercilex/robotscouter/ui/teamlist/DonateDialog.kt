@@ -40,7 +40,7 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
     private val monthlyCheckBox: CheckBox by bindView(R.id.monthly)
 
     private val billingClient by unsafeLazy {
-        BillingClient.newBuilder(context!!).setListener(this).build()
+        BillingClient.newBuilder(requireContext()).setListener(this).build()
     }
     private val billingClientReadyTask = TaskCompletionSource<@BillingResponse Int>()
 

@@ -86,7 +86,7 @@ abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)
-                .setCurrentScreen(activity!!, null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 
     override fun onDestroy() {

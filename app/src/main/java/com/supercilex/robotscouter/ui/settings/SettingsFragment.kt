@@ -59,7 +59,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             if (it!!.isSuccessful) {
                 FirebaseAuth.getInstance().signInAnonymously()
                 FirebaseAppIndex.getInstance().removeAll().logFailures()
-                activity!!.finish()
+                requireActivity().finish()
             } else {
                 toast(R.string.fui_general_error)
             }
@@ -134,7 +134,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {
-        val activity = activity!!
+        val activity = requireActivity()
         when (preference.key) {
             KEY_RESET_TUTORIALS -> {
                 clearPrefs()
@@ -160,7 +160,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                                 getString(R.string.settings_debug_info_title), debugInfo)
                 toast(R.string.settings_debug_info_copied_message)
             }
-            KEY_LICENSES -> fragmentManager!!.beginTransaction()
+            KEY_LICENSES -> requireFragmentManager().beginTransaction()
                     .setCustomAnimations(
                             R.anim.fade_in,
                             R.anim.fade_out,
@@ -186,7 +186,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             if (resultCode == Activity.RESULT_OK) {
                 toast(R.string.team_signed_in_message)
                 logLoginEvent()
-                activity!!.finish()
+                requireActivity().finish()
             } else {
                 val response: IdpResponse = IdpResponse.fromResultIntent(data) ?: return
 

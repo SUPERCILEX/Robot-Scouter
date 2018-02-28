@@ -13,7 +13,7 @@ dependencies {
 }
 
 checkstyle {
-    toolVersion = '8.5'
+    toolVersion = '8.8'
 }
 
 task ktlint(type: JavaExec) {

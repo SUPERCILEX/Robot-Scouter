@@ -130,7 +130,7 @@ class TeamListAdapter(
 
     override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
             TeamViewHolder.getTeamMediaRequestBuilder(
-                    isTeamSelected(team), fragment.context!!, team)
+                    isTeamSelected(team), fragment.requireContext(), team)
 
     override fun getPreloadItems(position: Int): List<Team> =
             Collections.singletonList(getItem(position))

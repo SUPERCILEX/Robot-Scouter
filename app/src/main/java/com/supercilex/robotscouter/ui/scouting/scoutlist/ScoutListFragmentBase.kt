@@ -149,7 +149,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         viewHolder.onActivityResult(requestCode, resultCode, data)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val activity = activity!!
+        val activity = requireActivity()
         when (item.itemId) {
             R.id.action_new_scout -> addScout()
             R.id.action_add_media -> ShouldUploadMediaToTbaDialog.show(this)

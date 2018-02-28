@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.app.Dialog
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.FragmentManager
@@ -18,7 +17,7 @@ class NewTeamDialog : KeyboardDialogBase() {
     private val inputLayout: TextInputLayout by bindView(R.id.name)
     override val lastEditText: EditText by bindView(R.id.team_number)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = createDialog(
+    override fun onCreateDialog(savedInstanceState: Bundle?) = createDialog(
             View.inflate(context, R.layout.dialog_new_team, null),
             R.string.scout_new_title,
             savedInstanceState

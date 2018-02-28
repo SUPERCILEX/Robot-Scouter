@@ -36,7 +36,7 @@ abstract class DialogFragmentBase : DialogFragment() {
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)
-                .setCurrentScreen(activity!!, null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 
     override fun onDestroy() {
@@ -49,7 +49,7 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
         DialogInterface.OnShowListener {
     override fun onCreateDialog(
             savedInstanceState: Bundle?
-    ): Dialog = object : BottomSheetDialog(context!!, R.style.RobotScouter_Tmp_72076683),
+    ): Dialog = object : BottomSheetDialog(requireContext(), R.style.RobotScouter_Tmp_72076683),
             DialogInterface.OnShowListener {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -86,7 +86,7 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)
-                .setCurrentScreen(activity!!, null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 
     override fun onDestroy() {
@@ -136,7 +136,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog() {
     }
 
     protected fun createDialog(rootView: View, @StringRes title: Int, savedInstanceState: Bundle?) =
-            AlertDialog.Builder(context!!)
+            AlertDialog.Builder(requireContext())
                     .setView(rootView)
                     .setTitle(title)
                     .setPositiveButton(android.R.string.ok, null)

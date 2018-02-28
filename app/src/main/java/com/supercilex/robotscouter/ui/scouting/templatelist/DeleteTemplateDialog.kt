@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
-import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
@@ -24,7 +23,7 @@ import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
 
 class DeleteTemplateDialog : ManualDismissDialog() {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
+    override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.template_delete_dialog_title)
             .setMessage(R.string.template_delete_message)
             .setPositiveButton(R.string.template_delete_title, null)

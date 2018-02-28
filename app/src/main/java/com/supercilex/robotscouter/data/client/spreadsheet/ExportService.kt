@@ -152,7 +152,7 @@ class ExportService : IntentService(TAG) {
             val teams = mutableTeams.toList()
             if (teams.isEmpty()) return false
 
-            val context = fragment.context!!
+            val context = fragment.requireContext()
 
             if (!EasyPermissions.hasPermissions(context, *permHandler.perms.toTypedArray())) {
                 permHandler.requestPerms(fragment, R.string.export_write_storage_rationale)

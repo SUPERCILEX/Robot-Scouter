@@ -46,7 +46,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
 
     private val noContentHint: View by bindView(R.id.no_content_hint)
     private val fab: FloatingActionButton by unsafeLazy {
-        activity!!.find<FloatingActionButton>(R.id.fab)
+        requireActivity().find<FloatingActionButton>(R.id.fab)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

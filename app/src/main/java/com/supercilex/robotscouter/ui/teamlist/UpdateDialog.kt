@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.ui.teamlist
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,7 +16,7 @@ import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.updateRequiredMessage
 
 class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
+    override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.update_required_title)
             .setMessage(run {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -32,9 +31,9 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
             .setCancelable(false)
             .create()
 
-    override fun onClick(dialog: DialogInterface, which: Int) = showStoreListing(activity!!)
+    override fun onClick(dialog: DialogInterface, which: Int) = showStoreListing(requireActivity())
 
-    override fun onCancel(dialog: DialogInterface?) = activity!!.finish()
+    override fun onCancel(dialog: DialogInterface?) = requireActivity().finish()
 
     companion object {
         private const val TAG = "UpdateDialog"

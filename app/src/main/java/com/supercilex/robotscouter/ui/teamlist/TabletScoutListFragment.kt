@@ -17,13 +17,13 @@ import org.jetbrains.anko.findOptional
 class TabletScoutListFragment : ScoutListFragmentBase() {
     private var noContentHint: View? = null
         get() {
-            if (field == null) field = activity!!.findOptional(R.id.no_team_selected_hint)
+            if (field == null) field = requireActivity().findOptional(R.id.no_team_selected_hint)
             return field
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (!context!!.isInTabletMode()) {
+        if (!requireContext().isInTabletMode()) {
             val listener = context as TeamSelectionListener
             listener.onTeamSelected(bundle, true)
             removeFragment()
@@ -40,7 +40,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
                         .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)
                         .apply { isAccessible = true }
                         .invoke(this@TabletScoutListFragment, it) as Boolean
-                        || activity!!.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, it)
+                        || requireActivity().onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, it)
             }
         }
     }
@@ -64,7 +64,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
     override fun onTeamDeleted() = removeFragment()
 
     private fun removeFragment() {
-        fragmentManager!!.beginTransaction().remove(this).commit()
+        requireFragmentManager().beginTransaction().remove(this).commit()
     }
 
     companion object {

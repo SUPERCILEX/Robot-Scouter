@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.ui
 
-import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
@@ -10,7 +9,7 @@ import com.supercilex.robotscouter.ui.teamlist.UpdateDialog
 import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
 
 class RatingDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = AlertDialog.Builder(context!!)
+    override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.rate_title)
             .setMessage(R.string.rate_message)
             .setPositiveButton(R.string.rate_positive, this)
@@ -21,7 +20,7 @@ class RatingDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override fun onClick(dialog: DialogInterface, which: Int) {
         shouldShowRatingDialog = when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
-                UpdateDialog.showStoreListing(activity!!)
+                UpdateDialog.showStoreListing(requireActivity())
                 false
             }
             DialogInterface.BUTTON_NEGATIVE -> false

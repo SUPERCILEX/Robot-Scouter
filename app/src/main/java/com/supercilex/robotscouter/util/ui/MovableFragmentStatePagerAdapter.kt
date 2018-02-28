@@ -6,6 +6,7 @@ import android.os.Parcelable
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 
@@ -17,7 +18,7 @@ import android.view.ViewGroup
  */
 abstract class MovableFragmentStatePagerAdapter(
         private val manager: FragmentManager
-) : NullablePagerAdapter() {
+) : PagerAdapter() {
     private var currentTransaction: FragmentTransaction? = null
     private var currentPrimaryItem: Fragment? = null
 
@@ -74,16 +75,16 @@ abstract class MovableFragmentStatePagerAdapter(
     }
 
     /** @see android.support.v4.app.FragmentStatePagerAdapter.setPrimaryItem */
-    override fun setPrimaryItem(container: ViewGroup, position: Int, fragment: Any?) {
-        fragment as Fragment?
+    override fun setPrimaryItem(container: ViewGroup, position: Int, fragment: Any) {
+        fragment as Fragment
         if (fragment !== currentPrimaryItem) {
             currentPrimaryItem?.let {
                 it.setMenuVisibility(false)
                 it.userVisibleHint = false
             }
 
-            fragment?.setMenuVisibility(true)
-            fragment?.userVisibleHint = true
+            fragment.setMenuVisibility(true)
+            fragment.userVisibleHint = true
             currentPrimaryItem = fragment
         }
     }
