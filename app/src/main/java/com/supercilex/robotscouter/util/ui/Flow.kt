@@ -1,14 +1,12 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.app.Activity
-import android.arch.lifecycle.LiveData
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.NavUtils
 import android.support.v4.app.TaskStackBuilder
 import android.support.v7.widget.RecyclerView
-import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.util.data.ACTION_FROM_DEEP_LINK
 
 fun Intent.addNewDocumentFlags(): Intent {
@@ -28,12 +26,6 @@ fun Activity.handleUpNavigation() {
         finish()
     } else {
         NavUtils.navigateUpFromSameTask(this)
-    }
-}
-
-fun <T> Task<T>.asLiveData(): LiveData<Task<T>> = SingleLiveEvent<Task<T>>().apply {
-    addOnCompleteListener {
-        value = it
     }
 }
 

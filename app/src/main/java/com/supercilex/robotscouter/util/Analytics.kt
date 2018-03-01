@@ -1,14 +1,9 @@
 package com.supercilex.robotscouter.util
 
 import android.os.Bundle
-import android.util.Log
 import androidx.os.bundleOf
 import com.crashlytics.android.Crashlytics
-import com.firebase.ui.common.ChangeEventType
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.analytics.FirebaseAnalytics.Param.CONTENT_TYPE
@@ -16,29 +11,17 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
-import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.data.model.User
-import com.supercilex.robotscouter.util.data.PrefObserver
-import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
 import com.supercilex.robotscouter.util.data.nullOrFull
-import kotlinx.coroutines.experimental.CompletionHandler
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import java.lang.Exception
+import kotlinx.coroutines.experimental.async
 import java.util.Date
 import kotlin.math.ceil
 import kotlin.math.min
@@ -60,7 +43,6 @@ private val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance
 
 fun initAnalytics() {
     analytics.setAnalyticsCollectionEnabled(!isInTestMode)
-    PrefLogger
 
     FirebaseAuth.getInstance().addAuthStateListener {
         val user = it.currentUser
@@ -140,22 +122,26 @@ fun Team.logTakeMedia() = analytics.logEvent(
         )
 )
 
-fun List<Team>.logShare() = launch {
-    safeLog(this@logShare) { ids, name ->
-        analytics.logEvent(
-                "share_teams",
-                bundleOf(ITEM_ID to ids, ITEM_NAME to name)
-        )
-    }
+fun List<Team>.logShare() {
+    async {
+        safeLog(this@logShare) { ids, name ->
+            analytics.logEvent(
+                    "share_teams",
+                    bundleOf(ITEM_ID to ids, ITEM_NAME to name)
+            )
+        }
+    }.logFailures()
 }
 
-fun List<Team>.logExport() = launch {
-    safeLog(this@logExport) { ids, name ->
-        analytics.logEvent(
-                "export_teams",
-                bundleOf(ITEM_ID to ids, ITEM_NAME to name)
-        )
-    }
+fun List<Team>.logExport() {
+    async {
+        safeLog(this@logExport) { ids, name ->
+            analytics.logEvent(
+                    "export_teams",
+                    bundleOf(ITEM_ID to ids, ITEM_NAME to name)
+            )
+        }
+    }.logFailures()
 }
 
 fun Team.logAddScout(scoutId: String, templateId: String) = analytics.logEvent(
@@ -259,100 +245,3 @@ private fun segment(long: String): List<String> {
 }
 
 fun logLoginEvent() = analytics.logEvent(Event.LOGIN, Bundle())
-
-inline fun <T, reified E> Task<T>.logIgnorableFailures() = logFailures { it is E }
-
-fun <T> Task<T>.logFailures(
-        ignore: ((Exception) -> Boolean)? = null
-): Task<T> {
-    val trace = Thread.currentThread().stackTrace.filter {
-        it.className.contains("supercilex")
-    }.let {
-        it.subList(1, it.size)
-    }
-    return addOnFailureListener {
-        if (ignore?.invoke(it)?.not() != false) {
-            logCrashLog("Crash source: $trace")
-            CrashLogger.onFailure(it)
-        }
-    }
-}
-
-fun <T> Deferred<T>.logFailures(): Deferred<T> {
-    invokeOnCompletion(CrashLogger)
-    return this
-}
-
-fun DocumentReference.log(): DocumentReference {
-    logDbUse(path)
-    return this
-}
-
-fun Query.log(): Query {
-    if (this is CollectionReference) return log()
-
-    logDbUse("")
-    return this
-}
-
-fun CollectionReference.log(): CollectionReference {
-    logDbUse(path)
-    return this
-}
-
-fun logCrashLog(message: String) {
-    Crashlytics.log(message)
-    FirebaseCrash.log(message)
-    if (BuildConfig.DEBUG) Log.d("CrashLogs", message)
-}
-
-private fun logDbUse(path: String) {
-    val trace = Thread.currentThread().stackTrace.filter {
-        it.className.contains("supercilex")
-    }.let {
-        it.subList(2, it.size)
-    }
-    logCrashLog("Used reference '$path' at $trace")
-}
-
-object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {
-    override fun onFailure(e: Exception) {
-        invoke(e)
-    }
-
-    override fun onComplete(task: Task<Any>) {
-        invoke(task.exception)
-    }
-
-    override fun invoke(cause: Throwable?) {
-        cause ?: return
-        if (BuildConfig.DEBUG || isInTestMode) {
-            error("An unknown error occurred", cause)
-        } else {
-            FirebaseCrash.report(cause)
-            Crashlytics.logException(cause)
-        }
-    }
-}
-
-private object PrefLogger : PrefObserver() {
-    override fun onChildChanged(
-            type: ChangeEventType,
-            snapshot: DocumentSnapshot,
-            newIndex: Int,
-            oldIndex: Int
-    ) {
-        if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
-
-        val id = snapshot.id
-        val pref = PrefsLiveData.value!![newIndex]
-        when (pref) {
-            is Boolean -> Crashlytics.setBool(id, pref)
-            is String -> Crashlytics.setString(id, pref)
-            is Int -> Crashlytics.setInt(id, pref)
-            is Long -> Crashlytics.setLong(id, pref)
-            is Double -> Crashlytics.setDouble(id, pref)
-            is Float -> Crashlytics.setFloat(id, pref)
-        }
-    }
-}

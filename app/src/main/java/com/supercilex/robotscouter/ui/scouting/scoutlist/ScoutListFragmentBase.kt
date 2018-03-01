@@ -13,10 +13,9 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
@@ -24,7 +23,9 @@ import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.ui.TeamDetailsDialog
 import com.supercilex.robotscouter.ui.TeamSharer
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.asLifecycleReference
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.data.asLiveData
@@ -44,9 +45,10 @@ import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
 import com.supercilex.robotscouter.util.user
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
-import org.jetbrains.anko.support.v4.longToast
 
 abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team>, CaptureTeamMediaListener {
@@ -143,17 +145,16 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     ) = viewHolder.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
     override fun startCapture(shouldUploadMediaToTba: Boolean) =
-        viewHolder.startCapture(shouldUploadMediaToTba)
+            viewHolder.startCapture(shouldUploadMediaToTba)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-        viewHolder.onActivityResult(requestCode, resultCode, data)
+            viewHolder.onActivityResult(requestCode, resultCode, data)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val activity = requireActivity()
         when (item.itemId) {
             R.id.action_new_scout -> addScout()
             R.id.action_add_media -> ShouldUploadMediaToTbaDialog.show(this)
-            R.id.action_share -> TeamSharer.shareTeams(activity, listOf(team))
+            R.id.action_share -> TeamSharer.shareTeams(this, listOf(team))
             R.id.action_edit_template -> {
                 val templateId = team.templateId
 
@@ -162,15 +163,21 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                     return true
                 }
 
-                getTemplatesQuery().log().get().continueWith(
-                        AsyncTaskExecutor, Continuation<QuerySnapshot, Boolean> {
-                    it.result.map { scoutParser.parseSnapshot(it) }
-                            .find { it.id == templateId } != null
-                }).addOnSuccessListener(activity) { ownsTemplate ->
+                val ref = asLifecycleReference()
+                async(UI) {
+                    val ownsTemplate = try {
+                        async { getTemplatesQuery().log().get().await() }.await()
+                    } catch (e: Exception) {
+                        CrashLogger.onFailure(e)
+                        emptyList<DocumentSnapshot>()
+                    }.map {
+                        scoutParser.parseSnapshot(it)
+                    }.find { it.id == templateId } != null
+
                     if (ownsTemplate) {
-                        startActivity(TemplateListActivity.createIntent(templateId))
+                        ref().startActivity(TemplateListActivity.createIntent(templateId))
                     } else {
-                        longToast(R.string.template_access_denied_error)
+                        longSnackbar(ref().find(R.id.root), R.string.template_access_denied_error)
                     }
                 }.logFailures()
             }

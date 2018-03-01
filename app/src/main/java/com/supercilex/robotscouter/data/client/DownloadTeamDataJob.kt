@@ -2,8 +2,6 @@ package com.supercilex.robotscouter.data.client
 
 import android.os.Build
 import android.support.annotation.RequiresApi
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.util.data.model.isStale
@@ -26,10 +24,10 @@ interface DownloadTeamDataJob : TeamJob {
     override fun startTask(
             originalTeam: Team,
             existingFetchedTeam: Team
-    ): Task<Team?> = if (existingFetchedTeam.isStale) {
+    ) = if (existingFetchedTeam.isStale) {
         TbaDownloader.load(existingFetchedTeam)
     } else {
-        Tasks.forResult(null)
+        null
     }
 }
 

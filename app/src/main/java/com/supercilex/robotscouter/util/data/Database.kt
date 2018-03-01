@@ -11,10 +11,6 @@ import com.firebase.ui.firestore.ChangeEventListener
 import com.firebase.ui.firestore.FirestoreArray
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -59,18 +55,16 @@ import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
-import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 import kotlin.coroutines.experimental.suspendCoroutine
 
 val teamParser = SnapshotParser {
@@ -111,46 +105,24 @@ inline fun firestoreBatch(
 inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
         firestoreBatch { transaction(this@batch) }.also { log() }
 
-fun Query.getInBatches(batchSize: Long = 100): Task<List<DocumentSnapshot>> = doAsync {
+suspend fun Query.getInBatches(batchSize: Long = 100): List<DocumentSnapshot> {
     var query = orderBy(FieldPath.documentId()).limit(batchSize)
-    val docs = mutableListOf<DocumentSnapshot>(
-            *Tasks.await(query.log().get()).documents.toTypedArray())
-    var lastResultSize = docs.size
+    val docs: MutableList<DocumentSnapshot> = query.log().get().await().documents
+    var lastResultSize = docs.size.toLong()
 
-    while (lastResultSize >= batchSize) {
-        query = orderBy(FieldPath.documentId()).startAfter(docs.last()).limit(batchSize)
-        docs += Tasks.await(query.log().get()).documents.also {
-            lastResultSize = it.size
+    while (lastResultSize == batchSize) {
+        query = query.startAfter(docs.last())
+        docs += query.log().get().await().documents.also {
+            lastResultSize = it.size.toLong()
         }
     }
 
-    docs
+    return docs
 }
 
 suspend fun <T> ObservableSnapshotArray<T>.safeCopy(): List<T> = suspendCoroutine {
     RobotScouter.runOnUiThread { it.resume(toList()) }
 }
-
-@Deprecated("Use the coroutine version instead")
-inline fun <T, R> LiveData<T>.observeOnce(
-        crossinline block: (T) -> Task<R>
-): Task<R> = TaskCompletionSource<R>().apply {
-    RobotScouter.runOnUiThread {
-        observeForever(object : Observer<T> {
-            private var hasChanged = false
-
-            override fun onChanged(t: T?) {
-                if (hasChanged) return
-                hasChanged = true
-
-                block(t ?: return).addOnCompleteListener {
-                    removeObserver(this)
-                    if (it.isSuccessful) setResult(it.result) else setException(it.exception!!)
-                }
-            }
-        })
-    }
-}.task
 
 suspend fun <T> LiveData<T>.observeOnce(): T? = suspendCoroutine {
     RobotScouter.runOnUiThread {
@@ -167,9 +139,10 @@ suspend fun <T> LiveData<T>.observeOnce(): T? = suspendCoroutine {
 
 fun <T> LiveData<ObservableSnapshotArray<T>>.observeOnDataChanged(
 ): LiveData<ObservableSnapshotArray<T>> = Transformations.switchMap(this) {
-    it?.asLiveData()
+    it?.asLiveData() ?: object : ObservableSnapshotArray<T>(
             // This "cast" is safe because the list is empty and we will never parse anything
-            ?: object : ObservableSnapshotArray<T>(@Suppress("UNCHECKED_CAST") { Unit as T }) {
+            @Suppress("UNCHECKED_CAST") { Unit as T }
+    ) {
         init {
             notifyOnDataChanged()
         }
@@ -319,7 +292,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
             val team = value!![newIndex]
-            launch {
+            async {
                 team.fetchLatestData()
 
                 val media = team.media
@@ -335,11 +308,11 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                         forceRefresh()
                     }
                 }
-            }
+            }.logFailures()
         }
     }
     private val merger = object : ChangeEventListenerBase {
-        private val lock = ReentrantLock()
+        private val mutex = Mutex()
 
         override fun onChildChanged(
                 type: ChangeEventType,
@@ -359,10 +332,12 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
 
                     if (rawTeams.contains(rawTeam)) {
                         val existingTeam = teams[rawTeams.indexOf(rawTeam)]
-                        if (existingTeam.timestamp < team.timestamp) {
-                            mergeTeams(existingTeam, team)
-                        } else {
-                            mergeTeams(team, existingTeam)
+                        mutex.withLock {
+                            if (existingTeam.timestamp < team.timestamp) {
+                                mergeTeams(existingTeam, team)
+                            } else {
+                                mergeTeams(team, existingTeam)
+                            }
                         }
                         break
                     }
@@ -373,33 +348,29 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
         }
 
         private suspend fun mergeTeams(existingTeam: Team, duplicate: Team) {
-            lock.withLock {
-                try {
-                    // Blow up if an error occurs retrieving these teams
-                    val ensureNotTrashed = Continuation<DocumentSnapshot, Any?> {
-                        if (teamParser.parseSnapshot(it.result).isTrashed!!) error("Invalid")
-                    }
-                    Tasks.whenAllSuccess<Any?>(
-                            existingTeam.ref.log().get().continueWith(ensureNotTrashed),
-                            duplicate.ref.log().get().continueWith(ensureNotTrashed)
-                    ).await()
-                } catch (e: Exception) {
-                    return
+            try {
+                // Blow up if an error occurs retrieving these teams
+                val ensureNotTrashed: DocumentSnapshot.() -> Unit = {
+                    if (teamParser.parseSnapshot(this).isTrashed!!) error("Invalid")
                 }
-
-                val scouts = duplicate.getScouts().await()
-                firestoreBatch {
-                    for (scout in scouts) {
-                        val scoutId = scout.id
-                        set(existingTeam.getScoutsRef().document(scoutId).log(), scout)
-                        for (metric in scout.metrics) {
-                            set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).log(),
-                                metric)
-                        }
-                    }
-                }.await()
-                duplicate.trash().await()
+                existingTeam.ref.log().get().await().ensureNotTrashed()
+                duplicate.ref.log().get().await().ensureNotTrashed()
+            } catch (e: Exception) {
+                return
             }
+
+            val scouts = duplicate.getScouts()
+            firestoreBatch {
+                for (scout in scouts) {
+                    val scoutId = scout.id
+                    set(existingTeam.getScoutsRef().document(scoutId).log(), scout)
+                    for (metric in scout.metrics) {
+                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).log(),
+                            metric)
+                    }
+                }
+            }.await()
+            duplicate.trash()
         }
     }
 

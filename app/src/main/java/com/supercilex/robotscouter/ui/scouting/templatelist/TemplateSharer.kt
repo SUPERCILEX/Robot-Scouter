@@ -1,17 +1,18 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.content.Intent
-import android.support.v4.app.FragmentActivity
+import android.support.v4.app.Fragment
 import androidx.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
-import com.google.android.gms.tasks.Continuation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
+import com.supercilex.robotscouter.RobotScouter
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.CachingSharer
 import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.firestoreBatch
@@ -21,48 +22,63 @@ import com.supercilex.robotscouter.util.data.model.userDeletionQueue
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.logIgnorableFailures
 import com.supercilex.robotscouter.util.logShareTemplate
 import com.supercilex.robotscouter.util.templates
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.find
 import java.util.Date
-import java.util.concurrent.CancellationException
 
 class TemplateSharer private constructor(
-        private val activity: FragmentActivity
-) : CachingSharer(activity) {
-    fun share(templateId: String, templateName: String) {
-        loadFile(FILE_NAME).continueWith(AsyncTaskExecutor, Continuation<String, Intent> {
-            it.result // Skip token generation if task failed
+        fragment: Fragment,
+        templateId: String,
+        templateName: String
+) : CachingSharer() {
+    init {
+        val fragmentRef = fragment.asLifecycleReference()
+        async(UI) {
+            val intent = try {
+                async { generateIntent(templateId, templateName) }.await()
+            } catch (e: Exception) {
+                CrashLogger.onFailure(e)
+                longSnackbar(fragmentRef().find(R.id.root), R.string.fui_general_error)
+                return@async
+            }
+            fragmentRef().startActivityForResult(intent, RC_SHARE)
+        }.logFailures()
+    }
 
-            val token = generateToken
-            firestoreBatch {
-                update(templates.document(templateId).log(),
-                       FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token),
-                       Date())
-                set(userDeletionQueue.log(),
-                    QueuedDeletion.ShareToken.Template(token, templateId).data,
-                    SetOptions.merge())
-            }.logFailures()
+    private suspend fun generateIntent(templateId: String, templateName: String): Intent {
+        // Called first to skip token generation if task failed
+        val htmlTemplate = loadFile(FILE_NAME)
 
-            getInvitationIntent(
-                    getTemplateLink(templateId, token),
-                    templateName,
-                    it.result.format(activity.getString(R.string.template_share_cta, templateName)))
-        }).addOnSuccessListener(activity) {
-            activity.startActivityForResult(it, RC_SHARE)
-        }.logIgnorableFailures<Intent, CancellationException>().addOnFailureListener(activity) {
-            longSnackbar(activity.find(R.id.root), R.string.fui_general_error)
-        }
+        val token = generateToken
+        firestoreBatch {
+            update(templates.document(templateId).log(),
+                   FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token),
+                   Date())
+            set(userDeletionQueue.log(),
+                QueuedDeletion.ShareToken.Template(token, templateId).data,
+                SetOptions.merge())
+        }.logFailures()
+
+        return getInvitationIntent(
+                getTemplateLink(templateId, token),
+                templateName,
+                htmlTemplate.format(
+                        RobotScouter.getString(R.string.template_share_cta, templateName))
+        )
     }
 
     private fun getInvitationIntent(deepLink: String, templateName: String, html: String) =
             AppInviteInvitation.IntentBuilder(
-                    activity.getString(R.string.template_share_title, templateName))
-                    .setMessage(activity.getString(R.string.template_share_message, templateName))
+                    RobotScouter.getString(R.string.template_share_title, templateName))
+                    .setMessage(
+                            RobotScouter.getString(R.string.template_share_message, templateName))
                     .setDeepLink(deepLink.toUri())
-                    .setEmailSubject(activity.getString(R.string.template_share_cta, templateName))
+                    .setEmailSubject(
+                            RobotScouter.getString(R.string.template_share_cta, templateName))
                     .setEmailHtmlContent(html)
                     .build()
 
@@ -74,12 +90,12 @@ class TemplateSharer private constructor(
          * @return true if a share intent was launched, false otherwise
          */
         fun shareTemplate(
-                activity: FragmentActivity,
+                fragment: Fragment,
                 templateId: String,
                 templateName: String
         ): Boolean {
             if (isOffline) {
-                longSnackbar(activity.find(R.id.root), R.string.no_connection)
+                longSnackbar(fragment.find(R.id.root), R.string.no_connection)
                 return false
             }
 
@@ -91,7 +107,7 @@ class TemplateSharer private constructor(
                             .build()
             ).logFailures()
 
-            TemplateSharer(activity).share(templateId, templateName)
+            TemplateSharer(fragment, templateId, templateName)
 
             return true
         }

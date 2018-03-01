@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.data.remote
 
+import android.support.annotation.WorkerThread
 import com.bumptech.glide.Glide
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
@@ -12,7 +13,7 @@ import retrofit2.Response
 class TbaDownloader private constructor(
         team: Team
 ) : TbaServiceBase<TbaTeamApi>(team, TbaTeamApi::class.java) {
-    override fun call(): Team? {
+    override fun execute(): Team? {
         getTeamInfo()
         getTeamMedia(year)
         return team
@@ -95,6 +96,7 @@ class TbaDownloader private constructor(
         private const val CHIEF_DELPHI = "cdphotothread"
         private const val MAX_HISTORY = 2000
 
-        fun load(team: Team) = TbaServiceBase.executeAsync(TbaDownloader(team))
+        @WorkerThread
+        fun load(team: Team) = TbaDownloader(team).execute()
     }
 }

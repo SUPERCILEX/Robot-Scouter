@@ -9,11 +9,10 @@ import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.RC_SIGN_IN
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
@@ -33,8 +32,10 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
         activity.lifecycle.addObserver(this)
     }
 
-    fun init(): Task<Unit?> =
-            if (isSignedIn) Tasks.forResult(null) else signInAnonymously().continueWith { null }
+    suspend fun init() {
+        if (isSignedIn) return
+        signInAnonymously().await()
+    }
 
     fun initMenu(menu: Menu) {
         signInMenuItem = menu.findItem(R.id.action_sign_in)

@@ -1,22 +1,20 @@
 package com.supercilex.robotscouter.util.data.model
 
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.TemplateType
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.FIRESTORE_METRICS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.firestoreBatch
@@ -29,7 +27,9 @@ import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 import kotlin.math.abs
 
@@ -63,19 +63,25 @@ fun addTemplate(type: TemplateType): String {
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
     }.logFailures()
 
-    defaultTemplates.document(type.id.toString()).log().get().continueWithTask(
-            AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
+    async {
+        val templateSnapshot = try {
+            defaultTemplates.document(type.id.toString()).log().get().await()
+        } catch (e: Exception) {
+            ref.log().delete().logFailures()
+            RobotScouter.runOnUiThread { longToast(R.string.scout_add_template_not_cached_error) }
+            if (e is FirebaseFirestoreException && e.code == Code.UNAVAILABLE) {
+                return@async
+            } else {
+                throw e
+            }
+        }
+
         firestoreBatch {
-            scoutParser.parseSnapshot(it.result).metrics.forEach {
+            scoutParser.parseSnapshot(templateSnapshot).metrics.forEach {
                 set(getTemplateMetricsRef(id).document(it.ref.id).log(), it)
             }
         }
-    }).logFailures {
-        ref.log().delete().logFailures()
-        RobotScouter.longToast(R.string.scout_add_template_not_cached_error)
-        it is FirebaseFirestoreException
-                && it.code == FirebaseFirestoreException.Code.UNAVAILABLE
-    }
+    }.logFailures()
 
     return id
 }
@@ -85,13 +91,12 @@ fun Scout.getTemplateName(index: Int): String =
 
 fun trashTemplate(id: String) {
     FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
-    getTemplateRef(id).log().get().continueWithTask(
-            AsyncTaskExecutor, Continuation<DocumentSnapshot, Task<Void>> {
-        val snapshot = it.result
+    async {
+        val snapshot = getTemplateRef(id).log().get().await()
         val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
         firestoreBatch {
             update(snapshot.reference.log(), "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
             set(userDeletionQueue.log(), QueuedDeletion.Template(id).data, SetOptions.merge())
-        }
-    }).logFailures()
+        }.await()
+    }.logFailures()
 }

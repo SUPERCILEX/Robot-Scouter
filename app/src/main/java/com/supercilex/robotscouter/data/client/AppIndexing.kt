@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.JobIntentService
 import com.google.firebase.appindexing.FirebaseAppIndex
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.TeamsLiveData
@@ -54,15 +55,15 @@ class AppIndexingService : JobIntentService() {
     companion object {
         private const val JOB_ID = 387
 
-        fun refreshIndexables(context: Context) =
-                enqueueWork(context, AppIndexingService::class.java, JOB_ID, Intent())
+        fun refreshIndexables() =
+                enqueueWork(RobotScouter, AppIndexingService::class.java, JOB_ID, Intent())
     }
 }
 
 class AppIndexingUpdateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == FirebaseAppIndex.ACTION_UPDATE_INDEX) {
-            AppIndexingService.refreshIndexables(context)
+            AppIndexingService.refreshIndexables()
         }
     }
 }

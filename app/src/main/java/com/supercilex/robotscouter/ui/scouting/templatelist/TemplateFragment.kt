@@ -11,12 +11,12 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import com.github.clans.fab.FloatingActionMenu
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricListFragment
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.firestoreBatch
@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.getTabIdBundle
 import com.supercilex.robotscouter.util.data.getTemplateViewAction
 import com.supercilex.robotscouter.util.data.model.getTemplateMetricsRef
-import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
@@ -33,6 +32,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.coroutines.experimental.async
 import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
@@ -130,20 +130,18 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             }
             R.id.action_remove_metrics -> {
                 recyclerView.clearFocus()
-                metricsRef.log().get().addOnSuccessListener { metrics ->
-                    doAsync {
-                        Tasks.await(firestoreBatch {
+                metricsRef.log().get().addOnSuccessListener(requireActivity()) { metrics ->
+                    async {
+                        firestoreBatch {
                             for (metric in metrics) delete(metric.reference.log())
-                        })
+                        }.await()
                     }.logFailures()
 
                     longSnackbar(fam, R.string.deleted, R.string.undo) {
-                        doAsync {
-                            Tasks.await(firestoreBatch {
-                                for (metric in metrics) {
-                                    set(metric.reference.log(), metric.data)
-                                }
-                            })
+                        async {
+                            firestoreBatch {
+                                for (metric in metrics) set(metric.reference.log(), metric.data)
+                            }.await()
                         }.logFailures()
                     }
                 }

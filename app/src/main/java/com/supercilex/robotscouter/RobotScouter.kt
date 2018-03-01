@@ -9,7 +9,9 @@ import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.initDatabase
 import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
+import com.supercilex.robotscouter.util.initLogging
 import com.supercilex.robotscouter.util.initRemoteConfig
+import com.supercilex.robotscouter.util.refWatcher
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
 
@@ -25,7 +27,9 @@ class RobotScouterApp : MultiDexApplication() {
         if (LeakCanary.isInAnalyzerProcess(this)) return
 
         app = this
+        refWatcher // Install Leak Canary
 
+        initLogging()
         initAnalytics()
         initRemoteConfig()
         initDatabase()

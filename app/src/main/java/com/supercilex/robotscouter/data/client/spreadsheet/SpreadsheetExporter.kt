@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
+import kotlinx.coroutines.experimental.CancellationException
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
@@ -45,7 +46,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Collections
 import java.util.Locale
-import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 
 class SpreadsheetExporter(
@@ -59,7 +59,7 @@ class SpreadsheetExporter(
     fun export() {
         val exportId = notificationManager.addExporter(this)
 
-        val spreadsheetUri = getFileUri() ?: return
+        val spreadsheetUri = getFileUri()
 
         val baseIntent = Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -135,16 +135,16 @@ class SpreadsheetExporter(
     private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
             RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
 
-    private fun getFileUri(): Uri? {
+    private fun getFileUri(): Uri {
         val folder = synchronized(notificationManager) {
             checkNotNull(exportsFolder) { "Couldn't get write access" }
         }
 
         return FileProvider.getUriForFile(
-                RobotScouter, providerAuthority, writeFile(folder) ?: return null)
+                RobotScouter, providerAuthority, writeFile(folder))
     }
 
-    private fun writeFile(rsFolder: File): File? {
+    private fun writeFile(rsFolder: File): File {
         var stream: FileOutputStream? = null
         var file = File(rsFolder, getFullyQualifiedFileName())
 
@@ -162,7 +162,7 @@ class SpreadsheetExporter(
                 getWorkbook()
             } catch (e: Exception) {
                 file.delete()
-                if (e is CancellationException) return null else throw e
+                throw e
             }.write(stream)
 
             return file.unhide()

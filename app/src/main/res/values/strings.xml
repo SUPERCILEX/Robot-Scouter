@@ -151,7 +151,7 @@
     <string name="scout_new_team_number_hint">Team number</string>
     <string name="scout_add_title">Add scout</string>
     <string name="scout_add_template_not_cached_error">
-        Error adding new scout:\nthe template you are attempting to use hasn’t been cached yet.
+        Error adding new scout:\nThe template you are attempting to use hasn’t been cached yet.
         Please add at least one scout while you have an internet connection so your template may be
         cached for offline use.
     </string>

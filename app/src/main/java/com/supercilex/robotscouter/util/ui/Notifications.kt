@@ -12,13 +12,13 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
-import com.supercilex.robotscouter.util.doAsync
+import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.isSingleton
-import com.supercilex.robotscouter.util.logIgnorableFailures
+import com.supercilex.robotscouter.util.reportOrCancel
 import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
-import java.util.concurrent.CancellationException
+import java.util.concurrent.Future
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -87,10 +87,10 @@ fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
  */
 class FilteringNotificationManager : Runnable {
     private val lock = ReentrantReadWriteLock()
-    private val executor = ScheduledThreadPoolExecutor(1)
     private val notifications: MutableMap<Int, Notification> = LinkedHashMap()
     private val vips: Queue<Int> = LinkedList()
 
+    private var updater: Future<*> by LateinitVal()
     private var isStopped = false
 
     /**
@@ -122,14 +122,12 @@ class FilteringNotificationManager : Runnable {
             check(!isStopped) { "Cannot start a previously stopped notification filter." }
         }
 
-        doAsync {
-            executor.scheduleWithFixedDelay(
-                    this,
-                    0,
-                    SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS,
-                    TimeUnit.MILLISECONDS
-            ).get()
-        }.logIgnorableFailures<Any?, CancellationException>()
+        updater = executor.scheduleWithFixedDelay(
+                this,
+                0,
+                SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS,
+                TimeUnit.MILLISECONDS
+        )
     }
 
     fun isStopped(): Boolean = lock.read { isStopped }
@@ -149,7 +147,7 @@ class FilteringNotificationManager : Runnable {
     }
 
     fun stopNow() {
-        executor.shutdownNow()
+        updater.reportOrCancel(true)
         lock.write {
             vips.clear()
             notifications.clear()
@@ -167,8 +165,12 @@ class FilteringNotificationManager : Runnable {
         }
 
         lock.read {
-            if (isStopped && notifications.isEmpty()) executor.shutdown()
+            if (isStopped && notifications.isEmpty()) updater.reportOrCancel()
         }
+    }
+
+    private companion object {
+        val executor = ScheduledThreadPoolExecutor(1)
     }
 }
 

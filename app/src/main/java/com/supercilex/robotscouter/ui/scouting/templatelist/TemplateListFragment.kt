@@ -135,7 +135,7 @@ class TemplateListFragment : FragmentBase(),
         when (item.itemId) {
             R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             R.id.action_share -> TemplateSharer.shareTemplate(
-                    requireActivity(),
+                    this,
                     pagerAdapter.currentTabId!!,
                     pagerAdapter.currentTab?.text?.toString()!!
             )

@@ -2,8 +2,6 @@ package com.supercilex.robotscouter.util.data
 
 import android.net.Uri
 import android.support.annotation.WorkerThread
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.Scope
@@ -18,11 +16,13 @@ import com.supercilex.robotscouter.util.APP_LINK_BASE
 import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
 import com.supercilex.robotscouter.util.uid
+import kotlinx.coroutines.experimental.async
 import java.io.File
 
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
@@ -71,25 +71,26 @@ fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
                                      .setScope(Scope.CROSS_DEVICE))
                 .build()
 
-fun updateOwner(
+suspend fun updateOwner(
         refs: Iterable<DocumentReference>,
         token: String,
         prevUid: String?,
         newValue: (DocumentReference) -> Any
-): Task<Void> {
+) {
     val pendingApprovalPath = FieldPath.of(FIRESTORE_PENDING_APPROVALS, uid!!)
     val oldOwnerPath = prevUid?.let { FieldPath.of(FIRESTORE_OWNERS, it) }
     val newOwnerPath = FieldPath.of(FIRESTORE_OWNERS, uid!!)
 
-    return Tasks.whenAll(refs.map { ref ->
-        firestoreBatch {
-            update(ref.log(), pendingApprovalPath, token)
-            oldOwnerPath?.let { update(ref.log(), it, FieldValue.delete()) }
-            update(ref.log(), newOwnerPath, newValue(ref))
-        }.addOnSuccessListener {
+    refs.map { ref ->
+        async {
+            firestoreBatch {
+                update(ref.log(), pendingApprovalPath, token)
+                oldOwnerPath?.let { update(ref.log(), it, FieldValue.delete()) }
+                update(ref.log(), newOwnerPath, newValue(ref))
+            }.await()
             ref.log().update(pendingApprovalPath, FieldValue.delete()).logFailures()
-        }.logFailures()
-    })
+        }
+    }.await()
 }
 
 private inline fun <T> List<T>.generateUrl(

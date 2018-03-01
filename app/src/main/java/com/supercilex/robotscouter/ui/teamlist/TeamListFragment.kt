@@ -14,19 +14,21 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.ioPerms
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.coroutines.experimental.async
 import kotterknife.bindView
 import org.jetbrains.anko.find
 
@@ -125,10 +127,11 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     fun exportTeams() {
         val teams = menuHelper.selectedTeams
         if (teams.isEmpty()) {
-            TeamsLiveData.observeOnDataChanged().observeOnce {
-                ExportService.exportAndShareSpreadSheet(this@TeamListFragment, permHandler, it)
-                Tasks.forResult(null)
-            }
+            val ref = asLifecycleReference()
+            async {
+                val allTeams = TeamsLiveData.observeOnDataChanged().observeOnce()!!
+                ExportService.exportAndShareSpreadSheet(ref(), ref().permHandler, allTeams)
+            }.logFailures()
         } else {
             if (ExportService.exportAndShareSpreadSheet(this, permHandler, teams)) {
                 resetMenu()

@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.Saveable
+import kotlinx.coroutines.experimental.async
 
 class TeamHolder : ViewModelBase<Bundle>(), Saveable,
         Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
@@ -44,7 +45,7 @@ class TeamHolder : ViewModelBase<Bundle>(), Saveable,
             }
 
             team.add()
-            TbaDownloader.load(team).addOnSuccessListener { it?.let { team.update(it) } }
+            async { TbaDownloader.load(team)?.let { team.update(it) } }
         }
 
         return object : MutableLiveData<Team>(), ChangeEventListenerBase {

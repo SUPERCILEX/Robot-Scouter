@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.ui.settings
 
 import android.app.Activity
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -21,10 +21,8 @@ import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.net.toUri
-import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
@@ -43,20 +41,19 @@ import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
 import com.supercilex.robotscouter.util.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
-import com.supercilex.robotscouter.util.ui.asLiveData
 import org.jetbrains.anko.support.v4.toast
 
 class SettingsFragment : PreferenceFragmentBase(),
         TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        addSignOutListener()
+    private val settingsModel by lazy {
+        ViewModelProviders.of(this).get(SettingsViewModel::class.java).apply { init(null) }
     }
 
-    private fun addSignOutListener() {
-        signOutListener?.observe(this, Observer {
-            if (it!!.isSuccessful) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        settingsModel.signOutListener.observe(this, Observer {
+            if (it == null) {
                 FirebaseAuth.getInstance().signInAnonymously()
                 FirebaseAppIndex.getInstance().removeAll().logFailures()
                 requireActivity().finish()
@@ -143,8 +140,7 @@ class SettingsFragment : PreferenceFragmentBase(),
             KEY_LINK_ACCOUNT -> signIn(this)
             KEY_SIGN_OUT -> {
                 cancelAllJobs()
-                signOutListener = AuthUI.getInstance().signOut(activity).asLiveData()
-                addSignOutListener()
+                settingsModel.signOut()
             }
             KEY_RELEASE_NOTES -> launchUrl(
                     activity,
@@ -210,8 +206,6 @@ class SettingsFragment : PreferenceFragmentBase(),
         private const val KEY_TRANSLATE = "translate"
         private const val KEY_VERSION = "version"
         private const val KEY_LICENSES = "licenses"
-
-        private var signOutListener: LiveData<Task<Void>>? = null
 
         fun newInstance() = SettingsFragment()
     }

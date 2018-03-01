@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.data.remote
 
+import android.support.annotation.WorkerThread
 import com.google.gson.JsonObject
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -12,7 +13,7 @@ import java.io.File
 class TbaUploader private constructor(
         team: Team
 ) : TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
-    override fun call(): Team? {
+    override fun execute(): Team? {
         if (!File(team.media ?: return null).exists()) return null
 
         uploadToImgur()
@@ -64,6 +65,7 @@ class TbaUploader private constructor(
             ".${url.split(".").dropLastWhile { it.isEmpty() }.last()}"
 
     companion object {
-        fun upload(team: Team) = TbaServiceBase.executeAsync(TbaUploader(team))
+        @WorkerThread
+        fun upload(team: Team) = TbaUploader(team).execute()
     }
 }

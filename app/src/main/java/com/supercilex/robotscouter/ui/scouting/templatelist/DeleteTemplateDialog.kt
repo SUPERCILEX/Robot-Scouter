@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.TemplateType
@@ -17,10 +16,12 @@ import com.supercilex.robotscouter.util.data.model.trashTemplate
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.putRef
+import com.supercilex.robotscouter.util.data.safeCopy
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
+import kotlinx.coroutines.experimental.async
 
 class DeleteTemplateDialog : ManualDismissDialog() {
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
@@ -32,9 +33,11 @@ class DeleteTemplateDialog : ManualDismissDialog() {
 
     override fun onAttemptDismiss(): Boolean {
         val templateId = arguments!!.getRef().id
-        TeamsLiveData.observeOnDataChanged().observeOnce { teams ->
+        async {
             firestoreBatch {
-                teams.filter { templateId == it.templateId }.forEach {
+                TeamsLiveData.observeOnDataChanged().observeOnce()!!.safeCopy().filter {
+                    templateId == it.templateId
+                }.forEach {
                     update(it.ref.log(), FIRESTORE_TEMPLATE_ID, defaultTemplateId)
                 }
             }.logFailures()
@@ -43,9 +46,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
                 defaultTemplateId = TemplateType.DEFAULT.id.toString()
             }
             trashTemplate(templateId)
-
-            Tasks.forResult(null)
-        }
+        }.logFailures()
         return true
     }
 

@@ -65,7 +65,7 @@ class LinkReceiverActivity : ActivityBase() {
 
         if (token != null) updateOwner(refs, token, null) { ref ->
             link.getQueryParameter(ref.id).toLong()
-        }.await()
+        }
 
         if (refs.isSingleton) {
             val id = refs.single().id
@@ -87,7 +87,7 @@ class LinkReceiverActivity : ActivityBase() {
     private suspend fun processTemplates(link: Uri, token: String?) {
         val refs = link.getQueryParameter(KEYS).split(",").map { templates.document(it) }
 
-        if (token != null) updateOwner(refs, token, null) { Date() }.await()
+        if (token != null) updateOwner(refs, token, null) { Date() }
 
         startActivity(TemplateListActivity.createIntent(refs.single().id)
                               .addNewDocumentFlags()
@@ -101,8 +101,6 @@ class LinkReceiverActivity : ActivityBase() {
 
     private fun showErrorAndContinue() {
         startTeamListActivityNoArgs()
-        RobotScouter.runOnUiThread {
-            longToast(R.string.link_uri_parse_error)
-        }
+        RobotScouter.runOnUiThread { longToast(R.string.link_uri_parse_error) }
     }
 }

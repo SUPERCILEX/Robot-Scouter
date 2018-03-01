@@ -20,8 +20,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
-import com.supercilex.robotscouter.util.doAsync
-import com.supercilex.robotscouter.util.logIgnorableFailures
+import com.supercilex.robotscouter.util.reportOrCancel
 import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
@@ -30,8 +29,8 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import java.lang.ref.WeakReference
-import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Future
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
@@ -166,7 +165,7 @@ open class StopwatchViewHolder(
             holder: StopwatchViewHolder,
             val startTimeMillis: Long = System.currentTimeMillis()
     ) : Runnable {
-        private val executor = ScheduledThreadPoolExecutor(1)
+        private val updater: Future<*>
 
         /**
          * The ID of the metric who originally started the request. We need to validate it since
@@ -187,11 +186,9 @@ open class StopwatchViewHolder(
 
         init {
             TIMERS[holder.metric] = this
+            updater = executor.scheduleWithFixedDelay(this, 1, 1, TimeUnit.SECONDS)
             updateStyle()
             updateButtonTime()
-            doAsync {
-                executor.scheduleWithFixedDelay(this, 0, 1, TimeUnit.SECONDS).get()
-            }.logIgnorableFailures<Any?, CancellationException>()
         }
 
         override fun run() {
@@ -214,7 +211,7 @@ open class StopwatchViewHolder(
                 TIMERS.remove(it.key)
             }
 
-            executor.shutdownNow()
+            updater.reportOrCancel(true)
             RobotScouter.runOnUiThread {
                 updateStyle()
                 setText(R.string.metric_stopwatch_start_title)
@@ -230,12 +227,13 @@ open class StopwatchViewHolder(
         private fun updateStyle() {
             val holder = holder ?: return
             TransitionManager.beginDelayedTransition(holder.itemView as ViewGroup, transition)
-            holder.updateStyle(!executor.isShutdown)
+            holder.updateStyle(!updater.isDone)
         }
 
         private companion object {
             const val GAME_TIME = 3
 
+            val executor = ScheduledThreadPoolExecutor(1)
             val transition = AutoTransition().apply {
                 excludeTarget(RecyclerView::class.java, true)
             }
@@ -248,8 +246,11 @@ open class StopwatchViewHolder(
         override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
-        ): DataHolder = LayoutInflater.from(parent.context)
-                .inflate(R.layout.scout_stopwatch_cycle_item, parent, false).apply {
+        ): DataHolder = LayoutInflater.from(parent.context).inflate(
+                R.layout.scout_stopwatch_cycle_item,
+                parent,
+                false
+        ).apply {
             layoutParams = layoutParams.apply {
                 width = ViewGroup.LayoutParams.WRAP_CONTENT
             }

@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.data.client.LinkReceiverActivity
 import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListActivity
 import com.supercilex.robotscouter.ui.scouting.templatelist.TemplateListActivity
 import com.supercilex.robotscouter.ui.settings.SettingsActivity
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
@@ -39,7 +40,6 @@ import com.supercilex.robotscouter.util.ui.showSignInTutorial
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import kotterknife.bindView
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
@@ -94,7 +94,16 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
         find<View>(R.id.fab).setOnClickListener(this)
         showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
-        authHelper.init().addOnSuccessListener(this) { handleIntent(intent) }
+        val ref = asLifecycleReference()
+        async(UI) {
+            try {
+                async { authHelper.init() }.await()
+            } catch (e: Exception) {
+                CrashLogger.onFailure(e)
+                return@async
+            }
+            ref().handleIntent(ref().intent)
+        }.logFailures()
 
         Credentials.getClient(this) // Ensure the Play Services update dialog is shown
     }
@@ -107,12 +116,12 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
     override fun onStart() {
         super.onStart()
         val ref = asLifecycleReference()
-        launch(UI) {
+        async(UI) {
             async { fetchAndActivate() }.await()
             if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
                 UpdateDialog.show(ref().supportFragmentManager)
             }
-        }
+        }.logFailures()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

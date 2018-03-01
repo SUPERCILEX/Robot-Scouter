@@ -4,13 +4,10 @@ import android.content.Context
 import android.support.annotation.WorkerThread
 import android.util.Patterns
 import androidx.net.toUri
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.data.client.startDownloadDataJob
 import com.supercilex.robotscouter.data.model.Scout
@@ -19,13 +16,13 @@ import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.deepLink
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getInBatches
 import com.supercilex.robotscouter.util.data.metricParser
 import com.supercilex.robotscouter.util.data.scoutParser
-import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
@@ -135,7 +132,9 @@ fun Team.forceUpdate() {
     ref.log().set(this).logFailures()
 }
 
-fun Team.forceRefresh(): Task<Void?> = ref.log().update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()
+fun Team.forceRefresh() {
+    ref.log().update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()
+}
 
 fun Team.copyMediaInfo(newTeam: Team) {
     media = newTeam.media
@@ -144,16 +143,16 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = newTeam.mediaYear
 }
 
-fun Team.trash(): Task<Void?> {
+suspend fun Team.trash() {
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
-    return firestoreBatch {
+    firestoreBatch {
         update(ref.log(), "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
         } else {
             -abs(number)
         })
         set(userDeletionQueue.log(), QueuedDeletion.Team(ref.id).data, SetOptions.merge())
-    }.logFailures()
+    }.await()
 }
 
 fun Team.fetchLatestData() = async {
@@ -161,16 +160,13 @@ fun Team.fetchLatestData() = async {
     if (isStale) startDownloadDataJob()
 }.logFailures()
 
-fun Team.getScouts(): Task<List<Scout>> = doAsync {
-    val scouts = Tasks.await(getScoutsQuery().getInBatches()).map {
-        scoutParser.parseSnapshot(it)
-    }
-    val metricTasks = Tasks.await(Tasks.whenAllSuccess<List<DocumentSnapshot>>(scouts.map {
-        getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches()
-    }))
-
-    scouts.mapIndexed { index, scout ->
-        scout.copy(metrics = metricTasks[index].map { metricParser.parseSnapshot(it) })
+suspend fun Team.getScouts(): List<Scout> {
+    val scouts = getScoutsQuery().getInBatches().map { scoutParser.parseSnapshot(it) }
+    val metricsForScouts = scouts.map {
+        async { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches() }
+    }.await()
+    return scouts.mapIndexed { index, scout ->
+        scout.copy(metrics = metricsForScouts[index].map { metricParser.parseSnapshot(it) })
     }
 }
 
@@ -193,6 +189,6 @@ fun String.formatAsTeamUrl(): String? {
     return if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
         trimmedUrl
     } else {
-        "http://" + trimmedUrl
+        "http://$trimmedUrl"
     }
 }

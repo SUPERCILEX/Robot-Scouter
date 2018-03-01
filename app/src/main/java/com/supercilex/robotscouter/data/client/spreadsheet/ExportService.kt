@@ -7,37 +7,37 @@ import android.support.annotation.RequiresPermission
 import android.support.annotation.Size
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.model.TemplateType
-import com.supercilex.robotscouter.util.AsyncTaskExecutor
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.asLifecycleReference
+import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.putExtra
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
-import com.supercilex.robotscouter.util.doAsync
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isOnline
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logExport
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.RatingDialog
+import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.TimeoutCancellationException
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 class ExportService : IntentService(TAG) {
     init {
@@ -57,16 +57,17 @@ class ExportService : IntentService(TAG) {
         try {
             onHandleScouts(notificationManager, chunks.map {
                 notificationManager.loading(it)
-                Tasks.await(
-                        Tasks.whenAllSuccess<List<Scout>>(it.map { it.getScouts() }),
-                        TIMEOUT,
-                        TimeUnit.MINUTES
-                ).also { notificationManager.updateLoadProgress() }
+
+                runBlocking {
+                    withTimeout(TIMEOUT, TimeUnit.MINUTES) {
+                        it.map { async { it.getScouts() } }.await()
+                    }
+                }.also { notificationManager.updateLoadProgress() }
             }.flatten().withIndex().associate {
                 teams[it.index] to it.value
             })
         } catch (e: Exception) {
-            abortCritical(e, notificationManager)
+            notificationManager.abortCritical(e)
         }
     }
 
@@ -78,25 +79,34 @@ class ExportService : IntentService(TAG) {
 
         notificationManager.setData(zippedScouts.size, newScouts.keys)
 
-        val templateNames = getTemplateNames(zippedScouts.keys)
-        Tasks.await(Tasks.whenAll(zippedScouts.map { (templateId, scouts) ->
-            doAsync {
-                if (!notificationManager.isStopped()) {
-                    SpreadsheetExporter(scouts, notificationManager, templateNames[templateId]!!)
-                            .export()
-                }
-            }.addOnFailureListener(AsyncTaskExecutor, OnFailureListener {
-                abortCritical(it, notificationManager)
-            })
-        }), TIMEOUT, TimeUnit.MINUTES)
+        runBlocking {
+            val templateNames = getTemplateNames(zippedScouts.keys)
+            withTimeout(TIMEOUT, TimeUnit.MINUTES) {
+                zippedScouts.map { (templateId, scouts) ->
+                    async {
+                        if (!notificationManager.isStopped()) {
+                            try {
+                                SpreadsheetExporter(
+                                        scouts,
+                                        notificationManager,
+                                        templateNames[templateId]!!
+                                ).export()
+                            } catch (e: Exception) {
+                                notificationManager.abortCritical(e)
+                                throw CancellationException()
+                            }
+                        }
+                    }
+                }.await()
+            }
+        }
     }
 
-    private fun getTemplateNames(templateIds: Set<String>): Map<String, String> {
+    private suspend fun getTemplateNames(templateIds: Set<String>): Map<String, String> {
         val unknownTemplateName: String = getString(R.string.export_unknown_template_title)
 
-        val allPossibleTemplateNames: Map<String, String> = Tasks.await(
-                getTemplatesQuery().log().get()
-        ).associate {
+        val templatesSnapshot = getTemplatesQuery().log().get().await()
+        val allPossibleTemplateNames: Map<String, String> = templatesSnapshot.associate {
             val scout = scoutParser.parseSnapshot(it)
             scout.id to (scout.name ?: unknownTemplateName)
         }.toMutableMap().apply {
@@ -132,10 +142,10 @@ class ExportService : IntentService(TAG) {
         return zippedScouts
     }
 
-    private fun abortCritical(e: Exception, notificationManager: ExportNotificationManager) {
-        if (e !is TimeoutException) CrashLogger.onFailure(e)
-        showToast("${getString(R.string.fui_general_error)}\n\n${e.message}")
-        notificationManager.abort()
+    private fun ExportNotificationManager.abortCritical(e: Exception) {
+        if (e !is TimeoutCancellationException) CrashLogger.onFailure(e)
+        abort()
+        if (e !is CancellationException) showToast("${getString(R.string.fui_general_error)}\n\n$e")
     }
 
     companion object {
@@ -171,10 +181,10 @@ class ExportService : IntentService(TAG) {
 
             if (teams.size >= MIN_TEAMS_TO_RATE && isOnline) {
                 val f = fragment.asLifecycleReference()
-                launch(UI) {
+                async(UI) {
                     async { fetchAndActivate() }.await()
                     if (shouldShowRatingDialog) RatingDialog.show(f().childFragmentManager)
-                }
+                }.logFailures()
             }
 
             return true

@@ -115,7 +115,7 @@ class TeamMenuHelper(
         val team = selectedTeams.first()
         when (item.itemId) {
             R.id.action_export_teams -> fragment.exportTeams()
-            R.id.action_share -> if (TeamSharer.shareTeams(activity, selectedTeams)) {
+            R.id.action_share -> if (TeamSharer.shareTeams(fragment, selectedTeams)) {
                 resetMenu()
             }
             R.id.action_edit_team_details ->

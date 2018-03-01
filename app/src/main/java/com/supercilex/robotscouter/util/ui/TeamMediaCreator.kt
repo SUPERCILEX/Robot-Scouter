@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.logTakeMedia
 import com.supercilex.robotscouter.util.providerAuthority
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.util.Calendar
@@ -63,7 +64,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(RobotScouter.packageManager) == null) {
-            RobotScouter.longToast(R.string.fui_general_error)
+            RobotScouter.runOnUiThread { longToast(R.string.fui_general_error) }
             return
         }
         if (!EasyPermissions.hasPermissions(RobotScouter, *handler.perms.toTypedArray())) {
@@ -80,7 +81,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             ).hide()
         } catch (e: Exception) {
             CrashLogger.onFailure(e)
-            RobotScouter.longToast(e.toString())
+            RobotScouter.runOnUiThread { longToast(e.toString()) }
             return
         }.also {
             this.photoFile = it
