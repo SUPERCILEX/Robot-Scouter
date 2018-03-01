@@ -2,6 +2,9 @@
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 -keepnames public class * extends com.supercilex.robotscouter.util.ui.FragmentBase
+-keepnames public class * extends com.supercilex.robotscouter.util.ui.DialogFragmentBase
+-keepnames public class * extends com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
+-keepnames public class * extends com.supercilex.robotscouter.util.ui.PreferenceFragmentBase
 
 # Retrofit
 -dontnote retrofit2.Platform

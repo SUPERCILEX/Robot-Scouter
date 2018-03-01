@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -83,6 +84,19 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable {
 }
 
 abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
+    override fun onResume() {
+        super.onResume()
+        FirebaseAnalytics.getInstance(context)
+                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        refWatcher.watch(this)
+    }
+}
+
+abstract class PreferenceFragmentBase : PreferenceFragmentCompat(), OnActivityResult, Saveable {
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)

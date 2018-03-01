@@ -12,7 +12,6 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.content.res.AppCompatResources
 import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.PreferenceGroup
 import android.support.v7.preference.PreferenceGroupAdapter
 import android.support.v7.preference.PreferenceScreen
@@ -42,11 +41,12 @@ import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
+import com.supercilex.robotscouter.util.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.ui.asLiveData
 import org.jetbrains.anko.support.v4.toast
 
-class SettingsFragment : PreferenceFragmentCompat(),
+class SettingsFragment : PreferenceFragmentBase(),
         TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
