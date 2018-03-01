@@ -97,8 +97,8 @@ class SpinnerTemplateViewHolder(
         }
     }
 
-    private class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView), TemplateViewHolder,
-            View.OnClickListener {
+    private class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+            TemplateViewHolder, View.OnClickListener {
         override val reorder: View by bindView(R.id.reorder)
         override val nameEditor: EditText by bindView(R.id.name)
         private val default: ImageButton by bindView(R.id._default)

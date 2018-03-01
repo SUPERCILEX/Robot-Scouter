@@ -146,9 +146,11 @@ class ExportService : IntentService(TAG) {
         private const val MIN_TEAMS_TO_RATE = 10
 
         /** @return true if an export was attempted, false otherwise */
-        fun exportAndShareSpreadSheet(fragment: Fragment,
-                                      permHandler: PermissionRequestHandler,
-                                      @Size(min = 1) mutableTeams: List<Team>): Boolean {
+        fun exportAndShareSpreadSheet(
+                fragment: Fragment,
+                permHandler: PermissionRequestHandler,
+                @Size(min = 1) mutableTeams: List<Team>
+        ): Boolean {
             val teams = mutableTeams.toList()
             if (teams.isEmpty()) return false
 

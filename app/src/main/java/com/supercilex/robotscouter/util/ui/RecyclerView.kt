@@ -23,9 +23,11 @@ fun RecyclerView.isItemInRange(position: Int): Boolean = (layoutManager as Linea
             && position in first..it.findLastCompletelyVisibleItemPosition()
 }
 
-inline fun RecyclerView.notifyItemsNoChangeAnimation(update: RecyclerView.Adapter<*>.() -> Unit = {
-    notifyItemRangeChanged(0, adapter.itemCount)
-}) {
+inline fun RecyclerView.notifyItemsNoChangeAnimation(
+        update: RecyclerView.Adapter<*>.() -> Unit = {
+            notifyItemRangeChanged(0, adapter.itemCount)
+        }
+) {
     val animator = itemAnimator as? SimpleItemAnimator
 
     animator?.supportsChangeAnimations = false

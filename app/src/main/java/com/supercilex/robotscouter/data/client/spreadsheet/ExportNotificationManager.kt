@@ -186,7 +186,9 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     private fun NotificationCompat.Builder.updateProgress(
-            maxProgress: Int, progress: Int): NotificationCompat.Builder {
+            maxProgress: Int,
+            progress: Int
+    ): NotificationCompat.Builder {
         require(progress >= 0) { "Progress must be greater than 0" }
         require(maxProgress >= progress) {
             "Max progress ($maxProgress) must be greater or equal to progress ($progress)"

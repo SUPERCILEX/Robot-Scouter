@@ -16,10 +16,11 @@ import net.yslibrary.licenseadapter.Licenses
 import org.jetbrains.anko.find
 
 class LicensesFragment : FragmentBase(), OnBackPressedListener {
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View =
-            View.inflate(context, R.layout.fragment_licenses, null)
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View = View.inflate(context, R.layout.fragment_licenses, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val libraries: List<Library> = listOf(

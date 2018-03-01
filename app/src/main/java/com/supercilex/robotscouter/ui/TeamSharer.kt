@@ -36,8 +36,8 @@ import java.util.concurrent.CancellationException
 
 class TeamSharer private constructor(
         private val activity: FragmentActivity,
-        @Size(min = 1) teams: List<Team>) : CachingSharer(activity
-) {
+        @Size(min = 1) teams: List<Team>
+) : CachingSharer(activity) {
     private val cache = Cache(teams)
     private val safeMessage: String
         get() {
