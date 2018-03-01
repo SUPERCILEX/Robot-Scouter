@@ -15,9 +15,8 @@ import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdate
-
-private typealias IntrinsicBoolean = Boolean
-private typealias IntrinsicList <T> = List<T>
+import kotlin.Boolean as IntrinsicBoolean
+import kotlin.collections.List as IntrinsicList
 
 sealed class Metric<T>(
         @Exclude
