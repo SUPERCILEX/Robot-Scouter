@@ -7,6 +7,7 @@ import android.support.annotation.RequiresPermission
 import android.support.annotation.Size
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
@@ -105,7 +106,12 @@ class ExportService : IntentService(TAG) {
     private suspend fun getTemplateNames(templateIds: Set<String>): Map<String, String> {
         val unknownTemplateName: String = getString(R.string.export_unknown_template_title)
 
-        val templatesSnapshot = getTemplatesQuery().log().get().await()
+        val templatesSnapshot: List<DocumentSnapshot> = try {
+            getTemplatesQuery().log().get().await().documents
+        } catch (e: Exception) {
+            CrashLogger.onFailure(e)
+            emptyList()
+        }
         val allPossibleTemplateNames: Map<String, String> = templatesSnapshot.associate {
             val scout = scoutParser.parseSnapshot(it)
             scout.id to (scout.name ?: unknownTemplateName)
