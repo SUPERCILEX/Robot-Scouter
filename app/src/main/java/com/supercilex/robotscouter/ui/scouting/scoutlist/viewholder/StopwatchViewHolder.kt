@@ -2,6 +2,8 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 
 import android.os.Build
 import android.support.annotation.StringRes
+import android.support.design.widget.BaseTransientBottomBar
+import android.support.design.widget.Snackbar
 import android.support.transition.AutoTransition
 import android.support.transition.TransitionManager
 import android.support.v4.app.FragmentActivity
@@ -42,6 +44,7 @@ open class StopwatchViewHolder(
     private val cycles: RecyclerView by bindView(R.id.list)
 
     private var timer: Timer? = null
+    private var undoAddSnackbar: Snackbar? = null
 
     init {
         toggleStopwatch.setOnClickListener(this)
@@ -83,6 +86,7 @@ open class StopwatchViewHolder(
     override fun onClick(v: View) {
         val currentTimer = timer
         if (currentTimer == null) {
+            undoAddSnackbar?.dismiss()
             timer = Timer(this)
         } else {
             metric.value = metric.value.toMutableList().apply {
@@ -109,9 +113,13 @@ open class StopwatchViewHolder(
         val currentTimer = timer ?: return false
 
         currentTimer.cancel()
-        longSnackbar(itemView, R.string.cancelled, R.string.undo) {
+        undoAddSnackbar = longSnackbar(itemView, R.string.cancelled, R.string.undo) {
             timer = Timer(this, currentTimer.startTimeMillis)
-        }
+        }.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+            override fun onDismissed(transientBottomBar: Snackbar, event: Int) {
+                undoAddSnackbar = null
+            }
+        })
 
         return true
     }
