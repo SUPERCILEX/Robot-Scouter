@@ -166,7 +166,7 @@
     <string name="details_action_visit_tba_title">TBA</string>
     <string name="details_action_visit_website_title">Website</string>
 
-    <string name="scout_edit_name_title">Edit scout name</string>
+    <string name="scout_edit_name_title">Edit match name</string>
     <string name="scout_name_title">Scout name</string>
     <string name="scout_delete_title">Delete scout</string>
     <string name="scout_delete_message">Scout deleted</string>
