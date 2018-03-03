@@ -90,7 +90,7 @@ open class StopwatchViewHolder(
             }
 
             val size = metric.value.size
-            notifyCycleAdded(size)
+            notifyCycleAdded(size, size)
 
             longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, R.string.undo) {
                 val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
@@ -99,7 +99,7 @@ open class StopwatchViewHolder(
                 }
                 metric.value = newCycles
 
-                notifyCycleRemoved(metric.value.size, hadAverage)
+                notifyCycleRemoved(metric.value.size, metric.value.size, hadAverage)
                 timer = Timer(this, currentTimer.startTimeMillis)
             }
         }
@@ -116,7 +116,7 @@ open class StopwatchViewHolder(
         return true
     }
 
-    private fun notifyCycleAdded(size: Int) {
+    private fun notifyCycleAdded(position: Int, size: Int) {
         // Force RV to request layout when adding first item
         cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
 
@@ -124,22 +124,22 @@ open class StopwatchViewHolder(
         if (size == LIST_SIZE_WITH_AVERAGE) {
             // Add the average card
             adapter.notifyItemInserted(0)
-            adapter.notifyItemInserted(size)
+            adapter.notifyItemInserted(position)
         } else {
             // Account for the average card being there or not. Since we are adding a new lap,
             // there are only two possible states: 1 item or n + 2 items.
-            adapter.notifyItemInserted(if (size == 1) 0 else size)
+            adapter.notifyItemInserted(if (size == 1) 0 else position)
             // Ensure the average card is updated if it's there
             adapter.notifyItemChanged(0)
         }
     }
 
-    private fun notifyCycleRemoved(size: Int, hadAverage: Boolean) {
+    private fun notifyCycleRemoved(position: Int, size: Int, hadAverage: Boolean) {
         // Force RV to request layout when removing last item
         cycles.setHasFixedSize(size > 0)
 
         val adapter = cycles.adapter
-        adapter.notifyItemRemoved(adapterPosition)
+        adapter.notifyItemRemoved(if (hadAverage) position + 1 else position)
         if (hadAverage && size == 1) {
             // Remove the average card
             adapter.notifyItemRemoved(0)
@@ -319,12 +319,13 @@ open class StopwatchViewHolder(
             val metric = holder.metric
             val hadAverage = hasAverage
             val position = realPosition
+            val rawPosition = adapterPosition
 
             val newCycles = metric.value.toMutableList()
             val deletedCycle = newCycles.removeAt(position)
             metric.value = newCycles
 
-            holder.notifyCycleRemoved(metric.value.size, hadAverage)
+            holder.notifyCycleRemoved(position, metric.value.size, hadAverage)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
                 val latestMetric = holder.metric
@@ -333,7 +334,7 @@ open class StopwatchViewHolder(
                     add(position, deletedCycle)
                 }
 
-                holder.notifyCycleAdded(latestMetric.value.size)
+                holder.notifyCycleAdded(rawPosition, latestMetric.value.size)
             }
 
             return true
