@@ -16,7 +16,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.createFile
-import com.supercilex.robotscouter.util.data.hide
+import com.supercilex.robotscouter.util.data.hidden
 import com.supercilex.robotscouter.util.data.ioPerms
 import com.supercilex.robotscouter.util.data.mediaFolder
 import com.supercilex.robotscouter.util.data.unhide
@@ -78,7 +78,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                     "jpg",
                     mediaFolder!!,
                     System.currentTimeMillis().toString()
-            ).hide()
+            ).hidden()
         } catch (e: Exception) {
             CrashLogger.onFailure(e)
             RobotScouter.runOnUiThread { longToast(e.toString()) }

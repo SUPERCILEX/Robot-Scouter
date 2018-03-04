@@ -17,7 +17,7 @@ import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.exportsFolder
-import com.supercilex.robotscouter.util.data.hide
+import com.supercilex.robotscouter.util.data.hidden
 import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.providerAuthority
@@ -51,8 +51,11 @@ import java.util.concurrent.TimeUnit
 class SpreadsheetExporter(
         scouts: Map<Team, List<Scout>>,
         private val notificationManager: ExportNotificationManager,
-        val templateName: String
+        private val rawTemplateName: String?
 ) {
+    val templateName: String by lazy {
+        rawTemplateName ?: RobotScouter.getString(R.string.export_unnamed_template_title)
+    }
     val scouts: Map<Team, List<Scout>> = Collections.unmodifiableMap(scouts)
     private val cache = SpreadsheetCache(scouts.keys)
 
@@ -145,17 +148,25 @@ class SpreadsheetExporter(
     }
 
     private fun writeFile(rsFolder: File): File {
-        var stream: FileOutputStream? = null
-        var file = File(rsFolder, getFullyQualifiedFileName())
-
-        try {
-            file = findAvailableFile(file, rsFolder).hide().apply {
-                if (!parentFile.exists() && !parentFile.mkdirs() || !createNewFile()
+        val file = synchronized(notificationManager) {
+            var availableFile = findAvailableFile(rsFolder)
+            try {
+                availableFile = availableFile.hidden()
+                availableFile.apply {
+                    if (
+                        !parentFile.exists() && !parentFile.mkdirs() || !createNewFile()
                         // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
-                        && (!delete() || !createNewFile())) {
-                    throw IOException("Failed to create file: $this")
+                        && (!delete() || !createNewFile())
+                    ) throw IOException("Failed to create file: $this")
                 }
+            } catch (e: IOException) {
+                availableFile.delete()
+                throw e
             }
+        }
+
+        var stream: FileOutputStream? = null
+        try {
             stream = FileOutputStream(file)
 
             try {
@@ -174,13 +185,13 @@ class SpreadsheetExporter(
         }
     }
 
-    private fun findAvailableFile(wantedFile: File, rsFolder: File): File {
-        var availableFile = wantedFile
+    private fun findAvailableFile(rsFolder: File): File {
+        var availableFile = File(rsFolder, getFullyQualifiedFileName(0))
 
         var i = 1
         while (true) {
-            availableFile = if (availableFile.exists()) {
-                File(rsFolder, getFullyQualifiedFileName(templateName, " ($i)"))
+            availableFile = if (availableFile.exists() || availableFile.hidden().exists()) {
+                File(rsFolder, getFullyQualifiedFileName(i))
             } else {
                 return availableFile
             }
@@ -188,15 +199,14 @@ class SpreadsheetExporter(
         }
     }
 
-    private fun getFullyQualifiedFileName(
-            templateName: String = this.templateName,
-            middleMan: String? = null
-    ): String {
+    private fun getFullyQualifiedFileName(count: Int): String {
+        val normalizedTemplateName =
+                rawTemplateName?.toUpperCase(Locale.getDefault())?.replace(" ", "_")
+        val prefix = if (normalizedTemplateName == null) "" else "[$normalizedTemplateName] "
+        val suffix = if (count <= 0) "" else " ($count)"
         val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
-        val normalizedTemplateName = templateName.toUpperCase(Locale.getDefault()).replace(" ", "_")
 
-        return if (middleMan == null) "[$normalizedTemplateName] ${cache.teamNames}$extension"
-        else "[$normalizedTemplateName] ${cache.teamNames}$middleMan$extension"
+        return "$prefix${cache.teamNames}$suffix$extension"
     }
 
     private fun getWorkbook(): Workbook {

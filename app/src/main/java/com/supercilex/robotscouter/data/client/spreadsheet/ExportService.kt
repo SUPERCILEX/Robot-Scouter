@@ -90,7 +90,7 @@ class ExportService : IntentService(TAG) {
                                 SpreadsheetExporter(
                                         scouts,
                                         notificationManager,
-                                        templateNames[templateId]!!
+                                        templateNames[templateId]
                                 ).export()
                             } catch (e: Exception) {
                                 notificationManager.abortCritical(e)
@@ -103,7 +103,7 @@ class ExportService : IntentService(TAG) {
         }
     }
 
-    private suspend fun getTemplateNames(templateIds: Set<String>): Map<String, String> {
+    private suspend fun getTemplateNames(templateIds: Set<String>): Map<String, String?> {
         val unknownTemplateName: String = getString(R.string.export_unknown_template_title)
 
         val templatesSnapshot: List<DocumentSnapshot> = try {
@@ -112,9 +112,8 @@ class ExportService : IntentService(TAG) {
             CrashLogger.onFailure(e)
             emptyList()
         }
-        val allPossibleTemplateNames: Map<String, String> = templatesSnapshot.associate {
-            val scout = scoutParser.parseSnapshot(it)
-            scout.id to (scout.name ?: unknownTemplateName)
+        val allPossibleTemplateNames: Map<String, String?> = templatesSnapshot.associate {
+            scoutParser.parseSnapshot(it).let { it.id to it.name }
         }.toMutableMap().apply {
             putAll(TemplateType.values.associate {
                 it.id.toString() to resources.getStringArray(R.array.template_new_options)[it.id]
@@ -123,9 +122,14 @@ class ExportService : IntentService(TAG) {
 
         val usedTemplates = mutableMapOf<String, Int>()
         return templateIds.associate {
-            // Getting the name will be null if the user deletes a template
-            it to (allPossibleTemplateNames[it] ?: unknownTemplateName)
+            if (allPossibleTemplateNames.contains(it)) {
+                it to allPossibleTemplateNames[it]
+            } else {
+                // User deleted template
+                it to unknownTemplateName
+            }
         }.mapValues { (_, name) ->
+            if (name == null) return@mapValues null
             usedTemplates[name]?.let {
                 usedTemplates[name] = it + 1
                 "$name ($it)"

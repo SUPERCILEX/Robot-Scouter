@@ -37,7 +37,7 @@ val mediaFolder: File?
     get() = getFolder(media)
 
 @WorkerThread
-fun File.hide() = File(parentFile, ".$name")
+fun File.hidden() = File(parentFile, ".$name")
 
 @WorkerThread
 @Throws(IOException::class)

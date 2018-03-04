@@ -102,6 +102,7 @@
     <string name="export_overall_progress_title">Spreadsheet exporter</string>
     <string name="export_progress_title">Exporting spreadsheet</string>
 
+    <string name="export_unnamed_template_title">Unnamed Template</string>
     <string name="export_unknown_template_title">Unknown Template</string>
     <string name="export_offline_rationale">
         Exporting spreadsheet while offline may yield incomplete results.
