@@ -82,7 +82,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                     createFile(
                             team.toString(),
                             "jpg",
-                            mediaFolder!!,
+                            mediaFolder ?: throw IOException("Couldn't create folder"),
                             System.currentTimeMillis().toString()
                     ).hide()
                 } catch (e: IOException) {
@@ -118,7 +118,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 RobotScouter.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
                     this.data = contentUri
                 })
-            }
+            }.logFailures()
         } else {
             async { photoFile.delete() }.logFailures()
         }

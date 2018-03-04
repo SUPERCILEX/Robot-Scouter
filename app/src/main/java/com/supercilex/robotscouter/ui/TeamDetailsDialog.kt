@@ -24,9 +24,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.teamlist.TeamListFragment
+import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
@@ -39,6 +39,7 @@ import com.supercilex.robotscouter.util.data.model.launchWebsite
 import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.logEditDetails
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
@@ -48,8 +49,11 @@ import com.supercilex.robotscouter.util.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import kotterknife.bindView
-import java.io.File
+import org.jetbrains.anko.coroutines.experimental.asReference
 import java.util.Calendar
 import kotlin.math.hypot
 
@@ -202,41 +206,47 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     private fun save() {
-        val isMediaValid = validateUrl(mediaEditText.text, mediaInputLayout)
-        val isWebsiteValid = validateUrl(websiteEditText.text, websiteInputLayout)
+        val name = nameEditText.text
+        val media = mediaEditText.text
+        val website = websiteEditText.text
 
-        if (!isWebsiteValid || !isMediaValid) return
+        val isMediaValid = validateUrl(media, mediaInputLayout)
+        val isWebsiteValid = validateUrl(website, websiteInputLayout)
 
-        nameEditText.text.nullOrFull()?.toString().also {
-            if (it != team.name) {
-                team.name = it
-                team.hasCustomName = it?.isNotBlank() == true
+        val ref = asLifecycleReference()
+        async(UI) {
+            if (!isWebsiteValid.await() || !isMediaValid.await()) return@async
+
+            name.nullOrFull()?.toString().also {
+                if (it != team.name) {
+                    team.name = it
+                    team.hasCustomName = it?.isNotBlank() == true
+                }
             }
-        }
 
-        mediaEditText.text.toString().formatAsTeamUrl().also {
-            if (it != team.media) {
-                team.media = it
-                team.hasCustomMedia = it?.isNotBlank() == true
-                team.mediaYear = Calendar.getInstance().get(Calendar.YEAR)
+            async { media.toString().formatAsTeamUrl() }.await().also {
+                if (it != team.media) {
+                    team.media = it
+                    team.hasCustomMedia = it?.isNotBlank() == true
+                    team.mediaYear = Calendar.getInstance().get(Calendar.YEAR)
+                }
             }
-        }
 
-        websiteEditText.text.toString().formatAsTeamUrl().also {
-            if (it != team.website) {
-                team.website = it
-                team.hasCustomWebsite = it?.isNotBlank() == true
+            async { website.toString().formatAsTeamUrl() }.await().also {
+                if (it != team.website) {
+                    team.website = it
+                    team.hasCustomWebsite = it?.isNotBlank() == true
+                }
             }
-        }
 
-        team.media?.let { if (File(it).exists()) team.startUploadMediaJob() }
-        team.forceUpdate()
-        team.forceRefresh()
+            team.forceUpdate()
+            team.forceRefresh()
 
-        // If we are being called from TeamListFragment, reset the menu if the click was consumed
-        (parentFragment as? TeamListFragment)?.resetMenu()
+            // If we are being called from TeamListFragment, reset the menu if the click was consumed
+            (ref().parentFragment as? TeamListFragment)?.resetMenu()
 
-        dismiss()
+            ref().dismiss()
+        }.logFailures()
     }
 
     override fun onSaveInstanceState(outState: Bundle) = super.onSaveInstanceState(outState.apply {
@@ -268,11 +278,14 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         validateUrl(websiteEditText.text, websiteInputLayout)
     }
 
-    private fun validateUrl(
-            url: CharSequence,
-            inputLayout: TextInputLayout
-    ) = url.isValidTeamUrl().also {
-        inputLayout.error = if (it) null else getString(R.string.details_malformed_url_error)
+    private fun validateUrl(url: CharSequence, inputLayout: TextInputLayout): Deferred<Boolean> {
+        val inputRef = inputLayout.asReference()
+        return async(UI) {
+            val isValid = async { url.isValidTeamUrl() }.await()
+            inputRef().error =
+                    if (isValid) null else getString(R.string.details_malformed_url_error)
+            isValid
+        }.logFailures()
     }
 
     companion object {

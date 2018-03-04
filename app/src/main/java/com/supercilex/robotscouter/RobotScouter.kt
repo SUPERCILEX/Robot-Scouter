@@ -7,13 +7,16 @@ import android.support.v7.app.AppCompatDelegate
 import com.squareup.leakcanary.LeakCanary
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.initDatabase
+import com.supercilex.robotscouter.util.data.initIo
 import com.supercilex.robotscouter.util.data.initPrefs
 import com.supercilex.robotscouter.util.initAnalytics
 import com.supercilex.robotscouter.util.initLogging
 import com.supercilex.robotscouter.util.initRemoteConfig
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.refWatcher
 import com.supercilex.robotscouter.util.ui.initNotifications
 import com.supercilex.robotscouter.util.ui.initUi
+import kotlinx.coroutines.experimental.async
 
 @Suppress("PropertyName")
 val RobotScouter
@@ -30,6 +33,7 @@ class RobotScouterApp : MultiDexApplication() {
         refWatcher // Install Leak Canary
 
         initLogging()
+        async { initIo() }.logFailures()
         initAnalytics()
         initRemoteConfig()
         initDatabase()
@@ -58,7 +62,7 @@ class RobotScouterApp : MultiDexApplication() {
             StrictMode.setThreadPolicy(
                     StrictMode.ThreadPolicy.Builder()
                             .detectAll()
-                            .penaltyFlashScreen()
+                            .penaltyDeath()
                             .penaltyLog()
                             .build()
             )

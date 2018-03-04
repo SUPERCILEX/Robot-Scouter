@@ -14,6 +14,11 @@ private val exports = // TODO Environment.DIRECTORY_DOCUMENTS can be used after 
 private val media = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_PICTURES)
 
 @WorkerThread
+fun initIo() {
+    // Do nothing, this will initialize our static fields
+}
+
+@WorkerThread
 @Throws(IOException::class)
 fun createFile(
         prefix: String,
