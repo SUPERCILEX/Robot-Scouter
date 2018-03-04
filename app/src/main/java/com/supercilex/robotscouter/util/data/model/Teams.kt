@@ -88,8 +88,7 @@ fun Collection<Team>.getNames(): String {
 
 fun Team.add() {
     id = teams.document().id
-    forceUpdate()
-    forceRefresh()
+    forceUpdateAndRefresh()
 
     logAdd()
     FirebaseUserActions.getInstance().end(
@@ -132,8 +131,11 @@ fun Team.forceUpdate() {
     ref.log().set(this).logFailures()
 }
 
-fun Team.forceRefresh() {
-    ref.log().update(FIRESTORE_TIMESTAMP, Date(0)).logFailures()
+fun Team.forceUpdateAndRefresh() {
+    firestoreBatch {
+        set(ref.log(), this@forceUpdateAndRefresh)
+        update(ref.log(), FIRESTORE_TIMESTAMP, Date(0))
+    }.logFailures()
 }
 
 fun Team.copyMediaInfo(newTeam: Team) {

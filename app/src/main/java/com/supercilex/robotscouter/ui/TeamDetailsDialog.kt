@@ -30,8 +30,7 @@ import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
-import com.supercilex.robotscouter.util.data.model.forceRefresh
-import com.supercilex.robotscouter.util.data.model.forceUpdate
+import com.supercilex.robotscouter.util.data.model.forceUpdateAndRefresh
 import com.supercilex.robotscouter.util.data.model.formatAsTeamUrl
 import com.supercilex.robotscouter.util.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.util.data.model.launchTba
@@ -239,8 +238,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            team.forceUpdate()
-            team.forceRefresh()
+            team.forceUpdateAndRefresh()
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
             (ref().parentFragment as? TeamListFragment)?.resetMenu()
