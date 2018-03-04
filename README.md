@@ -63,13 +63,14 @@ If you know another language, please help
 
 ### Learning 📚
 - Get familiar with [Firebase](https://firebase.google.com) to understand the core technologies behind Robot Scouter
-- Take careful note of the [Firebase Realtime Database](https://firebase.google.com/docs/database/)
-  and [Firebase-UI](https://github.com/firebase/FirebaseUI-Android)
+- Take careful note of [Firestore](https://firebase.google.com/docs/firestore/) and
+  [Firebase-UI](https://github.com/firebase/FirebaseUI-Android)
 
 ## Environment setup 💻
 
-1. [Move the dummy files](building/setup.sh#L17-L21) into position
-1. If you are working with the database or need access to other Firebase technologies,
+1. [Move the dummy files](https://github.com/SUPERCILEX/Robot-Scouter/blob/083ee0b7fd672d09ecaddf73d777d4fe9c4612d2/building/setup.sh#L25-L29)
+   into position
+1. If you are working with Firestore or need access to other Firebase technologies,
    [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
    and replace the dummy [google-services.json](travis-dummies/google-services.json) with the one
    created in your Firebase project
