@@ -10,10 +10,11 @@ import java.io.IOException
 val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 private val exports = // TODO Environment.DIRECTORY_DOCUMENTS can be used after API 19
-    File(Environment.getExternalStorageDirectory(), "Documents")
+        File(Environment.getExternalStorageDirectory(), "Documents")
 private val media = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_PICTURES)
 
 @WorkerThread
+@Throws(IOException::class)
 fun createFile(
         prefix: String,
         suffix: String,
@@ -40,13 +41,18 @@ val mediaFolder: File?
 fun File.hidden() = File(parentFile, ".$name")
 
 @WorkerThread
-@Throws(IOException::class)
-fun File.unhide(): File {
-    val unhidden = File(parentFile, name.substring(1))
-    if (!renameTo(unhidden)) {
-        throw IOException("Failed to rename file: $this")
-    }
-    return unhidden
+fun File.unhidden() = File(parentFile, name.substring(1))
+
+@WorkerThread
+fun File.hide(): File? {
+    val hidden = hidden()
+    return if (!renameTo(hidden)) null else hidden
+}
+
+@WorkerThread
+fun File.unhide(): File? {
+    val unhidden = unhidden()
+    return if (!renameTo(unhidden)) null else unhidden
 }
 
 private fun getFolder(folder: File) =

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.annotation.WorkerThread
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
 import com.supercilex.robotscouter.R
@@ -16,16 +15,20 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.createFile
-import com.supercilex.robotscouter.util.data.hidden
+import com.supercilex.robotscouter.util.data.hide
 import com.supercilex.robotscouter.util.data.ioPerms
 import com.supercilex.robotscouter.util.data.mediaFolder
 import com.supercilex.robotscouter.util.data.unhide
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logTakeMedia
 import com.supercilex.robotscouter.util.providerAuthority
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
+import java.io.IOException
 import java.util.Calendar
 import java.util.Collections
 
@@ -58,7 +61,6 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         }
     }
 
-    @WorkerThread
     fun capture(host: Fragment, shouldUploadMediaToTba: Boolean? = null) {
         shouldUploadMediaToTba?.let { this.shouldUploadMediaToTba = it }
 
@@ -72,26 +74,29 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             return
         }
 
-        val photoFile = try {
-            createFile(
-                    team.toString(),
-                    "jpg",
-                    mediaFolder!!,
-                    System.currentTimeMillis().toString()
-            ).hidden()
-        } catch (e: Exception) {
-            CrashLogger.onFailure(e)
-            RobotScouter.runOnUiThread { longToast(e.toString()) }
-            return
-        }.also {
-            this.photoFile = it
-        }
-
         team.logTakeMedia()
-        val photoUri = FileProvider.getUriForFile(
-                RobotScouter, providerAuthority, photoFile)
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-        host.startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
+
+        async(UI) {
+            val file = async {
+                try {
+                    createFile(
+                            team.toString(),
+                            "jpg",
+                            mediaFolder!!,
+                            System.currentTimeMillis().toString()
+                    ).hide()
+                } catch (e: IOException) {
+                    CrashLogger.onFailure(e)
+                    RobotScouter.runOnUiThread { longToast(e.toString()) }
+                    null
+                }
+            }.await() ?: return@async
+
+            photoFile = file
+            val photoUri = FileProvider.getUriForFile(RobotScouter, providerAuthority, file)
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+            host.startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
+        }.logFailures()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -99,21 +104,23 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val photoFile = photoFile!!
         if (resultCode == Activity.RESULT_OK) {
-            val contentUri = Uri.fromFile(photoFile.unhide())
+            async(UI) {
+                val contentUri = async { Uri.fromFile(photoFile.unhide()) }.await()
 
-            _onMediaCaptured.value = team.copy().apply {
-                media = contentUri.path
-                hasCustomMedia = true
-                shouldUploadMediaToTba = this@TeamMediaCreator.shouldUploadMediaToTba!!
-                mediaYear = Calendar.getInstance().get(Calendar.YEAR)
+                _onMediaCaptured.value = team.copy().apply {
+                    media = contentUri.path
+                    hasCustomMedia = true
+                    shouldUploadMediaToTba = this@TeamMediaCreator.shouldUploadMediaToTba!!
+                    mediaYear = Calendar.getInstance().get(Calendar.YEAR)
+                }
+
+                // Tell gallery that we have a new photo
+                RobotScouter.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
+                    this.data = contentUri
+                })
             }
-
-            // Tell gallery that we have a new photo
-            RobotScouter.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
-                this.data = contentUri
-            })
         } else {
-            photoFile.delete()
+            async { photoFile.delete() }.logFailures()
         }
     }
 

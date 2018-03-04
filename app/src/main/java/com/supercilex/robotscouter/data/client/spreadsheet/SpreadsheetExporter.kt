@@ -149,9 +149,8 @@ class SpreadsheetExporter(
 
     private fun writeFile(rsFolder: File): File {
         val file = synchronized(notificationManager) {
-            var availableFile = findAvailableFile(rsFolder)
+            val availableFile = findAvailableFile(rsFolder).hidden()
             try {
-                availableFile = availableFile.hidden()
                 availableFile.apply {
                     if (
                         !parentFile.exists() && !parentFile.mkdirs() || !createNewFile()
@@ -176,7 +175,7 @@ class SpreadsheetExporter(
                 throw e
             }.write(stream)
 
-            return file.unhide()
+            return file.unhide() ?: throw IOException("Couldn't unhide file")
         } catch (e: IOException) {
             file.delete()
             throw e
