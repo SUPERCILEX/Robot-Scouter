@@ -164,23 +164,12 @@ class SpreadsheetExporter(
             }
         }
 
-        var stream: FileOutputStream? = null
         try {
-            stream = FileOutputStream(file)
-
-            try {
-                getWorkbook()
-            } catch (e: Exception) {
-                file.delete()
-                throw e
-            }.write(stream)
-
+            FileOutputStream(file).use { getWorkbook().write(it) }
             return file.unhide() ?: throw IOException("Couldn't unhide file")
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             file.delete()
             throw e
-        } finally {
-            stream?.close()
         }
     }
 
