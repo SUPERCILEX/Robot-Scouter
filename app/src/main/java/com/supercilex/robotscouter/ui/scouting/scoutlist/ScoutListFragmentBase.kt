@@ -136,6 +136,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onSaveInstanceState(outState: Bundle) {
         pagerAdapter?.onSaveInstanceState(outState)
         dataHolder.onSaveInstanceState(outState)
+        viewHolder.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(
