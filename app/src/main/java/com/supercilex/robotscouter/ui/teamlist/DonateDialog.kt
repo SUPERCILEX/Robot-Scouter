@@ -65,22 +65,31 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
 
         val width = seekBar.width - (seekBar.paddingLeft + seekBar.paddingRight)
         val thumbPos = seekBar.paddingLeft + (width * progress / seekBar.max)
-        val offset = seekBar.thumbOffset - if (progress == seekBar.max) 2 * seekBar.max else seekBar.max
+        val offset =
+                seekBar.thumbOffset - if (progress == seekBar.max) 2 * seekBar.max else seekBar.max
         amountTextView.x = (thumbPos + offset).toFloat()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        billingClient.endConnection()
+        if (billingClient.isReady) billingClient.endConnection()
     }
 
     override fun onClick(v: View) {
+        if (!billingClient.isReady) {
+            showError()
+            return
+        }
+
         updateProgress(true)
 
         val sku = "${amountSeekBar.progress + 1}${DonateDialog.SKU_BASE}" +
                 if (monthlyCheckBox.isChecked) "monthly" else "single"
-        val type = if (monthlyCheckBox.isChecked) BillingClient.SkuType.SUBS else BillingClient.SkuType.INAPP
-        purchaseItem(sku, type).addOnFailureListener { showError() }
+        purchaseItem(sku, if (monthlyCheckBox.isChecked) {
+            BillingClient.SkuType.SUBS
+        } else {
+            BillingClient.SkuType.INAPP
+        }).addOnFailureListener { showError() }
     }
 
     private fun handlePurchaseResponse(response: Task<Int>) = response.addOnCompleteListener {
@@ -103,8 +112,8 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
     private fun purchaseItem(
             sku: String,
             @BillingClient.SkuType type: String
-    ): Task<Nothing> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Nothing>> {
-        val purchaseStartTask = TaskCompletionSource<Nothing>()
+    ): Task<Unit?> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Unit?>> {
+        val purchaseStartTask = TaskCompletionSource<Unit?>()
 
         logCrashLog("Starting purchase flow for sku: $sku")
         val result = billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
@@ -115,30 +124,28 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
 
         if (result == BillingResponse.OK) {
             purchaseStartTask.setResult(null)
-        } else {
-            if (result == BillingResponse.ITEM_ALREADY_OWNED) {
-                billingClient.queryPurchaseHistoryAsync(type) { responseCode, purchasesList ->
-                    if (responseCode != BillingResponse.OK) {
-                        val e = PurchaseException(
-                                responseCode,
-                                message = "Purchase fetch failed with code $responseCode and sku $sku"
-                        )
-                        CrashLogger.onFailure(e)
-                        purchaseStartTask.setException(e)
-                        return@queryPurchaseHistoryAsync
-                    }
+        } else if (result == BillingResponse.ITEM_ALREADY_OWNED) {
+            billingClient.queryPurchaseHistoryAsync(type) { responseCode, purchasesList ->
+                if (responseCode != BillingResponse.OK) {
+                    val e = PurchaseException(
+                            responseCode,
+                            message = "Purchase fetch failed with code $responseCode and sku $sku"
+                    )
+                    CrashLogger.onFailure(e)
+                    purchaseStartTask.setException(e)
+                    return@queryPurchaseHistoryAsync
+                }
 
-                    getConsumePurchasesTask(purchasesList)
-                            .continueWithTask { purchaseItem(sku, type) }
-                            .addOnSuccessListener { purchaseStartTask.setResult(null) }
-                }
-            } else if (result == BillingResponse.FEATURE_NOT_SUPPORTED) {
-                snackbar(content, R.string.fui_general_error)
-            } else {
-                PurchaseException(result, sku).let {
-                    CrashLogger.onFailure(it)
-                    purchaseStartTask.setException(it)
-                }
+                getConsumePurchasesTask(purchasesList)
+                        .continueWithTask { purchaseItem(sku, type) }
+                        .addOnSuccessListener { purchaseStartTask.setResult(null) }
+            }
+        } else if (result == BillingResponse.FEATURE_NOT_SUPPORTED) {
+            snackbar(content, R.string.fui_general_error)
+        } else {
+            PurchaseException(result, sku).let {
+                CrashLogger.onFailure(it)
+                purchaseStartTask.setException(it)
             }
         }
 
