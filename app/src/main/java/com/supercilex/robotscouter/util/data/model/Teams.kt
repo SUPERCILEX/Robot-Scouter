@@ -26,7 +26,6 @@ import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.launchUrl
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.second
@@ -101,7 +100,8 @@ fun Team.add() {
 
 fun Team.update(newTeam: Team) {
     if (this == newTeam) {
-        ref.log().update(FIRESTORE_TIMESTAMP, getCurrentTimestamp()).logFailures()
+        val timestamp = getCurrentTimestamp()
+        ref.update(FIRESTORE_TIMESTAMP, timestamp).logFailures(ref, timestamp)
         return
     }
 
@@ -118,7 +118,7 @@ fun Team.updateTemplateId(id: String) {
     if (id == templateId) return
 
     templateId = id
-    ref.log().update(FIRESTORE_TEMPLATE_ID, templateId).logFailures()
+    ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures(ref, templateId)
 }
 
 fun Team.updateMedia(newTeam: Team) {
@@ -128,14 +128,14 @@ fun Team.updateMedia(newTeam: Team) {
 }
 
 fun Team.forceUpdate() {
-    ref.log().set(this).logFailures()
+    ref.set(this).logFailures(ref, this)
 }
 
 fun Team.forceUpdateAndRefresh() {
     firestoreBatch {
-        set(ref.log(), this@forceUpdateAndRefresh)
-        update(ref.log(), FIRESTORE_TIMESTAMP, Date(0))
-    }.logFailures()
+        set(ref, this@forceUpdateAndRefresh)
+        update(ref, FIRESTORE_TIMESTAMP, Date(0))
+    }.logFailures(ref, this)
 }
 
 fun Team.copyMediaInfo(newTeam: Team) {
@@ -148,13 +148,13 @@ fun Team.copyMediaInfo(newTeam: Team) {
 suspend fun Team.trash() {
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
     firestoreBatch {
-        update(ref.log(), "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
+        update(ref, "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
         } else {
             -abs(number)
         })
-        set(userDeletionQueue.log(), QueuedDeletion.Team(ref.id).data, SetOptions.merge())
-    }.await()
+        set(userDeletionQueue, QueuedDeletion.Team(ref.id).data, SetOptions.merge())
+    }.logFailures(ref, this).await()
 }
 
 fun Team.fetchLatestData() = async {

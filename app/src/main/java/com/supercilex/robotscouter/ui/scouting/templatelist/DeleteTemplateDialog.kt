@@ -17,7 +17,6 @@ import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.putRef
 import com.supercilex.robotscouter.util.data.safeCopy
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
@@ -32,20 +31,21 @@ class DeleteTemplateDialog : ManualDismissDialog() {
             .createAndSetup(savedInstanceState)
 
     override fun onAttemptDismiss(): Boolean {
-        val templateId = arguments!!.getRef().id
+        val deletedTemplateId = arguments!!.getRef().id
+        val newTemplateId = defaultTemplateId
         async {
+            val teamRefs = TeamsLiveData.observeOnDataChanged().observeOnce()!!.safeCopy().filter {
+                deletedTemplateId == it.templateId
+            }.map { it.ref }
             firestoreBatch {
-                TeamsLiveData.observeOnDataChanged().observeOnce()!!.safeCopy().filter {
-                    templateId == it.templateId
-                }.forEach {
-                    update(it.ref.log(), FIRESTORE_TEMPLATE_ID, defaultTemplateId)
-                }
-            }.logFailures()
+                for (ref in teamRefs) update(ref, FIRESTORE_TEMPLATE_ID, newTemplateId)
+            }.logFailures(teamRefs, newTemplateId)
 
-            if (templateId == defaultTemplateId) {
+            if (deletedTemplateId == newTemplateId) {
                 defaultTemplateId = TemplateType.DEFAULT.id.toString()
             }
-            trashTemplate(templateId)
+
+            trashTemplate(deletedTemplateId)
         }.logFailures()
         return true
     }

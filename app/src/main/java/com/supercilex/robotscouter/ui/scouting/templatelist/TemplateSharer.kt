@@ -20,7 +20,6 @@ import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.model.userDeletionQueue
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTemplate
 import com.supercilex.robotscouter.util.templates
@@ -54,14 +53,13 @@ class TemplateSharer private constructor(
         val htmlTemplate = loadFile(FILE_NAME)
 
         val token = generateToken
+        val templateRef = templates.document(templateId)
         firestoreBatch {
-            update(templates.document(templateId).log(),
-                   FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token),
-                   Date())
-            set(userDeletionQueue.log(),
+            update(templateRef, FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
+            set(userDeletionQueue,
                 QueuedDeletion.ShareToken.Template(token, templateId).data,
                 SetOptions.merge())
-        }.logFailures()
+        }.logFailures(templateRef)
 
         return getInvitationIntent(
                 getTemplateLink(templateId, token),

@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.util
 import android.os.Bundle
 import androidx.os.bundleOf
 import com.crashlytics.android.Crashlytics
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.analytics.FirebaseAnalytics.Param.CONTENT_TYPE
@@ -72,16 +71,9 @@ fun initAnalytics() {
     // updated accurately. If we used an AuthStateListener, it would only update when the app is
     // restarted.
     FirebaseAuth.getInstance().addIdTokenListener {
-        val available =
-                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(RobotScouter)
-        "Play Services availability: $available".also {
-            FirebaseCrash.log(it)
-            Crashlytics.log(it)
-        }
-
-        if (uid != null) {
-            userRef.log().set(mapOf(FIRESTORE_LAST_LOGIN to Date()), SetOptions.merge())
-                    .logFailures()
+        if (it.currentUser?.uid != null) {
+            val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
+            userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
         }
     }
 }

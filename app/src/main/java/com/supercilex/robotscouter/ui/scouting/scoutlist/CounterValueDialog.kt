@@ -11,7 +11,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_VALUE
 import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.putRef
 import com.supercilex.robotscouter.util.isNumber
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.show
 
@@ -26,7 +25,8 @@ class CounterValueDialog : ValueDialogBase<Long>() {
     }
 
     override fun onAttemptDismiss() = if (lastEditText.text.toString().isNumber()) {
-        arguments!!.getRef().log().update(FIRESTORE_VALUE, value).logFailures()
+        val ref = arguments!!.getRef()
+        ref.update(FIRESTORE_VALUE, value).logFailures(ref, value)
         true
     } else {
         inputLayout.error = getString(R.string.number_too_big_error)

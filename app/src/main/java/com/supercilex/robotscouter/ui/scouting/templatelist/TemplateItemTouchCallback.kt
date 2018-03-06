@@ -21,7 +21,6 @@ import com.supercilex.robotscouter.ui.scouting.templatelist.viewholder.TemplateV
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.isItemInRange
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
@@ -236,19 +235,19 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         adapter.notifyItemRemoved(position)
 
         recyclerView.clearFocus() // Save user data for undo
-        deletedRef.log().get().addOnSuccessListener(rootView.context as FragmentActivity) { snapshot ->
+        deletedRef.get().addOnSuccessListener(rootView.context as FragmentActivity) { snapshot ->
             firestoreBatch {
                 updatePositions(itemsBelow, -1)
-                delete(deletedRef.log())
-            }.logFailures()
+                delete(deletedRef)
+            }.logFailures(deletedRef, itemsBelow)
 
             longSnackbar(rootView, R.string.deleted, R.string.undo) {
                 firestoreBatch {
-                    set(deletedRef.log(), snapshot.data)
+                    set(deletedRef, snapshot.data)
                     updatePositions(itemsBelow, 1)
-                }.logFailures()
+                }.logFailures(deletedRef, itemsBelow)
             }
-        }.logFailures()
+        }.logFailures(deletedRef)
     }
 
     override fun onChildDraw(
@@ -300,7 +299,7 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     private fun WriteBatch.updatePositions(items: List<OrderedRemoteModel>, offset: Int = 0) {
         for (item in items) {
             item.position += offset
-            update(item.ref.log(), FIRESTORE_POSITION, item.position)
+            update(item.ref, FIRESTORE_POSITION, item.position)
         }
     }
 

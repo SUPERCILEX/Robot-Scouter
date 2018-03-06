@@ -55,7 +55,7 @@ import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.model.updateTemplateId
 import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.log
+import com.supercilex.robotscouter.util.logCrashLog
 import com.supercilex.robotscouter.util.logFailures
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
@@ -82,6 +82,8 @@ val scoutParser = SnapshotParser { snapshot ->
 }
 val metricParser = SnapshotParser { Metric.parse(it.data, it.reference) }
 
+val FirebaseFirestoreException.isOffline get() = code == FirebaseFirestoreException.Code.UNAVAILABLE
+
 private const val REF_KEY = "com.supercilex.robotscouter.REF"
 
 fun initDatabase() {
@@ -102,16 +104,16 @@ inline fun firestoreBatch(
 }
 
 inline fun DocumentReference.batch(transaction: WriteBatch.(ref: DocumentReference) -> Unit) =
-        firestoreBatch { transaction(this@batch) }.also { log() }
+        firestoreBatch { transaction(this@batch) }
 
 suspend fun Query.getInBatches(batchSize: Long = 100): List<DocumentSnapshot> {
     var query = orderBy(FieldPath.documentId()).limit(batchSize)
-    val docs: MutableList<DocumentSnapshot> = query.log().get().await().documents
+    val docs: MutableList<DocumentSnapshot> = query.get().await().documents
     var lastResultSize = docs.size.toLong()
 
     while (lastResultSize == batchSize) {
         query = query.startAfter(docs.last())
-        docs += query.log().get().await().documents.also {
+        docs += query.get().await().documents.also {
             lastResultSize = it.size.toLong()
         }
     }
@@ -219,7 +221,10 @@ interface ChangeEventListenerBase : ChangeEventListener {
 
     override fun onDataChanged() = Unit
 
-    override fun onError(e: FirebaseFirestoreException) = CrashLogger.onFailure(e)
+    override fun onError(e: FirebaseFirestoreException) {
+        logCrashLog("Snapshot listener failure for $javaClass")
+        CrashLogger.onFailure(e)
+    }
 }
 
 object KeepAliveListener : ChangeEventListenerBase
@@ -245,7 +250,7 @@ abstract class AuthObservableSnapshotArrayLiveData<T> : LiveData<ObservableSnaps
 
 object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
     override val items: ObservableSnapshotArray<Team>
-        get() = FirestoreArray(teamsQuery.log(), teamParser)
+        get() = FirestoreArray(teamsQuery, teamParser)
 
     private val templateIdUpdater = object : ChangeEventListenerBase {
         private var nTeamUpdatesForTemplateId = "" to -1
@@ -297,7 +302,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                     team.startUploadMediaJob()
                 } else if (media == null || media.isValidTeamUrl()) {
                     team.fetchLatestData()
-                    FirebaseAppIndex.getInstance().update(team.indexable).logFailures()
+                    team.indexable.let { FirebaseAppIndex.getInstance().update(it).logFailures(it) }
                 } else {
                     team.apply {
                         hasCustomMedia = false
@@ -350,8 +355,8 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                 val ensureNotTrashed: DocumentSnapshot.() -> Unit = {
                     if (teamParser.parseSnapshot(this).isTrashed!!) error("Invalid")
                 }
-                existingTeam.ref.log().get().await().ensureNotTrashed()
-                duplicate.ref.log().get().await().ensureNotTrashed()
+                existingTeam.ref.get().await().ensureNotTrashed()
+                duplicate.ref.get().await().ensureNotTrashed()
             } catch (e: Exception) {
                 return
             }
@@ -360,13 +365,13 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
             firestoreBatch {
                 for (scout in scouts) {
                     val scoutId = scout.id
-                    set(existingTeam.getScoutsRef().document(scoutId).log(), scout)
+                    set(existingTeam.getScoutsRef().document(scoutId), scout)
                     for (metric in scout.metrics) {
-                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id).log(),
+                        set(existingTeam.getScoutMetricsRef(scoutId).document(metric.ref.id),
                             metric)
                     }
                 }
-            }.await()
+            }.logFailures(scouts).await()
             duplicate.trash()
         }
     }
@@ -395,7 +400,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
 
 object PrefsLiveData : AuthObservableSnapshotArrayLiveData<Any>() {
     override val items: ObservableSnapshotArray<Any>
-        get() = FirestoreArray<Any>(userPrefs.log()) {
+        get() = FirestoreArray<Any>(userPrefs) {
             val id = it.id
             when (id) {
                 FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,

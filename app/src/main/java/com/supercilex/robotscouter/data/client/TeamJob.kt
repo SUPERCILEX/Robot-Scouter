@@ -1,13 +1,13 @@
 package com.supercilex.robotscouter.data.client
 
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.model.isTrashed
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.teamParser
-import com.supercilex.robotscouter.util.log
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.uid
 
 interface TeamJob {
@@ -18,16 +18,16 @@ interface TeamJob {
         if (!team.owners.contains(uid)) return
 
         val snapshot = try {
-            team.ref.log().get().await()
+            team.ref.get().logFailures(team.ref, team) {
+                (it as? FirebaseFirestoreException)?.code == Code.PERMISSION_DENIED
+            }.await()
         } catch (e: FirebaseFirestoreException) {
-            if (e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
+            if (e.code == Code.PERMISSION_DENIED) {
                 return // Don't reschedule job
             } else {
-                CrashLogger.onFailure(e)
                 throw e
             }
         } catch (e: Exception) {
-            CrashLogger.onFailure(e)
             throw e
         }
 

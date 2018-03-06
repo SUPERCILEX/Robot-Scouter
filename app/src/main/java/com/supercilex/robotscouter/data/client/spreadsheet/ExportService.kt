@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.util.data.shouldShowRatingDialog
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isOnline
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logExport
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
@@ -107,7 +106,7 @@ class ExportService : IntentService(TAG) {
         val unknownTemplateName: String = getString(R.string.export_unknown_template_title)
 
         val templatesSnapshot: List<DocumentSnapshot> = try {
-            getTemplatesQuery().log().get().await().documents
+            getTemplatesQuery().get().await().documents
         } catch (e: Exception) {
             CrashLogger.onFailure(e)
             emptyList()

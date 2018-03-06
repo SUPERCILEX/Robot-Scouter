@@ -16,7 +16,7 @@ import com.supercilex.robotscouter.util.data.generateToken
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.model.teamsQuery
 import com.supercilex.robotscouter.util.data.updateOwner
-import com.supercilex.robotscouter.util.log
+import com.supercilex.robotscouter.util.logCrashLog
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.uid
 import kotlinx.coroutines.experimental.async
@@ -36,25 +36,27 @@ class AccountMergeService : ManualMergeService() {
         token = generateToken
         prevUid = uid!!
 
+        logCrashLog("Migrating user data from $prevUid.")
+
         return async {
             await(
-                    async { userPrefs = userPrefsRef.log().get().await() },
-                    async { teams = teamsQuery.log().get().await() },
-                    async { templates = getTemplatesQuery().log().get().await() }
+                    async { userPrefs = userPrefsRef.get().await() },
+                    async { teams = teamsQuery.get().await() },
+                    async { templates = getTemplatesQuery().get().await() }
             )
 
+            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
+            val refs = (teams + templates).map { it.reference }
             firestoreBatch {
-                val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-                (teams.toMutableList() + templates).map {
-                    update(it.reference.log(), tokenPath, Date())
-                }
-            }.await()
+                for (ref in refs) update(ref, tokenPath, Date())
+            }.logFailures(refs, token).await()
         }.logFailures().asTask()
     }
 
     override fun onTransferData(response: IdpResponse): Task<Void?>? = async {
         for (snapshot in userPrefs) {
-            userPrefsRef.document(snapshot.id).log().set(snapshot.data).logFailures()
+            userPrefsRef.document(snapshot.id).set(snapshot.data)
+                    .logFailures(snapshot.reference, snapshot.data)
         }
 
         val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
@@ -64,9 +66,9 @@ class AccountMergeService : ManualMergeService() {
             updateOwner(teamRefs, token, prevUid) { ref ->
                 teams.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)
             }
-            teamRefs.map {
-                async { it.log().update(tokenPath, FieldValue.delete()).await() }
-            }.await()
+            for (ref in teamRefs) {
+                ref.update(tokenPath, FieldValue.delete()).logFailures(ref, token)
+            }
         }.logFailures()
 
         val templateRefs = templates.map { it.reference }
@@ -74,9 +76,9 @@ class AccountMergeService : ManualMergeService() {
             updateOwner(templateRefs, token, prevUid) { ref ->
                 templates.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)
             }
-            templateRefs.map {
-                async { it.log().update(tokenPath, FieldValue.delete()).await() }
-            }.await()
+            for (ref in templateRefs) {
+                ref.update(tokenPath, FieldValue.delete()).logFailures(ref, token)
+            }
         }.logFailures()
 
         null

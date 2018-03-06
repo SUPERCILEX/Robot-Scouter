@@ -11,14 +11,13 @@ import com.supercilex.robotscouter.util.data.KeepAliveListener
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.metricParser
-import com.supercilex.robotscouter.util.log
 
 class MetricListHolder : ViewModelBase<CollectionReference>(), DefaultLifecycleObserver {
     lateinit var metrics: ObservableSnapshotArray<Metric<*>>
         private set
 
     override fun onCreate(args: CollectionReference) {
-        metrics = FirestoreArray(args.orderBy(FIRESTORE_POSITION).log(), metricParser)
+        metrics = FirestoreArray(args.orderBy(FIRESTORE_POSITION), metricParser)
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 

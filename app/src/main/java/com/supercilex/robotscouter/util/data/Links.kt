@@ -17,7 +17,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
 import com.supercilex.robotscouter.util.await
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.teams
 import com.supercilex.robotscouter.util.templates
@@ -83,12 +82,12 @@ suspend fun updateOwner(
 
     refs.map { ref ->
         async {
-            firestoreBatch {
-                update(ref.log(), pendingApprovalPath, token)
-                oldOwnerPath?.let { update(ref.log(), it, FieldValue.delete()) }
-                update(ref.log(), newOwnerPath, newValue(ref))
-            }.await()
-            ref.log().update(pendingApprovalPath, FieldValue.delete()).logFailures()
+            ref.batch {
+                update(it, pendingApprovalPath, token)
+                oldOwnerPath?.let { update(ref, it, FieldValue.delete()) }
+                update(it, newOwnerPath, newValue(it))
+            }.logFailures(ref, "Token: $token, from user: $prevUid").await()
+            ref.update(pendingApprovalPath, FieldValue.delete()).logFailures(ref)
         }
     }.await()
 }

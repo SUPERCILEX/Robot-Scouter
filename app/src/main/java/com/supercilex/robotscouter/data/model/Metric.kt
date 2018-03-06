@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TYPE
 import com.supercilex.robotscouter.util.FIRESTORE_UNIT
 import com.supercilex.robotscouter.util.FIRESTORE_VALUE
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logUpdate
 import kotlin.Boolean as IntrinsicBoolean
@@ -60,7 +59,7 @@ sealed class Metric<T>(
             set(value) {
                 if (field != value) {
                     field = value
-                    ref.log().update(FIRESTORE_UNIT, field).logFailures()
+                    ref.update(FIRESTORE_UNIT, field).logFailures(ref, field)
                 }
             }
 
@@ -138,11 +137,11 @@ sealed class Metric<T>(
             batch.update(FIRESTORE_SELECTED_VALUE_ID, id as Any)
         }
 
-        private fun WriteBatch?.update(id: String, o: Any) {
+        private fun WriteBatch?.update(id: String, any: Any) {
             if (this == null) {
-                ref.log().update(id, o).logFailures()
+                ref.update(id, any).logFailures(ref, "Id: $id, update: $any")
             } else {
-                update(ref.log(), id, o)
+                update(ref, id, any)
             }
         }
 
@@ -186,7 +185,7 @@ sealed class Metric<T>(
         set(value) {
             if (field != value) {
                 field = value
-                ref.log().update(FIRESTORE_NAME, field).logFailures()
+                ref.update(FIRESTORE_NAME, field).logFailures(ref, field)
             }
         }
 
@@ -201,7 +200,7 @@ sealed class Metric<T>(
             if (_value != value) {
                 _value = value
                 logUpdate()
-                ref.log().update(FIRESTORE_VALUE, _value).logFailures()
+                ref.update(FIRESTORE_VALUE, _value).logFailures(ref, _value)
             }
         }
 

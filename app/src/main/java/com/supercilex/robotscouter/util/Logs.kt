@@ -7,10 +7,8 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.crash.FirebaseCrash
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.util.data.PrefObserver
 import com.supercilex.robotscouter.util.data.PrefsLiveData
@@ -24,34 +22,23 @@ fun initLogging() {
     PrefLogger
 }
 
-fun <T> Task<T>.logFailures(ignore: ((Exception) -> Boolean)? = null): Task<T> {
-    val trace = generateStackTrace(1)
-    return addOnFailureListener {
-        if (ignore?.invoke(it)?.not() != false) {
-            CrashLogger.onFailure(it.injectRoot(trace))
-        }
-    }
-}
+fun <T> Task<T>.logFailures(
+        ref: DocumentReference,
+        data: Any? = null,
+        ignore: ((Exception) -> Boolean)? = null
+) = logFailures("Path: ${ref.path}", "Data: $data", ignoreable = ignore)
+
+fun <T> Task<T>.logFailures(
+        refs: List<DocumentReference>,
+        data: Any?,
+        ignore: ((Exception) -> Boolean)? = null
+) = logFailures("Paths: ${refs.joinToString { it.path }}", "Data: $data", ignoreable = ignore)
+
+fun <T> Task<T>.logFailures(data: Any? = null, ignore: ((Exception) -> Boolean)? = null) =
+        logFailures(data, ignoreable = ignore)
 
 fun <T> Deferred<T>.logFailures(): Deferred<T> {
     invokeOnCompletion(CrashLogger)
-    return this
-}
-
-fun DocumentReference.log(): DocumentReference {
-    logDbUse(path)
-    return this
-}
-
-fun Query.log(): Query {
-    if (this is CollectionReference) return log()
-
-    logDbUse("Unknown")
-    return this
-}
-
-fun CollectionReference.log(): CollectionReference {
-    logDbUse(path)
     return this
 }
 
@@ -74,9 +61,18 @@ fun Exception.injectRoot(trace: List<StackTraceElement>) = apply {
     }.toTypedArray()
 }
 
-@Suppress("NOTHING_TO_INLINE") // Used to minimize pointless stack traces
-private inline fun logDbUse(path: String) =
-        logCrashLog("Used reference '$path' at ${generateStackTrace(1)}")
+private fun <T> Task<T>.logFailures(
+        vararg data: Any?,
+        ignoreable: ((Exception) -> Boolean)?
+): Task<T> {
+    val trace = generateStackTrace(2)
+    return addOnFailureListener {
+        for (hint in data) logCrashLog(hint.toString())
+        if (ignoreable?.invoke(it)?.not() != false) {
+            CrashLogger.onFailure(it.injectRoot(trace))
+        }
+    }
+}
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {
     override fun onFailure(e: Exception) {

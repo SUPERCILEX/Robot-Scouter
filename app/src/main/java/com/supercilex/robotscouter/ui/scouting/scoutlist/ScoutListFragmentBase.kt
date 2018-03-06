@@ -37,7 +37,6 @@ import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.data.viewAction
 import com.supercilex.robotscouter.util.isOffline
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.FragmentBase
@@ -167,7 +166,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                 val ref = asLifecycleReference()
                 async(UI) {
                     val ownsTemplate = try {
-                        async { getTemplatesQuery().log().get().await() }.await()
+                        async { getTemplatesQuery().get().await() }.await()
                     } catch (e: Exception) {
                         CrashLogger.onFailure(e)
                         emptyList<DocumentSnapshot>()

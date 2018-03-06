@@ -26,7 +26,6 @@ import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.userDeletionQueue
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.isSingleton
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShare
 import kotlinx.coroutines.experimental.android.UI
@@ -85,11 +84,11 @@ class TeamSharer private constructor(
         val token = generateToken
         val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
         firestoreBatch {
-            for (team in cache.teams) update(team.ref.log(), tokenPath, Date())
-            set(userDeletionQueue.log(),
+            for (team in cache.teams) update(team.ref, tokenPath, Date())
+            set(userDeletionQueue,
                 QueuedDeletion.ShareToken.Team(token, cache.teams.map { it.id }).data,
                 SetOptions.merge())
-        }.logFailures()
+        }.logFailures(cache.teams.map { it.ref }, cache.teams)
 
         return getInvitationIntent(
                 cache.teams.getTeamsLink(token),

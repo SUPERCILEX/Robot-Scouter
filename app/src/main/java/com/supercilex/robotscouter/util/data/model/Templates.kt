@@ -4,7 +4,6 @@ import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
@@ -20,9 +19,9 @@ import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.getTemplateLink
+import com.supercilex.robotscouter.util.data.isOffline
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.templates
@@ -61,26 +60,30 @@ fun addTemplate(type: TemplateType): String {
         val scout = Scout(id, id)
         set(it, scout)
         update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
-    }.logFailures()
+    }.logFailures(ref, id)
 
     async {
         val templateSnapshot = try {
-            defaultTemplates.document(type.id.toString()).log().get().await()
+            val defaultRef = defaultTemplates.document(type.id.toString())
+            defaultRef.get().logFailures(defaultRef) {
+                (it as? FirebaseFirestoreException)?.isOffline == true
+            }.await()
         } catch (e: Exception) {
-            ref.log().delete().logFailures()
+            ref.delete().logFailures(ref)
             RobotScouter.runOnUiThread { longToast(R.string.scout_add_template_not_cached_error) }
-            if (e is FirebaseFirestoreException && e.code == Code.UNAVAILABLE) {
+            if (e is FirebaseFirestoreException && e.isOffline) {
                 return@async
             } else {
                 throw e
             }
         }
 
-        firestoreBatch {
-            scoutParser.parseSnapshot(templateSnapshot).metrics.forEach {
-                set(getTemplateMetricsRef(id).document(it.ref.id).log(), it)
-            }
+        val metrics = scoutParser.parseSnapshot(templateSnapshot).metrics.associate {
+            getTemplateMetricsRef(id).document(it.ref.id) to it
         }
+        firestoreBatch {
+            for ((metricRef, metric) in metrics) set(metricRef, metric)
+        }.logFailures(metrics.map { it.key }, metrics.map { it.value })
     }.logFailures()
 
     return id
@@ -92,11 +95,12 @@ fun Scout.getTemplateName(index: Int): String =
 fun trashTemplate(id: String) {
     FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
     async {
-        val snapshot = getTemplateRef(id).log().get().await()
+        val ref = getTemplateRef(id)
+        val snapshot = ref.get().logFailures(ref).await()
         val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
         firestoreBatch {
-            update(snapshot.reference.log(), "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
-            set(userDeletionQueue.log(), QueuedDeletion.Template(id).data, SetOptions.merge())
+            update(snapshot.reference, "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
+            set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())
         }.await()
     }.logFailures()
 }

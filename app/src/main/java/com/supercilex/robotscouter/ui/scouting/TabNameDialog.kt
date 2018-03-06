@@ -11,7 +11,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.data.putRef
-import com.supercilex.robotscouter.util.log
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.unsafeLazy
@@ -27,7 +26,8 @@ class TabNameDialog : ValueDialogBase<String>() {
     }
 
     override fun onAttemptDismiss(): Boolean {
-        arguments!!.getRef().log().update(FIRESTORE_NAME, value).logFailures()
+        val ref = arguments!!.getRef()
+        ref.update(FIRESTORE_NAME, value).logFailures(ref, value)
         return true
     }
 
