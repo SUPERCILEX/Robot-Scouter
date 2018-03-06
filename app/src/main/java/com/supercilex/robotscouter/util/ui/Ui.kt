@@ -16,8 +16,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.view.View
 import android.view.WindowManager
-import com.crashlytics.android.Crashlytics
-import com.google.firebase.crash.FirebaseCrash
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -25,6 +23,7 @@ import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
+import com.supercilex.robotscouter.util.logCrashLog
 import org.jetbrains.anko.configuration
 import org.jetbrains.anko.find
 import org.jetbrains.anko.landscape
@@ -54,10 +53,8 @@ fun initUi() {
                     "Noto Color Emoji Compat",
                     R.array.com_google_android_gms_fonts_certs)).registerInitCallback(
             object : EmojiCompat.InitCallback() {
-                override fun onFailed(t: Throwable?) {
-                    FirebaseCrash.log("EmojiCompat failed to initialize with error: $t")
-                    Crashlytics.log("EmojiCompat failed to initialize with error: $t")
-                }
+                override fun onFailed(t: Throwable?) =
+                        logCrashLog("EmojiCompat failed to initialize with error: $t")
             }))
 }
 

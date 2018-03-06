@@ -6,7 +6,6 @@ import com.firebase.ui.common.ChangeEventType
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.BuildConfig
@@ -44,7 +43,6 @@ fun <T> Deferred<T>.logFailures(): Deferred<T> {
 
 fun logCrashLog(message: String) {
     Crashlytics.log(message)
-    FirebaseCrash.log(message)
     if (BuildConfig.DEBUG) Log.d("CrashLogs", message)
 }
 
@@ -89,7 +87,6 @@ object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandl
             error("An error occurred", t)
         } else {
             Crashlytics.logException(t)
-            FirebaseCrash.report(t)
         }
     }
 }

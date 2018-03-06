@@ -9,7 +9,6 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.CONTENT_TYPE
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
@@ -47,8 +46,7 @@ fun initAnalytics() {
         val user = it.currentUser
 
         // Log uid to help debug db crashes
-        FirebaseCrash.log("User id: ${user?.uid}")
-        Crashlytics.log("User id: ${user?.uid}")
+        logCrashLog("User id: ${user?.uid}")
         Crashlytics.setUserIdentifier(user?.uid)
         Crashlytics.setUserEmail(user?.email)
         Crashlytics.setUserName(user?.displayName)
