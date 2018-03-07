@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data.model
 
-import android.arch.lifecycle.LiveData
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -18,10 +17,9 @@ import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.firestoreBatch
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
-import com.supercilex.robotscouter.util.defaultTemplates
+import com.supercilex.robotscouter.util.data.waitForChange
+import com.supercilex.robotscouter.util.defaultTemplatesRef
 import com.supercilex.robotscouter.util.logAddScout
 import com.supercilex.robotscouter.util.logFailures
 import kotlinx.coroutines.experimental.async
@@ -39,10 +37,7 @@ fun Team.getScoutsQuery(direction: Query.Direction = Query.Direction.ASCENDING):
 
 fun Team.getScoutMetricsRef(id: String) = getScoutsRef().document(id).collection(FIRESTORE_METRICS)
 
-fun Team.addScout(
-        overrideId: String?,
-        existingScouts: LiveData<ObservableSnapshotArray<Scout>>
-): String {
+fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<Scout>): String {
     val templateId = overrideId ?: templateId
     val scoutRef = getScoutsRef().document()
 
@@ -54,7 +49,7 @@ fun Team.addScout(
             val metricsRef = getScoutMetricsRef(scoutRef.id)
             TemplateType.coerce(templateId)?.let { type ->
                 val scout = scoutParser.parseSnapshot(
-                        defaultTemplates.document(type.id.toString()).get().await())
+                        defaultTemplatesRef.document(type.id.toString()).get().await())
 
                 val metrics = scout.metrics.associate {
                     metricsRef.document(it.ref.id) to it
@@ -94,9 +89,9 @@ fun Team.addScout(
             throw e
         } ?: return@async
 
-        val nExistingTemplates = existingScouts.observeOnDataChanged().observeOnce()?.map {
+        val nExistingTemplates = existingScouts.waitForChange().map {
             it.templateId
-        }?.groupBy { it }?.get(templateId)?.size ?: return@async
+        }.groupBy { it }[templateId]?.size ?: return@async
 
         scoutRef.update(FIRESTORE_NAME, "$templateName $nExistingTemplates").logFailures(scoutRef)
     }.logFailures()

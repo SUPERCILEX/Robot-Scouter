@@ -1,24 +1,19 @@
 package com.supercilex.robotscouter.ui.teamlist
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
-import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
-import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
+import com.supercilex.robotscouter.util.data.teams
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.Saveable
 
 class TeamListHolder : ViewModelBase<Bundle?>(), Saveable {
     val selectedTeamIdListener = UniqueMutableLiveData<Team?>()
 
-    private val keepAliveListener = Observer<ObservableSnapshotArray<Team>> {}
-
     override fun onCreate(args: Bundle?) {
         selectedTeamIdListener.setValue(args?.getParcelable(TEAM_KEY))
-        TeamsLiveData.observe(ListenerRegistrationLifecycleOwner, keepAliveListener)
+        teams.keepAlive = true
     }
 
     fun selectTeam(team: Team?) {
@@ -30,7 +25,7 @@ class TeamListHolder : ViewModelBase<Bundle?>(), Saveable {
 
     override fun onCleared() {
         super.onCleared()
-        TeamsLiveData.removeObserver(keepAliveListener)
+        teams.keepAlive = false
     }
 
     private companion object {

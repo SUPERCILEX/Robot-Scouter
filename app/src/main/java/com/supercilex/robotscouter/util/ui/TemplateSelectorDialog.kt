@@ -87,7 +87,7 @@ abstract class TemplateSelectorDialog : DialogFragmentBase() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        holder.init(getTemplatesQuery())
+        holder.init { getTemplatesQuery() }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

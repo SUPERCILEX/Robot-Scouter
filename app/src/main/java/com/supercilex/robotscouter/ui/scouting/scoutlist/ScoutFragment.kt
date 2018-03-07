@@ -31,6 +31,7 @@ class ScoutFragment : MetricListFragment() {
     private val team by unsafeLazy { arguments!!.getTeam() }
     private val scoutId by unsafeLazy { getTabId(arguments)!! }
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
+    override val dataId get() = scoutId
 
     val toolbar: Toolbar by unsafeLazy {
         parentFragment!!.find<Toolbar>(R.id.toolbar)

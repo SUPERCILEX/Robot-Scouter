@@ -13,16 +13,17 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
-import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
+import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.getTeam
+import com.supercilex.robotscouter.util.data.teams
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.Saveable
 import kotlinx.coroutines.experimental.async
 
 class TeamHolder : ViewModelBase<Bundle>(), Saveable,
         Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
-    val teamListener: LiveData<Team> = Transformations.switchMap(TeamsLiveData, this)
+    val teamListener: LiveData<Team> = Transformations.switchMap(teams.asLiveData(), this)
 
     private val keepAliveListener = Observer<Team> {}
     private lateinit var team: Team

@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader
@@ -14,25 +13,23 @@ import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
+import com.supercilex.robotscouter.util.data.teams
 import com.supercilex.robotscouter.util.ui.CardListHelper
 import com.supercilex.robotscouter.util.ui.SavedStateAdapter
-import com.supercilex.robotscouter.util.ui.animatePopReveal
 import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
 class TeamListAdapter(
-        snapshots: ObservableSnapshotArray<Team>,
         savedInstanceState: Bundle?,
         private val fragment: Fragment,
         private val menuHelper: TeamMenuHelper,
         private val selectedTeamIdListener: MutableLiveData<Team?>
 ) : SavedStateAdapter<Team, TeamViewHolder>(
         FirestoreRecyclerOptions.Builder<Team>()
-                .setSnapshotArray(snapshots)
+                .setSnapshotArray(teams)
                 .setLifecycleOwner(fragment)
                 .build(),
         savedInstanceState,
@@ -47,7 +44,6 @@ class TeamListAdapter(
     )
 
     private val cardListHelper = CardListHelper(this, recyclerView)
-    private val noTeamsHint: View = fragment.find(R.id.no_content_hint)
 
     private var selectedTeamId: String? = null
     private var hasSelectedTeamChanged = false
@@ -143,20 +139,16 @@ class TeamListAdapter(
                     break
                 }
             }
-        } else if (type == ChangeEventType.REMOVED && menuHelper.selectedTeams.isNotEmpty()) {
-            for (oldTeam in menuHelper.selectedTeams) {
-                if (snapshots.firstOrNull { it.id == oldTeam.id } == null) {
-                    // We found the deleted item
-                    menuHelper.onSelectedTeamRemoved(oldTeam)
-                    break
-                }
-            }
-        }
-    }
+        } else if (type == ChangeEventType.REMOVED) {
+            val id = snapshot.id
 
-    override fun onDataChanged() {
-        super.onDataChanged()
-        noTeamsHint.animatePopReveal(itemCount == 0)
+            if (selectedTeamIdListener.value?.id == id) {
+                selectedTeamIdListener.value = null
+            }
+
+            val selectedTeam = menuHelper.selectedTeams.find { it.id == id }
+            if (selectedTeam != null) menuHelper.onSelectedTeamRemoved(selectedTeam)
+        }
     }
 
     override fun stopListening() {

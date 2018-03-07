@@ -41,6 +41,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(getTabId(arguments)!!)
     }
+    override val dataId by unsafeLazy { metricsRef.parent.id }
 
     private val itemTouchCallback by unsafeLazy {
         TemplateItemTouchCallback<Metric<*>>(view!!)

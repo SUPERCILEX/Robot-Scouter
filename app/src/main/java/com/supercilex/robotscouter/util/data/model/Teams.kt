@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_POSITION
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.await
+import com.supercilex.robotscouter.util.data.QueryGenerator
 import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.deepLink
 import com.supercilex.robotscouter.util.data.firestoreBatch
@@ -31,8 +32,9 @@ import com.supercilex.robotscouter.util.logAdd
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.teamFreshnessDays
-import com.supercilex.robotscouter.util.teams
+import com.supercilex.robotscouter.util.teamsRef
 import com.supercilex.robotscouter.util.uid
+import com.supercilex.robotscouter.util.user
 import kotlinx.coroutines.experimental.async
 import java.io.File
 import java.util.Calendar
@@ -41,12 +43,14 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.sign
 
-val teamsQuery
-    get() = "$FIRESTORE_OWNERS.${uid!!}".let {
-        teams.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
+val teamsQueryGenerator: QueryGenerator = {
+    "$FIRESTORE_OWNERS.${it.uid}".let {
+        teamsRef.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
     }
+}
+val teamsQuery get() = teamsQueryGenerator(user!!)
 
-val Team.ref: DocumentReference get() = teams.document(id)
+val Team.ref: DocumentReference get() = teamsRef.document(id)
 
 val Team.isStale: Boolean
     get() = TimeUnit.MILLISECONDS.toDays(
@@ -87,7 +91,7 @@ fun Collection<Team>.getNames(): String {
 }
 
 fun Team.add() {
-    id = teams.document().id
+    id = teamsRef.document().id
     forceUpdateAndRefresh()
 
     logAdd()

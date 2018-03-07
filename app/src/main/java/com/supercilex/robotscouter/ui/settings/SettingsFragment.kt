@@ -30,7 +30,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.RC_SIGN_IN
 import com.supercilex.robotscouter.util.data.cancelAllJobs
 import com.supercilex.robotscouter.util.data.clearPrefs
-import com.supercilex.robotscouter.util.data.prefs
+import com.supercilex.robotscouter.util.data.prefStore
 import com.supercilex.robotscouter.util.debugInfo
 import com.supercilex.robotscouter.util.fullVersionName
 import com.supercilex.robotscouter.util.isFullUser
@@ -63,7 +63,7 @@ class SettingsFragment : PreferenceFragmentBase(),
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        preferenceManager.preferenceDataStore = prefs
+        preferenceManager.preferenceDataStore = prefStore
         addPreferencesFromResource(R.xml.app_preferences)
         onPreferenceChange(preferenceScreen, null)
     }

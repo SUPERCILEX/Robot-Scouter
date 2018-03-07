@@ -9,16 +9,38 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.BuildConfig
-import com.supercilex.robotscouter.util.data.PrefObserver
-import com.supercilex.robotscouter.util.data.PrefsLiveData
+import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.util.data.prefs
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.CompletionHandler
 import kotlinx.coroutines.experimental.Deferred
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 
+private val prefLogger = object : ChangeEventListenerBase {
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
+        if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
+
+        val id = snapshot.id
+        val pref = prefs[newIndex]
+        when (pref) {
+            is Boolean -> Crashlytics.setBool(id, pref)
+            is String -> Crashlytics.setString(id, pref)
+            is Int -> Crashlytics.setInt(id, pref)
+            is Long -> Crashlytics.setLong(id, pref)
+            is Double -> Crashlytics.setDouble(id, pref)
+            is Float -> Crashlytics.setFloat(id, pref)
+        }
+    }
+}
+
 fun initLogging() {
-    PrefLogger
+    prefs.addChangeEventListener(prefLogger)
 }
 
 fun <T> Task<T>.logFailures(
@@ -75,28 +97,6 @@ object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandl
             error("An error occurred", t)
         } else {
             Crashlytics.logException(t)
-        }
-    }
-}
-
-private object PrefLogger : PrefObserver() {
-    override fun onChildChanged(
-            type: ChangeEventType,
-            snapshot: DocumentSnapshot,
-            newIndex: Int,
-            oldIndex: Int
-    ) {
-        if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
-
-        val id = snapshot.id
-        val pref = PrefsLiveData.value!![newIndex]
-        when (pref) {
-            is Boolean -> Crashlytics.setBool(id, pref)
-            is String -> Crashlytics.setString(id, pref)
-            is Int -> Crashlytics.setInt(id, pref)
-            is Long -> Crashlytics.setLong(id, pref)
-            is Double -> Crashlytics.setDouble(id, pref)
-            is Float -> Crashlytics.setFloat(id, pref)
         }
     }
 }

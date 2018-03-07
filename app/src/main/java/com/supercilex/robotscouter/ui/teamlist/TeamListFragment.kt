@@ -18,10 +18,10 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.spreadsheet.ExportService
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.asLifecycleReference
-import com.supercilex.robotscouter.util.data.TeamsLiveData
+import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.ioPerms
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
+import com.supercilex.robotscouter.util.data.teams
+import com.supercilex.robotscouter.util.data.waitForChange
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
@@ -40,8 +40,8 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
 
     private val recyclerView: RecyclerView by bindView(R.id.list)
-    private var adapter: TeamListAdapter? = null
-    private val menuHelper: TeamMenuHelper by unsafeLazy { TeamMenuHelper(this, recyclerView) }
+    private lateinit var adapter: TeamListAdapter
+    private val menuHelper by unsafeLazy { TeamMenuHelper(this, recyclerView) }
     private val permHandler: PermissionRequestHandler by unsafeLazy {
         ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
     }
@@ -81,62 +81,55 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
             }
         })
 
-        TeamsLiveData.observe(this, Observer { snapshots ->
-            adapter?.let {
-                it.stopListening()
-                lifecycle.removeObserver(it)
-            }
+        adapter = TeamListAdapter(
+                savedInstanceState,
+                this,
+                menuHelper,
+                holder.selectedTeamIdListener
+        )
+        recyclerView.adapter = adapter
+        menuHelper.adapter = adapter
+        menuHelper.restoreState(savedInstanceState)
 
-            if (snapshots == null) {
-                noContentHint.animatePopReveal(true)
-                fab.show()
-                selectTeam(null)
-            } else {
-                adapter = TeamListAdapter(
-                        snapshots,
-                        savedInstanceState,
-                        this,
-                        menuHelper,
-                        holder.selectedTeamIdListener
-                )
-                recyclerView.adapter = adapter
-                menuHelper.adapter = adapter!!
-                menuHelper.restoreState(savedInstanceState)
-                savedInstanceState?.clear()
-            }
+        teams.asLiveData().observe(this, Observer {
+            val noTeams = it!!.isEmpty()
+            noContentHint.animatePopReveal(noTeams)
+            if (noTeams) fab.show()
         })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         holder.onSaveInstanceState(outState)
         menuHelper.saveState(outState)
-        adapter?.onSaveInstanceState(outState)
+        adapter.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menuHelper.onCreateOptionsMenu(menu, inflater)
         if (menuHelper.selectedTeams.isEmpty()) fab.show()
-        adapter?.startScroll()
+        adapter.startScroll()
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
 
-    fun selectTeam(team: Team?) = onHolderReadyTask.task.addOnSuccessListener { it.selectTeam(team) }
+    fun selectTeam(team: Team?) = onHolderReadyTask.task.addOnSuccessListener {
+        it.selectTeam(team)
+    }
 
     override fun onBackPressed(): Boolean = menuHelper.onBackPressed()
 
     fun resetMenu() = menuHelper.resetMenu()
 
     fun exportTeams() {
-        val teams = menuHelper.selectedTeams
-        if (teams.isEmpty()) {
+        val selectedTeams = menuHelper.selectedTeams
+        if (selectedTeams.isEmpty()) {
             val ref = asLifecycleReference()
             async {
-                val allTeams = TeamsLiveData.observeOnDataChanged().observeOnce()!!
+                val allTeams = teams.waitForChange()
                 ExportService.exportAndShareSpreadSheet(ref(), ref().permHandler, allTeams)
             }.logFailures()
         } else {
-            if (ExportService.exportAndShareSpreadSheet(this, permHandler, teams)) {
+            if (ExportService.exportAndShareSpreadSheet(this, permHandler, selectedTeams)) {
                 resetMenu()
             }
         }

@@ -32,11 +32,11 @@ const val FIRESTORE_NAME = "name"
 const val FIRESTORE_VALUE = "value"
 const val FIRESTORE_TIMESTAMP = "timestamp"
 
-val users = FirebaseFirestore.getInstance().collection("users")
+val usersRef = FirebaseFirestore.getInstance().collection("users")
 const val FIRESTORE_LAST_LOGIN = "lastLogin"
 
 // Team
-val teams = FirebaseFirestore.getInstance().collection("teams")
+val teamsRef = FirebaseFirestore.getInstance().collection("teams")
 const val FIRESTORE_NUMBER = "number"
 
 // Scout
@@ -50,8 +50,8 @@ const val FIRESTORE_UNIT = "unit"
 const val FIRESTORE_SELECTED_VALUE_ID = "selectedValueId"
 
 // Templates
-val templates = FirebaseFirestore.getInstance().collection("templates")
-val defaultTemplates = FirebaseFirestore.getInstance().collection("default-templates")
+val templatesRef = FirebaseFirestore.getInstance().collection("templates")
+val defaultTemplatesRef = FirebaseFirestore.getInstance().collection("default-templates")
 const val FIRESTORE_TEMPLATE_ID = "templateId"
 
 // Prefs
@@ -65,7 +65,7 @@ const val FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG = "shouldShowRatingDialog"
 
 const val FIRESTORE_CONTENT_ID = "contentId"
 const val FIRESTORE_SHARE_TYPE = "shareType"
-val deletionQueue = FirebaseFirestore.getInstance().collection("deletion-queue")
+val deletionQueueRef = FirebaseFirestore.getInstance().collection("deletion-queue")
 // [END FIREBASE CHILD NAMES]
 
 val fullVersionName: String by lazy {

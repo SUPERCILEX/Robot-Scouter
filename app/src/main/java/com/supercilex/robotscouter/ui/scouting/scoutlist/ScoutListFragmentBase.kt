@@ -28,7 +28,6 @@ import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
-import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabId
 import com.supercilex.robotscouter.util.data.model.TeamHolder
@@ -43,7 +42,6 @@ import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
-import com.supercilex.robotscouter.util.user
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
@@ -122,9 +120,6 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onStart() {
         super.onStart()
         FirebaseUserActions.getInstance().start(team.viewAction).logFailures()
-        // Don't add an auth listener since it could get called after onStop which won't work if we
-        // try to remove a fragment.
-        if (user == null) onTeamDeleted()
     }
 
     override fun onStop() {
@@ -193,7 +188,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     fun addScout(id: String? = null) {
         pagerAdapter!!.apply {
-            currentTabId = team.addScout(id, holder.scouts.asLiveData())
+            currentTabId = team.addScout(id, holder.scouts)
         }
     }
 

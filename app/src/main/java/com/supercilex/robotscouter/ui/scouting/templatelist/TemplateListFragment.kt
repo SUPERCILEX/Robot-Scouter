@@ -147,7 +147,7 @@ class TemplateListFragment : FragmentBase(),
     override fun onClick(v: View) {
         childFragmentManager.fragments
                 .filterIsInstance<TemplateFragment>()
-                .filter { pagerAdapter.currentTabId == it.metricsRef.parent.id }
+                .filter { pagerAdapter.currentTabId == it.dataId }
                 .also { it.firstOrNull()?.onClick(v) }
     }
 

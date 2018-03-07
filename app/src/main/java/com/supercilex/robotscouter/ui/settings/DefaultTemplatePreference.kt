@@ -67,16 +67,16 @@ class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase,
 
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         holder?.apply {
-            onCleared()
             scouts.removeChangeEventListener(this@DefaultTemplatePreference)
+            onCleared()
         }
         holder = uid?.let {
             ViewModelProviders
                     .of((context as ContextWrapper).baseContext as FragmentActivity)
                     // Ensure our instance is unique since we're mutating the listener
                     .get(javaClass.canonicalName + it, ScoutsHolder::class.java)
-                    .apply { init(getTemplatesQuery()) }
-        } ?: return
-        holder!!.scouts.addChangeEventListener(this)
+                    .apply { init { getTemplatesQuery() } }
+        }
+        holder?.scouts?.addChangeEventListener(this)
     }
 }

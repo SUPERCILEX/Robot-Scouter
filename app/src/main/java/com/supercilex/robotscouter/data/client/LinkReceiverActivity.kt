@@ -21,8 +21,8 @@ import com.supercilex.robotscouter.util.data.updateOwner
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.onSignedIn
-import com.supercilex.robotscouter.util.teams
-import com.supercilex.robotscouter.util.templates
+import com.supercilex.robotscouter.util.teamsRef
+import com.supercilex.robotscouter.util.templatesRef
 import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
@@ -50,8 +50,8 @@ class LinkReceiverActivity : ActivityBase() {
             val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
 
             when (link.lastPathSegment) {
-                teams.id -> processTeams(link, token)
-                templates.id -> processTemplates(link, token)
+                teamsRef.id -> processTeams(link, token)
+                templatesRef.id -> processTemplates(link, token)
                 else -> showErrorAndContinue()
             }
         }.logFailures().invokeOnCompletion {
@@ -61,7 +61,7 @@ class LinkReceiverActivity : ActivityBase() {
     }
 
     private suspend fun processTeams(link: Uri, token: String?) {
-        val refs = link.getQueryParameter(KEYS).split(",").map { teams.document(it) }
+        val refs = link.getQueryParameter(KEYS).split(",").map { teamsRef.document(it) }
 
         if (token != null) updateOwner(refs, token, null) { ref ->
             link.getQueryParameter(ref.id).toLong()
@@ -85,7 +85,7 @@ class LinkReceiverActivity : ActivityBase() {
     }
 
     private suspend fun processTemplates(link: Uri, token: String?) {
-        val refs = link.getQueryParameter(KEYS).split(",").map { templates.document(it) }
+        val refs = link.getQueryParameter(KEYS).split(",").map { templatesRef.document(it) }
 
         if (token != null) updateOwner(refs, token, null) { Date() }
 

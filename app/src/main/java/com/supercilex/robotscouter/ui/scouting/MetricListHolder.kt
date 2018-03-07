@@ -1,37 +1,23 @@
 package com.supercilex.robotscouter.ui.scouting
 
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import com.firebase.ui.firestore.FirestoreArray
-import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.util.FIRESTORE_POSITION
-import com.supercilex.robotscouter.util.data.KeepAliveListener
-import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
+import com.supercilex.robotscouter.util.data.LifecycleAwareFirestoreArray
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.metricParser
 
-class MetricListHolder : ViewModelBase<CollectionReference>(), DefaultLifecycleObserver {
-    lateinit var metrics: ObservableSnapshotArray<Metric<*>>
+class MetricListHolder : ViewModelBase<CollectionReference>() {
+    lateinit var metrics: LifecycleAwareFirestoreArray<Metric<*>>
         private set
 
     override fun onCreate(args: CollectionReference) {
-        metrics = FirestoreArray(args.orderBy(FIRESTORE_POSITION), metricParser)
-        ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        metrics.addChangeEventListener(KeepAliveListener)
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        metrics.removeChangeEventListener(KeepAliveListener)
+        metrics = LifecycleAwareFirestoreArray({ args.orderBy(FIRESTORE_POSITION) }, metricParser)
+        metrics.keepAlive = true
     }
 
     override fun onCleared() {
         super.onCleared()
-        ListenerRegistrationLifecycleOwner.lifecycle.removeObserver(this)
-        onStop(ListenerRegistrationLifecycleOwner)
+        metrics.keepAlive = false
     }
 }

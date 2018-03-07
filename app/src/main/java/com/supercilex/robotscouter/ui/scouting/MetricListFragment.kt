@@ -18,6 +18,7 @@ abstract class MetricListFragment : FragmentBase() {
         ViewModelProviders.of(this).get(MetricListHolder::class.java)
     }
     abstract val metricsRef: CollectionReference
+    abstract val dataId: String
 
     protected val recyclerView: RecyclerView by bindView(R.id.list)
     protected var adapter: SavedStateAdapter<*, *> by LateinitVal()

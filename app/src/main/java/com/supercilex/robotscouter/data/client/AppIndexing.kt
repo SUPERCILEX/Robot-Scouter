@@ -8,15 +8,13 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.await
-import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.indexable
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
-import com.supercilex.robotscouter.util.data.safeCopy
 import com.supercilex.robotscouter.util.data.scoutParser
+import com.supercilex.robotscouter.util.data.teams
+import com.supercilex.robotscouter.util.data.waitForChange
 import com.supercilex.robotscouter.util.onSignedIn
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
@@ -36,8 +34,7 @@ class AppIndexingService : JobIntentService() {
     }
 
     private suspend fun getUpdateTeamsTask() {
-        val indexables = TeamsLiveData.observeOnDataChanged().observeOnce()?.safeCopy()
-                ?.map { it.indexable } ?: return
+        val indexables = teams.waitForChange().map { it.indexable }
         FirebaseAppIndex.getInstance().update(*indexables.toTypedArray()).await()
     }
 

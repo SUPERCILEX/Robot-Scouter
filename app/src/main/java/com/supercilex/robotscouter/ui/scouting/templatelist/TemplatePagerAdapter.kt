@@ -6,16 +6,16 @@ import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.ui.scouting.TabPagerAdapterBase
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.util.templates
+import com.supercilex.robotscouter.util.templatesRef
 
 open class TemplatePagerAdapter(
         fragment: Fragment,
         tabLayout: TabLayout
-) : TabPagerAdapterBase(fragment, tabLayout, templates) {
+) : TabPagerAdapterBase(fragment, tabLayout, templatesRef) {
     override val editTabNameRes = R.string.template_edit_name_title
 
     init {
-        holder.init(getTemplatesQuery(Query.Direction.DESCENDING))
+        holder.init { getTemplatesQuery(Query.Direction.DESCENDING) }
     }
 
     override fun getItem(position: Int) = TemplateFragment.newInstance(currentScouts[position].id)

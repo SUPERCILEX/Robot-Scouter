@@ -19,10 +19,10 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.getTemplateLink
 import com.supercilex.robotscouter.util.data.scoutParser
-import com.supercilex.robotscouter.util.defaultTemplates
+import com.supercilex.robotscouter.util.defaultTemplatesRef
 import com.supercilex.robotscouter.util.logAddTemplate
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.templates
+import com.supercilex.robotscouter.util.templatesRef
 import com.supercilex.robotscouter.util.uid
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
@@ -32,15 +32,15 @@ import kotlin.math.abs
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         "$FIRESTORE_OWNERS.${uid!!}".let {
-            templates.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
+            templatesRef.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
         }
 
-fun getTemplateRef(id: String) = templates.document(id)
+fun getTemplateRef(id: String) = templatesRef.document(id)
 
 fun getTemplateMetricsRef(id: String) = getTemplateRef(id).collection(FIRESTORE_METRICS)
 
 fun addTemplate(type: TemplateType): String {
-    val ref = templates.document()
+    val ref = templatesRef.document()
     val id = ref.id
 
     logAddTemplate(id, type)
@@ -62,7 +62,7 @@ fun addTemplate(type: TemplateType): String {
 
     async {
         val templateSnapshot = try {
-            val defaultRef = defaultTemplates.document(type.id.toString())
+            val defaultRef = defaultTemplatesRef.document(type.id.toString())
             defaultRef.get().logFailures(defaultRef).await()
         } catch (e: Exception) {
             ref.delete().logFailures(ref)

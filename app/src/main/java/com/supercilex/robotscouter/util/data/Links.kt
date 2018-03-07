@@ -18,8 +18,8 @@ import com.supercilex.robotscouter.util.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.util.FIRESTORE_PENDING_APPROVALS
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.teams
-import com.supercilex.robotscouter.util.templates
+import com.supercilex.robotscouter.util.teamsRef
+import com.supercilex.robotscouter.util.templatesRef
 import com.supercilex.robotscouter.util.uid
 import kotlinx.coroutines.experimental.async
 import java.io.File
@@ -27,8 +27,8 @@ import java.io.File
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
 const val KEYS = "keys"
 
-private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teams.id}/"
-private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templates.id}/"
+private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teamsRef.id}/"
+private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templatesRef.id}/"
 
 val generateToken: String get() = FirebaseFirestore.getInstance().collection("null").document().id
 

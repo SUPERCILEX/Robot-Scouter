@@ -1,8 +1,5 @@
 package com.supercilex.robotscouter.util.data
 
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.SharedPreferences
 import android.support.v7.app.AppCompatDelegate
@@ -32,7 +29,7 @@ private val localPrefs: SharedPreferences by lazy {
     RobotScouter.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
 }
 
-val prefs = object : PreferenceDataStore() {
+val prefStore = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
         if (value != null) {
             val ref = userPrefs.document(key)
@@ -53,17 +50,19 @@ val prefs = object : PreferenceDataStore() {
 }
 
 var defaultTemplateId: String
-    get() =
-        prefs.getString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, TemplateType.DEFAULT.id.toString())!!
+    get() = prefStore.getString(
+            FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
+            TemplateType.DEFAULT.id.toString()
+    )!!
     set(value) {
         logUpdateDefaultTemplateId(value)
-        prefs.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
+        prefStore.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
     }
 
 @get:AppCompatDelegate.NightMode
 val nightMode: Int
     get() {
-        val mode = prefs.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")
+        val mode = prefStore.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")
         return when (mode) {
             "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
             "yes" -> AppCompatDelegate.MODE_NIGHT_YES
@@ -73,84 +72,25 @@ val nightMode: Int
     }
 
 val shouldAskToUploadMediaToTba: Boolean
-    get() = prefs.getString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "ask"
+    get() = prefStore.getString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "ask"
 
 var shouldUploadMediaToTba: Boolean
-    get() = prefs.getString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "yes"
-    set(value) = prefs.putString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, if (value) "yes" else "no")
+    get() = prefStore.getString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, "ask") == "yes"
+    set(value) = prefStore.putString(FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA, if (value) "yes" else "no")
 
 var hasShownAddTeamTutorial: Boolean
-    get() = prefs.getBoolean(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false)
-    set(value) = prefs.putBoolean(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, value)
+    get() = prefStore.getBoolean(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false)
+    set(value) = prefStore.putBoolean(FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, value)
 
 var hasShownSignInTutorial: Boolean
-    get() = prefs.getBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
-    set(value) = prefs.putBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
+    get() = prefStore.getBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false)
+    set(value) = prefStore.putBoolean(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, value)
 
 var shouldShowRatingDialog: Boolean
-    get() = showRatingDialog && prefs.getBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, true)
-    set(value) = prefs.putBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, value)
+    get() = showRatingDialog && prefStore.getBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, true)
+    set(value) = prefStore.putBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, value)
 
-fun initPrefs() {
-    PrefUpdater
-}
-
-fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T {
-    for (i in 0..lastIndex) {
-        @Suppress("UNCHECKED_CAST") // Trust the client
-        if (getSnapshot(i).id == id) return get(i) as T
-    }
-    return defValue
-}
-
-fun clearPrefs() {
-    for ((key, value) in localPrefs.all.entries) {
-        when (value) {
-            is Boolean -> prefs.putBoolean(key, false)
-            is String -> prefs.putString(key, null)
-            else -> error("Unknown value type: ${value?.let { it::class.java }}")
-        }
-    }
-    clearLocalPrefs()
-}
-
-private fun clearLocalPrefs() = localPrefs.edit { clear() }
-
-private fun updateTeamTemplateIds() {
-    async {
-        TeamsLiveData.observeOnDataChanged().observeOnce()?.safeCopy()?.forEach {
-            it.updateTemplateId(defaultTemplateId)
-        }
-    }.logFailures()
-}
-
-abstract class PrefObserver : Observer<ObservableSnapshotArray<Any>>,
-        DefaultLifecycleObserver, ChangeEventListenerBase {
-    init {
-        PrefsLiveData.observeForever(this)
-    }
-
-    override fun onChanged(prefs: ObservableSnapshotArray<Any>?) {
-        val lifecycle = ListenerRegistrationLifecycleOwner.lifecycle
-        if (prefs == null) {
-            lifecycle.removeObserver(this)
-            onStop(ListenerRegistrationLifecycleOwner)
-            clearLocalPrefs()
-        } else {
-            lifecycle.addObserver(this)
-        }
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        PrefsLiveData.value?.addChangeEventListener(this)
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        PrefsLiveData.value?.removeChangeEventListener(this)
-    }
-}
-
-private object PrefUpdater : PrefObserver() {
+private val prefUpdater = object : ChangeEventListenerBase {
     override fun onChildChanged(
             type: ChangeEventType,
             snapshot: DocumentSnapshot,
@@ -167,13 +107,13 @@ private object PrefUpdater : PrefObserver() {
                     FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
                     FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
                     FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
-                    -> putBoolean(id, PrefsLiveData.value!![newIndex] as Boolean)
+                    -> putBoolean(id, prefs[newIndex] as Boolean)
 
                     FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
                     FIRESTORE_PREF_NIGHT_MODE,
                     FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
                     -> {
-                        val value = PrefsLiveData.value!![newIndex] as String
+                        val value = prefs[newIndex] as String
 
                         hasDefaultTemplateChanged = id == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
                                 && defaultTemplateId != value
@@ -188,4 +128,35 @@ private object PrefUpdater : PrefObserver() {
             localPrefs.edit { remove(id) }
         }
     }
+}
+
+fun initPrefs() {
+    prefs.addChangeEventListener(prefUpdater)
+}
+
+fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T {
+    for (i in 0..lastIndex) {
+        @Suppress("UNCHECKED_CAST") // Trust the client
+        if (getSnapshot(i).id == id) return get(i) as T
+    }
+    return defValue
+}
+
+fun clearPrefs() {
+    for ((key, value) in localPrefs.all.entries) {
+        when (value) {
+            is Boolean -> prefStore.putBoolean(key, false)
+            is String -> prefStore.putString(key, null)
+            else -> error("Unknown value type: ${value?.let { it::class.java }}")
+        }
+    }
+    clearLocalPrefs()
+}
+
+private fun clearLocalPrefs() = localPrefs.edit { clear() }
+
+private fun updateTeamTemplateIds() {
+    async {
+        for (team in teams.waitForChange()) team.updateTemplateId(defaultTemplateId)
+    }.logFailures()
 }

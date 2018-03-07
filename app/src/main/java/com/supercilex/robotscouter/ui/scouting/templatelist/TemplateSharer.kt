@@ -22,7 +22,7 @@ import com.supercilex.robotscouter.util.data.model.userDeletionQueue
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logShareTemplate
-import com.supercilex.robotscouter.util.templates
+import com.supercilex.robotscouter.util.templatesRef
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
@@ -53,7 +53,7 @@ class TemplateSharer private constructor(
         val htmlTemplate = loadFile(FILE_NAME)
 
         val token = generateToken
-        val templateRef = templates.document(templateId)
+        val templateRef = templatesRef.document(templateId)
         firestoreBatch {
             update(templateRef, FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
             set(userDeletionQueue,

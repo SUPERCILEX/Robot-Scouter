@@ -31,6 +31,7 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.animateColorChange
 import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
+import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.find
 import java.util.Locale
 
@@ -44,10 +45,12 @@ class TeamMenuHelper(
     val selectedTeams: List<Team> get() = _selectedTeams
     lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
 
-    private val fab: FloatingActionButton = activity.find(R.id.fab)
-    private val drawerLayout: DrawerLayout = activity.find(R.id.drawer_layout)
-    private val toolbar: Toolbar = activity.find<Toolbar>(R.id.toolbar).apply {
-        setNavigationOnClickListener(this@TeamMenuHelper)
+    private val fab by unsafeLazy { activity.find<FloatingActionButton>(R.id.fab) }
+    private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(R.id.drawer_layout) }
+    private val toolbar by unsafeLazy {
+        activity.find<Toolbar>(R.id.toolbar).apply {
+            setNavigationOnClickListener(this@TeamMenuHelper)
+        }
     }
 
     private var isMenuReady = false

@@ -7,16 +7,14 @@ import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.FIRESTORE_TEMPLATE_ID
-import com.supercilex.robotscouter.util.data.TeamsLiveData
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.model.ref
 import com.supercilex.robotscouter.util.data.model.trashTemplate
-import com.supercilex.robotscouter.util.data.observeOnDataChanged
-import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.putRef
-import com.supercilex.robotscouter.util.data.safeCopy
+import com.supercilex.robotscouter.util.data.teams
+import com.supercilex.robotscouter.util.data.waitForChange
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.ManualDismissDialog
 import com.supercilex.robotscouter.util.ui.show
@@ -34,7 +32,7 @@ class DeleteTemplateDialog : ManualDismissDialog() {
         val deletedTemplateId = arguments!!.getRef().id
         val newTemplateId = defaultTemplateId
         async {
-            val teamRefs = TeamsLiveData.observeOnDataChanged().observeOnce()!!.safeCopy().filter {
+            val teamRefs = teams.waitForChange().filter {
                 deletedTemplateId == it.templateId
             }.map { it.ref }
             firestoreBatch {

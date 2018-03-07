@@ -2,8 +2,6 @@ package com.supercilex.robotscouter.util.ui
 
 import android.app.Activity
 import android.app.Application
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -22,9 +20,8 @@ import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
-import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
-import com.supercilex.robotscouter.util.data.PrefsLiveData
 import com.supercilex.robotscouter.util.data.nightMode
+import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.logCrashLog
 import org.jetbrains.anko.configuration
 import org.jetbrains.anko.find
@@ -38,15 +35,13 @@ private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
 
 fun initUi() {
     AppCompatDelegate.setDefaultNightMode(nightMode)
-    PrefsLiveData.observeForever {
-        val lifecycle = ListenerRegistrationLifecycleOwner.lifecycle
-        if (it == null) {
-            lifecycle.removeObserver(NightModeUpdateReceiver)
-            NightModeUpdateReceiver.onStop(ListenerRegistrationLifecycleOwner)
-        } else {
-            lifecycle.addObserver(NightModeUpdateReceiver)
+    prefs.addChangeEventListener(object : ChangeEventListenerBase {
+        override fun onDataChanged() {
+            AppCompatDelegate.setDefaultNightMode(nightMode)
+            visibleActivities.filterIsInstance<AppCompatActivity>()
+                    .forEach { it.delegate.setLocalNightMode(nightMode) }
         }
-    }
+    })
 
     RobotScouter.registerActivityLifecycleCallbacks(ActivityHandler)
 
@@ -73,22 +68,6 @@ fun View.setOnLongClickListenerCompat(listener: View.OnLongClickListener) {
     setOnLongClickListener(listener)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         setOnContextClickListener { listener.onLongClick(this) }
-    }
-}
-
-private object NightModeUpdateReceiver : DefaultLifecycleObserver, ChangeEventListenerBase {
-    override fun onStart(owner: LifecycleOwner) {
-        PrefsLiveData.value?.addChangeEventListener(this)
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        PrefsLiveData.value?.removeChangeEventListener(this)
-    }
-
-    override fun onDataChanged() {
-        AppCompatDelegate.setDefaultNightMode(nightMode)
-        visibleActivities.filterIsInstance<AppCompatActivity>()
-                .forEach { it.delegate.setLocalNightMode(nightMode) }
     }
 }
 
