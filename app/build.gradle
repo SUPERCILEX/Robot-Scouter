@@ -3,7 +3,6 @@ def isReleaseBuild = !project.hasProperty('devBuild')
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 if (isReleaseBuild) {
-    apply plugin: 'com.google.firebase.firebase-crash'
     apply plugin: 'com.google.firebase.firebase-perf'
 }
 apply plugin: 'io.fabric'
