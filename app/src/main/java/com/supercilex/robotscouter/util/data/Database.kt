@@ -370,7 +370,7 @@ object TeamsLiveData : AuthObservableSnapshotArrayLiveData<Team>() {
                     }
                 }
             }.logFailures(scouts).await()
-            duplicate.trash()
+            duplicate.trash().await()
         }
     }
 

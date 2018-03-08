@@ -124,6 +124,6 @@ private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
                     QueuedDeletion.Scout(id, this@updateScoutDate.id).data,
                     SetOptions.merge())
             }
-        }.logFailures(ref, this@updateScoutDate).await()
+        }.logFailures(ref, this@updateScoutDate)
     }.logFailures()
 }

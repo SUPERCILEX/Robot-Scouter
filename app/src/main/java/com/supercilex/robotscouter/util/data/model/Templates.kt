@@ -93,6 +93,6 @@ fun trashTemplate(id: String) {
         firestoreBatch {
             update(snapshot.reference, "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
             set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())
-        }.await()
+        }.logFailures(id)
     }.logFailures()
 }

@@ -13,11 +13,9 @@ import com.supercilex.robotscouter.util.data.getTeamList
 import com.supercilex.robotscouter.util.data.model.trash
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.isSingleton
-import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.find
 
 class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
@@ -49,7 +47,7 @@ class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        for (team in teams) async { team.trash() }.logFailures()
+        for (team in teams) team.trash()
         dismiss()
     }
 

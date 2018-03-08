@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.annotation.WorkerThread
 import android.util.Patterns
 import androidx.net.toUri
+import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -145,16 +146,16 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = newTeam.mediaYear
 }
 
-suspend fun Team.trash() {
+fun Team.trash(): Task<Void?> {
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
-    firestoreBatch {
+    return firestoreBatch {
         update(ref, "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
         } else {
             -abs(number)
         })
         set(userDeletionQueue, QueuedDeletion.Team(ref.id).data, SetOptions.merge())
-    }.logFailures(ref, this).await()
+    }.logFailures(ref, this)
 }
 
 fun Team.fetchLatestData() = async {
