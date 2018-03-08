@@ -82,8 +82,6 @@ val scoutParser = SnapshotParser { snapshot ->
 }
 val metricParser = SnapshotParser { Metric.parse(it.data, it.reference) }
 
-val FirebaseFirestoreException.isOffline get() = code == FirebaseFirestoreException.Code.UNAVAILABLE
-
 private const val REF_KEY = "com.supercilex.robotscouter.REF"
 
 fun initDatabase() {

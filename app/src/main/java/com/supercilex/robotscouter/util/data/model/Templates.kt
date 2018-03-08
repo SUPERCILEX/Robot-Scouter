@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.util.data.model
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.R
@@ -19,7 +18,6 @@ import com.supercilex.robotscouter.util.data.batch
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.data.getTemplateIndexable
 import com.supercilex.robotscouter.util.data.getTemplateLink
-import com.supercilex.robotscouter.util.data.isOffline
 import com.supercilex.robotscouter.util.data.scoutParser
 import com.supercilex.robotscouter.util.defaultTemplates
 import com.supercilex.robotscouter.util.logAddTemplate
@@ -65,17 +63,11 @@ fun addTemplate(type: TemplateType): String {
     async {
         val templateSnapshot = try {
             val defaultRef = defaultTemplates.document(type.id.toString())
-            defaultRef.get().logFailures(defaultRef) {
-                (it as? FirebaseFirestoreException)?.isOffline == true
-            }.await()
+            defaultRef.get().logFailures(defaultRef).await()
         } catch (e: Exception) {
             ref.delete().logFailures(ref)
             RobotScouter.runOnUiThread { longToast(R.string.scout_add_template_not_cached_error) }
-            if (e is FirebaseFirestoreException && e.isOffline) {
-                return@async
-            } else {
-                throw e
-            }
+            throw e
         }
 
         val metrics = scoutParser.parseSnapshot(templateSnapshot).metrics.associate {

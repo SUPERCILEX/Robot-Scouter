@@ -18,7 +18,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.QueuedDeletion
 import com.supercilex.robotscouter.util.data.firestoreBatch
-import com.supercilex.robotscouter.util.data.isOffline
 import com.supercilex.robotscouter.util.data.observeOnDataChanged
 import com.supercilex.robotscouter.util.data.observeOnce
 import com.supercilex.robotscouter.util.data.scoutParser
@@ -67,10 +66,9 @@ fun Team.addScout(
                 scout.name
             } ?: run {
                 val deferredName = async {
-                    val template = getTemplateRef(templateId).get().logFailures(templateId) {
-                        (it as? FirebaseFirestoreException)?.isOffline == true
-                    }.await()
-                    scoutParser.parseSnapshot(template).name
+                    scoutParser.parseSnapshot(
+                            getTemplateRef(templateId).get().logFailures(templateId).await()
+                    ).name
                 }
 
                 async {
@@ -81,9 +79,7 @@ fun Team.addScout(
                         for ((id, data) in metrics) {
                             set(metricsRef.document(id), data)
                         }
-                    }.logFailures(scoutRef, metrics) {
-                        (it as? FirebaseFirestoreException)?.isOffline == true
-                    }
+                    }.logFailures(scoutRef, metrics)
                 }.await()
 
                 try {
@@ -95,11 +91,7 @@ fun Team.addScout(
         } catch (e: Exception) {
             scoutRef.delete().logFailures(scoutRef)
             RobotScouter.runOnUiThread { longToast(R.string.scout_add_template_not_cached_error) }
-            if (e is FirebaseFirestoreException && e.isOffline) {
-                null
-            } else {
-                throw e
-            }
+            throw e
         } ?: return@async
 
         val nExistingTemplates = existingScouts.observeOnDataChanged().observeOnce()?.map {

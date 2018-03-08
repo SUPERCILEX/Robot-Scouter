@@ -18,9 +18,7 @@ interface TeamJob {
         if (!team.owners.contains(uid)) return
 
         val snapshot = try {
-            team.ref.get().logFailures(team.ref, team) {
-                (it as? FirebaseFirestoreException)?.code == Code.PERMISSION_DENIED
-            }.await()
+            team.ref.get().logFailures(team.ref, team).await()
         } catch (e: FirebaseFirestoreException) {
             if (e.code == Code.PERMISSION_DENIED) {
                 return // Don't reschedule job

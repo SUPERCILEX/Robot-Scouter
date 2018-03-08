@@ -23,18 +23,21 @@ fun initLogging() {
 
 fun <T> Task<T>.logFailures(
         ref: DocumentReference,
-        data: Any? = null,
-        ignore: ((Exception) -> Boolean)? = null
-) = logFailures("Path: ${ref.path}", "Data: $data", ignoreable = ignore)
+        data: Any? = null
+) = logFailures("Path: ${ref.path}", "Data: $data")
 
 fun <T> Task<T>.logFailures(
         refs: List<DocumentReference>,
-        data: Any?,
-        ignore: ((Exception) -> Boolean)? = null
-) = logFailures("Paths: ${refs.joinToString { it.path }}", "Data: $data", ignoreable = ignore)
+        data: Any?
+) = logFailures("Paths: ${refs.joinToString { it.path }}", "Data: $data")
 
-fun <T> Task<T>.logFailures(data: Any? = null, ignore: ((Exception) -> Boolean)? = null) =
-        logFailures(data, ignoreable = ignore)
+fun <T> Task<T>.logFailures(vararg hints: Any?): Task<T> {
+    val trace = generateStackTrace(2)
+    return addOnFailureListener {
+        for (hint in hints) logCrashLog(hint.toString())
+        CrashLogger.onFailure(it.injectRoot(trace))
+    }
+}
 
 fun <T> Deferred<T>.logFailures(): Deferred<T> {
     invokeOnCompletion(CrashLogger)
@@ -57,19 +60,6 @@ fun Exception.injectRoot(trace: List<StackTraceElement>) = apply {
         addAll(0, trace)
         add(trace.size, StackTraceElement("Hack", "startOriginalStackTrace", "Hack.kt", 0))
     }.toTypedArray()
-}
-
-private fun <T> Task<T>.logFailures(
-        vararg data: Any?,
-        ignoreable: ((Exception) -> Boolean)?
-): Task<T> {
-    val trace = generateStackTrace(2)
-    return addOnFailureListener {
-        for (hint in data) logCrashLog(hint.toString())
-        if (ignoreable?.invoke(it)?.not() != false) {
-            CrashLogger.onFailure(it.injectRoot(trace))
-        }
-    }
 }
 
 object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandler, AnkoLogger {
