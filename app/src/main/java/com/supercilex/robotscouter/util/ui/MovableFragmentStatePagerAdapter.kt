@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
+import java.lang.reflect.Field
 
 /**
  * A PagerAdapter that can withstand item reordering. See
@@ -59,6 +60,7 @@ abstract class MovableFragmentStatePagerAdapter(
         itemIdsToFragments[itemId] = fragment
 
         savedStates[itemId]?.let {
+            (fragmentStateField.get(it) as Bundle).classLoader = javaClass.classLoader
             fragment.setInitialSavedState(it)
         }
         fragment.setMenuVisibility(false)
@@ -173,5 +175,11 @@ abstract class MovableFragmentStatePagerAdapter(
         const val KEY_FRAGMENT_IDS = "fragment_keys_"
         const val KEY_FRAGMENT_STATES = "fragment_states_"
         const val KEY_FRAGMENT_STATE = "fragment_state_"
+
+        // TODO https://issuetracker.google.com/issues/74354091
+        val fragmentStateField: Field = Fragment.SavedState::class.java
+                .getDeclaredField("mState").apply {
+                    isAccessible = true
+                }
     }
 }
