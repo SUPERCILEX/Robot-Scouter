@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.DefaultLifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.ViewModelProviders
@@ -36,8 +35,8 @@ abstract class TabPagerAdapterBase(
     @get:StringRes protected abstract val editTabNameRes: Int
     private val noContentHint: View by fragment.bindView(R.id.no_content_hint)
 
-    val holder: ScoutsHolder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
-    protected var oldScouts: List<Scout> = emptyList()
+    val holder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
+    private var oldScouts: List<Scout> = emptyList()
     protected var currentScouts: List<Scout> = emptyList()
 
     var currentTabId: String? = null
@@ -55,12 +54,10 @@ abstract class TabPagerAdapterBase(
 
     override fun getCount() = currentScouts.size
 
-    override fun getItemPosition(any: Any): Int = if (any is MetricListFragment) {
-        val id = any.metricsRef.parent.id
+    override fun getItemPosition(f: Any): Int {
+        val id = (f as MetricListFragment).metricsRef.parent.id
         val position = currentScouts.indexOfFirst { it.id == id }
-        if (position == -1) PagerAdapter.POSITION_NONE else position
-    } else {
-        PagerAdapter.POSITION_NONE
+        return if (position == -1) PagerAdapter.POSITION_NONE else position
     }
 
     override fun getItemId(position: Int) = currentScouts[position].id
@@ -139,9 +136,7 @@ abstract class TabPagerAdapterBase(
             outState.putAll(getTabIdBundle(currentTabId))
 
     private fun selectTab(index: Int) {
-        ArchTaskExecutor.getInstance().postToMainThread {
-            tabLayout.getTabAt(index)?.select()
-        }
+        tabLayout.getTabAt(index)?.select()
     }
 
     override fun onStart(owner: LifecycleOwner) {
