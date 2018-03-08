@@ -6,7 +6,7 @@
 -keepnames public class * extends com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
 -keepnames public class * extends com.supercilex.robotscouter.util.ui.PreferenceFragmentBase
 
-# Ignore Kotlin errors
+# Ignore Kotlin errors TODO https://youtrack.jetbrains.com/issue/KT-23172
 -dontwarn com.supercilex.robotscouter.**
 
 # Retrofit
