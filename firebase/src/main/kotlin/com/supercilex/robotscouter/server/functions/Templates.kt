@@ -109,6 +109,13 @@ fun pitTemplateMetrics() = metrics {
                     ListItem("d", "Scale"),
                     ListItem("e", "Switch + Scale")
             ),
+            "m" to selector(
+                    "Where can they place cubes?", "a",
+                    ListItem("a", "Just the exchange zone"),
+                    ListItem("b", "Switch"),
+                    ListItem("c", "Scale"),
+                    ListItem("c", "Switch and scale")
+            ),
             "k" to text("What is special about your robot or something you want us to know?"),
             "l" to text("Other")
     )
