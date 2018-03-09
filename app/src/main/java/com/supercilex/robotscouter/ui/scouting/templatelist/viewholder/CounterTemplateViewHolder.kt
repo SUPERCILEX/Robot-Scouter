@@ -17,6 +17,8 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
     override val nameEditor: EditText by unsafeLazy { name as EditText }
     private val unit: EditText by bindView(R.id.unit)
 
+    override val valueWithoutUnit: String get() = count.text.toString()
+
     init {
         init()
 

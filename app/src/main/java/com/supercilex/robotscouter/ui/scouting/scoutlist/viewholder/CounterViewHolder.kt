@@ -21,11 +21,11 @@ open class CounterViewHolder(
     private val increment: ImageButton by bindView(R.id.increment_counter)
     private val decrement: ImageButton by bindView(R.id.decrement_counter)
 
-    private val valueWithoutUnit: String
+    protected open val valueWithoutUnit: String
         get() {
             val unit: String? = metric.unit
             val count = count.text.toString()
-            return if (unit?.isNotBlank() == true) count.replace(unit, "") else count
+            return if (unit?.isNotBlank() == true) count.removeSuffix(unit) else count
         }
 
     init {
