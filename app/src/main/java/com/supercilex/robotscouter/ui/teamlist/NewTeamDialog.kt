@@ -8,7 +8,6 @@ import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getScoutBundle
-import com.supercilex.robotscouter.util.isNumber
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import kotterknife.bindView
@@ -24,15 +23,15 @@ class NewTeamDialog : KeyboardDialogBase() {
     )
 
     public override fun onAttemptDismiss(): Boolean {
-        val teamNumber: String = lastEditText.text.toString()
-        return if (teamNumber.isNumber()) {
-            (activity as TeamSelectionListener)
-                    .onTeamSelected(getScoutBundle(Team(teamNumber.toLong(), ""), true))
-            true
-        } else {
+        val teamNumber = try {
+            lastEditText.text.toString().toLong()
+        } catch (e: NumberFormatException) {
             inputLayout.error = getString(R.string.number_too_big_error)
-            false
+            return false
         }
+        (activity as TeamSelectionListener)
+                .onTeamSelected(getScoutBundle(Team(teamNumber, ""), true))
+        return true
     }
 
     companion object {

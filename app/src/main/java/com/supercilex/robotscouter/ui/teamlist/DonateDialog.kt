@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.view.isVisible
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponse
 import com.android.billingclient.api.BillingClientStateListener
@@ -176,8 +177,8 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
     }
 
     private fun updateProgress(isDoingAsyncWork: Boolean) {
-        if (isDoingAsyncWork) progress.show(Runnable { content.visibility = View.GONE })
-        else progress.hide(true, Runnable { content.visibility = View.VISIBLE })
+        if (isDoingAsyncWork) progress.show(Runnable { content.isVisible = false })
+        else progress.hide(true, Runnable { content.isVisible = true })
         donate.isEnabled = !isDoingAsyncWork
     }
 

@@ -24,7 +24,7 @@ fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
     if (attrs == null) return
 
     context.withStyledAttributes(attrs, R.styleable.SupportVectorDrawables) {
-        val compute: Int.() -> Drawable? = compute@ {
+        val compute: Int.() -> Drawable? = compute@{
             if (this == -1) {
                 null
             } else {

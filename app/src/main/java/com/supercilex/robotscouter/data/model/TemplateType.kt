@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.data.model
 
-import com.supercilex.robotscouter.util.isNumber
+import androidx.text.isDigitsOnly
 import java.util.Collections
 
 enum class TemplateType(val id: Int) {
@@ -22,7 +22,7 @@ enum class TemplateType(val id: Int) {
             "Unknown template type: $id"
         }
 
-        fun coerce(id: String?): TemplateType? = if (id?.isNumber() == true) {
+        fun coerce(id: String?): TemplateType? = if (id?.isDigitsOnly() == true) {
             values.find { it.id == id.toInt() }
         } else {
             null

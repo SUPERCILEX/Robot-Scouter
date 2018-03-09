@@ -4,11 +4,11 @@ import android.Manifest
 import android.app.Activity
 import android.arch.lifecycle.LiveData
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
+import androidx.os.toUri
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
@@ -105,7 +105,11 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         val photoFile = photoFile!!
         if (resultCode == Activity.RESULT_OK) {
             async(UI) {
-                val contentUri = async { Uri.fromFile(photoFile.unhide()) }.await()
+                val contentUri = async { photoFile.unhide()?.toUri() }.await()
+                if (contentUri == null) {
+                    RobotScouter.runOnUiThread { longToast(R.string.fui_general_error) }
+                    return@async
+                }
 
                 _onMediaCaptured.value = team.copy().apply {
                     media = contentUri.path

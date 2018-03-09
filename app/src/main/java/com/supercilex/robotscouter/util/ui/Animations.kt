@@ -13,6 +13,8 @@ import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.view.View
 import android.view.ViewAnimationUtils
+import androidx.view.isGone
+import androidx.view.isVisible
 import com.supercilex.robotscouter.RobotScouter
 
 val shortAnimationDuration: Long by lazy {
@@ -40,7 +42,7 @@ fun View.animateCircularReveal(
         radius: Float
 ): Animator? = getRevealAnimation(visible) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-        visibility = if (visible) View.VISIBLE else View.GONE
+        isVisible = visible
         return@getRevealAnimation null
     }
 
@@ -54,11 +56,11 @@ fun View.animateCircularReveal(
 
     anim.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationStart(animation: Animator?) {
-            if (visible) visibility = View.VISIBLE
+            if (visible) isVisible = true
         }
 
         override fun onAnimationEnd(animation: Animator) {
-            if (!visible) visibility = View.GONE
+            if (!visible) isVisible = false
         }
     })
 
@@ -71,7 +73,7 @@ fun View.animatePopReveal(visible: Boolean) {
             alpha = 0f
             scaleY = 0f
             scaleX = 0f
-            visibility = View.VISIBLE
+            isVisible = true
         }
 
         animate().cancel()
@@ -89,11 +91,11 @@ fun View.animatePopReveal(visible: Boolean) {
                 } as TimeInterpolator)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationCancel(animation: Animator) {
-                        visibility = if (visible) View.GONE else View.VISIBLE
+                        isGone = visible
                     }
 
                     override fun onAnimationEnd(animation: Animator) {
-                        if (!visible) visibility = View.GONE
+                        if (!visible) isVisible = false
                         // Reset state
                         alpha = 1f
                         scaleY = 1f
@@ -104,10 +106,10 @@ fun View.animatePopReveal(visible: Boolean) {
 }
 
 private inline fun <T> View.getRevealAnimation(visible: Boolean, animator: () -> T?): T? {
-    return if (visible && visibility == View.VISIBLE || !visible && visibility != View.VISIBLE) {
+    return if (visible && isVisible || !visible && !isVisible) {
         null
     } else if (!ViewCompat.isAttachedToWindow(this)) {
-        visibility = if (visible) View.VISIBLE else View.GONE
+        isVisible = visible
         null
     } else {
         animator()

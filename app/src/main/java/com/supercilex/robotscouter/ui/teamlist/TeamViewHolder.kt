@@ -10,6 +10,8 @@ import android.view.ViewStub
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.isGone
+import androidx.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
@@ -66,7 +68,7 @@ class TeamViewHolder(
     val mediaImageView: ImageView by bindView(R.id.media)
     private val mediaLoadProgressStub: ViewStub by bindView(R.id.progress)
     private val mediaLoadProgress by unsafeLazy {
-        mediaLoadProgressStub.visibility = View.VISIBLE
+        mediaLoadProgressStub.isVisible = true
         itemView.find<ContentLoadingProgressBar>(R.id.progress)
     }
     private val numberTextView: TextView by bindView(R.id.number)
@@ -136,9 +138,7 @@ class TeamViewHolder(
 
     private fun updateProgressVisibility() {
         if (isMediaLoaded || recyclerView.isScrolling) {
-            if (mediaLoadProgressStub.visibility != View.GONE) {
-                mediaLoadProgress.hide(true)
-            }
+            if (!mediaLoadProgressStub.isGone) mediaLoadProgress.hide(true)
         } else {
             mediaLoadProgress.show()
         }

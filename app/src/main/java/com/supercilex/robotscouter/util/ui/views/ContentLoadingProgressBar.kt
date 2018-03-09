@@ -3,8 +3,8 @@ package com.supercilex.robotscouter.util.ui.views
 import android.content.Context
 import android.os.SystemClock
 import android.util.AttributeSet
-import android.view.View
 import android.widget.ProgressBar
+import androidx.view.isVisible
 
 /**
  * ContentLoadingProgressBar implements a ProgressBar that waits a minimum time to be dismissed
@@ -15,15 +15,15 @@ import android.widget.ProgressBar
 class ContentLoadingProgressBar : ProgressBar {
     private val delayedShow = Runnable {
         startTime = SystemClock.uptimeMillis()
-        visibility = View.VISIBLE
+        isVisible = true
     }
     private val delayedHide = Runnable {
-        visibility = View.GONE
+        isVisible = false
         startTime = -1L
     }
 
     private var _isAttachedToWindow = false
-    private var _isShown: Boolean = visibility == View.VISIBLE
+    private var _isShown: Boolean = isVisible
     private var startTime = -1L
 
     constructor(context: Context) : super(context)
@@ -37,7 +37,7 @@ class ContentLoadingProgressBar : ProgressBar {
         super.onAttachedToWindow()
         _isAttachedToWindow = true
 
-        if (_isShown && visibility != View.VISIBLE) postDelayed(delayedShow, MIN_DELAY_MILLIS)
+        if (_isShown && !isVisible) postDelayed(delayedShow, MIN_DELAY_MILLIS)
     }
 
     override fun onDetachedFromWindow() {
@@ -47,7 +47,7 @@ class ContentLoadingProgressBar : ProgressBar {
         removeCallbacks(delayedHide)
         removeCallbacks(delayedShow)
 
-        if (!_isShown && startTime != -1L) visibility = View.GONE
+        if (!_isShown && startTime != -1L) isVisible = false
         startTime = -1L
     }
 
@@ -65,7 +65,7 @@ class ContentLoadingProgressBar : ProgressBar {
             if (startTime == -1L || diff >= MIN_SHOW_TIME_MILLIS || force) {
                 // The progress spinner has been shown long enough OR was not shown yet.
                 // If it wasn't shown yet, it will just never be shown.
-                visibility = View.GONE
+                isVisible = false
                 callback?.run()
                 startTime = -1L
             } else {
