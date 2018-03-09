@@ -75,8 +75,10 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable {
                     v.postDelayed(it, shortAnimationDuration)
                 }
             }
-        } else if (ev.action == MotionEvent.ACTION_MOVE && clearFocus != null
-                && ev.eventTime - ev.downTime > shortAnimationDuration / 2) {
+        } else if (
+            ev.action == MotionEvent.ACTION_MOVE && clearFocus != null &&
+            ev.eventTime - ev.downTime > shortAnimationDuration / 2
+        ) {
             v?.removeCallbacks(clearFocus)
         }
         return super.dispatchTouchEvent(ev)
