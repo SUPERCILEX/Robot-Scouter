@@ -288,7 +288,7 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         super.clearView(recyclerView, viewHolder)
         if (isMovingItem) {
-            animatorPointer = recyclerView.itemAnimator
+            recyclerView.itemAnimator?.let { animatorPointer = it }
             recyclerView.itemAnimator = null
             firestoreBatch {
                 updatePositions(localItems)
