@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.data
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
@@ -57,6 +56,7 @@ import com.supercilex.robotscouter.util.data.model.userPrefs
 import com.supercilex.robotscouter.util.isOffline
 import com.supercilex.robotscouter.util.logCrashLog
 import com.supercilex.robotscouter.util.logFailures
+import com.supercilex.robotscouter.util.ui.isMain
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
@@ -161,7 +161,7 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
         }
 
         override fun onDataChanged() {
-            if (ArchTaskExecutor.getInstance().isMainThread) {
+            if (Thread.currentThread().isMain) {
                 value = this@asLiveData
             } else {
                 postValue(this@asLiveData)

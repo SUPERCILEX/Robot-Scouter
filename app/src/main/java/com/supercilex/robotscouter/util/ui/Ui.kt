@@ -9,6 +9,8 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Debug
+import android.os.Handler
+import android.os.Looper
 import android.support.text.emoji.EmojiCompat
 import android.support.text.emoji.FontRequestEmojiCompatConfig
 import android.support.v4.provider.FontRequest
@@ -28,6 +30,9 @@ import org.jetbrains.anko.configuration
 import org.jetbrains.anko.find
 import org.jetbrains.anko.landscape
 import java.util.concurrent.CopyOnWriteArrayList
+
+val mainHandler = Handler(Looper.getMainLooper())
+val Thread.isMain get() = this === mainHandler.looper.thread
 
 private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
 

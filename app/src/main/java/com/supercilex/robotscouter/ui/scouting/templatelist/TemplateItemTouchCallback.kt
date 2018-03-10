@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
@@ -23,6 +22,7 @@ import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.isItemInRange
+import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import com.supercilex.robotscouter.util.ui.showKeyboard
 import com.supercilex.robotscouter.util.ui.swap
@@ -76,7 +76,7 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         if (position == scrollToPosition) {
             // Posting to the main thread b/c the fam covers the screen which makes the LLM think
             // there's only one item
-            ArchTaskExecutor.getInstance().postToMainThread {
+            mainHandler.post {
                 if (recyclerView.isItemInRange(position)) {
                     viewHolder.requestFocus()
                     viewHolder.nameEditor.showKeyboard()

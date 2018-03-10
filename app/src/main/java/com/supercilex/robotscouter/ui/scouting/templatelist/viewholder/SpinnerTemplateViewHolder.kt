@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -19,6 +18,7 @@ import com.supercilex.robotscouter.util.data.firestoreBatch
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.getDrawableCompat
+import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.ui.showKeyboard
 import com.supercilex.robotscouter.util.ui.swap
@@ -206,9 +206,7 @@ class SpinnerTemplateViewHolder(
             viewHolder.enableDragToReorder(viewHolder, itemTouchHelper)
             if (viewHolder.adapterPosition == pendingScrollPosition) {
                 viewHolder.requestFocus()
-                ArchTaskExecutor.getInstance().postToMainThread {
-                    viewHolder.nameEditor.showKeyboard()
-                }
+                mainHandler.post { viewHolder.nameEditor.showKeyboard() }
                 pendingScrollPosition = RecyclerView.NO_POSITION
             }
         }

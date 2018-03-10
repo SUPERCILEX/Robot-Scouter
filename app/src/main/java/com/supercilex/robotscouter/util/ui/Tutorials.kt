@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.util.ui
 
-import android.arch.core.executor.ArchTaskExecutor
 import android.arch.lifecycle.Observer
 import android.support.v4.app.FragmentActivity
 import com.supercilex.robotscouter.R
@@ -34,7 +33,7 @@ fun showAddTeamTutorial(helper: TutorialHelper, owner: FragmentActivity) {
 fun showSignInTutorial(
         helper: TutorialHelper,
         owner: FragmentActivity
-) = ArchTaskExecutor.getInstance().postToMainThread {
+) = mainHandler.post {
     helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt
             get() = MaterialTapTargetPrompt.Builder(owner, R.style.RobotScouter_Tutorial_Menu)
@@ -58,4 +57,4 @@ fun showSignInTutorial(
             } else latestPrompt?.dismiss()
         }
     })
-}
+}.let { Unit }
