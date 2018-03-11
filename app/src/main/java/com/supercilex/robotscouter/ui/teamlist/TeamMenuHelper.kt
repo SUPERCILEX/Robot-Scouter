@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.animateColorChange
+import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import org.jetbrains.anko.find
 import java.util.Locale
@@ -210,7 +211,10 @@ class TeamMenuHelper(
     }
 
     private fun setNormalMenuItemsVisible(visible: Boolean) {
-        signInItem.isVisible = visible && !isFullUser
+        // Post twice: 1. for speed, 2. so the items update on config change
+        val updateItems = { signInItem.isVisible = visible && !isFullUser }
+        updateItems()
+        mainHandler.post(updateItems)
 
         if (visible) {
             fab.show()
