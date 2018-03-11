@@ -154,7 +154,7 @@ class ExportService : IntentService(TAG) {
     private fun ExportNotificationManager.abortCritical(e: Exception) {
         if (e !is TimeoutCancellationException) CrashLogger.onFailure(e)
         abort()
-        if (e !is CancellationException) showToast("${getString(R.string.fui_general_error)}\n\n$e")
+        if (e !is CancellationException) showToast("${getString(R.string.fui_error_unknown)}\n\n$e")
     }
 
     companion object {

@@ -142,7 +142,7 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
                         .addOnSuccessListener { purchaseStartTask.setResult(null) }
             }
         } else if (result == BillingResponse.FEATURE_NOT_SUPPORTED) {
-            snackbar(content, R.string.fui_general_error)
+            snackbar(content, R.string.fui_error_unknown)
         } else {
             PurchaseException(result, sku).let {
                 CrashLogger.onFailure(it)
@@ -184,7 +184,7 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
 
     private fun showError() {
         updateProgress(false)
-        longSnackbar(content, R.string.fui_general_error)
+        longSnackbar(content, R.string.fui_error_unknown)
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {

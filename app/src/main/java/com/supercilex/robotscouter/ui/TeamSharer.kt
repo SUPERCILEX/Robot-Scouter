@@ -70,7 +70,7 @@ class TeamSharer private constructor(
                 async { generateIntent() }.await()
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
-                longSnackbar(fragmentRef().find(R.id.root), R.string.fui_general_error)
+                longSnackbar(fragmentRef().find(R.id.root), R.string.fui_error_unknown)
                 return@async
             }
             fragmentRef().startActivityForResult(intent, RC_SHARE)

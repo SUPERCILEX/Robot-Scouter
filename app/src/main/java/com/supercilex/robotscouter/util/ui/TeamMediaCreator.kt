@@ -66,7 +66,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(RobotScouter.packageManager) == null) {
-            RobotScouter.runOnUiThread { longToast(R.string.fui_general_error) }
+            RobotScouter.runOnUiThread { longToast(R.string.fui_error_unknown) }
             return
         }
         if (!EasyPermissions.hasPermissions(RobotScouter, *handler.perms.toTypedArray())) {
@@ -107,7 +107,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             async(UI) {
                 val contentUri = async { photoFile.unhide()?.toUri() }.await()
                 if (contentUri == null) {
-                    RobotScouter.runOnUiThread { longToast(R.string.fui_general_error) }
+                    RobotScouter.runOnUiThread { longToast(R.string.fui_error_unknown) }
                     return@async
                 }
 

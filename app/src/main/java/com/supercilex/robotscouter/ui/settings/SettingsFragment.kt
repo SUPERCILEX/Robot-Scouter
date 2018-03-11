@@ -58,7 +58,7 @@ class SettingsFragment : PreferenceFragmentBase(),
                 FirebaseAppIndex.getInstance().removeAll().logFailures()
                 requireActivity().finish()
             } else {
-                toast(R.string.fui_general_error)
+                toast(R.string.fui_error_unknown)
             }
         })
     }
