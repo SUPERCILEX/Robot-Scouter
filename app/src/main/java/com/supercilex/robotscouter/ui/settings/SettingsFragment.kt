@@ -30,7 +30,6 @@ import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.RC_SIGN_IN
 import com.supercilex.robotscouter.util.data.cancelAllJobs
 import com.supercilex.robotscouter.util.data.clearPrefs
-import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.debugInfo
 import com.supercilex.robotscouter.util.fullVersionName
@@ -172,7 +171,6 @@ class SettingsFragment : PreferenceFragmentBase(),
     }
 
     override fun onTemplateSelected(id: String) {
-        defaultTemplateId = id
         (preferenceScreen.findPreference(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID) as ListPreference)
                 .value = id
     }

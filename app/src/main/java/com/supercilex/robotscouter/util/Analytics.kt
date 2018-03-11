@@ -19,8 +19,10 @@ import com.supercilex.robotscouter.util.data.model.add
 import com.supercilex.robotscouter.util.data.model.getNames
 import com.supercilex.robotscouter.util.data.model.userRef
 import com.supercilex.robotscouter.util.data.nullOrFull
+import com.supercilex.robotscouter.util.ui.mainHandler
 import kotlinx.coroutines.experimental.async
 import java.util.Date
+import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -38,6 +40,18 @@ private const val SEGMENT_SIZE = 98
 private const val SEGMENT = "…"
 
 private val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(RobotScouter) }
+
+private val updateLastLogin = object : Runnable {
+    override fun run() {
+        if (uid != null) {
+            val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
+            userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
+        }
+
+        mainHandler.removeCallbacks(this)
+        mainHandler.postDelayed(this, TimeUnit.DAYS.toMillis(1))
+    }
+}
 
 fun initAnalytics() {
     analytics.setAnalyticsCollectionEnabled(!isInTestMode)
@@ -62,16 +76,8 @@ fun initAnalytics() {
                     user.displayName.nullOrFull(),
                     user.photoUrl
             ).add()
-        }
-    }
 
-    // Use an IdTokenListener which updates every hour or so to ensure the last login time gets
-    // updated accurately. If we used an AuthStateListener, it would only update when the app is
-    // restarted.
-    FirebaseAuth.getInstance().addIdTokenListener {
-        if (it.currentUser?.uid != null) {
-            val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
-            userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
+            updateLastLogin.run()
         }
     }
 }
