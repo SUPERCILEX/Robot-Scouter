@@ -49,10 +49,8 @@ fun logCrashLog(message: String) {
     if (BuildConfig.DEBUG) Log.d("CrashLogs", message)
 }
 
-fun generateStackTrace(stackTraceSkip: Int) = Thread.currentThread().stackTrace.filter {
-    it.className.contains("supercilex")
-}.let<List<StackTraceElement>, List<StackTraceElement>> {
-    it.subList(1 + stackTraceSkip, it.size)
+fun generateStackTrace(stackTraceSkip: Int) = Thread.currentThread().stackTrace.let {
+    it.takeLast(it.size - (3 + stackTraceSkip))
 }
 
 fun Exception.injectRoot(trace: List<StackTraceElement>) = apply {
