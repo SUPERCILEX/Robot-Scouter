@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import com.supercilex.robotscouter.util.ui.initSupportVectorDrawablesAttrs
 
 /** @see SupportVectorDrawablesTextView */
-class SupportVectorDrawablesButton : AppCompatButton {
+open class SupportVectorDrawablesButton : AppCompatButton {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {

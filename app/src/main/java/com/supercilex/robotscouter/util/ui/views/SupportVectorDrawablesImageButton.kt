@@ -9,7 +9,7 @@ import com.supercilex.robotscouter.util.ui.getDrawableCompat
 import com.supercilex.robotscouter.util.ui.getIconThemedContext
 
 /** @see SupportVectorDrawablesTextView */
-class SupportVectorDrawablesImageButton : AppCompatImageButton {
+open class SupportVectorDrawablesImageButton : AppCompatImageButton {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {

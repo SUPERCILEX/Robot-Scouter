@@ -67,42 +67,55 @@ fun View.animateCircularReveal(
     anim
 }
 
-fun View.animatePopReveal(visible: Boolean) {
-    getRevealAnimation(visible) {
-        if (visible) {
-            alpha = 0f
-            scaleY = 0f
-            scaleX = 0f
-            isVisible = true
-        }
-
-        animate().cancel()
-        animate()
-                .scaleX(if (visible) 1f else 0f)
-                .scaleY(if (visible) 1f else 0f)
-                .alpha(if (visible) 1f else 0f)
-                .setDuration(shortAnimationDuration)
-                // TODO sadly, LookupTableInterpolator is package private in Java which makes Kotlin
-                // throw an IllegalAccessError. See https://youtrack.jetbrains.com/issue/KT-15315.
-                .setInterpolator(@Suppress("USELESS_CAST") if (visible) {
-                    LinearOutSlowInInterpolator() as Any
-                } else {
-                    FastOutLinearInInterpolator() as Any
-                } as TimeInterpolator)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationCancel(animation: Animator) {
-                        isGone = visible
-                    }
-
-                    override fun onAnimationEnd(animation: Animator) {
-                        if (!visible) isVisible = false
-                        // Reset state
-                        alpha = 1f
-                        scaleY = 1f
-                        scaleX = 1f
-                    }
-                })
+fun View.animatePopReveal(
+        visible: Boolean,
+        listener: Animator.AnimatorListener? = null
+) = getRevealAnimation(visible) {
+    if (visible) {
+        alpha = 0f
+        scaleY = 0f
+        scaleX = 0f
+        isVisible = true
     }
+
+    animate().cancel()
+    animate()
+            .scaleX(if (visible) 1f else 0f)
+            .scaleY(if (visible) 1f else 0f)
+            .alpha(if (visible) 1f else 0f)
+            .setDuration(shortAnimationDuration)
+            // TODO sadly, LookupTableInterpolator is package private in Java which makes Kotlin
+            // throw an IllegalAccessError. See https://youtrack.jetbrains.com/issue/KT-15315.
+            .setInterpolator(@Suppress("USELESS_CAST") if (visible) {
+                LinearOutSlowInInterpolator() as Any
+            } else {
+                FastOutLinearInInterpolator() as Any
+            } as TimeInterpolator)
+            .setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                    listener?.onAnimationStart(animation)
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                    isGone = visible
+
+                    listener?.onAnimationCancel(animation)
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    if (!visible) isVisible = false
+                    // Reset state
+                    alpha = 1f
+                    scaleY = 1f
+                    scaleX = 1f
+
+                    listener?.onAnimationEnd(animation)
+                }
+
+                override fun onAnimationRepeat(animation: Animator) {
+                    listener?.onAnimationRepeat(animation)
+                }
+            })
 }
 
 private inline fun <T> View.getRevealAnimation(visible: Boolean, animator: () -> T?): T? {

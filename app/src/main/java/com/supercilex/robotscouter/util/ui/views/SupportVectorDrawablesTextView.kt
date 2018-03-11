@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.util.ui.initSupportVectorDrawablesAttrs
  * compatibility attribute for compound drawables. Thus, we must load compound drawables at runtime
  * using AppCompat and inject them into the button to support pre-L devices.
  */
-class SupportVectorDrawablesTextView : AppCompatTextView {
+open class SupportVectorDrawablesTextView : AppCompatTextView {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
