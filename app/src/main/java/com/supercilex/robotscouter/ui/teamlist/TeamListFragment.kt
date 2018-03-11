@@ -113,8 +113,10 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
         adapter?.onSaveInstanceState(outState)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
-            menuHelper.onCreateOptionsMenu(menu, inflater)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menuHelper.onCreateOptionsMenu(menu, inflater)
+        if (menuHelper.selectedTeams.isEmpty()) fab.show()
+    }
 
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
 
