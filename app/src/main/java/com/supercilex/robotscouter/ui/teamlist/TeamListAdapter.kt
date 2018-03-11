@@ -4,7 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,6 +50,7 @@ class TeamListAdapter(
     private val noTeamsHint: View = fragment.find(R.id.no_content_hint)
 
     private var selectedTeamId: String? = null
+    private var hasSelectedTeamChanged = false
 
     init {
         recyclerView.addOnScrollListener(preloader)
@@ -68,38 +68,27 @@ class TeamListAdapter(
 
     override fun onChanged(team: Team?) {
         val oldId = selectedTeamId
-        selectedTeamId = team?.id.let {
-            if (selectedTeamId == it) return else it
-        }
+        val newId = team?.id.also { selectedTeamId = it }
+        if (oldId == newId) return
+        hasSelectedTeamChanged = newId != null
 
-        var hasScrolledToPos = false
-        val visiblePositions = (recyclerView.layoutManager as LinearLayoutManager).let {
-            it.findFirstCompletelyVisibleItemPosition()..it.findLastCompletelyVisibleItemPosition()
-        }
-
-        for (i in 0 until itemCount) {
-            val id = getItem(i).id
-            if (id == selectedTeamId) {
-                if (!hasScrolledToPos) {
-                    if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
-                    hasScrolledToPos = true
-                }
-
-                notifyItemChanged(i)
-            } else if (id == oldId) {
-                notifyItemChanged(i)
-            }
-        }
-
-        if (!hasScrolledToPos && selectedTeamId?.isNotBlank() == true) {
-            for (i in 0 until itemCount) {
-                if (team != null && getItem(i).number >= team.number) {
-                    if (i !in visiblePositions) recyclerView.smoothScrollToPosition(i)
-                    return
+        fun notify(id: String?) {
+            if (id != null) {
+                snapshots.indexOfFirst { it.id == id }.let {
+                    if (it != -1) notifyItemChanged(it)
                 }
             }
-            recyclerView.smoothScrollToPosition(itemCount)
         }
+
+        notify(oldId)
+        notify(newId)
+    }
+
+    fun startScroll() {
+        if (hasSelectedTeamChanged) {
+            recyclerView.smoothScrollToPosition(snapshots.indexOfFirst { it.id == selectedTeamId })
+        }
+        hasSelectedTeamChanged = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeamViewHolder =

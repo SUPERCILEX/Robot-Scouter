@@ -116,6 +116,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menuHelper.onCreateOptionsMenu(menu, inflater)
         if (menuHelper.selectedTeams.isEmpty()) fab.show()
+        adapter?.startScroll()
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
