@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.ui.MovableFragmentStatePagerAdapter
 import com.supercilex.robotscouter.util.ui.Saveable
 import com.supercilex.robotscouter.util.ui.animatePopReveal
+import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotterknife.bindView
 
@@ -136,7 +137,15 @@ abstract class TabPagerAdapterBase(
             outState.putAll(getTabIdBundle(currentTabId))
 
     private fun selectTab(index: Int) {
-        tabLayout.getTabAt(index)?.select()
+        val select: () -> Unit = { tabLayout.getTabAt(index)?.select() }
+
+        // Select the tab twice:
+        // 1. Ensure we don't wastefully load other templates if the selected one is somewhere in
+        //    the middle and the post takes too long to change the selection.
+        // 2. If the tabs are updated, we'll lose our position while updating so posting ensures
+        //    the selection happens after the adapter has processed the notify call.
+        select()
+        mainHandler.post(select)
     }
 
     override fun onStart(owner: LifecycleOwner) {
