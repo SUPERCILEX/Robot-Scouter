@@ -50,7 +50,7 @@ class TeamMenuHelper(
         setNavigationOnClickListener(this@TeamMenuHelper)
     }
 
-    private var isMenuReady: Boolean = false
+    private var isMenuReady = false
 
     private lateinit var signInItem: MenuItem
 
@@ -194,7 +194,7 @@ class TeamMenuHelper(
         _selectedTeams.remove(oldTeam)
         if (selectedTeams.isEmpty()) {
             resetMenu()
-        } else {
+        } else if (isMenuReady) {
             updateState()
         }
     }
