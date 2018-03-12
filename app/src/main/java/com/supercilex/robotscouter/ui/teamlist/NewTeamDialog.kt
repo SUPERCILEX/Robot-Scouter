@@ -10,17 +10,18 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
-import kotterknife.bindView
+import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.find
 
 class NewTeamDialog : KeyboardDialogBase() {
-    private val inputLayout: TextInputLayout by bindView(R.id.name)
-    override val lastEditText: EditText by bindView(R.id.team_number)
+    private val rootView: View by unsafeLazy {
+        View.inflate(context, R.layout.dialog_new_team, null)
+    }
+    private val inputLayout by unsafeLazy { rootView.find<TextInputLayout>(R.id.name) }
+    override val lastEditText by unsafeLazy { rootView.find<EditText>(R.id.team_number) }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?) = createDialog(
-            View.inflate(context, R.layout.dialog_new_team, null),
-            R.string.scout_new_title,
-            savedInstanceState
-    )
+    override fun onCreateDialog(savedInstanceState: Bundle?) =
+            createDialog(rootView, R.string.scout_new_title, savedInstanceState)
 
     public override fun onAttemptDismiss(): Boolean {
         val teamNumber = try {

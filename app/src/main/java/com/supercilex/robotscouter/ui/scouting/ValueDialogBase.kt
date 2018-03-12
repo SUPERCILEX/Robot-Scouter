@@ -8,21 +8,20 @@ import android.view.View
 import android.widget.EditText
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.KeyboardDialogBase
-import kotterknife.bindView
+import com.supercilex.robotscouter.util.unsafeLazy
+import org.jetbrains.anko.find
 
 abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
-    protected val inputLayout: TextInputLayout by bindView(R.id.value_layout)
-    override val lastEditText: EditText by bindView(R.id.value)
+    private val rootView: View by unsafeLazy { View.inflate(context, R.layout.dialog_value, null) }
+    protected val inputLayout by unsafeLazy { rootView.find<TextInputLayout>(R.id.value_layout) }
+    override val lastEditText by unsafeLazy { rootView.find<EditText>(R.id.value) }
 
     protected abstract val value: T?
     @get:StringRes protected abstract val title: Int
     @get:StringRes protected abstract val hint: Int
 
-    override fun onCreateDialog(savedInstanceState: Bundle?) = createDialog(
-            View.inflate(context, R.layout.dialog_value, null),
-            title,
-            savedInstanceState
-    )
+    override fun onCreateDialog(savedInstanceState: Bundle?) =
+            createDialog(rootView, title, savedInstanceState)
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)
