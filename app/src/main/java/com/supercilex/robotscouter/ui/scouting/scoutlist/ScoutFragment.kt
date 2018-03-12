@@ -40,7 +40,7 @@ class ScoutFragment : MetricListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         holder.metrics.asLiveData().observe(this, Observer {
-            noContentHint.hide()
+            if (it!!.isNotEmpty()) noContentHint.hide()
         })
     }
 
