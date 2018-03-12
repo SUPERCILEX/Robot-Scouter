@@ -89,18 +89,14 @@ open class StopwatchViewHolder(
             undoAddSnackbar?.dismiss()
             timer = Timer(this)
         } else {
-            metric.value = metric.value.toMutableList().apply {
-                add(currentTimer.cancel())
-            }
+            val lap = currentTimer.cancel()
+            metric.value = metric.value.toMutableList().apply { add(lap) }
 
-            val size = metric.value.size
-            notifyCycleAdded(size, size)
+            metric.value.size.let { notifyCycleAdded(it, it) }
 
             longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, R.string.undo) {
                 val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
-                val newCycles = metric.value.toMutableList().apply {
-                    removeAt(size - 1)
-                }
+                val newCycles = metric.value.toMutableList().apply { remove(lap) }
                 metric.value = newCycles
 
                 notifyCycleRemoved(metric.value.size, metric.value.size, hadAverage)
