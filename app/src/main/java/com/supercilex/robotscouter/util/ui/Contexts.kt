@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.util.ui
 
+import android.arch.lifecycle.HolderFragment.holderFragmentFor
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -86,6 +87,8 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable {
 }
 
 abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
+    override fun getViewModelStore() = holderFragmentFor(this).viewModelStore
+
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)
@@ -99,6 +102,8 @@ abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
 }
 
 abstract class PreferenceFragmentBase : PreferenceFragmentCompat(), OnActivityResult, Saveable {
+    override fun getViewModelStore() = holderFragmentFor(this).viewModelStore
+
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)

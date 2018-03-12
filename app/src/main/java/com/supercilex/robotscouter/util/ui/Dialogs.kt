@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.app.Dialog
+import android.arch.lifecycle.HolderFragment
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -33,6 +34,8 @@ fun DialogFragment.show(
 }
 
 abstract class DialogFragmentBase : DialogFragment() {
+    override fun getViewModelStore() = HolderFragment.holderFragmentFor(this).viewModelStore
+
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(context)
@@ -47,6 +50,8 @@ abstract class DialogFragmentBase : DialogFragment() {
 
 abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
         DialogInterface.OnShowListener {
+    override fun getViewModelStore() = HolderFragment.holderFragmentFor(this).viewModelStore
+
     override fun onCreateDialog(
             savedInstanceState: Bundle?
     ): Dialog = object : BottomSheetDialog(requireContext(), R.style.RobotScouter_Tmp_72076683),
