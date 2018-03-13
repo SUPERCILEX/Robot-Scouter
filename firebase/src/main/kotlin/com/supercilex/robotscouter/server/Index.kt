@@ -6,7 +6,7 @@ import com.supercilex.robotscouter.server.functions.logUserData
 import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
 import com.supercilex.robotscouter.server.utils.LateinitVal
 import com.supercilex.robotscouter.server.utils.Modules
-import com.supercilex.robotscouter.server.utils.types.Event
+import com.supercilex.robotscouter.server.utils.types.TopicBuilder
 
 external fun require(module: String): dynamic
 external val exports: dynamic
@@ -22,14 +22,14 @@ fun main(args: Array<String>) {
     val moment = require("moment")
     modules = Modules(firestore, moment)
 
-    exports.deleteUnusedData =
-            functions.pubsub.topic("monthly-tick").onPublish { deleteUnusedData() }
-    exports.emptyTrash = functions.pubsub.topic("monthly-tick").onPublish { emptyTrash() }
+    exports.deleteUnusedData = functions.pubsub.topic("monthly-tick").unsafeCast<TopicBuilder>()
+            .onPublish { deleteUnusedData() }
+    exports.emptyTrash = functions.pubsub.topic("monthly-tick").unsafeCast<TopicBuilder>()
+            .onPublish { emptyTrash() }
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
-    exports.logUserData = functions.pubsub.topic("log-user-data").onPublish { event: Event<dynamic> ->
-        logUserData(event.data.json.uid)
-    }
-    exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates").onPublish {
-        updateDefaultTemplates()
-    }
+    exports.logUserData = functions.pubsub.topic("log-user-data").unsafeCast<TopicBuilder>()
+            .onPublish { logUserData(it) }
+    exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates")
+            .unsafeCast<TopicBuilder>()
+            .onPublish { updateDefaultTemplates() }
 }

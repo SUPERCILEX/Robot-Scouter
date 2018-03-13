@@ -6,7 +6,6 @@ package com.supercilex.robotscouter.server.utils.types
 import kotlin.js.Json
 import kotlin.js.Promise
 
-external fun setLogFunction(logger: (msg: String) -> Unit): Unit = definedExternally
 open external class Firestore(options: Any? = definedExternally /* null */) {
     open fun collection(collectionPath: String): CollectionReference = definedExternally
     open fun doc(documentPath: String): DocumentReference = definedExternally
@@ -38,9 +37,11 @@ open external class WriteBatch {
     open fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally /* null */): WriteBatch = definedExternally
     open fun commit(): Promise<Array<WriteResult>> = definedExternally
 }
+
 external interface Precondition {
     var lastUpdateTime: String? get() = definedExternally; set(value) = definedExternally
 }
+
 external interface SetOptions {
     var merge: Boolean? get() = definedExternally; set(value) = definedExternally
 }
@@ -99,6 +100,7 @@ open external class QuerySnapshot {
     open var readTime: String = definedExternally
     open fun forEach(callback: (result: DocumentSnapshot) -> Unit, thisArg: Any? = definedExternally /* null */): Unit = definedExternally
 }
+
 external interface DocumentChange {
     var type: dynamic /* Any /* "added" */ | Any /* "removed" */ | Any /* "modified" */ */
     var doc: DocumentSnapshot

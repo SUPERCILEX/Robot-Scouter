@@ -61,6 +61,11 @@ fun deleteUnusedData(): Promise<*> {
     ))
 }
 
+fun emptyTrash(): Promise<*> {
+    console.log("Emptying trash for all users.")
+    return deletionQueue.process { processDeletion(this) }
+}
+
 private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.process {
     console.log("Deleting all data for user:\n${JSON.stringify(data())}")
 
@@ -77,63 +82,72 @@ private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.proces
     }
 }
 
-fun emptyTrash(): Promise<*> {
-    console.log("Emptying trash for all users.")
-    return deletionQueue.process {
-        val userId = id
-        Promise.all(data().toMap<Json>().map { (key, data) ->
-            val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
-            if ((modules.moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
-                return@map Promise.resolve<Unit?>(null)
-            }
+private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
+    val userId = request.id
 
-            when (data[FIRESTORE_TYPE]) {
-                FIRESTORE_TEAM_TYPE -> teams.doc(key).get().then {
-                    if (it.exists) it.deleteIfSingleOwner(userId) { deleteTeam(this) }
-                }
-                FIRESTORE_SCOUT_TYPE -> teams.doc(data[FIRESTORE_CONTENT_ID] as String)
-                        .collection(FIRESTORE_SCOUTS)
-                        .doc(key)
-                        .run {
-                            console.log("Deleting scout: $id")
-                            Promise.all(arrayOf(delete(), collection(FIRESTORE_METRICS).delete()))
-                        }
-                FIRESTORE_TEMPLATE_TYPE -> templates.doc(key).get().then {
-                    if (it.exists) it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
-                }
-                FIRESTORE_SHARE_TOKEN_TYPE -> {
-                    fun CollectionReference.deleteShareToken(
-                    ) = Promise.all((data[FIRESTORE_CONTENT_ID] as Array<String>).map {
-                        doc(it).get().then {
-                            if (it.exists) {
-                                Promise.all(arrayOf(
-                                        it.ref.update(
-                                                "$FIRESTORE_ACTIVE_TOKENS.$key",
-                                                FieldValue.delete()
-                                        ),
-                                        it.ref.update(
-                                                FIRESTORE_PENDING_APPROVALS,
-                                                FieldValue.delete()
-                                        )
-                                ))
-                            }
-                        }
-                    }.toTypedArray()).then { Unit }
+    fun deleteTeam(id: String) = teams.doc(id).get().then {
+        if (it.exists) it.deleteIfSingleOwner(userId) { deleteTeam(this) }
+    }
 
-                    console.log("Deleting share token: $key")
-                    when (data[FIRESTORE_SHARE_TYPE] as Int) {
-                        FIRESTORE_TEAM_TYPE -> teams.deleteShareToken()
-                        FIRESTORE_TEMPLATE_TYPE -> templates.deleteShareToken()
-                        else -> error("Unknown share type: ${data[FIRESTORE_SHARE_TYPE]}")
+    fun deleteScout(teamId: String, scoutId: String) = teams.doc(teamId)
+            .collection(FIRESTORE_SCOUTS)
+            .doc(scoutId)
+            .run {
+                console.log("Deleting scout: ${this.id}")
+                Promise.all(arrayOf(delete(), collection(FIRESTORE_METRICS).delete()))
+            }.then { Unit }
+
+    fun deleteTemplate(id: String, userId: String) = templates.doc(id).get().then {
+        if (it.exists) it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+    }
+
+    fun deleteShareToken(data: Json, token: String): Promise<Unit> {
+        fun CollectionReference.delete(): Promise<Unit> {
+            @Suppress("UNCHECKED_CAST") // We know its type
+            val ids = data[FIRESTORE_CONTENT_ID] as Array<String>
+            return Promise.all(ids.map {
+                doc(it).get().then {
+                    if (it.exists) {
+                        Promise.all(arrayOf(
+                                it.ref.update(
+                                        "$FIRESTORE_ACTIVE_TOKENS.$token",
+                                        FieldValue.delete()
+                                ),
+                                it.ref.update(
+                                        FIRESTORE_PENDING_APPROVALS,
+                                        FieldValue.delete()
+                                )
+                        ))
                     }
                 }
-                else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
-            }.then {
-                ref.update(key, FieldValue.delete())
-            }.then { Unit }
-        }.toTypedArray()).then {
-            if (it.none { it == null }) ref.delete()
+            }.toTypedArray()).then { Unit }
         }
+
+        console.log("Deleting share token: $token")
+        return when (data[FIRESTORE_SHARE_TYPE] as Int) {
+            FIRESTORE_TEAM_TYPE -> teams.delete()
+            FIRESTORE_TEMPLATE_TYPE -> templates.delete()
+            else -> error("Unknown share type: ${data[FIRESTORE_SHARE_TYPE]}")
+        }
+    }
+
+    return Promise.all(request.data().toMap<Json>().map { (key, data) ->
+        val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
+        if ((modules.moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
+            return@map Promise.resolve<Unit?>(null)
+        }
+
+        when (data[FIRESTORE_TYPE]) {
+            FIRESTORE_TEAM_TYPE -> deleteTeam(key)
+            FIRESTORE_SCOUT_TYPE -> deleteScout(data[FIRESTORE_CONTENT_ID] as String, key)
+            FIRESTORE_TEMPLATE_TYPE -> deleteTemplate(key, userId)
+            FIRESTORE_SHARE_TOKEN_TYPE -> deleteShareToken(data, key)
+            else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
+        }.then {
+            request.ref.update(key, FieldValue.delete())
+        }.then { Unit }
+    }.toTypedArray()).then {
+        if (it.none { it == null }) request.ref.delete()
     }
 }
 
@@ -164,11 +178,11 @@ private fun Query.process(block: DocumentSnapshot.() -> Promise<*>): Promise<Uni
     Promise.all(it.docs.map(block).toTypedArray())
 }.then { Unit }
 
-fun DocumentSnapshot.deleteIfSingleOwner(
+private fun DocumentSnapshot.deleteIfSingleOwner(
         userId: String,
         delete: DocumentSnapshot.() -> Promise<*>
 ): Promise<*> {
-    console.log("Processing deletion request for ${data()} with id $id.")
+    console.log("Processing deletion request for id $id.")
 
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // We know its type
     val owners = get(FIRESTORE_OWNERS) as Json
