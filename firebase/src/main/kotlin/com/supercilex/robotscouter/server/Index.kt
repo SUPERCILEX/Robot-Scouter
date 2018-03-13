@@ -3,9 +3,12 @@ package com.supercilex.robotscouter.server
 import com.supercilex.robotscouter.server.functions.deleteUnusedData
 import com.supercilex.robotscouter.server.functions.emptyTrash
 import com.supercilex.robotscouter.server.functions.logUserData
+import com.supercilex.robotscouter.server.functions.sanitizeDeletionRequest
 import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
 import com.supercilex.robotscouter.server.utils.LateinitVal
 import com.supercilex.robotscouter.server.utils.Modules
+import com.supercilex.robotscouter.server.utils.deletionQueue
+import com.supercilex.robotscouter.server.utils.types.DocumentBuilder
 import com.supercilex.robotscouter.server.utils.types.TopicBuilder
 
 external fun require(module: String): dynamic
@@ -32,4 +35,7 @@ fun main(args: Array<String>) {
     exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates")
             .unsafeCast<TopicBuilder>()
             .onPublish { updateDefaultTemplates() }
+    exports.sanitizeDeletionQueue = functions.firestore.document("${deletionQueue.id}/{uid}")
+            .unsafeCast<DocumentBuilder>()
+            .onWrite { sanitizeDeletionRequest(it) }
 }

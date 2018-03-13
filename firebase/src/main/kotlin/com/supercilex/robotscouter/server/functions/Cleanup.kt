@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.server.functions
 
 import com.supercilex.robotscouter.server.modules
 import com.supercilex.robotscouter.server.utils.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.server.utils.FIRESTORE_BASE_TIMESTAMP
 import com.supercilex.robotscouter.server.utils.FIRESTORE_CONTENT_ID
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
 import com.supercilex.robotscouter.server.utils.FIRESTORE_LAST_LOGIN
@@ -18,6 +19,7 @@ import com.supercilex.robotscouter.server.utils.FIRESTORE_TEMPLATE_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TYPE
 import com.supercilex.robotscouter.server.utils.FieldValue
+import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
@@ -28,7 +30,9 @@ import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.toTemplateString
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
+import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
+import com.supercilex.robotscouter.server.utils.types.Event
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
@@ -63,7 +67,30 @@ fun deleteUnusedData(): Promise<*> {
 
 fun emptyTrash(): Promise<*> {
     console.log("Emptying trash for all users.")
-    return deletionQueue.process { processDeletion(this) }
+    return deletionQueue.where(
+            FIRESTORE_BASE_TIMESTAMP,
+            "<",
+            modules.moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate()
+    ).process { processDeletion(this) }
+}
+
+fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<Any?> {
+    val snapshot = event.data
+    if (!snapshot.exists) return Promise.resolve<Unit?>(null)
+
+    console.log("Sanitizing deletion request for user id ${snapshot.id}.")
+
+    val oldestDeletionRequest = snapshot.get(FIRESTORE_BASE_TIMESTAMP) as Date? ?: Date(-1)
+    val recalculatedOldestDeletionRequest = snapshot.data().findOldestDeletionTime()
+    return if (oldestDeletionRequest.getTime() != recalculatedOldestDeletionRequest?.getTime()) {
+        console.log("Updating oldest deletion time to $recalculatedOldestDeletionRequest.")
+        snapshot.ref.update(
+                FIRESTORE_BASE_TIMESTAMP,
+                recalculatedOldestDeletionRequest ?: Date(0)
+        )
+    } else {
+        Promise.resolve<Unit?>(null)
+    }
 }
 
 private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.process {
@@ -131,10 +158,12 @@ private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
         }
     }
 
-    return Promise.all(request.data().toMap<Json>().map { (key, data) ->
+    val requests = request.data().sanitizedDeletionRequestData()
+
+    return Promise.all(requests.toMap<Json>().map { (key, data) ->
         val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
         if ((modules.moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
-            return@map Promise.resolve<Unit?>(null)
+            return@map Promise.resolve<String?>(null)
         }
 
         when (data[FIRESTORE_TYPE]) {
@@ -143,12 +172,18 @@ private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
             FIRESTORE_TEMPLATE_TYPE -> deleteTemplate(key, userId)
             FIRESTORE_SHARE_TOKEN_TYPE -> deleteShareToken(data, key)
             else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
-        }.then {
-            request.ref.update(key, FieldValue.delete())
-        }.then { Unit }
+        }.then { key }
     }.toTypedArray()).then {
-        if (it.none { it == null }) request.ref.delete()
-    }
+        if (it.none { it == null }) {
+            request.ref.delete()
+        } else {
+            modules.firestore.batch {
+                for (field in it.filterNotNull()) {
+                    update(request.ref, field, FieldValue.delete())
+                }
+            }
+        }
+    }.then { Unit }
 }
 
 private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
@@ -196,4 +231,20 @@ private fun DocumentSnapshot.deleteIfSingleOwner(
     } else {
         delete(this)
     }
+}
+
+private fun Json.findOldestDeletionTime(): Date? {
+    return Date(sanitizedDeletionRequestData().toMap<Json>().map { (_, data) ->
+        data[FIRESTORE_TIMESTAMP] as Date
+    }.map {
+        it.getTime()
+    }.min() ?: return null)
+}
+
+private fun Json.sanitizedDeletionRequestData(): Json {
+    @Suppress("UNUSED_VARIABLE") // Used in JS
+    val requests = this
+    //language=JavaScript
+    js("delete requests[\"$FIRESTORE_BASE_TIMESTAMP\"]")
+    return this
 }

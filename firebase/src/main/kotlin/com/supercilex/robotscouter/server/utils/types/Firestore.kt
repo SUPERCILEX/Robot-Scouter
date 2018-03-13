@@ -115,3 +115,35 @@ open external class CollectionReference : Query {
     open fun doc(documentPath: String? = definedExternally /* null */): DocumentReference = definedExternally
     open fun add(data: Json): Promise<DocumentReference> = definedExternally
 }
+
+open external class DatabaseBuilder {
+    open var resource: Any = definedExternally
+    open fun namespace(namespace: String): NamespaceBuilder = definedExternally
+    open fun document(path: String): DocumentBuilder = definedExternally
+}
+
+open external class NamespaceBuilder {
+    open var resource: Any = definedExternally
+    open fun document(path: String): DocumentBuilder = definedExternally
+}
+
+external interface DeltaDocumentSnapshot {
+    var exists: Boolean
+    var ref: DocumentReference
+    var id: String
+    var createTime: String
+    var updateTime: String
+    var readTime: String
+    var previous: DeltaDocumentSnapshot
+    var get: (key: String) -> Any?
+    fun data(): Json
+}
+
+open external class DocumentBuilder {
+    open var resource: Any = definedExternally
+    open fun onWrite(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
+    open fun onCreate(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
+    open fun onUpdate(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
+    open fun onDelete(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
+    open fun onOperation(handler: Any, eventType: Any): Unit = definedExternally
+}
