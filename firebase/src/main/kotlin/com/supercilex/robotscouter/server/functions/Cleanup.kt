@@ -89,7 +89,7 @@ fun emptyTrash(): Promise<*> {
 
             when (data[FIRESTORE_TYPE]) {
                 FIRESTORE_TEAM_TYPE -> teams.doc(key).get().then {
-                    it.deleteIfSingleOwner(userId) { deleteTeam(this) }
+                    if (it.exists) it.deleteIfSingleOwner(userId) { deleteTeam(this) }
                 }
                 FIRESTORE_SCOUT_TYPE -> teams.doc(data[FIRESTORE_CONTENT_ID] as String)
                         .collection(FIRESTORE_SCOUTS)
@@ -99,16 +99,24 @@ fun emptyTrash(): Promise<*> {
                             Promise.all(arrayOf(delete(), collection(FIRESTORE_METRICS).delete()))
                         }
                 FIRESTORE_TEMPLATE_TYPE -> templates.doc(key).get().then {
-                    it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+                    if (it.exists) it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
                 }
                 FIRESTORE_SHARE_TOKEN_TYPE -> {
                     fun CollectionReference.deleteShareToken(
                     ) = Promise.all((data[FIRESTORE_CONTENT_ID] as Array<String>).map {
-                        doc(it).run {
-                            Promise.all(arrayOf(
-                                    update("$FIRESTORE_ACTIVE_TOKENS.$key", FieldValue.delete()),
-                                    update(FIRESTORE_PENDING_APPROVALS, FieldValue.delete())
-                            ))
+                        doc(it).get().then {
+                            if (it.exists) {
+                                Promise.all(arrayOf(
+                                        it.ref.update(
+                                                "$FIRESTORE_ACTIVE_TOKENS.$key",
+                                                FieldValue.delete()
+                                        ),
+                                        it.ref.update(
+                                                FIRESTORE_PENDING_APPROVALS,
+                                                FieldValue.delete()
+                                        )
+                                ))
+                            }
                         }
                     }.toTypedArray()).then { Unit }
 
@@ -160,6 +168,8 @@ fun DocumentSnapshot.deleteIfSingleOwner(
         userId: String,
         delete: DocumentSnapshot.() -> Promise<*>
 ): Promise<*> {
+    console.log("Processing deletion request for ${data()} with id $id.")
+
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // We know its type
     val owners = get(FIRESTORE_OWNERS) as Json
     //language=JavaScript
