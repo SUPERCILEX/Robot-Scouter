@@ -70,6 +70,18 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    lintOptions {
+        disable 'InvalidPackage', // Needed because of Okio
+                'GradleDependency', 'NewerVersionAvailable' // For build reproducibility
+        baseline file("${project.rootDir}/quality/lint-baseline.xml")
+        checkAllWarnings true
+        warningsAsErrors true
+        abortOnError false
+        def reportsDir = "${project.buildDir}/reports"
+        htmlOutput file("$reportsDir/lint-results.html")
+        xmlOutput file("$reportsDir/lint-results.xml")
+    }
 }
 
 kotlin {

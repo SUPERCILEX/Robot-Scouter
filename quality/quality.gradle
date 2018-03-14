@@ -1,8 +1,4 @@
-apply plugin: 'checkstyle'
-check.dependsOn 'ktlint', 'checkstyle'
-
-def configDir = "${project.rootDir}/quality"
-def reportsDir = "${project.buildDir}/reports"
+check.dependsOn 'ktlint'
 
 configurations {
     ktlint
@@ -12,33 +8,8 @@ dependencies {
     ktlint 'com.github.shyiko:ktlint:0.19.0'
 }
 
-checkstyle {
-    toolVersion = '8.8'
-}
-
 task ktlint(type: JavaExec) {
     main = "com.github.shyiko.ktlint.Main"
     classpath = configurations.ktlint
     args "src/**/*.kt"
-}
-
-task checkstyle(type: Checkstyle) {
-    configFile file("$configDir/checkstyle.xml")
-    source 'src'
-    include '**/*.*'
-    exclude '**/gen/**', '**/*.png'
-    classpath = files()
-}
-
-android {
-    lintOptions {
-        disable 'InvalidPackage', // Needed because of Okio
-                'GradleDependency', 'NewerVersionAvailable' // For build reproducibility
-        baseline file("$configDir/lint-baseline.xml")
-        checkAllWarnings true
-        warningsAsErrors true
-        abortOnError false
-        htmlOutput file("$reportsDir/lint-results.html")
-        xmlOutput file("$reportsDir/lint-results.xml")
-    }
 }

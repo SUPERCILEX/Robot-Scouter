@@ -1,4 +1,5 @@
 apply plugin: 'kotlin2js'
+apply from: '../quality/quality.gradle'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
