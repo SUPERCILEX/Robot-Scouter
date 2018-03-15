@@ -86,7 +86,9 @@ class TeamListAdapter(
 
     fun startScroll() {
         if (hasSelectedTeamChanged) {
-            recyclerView.smoothScrollToPosition(snapshots.indexOfFirst { it.id == selectedTeamId })
+            snapshots.indexOfFirst { it.id == selectedTeamId }.let {
+                if (it != -1) recyclerView.smoothScrollToPosition(it)
+            }
         }
         hasSelectedTeamChanged = false
     }
