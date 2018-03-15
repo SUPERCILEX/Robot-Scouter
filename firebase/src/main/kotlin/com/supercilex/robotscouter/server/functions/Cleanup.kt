@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
 import com.supercilex.robotscouter.server.utils.moment
+import com.supercilex.robotscouter.server.utils.processInBatches
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
@@ -72,7 +73,7 @@ fun emptyTrash(): Promise<*>? {
             FIRESTORE_BASE_TIMESTAMP,
             "<",
             moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate()
-    ).process { processDeletion(this) }
+    ).processInBatches(10) { processDeletion(it) }
 }
 
 fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<*>? {
@@ -92,19 +93,19 @@ fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<*>? {
     }
 }
 
-private fun deleteUnusedData(userQuery: Query) = userQuery.process {
-    console.log("Deleting all data for user:\n${JSON.stringify(data())}")
+private fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches { userSnapshot ->
+    console.log("Deleting all data for user:\n${JSON.stringify(userSnapshot.data())}")
 
-    val userId = id
+    val userId = userSnapshot.id
     Promise.all(arrayOf(
-            getTeamsQuery(userId).process {
-                deleteIfSingleOwner(userId) { deleteTeam(this) }
+            getTeamsQuery(userId).processInBatches {
+                it.deleteIfSingleOwner(userId) { deleteTeam(this) }
             },
-            getTemplatesQuery(userId).process {
-                deleteIfSingleOwner(userId) { deleteTemplate(this) }
+            getTemplatesQuery(userId).processInBatches {
+                it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
             }
     )).then {
-        deleteUser(this)
+        deleteUser(userSnapshot)
     }
 }
 
@@ -207,10 +208,6 @@ private fun deleteTemplate(template: DocumentSnapshot): Promise<*> {
         template.ref.delete()
     }.then { Unit }
 }
-
-private fun Query.process(block: DocumentSnapshot.() -> Promise<*>) = get().then {
-    Promise.all(it.docs.map(block).toTypedArray())
-}.then { Unit }
 
 private fun DocumentSnapshot.deleteIfSingleOwner(
         userId: String,

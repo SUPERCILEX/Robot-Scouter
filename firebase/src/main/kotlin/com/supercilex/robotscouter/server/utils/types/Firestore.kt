@@ -45,22 +45,22 @@ external class WriteBatch {
 }
 
 external interface Precondition {
-    var lastUpdateTime: String? get() = definedExternally; set(value) = definedExternally
+    val lastUpdateTime: String? get() = definedExternally
 }
 
 external interface SetOptions {
-    var merge: Boolean? get() = definedExternally; set(value) = definedExternally
+    val merge: Boolean? get() = definedExternally
 }
 
 external class WriteResult {
-    var writeTime: String = definedExternally
+    val writeTime: String = definedExternally
 }
 
 external class DocumentReference {
-    var id: String = definedExternally
-    var firestore: Firestore = definedExternally
-    var parent: CollectionReference = definedExternally
-    var path: String = definedExternally
+    val id: String = definedExternally
+    val firestore: Firestore = definedExternally
+    val parent: CollectionReference = definedExternally
+    val path: String = definedExternally
     fun collection(collectionPath: String): CollectionReference = definedExternally
     fun create(data: Json): Promise<WriteResult> = definedExternally
     fun set(data: Json, options: SetOptions? = definedExternally): Promise<WriteResult> = definedExternally
@@ -72,18 +72,18 @@ external class DocumentReference {
 }
 
 external class DocumentSnapshot {
-    var exists: Boolean = definedExternally
-    var ref: DocumentReference = definedExternally
-    var id: String = definedExternally
-    var createTime: String = definedExternally
-    var updateTime: String = definedExternally
-    var readTime: String = definedExternally
+    val exists: Boolean = definedExternally
+    val ref: DocumentReference = definedExternally
+    val id: String = definedExternally
+    val createTime: String = definedExternally
+    val updateTime: String = definedExternally
+    val readTime: String = definedExternally
     fun data(): Json = definedExternally
     fun get(fieldPath: String): Any = definedExternally
 }
 
 open external class Query {
-    var firestore: Firestore = definedExternally
+    val firestore: Firestore = definedExternally
     fun where(fieldPath: String, opStr: String, value: Any?): Query = definedExternally
     fun orderBy(fieldPath: String, directionStr: Any? = definedExternally): Query = definedExternally
     fun limit(limit: Number): Query = definedExternally
@@ -98,50 +98,48 @@ open external class Query {
 }
 
 external class QuerySnapshot {
-    var query: Query = definedExternally
-    var docChanges: Array<DocumentChange> = definedExternally
-    var docs: Array<DocumentSnapshot> = definedExternally
-    var size: Number = definedExternally
-    var empty: Boolean = definedExternally
-    var readTime: String = definedExternally
+    val query: Query = definedExternally
+    val docChanges: Array<DocumentChange> = definedExternally
+    val docs: Array<DocumentSnapshot> = definedExternally
+    val size: Number = definedExternally
+    val empty: Boolean = definedExternally
+    val readTime: String = definedExternally
     fun forEach(callback: (result: DocumentSnapshot) -> Unit, thisArg: Any? = definedExternally): Unit = definedExternally
 }
 
 external interface DocumentChange {
-    var type: dynamic
-    var doc: DocumentSnapshot
-    var oldIndex: Number
-    var newIndex: Number
+    val type: dynamic
+    val doc: DocumentSnapshot
+    val oldIndex: Number
+    val newIndex: Number
 }
 
 external class CollectionReference : Query {
-    var id: String = definedExternally
-    var parent: DocumentReference? = definedExternally
-    var path: String = definedExternally
+    val id: String = definedExternally
+    val parent: DocumentReference? = definedExternally
+    val path: String = definedExternally
     fun doc(documentPath: String? = definedExternally): DocumentReference = definedExternally
     fun add(data: Json): Promise<DocumentReference> = definedExternally
 }
 
 external class DatabaseBuilder {
-    var resource: Any = definedExternally
     fun namespace(namespace: String): NamespaceBuilder = definedExternally
     fun document(path: String): DocumentBuilder = definedExternally
 }
 
 external class NamespaceBuilder {
-    var resource: Any = definedExternally
     fun document(path: String): DocumentBuilder = definedExternally
 }
 
 external interface DeltaDocumentSnapshot {
-    var exists: Boolean
-    var ref: DocumentReference
-    var id: String
-    var createTime: String
-    var updateTime: String
-    var readTime: String
-    var previous: DeltaDocumentSnapshot
-    var get: (key: String) -> Any?
+    val exists: Boolean
+    val ref: DocumentReference
+    val id: String
+    val createTime: String
+    val updateTime: String
+    val readTime: String
+    val previous: DeltaDocumentSnapshot
+    val get: (key: String) -> Any?
     fun data(): Json
 }
 

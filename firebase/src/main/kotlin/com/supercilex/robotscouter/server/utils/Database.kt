@@ -27,41 +27,36 @@ fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
     commit()
 }
 
+fun Query.processInBatches(
+        batchSize: Int = 100,
+        action: (DocumentSnapshot) -> Promise<*>
+) = processInBatches(this, batchSize) {
+    Promise.all(it.map(action).toTypedArray())
+}
+
 fun CollectionReference.delete(
         batchSize: Int = 100,
         middleMan: (DocumentSnapshot) -> Promise<*>? = { null }
-) = deleteQueryBatch(
-        firestore,
-        orderBy(FieldPath.documentId()).limit(batchSize),
-        batchSize,
-        middleMan
-)
-
-private fun deleteQueryBatch(
-        db: Firestore,
-        query: Query,
-        batchSize: Int,
-        middleMan: (DocumentSnapshot) -> Promise<*>?
-): Promise<Unit> = query.get().then { snapshot ->
-    if (snapshot.size == 0) {
-        return@then Promise.resolve(0)
-    }
-
-    Promise.all(snapshot.docs.map(middleMan).map {
+) = processInBatches(orderBy(FieldPath.documentId()), batchSize) { snapshots ->
+    Promise.all(snapshots.map(middleMan).map {
         it ?: Promise.resolve(Unit)
     }.toTypedArray()).then {
-        db.batch {
-            snapshot.docs.forEach { delete(it.ref) }
+        firestore.batch {
+            snapshots.forEach { delete(it.ref) }
         }
-    }.then {
-        it.size
     }
-}.then { numDeleted ->
-    if (numDeleted == 0) {
-        return@then Promise.resolve(Unit)
-    }
+}
 
-    deleteQueryBatch(db, query, batchSize, middleMan)
+private fun processInBatches(
+        query: Query,
+        batchSize: Int,
+        action: (List<DocumentSnapshot>) -> Promise<*>
+): Promise<Unit> = query.limit(batchSize).get().then { snapshot ->
+    if (snapshot.size == 0) return@then Promise.resolve<DocumentSnapshot?>(null)
+    action(snapshot.docs.toList()).then { snapshot.docs.last() }
+}.then { next ->
+    if (next == null) return@then Promise.resolve(Unit)
+    processInBatches(query.startAfter(next), batchSize, action)
 }.then { Unit }
 
 class FieldValue {
