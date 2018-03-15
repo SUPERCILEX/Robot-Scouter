@@ -1,10 +1,10 @@
 package com.supercilex.robotscouter.server.utils
 
-import com.supercilex.robotscouter.server.modules
+import com.supercilex.robotscouter.server.require
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
-import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.admin
 import kotlin.js.Date
 
 const val FIRESTORE_OWNERS = "owners"
@@ -33,20 +33,23 @@ const val FIRESTORE_SCOUT_TYPE = 1
 const val FIRESTORE_TEMPLATE_TYPE = 2
 const val FIRESTORE_SHARE_TOKEN_TYPE = 3
 
+val firestore by lazy { admin.firestore() }
+val moment: dynamic by lazy { require("moment") }
+
 val defaultTemplates: CollectionReference
-    get() = modules.firestore.collection("default-templates")
+    get() = firestore.collection("default-templates")
 val users: CollectionReference
-    get() = modules.firestore.collection("users")
+    get() = firestore.collection("users")
 val DocumentSnapshot.userPrefs: CollectionReference
     get() = ref.collection("prefs")
 val teams: CollectionReference
-    get() = modules.firestore.collection("teams")
+    get() = firestore.collection("teams")
 val templates: CollectionReference
-    get() = modules.firestore.collection("templates")
+    get() = firestore.collection("templates")
 val deletionQueue: CollectionReference
-    get() = modules.firestore.collection("deletion-queue")
+    get() = firestore.collection("deletion-queue")
 
-private val epoch: Date by lazy { modules.moment(0).toDate() }
+val epoch: Date by lazy { Date(0) }
 
 fun getTeamsQuery(uid: String): Query = teams.where("$FIRESTORE_OWNERS.$uid", ">=", 0)
 
@@ -57,8 +60,3 @@ fun getTemplatesQuery(uid: String): Query =
 
 fun getTrashedTemplatesQuery(uid: String): Query =
         templates.where("$FIRESTORE_OWNERS.$uid", "<", epoch)
-
-class Modules(
-        val firestore: Firestore,
-        val moment: dynamic
-)

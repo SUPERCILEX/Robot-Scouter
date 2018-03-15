@@ -5,37 +5,26 @@ import com.supercilex.robotscouter.server.functions.emptyTrash
 import com.supercilex.robotscouter.server.functions.logUserData
 import com.supercilex.robotscouter.server.functions.sanitizeDeletionRequest
 import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
-import com.supercilex.robotscouter.server.utils.LateinitVal
-import com.supercilex.robotscouter.server.utils.Modules
 import com.supercilex.robotscouter.server.utils.deletionQueue
-import com.supercilex.robotscouter.server.utils.types.DocumentBuilder
-import com.supercilex.robotscouter.server.utils.types.TopicBuilder
+import com.supercilex.robotscouter.server.utils.types.admin
+import com.supercilex.robotscouter.server.utils.types.functions
 
 external fun require(module: String): dynamic
 external val exports: dynamic
 
-var modules: Modules by LateinitVal()
-    private set
-
+@Suppress("unused") // Used by Cloud Functions
 fun main(args: Array<String>) {
-    val functions = require("firebase-functions")
-    val admin = require("firebase-admin")
     admin.initializeApp(functions.config().firebase)
-    val firestore = admin.firestore()
-    val moment = require("moment")
-    modules = Modules(firestore, moment)
 
-    exports.deleteUnusedData = functions.pubsub.topic("monthly-tick").unsafeCast<TopicBuilder>()
+    exports.deleteUnusedData = functions.pubsub.topic("monthly-tick")
             .onPublish { deleteUnusedData() }
-    exports.emptyTrash = functions.pubsub.topic("monthly-tick").unsafeCast<TopicBuilder>()
+    exports.emptyTrash = functions.pubsub.topic("monthly-tick")
             .onPublish { emptyTrash() }
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
-    exports.logUserData = functions.pubsub.topic("log-user-data").unsafeCast<TopicBuilder>()
+    exports.logUserData = functions.pubsub.topic("log-user-data")
             .onPublish { logUserData(it) }
     exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates")
-            .unsafeCast<TopicBuilder>()
             .onPublish { updateDefaultTemplates() }
     exports.sanitizeDeletionQueue = functions.firestore.document("${deletionQueue.id}/{uid}")
-            .unsafeCast<DocumentBuilder>()
             .onWrite { sanitizeDeletionRequest(it) }
 }

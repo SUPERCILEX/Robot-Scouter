@@ -1,4 +1,10 @@
-@file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS", "unused")
+@file:Suppress(
+        "INTERFACE_WITH_SUPERCLASS",
+        "OVERRIDING_FINAL_MEMBER",
+        "RETURN_TYPE_MISMATCH_ON_OVERRIDE",
+        "CONFLICTING_OVERLOADS",
+        "unused"
+)
 @file:[JsQualifier("FirebaseFirestore") JsModule("@google-cloud/firestore")]
 
 package com.supercilex.robotscouter.server.utils.types
@@ -6,36 +12,36 @@ package com.supercilex.robotscouter.server.utils.types
 import kotlin.js.Json
 import kotlin.js.Promise
 
-open external class Firestore(options: Any? = definedExternally /* null */) {
-    open fun collection(collectionPath: String): CollectionReference = definedExternally
-    open fun doc(documentPath: String): DocumentReference = definedExternally
-    open fun getAll(vararg documentRef: DocumentReference): Promise<Array<DocumentSnapshot>> = definedExternally
-    open fun <T> runTransaction(updateFunction: (transaction: Transaction) -> Promise<T>): Promise<T> = definedExternally
-    open fun batch(): WriteBatch = definedExternally
+external class Firestore(options: Any? = definedExternally) {
+    fun collection(collectionPath: String): CollectionReference = definedExternally
+    fun doc(documentPath: String): DocumentReference = definedExternally
+    fun getAll(vararg documentRef: DocumentReference): Promise<Array<DocumentSnapshot>> = definedExternally
+    fun <T> runTransaction(updateFunction: (transaction: Transaction) -> Promise<T>): Promise<T> = definedExternally
+    fun batch(): WriteBatch = definedExternally
 }
 
-open external class GeoPoint(latitude: Number, longitude: Number) {
-    open var latitude: Number = definedExternally
-    open var longitude: Number = definedExternally
+external class GeoPoint(latitude: Number, longitude: Number) {
+    val latitude: Number = definedExternally
+    val longitude: Number = definedExternally
 }
 
-open external class Transaction {
-    open fun get(documentRef: DocumentReference): Promise<DocumentSnapshot> = definedExternally
-    open fun get(query: Query): Promise<QuerySnapshot> = definedExternally
-    open fun create(documentRef: DocumentReference, data: Json): Transaction = definedExternally
-    open fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally /* null */): Transaction = definedExternally
-    open fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally /* null */): Transaction = definedExternally
-    open fun update(documentRef: DocumentReference, field: String, value: Any, vararg fieldsOrPrecondition: Any): Transaction = definedExternally
-    open fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally /* null */): Transaction = definedExternally
+external class Transaction {
+    fun get(documentRef: DocumentReference): Promise<DocumentSnapshot> = definedExternally
+    fun get(query: Query): Promise<QuerySnapshot> = definedExternally
+    fun create(documentRef: DocumentReference, data: Json): Transaction = definedExternally
+    fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally): Transaction = definedExternally
+    fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally): Transaction = definedExternally
+    fun update(documentRef: DocumentReference, field: String, value: Any, vararg fieldsOrPrecondition: Any): Transaction = definedExternally
+    fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally): Transaction = definedExternally
 }
 
-open external class WriteBatch {
-    open fun create(documentRef: DocumentReference, data: Json): WriteBatch = definedExternally
-    open fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally /* null */): WriteBatch = definedExternally
-    open fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally /* null */): WriteBatch = definedExternally
-    open fun update(documentRef: DocumentReference, field: String, value: Any, vararg fieldsOrPrecondition: Any): WriteBatch = definedExternally
-    open fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally /* null */): WriteBatch = definedExternally
-    open fun commit(): Promise<Array<WriteResult>> = definedExternally
+external class WriteBatch {
+    fun create(documentRef: DocumentReference, data: Json): WriteBatch = definedExternally
+    fun set(documentRef: DocumentReference, data: Json, options: SetOptions? = definedExternally): WriteBatch = definedExternally
+    fun update(documentRef: DocumentReference, data: Json, precondition: Precondition? = definedExternally): WriteBatch = definedExternally
+    fun update(documentRef: DocumentReference, field: String, value: Any, vararg fieldsOrPrecondition: Any): WriteBatch = definedExternally
+    fun delete(documentRef: DocumentReference, precondition: Precondition? = definedExternally): WriteBatch = definedExternally
+    fun commit(): Promise<Array<WriteResult>> = definedExternally
 }
 
 external interface Precondition {
@@ -46,85 +52,85 @@ external interface SetOptions {
     var merge: Boolean? get() = definedExternally; set(value) = definedExternally
 }
 
-open external class WriteResult {
-    open var writeTime: String = definedExternally
+external class WriteResult {
+    var writeTime: String = definedExternally
 }
 
-open external class DocumentReference {
-    open var id: String = definedExternally
-    open var firestore: Firestore = definedExternally
-    open var parent: CollectionReference = definedExternally
-    open var path: String = definedExternally
-    open fun collection(collectionPath: String): CollectionReference = definedExternally
-    open fun create(data: Json): Promise<WriteResult> = definedExternally
-    open fun set(data: Json, options: SetOptions? = definedExternally /* null */): Promise<WriteResult> = definedExternally
-    open fun update(data: Json, precondition: Precondition? = definedExternally /* null */): Promise<WriteResult> = definedExternally
-    open fun update(field: String, value: Any, vararg moreFieldsOrPrecondition: Any): Promise<WriteResult> = definedExternally
-    open fun delete(precondition: Precondition? = definedExternally /* null */): Promise<WriteResult> = definedExternally
-    open fun get(): Promise<DocumentSnapshot> = definedExternally
-    open fun onSnapshot(onNext: (snapshot: DocumentSnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally /* null */): () -> Unit = definedExternally
+external class DocumentReference {
+    var id: String = definedExternally
+    var firestore: Firestore = definedExternally
+    var parent: CollectionReference = definedExternally
+    var path: String = definedExternally
+    fun collection(collectionPath: String): CollectionReference = definedExternally
+    fun create(data: Json): Promise<WriteResult> = definedExternally
+    fun set(data: Json, options: SetOptions? = definedExternally): Promise<WriteResult> = definedExternally
+    fun update(data: Json, precondition: Precondition? = definedExternally): Promise<WriteResult> = definedExternally
+    fun update(field: String, value: Any, vararg moreFieldsOrPrecondition: Any): Promise<WriteResult> = definedExternally
+    fun delete(precondition: Precondition? = definedExternally): Promise<WriteResult> = definedExternally
+    fun get(): Promise<DocumentSnapshot> = definedExternally
+    fun onSnapshot(onNext: (snapshot: DocumentSnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally): () -> Unit = definedExternally
 }
 
-open external class DocumentSnapshot {
-    open var exists: Boolean = definedExternally
-    open var ref: DocumentReference = definedExternally
-    open var id: String = definedExternally
-    open var createTime: String = definedExternally
-    open var updateTime: String = definedExternally
-    open var readTime: String = definedExternally
-    open fun data(): Json = definedExternally
-    open fun get(fieldPath: String): Any = definedExternally
+external class DocumentSnapshot {
+    var exists: Boolean = definedExternally
+    var ref: DocumentReference = definedExternally
+    var id: String = definedExternally
+    var createTime: String = definedExternally
+    var updateTime: String = definedExternally
+    var readTime: String = definedExternally
+    fun data(): Json = definedExternally
+    fun get(fieldPath: String): Any = definedExternally
 }
 
 open external class Query {
-    open var firestore: Firestore = definedExternally
-    open fun where(fieldPath: String, opStr: String /* "<" */, value: Any?): Query = definedExternally
-    open fun orderBy(fieldPath: String, directionStr: Any? /* "desc" */ = definedExternally /* null */): Query = definedExternally
-    open fun limit(limit: Number): Query = definedExternally
-    open fun offset(offset: Number): Query = definedExternally
-    open fun select(vararg field: dynamic /* String | com.supercilex.robotscouter.server.utils.types.FieldPath */): Query = definedExternally
-    open fun startAt(vararg fieldValues: Any): Query = definedExternally
-    open fun startAfter(vararg fieldValues: Any): Query = definedExternally
-    open fun endBefore(vararg fieldValues: Any): Query = definedExternally
-    open fun endAt(vararg fieldValues: Any): Query = definedExternally
-    open fun get(): Promise<QuerySnapshot> = definedExternally
-    open fun onSnapshot(onNext: (snapshot: QuerySnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally /* null */): () -> Unit = definedExternally
+    var firestore: Firestore = definedExternally
+    fun where(fieldPath: String, opStr: String, value: Any?): Query = definedExternally
+    fun orderBy(fieldPath: String, directionStr: Any? = definedExternally): Query = definedExternally
+    fun limit(limit: Number): Query = definedExternally
+    fun offset(offset: Number): Query = definedExternally
+    fun select(vararg field: dynamic): Query = definedExternally
+    fun startAt(vararg fieldValues: Any): Query = definedExternally
+    fun startAfter(vararg fieldValues: Any): Query = definedExternally
+    fun endBefore(vararg fieldValues: Any): Query = definedExternally
+    fun endAt(vararg fieldValues: Any): Query = definedExternally
+    fun get(): Promise<QuerySnapshot> = definedExternally
+    fun onSnapshot(onNext: (snapshot: QuerySnapshot) -> Unit, onError: ((error: Error) -> Unit)? = definedExternally): () -> Unit = definedExternally
 }
 
-open external class QuerySnapshot {
-    open var query: Query = definedExternally
-    open var docChanges: Array<DocumentChange> = definedExternally
-    open var docs: Array<DocumentSnapshot> = definedExternally
-    open var size: Number = definedExternally
-    open var empty: Boolean = definedExternally
-    open var readTime: String = definedExternally
-    open fun forEach(callback: (result: DocumentSnapshot) -> Unit, thisArg: Any? = definedExternally /* null */): Unit = definedExternally
+external class QuerySnapshot {
+    var query: Query = definedExternally
+    var docChanges: Array<DocumentChange> = definedExternally
+    var docs: Array<DocumentSnapshot> = definedExternally
+    var size: Number = definedExternally
+    var empty: Boolean = definedExternally
+    var readTime: String = definedExternally
+    fun forEach(callback: (result: DocumentSnapshot) -> Unit, thisArg: Any? = definedExternally): Unit = definedExternally
 }
 
 external interface DocumentChange {
-    var type: dynamic /* Any /* "added" */ | Any /* "removed" */ | Any /* "modified" */ */
+    var type: dynamic
     var doc: DocumentSnapshot
     var oldIndex: Number
     var newIndex: Number
 }
 
-open external class CollectionReference : Query {
-    open var id: String = definedExternally
-    open var parent: DocumentReference? = definedExternally
-    open var path: String = definedExternally
-    open fun doc(documentPath: String? = definedExternally /* null */): DocumentReference = definedExternally
-    open fun add(data: Json): Promise<DocumentReference> = definedExternally
+external class CollectionReference : Query {
+    var id: String = definedExternally
+    var parent: DocumentReference? = definedExternally
+    var path: String = definedExternally
+    fun doc(documentPath: String? = definedExternally): DocumentReference = definedExternally
+    fun add(data: Json): Promise<DocumentReference> = definedExternally
 }
 
-open external class DatabaseBuilder {
-    open var resource: Any = definedExternally
-    open fun namespace(namespace: String): NamespaceBuilder = definedExternally
-    open fun document(path: String): DocumentBuilder = definedExternally
+external class DatabaseBuilder {
+    var resource: Any = definedExternally
+    fun namespace(namespace: String): NamespaceBuilder = definedExternally
+    fun document(path: String): DocumentBuilder = definedExternally
 }
 
-open external class NamespaceBuilder {
-    open var resource: Any = definedExternally
-    open fun document(path: String): DocumentBuilder = definedExternally
+external class NamespaceBuilder {
+    var resource: Any = definedExternally
+    fun document(path: String): DocumentBuilder = definedExternally
 }
 
 external interface DeltaDocumentSnapshot {
@@ -139,11 +145,11 @@ external interface DeltaDocumentSnapshot {
     fun data(): Json
 }
 
-open external class DocumentBuilder {
-    open var resource: Any = definedExternally
-    open fun onWrite(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
-    open fun onCreate(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
-    open fun onUpdate(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
-    open fun onDelete(handler: (event: Event<DeltaDocumentSnapshot>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
-    open fun onOperation(handler: Any, eventType: Any): Unit = definedExternally
+external class DocumentBuilder {
+    var resource: Any = definedExternally
+    fun onWrite(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>): dynamic = definedExternally
+    fun onCreate(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>): dynamic = definedExternally
+    fun onUpdate(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>): dynamic = definedExternally
+    fun onDelete(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>): dynamic = definedExternally
+    fun onOperation(handler: Any, eventType: Any): Unit = definedExternally
 }

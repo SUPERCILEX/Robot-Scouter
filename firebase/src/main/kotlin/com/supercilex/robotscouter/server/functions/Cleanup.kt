@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.server.functions
 
-import com.supercilex.robotscouter.server.modules
 import com.supercilex.robotscouter.server.utils.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.server.utils.FIRESTORE_BASE_TIMESTAMP
 import com.supercilex.robotscouter.server.utils.FIRESTORE_CONTENT_ID
@@ -22,8 +21,11 @@ import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
+import com.supercilex.robotscouter.server.utils.epoch
+import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
+import com.supercilex.robotscouter.server.utils.moment
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
@@ -51,12 +53,12 @@ fun deleteUnusedData(): Promise<*> {
             deleteUnusedData(users.where(
                     FIRESTORE_LAST_LOGIN,
                     "<",
-                    modules.moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
+                    moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
             )),
             deleteUnusedData(users.where(
                     FIRESTORE_LAST_LOGIN,
                     "<",
-                    modules.moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate()
+                    moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate()
             ).where(
                     FIRESTORE_EMAIL, "==", null
             ).where(
@@ -70,7 +72,7 @@ fun emptyTrash(): Promise<*> {
     return deletionQueue.where(
             FIRESTORE_BASE_TIMESTAMP,
             "<",
-            modules.moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate()
+            moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate()
     ).process { processDeletion(this) }
 }
 
@@ -86,7 +88,7 @@ fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<Any?> 
         console.log("Updating oldest deletion time to $recalculatedOldestDeletionRequest.")
         snapshot.ref.update(
                 FIRESTORE_BASE_TIMESTAMP,
-                recalculatedOldestDeletionRequest ?: Date(0)
+                recalculatedOldestDeletionRequest ?: epoch
         )
     } else {
         Promise.resolve<Unit?>(null)
@@ -162,7 +164,7 @@ private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
 
     return Promise.all(requests.toMap<Json>().map { (key, data) ->
         val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
-        if ((modules.moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
+        if ((moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
             return@map Promise.resolve<String?>(null)
         }
 
@@ -177,7 +179,7 @@ private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
         if (it.none { it == null }) {
             request.ref.delete()
         } else {
-            modules.firestore.batch {
+            firestore.batch {
                 for (field in it.filterNotNull()) {
                     update(request.ref, field, FieldValue.delete())
                 }

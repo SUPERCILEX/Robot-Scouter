@@ -1,15 +1,24 @@
-@file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
+@file:Suppress(
+        "INTERFACE_WITH_SUPERCLASS",
+        "OVERRIDING_FINAL_MEMBER",
+        "RETURN_TYPE_MISMATCH_ON_OVERRIDE",
+        "CONFLICTING_OVERLOADS"
+)
 
 package com.supercilex.robotscouter.server.utils.types
 
 import kotlin.js.Json
+import kotlin.js.Promise
 
-open external class TopicBuilder {
-    open var resource: Any = definedExternally
-    open fun onPublish(handler: (event: Event<Message>) -> dynamic /* PromiseLike<Any> | Any */): dynamic = definedExternally
+external class Pubsub {
+    fun topic(topic: String): TopicBuilder = definedExternally
 }
 
-open external class Message(data: Any) {
-    open var data: String = definedExternally
-    open var json: Json = definedExternally
+external class TopicBuilder {
+    fun onPublish(handler: (event: Event<Message>) -> Promise<*>): dynamic = definedExternally
+}
+
+external class Message(data: Any) {
+    val data: String = definedExternally
+    val json: Json = definedExternally
 }
