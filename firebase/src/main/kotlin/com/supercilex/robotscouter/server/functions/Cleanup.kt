@@ -21,7 +21,6 @@ import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
-import com.supercilex.robotscouter.server.utils.epoch
 import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
@@ -78,18 +77,16 @@ fun emptyTrash(): Promise<*> {
 
 fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<Any?> {
     val snapshot = event.data
-    if (!snapshot.exists) return Promise.resolve<Unit?>(null)
-
     console.log("Sanitizing deletion request for user id ${snapshot.id}.")
 
+    if (!snapshot.exists) return Promise.resolve<Unit?>(null)
+    val recalculatedOldestDeletionRequest =
+            snapshot.data().findOldestDeletionTime() ?: return snapshot.ref.delete()
+
     val oldestDeletionRequest = snapshot.get(FIRESTORE_BASE_TIMESTAMP) as Date? ?: Date(-1)
-    val recalculatedOldestDeletionRequest = snapshot.data().findOldestDeletionTime()
-    return if (oldestDeletionRequest.getTime() != recalculatedOldestDeletionRequest?.getTime()) {
+    return if (oldestDeletionRequest.getTime() != recalculatedOldestDeletionRequest.getTime()) {
         console.log("Updating oldest deletion time to $recalculatedOldestDeletionRequest.")
-        snapshot.ref.update(
-                FIRESTORE_BASE_TIMESTAMP,
-                recalculatedOldestDeletionRequest ?: epoch
-        )
+        snapshot.ref.update(FIRESTORE_BASE_TIMESTAMP, recalculatedOldestDeletionRequest)
     } else {
         Promise.resolve<Unit?>(null)
     }
