@@ -29,8 +29,8 @@ fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
 
 fun CollectionReference.delete(
         batchSize: Int = 100,
-        middleMan: (DocumentSnapshot) -> Promise<*> = { Promise.resolve(Unit) }
-): Promise<Unit> = deleteQueryBatch(
+        middleMan: (DocumentSnapshot) -> Promise<*>? = { null }
+) = deleteQueryBatch(
         firestore,
         orderBy(FieldPath.documentId()).limit(batchSize),
         batchSize,
@@ -41,13 +41,15 @@ private fun deleteQueryBatch(
         db: Firestore,
         query: Query,
         batchSize: Int,
-        middleMan: (DocumentSnapshot) -> Promise<*>
+        middleMan: (DocumentSnapshot) -> Promise<*>?
 ): Promise<Unit> = query.get().then { snapshot ->
     if (snapshot.size == 0) {
         return@then Promise.resolve(0)
     }
 
-    Promise.all(snapshot.docs.map(middleMan).toTypedArray()).then {
+    Promise.all(snapshot.docs.map(middleMan).map {
+        it ?: Promise.resolve(Unit)
+    }.toTypedArray()).then {
         db.batch {
             snapshot.docs.forEach { delete(it.ref) }
         }

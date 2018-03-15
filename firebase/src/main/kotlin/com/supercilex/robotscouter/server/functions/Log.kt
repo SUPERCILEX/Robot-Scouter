@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.server.utils.types.Message
 import com.supercilex.robotscouter.server.utils.types.QuerySnapshot
 import kotlin.js.Promise
 
-fun logUserData(event: Event<Message>): Promise<*> {
+fun logUserData(event: Event<Message>): Promise<*>? {
     val uid = event.data.json["uid"] as String
 
     console.log("Logging user data for id: $uid")

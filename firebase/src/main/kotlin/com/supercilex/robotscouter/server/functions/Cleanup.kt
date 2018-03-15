@@ -45,7 +45,7 @@ private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
 private const val TRASH_TIMEOUT_DAYS = 30
 
-fun deleteUnusedData(): Promise<*> {
+fun deleteUnusedData(): Promise<*>? {
     console.log("Looking for users that haven't opened Robot Scouter for over a year" +
                         " or anonymous users that haven't opened Robot Scouter in over 60 days.")
     return Promise.all(arrayOf(
@@ -66,7 +66,7 @@ fun deleteUnusedData(): Promise<*> {
     ))
 }
 
-fun emptyTrash(): Promise<*> {
+fun emptyTrash(): Promise<*>? {
     console.log("Emptying trash for all users.")
     return deletionQueue.where(
             FIRESTORE_BASE_TIMESTAMP,
@@ -75,11 +75,11 @@ fun emptyTrash(): Promise<*> {
     ).process { processDeletion(this) }
 }
 
-fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<Any?> {
+fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<*>? {
     val snapshot = event.data
     console.log("Sanitizing deletion request for user id ${snapshot.id}.")
 
-    if (!snapshot.exists) return Promise.resolve<Unit?>(null)
+    if (!snapshot.exists) return null
     val recalculatedOldestDeletionRequest =
             snapshot.data().findOldestDeletionTime() ?: return snapshot.ref.delete()
 
@@ -88,11 +88,11 @@ fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<Any?> 
         console.log("Updating oldest deletion time to $recalculatedOldestDeletionRequest.")
         snapshot.ref.update(FIRESTORE_BASE_TIMESTAMP, recalculatedOldestDeletionRequest)
     } else {
-        Promise.resolve<Unit?>(null)
+        null
     }
 }
 
-private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.process {
+private fun deleteUnusedData(userQuery: Query) = userQuery.process {
     console.log("Deleting all data for user:\n${JSON.stringify(data())}")
 
     val userId = id
@@ -108,7 +108,7 @@ private fun deleteUnusedData(userQuery: Query): Promise<Unit> = userQuery.proces
     }
 }
 
-private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
+private fun processDeletion(request: DocumentSnapshot): Promise<*> {
     val userId = request.id
 
     fun deleteTeam(id: String) = teams.doc(id).get().then {
@@ -127,8 +127,8 @@ private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
         if (it.exists) it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
     }
 
-    fun deleteShareToken(data: Json, token: String): Promise<Unit> {
-        fun CollectionReference.delete(): Promise<Unit> {
+    fun deleteShareToken(data: Json, token: String): Promise<*> {
+        fun CollectionReference.delete(): Promise<*> {
             @Suppress("UNCHECKED_CAST") // We know its type
             val ids = data[FIRESTORE_CONTENT_ID] as Array<String>
             return Promise.all(ids.map {
@@ -185,14 +185,14 @@ private fun processDeletion(request: DocumentSnapshot): Promise<Unit> {
     }.then { Unit }
 }
 
-private fun deleteUser(user: DocumentSnapshot): Promise<Unit> {
+private fun deleteUser(user: DocumentSnapshot): Promise<*> {
     console.log("Deleting user: ${user.id}")
     return user.userPrefs.delete().then {
         user.ref.delete()
     }.then { Unit }
 }
 
-private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
+private fun deleteTeam(team: DocumentSnapshot): Promise<*> {
     console.log("Deleting team: ${team.toTeamString()}")
     return team.ref.collection(FIRESTORE_SCOUTS).delete {
         it.ref.collection(FIRESTORE_METRICS).delete()
@@ -201,14 +201,14 @@ private fun deleteTeam(team: DocumentSnapshot): Promise<Unit> {
     }.then { Unit }
 }
 
-private fun deleteTemplate(template: DocumentSnapshot): Promise<Unit> {
+private fun deleteTemplate(template: DocumentSnapshot): Promise<*> {
     console.log("Deleting template: ${template.toTemplateString()}")
     return template.ref.collection(FIRESTORE_METRICS).delete().then {
         template.ref.delete()
     }.then { Unit }
 }
 
-private fun Query.process(block: DocumentSnapshot.() -> Promise<*>): Promise<Unit> = get().then {
+private fun Query.process(block: DocumentSnapshot.() -> Promise<*>) = get().then {
     Promise.all(it.docs.map(block).toTypedArray())
 }.then { Unit }
 
