@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.BuildConfig
+import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.Scout
@@ -62,6 +63,7 @@ import com.supercilex.robotscouter.util.ui.isMain
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
+import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.lang.reflect.Field
 import java.util.Date
@@ -269,17 +271,20 @@ suspend fun Query.getInBatches(batchSize: Long = 100): List<DocumentSnapshot> {
 }
 
 suspend fun <T> ObservableSnapshotArray<T>.waitForChange(): List<T> = suspendCoroutine {
-    addChangeEventListener(object : ChangeEventListenerBase {
-        override fun onDataChanged() {
-            it.resume(toList())
-            removeChangeEventListener(this)
-        }
+    // Ensure we're on the same thread that receives db callbacks to prevent CMEs
+    RobotScouter.runOnUiThread {
+        addChangeEventListener(object : ChangeEventListenerBase {
+            override fun onDataChanged() {
+                it.resume(toList())
+                removeChangeEventListener(this)
+            }
 
-        override fun onError(e: FirebaseFirestoreException) {
-            it.resumeWithException(e)
-            removeChangeEventListener(this)
-        }
-    })
+            override fun onError(e: FirebaseFirestoreException) {
+                it.resumeWithException(e)
+                removeChangeEventListener(this)
+            }
+        })
+    }
 }
 
 fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArray<T>> {
