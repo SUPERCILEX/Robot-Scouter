@@ -12,6 +12,7 @@ import android.view.ContextThemeWrapper
 import android.widget.TextView
 import androidx.content.withStyledAttributes
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.LateinitVal
 import org.xmlpull.v1.XmlPullParser
 
@@ -56,35 +57,43 @@ fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
 
 fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
     val parser = resources.getXml(resId)
-    var type = parser.next()
-    while (type != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
-        type = parser.next()
-    }
-
-    if (type != XmlPullParser.START_TAG || parser.name != SELECTOR_ATTR_NAME) {
-        return AppCompatResources.getDrawable(this, resId)
-    }
-
-    val states = StateListDrawable()
-
-    type = parser.next()
-    while (type != XmlPullParser.END_DOCUMENT) {
-        if (type == XmlPullParser.START_TAG && parser.name == ITEM_ATTR_NAME) {
-            var stateType = 0
-            var drawableId: Int by LateinitVal()
-            for (i in 0 until parser.attributeCount) {
-                if (parser.getAttributeName(i).startsWith(STATE_ATTR_NAME)) {
-                    stateType = parser.getAttributeNameResource(i)
-                } else if (parser.getAttributeName(i) == DRAWABLE_ATTR_NAME) {
-                    drawableId = parser.getAttributeResourceValue(i, -1)
-                }
-            }
-            states.addState(intArrayOf(stateType), AppCompatResources.getDrawable(this, drawableId))
+    try {
+        var type = parser.next()
+        while (type != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+            type = parser.next()
         }
-        type = parser.next()
-    }
 
-    return states
+        if (type != XmlPullParser.START_TAG || parser.name != SELECTOR_ATTR_NAME) {
+            return AppCompatResources.getDrawable(this, resId)
+        }
+
+        val states = StateListDrawable()
+
+        type = parser.next()
+        while (type != XmlPullParser.END_DOCUMENT) {
+            if (type == XmlPullParser.START_TAG && parser.name == ITEM_ATTR_NAME) {
+                var stateType = 0
+                var drawableId: Int by LateinitVal()
+                for (i in 0 until parser.attributeCount) {
+                    if (parser.getAttributeName(i).startsWith(STATE_ATTR_NAME)) {
+                        stateType = parser.getAttributeNameResource(i)
+                    } else if (parser.getAttributeName(i) == DRAWABLE_ATTR_NAME) {
+                        drawableId = parser.getAttributeResourceValue(i, -1)
+                    }
+                }
+                states.addState(
+                        intArrayOf(stateType), AppCompatResources.getDrawable(this, drawableId))
+            }
+            type = parser.next()
+        }
+
+        return states
+    } catch (e: Exception) {
+        CrashLogger.onFailure(e)
+        return null
+    } finally {
+        parser.close()
+    }
 }
 
 fun TypedArray.getIconThemedContext(context: Context) = ContextThemeWrapper(

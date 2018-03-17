@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
 import kotterknife.bindView
 import org.jetbrains.anko.find
+import java.lang.ref.WeakReference
 import java.util.Locale
 
 class TeamViewHolder(
@@ -87,10 +88,7 @@ class TeamViewHolder(
         }
 
     init {
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) =
-                    updateProgressVisibility()
-        })
+        recyclerView.addOnScrollListener(ScrollListener(this))
 
         mediaImageView.setOnClickListener(this)
         mediaImageView.setOnLongClickListenerCompat(this)
@@ -171,6 +169,14 @@ class TeamViewHolder(
     }
 
     override fun toString() = team.toString()
+
+    private class ScrollListener(holder: TeamViewHolder) : RecyclerView.OnScrollListener() {
+        private val ref = WeakReference(holder)
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            ref.get()?.updateProgressVisibility()
+        }
+    }
 
     companion object {
         @SuppressLint("CheckResult") // Used in prefetch and standard load
