@@ -15,7 +15,7 @@ buildscript {
         firebaseUiVersion = 'd8d78eb203'
         poiVersion = '3.17'
         leakCanaryVersion = '1.5.4'
-        retrofitVersion = '2.3.0'
+        retrofitVersion = '2.4.0'
         glideVersion = '4.6.1'
     }
 

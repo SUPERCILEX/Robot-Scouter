@@ -96,6 +96,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
         showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
         val ref = asLifecycleReference()
         async(UI) {
+            authHelper // Force initialization on the main thread
             try {
                 async { authHelper.init() }.await()
             } catch (e: Exception) {
