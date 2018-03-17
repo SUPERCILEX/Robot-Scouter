@@ -14,7 +14,7 @@ tasks.whenTaskAdded { task ->
 apply from: '../quality/quality.gradle'
 
 android {
-    compileSdkVersion 'android-P'
+    compileSdkVersion 27
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
