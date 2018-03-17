@@ -8,6 +8,7 @@ import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.getPrefOrDefault
 import com.supercilex.robotscouter.util.data.prefs
 import com.supercilex.robotscouter.util.data.teams
+import com.supercilex.robotscouter.util.isSignedIn
 
 class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase {
     val hasShownAddTeamTutorial = UniqueMutableLiveData<Boolean?>()
@@ -28,6 +29,8 @@ class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase {
     }
 
     override fun onDataChanged() {
+        if (!isSignedIn) return
+
         teams.apply {
             removeChangeEventListener(signInPrefUpdater)
             addChangeEventListener(signInPrefUpdater)

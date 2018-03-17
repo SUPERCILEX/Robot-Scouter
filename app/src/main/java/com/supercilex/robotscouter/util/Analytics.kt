@@ -43,7 +43,7 @@ private val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance
 
 private val updateLastLogin = object : Runnable {
     override fun run() {
-        if (uid != null) {
+        if (isSignedIn) {
             val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
             userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
         }
