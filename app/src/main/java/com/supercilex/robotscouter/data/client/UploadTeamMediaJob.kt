@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.updateMedia
 import com.supercilex.robotscouter.util.data.startInternetJob14
 import com.supercilex.robotscouter.util.data.startInternetJob21
+import java.io.File
 
 fun Team.startUploadMediaJob() {
     val mediaHash: Int = media!!.hashCode()
@@ -16,6 +17,9 @@ fun Team.startUploadMediaJob() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         startInternetJob21(mediaHash, UploadTeamMediaJob21::class.java) {
             setPersisted(true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                setEstimatedNetworkBytes(File(media).length())
+            }
         }
     } else {
         startInternetJob14(mediaHash, UploadTeamMediaJob14::class.java) {

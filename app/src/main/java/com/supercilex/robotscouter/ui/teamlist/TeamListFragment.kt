@@ -142,7 +142,7 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     ) = permHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-        permHandler.onActivityResult(requestCode, resultCode, data)
+            permHandler.onActivityResult(requestCode, resultCode, data)
 
     companion object {
         const val TAG = "TeamListFragment"
