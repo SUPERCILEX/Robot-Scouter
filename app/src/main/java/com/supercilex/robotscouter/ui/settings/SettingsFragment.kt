@@ -182,9 +182,9 @@ class SettingsFragment : PreferenceFragmentBase(),
                 logLoginEvent()
                 requireActivity().finish()
             } else {
-                val response: IdpResponse = IdpResponse.fromResultIntent(data) ?: return
+                val response = IdpResponse.fromResultIntent(data) ?: return
 
-                if (response.errorCode == ErrorCodes.NO_NETWORK) {
+                if (response.error?.errorCode == ErrorCodes.NO_NETWORK) {
                     toast(R.string.no_connection)
                     return
                 }
