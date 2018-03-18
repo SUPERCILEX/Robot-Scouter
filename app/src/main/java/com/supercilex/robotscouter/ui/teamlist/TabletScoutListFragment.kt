@@ -12,12 +12,13 @@ import com.supercilex.robotscouter.ui.scouting.scoutlist.ScoutListFragmentBase
 import com.supercilex.robotscouter.util.ui.TeamSelectionListener
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.isInTabletMode
+import kotlinx.android.synthetic.main.fragment_scout_list.*
 import org.jetbrains.anko.findOptional
 
 class TabletScoutListFragment : ScoutListFragmentBase() {
     private var noContentHint: View? = null
         get() {
-            if (field == null) field = requireActivity().findOptional(R.id.no_team_selected_hint)
+            if (field == null) field = requireActivity().findOptional(R.id.noTeamSelectedHint)
             return field
         }
 
@@ -31,7 +32,7 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
     }
 
     override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
-            this, savedInstanceState, view!!, dataHolder.teamListener, onScoutingReadyTask.task) {
+            this, savedInstanceState, dataHolder.teamListener, onScoutingReadyTask.task) {
         init {
             toolbar.setOnMenuItemClickListener {
                 // We need to be able to guarantee that our `onOptionsItemSelected`s are called

@@ -21,9 +21,8 @@ import com.supercilex.robotscouter.util.data.model.trashScout
 import com.supercilex.robotscouter.util.data.model.untrashScout
 import com.supercilex.robotscouter.util.data.toBundle
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
-import com.supercilex.robotscouter.util.ui.views.ContentLoadingHint
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.fragment_scout_metric_list.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
@@ -33,15 +32,12 @@ class ScoutFragment : MetricListFragment() {
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
     override val dataId get() = scoutId
 
-    val toolbar: Toolbar by unsafeLazy {
-        parentFragment!!.find<Toolbar>(R.id.toolbar)
-    }
-    private val noContentHint: ContentLoadingHint by bindView(R.id.no_content_hint)
+    val toolbar by unsafeLazy { parentFragment!!.find<Toolbar>(R.id.toolbar) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         holder.metrics.asLiveData().observe(this, Observer {
-            if (it!!.isNotEmpty()) noContentHint.hide()
+            if (it!!.isNotEmpty()) emptyScoutHint.hide()
         })
     }
 
@@ -53,15 +49,15 @@ class ScoutFragment : MetricListFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
-        noContentHint.show()
+        metricsView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
+        emptyScoutHint.show()
     }
 
     override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = ScoutAdapter(
             holder.metrics,
             this,
             childFragmentManager,
-            recyclerView,
+            metricsView,
             savedInstanceState
     )
 

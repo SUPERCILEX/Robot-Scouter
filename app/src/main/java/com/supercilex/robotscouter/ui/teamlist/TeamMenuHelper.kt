@@ -46,7 +46,7 @@ class TeamMenuHelper(
     lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
 
     private val fab by unsafeLazy { activity.find<FloatingActionButton>(R.id.fab) }
-    private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(R.id.drawer_layout) }
+    private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(R.id.drawerLayout) }
     private val toolbar by unsafeLazy {
         activity.find<Toolbar>(R.id.toolbar).apply {
             setNavigationOnClickListener(this@TeamMenuHelper)

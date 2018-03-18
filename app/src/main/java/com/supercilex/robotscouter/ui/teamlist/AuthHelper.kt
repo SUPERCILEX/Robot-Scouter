@@ -18,13 +18,13 @@ import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.ui.OnActivityResult
-import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.find
 import com.supercilex.robotscouter.util.signIn as startSignInIntent
 
 class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
         DefaultLifecycleObserver, FirebaseAuth.AuthStateListener, OnActivityResult {
-    private val rootView: View by activity.bindView(R.id.root)
+    private val rootView: View = activity.find(R.id.root)
 
     private var signInMenuItem: MenuItem? = null
 

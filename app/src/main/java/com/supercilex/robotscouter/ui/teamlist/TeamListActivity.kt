@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.KeyEvent
 import android.view.Menu
@@ -38,12 +37,13 @@ import com.supercilex.robotscouter.util.ui.isInTabletMode
 import com.supercilex.robotscouter.util.ui.showAddTeamTutorial
 import com.supercilex.robotscouter.util.ui.showSignInTutorial
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.android.synthetic.main.activity_team_list.*
+import kotlinx.android.synthetic.main.fragment_team_list.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotterknife.bindView
-import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
+@Suppress("PLUGIN_WARNING") // We do crazy layout merges that outsmart Kotlin
 class TeamListActivity : ActivityBase(), View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener, TeamSelectionListener {
     override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
@@ -74,25 +74,24 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
         ActionBarDrawerToggle(
                 this,
                 drawerLayout,
-                find(R.id.toolbar),
+                toolbar,
                 R.string.team_navigation_drawer_open_desc,
                 R.string.team_navigation_drawer_close_desc
         )
     }
-    private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_list)
-        setSupportActionBar(find(R.id.toolbar))
+        setSupportActionBar(toolbar)
 
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        find<NavigationView>(R.id.drawer).setNavigationItemSelectedListener(this)
+        drawer.setNavigationItemSelectedListener(this)
 
-        find<View>(R.id.fab).setOnClickListener(this)
+        fab.setOnClickListener(this)
         showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
         val ref = asLifecycleReference()
         async(UI) {
@@ -181,7 +180,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
 
         if (isInTabletMode()) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.scout_list,
+                    .replace(R.id.scoutList,
                              TabletScoutListFragment.newInstance(args),
                              TabletScoutListFragment.TAG)
                     .commit()

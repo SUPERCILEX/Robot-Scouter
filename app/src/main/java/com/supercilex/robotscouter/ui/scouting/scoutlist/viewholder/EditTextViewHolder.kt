@@ -3,22 +3,17 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 import android.annotation.SuppressLint
 import android.os.Build
 import android.support.annotation.RequiresApi
-import android.support.design.widget.TextInputLayout
 import android.view.View
-import android.widget.TextView
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.scout_notes.*
 import java.util.Locale
 
 class EditTextViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.Text, String?, TextView>(itemView),
+) : MetricViewHolderBase<Metric.Text, String?>(itemView),
         View.OnFocusChangeListener {
-    private val textLayout: TextInputLayout by bindView(R.id.text_layout)
-
     init {
         name.onFocusChangeListener = this
     }

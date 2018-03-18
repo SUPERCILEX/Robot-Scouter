@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.text.method.LinkMovementMethod
 import android.view.View
-import android.widget.CheckBox
 import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.shouldAskToUploadMediaToTba
@@ -15,16 +14,19 @@ import com.supercilex.robotscouter.util.data.shouldUploadMediaToTba
 import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
 import com.supercilex.robotscouter.util.ui.create
-import kotterknife.bindView
+import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.android.synthetic.main.dialog_should_upload_media.*
 import org.jetbrains.anko.find
 
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val saveResponseCheckbox: CheckBox by bindView(R.id.save_response)
+    override val containerView: View by unsafeLazy {
+        View.inflate(context, R.layout.dialog_should_upload_media, null)
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.media_should_upload_title)
             .setMessage(R.string.media_should_upload_rationale)
-            .setView(View.inflate(context, R.layout.dialog_should_upload_media, null))
+            .setView(containerView)
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
             .create {
@@ -35,7 +37,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
     override fun onClick(dialog: DialogInterface, which: Int) {
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
-        if (saveResponseCheckbox.isChecked) shouldUploadMediaToTba = isYes
+        if (save.isChecked) shouldUploadMediaToTba = isYes
         (parentFragment as CaptureTeamMediaListener).startCapture(isYes)
     }
 

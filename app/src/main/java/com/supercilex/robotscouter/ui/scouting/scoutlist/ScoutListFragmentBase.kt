@@ -4,8 +4,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
@@ -42,6 +40,7 @@ import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.android.synthetic.main.fragment_scout_list.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
@@ -195,13 +194,11 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
     override fun onTemplateSelected(id: String) = addScout(id)
 
     private fun initScoutList() {
-        val tabLayout = find<TabLayout>(R.id.tabs)
-        val viewPager = find<ViewPager>(R.id.viewpager)
-        pagerAdapter = ScoutPagerAdapter(this, tabLayout, team)
+        pagerAdapter = ScoutPagerAdapter(this, team)
         pagerAdapter!!.currentTabId = scoutId
 
         viewPager.adapter = pagerAdapter
-        tabLayout.setupWithViewPager(viewPager)
+        tabs.setupWithViewPager(viewPager)
 
         arguments!!.let {
             if (it.getBoolean(KEY_ADD_SCOUT, false)) {

@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.app.Dialog
-import android.arch.lifecycle.HolderFragment
+import android.arch.lifecycle.HolderFragment.holderFragmentFor
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -34,7 +34,11 @@ fun DialogFragment.show(
 }
 
 abstract class DialogFragmentBase : DialogFragment() {
-    override fun getViewModelStore() = HolderFragment.holderFragmentFor(this).viewModelStore
+    protected open val containerView: View? = null
+
+    override fun getViewModelStore() = holderFragmentFor(this).viewModelStore
+
+    override fun getView() = containerView
 
     override fun onResume() {
         super.onResume()
@@ -50,7 +54,9 @@ abstract class DialogFragmentBase : DialogFragment() {
 
 abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
         DialogInterface.OnShowListener {
-    override fun getViewModelStore() = HolderFragment.holderFragmentFor(this).viewModelStore
+    protected abstract val containerView: View
+
+    override fun getViewModelStore() = holderFragmentFor(this).viewModelStore
 
     override fun onCreateDialog(
             savedInstanceState: Bundle?
@@ -83,6 +89,8 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
             this@BottomSheetDialogFragmentBase.onShow(dialog)
         }
     }
+
+    override fun getView() = containerView
 
     open fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) = Unit
 
@@ -140,9 +148,9 @@ abstract class KeyboardDialogBase : ManualDismissDialog() {
         dialog.window.setKeyboardModeVisible()
     }
 
-    protected fun createDialog(rootView: View, @StringRes title: Int, savedInstanceState: Bundle?) =
+    protected fun createDialog(@StringRes title: Int, savedInstanceState: Bundle?) =
             AlertDialog.Builder(requireContext())
-                    .setView(rootView)
+                    .setView(view)
                     .setTitle(title)
                     .setPositiveButton(android.R.string.ok, null)
                     .setNegativeButton(android.R.string.cancel, null)

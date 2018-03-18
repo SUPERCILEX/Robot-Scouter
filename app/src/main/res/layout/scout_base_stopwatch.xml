@@ -32,7 +32,7 @@
         app:constraint_referenced_ids="name, stopwatch" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/cycles"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clipToPadding="false"

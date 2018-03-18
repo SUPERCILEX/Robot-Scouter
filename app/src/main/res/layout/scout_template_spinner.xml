@@ -16,12 +16,12 @@
         android:hint="@string/metric_spinner_name_hint"
         android:inputType="textMultiLine|textCapSentences"
         app:layout_constraintStart_toEndOf="@id/reorder"
-        app:layout_constraintEnd_toStartOf="@id/new_item"
+        app:layout_constraintEnd_toStartOf="@id/newItem"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/barrier" />
 
     <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesImageButton
-        android:id="@+id/new_item"
+        android:id="@+id/newItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -45,7 +45,7 @@
         app:constraint_referenced_ids="name, new_item" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/items"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

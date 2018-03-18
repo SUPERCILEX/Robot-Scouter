@@ -7,6 +7,7 @@
     android:layout_height="match_parent">
 
     <com.supercilex.robotscouter.util.ui.views.ContentLoadingHint
+        android:id="@+id/emptyScoutHint"
         style="@style/RobotScouter.Tutorial.NoContentHint"
         android:text="@string/tutorial_loading_metrics_hint"
         app:layout_constraintStart_toStartOf="parent"
@@ -16,7 +17,7 @@
         app:drawableTopCompat="@drawable/ic_cloud_grey_24dp" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/metricsView"
         style="@style/RobotScouter.List.Scouting"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

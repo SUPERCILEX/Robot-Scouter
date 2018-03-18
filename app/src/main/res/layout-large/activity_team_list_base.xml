@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -38,7 +38,7 @@
             tools:ignore="UnusedAttribute" />
 
         <FrameLayout
-            android:id="@+id/scout_list"
+            android:id="@+id/scoutList"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:keyboardNavigationCluster="true"
@@ -49,7 +49,7 @@
             tools:ignore="UnusedAttribute" />
 
         <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
-            android:id="@+id/no_team_selected_hint"
+            android:id="@+id/noTeamSelectedHint"
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/tutorial_no_team_selected_hint"
             android:visibility="visible"

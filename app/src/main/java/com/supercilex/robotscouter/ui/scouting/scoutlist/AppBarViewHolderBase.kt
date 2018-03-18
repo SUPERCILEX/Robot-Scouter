@@ -9,13 +9,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
-import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v7.graphics.Palette
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -39,26 +36,22 @@ import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.Saveable
 import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
-import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.fragment_scout_list.*
 import org.jetbrains.anko.find
 import kotlin.math.roundToInt
 
 open class AppBarViewHolderBase(
         private val fragment: ScoutListFragmentBase,
         savedInstanceState: Bundle?,
-        rootView: View,
         listener: LiveData<Team>,
         private val onScoutingReadyTask: Task<*>
-) : OnSuccessListener<List<Void?>>, View.OnLongClickListener,
+) : LayoutContainer, OnSuccessListener<List<Void?>>, View.OnLongClickListener,
         CaptureTeamMediaListener, ActivityCompat.OnRequestPermissionsResultCallback,
         OnActivityResult, Saveable {
     protected var team: Team = listener.value!!
 
-    val toolbar: Toolbar = rootView.find(R.id.toolbar)
-    protected val header: CollapsingToolbarLayout = rootView.find(R.id.header)
-    private val backdrop: ImageView = rootView.find(R.id.backdrop)
-    private val mediaLoadProgress: ContentLoadingProgressBar = rootView.find(R.id.progress)
-
+    override val containerView = fragment.view
     private val permissionHandler = ViewModelProviders.of(fragment)
             .get(PermissionRequestHandler::class.java).apply {
                 init(TeamMediaCreator.perms)
@@ -96,7 +89,7 @@ open class AppBarViewHolderBase(
     }
 
     private fun loadImages() {
-        mediaLoadProgress.show()
+        progress.show()
 
         val media = team.media
         Glide.with(backdrop)
@@ -111,7 +104,7 @@ open class AppBarViewHolderBase(
                             dataSource: DataSource,
                             isFirstResource: Boolean
                     ): Boolean {
-                        mediaLoadProgress.hide(true)
+                        progress.hide(true)
 
                         if (resource?.isRecycled == false) {
                             Palette.from(resource).generate { palette ->
@@ -132,7 +125,7 @@ open class AppBarViewHolderBase(
                             target: Target<Bitmap>,
                             isFirstResource: Boolean
                     ): Boolean {
-                        mediaLoadProgress.hide(true)
+                        progress.hide(true)
                         return false
                     }
                 })

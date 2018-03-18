@@ -6,7 +6,7 @@
     tools:showIn="@layout/scout_counter">
 
     <ImageButton
-        android:id="@+id/decrement_counter"
+        android:id="@+id/decrement"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/square_view_hw"
         android:layout_height="@dimen/square_view_hw"
@@ -32,7 +32,7 @@
         tools:text="10" />
 
     <ImageButton
-        android:id="@+id/increment_counter"
+        android:id="@+id/increment"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="@dimen/square_view_hw"
         android:layout_height="@dimen/square_view_hw"

@@ -1,7 +1,5 @@
 package com.supercilex.robotscouter.data.model
 
-import android.os.Bundle
-import android.os.Parcel
 import android.os.Parcelable
 import android.support.annotation.Keep
 import android.support.annotation.RestrictTo
@@ -9,12 +7,11 @@ import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import com.supercilex.robotscouter.util.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.util.data.defaultTemplateId
-import com.supercilex.robotscouter.util.data.readBooleanCompat
-import com.supercilex.robotscouter.util.data.readBundleAsMap
-import com.supercilex.robotscouter.util.data.writeBooleanCompat
 import com.supercilex.robotscouter.util.uid
+import kotlinx.android.parcel.Parcelize
 import java.util.Date
 
+@Parcelize
 data class Team(
         @Exclude
         @get:Keep
@@ -112,55 +109,5 @@ data class Team(
         val comparison = number.compareTo(other.number)
         return if (comparison == 0) timestamp.compareTo(other.timestamp)
         else comparison
-    }
-
-    override fun describeContents() = 0
-
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.apply {
-            writeLong(number)
-            writeString(id)
-            writeBundle(Bundle().apply { owners.forEach { putLong(it.key, it.value) } })
-            writeBundle(Bundle().apply { activeTokens.forEach { putLong(it.key, it.value.time) } })
-            writeBundle(Bundle().apply { pendingApprovals.forEach { putString(it.key, it.value) } })
-            writeString(templateId)
-            writeString(name)
-            writeString(media)
-            writeString(website)
-            writeBooleanCompat(hasCustomName)
-            writeBooleanCompat(hasCustomMedia)
-            writeBooleanCompat(hasCustomWebsite)
-            writeBooleanCompat(shouldUploadMediaToTba)
-            writeInt(mediaYear)
-            writeLong(timestamp.time)
-        }
-    }
-
-    companion object {
-        @Suppress("unused") // Mandatory when implementing parcelable
-        @Exclude
-        @JvmField
-        val CREATOR: Parcelable.Creator<Team> = object : Parcelable.Creator<Team> {
-            override fun createFromParcel(source: Parcel): Team = source.run {
-                Team(readLong(),
-                     readString(),
-                     readBundleAsMap(),
-                     readBundleAsMap { Date(getLong(it)) }.toMutableMap(),
-                     readBundleAsMap(),
-                     readString(),
-                     readString(),
-                     readString(),
-                     readString(),
-                     readBooleanCompat(),
-                     readBooleanCompat(),
-                     readBooleanCompat(),
-                     readBooleanCompat(),
-                     readInt(),
-                     Date(readLong())
-                )
-            }
-
-            override fun newArray(size: Int): Array<Team?> = arrayOfNulls(size)
-        }
     }
 }

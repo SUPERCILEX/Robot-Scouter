@@ -36,7 +36,7 @@ class ScoutListActivity : ActivityBase() {
         setContentView(R.layout.activity_scout_list)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.scout_list,
+                    .add(R.id.scoutList,
                          ActivityScoutListFragment.newInstance(intent.getBundleExtra(SCOUT_ARGS_KEY)),
                          ActivityScoutListFragment.TAG)
                     .commit()

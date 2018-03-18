@@ -2,21 +2,21 @@ package com.supercilex.robotscouter.ui.scouting.templatelist.viewholder
 
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CounterViewHolder
 import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.scout_base_counter.*
+import kotlinx.android.synthetic.main.scout_template_base_reorder.*
+import kotlinx.android.synthetic.main.scout_template_counter.*
 import java.util.Locale
 
 class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
         MetricTemplateViewHolder<Metric.Number, Long> {
-    override val reorder: View by bindView(R.id.reorder)
-    override val nameEditor: EditText by unsafeLazy { name as EditText }
-    private val unit: EditText by bindView(R.id.unit)
-
+    override val reorderView: ImageView by unsafeLazy { reorder }
+    override val nameEditor = name as EditText
     override val valueWithoutUnit: String get() = count.text.toString()
 
     init {

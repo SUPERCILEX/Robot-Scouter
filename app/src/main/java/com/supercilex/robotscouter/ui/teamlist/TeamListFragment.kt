@@ -28,8 +28,8 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.android.synthetic.main.fragment_team_list.*
 import kotlinx.coroutines.experimental.async
-import kotterknife.bindView
 import org.jetbrains.anko.find
 
 class TeamListFragment : FragmentBase(), OnBackPressedListener {
@@ -39,14 +39,12 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     }
     private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
 
-    private val recyclerView: RecyclerView by bindView(R.id.list)
     private lateinit var adapter: TeamListAdapter
-    private val menuHelper by unsafeLazy { TeamMenuHelper(this, recyclerView) }
+    private val menuHelper by unsafeLazy { TeamMenuHelper(this, teamsView) }
     private val permHandler: PermissionRequestHandler by unsafeLazy {
         ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
     }
 
-    private val noContentHint: View by bindView(R.id.no_content_hint)
     private val fab: FloatingActionButton by unsafeLazy {
         requireActivity().find<FloatingActionButton>(R.id.fab)
     }
@@ -68,9 +66,9 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
     ): View? = View.inflate(context, R.layout.fragment_team_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.setHasFixedSize(true)
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        teamsView.layoutManager = LinearLayoutManager(context)
+        teamsView.setHasFixedSize(true)
+        teamsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 if (dy > 0) {
                     // User scrolled down -> hide the FAB
@@ -87,13 +85,13 @@ class TeamListFragment : FragmentBase(), OnBackPressedListener {
                 menuHelper,
                 holder.selectedTeamIdListener
         )
-        recyclerView.adapter = adapter
+        teamsView.adapter = adapter
         menuHelper.adapter = adapter
         menuHelper.restoreState(savedInstanceState)
 
         teams.asLiveData().observe(this, Observer {
             val noTeams = it!!.isEmpty()
-            noContentHint.animatePopReveal(noTeams)
+            noTeamsHint.animatePopReveal(noTeams)
             if (noTeams) fab.show()
         })
     }

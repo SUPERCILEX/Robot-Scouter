@@ -11,7 +11,6 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.widget.LinearLayout
 import com.google.firebase.firestore.CollectionReference
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
@@ -23,18 +22,18 @@ import com.supercilex.robotscouter.util.ui.Saveable
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
-import kotterknife.bindView
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.fragment_scout_list.*
 
 abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,
-        private val tabLayout: TabLayout,
         private val dataRef: CollectionReference
-) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager),
+) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager), LayoutContainer,
         Saveable,
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
-    private val noContentHint: View by fragment.bindView(R.id.no_content_hint)
+    override val containerView = fragment.view
 
     val holder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
     private var oldScouts: List<Scout> = emptyList()
@@ -46,7 +45,7 @@ abstract class TabPagerAdapterBase(
             currentScouts.indexOfFirst { it.id == field }.let { if (it != -1) selectTab(it) }
         }
     val currentTab: TabLayout.Tab?
-        get() = tabLayout.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
+        get() = tabs.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
 
     init {
         fragment.lifecycle.addObserver(this)
@@ -89,11 +88,11 @@ abstract class TabPagerAdapterBase(
 
         val prevTabId = currentTabId
 
-        noContentHint.animatePopReveal(currentScouts.isEmpty())
+        noTabsHint.animatePopReveal(currentScouts.isEmpty())
 
-        tabLayout.removeOnTabSelectedListener(this)
+        tabs.removeOnTabSelectedListener(this)
         notifyDataSetChanged()
-        tabLayout.addOnTabSelectedListener(this)
+        tabs.addOnTabSelectedListener(this)
 
         updateTabNames()
 
@@ -122,12 +121,12 @@ abstract class TabPagerAdapterBase(
     }
 
     private fun updateTabNames() {
-        (0 until tabLayout.tabCount).map {
-            tabLayout.getTabAt(it)!!
+        (0 until tabs.tabCount).map {
+            tabs.getTabAt(it)!!
         }.forEachIndexed { index, tab ->
             tab.text = currentScouts[index].name ?: getPageTitle(index)
 
-            val tabView = (tabLayout.getChildAt(0) as LinearLayout).getChildAt(index)
+            val tabView = (tabs.getChildAt(0) as LinearLayout).getChildAt(index)
             tabView.setOnLongClickListenerCompat(this@TabPagerAdapterBase)
             tabView.id = index
         }
@@ -137,7 +136,7 @@ abstract class TabPagerAdapterBase(
             outState.putAll(getTabIdBundle(currentTabId))
 
     private fun selectTab(index: Int) {
-        val select: () -> Unit = { tabLayout.getTabAt(index)?.select() }
+        val select: () -> Unit = { tabs.getTabAt(index)?.select() }
 
         // Select the tab twice:
         // 1. Ensure we don't wastefully load other templates if the selected one is somewhere in
@@ -173,7 +172,7 @@ abstract class TabPagerAdapterBase(
                 fragment.childFragmentManager,
                 dataRef.document(currentScouts[v.id].id),
                 editTabNameRes,
-                tabLayout.getTabAt(v.id)!!.text!!.toString()
+                tabs.getTabAt(v.id)!!.text!!.toString()
         )
         return true
     }

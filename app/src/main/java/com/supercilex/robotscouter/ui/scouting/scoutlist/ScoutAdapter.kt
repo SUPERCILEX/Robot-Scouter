@@ -38,7 +38,7 @@ class ScoutAdapter(
     override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-    ): MetricViewHolderBase<*, *, *> {
+    ): MetricViewHolderBase<*, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         return when (MetricType.valueOf(viewType)) {
             MetricType.HEADER -> HeaderViewHolder(

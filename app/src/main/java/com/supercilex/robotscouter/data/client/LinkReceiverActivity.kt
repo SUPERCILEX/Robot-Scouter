@@ -26,9 +26,8 @@ import com.supercilex.robotscouter.util.templatesRef
 import com.supercilex.robotscouter.util.ui.ActivityBase
 import com.supercilex.robotscouter.util.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.util.ui.isInTabletMode
-import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+import kotlinx.android.synthetic.main.activity_link_receiver.*
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
@@ -39,7 +38,7 @@ class LinkReceiverActivity : ActivityBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_receiver)
-        find<ContentLoadingProgressBar>(R.id.progress).show()
+        progress.show()
 
         async {
             onSignedIn()

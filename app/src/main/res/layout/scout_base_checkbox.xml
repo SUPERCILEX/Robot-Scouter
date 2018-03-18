@@ -5,7 +5,7 @@
     tools:showIn="@layout/scout_checkbox">
 
     <CheckBox
-        android:id="@+id/checkbox"
+        android:id="@+id/checkBox"
         style="@style/TextAppearance.AppCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

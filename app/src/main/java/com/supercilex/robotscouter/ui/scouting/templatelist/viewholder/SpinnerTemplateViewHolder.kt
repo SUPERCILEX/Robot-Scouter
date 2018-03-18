@@ -8,8 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.ImageView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
@@ -23,21 +22,22 @@ import com.supercilex.robotscouter.util.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.util.ui.showKeyboard
 import com.supercilex.robotscouter.util.ui.swap
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.scout_template_base_reorder.*
+import kotlinx.android.synthetic.main.scout_template_spinner.*
+import kotlinx.android.synthetic.main.scout_template_spinner_item.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.properties.Delegates
 
 class SpinnerTemplateViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>, TextView>(itemView),
+) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>>(itemView),
         MetricTemplateViewHolder<Metric.List, List<Metric.List.Item>>, View.OnClickListener {
-    override val reorder: View by bindView(R.id.reorder)
-    override val nameEditor: EditText by unsafeLazy { name as EditText }
-
-    private val newItem: ImageButton by bindView(R.id.new_item)
-    private val items: RecyclerView by bindView(R.id.list)
+    override val reorderView: ImageView by unsafeLazy { reorder }
+    override val nameEditor = name as EditText
     private val itemTouchCallback = ItemTouchCallback()
 
     init {
@@ -97,12 +97,12 @@ class SpinnerTemplateViewHolder(
         }
     }
 
-    private class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+    private class ItemHolder(
+            override val containerView: View
+    ) : RecyclerView.ViewHolder(containerView), LayoutContainer,
             TemplateViewHolder, View.OnClickListener {
-        override val reorder: View by bindView(R.id.reorder)
-        override val nameEditor: EditText by bindView(R.id.name)
-        private val default: ImageButton by bindView(R.id._default)
-        private val delete: ImageButton by bindView(R.id.delete)
+        override val reorderView: ImageView by unsafeLazy { reorder }
+        override val nameEditor: EditText = itemView.find(R.id.name)
 
         private lateinit var parent: SpinnerTemplateViewHolder
         private lateinit var item: Metric.List.Item
@@ -110,9 +110,9 @@ class SpinnerTemplateViewHolder(
 
         init {
             init()
-            default.setOnClickListener(this)
+            defaultView.setOnClickListener(this)
             delete.setOnClickListener(this)
-            default.setImageDrawable(itemView.context.getDrawableCompat(R.drawable.ic_default_24dp))
+            defaultView.setImageDrawable(itemView.context.getDrawableCompat(R.drawable.ic_default_24dp))
         }
 
         fun bind(parent: SpinnerTemplateViewHolder, item: Metric.List.Item, isDefault: Boolean) {
@@ -121,13 +121,13 @@ class SpinnerTemplateViewHolder(
             this.isDefault = isDefault
 
             nameEditor.setText(item.name)
-            default.isActivated = isDefault
+            defaultView.isActivated = isDefault
         }
 
         override fun onClick(v: View) {
             val items = parent.getLatestItems()
             when (v.id) {
-                R.id._default -> updateDefaultStatus(items)
+                R.id.defaultView -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)
                 else -> error("Unknown id: ${v.id}")
             }
@@ -200,9 +200,7 @@ class SpinnerTemplateViewHolder(
         fun getItem(position: Int): Metric.List.Item =
                 if (localItems == null) metric.value[position] else localItems!![position]
 
-        fun onBind(viewHolder: RecyclerView.ViewHolder) {
-            viewHolder as TemplateViewHolder
-
+        fun onBind(viewHolder: ItemHolder) {
             viewHolder.enableDragToReorder(viewHolder, itemTouchHelper)
             if (viewHolder.adapterPosition == pendingScrollPosition) {
                 viewHolder.requestFocus()

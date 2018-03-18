@@ -3,15 +3,13 @@ package com.supercilex.robotscouter.ui.scouting
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.google.firebase.firestore.CollectionReference
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.LateinitVal
 import com.supercilex.robotscouter.util.ui.FragmentBase
 import com.supercilex.robotscouter.util.ui.SavedStateAdapter
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.fragment_scout_metric_list.*
 
 abstract class MetricListFragment : FragmentBase() {
     protected val holder: MetricListHolder by unsafeLazy {
@@ -20,7 +18,6 @@ abstract class MetricListFragment : FragmentBase() {
     abstract val metricsRef: CollectionReference
     abstract val dataId: String
 
-    protected val recyclerView: RecyclerView by bindView(R.id.list)
     protected var adapter: SavedStateAdapter<*, *> by LateinitVal()
         private set
 
@@ -44,10 +41,10 @@ abstract class MetricListFragment : FragmentBase() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.setHasFixedSize(true)
+        metricsView.layoutManager = LinearLayoutManager(context)
+        metricsView.setHasFixedSize(true)
         adapter = onCreateRecyclerAdapter(savedInstanceState)
-        recyclerView.adapter = adapter
+        metricsView.adapter = adapter
 
         tmpSavedAdapterState = null
     }
@@ -64,6 +61,6 @@ abstract class MetricListFragment : FragmentBase() {
 
     override fun onStop() {
         super.onStop()
-        recyclerView.clearFocus()
+        metricsView.clearFocus()
     }
 }

@@ -28,6 +28,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
+            android:id="@+id/noTeamsHint"
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/tutorial_no_teams_hint"
             app:layout_constraintStart_toStartOf="parent"
@@ -38,6 +39,7 @@
             tools:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/teamsView"
             style="@style/RobotScouter.List"
             tools:listitem="@layout/team_list_row_layout" />
 

@@ -43,7 +43,7 @@ class TemplateAdapter(
     override fun getItemCount() = callback.getItemCount { super.getItemCount() }
 
     override fun onBindViewHolder(
-            viewHolder: MetricViewHolderBase<*, *, *>,
+            viewHolder: MetricViewHolderBase<*, *>,
             position: Int,
             metric: Metric<*>
     ) {
@@ -54,7 +54,7 @@ class TemplateAdapter(
     override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-    ): MetricViewHolderBase<*, *, *> {
+    ): MetricViewHolderBase<*, *> {
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
         return when (MetricType.valueOf(viewType)) {
             MetricType.HEADER -> HeaderTemplateViewHolder(

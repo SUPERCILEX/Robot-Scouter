@@ -9,7 +9,7 @@
     tools:context=".ui.scouting.templatelist.TemplateListActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -36,6 +36,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
+            android:id="@+id/noTabsHint"
             style="@style/RobotScouter.Tutorial.NoContentHint"
             android:text="@string/tutorial_no_templates_hint"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,14 +47,14 @@
             tools:visibility="visible" />
 
         <com.supercilex.robotscouter.util.ui.views.UnscrollableViewPager
-            android:id="@+id/viewpager"
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </android.support.constraint.ConstraintLayout>
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fab_menu"
+        android:id="@+id/fam"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|end"
@@ -66,32 +67,32 @@
         app:srcCompat="@drawable/ic_add_colorable_24dp">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_header"
+            android:id="@+id/addHeader"
             style="@style/RobotScouter.Fab.Metric"
             app:fab_label="@string/metric_header_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_checkbox"
+            android:id="@+id/addCheckbox"
             style="@style/RobotScouter.Fab.Metric"
             app:fab_label="@string/metric_checkbox_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_stopwatch"
+            android:id="@+id/addStopwatch"
             style="@style/RobotScouter.Fab.Metric"
             app:fab_label="@string/metric_stopwatch_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_note"
+            android:id="@+id/addNote"
             style="@style/RobotScouter.Fab.Metric"
             app:fab_label="@string/metric_note_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_counter"
+            android:id="@+id/addCounter"
             style="@style/RobotScouter.Fab.Metric"
             app:fab_label="@string/metric_counter_add_title" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/add_spinner"
+            android:id="@+id/addSpinner"
             style="@style/RobotScouter.Fab.Metric"
             app:fab_label="@string/metric_spinner_add_title" />
 

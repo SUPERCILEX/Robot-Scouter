@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.ui.handleUpNavigation
 import com.supercilex.robotscouter.util.ui.isInTabletMode
+import kotlinx.android.synthetic.main.fragment_scout_list.*
 
 class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +71,6 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
     ) : AppBarViewHolderBase(
             this@ActivityScoutListFragment,
             savedInstanceState,
-            view!!,
             listener,
             onScoutingReadyTask
     ) {

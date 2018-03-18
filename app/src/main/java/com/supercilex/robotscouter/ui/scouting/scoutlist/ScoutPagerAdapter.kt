@@ -13,9 +13,8 @@ import com.supercilex.robotscouter.util.logSelectScout
 
 class ScoutPagerAdapter(
         fragment: Fragment,
-        tabLayout: TabLayout,
         private val team: Team
-) : TabPagerAdapterBase(fragment, tabLayout, team.getScoutsRef()) {
+) : TabPagerAdapterBase(fragment, team.getScoutsRef()) {
     override val editTabNameRes = R.string.scout_edit_name_title
 
     init {

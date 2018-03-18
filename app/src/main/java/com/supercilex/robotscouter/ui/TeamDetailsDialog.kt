@@ -12,11 +12,6 @@ import android.support.transition.TransitionManager
 import android.support.v4.app.FragmentManager
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -46,12 +41,11 @@ import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.animateCircularReveal
 import com.supercilex.robotscouter.util.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.util.ui.show
-import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.android.synthetic.main.dialog_team_details.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotterknife.bindView
 import org.jetbrains.anko.coroutines.experimental.asReference
 import java.util.Calendar
 import kotlin.math.hypot
@@ -72,26 +66,9 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         ViewModelProviders.of(this).get(TeamMediaCreator::class.java)
     }
 
-    private val content by unsafeLazy {
+    override val containerView by unsafeLazy {
         View.inflate(context, R.layout.dialog_team_details, null) as ViewGroup
     }
-
-    private val media: ImageView by bindView(R.id.media)
-    private val mediaLoadProgress: ContentLoadingProgressBar by bindView(R.id.progress)
-    private val name: TextView by bindView(R.id.name)
-    private val editNameButton: ImageButton by bindView(R.id.edit_name_button)
-
-    private val launchTbaButton: Button by bindView(R.id.link_tba)
-    private val launchWebsiteButton: Button by bindView(R.id.link_website)
-
-    private val nameInputLayout: TextInputLayout by bindView(R.id.name_layout)
-    private val mediaInputLayout: TextInputLayout by bindView(R.id.media_layout)
-    private val websiteInputLayout: TextInputLayout by bindView(R.id.website_layout)
-    private val nameEditText: EditText by bindView(R.id.name_edit)
-    private val mediaEditText: EditText by bindView(R.id.media_edit)
-    private val websiteEditText: EditText by bindView(R.id.website_edit)
-
-    private val save: View by bindView(R.id.save)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,28 +100,26 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        dialog.setContentView(content)
-
         media.setOnClickListener(this)
         editNameButton.setOnClickListener(this)
-        launchTbaButton.setOnClickListener(this)
-        launchWebsiteButton.setOnClickListener(this)
+        linkTba.setOnClickListener(this)
+        linkWebsite.setOnClickListener(this)
         save.setOnClickListener(this)
 
-        mediaEditText.onFocusChangeListener = this
-        websiteEditText.onFocusChangeListener = this
-        websiteEditText.setImeOnDoneListener { save() }
+        mediaEdit.onFocusChangeListener = this
+        websiteEdit.onFocusChangeListener = this
+        websiteEdit.setImeOnDoneListener { save() }
 
         updateUi()
     }
 
     private fun updateUi() {
-        launchWebsiteButton.isEnabled = !team.website.isNullOrBlank()
+        linkWebsite.isEnabled = !team.website.isNullOrBlank()
 
-        TransitionManager.beginDelayedTransition(content)
+        TransitionManager.beginDelayedTransition(containerView)
 
-        mediaLoadProgress.show()
-        Glide.with(content.context)
+        progress.show()
+        Glide.with(media)
                 .load(team.media)
                 .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_person_grey_96dp))
                 .listener(object : RequestListener<Drawable> {
@@ -155,7 +130,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                             dataSource: DataSource,
                             isFirstResource: Boolean
                     ): Boolean {
-                        mediaLoadProgress.hide(true)
+                        progress.hide(true)
                         return false
                     }
 
@@ -165,23 +140,23 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                             target: Target<Drawable>,
                             isFirstResource: Boolean
                     ): Boolean {
-                        mediaLoadProgress.hide(true)
+                        progress.hide(true)
                         return false
                     }
                 })
                 .into(media)
         name.text = team.toString()
 
-        nameEditText.setText(team.name)
-        mediaEditText.setText(team.media)
-        websiteEditText.setText(team.website)
+        nameEdit.setText(team.name)
+        mediaEdit.setText(team.media)
+        websiteEdit.setText(team.website)
     }
 
     override fun onClick(v: View) = when (v.id) {
         R.id.media -> ShouldUploadMediaToTbaDialog.show(this)
-        R.id.edit_name_button -> revealNameEditor()
-        R.id.link_tba -> team.launchTba(content.context)
-        R.id.link_website -> team.launchWebsite(content.context)
+        R.id.editNameButton -> revealNameEditor()
+        R.id.linkTba -> team.launchTba(view.context)
+        R.id.linkWebsite -> team.launchWebsite(view.context)
         R.id.save -> save()
         else -> error("Unknown id: ${v.id}")
     }
@@ -192,8 +167,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         val nameAnimator = name.animateCircularReveal(
                 false, 0, name.height / 2, name.width.toFloat())
         val nameLayoutAnimator = (editNameButton.left + editNameButton.width / 2).let {
-            nameInputLayout.animateCircularReveal(
-                    true, it, 0, hypot(it.toFloat(), nameInputLayout.height.toFloat()))
+            nameLayout.animateCircularReveal(
+                    true, it, 0, hypot(it.toFloat(), nameLayout.height.toFloat()))
         }
 
         if (editNameAnimator != null && nameAnimator != null && nameLayoutAnimator != null) {
@@ -205,12 +180,12 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     private fun save() {
-        val name = nameEditText.text
-        val media = mediaEditText.text
-        val website = websiteEditText.text
+        val name = nameEdit.text
+        val media = mediaEdit.text
+        val website = websiteEdit.text
 
-        val isMediaValid = validateUrl(media, mediaInputLayout)
-        val isWebsiteValid = validateUrl(website, websiteInputLayout)
+        val isMediaValid = validateUrl(media, mediaLayout)
+        val isWebsiteValid = validateUrl(website, websiteLayout)
 
         val ref = asLifecycleReference()
         async(UI) {
@@ -272,8 +247,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         if (hasFocus) return // Only consider views losing focus
 
-        validateUrl(mediaEditText.text, mediaInputLayout)
-        validateUrl(websiteEditText.text, websiteInputLayout)
+        validateUrl(mediaEdit.text, mediaLayout)
+        validateUrl(websiteEdit.text, websiteLayout)
     }
 
     private fun validateUrl(url: CharSequence, inputLayout: TextInputLayout): Deferred<Boolean> {

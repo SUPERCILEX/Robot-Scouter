@@ -4,23 +4,17 @@ import android.support.annotation.CallSuper
 import android.support.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.ui.scouting.scoutlist.CounterValueDialog
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.scout_base_counter.*
 
 open class CounterViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.Number, Long, TextView>(itemView),
+) : MetricViewHolderBase<Metric.Number, Long>(itemView),
         View.OnClickListener, View.OnLongClickListener {
-    protected val count: TextView by bindView(R.id.count)
-    private val increment: ImageButton by bindView(R.id.increment_counter)
-    private val decrement: ImageButton by bindView(R.id.decrement_counter)
-
     protected open val valueWithoutUnit: String
         get() {
             val unit: String? = metric.unit
@@ -49,9 +43,9 @@ open class CounterViewHolder(
         val id = v.id
         var value = valueWithoutUnit.toLong()
 
-        if (id == R.id.increment_counter) {
+        if (id == R.id.increment) {
             metric.value = ++value
-        } else if (id == R.id.decrement_counter) {
+        } else if (id == R.id.decrement) {
             metric.value = --value
         }
 

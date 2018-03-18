@@ -17,7 +17,7 @@ abstract class MetricListAdapterBase(
         recyclerView: RecyclerView,
         savedInstanceState: Bundle?,
         private val manager: FragmentManager
-) : SavedStateAdapter<Metric<*>, MetricViewHolderBase<*, *, *>>(
+) : SavedStateAdapter<Metric<*>, MetricViewHolderBase<*, *>>(
         options,
         savedInstanceState,
         recyclerView
@@ -33,13 +33,13 @@ abstract class MetricListAdapterBase(
     }
 
     override fun onBindViewHolder(
-            viewHolder: MetricViewHolderBase<*, *, *>,
+            viewHolder: MetricViewHolderBase<*, *>,
             position: Int,
             metric: Metric<*>
     ) {
         cardListHelper.onBind(viewHolder, position)
 
-        viewHolder as MetricViewHolderBase<Metric<Any>, *, *>
+        viewHolder as MetricViewHolderBase<Metric<Any>, *>
         metric as Metric<Any>
         viewHolder.bind(metric, manager)
     }
@@ -60,7 +60,7 @@ abstract class MetricListAdapterBase(
 
             val metric = snapshots[newIndex]
             recyclerView.findViewHolderForAdapterPosition(newIndex)?.let {
-                if ((it as MetricViewHolderBase<Metric<Any>, *, *>).metric == metric) {
+                if ((it as MetricViewHolderBase<Metric<Any>, *>).metric == metric) {
                     return
                 }
             }

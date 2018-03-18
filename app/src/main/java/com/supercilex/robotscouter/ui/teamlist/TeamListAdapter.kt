@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.teams
 import com.supercilex.robotscouter.util.ui.CardListHelper
 import com.supercilex.robotscouter.util.ui.SavedStateAdapter
+import kotlinx.android.synthetic.main.team_list_row_layout.*
 import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
@@ -33,7 +34,7 @@ class TeamListAdapter(
                 .setLifecycleOwner(fragment)
                 .build(),
         savedInstanceState,
-        fragment.find(R.id.list)
+        fragment.find(R.id.teamsView)
 ), ListPreloader.PreloadModelProvider<Team>, Observer<Team?> {
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(
@@ -100,7 +101,7 @@ class TeamListAdapter(
                     recyclerView,
                     menuHelper
             ).also {
-                viewSizeProvider.setView(it.mediaImageView)
+                viewSizeProvider.setView(it.media)
             }
 
     override fun onBindViewHolder(teamHolder: TeamViewHolder, position: Int, team: Team) {

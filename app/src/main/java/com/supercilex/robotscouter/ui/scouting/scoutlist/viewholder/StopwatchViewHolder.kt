@@ -15,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.supercilex.robotscouter.R
@@ -26,7 +25,7 @@ import com.supercilex.robotscouter.util.reportOrCancel
 import com.supercilex.robotscouter.util.second
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.scout_base_stopwatch.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
@@ -38,17 +37,14 @@ import java.util.concurrent.TimeUnit
 
 open class StopwatchViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.Stopwatch, List<Long>, TextView>(itemView),
+) : MetricViewHolderBase<Metric.Stopwatch, List<Long>>(itemView),
         View.OnClickListener, View.OnLongClickListener {
-    private val toggleStopwatch: Button by bindView(R.id.stopwatch)
-    private val cycles: RecyclerView by bindView(R.id.list)
-
     private var timer: Timer? = null
     private var undoAddSnackbar: Snackbar? = null
 
     init {
-        toggleStopwatch.setOnClickListener(this)
-        toggleStopwatch.setOnLongClickListenerCompat(this)
+        stopwatch.setOnClickListener(this)
+        stopwatch.setOnLongClickListenerCompat(this)
 
         cycles.layoutManager = LinearLayoutManager(
                 itemView.context,
@@ -153,7 +149,7 @@ open class StopwatchViewHolder(
     }
 
     private fun setText(@StringRes id: Int, vararg formatArgs: Any) {
-        toggleStopwatch.text = itemView.resources.getString(id, *formatArgs)
+        stopwatch.text = itemView.resources.getString(id, *formatArgs)
     }
 
     private fun updateStyle(isRunning: Boolean) {
@@ -161,7 +157,7 @@ open class StopwatchViewHolder(
         // Because of that, calling View#setActivated(isRunning) doesn't update the background
         // color and we end up with unreadable text.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toggleStopwatch.isActivated = isRunning
+            stopwatch.isActivated = isRunning
         }
     }
 

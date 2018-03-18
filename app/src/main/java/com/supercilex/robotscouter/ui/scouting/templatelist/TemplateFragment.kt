@@ -32,8 +32,8 @@ import com.supercilex.robotscouter.util.ui.OnBackPressedListener
 import com.supercilex.robotscouter.util.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.unsafeLazy
+import kotlinx.android.synthetic.main.fragment_template_metric_list.*
 import kotlinx.coroutines.experimental.async
-import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
@@ -47,12 +47,11 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         TemplateItemTouchCallback<Metric<*>>(view!!)
     }
     private val appBar: AppBarLayout by unsafeLazy {
-        parentFragment!!.find<AppBarLayout>(R.id.app_bar)
+        parentFragment!!.find<AppBarLayout>(R.id.appBar)
     }
     private val fam: FloatingActionMenu by unsafeLazy {
-        parentFragment!!.find<FloatingActionMenu>(R.id.fab_menu)
+        parentFragment!!.find<FloatingActionMenu>(R.id.fam)
     }
-    private val noContentHint: View by bindView(R.id.no_content_hint)
 
     private val appBarOffsetListener = object : AppBarLayout.OnOffsetChangedListener {
         var isShowing = false
@@ -73,7 +72,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         holder.metrics.asLiveData().observe(this, Observer {
-            noContentHint.animatePopReveal(it!!.isEmpty())
+            noMetricsHint.animatePopReveal(it!!.isEmpty())
         })
     }
 
@@ -85,18 +84,18 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        noContentHint.animatePopReveal(true)
+        noMetricsHint.animatePopReveal(true)
 
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchCallback.adapter = adapter as TemplateAdapter
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        itemTouchHelper.attachToRecyclerView(metricsView)
 
-        recyclerView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
+        metricsView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
         appBar.addOnOffsetChangedListener(appBarOffsetListener)
 
         // This lets us close the fam when the RecyclerView it touched
-        recyclerView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+        metricsView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                 fam.close(true)
                 return false
@@ -108,7 +107,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             holder.metrics,
             this,
             childFragmentManager,
-            recyclerView,
+            metricsView,
             savedInstanceState,
             itemTouchCallback
     )
@@ -133,11 +132,11 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
                 }
             }
             R.id.action_delete_template -> {
-                recyclerView.clearFocus()
+                metricsView.clearFocus()
                 DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)
             }
             R.id.action_remove_metrics -> {
-                recyclerView.clearFocus()
+                metricsView.clearFocus()
                 metricsRef.get().addOnSuccessListener(requireActivity()) { metrics ->
                     async {
                         firestoreBatch {
@@ -168,12 +167,12 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         itemTouchCallback.addItemToScrollQueue(position)
 
         when (v.id) {
-            R.id.add_checkbox -> Metric.Boolean(position = position, ref = metricRef)
-            R.id.add_counter -> Metric.Number(position = position, ref = metricRef)
-            R.id.add_stopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
-            R.id.add_note -> Metric.Text(position = position, ref = metricRef)
-            R.id.add_spinner -> Metric.List(position = position, ref = metricRef)
-            R.id.add_header -> Metric.Header(position = position, ref = metricRef)
+            R.id.addCheckbox -> Metric.Boolean(position = position, ref = metricRef)
+            R.id.addCounter -> Metric.Number(position = position, ref = metricRef)
+            R.id.addStopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
+            R.id.addNote -> Metric.Text(position = position, ref = metricRef)
+            R.id.addSpinner -> Metric.List(position = position, ref = metricRef)
+            R.id.addHeader -> Metric.Header(position = position, ref = metricRef)
             else -> error("Unknown view id: $id")
         }.apply {
             logAdd()

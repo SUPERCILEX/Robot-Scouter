@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.util.data.getRef
 import com.supercilex.robotscouter.util.data.putRef
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.show
+import kotlinx.android.synthetic.main.dialog_value.*
 
 class CounterValueDialog : ValueDialogBase<Long>() {
     override val value get() = lastEditText.text.toString().toLong()
@@ -27,7 +28,7 @@ class CounterValueDialog : ValueDialogBase<Long>() {
         val number = try {
             value
         } catch (e: NumberFormatException) {
-            inputLayout.error = getString(R.string.number_too_big_error)
+            valueLayout.error = getString(R.string.number_too_big_error)
             return false
         }
         val ref = arguments!!.getRef()

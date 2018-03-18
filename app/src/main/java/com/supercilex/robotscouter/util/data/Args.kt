@@ -3,11 +3,9 @@ package com.supercilex.robotscouter.util.data
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcel
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
 import androidx.os.bundleOf
-import com.supercilex.robotscouter.RobotScouterApp
 import com.supercilex.robotscouter.data.model.Team
 
 const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
@@ -18,10 +16,6 @@ const val KEY_ADD_SCOUT = "add_scout"
 const val KEY_OVERRIDE_TEMPLATE_KEY = "override_template_key"
 
 fun <T : CharSequence> T?.nullOrFull() = if (isNullOrBlank()) null else this
-
-fun Parcel.readBooleanCompat() = getBooleanForInt(readInt())
-
-fun Parcel.writeBooleanCompat(value: Boolean) = writeInt(getIntForBoolean(value))
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun PersistableBundle.getBooleanCompat(key: String) = getBooleanForInt(getInt(key))
@@ -35,16 +29,10 @@ private fun getBooleanForInt(value: Int) = value == 1
 private fun getIntForBoolean(value: Boolean) = if (value) 1 else 0
 
 @Suppress("UNCHECKED_CAST") // Trust the client
-fun <T> Parcel.readBundleAsMap(): Map<String, T> = readBundleAsMap { get(it) as T }
-
-inline fun <T> Parcel.readBundleAsMap(parse: Bundle.(String) -> T): Map<String, T> =
-        readBundle(RobotScouterApp::class.java.classLoader).let { bundleToMap(it, parse) }
-
-@Suppress("UNCHECKED_CAST") // Trust the client
 fun <T> Bundle.getBundleAsMap(key: String): Map<String, T> = getBundleAsMap(key) { get(it) as T }
 
 inline fun <T> Bundle.getBundleAsMap(key: String, parse: Bundle.(String) -> T): Map<String, T> =
-        getBundle(key).let { bundleToMap(it, parse) }
+        getBundle(key).let { bundle -> bundle.keySet().associate { it to bundle.parse(it) } }
 
 @Suppress("UNCHECKED_CAST") // Trust the client
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -57,9 +45,6 @@ inline fun <T> PersistableBundle.getBundleAsMap(
 ) = getPersistableBundle(key).let { bundle ->
     bundle.keySet().associate { it to bundle.parse(it) } as Map<String, T>
 }
-
-inline fun <T> bundleToMap(bundle: Bundle, parse: Bundle.(String) -> T) =
-        bundle.keySet().associate { it to bundle.parse(it) }
 
 fun Team.toBundle() = bundleOf(TEAM_KEY to this@toBundle)
 

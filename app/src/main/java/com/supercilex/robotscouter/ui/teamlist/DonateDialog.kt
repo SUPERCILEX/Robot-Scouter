@@ -5,9 +5,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.view.View
-import android.widget.CheckBox
+import android.view.ViewGroup
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.view.isVisible
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponse
@@ -23,22 +22,18 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.logCrashLog
 import com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
-import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.uid
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.dialog_donate.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.longToast
 
 class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, BillingClientStateListener, PurchasesUpdatedListener {
-    private val content: View by bindView(R.id.content)
-    private val donate: View by bindView(R.id.donate)
-    private val progress: ContentLoadingProgressBar by bindView(R.id.progress)
-    private val amountTextView: TextView by bindView(R.id.amount_textview)
-    private val amountSeekBar: SeekBar by bindView(R.id.amount)
-    private val monthlyCheckBox: CheckBox by bindView(R.id.monthly)
+    override val containerView by unsafeLazy {
+        View.inflate(context, R.layout.dialog_donate, null) as ViewGroup
+    }
 
     private val billingClient by unsafeLazy {
         BillingClient.newBuilder(requireContext()).setListener(this).build()
@@ -51,8 +46,6 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        dialog.setContentView(View.inflate(context, R.layout.dialog_donate, null))
-        content // Force initialization
         donate.setOnClickListener(this)
         amountSeekBar.setOnSeekBarChangeListener(this)
     }
@@ -62,13 +55,13 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-        amountTextView.text = getString(R.string.donate_amount, progress + 1)
+        amount.text = getString(R.string.donate_amount, progress + 1)
 
         val width = seekBar.width - (seekBar.paddingLeft + seekBar.paddingRight)
         val thumbPos = seekBar.paddingLeft + (width * progress / seekBar.max)
         val offset =
                 seekBar.thumbOffset - if (progress == seekBar.max) 2 * seekBar.max else seekBar.max
-        amountTextView.x = (thumbPos + offset).toFloat()
+        amount.x = (thumbPos + offset).toFloat()
     }
 
     override fun onDestroy() {
@@ -85,8 +78,8 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
         updateProgress(true)
 
         val sku = "${amountSeekBar.progress + 1}${DonateDialog.SKU_BASE}" +
-                if (monthlyCheckBox.isChecked) "monthly" else "single"
-        purchaseItem(sku, if (monthlyCheckBox.isChecked) {
+                if (monthly.isChecked) "monthly" else "single"
+        purchaseItem(sku, if (monthly.isChecked) {
             BillingClient.SkuType.SUBS
         } else {
             BillingClient.SkuType.INAPP
@@ -100,8 +93,8 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
         dismiss()
     }.addOnFailureListener {
         when ((it as PurchaseException).errorCode) {
-            BillingResponse.USER_CANCELED -> longSnackbar(content, R.string.donate_cancel_message)
-            BillingResponse.SERVICE_UNAVAILABLE -> longSnackbar(content, R.string.no_connection)
+            BillingResponse.USER_CANCELED -> longSnackbar(view, R.string.donate_cancel_message)
+            BillingResponse.SERVICE_UNAVAILABLE -> longSnackbar(view, R.string.no_connection)
             BillingResponse.ITEM_ALREADY_OWNED, BillingResponse.ERROR -> Unit
             else -> {
                 CrashLogger.onFailure(it)
@@ -142,7 +135,7 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
                         .addOnSuccessListener { purchaseStartTask.setResult(null) }
             }
         } else if (result == BillingResponse.FEATURE_NOT_SUPPORTED) {
-            snackbar(content, R.string.fui_error_unknown)
+            snackbar(view, R.string.fui_error_unknown)
         } else {
             PurchaseException(result, sku).let {
                 CrashLogger.onFailure(it)
@@ -177,14 +170,14 @@ class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
     }
 
     private fun updateProgress(isDoingAsyncWork: Boolean) {
-        if (isDoingAsyncWork) progress.show(Runnable { content.isVisible = false })
-        else progress.hide(true, Runnable { content.isVisible = true })
+        if (isDoingAsyncWork) progress.show(Runnable { main.isVisible = false })
+        else progress.hide(true, Runnable { main.isVisible = true })
         donate.isEnabled = !isDoingAsyncWork
     }
 
     private fun showError() {
         updateProgress(false)
-        longSnackbar(content, R.string.fui_error_unknown)
+        longSnackbar(view, R.string.fui_error_unknown)
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {

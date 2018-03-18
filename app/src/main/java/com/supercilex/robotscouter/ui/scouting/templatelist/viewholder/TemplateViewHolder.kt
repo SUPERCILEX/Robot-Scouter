@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.EditText
 
 interface TemplateViewHolder : View.OnFocusChangeListener {
-    val reorder: View
+    val reorderView: View
     val nameEditor: EditText
 
     fun init() {
@@ -21,7 +21,7 @@ interface TemplateViewHolder : View.OnFocusChangeListener {
     fun enableDragToReorder(
             viewHolder: RecyclerView.ViewHolder,
             helper: ItemTouchHelper
-    ) = reorder.setOnTouchListener(View.OnTouchListener { v, event ->
+    ) = reorderView.setOnTouchListener(View.OnTouchListener { v, event ->
         if (event.action == MotionEvent.ACTION_DOWN) {
             viewHolder.itemView.clearFocus() // Saves data
             helper.startDrag(viewHolder)

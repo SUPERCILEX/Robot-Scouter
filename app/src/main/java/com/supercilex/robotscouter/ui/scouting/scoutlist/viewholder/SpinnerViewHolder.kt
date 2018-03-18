@@ -3,19 +3,14 @@ package com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
-import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.MetricViewHolderBase
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.scout_spinner.*
 
 class SpinnerViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>, TextView>(itemView),
+) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>>(itemView),
         AdapterView.OnItemSelectedListener {
-    private val spinner: Spinner by bindView(R.id.spinner)
-
     init {
         spinner.adapter = ArrayAdapter<String>(
                 itemView.context,

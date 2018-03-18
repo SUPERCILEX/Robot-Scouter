@@ -7,9 +7,6 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewStub
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.view.isGone
 import androidx.view.isVisible
 import com.bumptech.glide.Glide
@@ -28,17 +25,19 @@ import com.supercilex.robotscouter.util.ui.animatePopReveal
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.team_list_row_layout.*
 import org.jetbrains.anko.find
 import java.lang.ref.WeakReference
 import java.util.Locale
 
 class TeamViewHolder(
-        itemView: View,
+        override val containerView: View,
         private val fragment: Fragment,
         private val recyclerView: RecyclerView,
         private val menuHelper: TeamMenuHelper
-) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+) : RecyclerView.ViewHolder(containerView), LayoutContainer,
+        View.OnClickListener, View.OnLongClickListener {
     private val unknownName: String by unsafeLazy {
         itemView.context.getString(R.string.team_unknown_team_title)
     }
@@ -66,15 +65,13 @@ class TeamViewHolder(
         }
     }
 
-    val mediaImageView: ImageView by bindView(R.id.media)
-    private val mediaLoadProgressStub: ViewStub by bindView(R.id.progress)
+    private val mediaLoadProgressStub by unsafeLazy {
+        itemView.find<ViewStub>(R.id.progress)
+    }
     private val mediaLoadProgress by unsafeLazy {
         mediaLoadProgressStub.isVisible = true
         itemView.find<ContentLoadingProgressBar>(R.id.progress)
     }
-    private val numberTextView: TextView by bindView(R.id.number)
-    private val nameTextView: TextView by bindView(R.id.name)
-    private val newScoutButton: ImageButton by bindView(R.id.new_scout)
 
     private lateinit var team: Team
     private var isItemSelected: Boolean = false
@@ -90,10 +87,10 @@ class TeamViewHolder(
     init {
         recyclerView.addOnScrollListener(ScrollListener(this))
 
-        mediaImageView.setOnClickListener(this)
-        mediaImageView.setOnLongClickListenerCompat(this)
-        newScoutButton.setOnClickListener(this)
-        newScoutButton.setOnLongClickListenerCompat(this)
+        media.setOnClickListener(this)
+        media.setOnLongClickListenerCompat(this)
+        newScout.setOnClickListener(this)
+        newScout.setOnLongClickListenerCompat(this)
         itemView.setOnClickListener(this)
         itemView.setOnLongClickListenerCompat(this)
     }
@@ -115,21 +112,21 @@ class TeamViewHolder(
     }
 
     private fun setTeamNumber() {
-        numberTextView.text = String.format(Locale.getDefault(), "%d", team.number)
+        number.text = String.format(Locale.getDefault(), "%d", team.number)
     }
 
     private fun setTeamName() {
-        nameTextView.text = if (team.name?.isNotBlank() == true) team.name else unknownName
+        name.text = if (team.name?.isNotBlank() == true) team.name else unknownName
     }
 
     private fun updateItemStatus() {
         isMediaLoaded = isItemSelected
         updateProgressVisibility()
-        getTeamMediaRequestBuilder(isItemSelected, mediaImageView.context, team)
+        getTeamMediaRequestBuilder(isItemSelected, media.context, team)
                 .listener(mediaLoadProgressListener)
-                .into(mediaImageView)
+                .into(media)
 
-        newScoutButton.animatePopReveal(!couldItemBeSelected)
+        newScout.animatePopReveal(!couldItemBeSelected)
         itemView.isActivated = !isItemSelected && !couldItemBeSelected && isScouting
         itemView.isSelected = isItemSelected
     }
@@ -147,7 +144,7 @@ class TeamViewHolder(
             onTeamContextMenuRequested()
         } else {
             (itemView.context as TeamSelectionListener)
-                    .onTeamSelected(getScoutBundle(team, v.id == R.id.new_scout), false)
+                    .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout), false)
         }
     }
 
@@ -155,7 +152,7 @@ class TeamViewHolder(
         when {
             isItemSelected || couldItemBeSelected || v.id == R.id.root -> onTeamContextMenuRequested()
             v.id == R.id.media -> TeamDetailsDialog.show(fragment.childFragmentManager, team)
-            v.id == R.id.new_scout -> TeamTemplateSelectorDialog.show(
+            v.id == R.id.newScout -> TeamTemplateSelectorDialog.show(
                     fragment.childFragmentManager, team)
             else -> return false
         }

@@ -23,7 +23,7 @@ class TemplateListActivity : ActivityBase() {
         setContentView(R.layout.activity_template_list)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.template_list,
+                    .add(R.id.templateList,
                          TemplateListFragment.newInstance(getTabId(intent.extras)),
                          TemplateListFragment.TAG)
                     .commit()

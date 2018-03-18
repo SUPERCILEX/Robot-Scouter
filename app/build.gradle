@@ -2,6 +2,7 @@ def isReleaseBuild = !project.hasProperty('devBuild')
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 if (isReleaseBuild) {
     apply plugin: 'com.google.firebase.firebase-perf'
 }
@@ -90,6 +91,11 @@ kotlin {
     }
 }
 
+androidExtensions {
+    experimental = true
+    defaultCacheImplementation = "SPARSE_ARRAY"
+}
+
 play {
     track = 'alpha'
     serviceAccountEmail = 'google-play-auto-publisher@robot-scouter-app.iam.gserviceaccount.com'
@@ -150,7 +156,6 @@ dependencies {
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
 
     // Third party
-    implementation 'com.github.SUPERCILEX:kotterknife:5331f07fdf'
     implementation 'net.yslibrary.licenseadapter:licenseadapter:2.0.2'
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'uk.co.samuelwall:material-tap-target-prompt:2.7.0'

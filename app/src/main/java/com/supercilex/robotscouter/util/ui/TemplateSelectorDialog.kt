@@ -30,9 +30,8 @@ import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.data.model.ScoutsHolder
 import com.supercilex.robotscouter.util.data.model.getTemplateName
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
 import com.supercilex.robotscouter.util.unsafeLazy
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.dialog_template_selector.*
 import kotlin.math.roundToInt
 
 abstract class TemplateSelectorDialog : DialogFragmentBase() {
@@ -42,8 +41,9 @@ abstract class TemplateSelectorDialog : DialogFragmentBase() {
         ViewModelProviders.of(this).get(ScoutsHolder::class.java)
     }
 
-    private val progress: ContentLoadingProgressBar by bindView(R.id.progress)
-    private val recyclerView: RecyclerView by bindView(R.id.list)
+    override val containerView: View by unsafeLazy {
+        View.inflate(context, R.layout.dialog_template_selector, null)
+    }
     private val adapter by unsafeLazy {
         val options = FirestoreRecyclerOptions.Builder<Scout>()
                 .setSnapshotArray(holder.scouts)
@@ -91,20 +91,19 @@ abstract class TemplateSelectorDialog : DialogFragmentBase() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val rootView = View.inflate(context, R.layout.dialog_template_selector, null)
         return AlertDialog.Builder(requireContext())
                 .setTitle(title)
-                .setView(rootView)
+                .setView(view)
                 .setNegativeButton(android.R.string.cancel, null)
-                .create { onViewCreated(rootView, savedInstanceState) }
+                .create { onViewCreated(containerView, savedInstanceState) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         progress.show()
 
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = adapter
-        recyclerView.addItemDecoration(object : DividerItemDecoration(
+        templatesView.layoutManager = LinearLayoutManager(context)
+        templatesView.adapter = adapter
+        templatesView.addItemDecoration(object : DividerItemDecoration(
                 context,
                 DividerItemDecoration.VERTICAL
         ) {
@@ -131,7 +130,7 @@ abstract class TemplateSelectorDialog : DialogFragmentBase() {
                 }
 
                 // Only draw the divider for the second item i.e. the last native template
-                val child = parent.getChildAt(1 - (recyclerView.layoutManager as LinearLayoutManager)
+                val child = parent.getChildAt(1 - (templatesView.layoutManager as LinearLayoutManager)
                         .findFirstVisibleItemPosition()) ?: return
                 parent.getDecoratedBoundsWithMargins(child, bounds)
                 val bottom = bounds.bottom + child.translationY.roundToInt()

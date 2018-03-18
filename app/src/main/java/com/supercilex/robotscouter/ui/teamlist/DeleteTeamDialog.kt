@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.text.SpannableStringBuilder
 import android.view.View
-import android.widget.TextView
 import androidx.text.bold
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
@@ -16,15 +15,16 @@ import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.util.ui.show
 import com.supercilex.robotscouter.util.unsafeLazy
-import org.jetbrains.anko.find
+import kotlinx.android.synthetic.main.dialog_delete_team.*
 
 class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
+    override val containerView: View by unsafeLazy {
+        View.inflate(context, R.layout.dialog_delete_team, null)
+    }
     private val teams: List<Team> by unsafeLazy { arguments!!.getTeamList().sorted() }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        val view = View.inflate(context, R.layout.dialog_delete_team, null)
-
-        view.find<TextView>(R.id.message).text = run {
+        message.text = run {
             val message = resources.getQuantityString(
                     R.plurals.team_delete_message,
                     teams.size,
@@ -41,9 +41,7 @@ class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
             }
             deletedTeams
         }
-        view.find<View>(R.id.delete).setOnClickListener(this@DeleteTeamDialog)
-
-        dialog.setContentView(view)
+        delete.setOnClickListener(this@DeleteTeamDialog)
     }
 
     override fun onClick(v: View) {

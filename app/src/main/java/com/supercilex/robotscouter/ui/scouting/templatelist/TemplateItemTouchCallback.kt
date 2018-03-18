@@ -26,8 +26,8 @@ import com.supercilex.robotscouter.util.ui.mainHandler
 import com.supercilex.robotscouter.util.ui.maxAnimationDuration
 import com.supercilex.robotscouter.util.ui.showKeyboard
 import com.supercilex.robotscouter.util.ui.swap
-import kotterknife.bindView
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.math.roundToInt
 
@@ -37,8 +37,8 @@ class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
         ItemTouchHelper.START
 ) {
-    private val recyclerView: RecyclerView by rootView.bindView(R.id.list)
-    private val appBar: AppBarLayout by (rootView.context as FragmentActivity).bindView(R.id.app_bar)
+    private val recyclerView: RecyclerView = rootView.find(R.id.metricsView)
+    private val appBar: AppBarLayout = (rootView.context as FragmentActivity).find(R.id.appBar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 

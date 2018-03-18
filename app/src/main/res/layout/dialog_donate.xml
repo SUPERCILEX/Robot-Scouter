@@ -7,14 +7,14 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/content"
+        android:id="@+id/main"
         style="@style/RobotScouter.Dialog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/amount_textview"
+            android:id="@+id/amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/night_grey"
@@ -24,7 +24,7 @@
             tools:text="$1" />
 
         <SeekBar
-            android:id="@+id/amount"
+            android:id="@+id/amountSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_normal"
