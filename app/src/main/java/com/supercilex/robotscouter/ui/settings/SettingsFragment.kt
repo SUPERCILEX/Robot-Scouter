@@ -157,10 +157,10 @@ class SettingsFragment : PreferenceFragmentBase(),
             }
             KEY_LICENSES -> requireFragmentManager().beginTransaction()
                     .setCustomAnimations(
-                            R.anim.fade_in,
-                            R.anim.fade_out,
-                            R.anim.fade_in,
-                            R.anim.fade_out
+                            android.R.animator.fade_in,
+                            android.R.animator.fade_out,
+                            android.R.animator.fade_in,
+                            android.R.animator.fade_out
                     )
                     .replace(R.id.settings, LicensesFragment.newInstance())
                     .addToBackStack(null)
