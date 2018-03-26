@@ -75,7 +75,8 @@ class SpinnerTemplateViewHolder(
         val rv = items
         var items: List<Metric.List.Item> = metric.value
         for (i in 0 until rv.adapter.itemCount) {
-            items = (rv.getChildViewHolder(rv.getChildAt(i)) as ItemHolder).getUpdatedItems(items)
+            val holder = rv.findViewHolderForAdapterPosition(i) as ItemHolder?
+            items = (holder ?: continue).getUpdatedItems(items)
         }
         return items
     }
