@@ -66,8 +66,7 @@ class TbaDownloader private constructor(
 
             when (type) {
                 Imgur.ID -> Imgur("https://i.imgur.com/$key.png", preferred)
-                YouTube.ID ->
-                    YouTube("https://img.youtube.com/vi/$key/maxresdefault.jpg", preferred)
+                YouTube.ID -> YouTube("https://img.youtube.com/vi/$key/0.jpg", preferred)
                 Instagram.ID ->
                     Instagram("https://www.instagram.com/p/$key/media/?size=l", preferred)
                 ChiefDelphi.ID -> ChiefDelphi(
