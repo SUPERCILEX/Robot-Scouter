@@ -51,5 +51,5 @@ suspend fun fetchAndActivate() {
         return
     }
 
-    FirebaseRemoteConfig.getInstance().activateFetched()
+    config.activateFetched()
 }

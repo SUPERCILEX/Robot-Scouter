@@ -65,8 +65,7 @@ fun initAnalytics() {
         Crashlytics.setUserEmail(user?.email)
         Crashlytics.setUserName(user?.displayName)
         analytics.setUserId(user?.uid)
-        analytics.setUserProperty(
-                FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providers.toString())
+        analytics.setUserProperty(FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providerId)
 
         if (user != null) {
             User(

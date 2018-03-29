@@ -12,12 +12,15 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.RC_SIGN_IN
+import com.supercilex.robotscouter.util.asTask
 import com.supercilex.robotscouter.util.await
 import com.supercilex.robotscouter.util.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.util.isFullUser
 import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.logLoginEvent
+import com.supercilex.robotscouter.util.onSignedIn
 import com.supercilex.robotscouter.util.ui.OnActivityResult
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.util.signIn as startSignInIntent
@@ -33,8 +36,7 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
     }
 
     suspend fun init() {
-        if (isSignedIn) return
-        signInAnonymously().await()
+        if (!isSignedIn) signInAnonymously().await()
     }
 
     fun initMenu(menu: Menu) {
@@ -52,7 +54,7 @@ class AuthHelper(private val activity: TeamListActivity) : (View) -> Unit,
 
     fun signIn() = startSignInIntent(activity)
 
-    private fun signInAnonymously() = FirebaseAuth.getInstance().signInAnonymously()
+    private fun signInAnonymously() = async { onSignedIn() }.asTask()
             .addOnFailureListener(activity) {
                 longSnackbar(
                         rootView,

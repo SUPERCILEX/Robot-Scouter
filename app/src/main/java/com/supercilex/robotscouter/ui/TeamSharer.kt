@@ -5,6 +5,7 @@ import android.support.annotation.Size
 import android.support.v4.app.Fragment
 import androidx.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
+import com.google.android.gms.appinvite.AppInviteInvitation.IntentBuilder.MAX_MESSAGE_LENGTH
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.FieldPath
@@ -124,7 +125,6 @@ class TeamSharer private constructor(
 
     companion object {
         private const val RC_SHARE = 9
-        private const val MAX_MESSAGE_LENGTH = 100
         private const val FILE_NAME = "share_team_template.html"
 
         /**

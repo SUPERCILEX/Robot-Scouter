@@ -11,7 +11,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.google.android.gms.auth.api.credentials.Credentials
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
@@ -105,7 +105,7 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
             ref().handleIntent(ref().intent)
         }.logFailures()
 
-        Credentials.getClient(this) // Ensure the Play Services update dialog is shown
+        GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
     }
 
     override fun onNewIntent(intent: Intent) {
