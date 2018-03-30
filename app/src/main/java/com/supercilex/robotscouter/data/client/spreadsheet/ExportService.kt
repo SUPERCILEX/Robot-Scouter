@@ -75,6 +75,12 @@ class ExportService : IntentService(TAG) {
             notificationManager: ExportNotificationManager,
             newScouts: Map<Team, List<Scout>>
     ) {
+        if (newScouts.values.all { it.isEmpty() }) {
+            notificationManager.setData(0, newScouts.keys)
+            notificationManager.stop()
+            return
+        }
+
         val zippedScouts = zipScouts(newScouts)
 
         notificationManager.setData(zippedScouts.size, newScouts.keys)
@@ -143,9 +149,11 @@ class ExportService : IntentService(TAG) {
         val zippedScouts = mutableMapOf<String, MutableMap<Team, MutableList<Scout>>>()
         for ((team, scouts) in map) {
             for (scout in scouts) {
-                zippedScouts[scout.templateId]?.also {
-                    it[team]?.also { it += scout } ?: it.put(team, mutableListOf(scout))
-                } ?: zippedScouts.put(scout.templateId, mutableMapOf(team to mutableListOf(scout)))
+                zippedScouts.getOrPut(scout.templateId) {
+                    mutableMapOf()
+                }.getOrPut(team) {
+                    mutableListOf()
+                }.add(scout)
             }
         }
         return zippedScouts

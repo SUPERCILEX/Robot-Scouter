@@ -147,16 +147,7 @@ class ExportNotificationManager(private val service: ExportService) {
         notificationFilter.notify(id, notification.setGroup(hashCode().toString()).build(), true)
 
         if (--pendingTaskCount == 0) {
-            notificationFilter.notify(hashCode(), masterNotification
-                    .setSmallIcon(R.drawable.ic_logo)
-                    .setContentText(RobotScouter.resources.getQuantityString(
-                            R.plurals.export_complete_message, teams.size, teams.getNames()))
-                    .setSubText(RobotScouter.resources.getQuantityString(
-                            R.plurals.export_complete_subtitle, nTemplates, nTemplates))
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build(), true)
-            notificationFilter.stop()
-            ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_DETACH)
+            stop()
         } else {
             notificationFilter.notify(hashCode(), masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
@@ -171,6 +162,19 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     fun isStopped() = notificationFilter.isStopped()
+
+    fun stop() {
+        notificationFilter.notify(hashCode(), masterNotification
+                .setSmallIcon(R.drawable.ic_logo)
+                .setContentText(RobotScouter.resources.getQuantityString(
+                        R.plurals.export_complete_message, teams.size, teams.getNames()))
+                .setSubText(RobotScouter.resources.getQuantityString(
+                        R.plurals.export_complete_subtitle, nTemplates, nTemplates))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build(), true)
+        notificationFilter.stop()
+        ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_DETACH)
+    }
 
     fun abort() {
         notificationFilter.stopNow()
