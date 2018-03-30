@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.util.data
 
 import android.Manifest
+import android.os.Build
 import android.os.Environment
 import android.support.annotation.RequiresPermission
 import android.support.annotation.WorkerThread
@@ -9,9 +10,15 @@ import java.io.IOException
 
 val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-private val exports = // TODO Environment.DIRECTORY_DOCUMENTS can be used after API 19
-        File(Environment.getExternalStorageDirectory(), "Documents")
-private val media = File(Environment.getExternalStorageDirectory(), Environment.DIRECTORY_PICTURES)
+private val exports = Environment.getExternalStoragePublicDirectory(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Environment.DIRECTORY_DOCUMENTS
+        } else {
+            "Documents"
+        }
+)
+private val media: File =
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
 @WorkerThread
 fun initIo() {
