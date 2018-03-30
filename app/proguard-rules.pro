@@ -9,17 +9,6 @@
 # Ignore Kotlin errors TODO https://youtrack.jetbrains.com/issue/KT-23172
 -dontwarn com.supercilex.robotscouter.**
 
-# Retrofit
--dontnote retrofit2.Platform
--dontwarn retrofit2.**
--dontwarn okio.**
--dontwarn okhttp3.**
-
-# Other
--dontnote com.google.**
--dontnote com.facebook.**
--dontnote com.twitter.**
-
 # Remove logging
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);
