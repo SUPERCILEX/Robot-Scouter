@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.supercilex.robotscouter.util.ui.views.CardMetricLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
@@ -19,4 +19,4 @@
 
     </android.support.design.widget.TextInputLayout>
 
-</FrameLayout>
+</com.supercilex.robotscouter.util.ui.views.CardMetricLinearLayout>

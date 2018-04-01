@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<com.supercilex.robotscouter.util.ui.views.CardMetricConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/RobotScouter.ListItem">
@@ -19,4 +19,4 @@
 
     <include layout="@layout/scout_base_stopwatch" />
 
-</android.support.constraint.ConstraintLayout>
+</com.supercilex.robotscouter.util.ui.views.CardMetricConstraintLayout>

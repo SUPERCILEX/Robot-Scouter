@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.supercilex.robotscouter.util.ui.views.CardMetricLinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
@@ -12,4 +12,4 @@
 
     <include layout="@layout/scout_base_checkbox" />
 
-</LinearLayout>
+</com.supercilex.robotscouter.util.ui.views.CardMetricLinearLayout>
