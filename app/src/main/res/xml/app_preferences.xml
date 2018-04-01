@@ -9,7 +9,7 @@
             android:defaultValue="auto"
             android:entries="@array/settings_pref_night_mode_entries"
             android:entryValues="@array/settings_pref_night_mode_values"
-            android:icon="@drawable/ic_settings_colorable_24dp"
+            android:icon="@drawable/ic_weather_night_colorable_24dp"
             android:key="nightMode"
             android:summary="%s"
             android:title="@string/settings_pref_night_mode_title" />
