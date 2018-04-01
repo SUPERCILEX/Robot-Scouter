@@ -14,6 +14,13 @@
             android:summary="%s"
             android:title="@string/settings_pref_night_mode_title" />
 
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_lock_outline_colorable_24dp"
+            android:key="lockTemplates"
+            android:summary="@string/settings_pref_lock_templates_summary"
+            android:title="@string/settings_pref_lock_templates_title" />
+
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_general_title">

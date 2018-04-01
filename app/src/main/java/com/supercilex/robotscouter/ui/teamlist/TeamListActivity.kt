@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.KeyEvent
 import android.view.Menu
@@ -23,6 +24,7 @@ import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.util.data.getTeam
+import com.supercilex.robotscouter.util.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.util.fetchAndActivate
 import com.supercilex.robotscouter.util.fullVersionCode
 import com.supercilex.robotscouter.util.isOnline
@@ -89,6 +91,19 @@ class TeamListActivity : ActivityBase(), View.OnClickListener,
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
+        drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            private val editTemplates: MenuItem = drawer.menu.findItem(R.id.action_edit_templates)
+
+            init {
+                update()
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) = update()
+
+            private fun update() {
+                editTemplates.isVisible = isTemplateEditingAllowed
+            }
+        })
         drawer.setNavigationItemSelectedListener(this)
 
         fab.setOnClickListener(this)

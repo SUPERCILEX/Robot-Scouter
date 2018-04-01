@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.util.FIRESTORE_NAME
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
+import com.supercilex.robotscouter.util.FIRESTORE_PREF_LOCK_TEMPLATES
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.util.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
@@ -94,6 +95,7 @@ val metricParser = SnapshotParser { Metric.parse(it.data, it.reference) }
 val prefParser = SnapshotParser<Any?> {
     val id = it.id
     when (id) {
+        FIRESTORE_PREF_LOCK_TEMPLATES,
         FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
         FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
         FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG

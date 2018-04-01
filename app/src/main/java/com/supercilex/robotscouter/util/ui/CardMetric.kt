@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewOutlineProvider
 import com.supercilex.robotscouter.R
+import com.supercilex.robotscouter.util.unsafeLazy
 import android.graphics.RectF as AndroidRectF
 
 interface CardMetric {
@@ -52,7 +53,7 @@ class CardMetricHelper(private val view: View) {
 
     private val rectF = AndroidRectF()
 
-    private val provider by lazy {
+    private val provider by unsafeLazy {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {

@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
+import com.supercilex.robotscouter.util.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
@@ -58,7 +59,7 @@ open class AppBarViewHolderBase(
             }
     private val mediaCapture = ViewModelProviders.of(fragment)
             .get(TeamMediaCreator::class.java).apply {
-        init(permissionHandler to savedInstanceState)
+                init(permissionHandler to savedInstanceState)
                 onMediaCaptured.observe(fragment, Observer {
                     team.copyMediaInfo(it!!)
                     team.startUploadMediaJob()
@@ -69,6 +70,7 @@ open class AppBarViewHolderBase(
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()
     private lateinit var newScoutItem: MenuItem
     private lateinit var addMediaItem: MenuItem
+    private lateinit var editTemplateItem: MenuItem
 
     init {
         backdrop.setOnLongClickListenerCompat(this)
@@ -143,6 +145,7 @@ open class AppBarViewHolderBase(
 
         newScoutItem = menu.findItem(R.id.action_new_scout)
         addMediaItem = menu.findItem(R.id.action_add_media)
+        editTemplateItem = menu.findItem(R.id.action_edit_template)
 
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
         toolbar.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
@@ -161,6 +164,7 @@ open class AppBarViewHolderBase(
     override fun onSuccess(voids: List<Void?>) {
         newScoutItem.isVisible = true
         addMediaItem.isVisible = team.isOutdatedMedia
+        editTemplateItem.isVisible = isTemplateEditingAllowed
     }
 
     private fun getTransparentColor(@ColorInt opaque: Int): Int = Color.argb(

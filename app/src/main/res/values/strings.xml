@@ -258,6 +258,12 @@
         <item>no</item>
     </string-array>
 
+    <string name="settings_pref_lock_templates_title">Prevent template editing</string>
+    <string name="settings_pref_lock_templates_summary">
+        Choose whether or not to show the template editor. Useful to prevent accidental edits from
+        non-lead team members.
+    </string>
+
     <string name="settings_pref_default_template_title">Default template</string>
     <string name="settings_pref_default_template_summary">%s\nChoose the default template for new scouts</string>
 

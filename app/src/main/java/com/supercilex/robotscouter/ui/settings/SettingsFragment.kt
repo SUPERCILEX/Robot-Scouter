@@ -40,12 +40,13 @@ import com.supercilex.robotscouter.util.logLoginEvent
 import com.supercilex.robotscouter.util.signIn
 import com.supercilex.robotscouter.util.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.util.ui.TemplateSelectionListener
+import com.supercilex.robotscouter.util.unsafeLazy
 import org.jetbrains.anko.support.v4.toast
 
 class SettingsFragment : PreferenceFragmentBase(),
         TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
-    private val settingsModel by lazy {
+    private val settingsModel by unsafeLazy {
         ViewModelProviders.of(this).get(SettingsViewModel::class.java).apply { init(null) }
     }
 

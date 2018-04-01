@@ -91,6 +91,10 @@ service cloud.firestore {
           allow create, update: if isMatchingUid() && request.resource.data.value in ["auto", "yes", "no"];
         }
 
+        match /lockTemplates {
+          allow create, update: if isMatchingUid() && request.resource.data.value is bool;
+        }
+
         match /uploadMediaToTba {
           allow create, update: if isMatchingUid() && request.resource.data.value in ["ask", "yes", "no"];
         }
