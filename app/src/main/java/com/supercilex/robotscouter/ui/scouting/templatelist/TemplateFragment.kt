@@ -190,15 +190,15 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         val pagerAdapter = (parentFragment as? TemplateListFragment ?: return).pagerAdapter
-        pagerAdapter.currentTabId!!.let {
-            val tabName = pagerAdapter.currentTab?.text.toString()
-            if (isVisibleToUser) {
-                logSelectTemplate(it, tabName)
-                FirebaseUserActions.getInstance().start(getTemplateViewAction(it, tabName))
-            } else {
-                FirebaseUserActions.getInstance().end(getTemplateViewAction(it, tabName))
-            }.logFailures()
-        }
+        val currentTabId = pagerAdapter.currentTabId ?: return
+        val tabName = pagerAdapter.currentTab?.text.toString()
+
+        if (isVisibleToUser) {
+            logSelectTemplate(currentTabId, tabName)
+            FirebaseUserActions.getInstance().start(getTemplateViewAction(currentTabId, tabName))
+        } else {
+            FirebaseUserActions.getInstance().end(getTemplateViewAction(currentTabId, tabName))
+        }.logFailures()
     }
 
     companion object {
