@@ -31,10 +31,10 @@ import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.toTemplateString
+import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
-import com.supercilex.robotscouter.server.utils.types.Event
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
@@ -77,8 +77,8 @@ fun emptyTrash(): Promise<*>? {
     ).processInBatches(10) { processDeletion(it) }
 }
 
-fun sanitizeDeletionRequest(event: Event<DeltaDocumentSnapshot>): Promise<*>? {
-    val snapshot = event.data
+fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
+    val snapshot = event.after
     console.log("Sanitizing deletion request for user id ${snapshot.id}.")
 
     if (!snapshot.exists) return null

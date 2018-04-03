@@ -144,9 +144,9 @@ external interface DeltaDocumentSnapshot {
 }
 
 external class DocumentBuilder {
-    fun onWrite(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>?): dynamic = definedExternally
-    fun onCreate(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>?): dynamic = definedExternally
-    fun onUpdate(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>?): dynamic = definedExternally
-    fun onDelete(handler: (event: Event<DeltaDocumentSnapshot>) -> Promise<*>?): dynamic = definedExternally
+    fun onWrite(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
+    fun onCreate(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
+    fun onUpdate(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
+    fun onDelete(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
     fun onOperation(handler: Any, eventType: Any): Unit = definedExternally
 }

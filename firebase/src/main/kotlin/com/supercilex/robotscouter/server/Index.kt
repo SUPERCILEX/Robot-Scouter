@@ -14,17 +14,17 @@ external val exports: dynamic
 
 @Suppress("unused") // Used by Cloud Functions
 fun main(args: Array<String>) {
-    admin.initializeApp(functions.config().firebase)
+    admin.initializeApp()
 
     exports.deleteUnusedData = functions.pubsub.topic("monthly-tick")
-            .onPublish { deleteUnusedData() }
+            .onPublish { _, _ -> deleteUnusedData() }
     exports.emptyTrash = functions.pubsub.topic("monthly-tick")
-            .onPublish { emptyTrash() }
+            .onPublish { _, _ -> emptyTrash() }
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
     exports.logUserData = functions.pubsub.topic("log-user-data")
-            .onPublish { logUserData(it) }
+            .onPublish { message, _ -> logUserData(message) }
     exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates")
-            .onPublish { updateDefaultTemplates() }
+            .onPublish { _, _ -> updateDefaultTemplates() }
     exports.sanitizeDeletionQueue = functions.firestore.document("${deletionQueue.id}/{uid}")
-            .onWrite { sanitizeDeletionRequest(it) }
+            .onWrite { event, _ -> sanitizeDeletionRequest(event) }
 }

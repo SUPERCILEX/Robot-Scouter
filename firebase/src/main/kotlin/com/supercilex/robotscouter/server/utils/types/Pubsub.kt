@@ -15,7 +15,7 @@ external class Pubsub {
 }
 
 external class TopicBuilder {
-    fun onPublish(handler: (event: Event<Message>) -> Promise<*>?): dynamic = definedExternally
+    fun onPublish(handler: (message: Message, context: EventContext) -> Promise<*>?): dynamic = definedExternally
 }
 
 external class Message(data: Any) {
