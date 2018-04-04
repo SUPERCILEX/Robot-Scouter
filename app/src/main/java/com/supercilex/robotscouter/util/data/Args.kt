@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.annotation.RequiresApi
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import com.supercilex.robotscouter.data.model.Team
 
 const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"

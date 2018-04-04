@@ -108,11 +108,8 @@ abstract class MovableFragmentStatePagerAdapter(
 
     /** @see android.support.v4.app.FragmentStatePagerAdapter.saveState */
     override fun saveState(): Parcelable? = Bundle().apply {
-        putStringArrayList(KEY_FRAGMENT_IDS, ArrayList<String>(savedStates.keys))
-        putParcelableArrayList(
-                KEY_FRAGMENT_STATES,
-                ArrayList<Fragment.SavedState>(savedStates.values)
-        )
+        putStringArrayList(KEY_FRAGMENT_IDS, ArrayList(savedStates.keys))
+        putParcelableArrayList(KEY_FRAGMENT_STATES, ArrayList(savedStates.values))
 
         for ((f, id) in fragmentsToItemIds.entries) {
             if (f.isAdded) manager.putFragment(this, "$KEY_FRAGMENT_STATE$id", f)

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.text.SpannableStringBuilder
 import android.view.View
-import androidx.text.bold
+import androidx.core.text.bold
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.data.getTeamList

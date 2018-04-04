@@ -45,7 +45,7 @@ class LinkReceiverActivity : ActivityBase() {
 
             val dynamicLink: PendingDynamicLinkData? =
                     FirebaseDynamicLinks.getInstance().getDynamicLink(intent).await()
-            val link: Uri = dynamicLink?.link ?: intent.data ?: Uri.Builder().build()
+            val link: Uri = dynamicLink?.link ?: intent.data ?: Uri.EMPTY
             val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
 
             when (link.lastPathSegment) {

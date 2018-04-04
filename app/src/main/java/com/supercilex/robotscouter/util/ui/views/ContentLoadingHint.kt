@@ -6,7 +6,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.animation.LinearInterpolator
-import androidx.animation.doOnEnd
+import androidx.core.animation.doOnEnd
 import com.supercilex.robotscouter.util.ui.ContentLoader
 import com.supercilex.robotscouter.util.ui.ContentLoaderHelper
 import com.supercilex.robotscouter.util.ui.animatePopReveal

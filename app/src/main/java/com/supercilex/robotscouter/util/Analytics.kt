@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.util
 
 import android.os.Bundle
-import androidx.os.bundleOf
+import androidx.core.os.bundleOf
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event

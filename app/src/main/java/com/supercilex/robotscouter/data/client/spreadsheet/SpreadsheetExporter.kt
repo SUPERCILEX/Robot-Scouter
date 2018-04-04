@@ -64,13 +64,9 @@ class SpreadsheetExporter(
 
         val spreadsheetUri = getFileUri()
 
-        val baseIntent = Intent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            baseIntent.putStringArrayListExtra(
-                    Intent.EXTRA_CONTENT_ANNOTATIONS,
-                    ArrayList<String>().apply { add("document") }
-            )
-        }
+        val baseIntent = Intent()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putStringArrayListExtra(Intent.EXTRA_CONTENT_ANNOTATIONS, arrayListOf("document"))
 
         val viewIntent = Intent(baseIntent).setAction(Intent.ACTION_VIEW)
                 .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL)

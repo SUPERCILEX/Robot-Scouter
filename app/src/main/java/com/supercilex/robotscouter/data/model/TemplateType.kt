@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.data.model
 
-import androidx.text.isDigitsOnly
+import androidx.core.text.isDigitsOnly
 import java.util.Collections
 
 enum class TemplateType(val id: Int) {

@@ -121,7 +121,7 @@ dependencies {
 
     implementation "android.arch.lifecycle:extensions:$archVersion"
     implementation "android.arch.lifecycle:common-java8:$archVersion"
-    implementation 'androidx.core:core-ktx:0.2'
+    implementation 'androidx.core:core-ktx:0.3'
 
     implementation 'com.android.billingclient:billing:1.0'
 

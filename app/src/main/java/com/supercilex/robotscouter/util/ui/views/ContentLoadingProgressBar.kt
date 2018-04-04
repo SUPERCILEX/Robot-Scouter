@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.util.ui.views
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ProgressBar
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import com.supercilex.robotscouter.util.ui.ContentLoader
 import com.supercilex.robotscouter.util.ui.ContentLoaderHelper
 

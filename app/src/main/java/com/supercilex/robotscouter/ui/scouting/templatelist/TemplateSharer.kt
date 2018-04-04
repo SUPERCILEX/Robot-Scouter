@@ -2,7 +2,7 @@ package com.supercilex.robotscouter.ui.scouting.templatelist
 
 import android.content.Intent
 import android.support.v4.app.Fragment
-import androidx.net.toUri
+import androidx.core.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions

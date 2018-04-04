@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.view.updateLayoutParams
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.ui.scouting.scoutlist.viewholder.CounterViewHolder
 import com.supercilex.robotscouter.util.data.nullOrFull
@@ -25,7 +26,7 @@ class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
         itemView as LinearLayout
         itemView.removeView(unit)
         itemView.addView(unit, itemView.childCount - 1)
-        (count.layoutParams as LinearLayout.LayoutParams).rightMargin = 0
+        count.updateLayoutParams<LinearLayout.LayoutParams> { rightMargin = 0 }
 
         unit.onFocusChangeListener = this
     }

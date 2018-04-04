@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponse
 import com.android.billingclient.api.BillingClientStateListener

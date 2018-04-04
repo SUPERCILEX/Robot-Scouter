@@ -10,7 +10,7 @@ import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
-import androidx.view.postOnAnimationDelayed
+import androidx.core.view.postOnAnimationDelayed
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.google.firebase.firestore.WriteBatch

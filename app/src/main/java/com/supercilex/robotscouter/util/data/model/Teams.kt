@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.util.data.model
 import android.content.Context
 import android.support.annotation.WorkerThread
 import android.util.Patterns
-import androidx.net.toUri
+import androidx.core.net.toUri
 import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex

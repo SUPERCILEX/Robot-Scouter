@@ -20,7 +20,7 @@ import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
-import androidx.net.toUri
+import androidx.core.net.toUri
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.appindexing.FirebaseAppIndex

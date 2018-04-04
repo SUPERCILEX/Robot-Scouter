@@ -13,8 +13,8 @@ import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.view.View
 import android.view.ViewAnimationUtils
-import androidx.view.isGone
-import androidx.view.isVisible
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.supercilex.robotscouter.RobotScouter
 
 val shortAnimationDuration: Long by lazy {

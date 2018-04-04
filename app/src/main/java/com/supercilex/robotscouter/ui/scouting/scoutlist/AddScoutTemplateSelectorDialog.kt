@@ -9,7 +9,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckBox
 import android.widget.LinearLayout
-import androidx.content.withStyledAttributes
+import androidx.core.content.withStyledAttributes
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.data.defaultTemplateId
 import com.supercilex.robotscouter.util.ui.TemplateSelectorDialog

@@ -10,7 +10,7 @@ import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
 import android.widget.TextView
-import androidx.content.withStyledAttributes
+import androidx.core.content.withStyledAttributes
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.LateinitVal

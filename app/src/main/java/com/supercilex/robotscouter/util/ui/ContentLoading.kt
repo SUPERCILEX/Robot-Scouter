@@ -2,7 +2,7 @@ package com.supercilex.robotscouter.util.ui
 
 import android.os.SystemClock
 import android.view.View
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 
 interface ContentLoader {
     val helper: ContentLoaderHelper

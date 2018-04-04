@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.ui
 import android.content.Intent
 import android.support.annotation.Size
 import android.support.v4.app.Fragment
-import androidx.net.toUri
+import androidx.core.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.appinvite.AppInviteInvitation.IntentBuilder.MAX_MESSAGE_LENGTH
 import com.google.firebase.appindexing.Action

@@ -4,12 +4,12 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AlertDialog
 import android.text.Html
-import androidx.net.toUri
+import androidx.core.net.toUri
+import androidx.core.text.parseAsHtml
 import com.supercilex.robotscouter.BuildConfig
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.util.ui.DialogFragmentBase
@@ -18,14 +18,7 @@ import com.supercilex.robotscouter.util.updateRequiredMessage
 class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.update_required_title)
-            .setMessage(run {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Html.fromHtml(updateRequiredMessage, Html.FROM_HTML_MODE_COMPACT)
-                } else {
-                    @Suppress("DEPRECATION") // Needed to support older Android versions
-                    Html.fromHtml(updateRequiredMessage)
-                }
-            })
+            .setMessage(updateRequiredMessage.parseAsHtml(Html.FROM_HTML_MODE_COMPACT))
             .setPositiveButton(R.string.update_title, this)
             .setOnCancelListener(this)
             .setCancelable(false)
