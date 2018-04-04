@@ -34,6 +34,7 @@ import com.supercilex.robotscouter.util.data.prefStore
 import com.supercilex.robotscouter.util.debugInfo
 import com.supercilex.robotscouter.util.fullVersionName
 import com.supercilex.robotscouter.util.isFullUser
+import com.supercilex.robotscouter.util.isSignedIn
 import com.supercilex.robotscouter.util.launchUrl
 import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.logLoginEvent
@@ -64,6 +65,9 @@ class SettingsFragment : PreferenceFragmentBase(),
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        // In a rare edge case, the user can be signed out before the fragment dies
+        if (!isSignedIn) return
+
         preferenceManager.preferenceDataStore = prefStore
         addPreferencesFromResource(R.xml.app_preferences)
         onPreferenceChange(preferenceScreen, null)
