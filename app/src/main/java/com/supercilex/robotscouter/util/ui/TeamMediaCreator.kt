@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider
+import android.view.Gravity
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
@@ -96,6 +97,11 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             val photoUri = FileProvider.getUriForFile(RobotScouter, providerAuthority, file)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
             host.startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
+
+            if (this@TeamMediaCreator.shouldUploadMediaToTba == true) {
+                RobotScouter.longToast(R.string.media_upload_reminder)
+                        .setGravity(Gravity.CENTER, 0, 0)
+            }
         }.logFailures()
     }
 

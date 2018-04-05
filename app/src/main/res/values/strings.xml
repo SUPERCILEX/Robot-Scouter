@@ -30,12 +30,19 @@
     <string name="tutorial_loading_metrics_hint">Loading…\nCheck your internet connection</string>
 
     <!-- Media upload -->
-    <string name="media_should_upload_title">Upload media to The Blue Alliance</string>
+    <string name="media_should_upload_title">Upload media to The Blue Alliance?</string>
     <string name="media_should_upload_rationale">
-        If you choose to opt-in, your media will be shared with <a href="https://thebluealliance.com">The Blue Alliance</a>
-        to help other Robot Scouter users and the greater TBA community.
+        If you choose to opt-in, your media will be shared with
+        <a href="https://thebluealliance.com">The Blue Alliance</a> to help other Robot Scouter
+        users and the greater TBA community.\n\nPlease <b>READ THIS</b>:\n  ●
+        Real people review your suggestions, be graciously professional.\n  ●
+        Only take pictures of robots.\n  ●
+        Ensure the robot is clearly visible.
     </string>
-    <string name="media_save_response_title">Save response</string>
+    <string name="media_save_response_title">Don\'t remind me again</string>
+    <string name="media_upload_reminder">
+        Take <b>clear</b> pictures of <b>robots</b> <i>only</i>.
+    </string>
 
     <!-- Rating dialog -->
     <string name="rate_title">Enjoying Robot Scouter?</string>
@@ -267,7 +274,7 @@
     <string name="settings_pref_default_template_title">Default template</string>
     <string name="settings_pref_default_template_summary">%s\nChoose the default template for new scouts</string>
 
-    <string name="settings_pref_should_upload_to_tba_title">@string/media_should_upload_title</string>
+    <string name="settings_pref_should_upload_to_tba_title">Upload media to The Blue Alliance</string>
     <string name="settings_pref_should_upload_to_tba_summary">
         %s\nChoose what happens when you take a picture with Robot Scouter
     </string>
