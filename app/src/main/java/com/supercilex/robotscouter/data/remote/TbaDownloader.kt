@@ -124,13 +124,6 @@ class TbaDownloader private constructor(
             }
         }
 
-        class YouTube(url: String, preferred: Boolean) :
-                Media(url, (if (preferred) Int.MAX_VALUE else 0) - 1) {
-            companion object {
-                const val ID = "youtube"
-            }
-        }
-
         class Instagram(url: String, preferred: Boolean) :
                 Media(url, (if (preferred) Int.MAX_VALUE else 0) - 2) {
             companion object {
@@ -142,6 +135,13 @@ class TbaDownloader private constructor(
                 Media(url, (if (preferred) Int.MAX_VALUE else 0) - 3) {
             companion object {
                 const val ID = "cdphotothread"
+            }
+        }
+
+        class YouTube(url: String, preferred: Boolean) :
+                Media(url, (if (preferred) Int.MAX_VALUE else 0) - 1) {
+            companion object {
+                const val ID = "youtube"
             }
         }
 
