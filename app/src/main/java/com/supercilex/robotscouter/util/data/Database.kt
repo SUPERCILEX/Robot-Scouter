@@ -339,12 +339,14 @@ sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, A
 }
 
 class UniqueMutableLiveData<T> : MutableLiveData<T>() {
+    private val initialized = AtomicBoolean()
+
     override fun postValue(value: T) = runIfDifferent(value) { super.postValue(value) }
 
     override fun setValue(value: T) = runIfDifferent(value) { super.setValue(value) }
 
     private inline fun runIfDifferent(value: T, block: () -> Unit) {
-        if (this.value != value) block()
+        if (this.value != value || initialized.compareAndSet(false, true)) block()
     }
 }
 

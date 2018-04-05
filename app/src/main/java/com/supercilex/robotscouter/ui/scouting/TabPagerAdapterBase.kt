@@ -47,7 +47,7 @@ abstract class TabPagerAdapterBase(
     val currentTab: TabLayout.Tab?
         get() = tabs.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
 
-    init {
+    fun init() {
         fragment.lifecycle.addObserver(this)
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }

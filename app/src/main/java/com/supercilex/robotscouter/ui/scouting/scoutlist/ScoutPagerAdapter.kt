@@ -19,6 +19,7 @@ class ScoutPagerAdapter(
 
     init {
         holder.init(generator(team))
+        init()
     }
 
     override fun getItem(position: Int) =

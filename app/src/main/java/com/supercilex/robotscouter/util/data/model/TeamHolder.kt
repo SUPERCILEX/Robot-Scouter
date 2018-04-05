@@ -1,82 +1,87 @@
 package com.supercilex.robotscouter.util.data.model
 
-import android.arch.core.util.Function
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.Transformations
 import android.os.Bundle
 import com.firebase.ui.common.ChangeEventType
-import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.data.remote.TbaDownloader
 import com.supercilex.robotscouter.util.data.ChangeEventListenerBase
-import com.supercilex.robotscouter.util.data.ListenerRegistrationLifecycleOwner
+import com.supercilex.robotscouter.util.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.util.data.ViewModelBase
-import com.supercilex.robotscouter.util.data.asLiveData
 import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.teams
 import com.supercilex.robotscouter.util.data.toBundle
+import com.supercilex.robotscouter.util.data.waitForChange
+import com.supercilex.robotscouter.util.isSignedIn
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.Saveable
+import com.supercilex.robotscouter.util.uid
 import kotlinx.coroutines.experimental.async
 
-class TeamHolder : ViewModelBase<Bundle>(), Saveable,
-        Function<ObservableSnapshotArray<Team>, LiveData<Team>> {
-    val teamListener: LiveData<Team> = Transformations.switchMap(teams.asLiveData(), this)
+class TeamHolder : ViewModelBase<Bundle>(), Saveable, ChangeEventListenerBase {
+    private val _teamListener = UniqueMutableLiveData<Team?>()
+    val teamListener: LiveData<Team?> = _teamListener
 
-    private val keepAliveListener = Observer<Team> {}
-    private lateinit var team: Team
+    private var called = true
 
     override fun onCreate(args: Bundle) {
-        team = args.getTeam()
-        (teamListener as MutableLiveData).value = team
-        teamListener.observe(ListenerRegistrationLifecycleOwner, keepAliveListener)
+        val team = args.getTeam()
+        if (isSignedIn && team.owners.contains(uid)) {
+            if (team.id.isBlank()) {
+                async {
+                    for (potentialTeam in teams.waitForChange()) {
+                        if (team.number == potentialTeam.number) {
+                            _teamListener.postValue(potentialTeam.copy())
+                            return@async
+                        }
+                    }
+
+                    team.add()
+                    _teamListener.postValue(team.copy())
+
+                    try {
+                        TbaDownloader.load(team)
+                    } catch (e: Exception) {
+                        null
+                    }?.let { team.update(it) }
+                }.logFailures()
+            } else {
+                _teamListener.setValue(team)
+            }
+        } else {
+            _teamListener.setValue(null)
+        }
+
+        teams.keepAlive = true
+        teams.addChangeEventListener(this)
     }
 
-    override fun apply(teams: ObservableSnapshotArray<Team>?): LiveData<Team> {
-        if (teams == null) return MutableLiveData()
+    override fun onChildChanged(
+            type: ChangeEventType,
+            snapshot: DocumentSnapshot,
+            newIndex: Int,
+            oldIndex: Int
+    ) {
+        if (teamListener.value?.id != snapshot.id) return
+        called = true
 
-        if (team.id.isBlank()) {
-            for ((number, id) in teams) {
-                if (number == team.number) {
-                    team.id = id
-                    return apply(teams)
-                }
-            }
-
-            team.add()
-            async { TbaDownloader.load(team)?.let { team.update(it) } }
+        if (type == ChangeEventType.REMOVED) {
+            _teamListener.setValue(null)
+            return
+        } else if (type == ChangeEventType.MOVED) {
+            return
         }
 
-        return object : MutableLiveData<Team>(), ChangeEventListenerBase {
-            override fun onActive() {
-                teams.addChangeEventListener(this)
-            }
+        _teamListener.setValue(teams[newIndex].copy())
+    }
 
-            override fun onInactive() {
-                teams.removeChangeEventListener(this)
-            }
-
-            override fun onChildChanged(
-                    type: ChangeEventType,
-                    snapshot: DocumentSnapshot,
-                    newIndex: Int,
-                    oldIndex: Int
-            ) {
-                if (teamListener.value?.id != snapshot.id) return
-
-                if (type == ChangeEventType.REMOVED) {
-                    value = null
-                    return
-                } else if (type == ChangeEventType.MOVED) {
-                    return
-                }
-
-                val newTeam = teams[newIndex]
-                if (value != newTeam) value = newTeam.copy()
-            }
+    override fun onDataChanged() {
+        if (!called && teams.find { it.id == teamListener.value?.id } == null) {
+            _teamListener.setValue(null)
         }
+
+        called = false
     }
 
     override fun onSaveInstanceState(outState: Bundle) =
@@ -84,6 +89,7 @@ class TeamHolder : ViewModelBase<Bundle>(), Saveable,
 
     override fun onCleared() {
         super.onCleared()
-        teamListener.removeObserver(keepAliveListener)
+        teams.keepAlive = false
+        teams.removeChangeEventListener(this)
     }
 }

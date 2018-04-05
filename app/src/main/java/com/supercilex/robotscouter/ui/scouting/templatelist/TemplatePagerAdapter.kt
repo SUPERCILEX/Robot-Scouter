@@ -12,6 +12,7 @@ open class TemplatePagerAdapter(fragment: Fragment) : TabPagerAdapterBase(fragme
 
     init {
         holder.init { getTemplatesQuery(Query.Direction.DESCENDING) }
+        init()
     }
 
     override fun getItem(position: Int) = TemplateFragment.newInstance(currentScouts[position].id)

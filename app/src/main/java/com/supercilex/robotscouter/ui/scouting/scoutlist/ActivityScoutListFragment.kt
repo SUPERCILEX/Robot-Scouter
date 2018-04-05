@@ -66,7 +66,7 @@ class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStat
 
     private inner class ActivityAppBarViewHolder(
             savedInstanceState: Bundle?,
-            listener: LiveData<Team>,
+            listener: LiveData<Team?>,
             onScoutingReadyTask: Task<Nothing?>
     ) : AppBarViewHolderBase(
             this@ActivityScoutListFragment,

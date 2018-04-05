@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.util.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.util.data.KEY_OVERRIDE_TEMPLATE_KEY
 import com.supercilex.robotscouter.util.data.getScoutBundle
 import com.supercilex.robotscouter.util.data.getTabId
+import com.supercilex.robotscouter.util.data.getTeam
 import com.supercilex.robotscouter.util.data.model.TeamHolder
 import com.supercilex.robotscouter.util.data.model.addScout
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
@@ -47,7 +48,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
 abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
-        TemplateSelectionListener, Observer<Team>, CaptureTeamMediaListener {
+        TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener {
     override val recyclerPool = RecyclerView.RecycledViewPool()
 
     protected lateinit var viewHolder: AppBarViewHolderBase
@@ -78,8 +79,9 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         setHasOptionsMenu(true)
         savedState = savedInstanceState
 
-        dataHolder.init(savedInstanceState ?: arguments!!)
-        team = dataHolder.teamListener.value!!
+        val state = savedInstanceState ?: arguments!!
+        dataHolder.init(state)
+        team = state.getTeam()
         dataHolder.teamListener.observe(this, this)
     }
 

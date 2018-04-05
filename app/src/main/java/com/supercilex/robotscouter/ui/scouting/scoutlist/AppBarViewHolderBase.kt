@@ -39,18 +39,18 @@ import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
-import org.jetbrains.anko.find
+import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
 
 open class AppBarViewHolderBase(
         private val fragment: ScoutListFragmentBase,
         savedInstanceState: Bundle?,
-        listener: LiveData<Team>,
+        listener: LiveData<Team?>,
         private val onScoutingReadyTask: Task<*>
 ) : LayoutContainer, OnSuccessListener<List<Void?>>, View.OnLongClickListener,
         CaptureTeamMediaListener, ActivityCompat.OnRequestPermissionsResultCallback,
         OnActivityResult, Saveable {
-    protected var team: Team = listener.value!!
+    protected lateinit var team: Team
 
     override val containerView = fragment.view
     private val permissionHandler = ViewModelProviders.of(fragment)
@@ -149,7 +149,7 @@ open class AppBarViewHolderBase(
 
         if (!onScoutingReadyTask.isComplete) newScoutItem.isVisible = false
         toolbar.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-            v.find<View>(R.id.action_new_scout).setOnLongClickListenerCompat(this)
+            v.findOptional<View>(R.id.action_new_scout)?.setOnLongClickListenerCompat(this)
         }
 
         onMenuReadyTask.trySetResult(null)
