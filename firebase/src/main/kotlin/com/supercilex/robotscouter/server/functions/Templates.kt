@@ -82,25 +82,29 @@ fun pitTemplateMetrics() = metrics {
 
             "c" to header("Hardware"),
             "d" to selector(
-                    "Drivetrain", "d",
+                    "What's their drivetrain?", "d",
+                    ListItem("d", "Unknown"),
                     ListItem("a", "Standard 6/8 wheel"),
                     ListItem("b", "Swerve"),
                     ListItem("c", "Omni/Mecanum"),
-                    ListItem("d", "Unknown")
+                    ListItem("e", "Other")
             ),
+            "n" to text("If other, please specify"),
+            "o" to checkbox("Does it climb?"),
             "e" to text("How does it climb?"),
-            "f" to checkbox("Can we climb on them?"),
-            "g" to text("If so, where's the bar?"),
-            "h" to counter("Subjective quality assessment", 3, "⭐"),
+            "f" to checkbox("Can they help us climb?"),
+            "g" to text("If so, how?"),
+            "h" to counter("Subjective quality assessment (?/5)", 0, "⭐"),
 
             "i" to header("Strategy"),
             "j" to selector(
-                    "Autonomous", "a",
+                    "What's their autonomous?", "a",
                     ListItem("a", "None"),
                     ListItem("b", "Drive"),
                     ListItem("c", "Switch"),
                     ListItem("d", "Scale"),
-                    ListItem("e", "Switch + Scale")
+                    ListItem("e", "Switch OR Scale"),
+                    ListItem("f", "Switch AND Scale")
             ),
             "m" to selector(
                     "Where can they place cubes?", "a",
