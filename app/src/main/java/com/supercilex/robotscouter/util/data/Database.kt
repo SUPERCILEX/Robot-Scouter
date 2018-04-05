@@ -382,7 +382,7 @@ class LifecycleAwareFirestoreArray<T>(
 
             if (keepAlive && !wasAlive) {
                 lifecycleObserver.onStart(ListenerRegistrationLifecycleOwner)
-            } else if (wasAlive && !keepAlive) {
+            } else if (wasAlive && !keepAlive && !isListening) {
                 lifecycleObserver.onStop(ListenerRegistrationLifecycleOwner)
             }
         }
