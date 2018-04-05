@@ -73,9 +73,21 @@ fun cancelAllJobs() {
 fun Bundle.parseTeam() = Team(
         getLong(NUMBER),
         getString(ID),
-        getBundleAsMap(OWNERS),
-        getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
-        getBundleAsMap(PENDING_APPROVALS),
+        keySet().filter {
+            it.startsWith(OWNERS)
+        }.associate {
+            it.removePrefix(OWNERS) to getLong(it)
+        },
+        keySet().asSequence().filter {
+            it.startsWith(ACTIVE_TOKENS)
+        }.associate {
+            it.removePrefix(ACTIVE_TOKENS) to Date(getLong(it))
+        },
+        keySet().asSequence().filter {
+            it.startsWith(PENDING_APPROVALS)
+        }.associate {
+            it.removePrefix(PENDING_APPROVALS) to getString(it)
+        },
         getString(TEMPLATE_ID),
         getString(NAME),
         getString(MEDIA),
@@ -151,15 +163,9 @@ private fun getErrorMessage(clazz: String, result: Int) = "$clazz failed with er
 private fun Team.toRawBundle() = bundleOf(
         NUMBER to number,
         ID to id,
-        OWNERS to Bundle().apply {
-            owners.forEach { putLong(it.key, it.value) }
-        },
-        ACTIVE_TOKENS to Bundle().apply {
-            activeTokens.forEach { putLong(it.key, it.value.time) }
-        },
-        PENDING_APPROVALS to Bundle().apply {
-            pendingApprovals.forEach { putString(it.key, it.value) }
-        },
+        *owners.map { OWNERS + it.key to it.value }.toTypedArray(),
+        *activeTokens.map { ACTIVE_TOKENS + it.key to it.value.time }.toTypedArray(),
+        *pendingApprovals.map { PENDING_APPROVALS + it.key to it.value }.toTypedArray(),
         TEMPLATE_ID to templateId,
         NAME to name,
         MEDIA to media,
