@@ -53,7 +53,9 @@ class TbaUploader private constructor(
         if (cannotContinue(response)) return
 
         val body: JsonObject = response.body()!!
-        check(body.get("success").asBoolean || body.get("message").asString == "suggestion_exists") {
+        check(body.get("success").asBoolean || body.get("message").asString.let {
+            it == "media_exists" || it == "suggestion_exists"
+        }) {
             "Failed to upload suggestion: $body"
         }
     }
