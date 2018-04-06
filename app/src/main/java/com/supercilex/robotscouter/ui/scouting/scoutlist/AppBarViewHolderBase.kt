@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.R
-import com.supercilex.robotscouter.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.ui.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.util.data.isTemplateEditingAllowed
@@ -62,7 +61,6 @@ open class AppBarViewHolderBase(
                 init(permissionHandler to savedInstanceState)
                 onMediaCaptured.observe(fragment, Observer {
                     team.copyMediaInfo(it!!)
-                    team.startUploadMediaJob()
                     team.forceUpdate()
                 })
             }

@@ -152,9 +152,12 @@ private fun Job.Builder.buildAndSchedule() {
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 private fun JobInfo.Builder.buildAndSchedule(clazz: String) {
-    val result: Int = scheduler.schedule(build())
-    check(result == JobScheduler.RESULT_SUCCESS) {
-        getErrorMessage(clazz, result)
+    val info = build()
+    if (scheduler.allPendingJobs.find { it.id == info.id } == null) {
+        val result: Int = scheduler.schedule(info)
+        check(result == JobScheduler.RESULT_SUCCESS) {
+            getErrorMessage(clazz, result)
+        }
     }
 }
 
