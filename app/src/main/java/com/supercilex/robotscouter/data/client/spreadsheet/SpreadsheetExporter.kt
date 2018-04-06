@@ -20,11 +20,14 @@ import com.supercilex.robotscouter.util.data.exportsFolder
 import com.supercilex.robotscouter.util.data.hidden
 import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.isPolynomial
+import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
 import kotlinx.coroutines.experimental.CancellationException
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.usermodel.BorderExtent
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Chart
@@ -39,6 +42,7 @@ import org.apache.poi.ss.usermodel.charts.DataSources
 import org.apache.poi.ss.usermodel.charts.LegendPosition
 import org.apache.poi.ss.usermodel.charts.LineChartData
 import org.apache.poi.ss.util.CellRangeAddress
+import org.apache.poi.ss.util.PropertyTemplate
 import org.apache.poi.xssf.usermodel.XSSFChart
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
@@ -207,12 +211,12 @@ class SpreadsheetExporter(
             cache.workbook = it
         }
 
-        val averageSheet = run {
-            if (cache.teams.isPolynomial) {
-                workbook.createSheet("Team Averages").apply {
-                    createFreezePane(1, 1)
-                }
-            } else null
+        val overviewSheet = if (cache.teams.isPolynomial) {
+            workbook.createSheet("Overview").apply {
+                createFreezePane(1, 2)
+            }
+        } else {
+            null
         }
 
         for (team in cache.teams) {
@@ -223,10 +227,10 @@ class SpreadsheetExporter(
             })
         }
 
-        if (averageSheet != null) {
+        if (overviewSheet != null) {
             checkStatus()
             notificationManager.onStartBuildingAverageSheet(this)
-            buildTeamAveragesSheet(averageSheet)
+            buildOverviewSheet(overviewSheet)
         }
 
         checkStatus()
@@ -291,11 +295,12 @@ class SpreadsheetExporter(
             }
         }
 
-        fun addTitleRowMergedRegion(row: Row) {
+        fun Row.addTitleMergedRegion() {
             if (scouts.isPolynomial) {
-                row.rowNum.also {
-                    teamSheet.addMergedRegion(CellRangeAddress(it, it, 1, scouts.size))
-                }
+                val numScouts = scouts.size
+                teamSheet.addMergedRegion(CellRangeAddress(rowNum, rowNum, 1, numScouts))
+                teamSheet.addMergedRegion(
+                        CellRangeAddress(rowNum, rowNum, numScouts + 1, numScouts + 3))
             }
         }
 
@@ -318,7 +323,7 @@ class SpreadsheetExporter(
                     setCellValue(metric.name)
                     if (metric.type == MetricType.HEADER) {
                         cellStyle = cache.headerMetricRowHeaderStyle
-                        addTitleRowMergedRegion(row)
+                        row.addTitleMergedRegion()
                     } else {
                         cellStyle = cache.rowHeaderStyle
                     }
@@ -334,7 +339,11 @@ class SpreadsheetExporter(
             val scout = scouts[i]
 
             header.createCell(i + 1).apply {
-                setCellValue(scout.name.let { if (it.isNullOrBlank()) "Scout ${i + 1}" else it })
+                setCellValue(if (scout.name.isNullOrBlank()) {
+                    RobotScouter.getString(R.string.scout_tab_default_title, i + 1)
+                } else {
+                    scout.name
+                })
                 cellStyle = cache.columnHeaderStyle
             }
 
@@ -349,7 +358,7 @@ class SpreadsheetExporter(
                                 it.createCell(0).apply {
                                     setCellValue("Outdated metrics")
                                     cellStyle = cache.headerMetricRowHeaderStyle
-                                    addTitleRowMergedRegion(this.row)
+                                    row.addTitleMergedRegion()
                                 }
                             }
                         }
@@ -365,12 +374,14 @@ class SpreadsheetExporter(
             }
         }
 
-        cache.putLastDataOrAverageColumnIndex(team, teamSheet.getRow(0).lastCellNum
-                + if (scouts.isPolynomial) 0 else -1)
-        if (scouts.isPolynomial) buildTeamAverageColumn(teamSheet, team)
+        cache.putLastDataOrAverageColumnIndex(
+                team,
+                teamSheet.getRow(0).lastCellNum + if (scouts.isPolynomial) 0 else -1
+        )
+        if (scouts.isPolynomial) buildCalculatedTeamSheetColumns(teamSheet, team)
     }
 
-    private fun buildTeamAverageColumn(sheet: Sheet, team: Team) {
+    private fun buildCalculatedTeamSheetColumns(sheet: Sheet, team: Team) {
         fun createHeader(column: Int, title: String) {
             sheet.getRow(0).getCell(column, CREATE_NULL_AS_BLANK).apply {
                 setCellValue(title)
@@ -388,9 +399,11 @@ class SpreadsheetExporter(
 
         val averageColumn = sheet.getRow(0).lastCellNum.toInt()
         val medianColumn = averageColumn + 1
+        val maxColumn = medianColumn + 1
 
         createHeader(averageColumn, cache.averageString)
         createHeader(medianColumn, cache.medianString)
+        createHeader(maxColumn, cache.maxString)
 
         val chartData = mutableMapOf<Chart, Pair<LineChartData, List<ChartAxis>>>()
         val chartPool = mutableMapOf<Metric<*>, Chart>()
@@ -401,6 +414,7 @@ class SpreadsheetExporter(
 
             val averageCell = row.createCellWithStyle(averageColumn)
             val medianCell = row.createCellWithStyle(medianColumn)
+            val maxCell = row.createCellWithStyle(maxColumn)
             val address = row.getCell(1, CREATE_NULL_AS_BLANK) to
                     row.getCell(averageColumn - 1, CREATE_NULL_AS_BLANK)
 
@@ -412,10 +426,13 @@ class SpreadsheetExporter(
                     val averageAddress = averageCell.address
                     medianCell.cellFormula = "IF($averageAddress > 0.5, TRUE, " +
                             "IF($averageAddress < 0.5, FALSE, \"INDETERMINATE\"))"
+
+                    maxCell.cellFormula = "NA()"
                 }
                 MetricType.NUMBER -> {
                     averageCell.cellFormula = "AVERAGE($address)"
                     medianCell.cellFormula = "MEDIAN($address)"
+                    maxCell.cellFormula = "MAX($address)"
                     buildTeamChart(row, team, chartData, chartPool)
                 }
                 MetricType.STOPWATCH -> {
@@ -424,6 +441,7 @@ class SpreadsheetExporter(
                     }
                     averageCell.cellFormula = computeIfPresent("AVERAGE($address)")
                     medianCell.cellFormula = computeIfPresent("MEDIAN($address)")
+                    maxCell.cellFormula = computeIfPresent("MAX($address)")
                     buildTeamChart(row, team, chartData, chartPool)
                 }
                 MetricType.LIST -> {
@@ -433,11 +451,12 @@ class SpreadsheetExporter(
                             averageCell.rangeAddress()
                     )
                     medianCell.cellFormula = "NA()"
+                    maxCell.cellFormula = "NA()"
                 }
-                MetricType.HEADER, MetricType.TEXT -> {
-                    averageCell.cellFormula = "NA()"
-                    medianCell.cellFormula = "NA()"
+                MetricType.TEXT -> {
+                    listOf(averageCell, medianCell, maxCell).forEach { it.cellFormula = "NA()" }
                 }
+                MetricType.HEADER -> Unit
             }
         }
 
@@ -509,12 +528,10 @@ class SpreadsheetExporter(
             )
         }.invoke()
 
-        val lastDataCellNum = cache.getLastDataOrAverageColumnIndex(team)
-
         val data: LineChartData
         if (chart == null) {
             val drawing = row.sheet.createDrawingPatriarch()
-            val startChartIndex = lastDataCellNum + 3
+            val startChartIndex = row.sheet.getRow(0).lastCellNum + 1
             val newChart = drawing.createChart(drawing.createChartAnchor(
                     getChartRowIndex(nearestHeader.first, chartData.keys),
                     startChartIndex,
@@ -536,6 +553,7 @@ class SpreadsheetExporter(
             data = chartData[chart!!]!!.first
         }
 
+        val lastDataCellNum = cache.getLastDataOrAverageColumnIndex(team) - 1
         val categorySource = DataSources.fromStringCellRange(
                 row.sheet,
                 CellRangeAddress(0, 0, 1, lastDataCellNum)
@@ -549,30 +567,68 @@ class SpreadsheetExporter(
         ).setTitle(row.getCell(0).stringCellValue)
     }
 
-    private fun buildTeamAveragesSheet(averageSheet: Sheet) {
-        fun setAverageFormula(scoutSheet: Sheet, valueCell: Cell, averageCell: Cell) {
-            val safeSheetName = scoutSheet.sheetName.replace("'", "''")
-            val rangeAddress = "'$safeSheetName'!${averageCell.address}"
+    private fun buildOverviewSheet(overviewSheet: Sheet) {
+        fun Row.buildCalculatedHeader(columnIndex: Int) {
+            fun Cell.init(title: String): Cell {
+                setCellValue(title)
+                cellStyle = cache.calculatedColumnHeaderStyle
+                return this
+            }
 
-            valueCell.cellFormula = "IF(OR($rangeAddress = TRUE, $rangeAddress = FALSE), " +
-                    "IF($rangeAddress = TRUE, 1, 0), $rangeAddress)"
-            valueCell.cellStyle = averageCell.cellStyle
+            getCell(columnIndex).init(cache.averageString)
+            getCell(columnIndex + 1)?.init(cache.medianString)
+            getCell(columnIndex + 2)?.init(cache.maxString)
+        }
 
-            if (averageCell.cellTypeEnum == CellType.BOOLEAN) {
-                cache.setCellFormat(valueCell, "0.00%")
+        fun Row.setFormulas(headerCell: Cell, firstCalculatedScoutCell: Cell) {
+            val scoutRow = firstCalculatedScoutCell.row
+            val startColumnIndex = firstCalculatedScoutCell.columnIndex
+            val safeSheetName = firstCalculatedScoutCell.sheet.sheetName.replace("'", "''")
+
+            val startColumn = headerCell.columnIndex
+            val headerRow = headerCell.row
+            val createCellIfNeeded: (offset: Int) -> Cell? = {
+                if (headerRow.getCell(startColumn + it) == null) {
+                    null
+                } else {
+                    createCell(startColumn + it)
+                }
+            }
+
+            listOfNotNull(
+                    createCell(startColumn),
+                    createCellIfNeeded(1),
+                    createCellIfNeeded(2)
+            ).forEachIndexed { index, valueCell ->
+                val scoutCell = scoutRow.getCell(startColumnIndex + index)
+                if (scoutCell == null) {
+                    valueCell.cellFormula = "NA()"
+                    return@forEachIndexed
+                }
+
+                val rangeAddress = "'$safeSheetName'!${scoutCell.address}"
+                valueCell.cellFormula = "IF(OR($rangeAddress = TRUE, $rangeAddress = FALSE), " +
+                        "IF($rangeAddress = TRUE, 1, 0), $rangeAddress)"
+                valueCell.cellStyle = scoutCell.cellStyle
+
+                if (scoutCell.cellTypeEnum == CellType.BOOLEAN) {
+                    cache.setCellFormat(valueCell, "0.00%")
+                }
             }
         }
 
-        val workbook = averageSheet.workbook
-        val headerRow = averageSheet.createRow(0)
+        val workbook = overviewSheet.workbook
+        val headerRow = overviewSheet.createRow(0)
+        val calculatedHeaderRow = overviewSheet.createRow(1)
         headerRow.createCell(0)
+        calculatedHeaderRow.createCell(0)
 
         val metricCache = mutableMapOf<String, Int>()
 
         val sheetList = workbook.toList()
-        for (i in 1 until workbook.numberOfSheets) { // Excluding the average sheet
+        for (i in 1 until workbook.numberOfSheets) { // Excluding the overview sheet
             val scoutSheet = sheetList[i]
-            val row = averageSheet.createRow(i)
+            val row = overviewSheet.createRow(i + 1)
             row.createCell(0).apply {
                 setCellValue(scoutSheet.sheetName)
                 cellStyle = cache.rowHeaderStyle
@@ -592,24 +648,80 @@ class SpreadsheetExporter(
                 }
 
                 if (metricIndex == null) {
-                    val headerCell = headerRow.createCell(headerRow.lastCellNum.toInt()).apply {
+                    val startIndex = headerRow.lastCellNum.toInt()
+                    val headerCell = headerRow.createCell(startIndex).apply {
                         setCellValue(rootMetric.name)
                         cellStyle = cache.columnHeaderStyle
                     }
+                    calculatedHeaderRow.createCell(startIndex)
+
+                    val (medians, maxes) = cache.getRootMetricIndices(rootMetric).map { (team, index) ->
+                        val metricRow =
+                                workbook.getSheetAt(cache.teams.indexOf(team) + 1).getRow(index)
+
+                        val start = cache.getLastDataOrAverageColumnIndex(team)
+                        val evaluator = cache.formulaEvaluator
+                        Pair(
+                                evaluator.evaluate(metricRow.getCell(start + 1))?.formatAsString(),
+                                evaluator.evaluate(metricRow.getCell(start + 2))?.formatAsString()
+                        )
+                    }.let {
+                        val naToNull: (String?) -> String? = { if (it == "#N/A") null else it }
+                        it.map { it.first }.map(naToNull) to it.map { it.second }.map(naToNull)
+                    }
+
+                    var dataCount = 0
+
+                    fun setupHeaderCells(offset: Int) {
+                        dataCount++
+
+                        val column = startIndex + offset
+                        headerRow.createCell(column)
+                        calculatedHeaderRow.createCell(column)
+                    }
+
+                    if (!medians.toSet().isSingleton) setupHeaderCells(1)
+                    if (!maxes.toSet().isSingleton) setupHeaderCells(2)
+
+                    if (dataCount > 0) {
+                        val rowNum = headerRow.rowNum
+                        overviewSheet.addMergedRegion(CellRangeAddress(
+                                rowNum,
+                                rowNum,
+                                startIndex,
+                                startIndex + dataCount
+                        ))
+                    }
+
+                    calculatedHeaderRow.buildCalculatedHeader(startIndex)
 
                     metricCache[rootMetric.ref.id] = headerCell.columnIndex
-                    setAverageFormula(
-                            scoutSheet, row.createCell(headerCell.columnIndex), averageCell)
+                    row.setFormulas(headerCell, averageCell)
                 } else {
-                    setAverageFormula(scoutSheet, row.createCell(metricIndex), averageCell)
+                    row.setFormulas(headerRow.getCell(metricIndex), averageCell)
                 }
             }
         }
 
-        buildTeamAveragesCharts(averageSheet)
+        val template = PropertyTemplate()
+        val lastRowNum = overviewSheet.lastRowNum
+        var prevMetricStartColumnIndex = 1
+        for (i in 2 until headerRow.lastCellNum) {
+            if (headerRow.getCell(i).cellTypeEnum != CellType.BLANK) {
+                template.drawBorders(
+                        CellRangeAddress(2, lastRowNum, prevMetricStartColumnIndex, i - 1),
+                        BorderStyle.THIN,
+                        BorderExtent.OUTSIDE_VERTICAL
+                )
+                prevMetricStartColumnIndex = i
+            }
+        }
+        template.applyBorders(overviewSheet)
+
+        buildOverviewCharts(overviewSheet)
     }
 
-    private fun buildTeamAveragesCharts(sheet: Sheet) {
+    private fun buildOverviewCharts(sheet: Sheet) {
         if (isUnsupportedDevice) return
 
         val drawing = sheet.createDrawingPatriarch()
@@ -627,7 +739,7 @@ class SpreadsheetExporter(
 
             val categorySource = DataSources.fromArray(arrayOf<String>(headerName))
             val data = chart.chartDataFactory.createScatterChartData()
-            (1..sheet.lastRowNum).map { sheet.getRow(it) }.forEach {
+            (2..sheet.lastRowNum).map { sheet.getRow(it) }.forEach {
                 data.addSerie(
                         categorySource,
                         DataSources.fromNumericCellRange(

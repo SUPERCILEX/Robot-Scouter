@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.CreationHelper
 import org.apache.poi.ss.usermodel.Font
+import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.usermodel.Workbook
@@ -21,9 +22,13 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
 
     var workbook: Workbook by LateinitVal()
     val creationHelper: CreationHelper by lazy { workbook.creationHelper }
+    val formulaEvaluator: FormulaEvaluator by lazy { creationHelper.createFormulaEvaluator() }
 
     val columnHeaderStyle: CellStyle? by lazy {
         if (isUnsupportedDevice) null else createColumnHeaderStyle()
+    }
+    val calculatedColumnHeaderStyle: CellStyle? by lazy {
+        if (isUnsupportedDevice) null else createCalculatedColumnHeaderStyle()
     }
     val rowHeaderStyle: CellStyle? by lazy {
         if (isUnsupportedDevice) null else createRowHeaderStyle()
@@ -37,18 +42,21 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         }
     }
 
-    val averageString: String by lazy { RobotScouter.getString(R.string.metric_stopwatch_cycle_average_title) }
-    val medianString: String by lazy { RobotScouter.getString(R.string.metric_stopwatch_cycle_median_title) }
+    val averageString: String by lazy { RobotScouter.getString(R.string.export_average_column_title) }
+    val medianString: String by lazy { RobotScouter.getString(R.string.export_median_column_title) }
+    val maxString: String by lazy { RobotScouter.getString(R.string.export_max_column_title) }
 
     fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
 
-    fun putRootMetric(team: Team, index: Int, metric: Metric<*>) {
-        (metricCache[team] ?: mutableMapOf<Int, Metric<*>>().also {
-            metricCache[team] = it
-        })[index] = metric
+    fun getRootMetricIndices(metric: Metric<*>) = metricCache.mapNotNull { (team, metrics) ->
+        metrics.toList().find { it.second.id == metric.id }?.first?.let { team to it }
     }
 
-    fun getLastDataOrAverageColumnIndex(team: Team): Int = lastDataOrAverageColumnIndices[team]!!
+    fun putRootMetric(team: Team, index: Int, metric: Metric<*>) {
+        metricCache.getOrPut(team) { mutableMapOf() }[index] = metric
+    }
+
+    fun getLastDataOrAverageColumnIndex(team: Team) = lastDataOrAverageColumnIndices[team]!!
 
     fun putLastDataOrAverageColumnIndex(team: Team, i: Int) {
         lastDataOrAverageColumnIndices[team] = i
@@ -58,10 +66,9 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         if (isUnsupportedDevice) return
 
         cell.cellStyle = workbook.createCellStyle().apply {
-            dataFormat = formatStyles[format]
-                    ?: workbook.createDataFormat().getFormat(format).also {
-                        formatStyles[format] = it
-                    }
+            dataFormat = formatStyles.getOrPut(format) {
+                workbook.createDataFormat().getFormat(format)
+            }
         }
     }
 
@@ -69,6 +76,10 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         setFont(createBaseHeaderFont())
         setAlignment(HorizontalAlignment.CENTER)
         setVerticalAlignment(VerticalAlignment.CENTER)
+    }
+
+    private fun createCalculatedColumnHeaderStyle(): CellStyle = createColumnHeaderStyle().apply {
+        setFont(workbook.createFont().apply { italic = true })
     }
 
     private fun createRowHeaderStyle(): CellStyle =
