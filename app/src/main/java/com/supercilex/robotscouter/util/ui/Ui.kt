@@ -2,6 +2,9 @@ package com.supercilex.robotscouter.util.ui
 
 import android.app.Activity
 import android.app.Application
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LifecycleRegistry
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -31,9 +34,14 @@ import java.util.concurrent.CopyOnWriteArrayList
 val mainHandler = Handler(Looper.getMainLooper())
 val Thread.isMain get() = this === mainHandler.looper.thread
 
-private val visibleActivities: MutableList<Activity> = CopyOnWriteArrayList()
+val activitiesLifecycleOwner: LifecycleOwner = LifecycleOwner { activitiesRegistry }
+private val activitiesRegistry = LifecycleRegistry(activitiesLifecycleOwner)
+
+private val visibleActivities = CopyOnWriteArrayList<Activity>()
 
 fun initUi() {
+    activitiesRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+
     AppCompatDelegate.setDefaultNightMode(nightMode)
     prefs.addChangeEventListener(object : ChangeEventListenerBase {
         override fun onDataChanged() {
@@ -84,6 +92,9 @@ private object ActivityHandler : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStarted(activity: Activity) {
+        if (visibleActivities.isEmpty()) {
+            activitiesRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        }
         visibleActivities += activity
     }
 
@@ -97,6 +108,9 @@ private object ActivityHandler : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(activity: Activity) {
         visibleActivities -= activity
+        if (visibleActivities.isEmpty()) {
+            activitiesRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        }
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit

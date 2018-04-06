@@ -5,8 +5,8 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LifecycleRegistry
 import android.arch.lifecycle.ProcessLifecycleOwner
-import android.os.Handler
-import android.os.Looper
+import com.supercilex.robotscouter.util.ui.activitiesLifecycleOwner
+import com.supercilex.robotscouter.util.ui.mainHandler
 
 /**
  * Provides lifecycle for suggested listener registration status.
@@ -21,17 +21,15 @@ object ListenerRegistrationLifecycleOwner : LifecycleOwner, Runnable, GenericLif
 
     private val registry = LifecycleRegistry(this)
 
-    private val handler = Handler(Looper.getMainLooper())
-
     init {
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        activitiesLifecycleOwner.lifecycle.addObserver(this)
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event === Lifecycle.Event.ON_START) {
-            handler.removeCallbacks(this)
+            mainHandler.removeCallbacks(this)
         } else if (event === Lifecycle.Event.ON_STOP) {
-            handler.postDelayed(this, TIMEOUT_IN_MILLIS)
+            mainHandler.postDelayed(this, TIMEOUT_IN_MILLIS)
             return
         }
 
