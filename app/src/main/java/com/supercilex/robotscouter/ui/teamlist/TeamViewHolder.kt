@@ -165,8 +165,6 @@ class TeamViewHolder(
         menuHelper.onTeamContextMenuRequested(team)
     }
 
-    override fun toString() = team.toString()
-
     private class ScrollListener(holder: TeamViewHolder) : RecyclerView.OnScrollListener() {
         private val ref = WeakReference(holder)
 
