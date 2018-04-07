@@ -8,13 +8,13 @@
         android:id="@+id/textLayout"
         style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:hint="Text">
 
         <com.supercilex.robotscouter.util.ui.views.EmojiCompatTextInputEditText
             android:id="@+id/name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:inputType="textMultiLine|textCapSentences" />
 
     </android.support.design.widget.TextInputLayout>
