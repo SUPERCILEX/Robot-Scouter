@@ -13,7 +13,6 @@ import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.util.LateinitVal
-import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.reportOrCancel
 import org.jetbrains.anko.intentFor
 import java.util.LinkedList
@@ -181,12 +180,9 @@ class NotificationIntentForwarder : Activity() {
             val notificationId = intent.getIntExtra(KEY_NOTIFICATION_ID, -1)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                activeNotifications.filter { it.id == notificationId }.let {
-                    check(it.isSingleton) {
-                        "Couldn't find unique notification id ($notificationId) in $activeNotifications"
-                    }
-                    it[0]
-                }.notification.group?.let { key ->
+                activeNotifications.singleOrNull {
+                    it.id == notificationId
+                }?.notification?.group?.let { key ->
                     val groupNotifications =
                             activeNotifications.filter { it.notification.group == key }
                     if (groupNotifications.size == 2) {
