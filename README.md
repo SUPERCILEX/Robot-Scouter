@@ -51,6 +51,7 @@ scouting easy, efficient, and collaborative.
   - **Charts!** 📈
   - PSA: Excel spreadsheets can easily be
     [converted to Google Sheets](https://support.google.com/docs/answer/6055139).
+  - JSON exports are also supported for custom analysis (e.g. in Tableau)
 - And more!
 
 ## Contributing 💗

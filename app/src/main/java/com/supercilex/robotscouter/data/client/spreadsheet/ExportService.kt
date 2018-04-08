@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.data.model.TemplateType
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.await
+import com.supercilex.robotscouter.util.data.exportsFolder
 import com.supercilex.robotscouter.util.data.getTeamListExtra
 import com.supercilex.robotscouter.util.data.model.getScouts
 import com.supercilex.robotscouter.util.data.model.getTemplatesQuery
@@ -37,6 +38,7 @@ import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 class ExportService : IntentService(TAG) {
@@ -85,6 +87,10 @@ class ExportService : IntentService(TAG) {
 
         notificationManager.setData(zippedScouts.size, newScouts.keys)
 
+        val exportFolder = File(checkNotNull(exportsFolder) {
+            "Couldn't get write access"
+        }, "Robot Scouter export_${System.currentTimeMillis()}")
+
         runBlocking {
             val templateNames = getTemplateNames(zippedScouts.keys)
             withTimeout(TIMEOUT, TimeUnit.MINUTES) {
@@ -92,9 +98,10 @@ class ExportService : IntentService(TAG) {
                     async {
                         if (!notificationManager.isStopped()) {
                             try {
-                                SpreadsheetExporter(
+                                TemplateExporter(
                                         scouts,
                                         notificationManager,
+                                        exportFolder,
                                         templateNames[templateId]
                                 ).export()
                             } catch (e: Exception) {

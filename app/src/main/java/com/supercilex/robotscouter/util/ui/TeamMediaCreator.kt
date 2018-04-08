@@ -16,8 +16,7 @@ import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.ViewModelBase
-import com.supercilex.robotscouter.util.data.createFile
-import com.supercilex.robotscouter.util.data.hide
+import com.supercilex.robotscouter.util.data.hidden
 import com.supercilex.robotscouter.util.data.ioPerms
 import com.supercilex.robotscouter.util.data.mediaFolder
 import com.supercilex.robotscouter.util.data.unhide
@@ -82,12 +81,12 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         async(UI) {
             val file = async {
                 try {
-                    createFile(
-                            team.toString(),
-                            "jpg",
+                    File(
                             mediaFolder ?: throw IOException("Couldn't create folder"),
-                            System.currentTimeMillis().toString()
-                    ).hide()
+                            "${team}_${System.currentTimeMillis()}.jpg"
+                    ).hidden().apply {
+                        if (!createNewFile()) throw IOException("Unable to create temporary file")
+                    }
                 } catch (e: IOException) {
                     CrashLogger.onFailure(e)
                     RobotScouter.runOnUiThread { longToast(e.toString()) }

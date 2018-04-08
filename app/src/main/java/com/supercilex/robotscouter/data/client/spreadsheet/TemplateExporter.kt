@@ -10,21 +10,29 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Metric
 import com.supercilex.robotscouter.data.model.MetricType
 import com.supercilex.robotscouter.data.model.Scout
 import com.supercilex.robotscouter.data.model.Team
-import com.supercilex.robotscouter.util.data.exportsFolder
+import com.supercilex.robotscouter.util.CrashLogger
 import com.supercilex.robotscouter.util.data.hidden
+import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.data.unhide
 import com.supercilex.robotscouter.util.isPolynomial
 import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.providerAuthority
 import com.supercilex.robotscouter.util.ui.EXPORT_CHANNEL
 import com.supercilex.robotscouter.util.ui.NotificationIntentForwarder
-import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.async
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.BorderExtent
 import org.apache.poi.ss.usermodel.BorderStyle
@@ -47,14 +55,16 @@ import org.apache.poi.xssf.usermodel.XSSFChart
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
+import java.io.FileWriter
 import java.io.IOException
 import java.util.Collections
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-class SpreadsheetExporter(
+class TemplateExporter(
         scouts: Map<Team, List<Scout>>,
         private val notificationManager: ExportNotificationManager,
+        private val exportFolder: File,
         private val rawTemplateName: String?
 ) {
     val templateName: String by lazy {
@@ -63,10 +73,36 @@ class SpreadsheetExporter(
     val scouts: Map<Team, List<Scout>> = Collections.unmodifiableMap(scouts)
     private val cache = SpreadsheetCache(scouts.keys)
 
-    fun export() {
+    suspend fun export() {
+        val spreadsheet = async { exportSpreadsheet() }
+        val json = async {
+            try {
+                exportJson()
+            } catch (e: Exception) {
+                // Log exceptions, but don't fail the export if we messed up
+                CrashLogger.onFailure(e)
+            }
+        }
+
+        val notification = spreadsheet.await()
+        notificationManager.onStartJsonExport(this)
+        json.await()
+
+        if (!notificationManager.isStopped()) {
+            notificationManager.removeExporter(this, notification)
+        }
+    }
+
+    private fun exportSpreadsheet(): NotificationCompat.Builder {
+        fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
+                RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
+
+        fun getPluralTeams(@PluralsRes id: Int) = getPluralTeams(id, cache.teamNames)
+
         val exportId = notificationManager.addExporter(this)
 
-        val spreadsheetUri = getFileUri()
+        val spreadsheetUri: Uri = FileProvider.getUriForFile(
+                RobotScouter, providerAuthority, writeSpreadsheetFile())
 
         val baseIntent = Intent()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -128,58 +164,58 @@ class SpreadsheetExporter(
             )
         }
 
-        if (!notificationManager.isStopped()) {
-            notificationManager.removeExporter(this, builder)
-        }
+        return builder
     }
 
-    private fun getPluralTeams(@PluralsRes id: Int) = getPluralTeams(id, cache.teamNames)
-
-    private fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
-            RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
-
-    private fun getFileUri(): Uri {
-        val folder = synchronized(notificationManager) {
-            checkNotNull(exportsFolder) { "Couldn't get write access" }
-        }
-
-        return FileProvider.getUriForFile(
-                RobotScouter, providerAuthority, writeFile(folder))
+    private fun exportJson() {
+        writeJsonFile(GsonBuilder()
+                              .setPrettyPrinting()
+                              .serializeNulls()
+                              .disableHtmlEscaping()
+                              .create())
     }
 
-    private fun writeFile(rsFolder: File): File {
-        val file = synchronized(notificationManager) {
-            val availableFile = findAvailableFile(rsFolder).hidden()
-            try {
-                availableFile.apply {
-                    if (
-                        !parentFile.exists() && !parentFile.mkdirs() || !createNewFile()
-                        // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
-                        && (!delete() || !createNewFile())
-                    ) throw IOException("Failed to create file: $this")
-                }
-            } catch (e: IOException) {
-                availableFile.delete()
-                throw e
-            }
-        }
+    private fun writeSpreadsheetFile() = writeFile(spreadsheetFileExtension) {
+        FileOutputStream(this).use { getWorkbook().write(it) }
+    }
 
+    private fun writeJsonFile(gson: Gson) = writeFile(JSON_FILE_EXTENSION) {
+        FileWriter(this).use { gson.toJson(getJson(), it) }
+    }
+
+    private inline fun writeFile(extension: String, write: File.() -> Unit): File {
+        val file = createFile(extension)
         try {
-            FileOutputStream(file).use { getWorkbook().write(it) }
-            return file.unhide() ?: throw IOException("Couldn't unhide file")
+            return file.apply { write() }.unhide() ?: throw IOException("Couldn't unhide file")
         } catch (e: Exception) {
             file.delete()
             throw e
         }
     }
 
-    private fun findAvailableFile(rsFolder: File): File {
-        var availableFile = File(rsFolder, getFullyQualifiedFileName(0))
+    private fun createFile(extension: String) = synchronized(notificationManager) {
+        val availableFile = findAvailableFile(extension).hidden()
+        try {
+            availableFile.apply {
+                if (
+                    !parentFile.exists() && !parentFile.mkdirs() ||
+                    // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
+                    !createNewFile() && (!delete() || !createNewFile())
+                ) throw IOException("Failed to create file: $this")
+            }
+        } catch (e: IOException) {
+            availableFile.delete()
+            throw e
+        }
+    }
+
+    private fun findAvailableFile(extension: String): File {
+        var availableFile = File(exportFolder, getFileName(0, extension))
 
         var i = 1
         while (true) {
             availableFile = if (availableFile.exists() || availableFile.hidden().exists()) {
-                File(rsFolder, getFullyQualifiedFileName(i))
+                File(exportFolder, getFileName(i, extension))
             } else {
                 return availableFile
             }
@@ -187,21 +223,16 @@ class SpreadsheetExporter(
         }
     }
 
-    private fun getFullyQualifiedFileName(count: Int): String {
+    private fun getFileName(count: Int, extension: String): String {
         val normalizedTemplateName =
                 rawTemplateName?.toUpperCase(Locale.getDefault())?.replace(" ", "_")
         val prefix = if (normalizedTemplateName == null) "" else "[$normalizedTemplateName] "
         val suffix = if (count <= 0) "" else " ($count)"
-        val extension = if (isUnsupportedDevice) UNSUPPORTED_FILE_EXTENSION else FILE_EXTENSION
 
         return "$prefix${cache.teamNames}$suffix$extension"
     }
 
     private fun getWorkbook(): Workbook {
-        fun checkStatus() {
-            if (notificationManager.isStopped()) throw CancellationException()
-        }
-
         val workbook = if (isUnsupportedDevice) {
             showToast(RobotScouter.getString(R.string.export_unsupported_device_rationale))
             HSSFWorkbook()
@@ -220,7 +251,6 @@ class SpreadsheetExporter(
         }
 
         for (team in cache.teams) {
-            checkStatus()
             notificationManager.updateProgress(this, team)
             buildTeamSheet(team, workbook.createSheet(getSafeSheetName(workbook, team)).apply {
                 createFreezePane(1, 1)
@@ -228,12 +258,10 @@ class SpreadsheetExporter(
         }
 
         if (overviewSheet != null) {
-            checkStatus()
             notificationManager.onStartBuildingAverageSheet(this)
             buildOverviewSheet(overviewSheet)
         }
 
-        checkStatus()
         notificationManager.onStartCleanup(this)
         autoFitColumnWidths(workbook)
 
@@ -252,21 +280,21 @@ class SpreadsheetExporter(
 
         fun setRowValue(metric: Metric<*>, row: Row, column: Int) {
             val valueCell = row.getCell(column, CREATE_NULL_AS_BLANK)
-            when (metric.type) {
-                MetricType.BOOLEAN -> valueCell.setCellValue((metric as Metric.Boolean).value)
-                MetricType.NUMBER -> {
-                    val numberMetric = metric as Metric.Number
-                    valueCell.setCellValue(numberMetric.value.toDouble())
+            when (metric) {
+                is Metric.Header -> Unit
+                is Metric.Boolean -> valueCell.setCellValue(metric.value)
+                is Metric.Number -> {
+                    valueCell.setCellValue(metric.value.toDouble())
 
-                    val unit = numberMetric.unit
+                    val unit = metric.unit
                     if (unit.isNullOrBlank()) {
                         cache.setCellFormat(valueCell, "0.00")
                     } else {
                         cache.setCellFormat(valueCell, "#0\"$unit\"")
                     }
                 }
-                MetricType.STOPWATCH -> {
-                    val cycles = (metric as Metric.Stopwatch).value
+                is Metric.Stopwatch -> {
+                    val cycles = metric.value
                     if (cycles.isNotEmpty()) {
                         val builder = StringBuilder("AVERAGE(")
                                 .append(TimeUnit.MILLISECONDS.toSeconds(cycles.first()))
@@ -280,18 +308,12 @@ class SpreadsheetExporter(
 
                     cache.setCellFormat(valueCell, "#0\"s\"")
                 }
-                MetricType.LIST -> {
-                    val listMetric = metric as Metric.List
-                    val selectedItem =
-                            listMetric.value.firstOrNull { it.id == listMetric.selectedValueId }
-                    valueCell.setCellValue(
-                            selectedItem?.name ?: listMetric.value.firstOrNull()?.name)
+                is Metric.Text ->
+                    valueCell.setCellValue(cache.creationHelper.createRichTextString(metric.value))
+                is Metric.List -> {
+                    val selectedItem = metric.value.firstOrNull { it.id == metric.selectedValueId }
+                    valueCell.setCellValue(selectedItem?.name ?: metric.value.firstOrNull()?.name)
                 }
-                MetricType.TEXT -> {
-                    valueCell.setCellValue(
-                            cache.creationHelper.createRichTextString((metric as Metric.Text).value))
-                }
-                MetricType.HEADER -> Unit // No data
             }
         }
 
@@ -419,6 +441,7 @@ class SpreadsheetExporter(
                     row.getCell(averageColumn - 1, CREATE_NULL_AS_BLANK)
 
             when (type) {
+                MetricType.HEADER -> Unit // No data
                 MetricType.BOOLEAN -> {
                     sheet.setArrayFormula("AVERAGE(IF($address, 1, 0))", averageCell.rangeAddress())
                     cache.setCellFormat(averageCell, "0.00%")
@@ -444,6 +467,8 @@ class SpreadsheetExporter(
                     maxCell.cellFormula = computeIfPresent("MAX($address)")
                     buildTeamChart(row, team, chartData, chartPool)
                 }
+                MetricType.TEXT ->
+                    listOf(averageCell, medianCell, maxCell).forEach { it.cellFormula = "NA()" }
                 MetricType.LIST -> {
                     sheet.setArrayFormula(
                             "INDEX($address, MATCH(MAX(COUNTIF($address, $address)), " +
@@ -453,10 +478,6 @@ class SpreadsheetExporter(
                     medianCell.cellFormula = "NA()"
                     maxCell.cellFormula = "NA()"
                 }
-                MetricType.TEXT -> {
-                    listOf(averageCell, medianCell, maxCell).forEach { it.cellFormula = "NA()" }
-                }
-                MetricType.HEADER -> Unit
             }
         }
 
@@ -515,8 +536,7 @@ class SpreadsheetExporter(
             }
 
             for (possibleChart in chartData.keys) {
-                if (possibleChart is XSSFChart
-                        && possibleChart.graphicFrame.anchor.row1 == 1) {
+                if (possibleChart is XSSFChart && possibleChart.graphicFrame.anchor.row1 == 1) {
                     chart = possibleChart
                     return 0 to getMetricForChart(possibleChart, chartPool)
                 }
@@ -641,11 +661,11 @@ class SpreadsheetExporter(
                 val averageCell = scoutSheet.getRow(j)
                         .getCell(cache.getLastDataOrAverageColumnIndex(team))
 
-                if (averageCell.stringValue.isBlank()
-                        || rootMetric.type == MetricType.HEADER
-                        || rootMetric.type == MetricType.TEXT) {
-                    continue
-                }
+                if (
+                    averageCell.stringValue.isBlank() ||
+                    rootMetric.type == MetricType.HEADER ||
+                    rootMetric.type == MetricType.TEXT
+                ) continue
 
                 if (metricIndex == null) {
                     val startIndex = headerRow.lastCellNum.toInt()
@@ -762,11 +782,68 @@ class SpreadsheetExporter(
         }
     }
 
+    private fun getJson(): JsonElement? {
+        val json = JsonObject()
+
+        val teamsJson = JsonObject()
+        for ((team, scouts) in scouts) {
+            val scoutsJson = JsonArray()
+            for (scout in scouts) scoutsJson.add(getScoutJson(scout))
+            teamsJson.add(team.number.toString(), scoutsJson)
+        }
+        json.add("teams", teamsJson)
+
+        return json
+    }
+
+    private fun getScoutJson(scout: Scout): JsonElement {
+        fun String?.toJsonPrimitive() = nullOrFull()?.let { JsonPrimitive(it) } ?: JsonNull.INSTANCE
+
+        val scoutJson = JsonObject()
+
+        scoutJson.addProperty("name", scout.name)
+
+        val metricsJson = JsonObject()
+        var currentHeader: Metric.Header? = null
+        for (metric in scout.metrics) {
+            if (metric is Metric.Header) {
+                currentHeader = metric
+                continue
+            }
+
+            val metricJson = JsonObject()
+
+            metricJson.addProperty("type", metric.type.name.toLowerCase())
+            metricJson.addProperty("name", metric.name)
+            metricJson.add("value", when (metric) {
+                is Metric.Header -> error("Impossible condition")
+                is Metric.Boolean -> JsonPrimitive(metric.value)
+                is Metric.Number -> JsonPrimitive(metric.value)
+                is Metric.Stopwatch -> {
+                    val array = JsonArray()
+                    for (lap in metric.value) array.add(lap)
+                    array
+                }
+                is Metric.Text -> metric.value.toJsonPrimitive()
+                is Metric.List -> metric.value.find {
+                    it.id == metric.selectedValueId
+                }?.name.toJsonPrimitive()
+            })
+            metricJson.addProperty("category", currentHeader?.name.nullOrFull())
+
+            metricsJson.add(metric.ref.id, metricJson)
+        }
+        scoutJson.add("metrics", metricsJson)
+
+        return scoutJson
+    }
+
     private companion object {
         const val MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel"
         const val MIME_TYPE_ALL = "*/*"
-        const val FILE_EXTENSION = ".xlsx"
-        const val UNSUPPORTED_FILE_EXTENSION = ".xls"
+        const val JSON_FILE_EXTENSION = ".json"
+
+        val spreadsheetFileExtension = if (isUnsupportedDevice) ".xls" else ".xlsx"
 
         init {
             System.setProperty(

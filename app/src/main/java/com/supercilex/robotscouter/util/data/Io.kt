@@ -6,7 +6,6 @@ import android.os.Environment
 import android.support.annotation.RequiresPermission
 import android.support.annotation.WorkerThread
 import java.io.File
-import java.io.IOException
 
 val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
@@ -23,20 +22,6 @@ private val media: File =
 @WorkerThread
 fun initIo() {
     // Do nothing, this will initialize our static fields
-}
-
-@WorkerThread
-@Throws(IOException::class)
-fun createFile(
-        prefix: String,
-        suffix: String,
-        parent: File,
-        randomSeparator: String? = System.currentTimeMillis().toString()
-): File {
-    val tempFile = File(
-            parent, "$prefix${if (randomSeparator == null) "" else "_$randomSeparator"}.$suffix")
-    return if (tempFile.createNewFile()) tempFile
-    else throw IOException("Unable to create temporary file")
 }
 
 @get:WorkerThread

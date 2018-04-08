@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.util.isSingleton
 import com.supercilex.robotscouter.util.ui.EXPORT_IN_PROGRESS_CHANNEL
 import com.supercilex.robotscouter.util.ui.FilteringNotificationManager
 import com.supercilex.robotscouter.util.ui.notificationManager
+import kotlinx.coroutines.experimental.CancellationException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
@@ -36,7 +37,7 @@ class ExportNotificationManager(private val service: ExportService) {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 
     private val masterNotificationHolder = MasterNotificationHolder()
-    private val exporters = ConcurrentHashMap<SpreadsheetExporter, NotificationHolder>()
+    private val exporters = ConcurrentHashMap<TemplateExporter, NotificationHolder>()
 
     private var nLoadingChunks: Int by LateinitVal()
     private var nTemplates: Int by LateinitVal()
@@ -99,7 +100,7 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     @Synchronized
-    fun addExporter(exporter: SpreadsheetExporter): Int {
+    fun addExporter(exporter: TemplateExporter): Int {
         check(exporters.size < pendingTaskCount) { "More exporters than templates" }
 
         val id = exporter.hashCode()
@@ -126,21 +127,26 @@ class ExportNotificationManager(private val service: ExportService) {
         return id
     }
 
-    fun updateProgress(exporter: SpreadsheetExporter, team: Team) =
+    fun updateProgress(exporter: TemplateExporter, team: Team) =
             next(exporter, exportNotification.setContentText(team.toString()))
 
-    fun onStartBuildingAverageSheet(exporter: SpreadsheetExporter) {
+    fun onStartBuildingAverageSheet(exporter: TemplateExporter) {
         next(exporter, exportNotification
                 .setContentText(RobotScouter.getString(R.string.export_average_status)))
     }
 
-    fun onStartCleanup(exporter: SpreadsheetExporter) {
+    fun onStartCleanup(exporter: TemplateExporter) {
         next(exporter, exportNotification
                 .setContentText(RobotScouter.getString(R.string.export_cleanup_status)))
     }
 
+    fun onStartJsonExport(exporter: TemplateExporter) {
+        next(exporter, exportNotification
+                .setContentText(RobotScouter.getString(R.string.export_json_status)))
+    }
+
     @Synchronized
-    fun removeExporter(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
+    fun removeExporter(exporter: TemplateExporter, notification: NotificationCompat.Builder) {
         val (id) = exporters.remove(exporter)!!
         // The original notification must be cancelled because we're changing channels
         notificationManager.cancel(id)
@@ -190,7 +196,9 @@ class ExportNotificationManager(private val service: ExportService) {
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
-    private fun next(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
+    private fun next(exporter: TemplateExporter, notification: NotificationCompat.Builder) {
+        if (isStopped()) throw CancellationException()
+
         val holder = exporters.getValue(exporter)
         notificationFilter.notify(holder.id, notification
                 .updateProgress(holder.maxProgress, ++holder.progress)
@@ -223,8 +231,8 @@ class ExportNotificationManager(private val service: ExportService) {
         /** Accounts for two export files. */
         const val ESTIMATED_MASTER_OPS = EXTRA_MASTER_OPS + 2
 
-        /** Accounts one cleanup step. */
-        const val EXTRA_EXPORT_OPS_SINGLE = 1
+        /** Accounts one cleanup step and the JSON export. */
+        const val EXTRA_EXPORT_OPS_SINGLE = 2
         /** Accounts for the average sheet step. */
         const val EXTRA_EXPORT_OPS_POLY = EXTRA_EXPORT_OPS_SINGLE + 1
     }
