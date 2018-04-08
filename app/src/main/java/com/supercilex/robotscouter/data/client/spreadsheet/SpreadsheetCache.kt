@@ -18,7 +18,7 @@ import org.apache.poi.ss.usermodel.Workbook
 class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     private val metricCache = mutableMapOf<Team, MutableMap<Int, Metric<*>>>()
     private val lastDataOrAverageColumnIndices = mutableMapOf<Team, Int>()
-    private val formatStyles = mutableMapOf<String, Short>()
+    private val formatStyles = mutableMapOf<String, CellStyle>()
 
     var workbook: Workbook by LateinitVal()
     val creationHelper: CreationHelper by lazy { workbook.creationHelper }
@@ -46,7 +46,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     val medianString: String by lazy { RobotScouter.getString(R.string.export_median_column_title) }
     val maxString: String by lazy { RobotScouter.getString(R.string.export_max_column_title) }
 
-    fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache[team]!![index]
+    fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache.getValue(team)[index]
 
     fun getRootMetricIndices(metric: Metric<*>) = metricCache.mapNotNull { (team, metrics) ->
         metrics.toList().find { it.second.id == metric.id }?.first?.let { team to it }
@@ -56,7 +56,7 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
         metricCache.getOrPut(team) { mutableMapOf() }[index] = metric
     }
 
-    fun getLastDataOrAverageColumnIndex(team: Team) = lastDataOrAverageColumnIndices[team]!!
+    fun getLastDataOrAverageColumnIndex(team: Team) = lastDataOrAverageColumnIndices.getValue(team)
 
     fun putLastDataOrAverageColumnIndex(team: Team, i: Int) {
         lastDataOrAverageColumnIndices[team] = i
@@ -65,9 +65,9 @@ class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     fun setCellFormat(cell: Cell, format: String) {
         if (isUnsupportedDevice) return
 
-        cell.cellStyle = workbook.createCellStyle().apply {
-            dataFormat = formatStyles.getOrPut(format) {
-                workbook.createDataFormat().getFormat(format)
+        cell.cellStyle = formatStyles.getOrPut(format) {
+            workbook.createCellStyle().apply {
+                dataFormat = workbook.createDataFormat().getFormat(format)
             }
         }
     }

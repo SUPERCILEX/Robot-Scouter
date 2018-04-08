@@ -48,7 +48,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
             }
 
         override fun onChanged(t: T?) {
-            if (observerStatuses[originalObserver.javaClass]!!.compareAndSet(true, false)) {
+            if (observerStatuses.getValue(originalObserver.javaClass).compareAndSet(true, false)) {
                 newestObserver.onChanged(t)
             }
         }

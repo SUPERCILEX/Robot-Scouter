@@ -188,7 +188,7 @@ class ExportNotificationManager(private val service: ExportService) {
     }
 
     private fun next(exporter: SpreadsheetExporter, notification: NotificationCompat.Builder) {
-        val holder = exporters[exporter]!!
+        val holder = exporters.getValue(exporter)
         notificationFilter.notify(holder.id, notification
                 .updateProgress(holder.maxProgress, ++holder.progress)
                 .build())

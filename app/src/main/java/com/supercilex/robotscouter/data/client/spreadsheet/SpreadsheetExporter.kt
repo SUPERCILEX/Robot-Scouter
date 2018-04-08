@@ -241,7 +241,7 @@ class SpreadsheetExporter(
     }
 
     private fun buildTeamSheet(team: Team, teamSheet: Sheet) {
-        val scouts = scouts[team]!!
+        val scouts = scouts.getValue(team)
 
         if (scouts.isEmpty()) {
             teamSheet.workbook.apply { removeSheetAt(getSheetIndex(teamSheet)) }
@@ -461,7 +461,7 @@ class SpreadsheetExporter(
         }
 
         for (chart in chartData.keys) {
-            val data = chartData[chart]!!
+            val data = chartData.getValue(chart)
 
             chart.plot(data.first, *data.second.toTypedArray())
             if (chart is XSSFChart) {
@@ -550,7 +550,7 @@ class SpreadsheetExporter(
             chartData[newChart] = data to listOf(bottomAxis, leftAxis)
             chartPool[nearestHeader.second] = newChart
         } else {
-            data = chartData[chart!!]!!.first
+            data = chartData.getValue(chart!!).first
         }
 
         val lastDataCellNum = cache.getLastDataOrAverageColumnIndex(team) - 1
