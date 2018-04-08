@@ -186,6 +186,7 @@ class ExportNotificationManager(private val service: ExportService) {
     fun isStopped() = notificationFilter.isStopped()
 
     fun stop() {
+        notificationFilter.cancel(hashCode())
         notificationFilter.stop()
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }

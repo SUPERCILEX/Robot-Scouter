@@ -111,6 +111,13 @@ class FilteringNotificationManager : Runnable {
         }
     }
 
+    fun cancel(id: Int) {
+        lock.write {
+            vips.remove(id)
+            notifications.remove(id)
+        }
+    }
+
     /**
      * Starts the notification looper.
      *
