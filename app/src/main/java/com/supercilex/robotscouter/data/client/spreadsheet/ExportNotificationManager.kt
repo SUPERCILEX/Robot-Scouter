@@ -96,6 +96,15 @@ class ExportNotificationManager(private val service: ExportService) {
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
+        notificationFilter.notify(hashCode() + 1, masterNotification
+                .setGroup((hashCode() + 1).toString())
+                .setSmallIcon(R.drawable.ic_logo)
+                .setContentText(RobotScouter.resources.getQuantityString(
+                        R.plurals.export_complete_message, teams.size, teams.getNames()))
+                .setSubText(RobotScouter.resources.getQuantityString(
+                        R.plurals.export_complete_subtitle, nTemplates, nTemplates))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build(), true)
     }
 
     @Synchronized
@@ -168,15 +177,6 @@ class ExportNotificationManager(private val service: ExportService) {
     fun isStopped() = notificationFilter.isStopped()
 
     fun stop() {
-        notificationFilter.notify(hashCode() + 1, masterNotification
-                .setGroup((hashCode() + 1).toString())
-                .setSmallIcon(R.drawable.ic_logo)
-                .setContentText(RobotScouter.resources.getQuantityString(
-                        R.plurals.export_complete_message, teams.size, teams.getNames()))
-                .setSubText(RobotScouter.resources.getQuantityString(
-                        R.plurals.export_complete_subtitle, nTemplates, nTemplates))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .build(), true)
         notificationFilter.stop()
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
