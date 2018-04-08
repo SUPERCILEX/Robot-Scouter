@@ -144,7 +144,11 @@ class ExportNotificationManager(private val service: ExportService) {
         val (id) = exporters.remove(exporter)!!
         // The original notification must be cancelled because we're changing channels
         notificationManager.cancel(id)
-        notificationFilter.notify(id, notification.setGroup(hashCode().toString()).build(), true)
+        notificationFilter.notify(
+                id,
+                notification.setGroup((hashCode() + 1).toString()).build(),
+                true
+        )
 
         if (--pendingTaskCount == 0) {
             stop()
@@ -164,7 +168,8 @@ class ExportNotificationManager(private val service: ExportService) {
     fun isStopped() = notificationFilter.isStopped()
 
     fun stop() {
-        notificationFilter.notify(hashCode(), masterNotification
+        notificationFilter.notify(hashCode() + 1, masterNotification
+                .setGroup((hashCode() + 1).toString())
                 .setSmallIcon(R.drawable.ic_logo)
                 .setContentText(RobotScouter.resources.getQuantityString(
                         R.plurals.export_complete_message, teams.size, teams.getNames()))
@@ -173,7 +178,7 @@ class ExportNotificationManager(private val service: ExportService) {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build(), true)
         notificationFilter.stop()
-        ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_DETACH)
+        ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
     fun abort() {

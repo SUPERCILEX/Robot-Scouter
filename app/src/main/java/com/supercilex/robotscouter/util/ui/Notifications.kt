@@ -156,9 +156,7 @@ class FilteringNotificationManager : Runnable {
 
     override fun run() {
         lock.write {
-            vips.poll()?.let {
-                notificationManager.notify(it, notifications.remove(it)!!)
-            } ?: notifications.keys.firstOrNull()?.let {
+            (vips.poll() ?: notifications.keys.firstOrNull())?.let {
                 notificationManager.notify(it, notifications.remove(it)!!)
             }
         }
