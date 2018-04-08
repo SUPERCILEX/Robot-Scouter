@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.R
 import com.supercilex.robotscouter.RobotScouter
 import com.supercilex.robotscouter.data.model.Team
 import com.supercilex.robotscouter.util.CrashLogger
+import com.supercilex.robotscouter.util.asLifecycleReference
 import com.supercilex.robotscouter.util.data.ViewModelBase
 import com.supercilex.robotscouter.util.data.createFile
 import com.supercilex.robotscouter.util.data.hide
@@ -67,7 +68,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(RobotScouter.packageManager) == null) {
-            RobotScouter.runOnUiThread { longToast(R.string.fui_error_unknown) }
+            RobotScouter.longToast(R.string.fui_error_unknown)
             return
         }
         if (!EasyPermissions.hasPermissions(RobotScouter, *handler.perms.toTypedArray())) {
@@ -77,6 +78,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         team.logTakeMedia()
 
+        val ref = host.asLifecycleReference()
         async(UI) {
             val file = async {
                 try {
@@ -96,7 +98,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             photoFile = file
             val photoUri = FileProvider.getUriForFile(RobotScouter, providerAuthority, file)
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-            host.startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
+            ref().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
 
             if (this@TeamMediaCreator.shouldUploadMediaToTba == true) {
                 RobotScouter.longToast(R.string.media_upload_reminder)
@@ -113,7 +115,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             async(UI) {
                 val contentUri = async { photoFile.unhide()?.toUri() }.await()
                 if (contentUri == null) {
-                    RobotScouter.runOnUiThread { longToast(R.string.fui_error_unknown) }
+                    RobotScouter.longToast(R.string.fui_error_unknown)
                     return@async
                 }
 
