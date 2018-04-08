@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.util.ui
 
 import android.app.Dialog
-import android.arch.lifecycle.HolderFragment.holderFragmentFor
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.annotation.CallSuper
@@ -36,8 +35,6 @@ fun DialogFragment.show(
 abstract class DialogFragmentBase : DialogFragment() {
     protected open val containerView: View? = null
 
-    override fun getViewModelStore() = holderFragmentFor(this).viewModelStore
-
     override fun getView() = containerView
 
     override fun onResume() {
@@ -55,8 +52,6 @@ abstract class DialogFragmentBase : DialogFragment() {
 abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
         DialogInterface.OnShowListener {
     protected abstract val containerView: View
-
-    override fun getViewModelStore() = holderFragmentFor(this).viewModelStore
 
     override fun onCreateDialog(
             savedInstanceState: Bundle?
