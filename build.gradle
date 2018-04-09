@@ -20,8 +20,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:6.0.1'
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha09'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha10'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.2.0'
         classpath 'com.google.firebase:firebase-plugins:1.1.5'
