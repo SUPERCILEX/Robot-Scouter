@@ -25,3 +25,4 @@
 # Apache POI - remove once the next POIA version comes out
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTCellProtectionImpl { *; }
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle$Enum { *; }
