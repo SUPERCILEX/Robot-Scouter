@@ -21,3 +21,7 @@
     public static int d(...);
     public static int e(...);
 }
+
+# Apache POI - remove once the next POIA version comes out
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection { *; }
+-keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTCellProtectionImpl { *; }
