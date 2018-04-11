@@ -88,7 +88,7 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable {
 abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
     override fun onResume() {
         super.onResume()
-        FirebaseAnalytics.getInstance(context)
+        FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 
@@ -101,7 +101,7 @@ abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
 abstract class PreferenceFragmentBase : PreferenceFragmentCompat(), OnActivityResult, Saveable {
     override fun onResume() {
         super.onResume()
-        FirebaseAnalytics.getInstance(context)
+        FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 

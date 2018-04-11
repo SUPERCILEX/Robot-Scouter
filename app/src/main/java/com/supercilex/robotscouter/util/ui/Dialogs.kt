@@ -39,7 +39,7 @@ abstract class DialogFragmentBase : DialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        FirebaseAnalytics.getInstance(context)
+        FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 
@@ -93,7 +93,7 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
 
     override fun onResume() {
         super.onResume()
-        FirebaseAnalytics.getInstance(context)
+        FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
 

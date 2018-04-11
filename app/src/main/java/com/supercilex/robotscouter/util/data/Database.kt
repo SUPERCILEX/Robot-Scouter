@@ -78,20 +78,20 @@ typealias QueryGenerator = (FirebaseUser) -> Query
 private const val REF_KEY = "com.supercilex.robotscouter.REF"
 
 val teamParser = SnapshotParser {
-    it.toObject(Team::class.java).apply { id = it.id }
+    it.toObject(Team::class.java)!!.apply { id = it.id }
 }
 val scoutParser = SnapshotParser { snapshot ->
     Scout(snapshot.id,
-          snapshot.getString(FIRESTORE_TEMPLATE_ID),
+          snapshot.getString(FIRESTORE_TEMPLATE_ID)!!,
           snapshot.getString(FIRESTORE_NAME),
-          snapshot.getDate(FIRESTORE_TIMESTAMP),
+          snapshot.getDate(FIRESTORE_TIMESTAMP)!!,
           @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
-          (snapshot.data[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
+          (snapshot.data!![FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
               Metric.parse(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
                       "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
           })
 }
-val metricParser = SnapshotParser { Metric.parse(it.data, it.reference) }
+val metricParser = SnapshotParser { Metric.parse(it.data!!, it.reference) }
 val prefParser = SnapshotParser<Any?> {
     val id = it.id
     when (id) {
@@ -99,12 +99,12 @@ val prefParser = SnapshotParser<Any?> {
         FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
         FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
         FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
-        -> it.getBoolean(FIRESTORE_VALUE)
+        -> it.getBoolean(FIRESTORE_VALUE)!!
 
         FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
         FIRESTORE_PREF_NIGHT_MODE,
         FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
-        -> it.getString(FIRESTORE_VALUE)
+        -> it.getString(FIRESTORE_VALUE)!!
 
         else -> it
     }

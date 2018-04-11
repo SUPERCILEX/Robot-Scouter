@@ -23,7 +23,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1 // The version code is updated on each Travis build
-        versionName '2.2.10'
+        versionName '2.3.0'
         multiDexEnabled true
         resConfigs "en"
         vectorDrawables.useSupportLibrary = true
@@ -117,7 +117,7 @@ dependencies {
     implementation "com.android.support:palette-v7:$supportLibVersion"
     implementation "com.android.support:preference-v14:$supportLibVersion"
     implementation "com.android.support:support-emoji-appcompat:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
     implementation "android.arch.lifecycle:extensions:$archVersion"
     implementation "android.arch.lifecycle:common-java8:$archVersion"
@@ -131,7 +131,7 @@ dependencies {
     implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.google.firebase:firebase-auth:$playServicesVersion"
     implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
-    implementation 'com.facebook.android:facebook-login:4.31.0'
+    implementation 'com.facebook.android:facebook-login:4.32.0'
     implementation("com.twitter.sdk.android:twitter-core:3.1.1@aar") { transitive = true }
     // Database
 //    implementation "com.firebaseui:firebase-ui-firestore:$firebaseUiVersion"

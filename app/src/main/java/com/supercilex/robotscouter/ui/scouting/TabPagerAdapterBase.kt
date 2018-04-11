@@ -55,7 +55,7 @@ abstract class TabPagerAdapterBase(
     override fun getCount() = currentScouts.size
 
     override fun getItemPosition(f: Any): Int {
-        val id = (f as MetricListFragment).metricsRef.parent.id
+        val id = (f as MetricListFragment).metricsRef.parent!!.id
         val position = currentScouts.indexOfFirst { it.id == id }
         return if (position == -1) PagerAdapter.POSITION_NONE else position
     }

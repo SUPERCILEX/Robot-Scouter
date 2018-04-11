@@ -89,7 +89,7 @@ fun trashTemplate(id: String) {
     async {
         val ref = getTemplateRef(id)
         val snapshot = ref.get().logFailures(ref).await()
-        val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP).time))
+        val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP)!!.time))
         firestoreBatch {
             update(snapshot.reference, "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
             set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())

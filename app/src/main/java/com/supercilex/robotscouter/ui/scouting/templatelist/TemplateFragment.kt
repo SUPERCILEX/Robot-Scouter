@@ -41,7 +41,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
     override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(getTabId(arguments)!!)
     }
-    override val dataId by unsafeLazy { metricsRef.parent.id }
+    override val dataId by unsafeLazy { metricsRef.parent!!.id }
 
     private val itemTouchCallback by unsafeLazy {
         TemplateItemTouchCallback<Metric<*>>(view!!)
@@ -125,7 +125,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
         when (id) {
             R.id.action_set_default_template -> {
                 val oldDefaultId = defaultTemplateId
-                defaultTemplateId = metricsRef.parent.id
+                defaultTemplateId = metricsRef.parent!!.id
 
                 longSnackbar(fam, R.string.template_set_default_message, R.string.undo) {
                     defaultTemplateId = oldDefaultId
@@ -133,7 +133,7 @@ class TemplateFragment : MetricListFragment(), View.OnClickListener, OnBackPress
             }
             R.id.action_delete_template -> {
                 metricsView.clearFocus()
-                DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent)
+                DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent!!)
             }
             R.id.action_remove_metrics -> {
                 metricsView.clearFocus()

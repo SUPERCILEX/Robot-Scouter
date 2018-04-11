@@ -64,7 +64,7 @@ class AccountMergeService : ManualMergeService() {
         val teamRefs = teams.map { it.reference }
         async {
             updateOwner(teamRefs, token, prevUid) { ref ->
-                teams.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)
+                teams.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)!!
             }
             for (ref in teamRefs) {
                 ref.update(tokenPath, FieldValue.delete()).logFailures(ref, token)
@@ -74,7 +74,7 @@ class AccountMergeService : ManualMergeService() {
         val templateRefs = templates.map { it.reference }
         async {
             updateOwner(templateRefs, token, prevUid) { ref ->
-                templates.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)
+                templates.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)!!
             }
             for (ref in templateRefs) {
                 ref.update(tokenPath, FieldValue.delete()).logFailures(ref, token)
