@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.util.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.util.data.model.copyMediaInfo
 import com.supercilex.robotscouter.util.data.model.forceUpdate
 import com.supercilex.robotscouter.util.data.model.isOutdatedMedia
+import com.supercilex.robotscouter.util.logFailures
 import com.supercilex.robotscouter.util.ui.CaptureTeamMediaListener
 import com.supercilex.robotscouter.util.ui.OnActivityResult
 import com.supercilex.robotscouter.util.ui.PermissionRequestHandler
@@ -38,8 +39,10 @@ import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
+import android.support.v7.graphics.Target as PaletteTarget
 
 open class AppBarViewHolderBase(
         private val fragment: ScoutListFragmentBase,
@@ -48,10 +51,12 @@ open class AppBarViewHolderBase(
         private val onScoutingReadyTask: Task<*>
 ) : LayoutContainer, OnSuccessListener<List<Void?>>, View.OnLongClickListener,
         CaptureTeamMediaListener, ActivityCompat.OnRequestPermissionsResultCallback,
-        OnActivityResult, Saveable {
+        OnActivityResult, Saveable, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
     override val containerView = fragment.view
+    private val toolbarHeight =
+            fragment.resources.getDimensionPixelSize(R.dimen.scout_toolbar_height)
     private val permissionHandler = ViewModelProviders.of(fragment)
             .get(PermissionRequestHandler::class.java).apply {
                 init(TeamMediaCreator.perms)
@@ -90,46 +95,67 @@ open class AppBarViewHolderBase(
 
     private fun loadImages() {
         progress.show()
-
-        val media = team.media
         Glide.with(backdrop)
                 .asBitmap()
-                .load(media)
+                .load(team.media)
                 .apply(RequestOptions.centerCropTransform().error(R.drawable.ic_person_grey_96dp))
-                .listener(object : RequestListener<Bitmap> {
-                    override fun onResourceReady(
-                            resource: Bitmap?,
-                            model: Any?,
-                            target: Target<Bitmap>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                    ): Boolean {
-                        progress.hide(true)
-
-                        if (resource?.isRecycled == false) {
-                            Palette.from(resource).generate { palette ->
-                                palette.vibrantSwatch?.let {
-                                    updateScrim(it.rgb, resource)
-                                    return@generate
-                                }
-
-                                palette.dominantSwatch?.let { updateScrim(it.rgb, resource) }
-                            }
-                        }
-                        return false
-                    }
-
-                    override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Bitmap>,
-                            isFirstResource: Boolean
-                    ): Boolean {
-                        progress.hide(true)
-                        return false
-                    }
-                })
+                .listener(this)
                 .into(backdrop)
+    }
+
+    override fun onResourceReady(
+            resource: Bitmap?,
+            model: Any?,
+            target: Target<Bitmap>,
+            dataSource: DataSource,
+            isFirstResource: Boolean
+    ): Boolean {
+        progress.hide(true)
+
+        if (resource?.isRecycled == false) {
+            async {
+                val palette = Palette.from(resource).generate()
+
+                val update: Palette.Swatch.() -> Unit = {
+                    updateScrim(rgb, resource)
+                }
+                palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
+            }.logFailures()
+
+            async {
+                val paletteTarget = PaletteTarget.Builder()
+                        .setExclusive(false)
+                        .setTargetLightness(1f)
+                        .setMinimumLightness(0.8f)
+                        .setLightnessWeight(1f)
+                        .setTargetSaturation(0f)
+                        .setMaximumSaturation(0f)
+                        .build()
+                val swatch = Palette.from(resource)
+                        .addTarget(paletteTarget)
+                        .setRegion(0, 0, resource.width, toolbarHeight)
+                        .generate()
+                        .getSwatchForTarget(paletteTarget) ?: return@async
+
+                // Find backgrounds that are pretty white and then display the scrim to ensure the
+                // text is visible.
+                if (swatch.hsl.first() == 0f) {
+                    header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
+                }
+            }.logFailures()
+        }
+
+        return false
+    }
+
+    override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: Target<Bitmap>,
+            isFirstResource: Boolean
+    ): Boolean {
+        progress.hide(true)
+        return false
     }
 
     @CallSuper

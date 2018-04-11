@@ -17,6 +17,7 @@
     <dimen name="spacing_checkbox_margin_hack">-7dp</dimen>
 
     <dimen name="square_view_hw">56dp</dimen>
+    <dimen name="scout_toolbar_height">104dp</dimen>
 
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="corner_radius">2dp</dimen>
