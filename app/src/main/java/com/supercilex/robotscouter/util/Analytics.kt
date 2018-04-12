@@ -3,6 +3,8 @@ package com.supercilex.robotscouter.util
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.crashlytics.android.Crashlytics
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.FirebaseException
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.analytics.FirebaseAnalytics.Param.CONTENT_TYPE
@@ -21,6 +23,8 @@ import com.supercilex.robotscouter.util.data.model.userRef
 import com.supercilex.robotscouter.util.data.nullOrFull
 import com.supercilex.robotscouter.util.ui.mainHandler
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
@@ -77,6 +81,25 @@ fun initAnalytics() {
             ).add()
 
             updateLastLogin.run()
+
+            user.reload().addOnFailureListener {
+                if (it is FirebaseException) {
+                    logCrashLog("User refresh error: $it")
+
+                    // If we got a user not found error, it means we've deleted the user record and
+                    // all associated data, but the user was still using Robot Scouter somehow.
+                    if (it.message?.contains("USER_NOT_FOUND") == true) {
+                        async {
+                            AuthUI.getInstance().signOut(RobotScouter).await()
+                            onSignedIn()
+                            RobotScouter.runOnUiThread {
+                                longToast("User account deleted due to inactivity. " +
+                                                  "Starting a fresh session.")
+                            }
+                        }.logFailures()
+                    }
+                }
+            }
         }
     }
 }

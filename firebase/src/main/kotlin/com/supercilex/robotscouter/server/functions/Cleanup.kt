@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.server.utils.FIRESTORE_TEMPLATE_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.server.utils.FIRESTORE_TYPE
 import com.supercilex.robotscouter.server.utils.FieldValue
+import com.supercilex.robotscouter.server.utils.auth
 import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
@@ -36,6 +37,7 @@ import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.setTimeout
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
 import kotlin.js.Date
@@ -188,7 +190,14 @@ private fun deleteUser(user: DocumentSnapshot): Promise<*> {
     console.log("Deleting user: ${user.id}")
     return user.userPrefs.delete().then {
         user.ref.delete()
-    }.then { Unit }
+    }.then {
+        Promise<Unit> { resolve, _ ->
+            // Wait because there's a limit of 10 deletions/sec
+            setTimeout({ resolve(Unit) }, 100)
+        }
+    }.then {
+        auth.deleteUser(user.id)
+    }
 }
 
 private fun deleteTeam(team: DocumentSnapshot): Promise<*> {

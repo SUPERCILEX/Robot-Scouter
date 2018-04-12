@@ -34,6 +34,7 @@ const val FIRESTORE_TEMPLATE_TYPE = 2
 const val FIRESTORE_SHARE_TOKEN_TYPE = 3
 
 val firestore by lazy { admin.firestore() }
+val auth by lazy { admin.auth() }
 val moment: dynamic by lazy { require("moment") }
 
 val defaultTemplates: CollectionReference
