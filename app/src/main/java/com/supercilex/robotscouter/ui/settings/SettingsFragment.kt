@@ -16,7 +16,6 @@ import android.support.v7.preference.PreferenceGroup
 import android.support.v7.preference.PreferenceGroupAdapter
 import android.support.v7.preference.PreferenceScreen
 import android.support.v7.preference.PreferenceViewHolder
-import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
@@ -81,15 +80,15 @@ class SettingsFragment : PreferenceFragmentBase(),
         }
     }
 
-    override fun onCreateAdapter(preferenceScreen: PreferenceScreen): RecyclerView.Adapter<*> {
-        return object : PreferenceGroupAdapter(preferenceScreen) {
-            override fun onBindViewHolder(holder: PreferenceViewHolder, position: Int) {
-                super.onBindViewHolder(holder, position)
-                if (getItem(position).key == "about") {
-                    (holder.findViewById(R.id.about) as TextView).apply {
-                        text = getString(R.string.settings_pref_about_summary, "\uD83D\uDC96")
-                        movementMethod = LinkMovementMethod.getInstance()
-                    }
+    override fun onCreateAdapter(
+            preferenceScreen: PreferenceScreen
+    ) = object : PreferenceGroupAdapter(preferenceScreen) {
+        override fun onBindViewHolder(holder: PreferenceViewHolder, position: Int) {
+            super.onBindViewHolder(holder, position)
+            if (getItem(position).key == "about") {
+                (holder.findViewById(R.id.about) as TextView).apply {
+                    text = getString(R.string.settings_pref_about_summary, "\uD83D\uDC96").trim()
+                    movementMethod = LinkMovementMethod.getInstance()
                 }
             }
         }
