@@ -5,6 +5,7 @@ import com.supercilex.robotscouter.server.functions.emptyTrash
 import com.supercilex.robotscouter.server.functions.logUserData
 import com.supercilex.robotscouter.server.functions.sanitizeDeletionRequest
 import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
+import com.supercilex.robotscouter.server.functions.updateOwners
 import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.types.admin
 import com.supercilex.robotscouter.server.utils.types.functions
@@ -27,4 +28,6 @@ fun main(args: Array<String>) {
             .onPublish { _, _ -> updateDefaultTemplates() }
     exports.sanitizeDeletionQueue = functions.firestore.document("${deletionQueue.id}/{uid}")
             .onWrite { event, _ -> sanitizeDeletionRequest(event) }
+    exports.updateOwners = functions.https
+            .onCall { data, context -> updateOwners(data, context) }
 }

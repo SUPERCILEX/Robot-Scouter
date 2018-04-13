@@ -8,16 +8,18 @@ import com.google.firebase.appindexing.Scope
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.FirebaseFunctionsException
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
-import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
-import com.supercilex.robotscouter.common.FIRESTORE_PENDING_APPROVALS
+import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
+import com.supercilex.robotscouter.common.FIRESTORE_REF
+import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
+import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
-import kotlinx.coroutines.experimental.async
 import java.io.File
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
@@ -72,21 +74,23 @@ suspend fun updateOwner(
         token: String,
         prevUid: String?,
         newValue: (DocumentReference) -> Any
-) {
-    val pendingApprovalPath = FieldPath.of(FIRESTORE_PENDING_APPROVALS, uid!!)
-    val oldOwnerPath = prevUid?.let { FieldPath.of(FIRESTORE_OWNERS, it) }
-    val newOwnerPath = FieldPath.of(FIRESTORE_OWNERS, uid!!)
-
-    refs.map { ref ->
-        async {
-            ref.batch {
-                update(it, pendingApprovalPath, token)
-                oldOwnerPath?.let { update(ref, it, FieldValue.delete()) }
-                update(it, newOwnerPath, newValue(it))
-            }.logFailures(ref, "Token: $token, from user: $prevUid").await()
-            ref.update(pendingApprovalPath, FieldValue.delete()).logFailures(ref)
-        }
-    }.await()
+) = refs.map { ref ->
+    FirebaseFunctions.getInstance()
+            .getHttpsCallable("updateOwners")
+            .call(mapOf(
+                    FIRESTORE_TOKEN to token,
+                    FIRESTORE_REF to ref.path,
+                    FIRESTORE_PREV_UID to prevUid,
+                    FIRESTORE_VALUE to newValue(ref)
+            ))
+            .addOnFailureListener {
+                if (it is FirebaseFunctionsException) {
+                    logCrashLog("Functions failed (${it.code}) with details: ${it.details}")
+                }
+            }
+            .logFailures(ref, "Token: $token, from user: $prevUid")
+}.forEach {
+    it.await()
 }
 
 private inline fun <T> List<T>.generateUrl(

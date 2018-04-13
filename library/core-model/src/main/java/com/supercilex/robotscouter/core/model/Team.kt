@@ -36,12 +36,6 @@ data class Team(
         @Exclude
         @get:Keep
         @set:Keep
-        @set:RestrictTo(RestrictTo.Scope.TESTS)
-        var pendingApprovals: Map<String, String> = emptyMap(),
-
-        @Exclude
-        @get:Keep
-        @set:Keep
         var templateId: String = TemplateType.DEFAULT.id.toString(),
 
         @Exclude

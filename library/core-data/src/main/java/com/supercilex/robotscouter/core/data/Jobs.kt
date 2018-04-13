@@ -23,7 +23,6 @@ private const val NUMBER = "number"
 private const val ID = "id"
 private const val OWNERS = "owners"
 private const val ACTIVE_TOKENS = "activeTokens"
-private const val PENDING_APPROVALS = "pendingApprovals"
 private const val TEMPLATE_ID = "template-id"
 private const val NAME = "name"
 private const val MEDIA = "media"
@@ -83,11 +82,6 @@ internal fun Bundle.parseTeam() = Team(
         }.associate {
             it.removePrefix(ACTIVE_TOKENS) to Date(getLong(it))
         },
-        keySet().asSequence().filter {
-            it.startsWith(PENDING_APPROVALS)
-        }.associate {
-            it.removePrefix(PENDING_APPROVALS) to getString(it)
-        },
         getString(TEMPLATE_ID),
         getString(NAME),
         getString(MEDIA),
@@ -106,7 +100,6 @@ internal fun PersistableBundle.parseTeam() = Team(
         getString(ID),
         getBundleAsMap(OWNERS),
         getBundleAsMap(ACTIVE_TOKENS) { Date(getLong(it)) }.toMutableMap(),
-        getBundleAsMap(PENDING_APPROVALS),
         getString(TEMPLATE_ID),
         getString(NAME),
         getString(MEDIA),
@@ -168,7 +161,6 @@ private fun Team.toRawBundle() = bundleOf(
         ID to id,
         *owners.map { OWNERS + it.key to it.value }.toTypedArray(),
         *activeTokens.map { ACTIVE_TOKENS + it.key to it.value.time }.toTypedArray(),
-        *pendingApprovals.map { PENDING_APPROVALS + it.key to it.value }.toTypedArray(),
         TEMPLATE_ID to templateId,
         NAME to name,
         MEDIA to media,
@@ -190,9 +182,6 @@ private fun Team.toRawPersistableBundle() = PersistableBundle().apply {
     })
     putPersistableBundle(ACTIVE_TOKENS, PersistableBundle().apply {
         activeTokens.forEach { putLong(it.key, it.value.time) }
-    })
-    putPersistableBundle(PENDING_APPROVALS, PersistableBundle().apply {
-        pendingApprovals.forEach { putString(it.key, it.value) }
     })
     putString(TEMPLATE_ID, templateId)
     putString(NAME, name)

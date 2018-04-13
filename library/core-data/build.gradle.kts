@@ -22,6 +22,7 @@ dependencies {
 
     implementation(Config.Libs.PlayServices.auth) { isTransitive = false }
     implementation(Config.Libs.FirebaseUi.firestore) { exclude(module = "recyclerview-v7") }
+    implementation(Config.Libs.Firebase.functions)
     implementation(Config.Libs.Firebase.storage)
     implementation(Config.Libs.Firebase.config)
     implementation(Config.Libs.Firebase.jobs)

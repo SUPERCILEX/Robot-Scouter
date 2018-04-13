@@ -13,7 +13,6 @@ service cloud.firestore {
                  && request.resource.data.owners[request.auth.uid] is int
                  && request.resource.data.templateId is string
                  && request.resource.data.activeTokens is map
-                 && request.resource.data.pendingApprovals is map
                  && request.resource.data.hasCustomName is bool
                  && request.resource.data.hasCustomMedia is bool
                  && request.resource.data.hasCustomWebsite is bool
@@ -119,6 +118,7 @@ service cloud.firestore {
   }
 }
 
+// TODO remove after 3.0 has shipped
 function hasPendingApproval() {
   return request.resource.data.pendingApprovals[request.auth.uid] in resource.data.activeTokens.keys();
 }

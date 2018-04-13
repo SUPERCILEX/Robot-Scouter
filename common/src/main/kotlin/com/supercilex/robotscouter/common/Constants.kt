@@ -16,8 +16,10 @@ const val FIRESTORE_TEAMS = "teams"
 const val FIRESTORE_NUMBER = "number"
 
 // Shared
+const val FIRESTORE_REF = "ref"
+const val FIRESTORE_PREV_UID = "prevUid"
+const val FIRESTORE_TOKEN = "token"
 const val FIRESTORE_ACTIVE_TOKENS = "activeTokens"
-const val FIRESTORE_PENDING_APPROVALS = "pendingApprovals"
 
 // Scout
 const val FIRESTORE_SCOUTS = "scouts"

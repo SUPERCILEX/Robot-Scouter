@@ -78,6 +78,7 @@ external interface ChangeJson {
 external class Functions {
     val firestore: NamespaceBuilder = definedExternally
     val pubsub: Pubsub = definedExternally
+    val https: Https = definedExternally
 }
 
 external class Admin {

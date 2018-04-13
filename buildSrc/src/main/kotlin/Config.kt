@@ -63,6 +63,7 @@ object Config {
             const val analytics = "com.google.firebase:firebase-analytics:15.0.2"
             const val auth = "com.google.firebase:firebase-auth:15.1.0"
             const val firestore = "com.google.firebase:firebase-firestore:16.0.0"
+            const val functions = "com.google.firebase:firebase-functions:15.0.0"
             const val storage = "com.google.firebase:firebase-storage:15.0.2"
             const val config = "com.google.firebase:firebase-config:15.0.2"
             const val indexing = "com.google.firebase:firebase-appindexing:15.0.1"

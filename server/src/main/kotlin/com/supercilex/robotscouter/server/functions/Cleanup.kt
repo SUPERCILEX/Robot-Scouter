@@ -6,7 +6,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
 import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
-import com.supercilex.robotscouter.common.FIRESTORE_PENDING_APPROVALS
 import com.supercilex.robotscouter.common.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
@@ -43,7 +42,6 @@ import com.supercilex.robotscouter.server.utils.users
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
-import kotlin.js.json
 
 private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
@@ -143,13 +141,7 @@ private fun processDeletion(request: DocumentSnapshot): Promise<*> {
             return Promise.all(ids.map {
                 doc(it).get().then {
                     if (it.exists) {
-                        Promise.all(arrayOf(
-                                it.ref.update(
-                                        "$FIRESTORE_ACTIVE_TOKENS.$token",
-                                        FieldValue.delete()
-                                ),
-                                it.ref.update(FIRESTORE_PENDING_APPROVALS, json())
-                        ))
+                        it.ref.update("$FIRESTORE_ACTIVE_TOKENS.$token", FieldValue.delete())
                     }
                 }
             }.toTypedArray()).then { Unit }
