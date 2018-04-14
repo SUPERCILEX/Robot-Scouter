@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scout_name_title">Scout name</string>
+    <string name="tutorial_loading_metrics_hint">Loading…\nCheck your internet connection</string>
+
+    <!-- Counter -->
+    <string name="scout_edit_counter_value_title">Edit value</string>
+    <string name="scout_counter_value_title">Value</string>
+    <string name="accessibility_increment_counter">Increment counter</string>
+    <string name="accessibility_decrement_counter">Decrement counter</string>
+
+    <!-- Stopwatch -->
+    <string name="metric_stopwatch_start_title">Start</string>
+    <string name="metric_stopwatch_stop_title">Stop (%s)</string>
+    <string name="metric_stopwatch_cycle_title">Cycle %d</string>
+    <string name="metric_stopwatch_cycle_average_title">Average</string>
+    <string name="scout_stopwatch_lap_added_message">Added stopwatch lap</string>
+</resources>

@@ -13,15 +13,16 @@ tasks.whenTaskAdded { task ->
 }
 
 apply from: '../quality/quality.gradle'
+apply from: '../quality/quality-android.gradle'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion compileSdk
 
     defaultConfig {
         manifestPlaceholders = [appName: '@string/app_name']
         applicationId 'com.supercilex.robotscouter'
-        minSdkVersion 16
-        targetSdkVersion 27
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
         versionCode 1 // The version code is updated on each Travis build
         versionName '2.3.0'
         multiDexEnabled true
@@ -71,18 +72,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    lintOptions {
-        disable 'InvalidPackage', // Needed because of Okio
-                'GradleDependency', 'NewerVersionAvailable' // For build reproducibility
-        baseline file("${project.rootDir}/quality/lint-baseline.xml")
-        checkAllWarnings true
-        warningsAsErrors true
-        abortOnError false
-        def reportsDir = "${project.buildDir}/reports"
-        htmlOutput file("$reportsDir/lint-results.html")
-        xmlOutput file("$reportsDir/lint-results.xml")
-    }
 }
 
 kotlin {
@@ -103,76 +92,20 @@ play {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
-    implementation "org.jetbrains.anko:anko-coroutines:$ankoVersion"
-    implementation "org.jetbrains.anko:anko-design:$ankoVersion"
-    implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"
+    implementation project(':shared')
+    implementation project(':feature-teams')
+    implementation project(':feature-scouts')
+    implementation project(':feature-templates')
+    implementation project(':feature-settings')
+    implementation project(':feature-exports')
 
-    // Support libraries
     implementation 'com.android.support:multidex:1.0.3'
-    implementation "com.android.support:design:$supportLibVersion"
-    implementation "com.android.support:customtabs:$supportLibVersion"
-    implementation "com.android.support:cardview-v7:$supportLibVersion"
-    implementation "com.android.support:palette-v7:$supportLibVersion"
-    implementation "com.android.support:preference-v14:$supportLibVersion"
-    implementation "com.android.support:support-emoji-appcompat:$supportLibVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-
-    implementation "android.arch.lifecycle:extensions:$archVersion"
-    implementation "android.arch.lifecycle:common-java8:$archVersion"
-    implementation 'androidx.core:core-ktx:0.3'
-
     implementation 'com.android.billingclient:billing:1.0'
-
-    // Firebase UI
-    // Auth
-//    implementation "com.firebaseui:firebase-ui-auth:$firebaseUiVersion"
-    implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
-    implementation "com.google.firebase:firebase-auth:$playServicesVersion"
-    implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
-    implementation 'com.facebook.android:facebook-login:4.32.0'
-    implementation("com.twitter.sdk.android:twitter-core:3.1.1@aar") { transitive = true }
-    // Database
-//    implementation "com.firebaseui:firebase-ui-firestore:$firebaseUiVersion"
-    implementation "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion"
-    implementation "com.google.firebase:firebase-firestore:$playServicesVersion"
-
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
-
-    // Firebase
-    implementation "com.google.firebase:firebase-core:$playServicesVersion"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.1'
-    implementation "com.google.firebase:firebase-perf:$playServicesVersion"
-    implementation "com.google.firebase:firebase-storage:$playServicesVersion"
-    implementation "com.google.firebase:firebase-invites:$playServicesVersion"
-    implementation "com.google.firebase:firebase-appindexing:$playServicesVersion"
-    implementation "com.google.firebase:firebase-config:$playServicesVersion"
-    implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
-
-    // From Google-ish
-    implementation 'pub.devrel:easypermissions:1.2.0'
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
-    implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
-    implementation 'com.google.code.gson:gson:2.8.2'
-
-    // Third party
-    implementation 'net.yslibrary.licenseadapter:licenseadapter:2.0.2'
-    implementation 'com.github.clans:fab:1.6.4'
     implementation 'uk.co.samuelwall:material-tap-target-prompt:2.7.0'
-    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
 
-    // Apache POI
-    implementation "com.github.SUPERCILEX.poi-android:poi:$poiVersion"
-    implementation "com.github.SUPERCILEX.poi-android:proguard:$poiVersion"
-
-    // Leak canary
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-
-    // Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.google.firebase:firebase-perf:$playServicesVersion"
+    implementation "com.google.firebase:firebase-invites:$playServicesVersion"
+    implementation "com.google.firebase:firebase-messaging:$playServicesVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

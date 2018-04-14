@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_activity_title">Settings</string>
+    <string name="settings_category_ui_title">User interface</string>
+    <string name="settings_category_general_title">General</string>
+    <string name="settings_category_about_title">About</string>
+
+    <string name="settings_pref_night_mode_title">Night mode</string>
+    <string-array name="settings_pref_night_mode_entries">
+        <item>Auto</item>
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+    <string-array name="settings_pref_night_mode_values">
+        <item>auto</item>
+        <item>yes</item>
+        <item>no</item>
+    </string-array>
+
+    <string name="settings_pref_lock_templates_title">Prevent template editing</string>
+    <string name="settings_pref_lock_templates_summary">
+        Choose whether or not to show the template editor. Useful to prevent accidental edits from
+        non-lead team members.
+    </string>
+
+    <string name="settings_pref_default_template_title">Default template</string>
+    <string name="settings_pref_default_template_summary">%s\nChoose the default template for new scouts</string>
+
+    <string name="settings_pref_should_upload_to_tba_title">Upload media to The Blue Alliance</string>
+    <string name="settings_pref_should_upload_to_tba_summary">
+        %s\nChoose what happens when you take a picture with Robot Scouter
+    </string>
+    <string-array name="settings_pref_should_upload_to_tba_entries">
+        <item>Ask every time</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string-array name="settings_pref_should_upload_to_tba_values">
+        <item>ask</item>
+        <item>yes</item>
+        <item>no</item>
+    </string-array>
+
+    <string name="settings_pref_reset_tutorials_title">Reset tutorials</string>
+
+    <string name="settings_pref_link_account_title">Link accounts</string>
+    <string name="settings_pref_link_account_summary">Merge two accounts into one</string>
+
+    <string name="settings_pref_sign_out_title">Sign out and reset Robot Scouter</string>
+
+    <string name="settings_pref_about_summary">
+        Robot Scouter is developed with %s by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>
+        and the icon was designed by <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nIf
+        you want to try out new features before everyone else, feel free to join
+        <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso,
+        Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a>
+        so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!
+    </string>
+
+    <string name="settings_pref_release_notes_title">Release notes</string>
+    <string name="settings_pref_release_notes_summary">View the latest release notes</string>
+
+    <string name="settings_pref_translate_title">Help translate Robot Scouter</string>
+    <string name="settings_pref_translate_summary">Know another language? Please help translate!</string>
+
+    <string name="settings_pref_version_title">Version</string>
+    <string name="settings_debug_info_title">Robot Scouter debug info</string>
+    <string name="settings_debug_info_copied_message">Debug info copied to clipboard!</string>
+
+    <string name="settings_pref_licenses_title">Licenses</string>
+</resources>

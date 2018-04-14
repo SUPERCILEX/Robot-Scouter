@@ -1,0 +1,8 @@
+apply from: '../standard-android-config.gradle'
+
+dependencies {
+    api project(':shared')
+
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.ListItem">
+
+    <android.support.text.emoji.widget.EmojiAppCompatTextView
+        android:id="@+id/name"
+        style="@style/TextAppearance.AppCompat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/text_size_normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/stopwatch"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
+        tools:text="Example" />
+
+    <include layout="@layout/scout_base_stopwatch" />
+
+</com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout>

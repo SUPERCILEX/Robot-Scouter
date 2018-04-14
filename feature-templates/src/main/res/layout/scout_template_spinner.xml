@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.ListItem">
+
+    <include layout="@layout/scout_template_base_reorder" />
+
+    <android.support.text.emoji.widget.EmojiAppCompatEditText
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:hint="@string/metric_spinner_name_hint"
+        android:inputType="textMultiLine|textCapSentences"
+        app:layout_constraintStart_toEndOf="@id/reorder"
+        app:layout_constraintEnd_toStartOf="@id/newItem"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barrier" />
+
+    <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesImageButton
+        android:id="@+id/newItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/accessibility_add_spinner_item"
+        android:stateListAnimator="@null"
+        app:layout_constraintStart_toEndOf="@id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
+        app:iconDrawable="@drawable/ic_add_colorable_24dp"
+        app:iconStyle="@style/Icon.Accent"
+        tools:ignore="UnusedAttribute" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="name, new_item" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/items"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/scout_template_spinner_item" />
+
+</com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout>

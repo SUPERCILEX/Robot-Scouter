@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="template_tab_default_title">Template %d</string>
+    <string name="scout_add_template_not_cached_error">
+        Error adding new scout:\nThe template you are attempting to use hasn’t been cached yet.
+        Please add at least one scout while you have an internet connection so your template may be
+        cached for offline use.
+    </string>
+
+    <!-- Notifications -->
+    <string name="export_group_title">Spreadsheet exporting</string>
+    <string name="export_channel_title">Completed exports</string>
+    <string name="export_channel_desc">
+        Displays an actionable notification to manage the completed export.
+    </string>
+    <string name="export_progress_channel_title">In-progress exports</string>
+    <string name="export_progress_channel_desc">Displays the status of an in-progress export.</string>
+</resources>

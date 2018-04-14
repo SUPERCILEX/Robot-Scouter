@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="export_all_teams_title">Export all teams</string>
+    <plurals name="export_share_title">
+        <item quantity="one">Share team %s’s scouting data</item>
+        <item quantity="other">Share teams %s’s scouting data</item>
+    </plurals>
+    <string name="export_overall_progress_title">Spreadsheet exporter</string>
+    <string name="export_progress_title">Exporting spreadsheet</string>
+
+    <string name="export_unnamed_template_title">Unnamed Template</string>
+    <string name="export_unknown_template_title">Unknown Template</string>
+    <string name="export_offline_rationale">
+        Exporting spreadsheet while offline may yield incomplete results.
+    </string>
+    <string name="export_unsupported_device_rationale">Warning: you are using an unsupported device</string>
+
+    <string name="export_write_storage_rationale">
+        Robot Scouter needs access to your storage to create the spreadsheet file.
+    </string>
+    <string name="export_progress_hint">Exporting…</string>
+    <string name="export_complete_title">Export complete for %s</string>
+    <plurals name="export_complete_subtitle">
+        <item quantity="one">1 file exported</item>
+        <item quantity="other">%d files exported</item>
+    </plurals>
+    <plurals name="export_complete_summary">
+        <item quantity="one">1 team exported</item>
+        <item quantity="other">%d teams exported</item>
+    </plurals>
+    <plurals name="export_complete_message">
+        <item quantity="one">Exported team %s.</item>
+        <item quantity="other">Exported teams %s.</item>
+    </plurals>
+
+    <string name="export_initialize_status">Initializing</string>
+    <string name="export_load_status">Loading teams</string>
+    <plurals name="export_load_status_detail">
+        <item quantity="one">Loading team %d</item>
+        <item quantity="other">Loading teams %d-%d</item>
+    </plurals>
+    <string name="export_template_status">Exporting teams for %s</string>
+    <string name="export_average_status">Exporting overview sheet</string>
+    <string name="export_cleanup_status">Cleanup</string>
+    <string name="export_json_status">Exporting JSON</string>
+
+    <string name="export_average_column_title">Average</string>
+    <string name="export_median_column_title">Median</string>
+    <string name="export_max_column_title">Max</string>
+</resources>

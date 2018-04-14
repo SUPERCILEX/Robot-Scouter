@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="save">Save</string>
+    <string name="undo">Undo</string>
+
+    <string name="share">Share</string>
+    <string name="open">Open</string>
+    <string name="delete">Delete</string>
+    <string name="deleted">Deleted</string>
+    <string name="cancelled">Cancelled</string>
+
+    <string name="no_connection">No internet connection</string>
+    <string name="sign_in_required">Sign in required</string>
+    <string name="signed_in_message">Successfully signed in!</string>
+    <string name="sign_in_failed_message">Sign in failed</string>
+    <string name="error_unknown">An unknown error occurred</string>
+</resources>

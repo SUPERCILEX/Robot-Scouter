@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_ui_title">
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="auto"
+            android:entries="@array/settings_pref_night_mode_entries"
+            android:entryValues="@array/settings_pref_night_mode_values"
+            android:icon="@drawable/ic_weather_night_colorable_24dp"
+            android:key="nightMode"
+            android:summary="%s"
+            android:title="@string/settings_pref_night_mode_title" />
+
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_lock_outline_colorable_24dp"
+            android:key="lockTemplates"
+            android:summary="@string/settings_pref_lock_templates_summary"
+            android:title="@string/settings_pref_lock_templates_title" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_general_title">
+
+        <com.supercilex.robotscouter.feature.settings.DefaultTemplatePreference
+            android:icon="@drawable/ic_content_paste_colorable_24dp"
+            android:key="defaultTemplateId"
+            android:summary="@string/settings_pref_default_template_summary"
+            android:title="@string/settings_pref_default_template_title" />
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="ask"
+            android:entries="@array/settings_pref_should_upload_to_tba_entries"
+            android:entryValues="@array/settings_pref_should_upload_to_tba_values"
+            android:icon="@android:drawable/stat_sys_upload_done"
+            android:key="uploadMediaToTba"
+            android:summary="@string/settings_pref_should_upload_to_tba_summary"
+            android:title="@string/settings_pref_should_upload_to_tba_title" />
+
+        <android.support.v7.preference.Preference
+            android:icon="@drawable/ic_replay_colorable_24dp"
+            android:key="reset_tutorials"
+            android:title="@string/settings_pref_reset_tutorials_title" />
+
+        <android.support.v7.preference.Preference
+            android:icon="@drawable/ic_link_colorable_24dp"
+            android:key="link_account"
+            android:summary="@string/settings_pref_link_account_summary"
+            android:title="@string/settings_pref_link_account_title" />
+
+        <android.support.v7.preference.Preference
+            android:icon="@drawable/ic_sign_out_colorable_24dp"
+            android:key="sign_out"
+            android:title="@string/settings_pref_sign_out_title" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/settings_category_about_title">
+
+        <android.support.v7.preference.Preference android:key="about">
+
+            <aapt:attr name="android:layout">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.text.emoji.widget.EmojiAppCompatTextView
+                        android:id="@+id/about"
+                        style="@style/TextAppearance.AppCompat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                        android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+                        android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp" />
+
+                </LinearLayout>
+
+            </aapt:attr>
+
+        </android.support.v7.preference.Preference>
+
+        <android.support.v7.preference.Preference
+            android:key="release_notes"
+            android:summary="@string/settings_pref_release_notes_summary"
+            android:title="@string/settings_pref_release_notes_title" />
+
+        <android.support.v7.preference.Preference
+            android:key="translate"
+            android:summary="@string/settings_pref_translate_summary"
+            android:title="@string/settings_pref_translate_title" />
+
+        <android.support.v7.preference.Preference
+            android:key="version"
+            android:title="@string/settings_pref_version_title" />
+
+        <android.support.v7.preference.Preference
+            android:key="licenses"
+            android:title="@string/settings_pref_licenses_title" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

@@ -1,0 +1,4 @@
+-keepnames public class * extends com.supercilex.robotscouter.core.ui.FragmentBase
+-keepnames public class * extends com.supercilex.robotscouter.core.ui.DialogFragmentBase
+-keepnames public class * extends com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
+-keepnames public class * extends com.supercilex.robotscouter.core.ui.PreferenceFragmentBase

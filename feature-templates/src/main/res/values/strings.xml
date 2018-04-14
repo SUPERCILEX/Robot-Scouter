@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="template_activity_title">Scout template editor</string>
+    <string name="template_new_title">New template</string>
+    <string name="template_set_default_message">Default template updated</string>
+    <string name="template_edit_name_title">Edit template name</string>
+    <string name="template_added_title">Template added</string>
+    <string name="template_added_message">Template added and set as default</string>
+
+    <string name="template_tutorial_no_templates_hint">Scout templates you add appear here</string>
+    <string name="template_tutorial_no_metrics_hint">Metrics you add appear here</string>
+
+    <string name="template_share_title">Share the %s template</string>
+    <string name="template_share_message">
+        You’re invited to edit the %s template with me in Robot Scouter!
+    </string>
+    <string name="template_share_cta">Import the %s scouting template into Robot Scouter</string>
+
+    <string name="template_move_cancelled_rationale">
+        Move cancelled: another user updated the template while you were reordering items.
+    </string>
+
+    <string name="metric_header_add_title">Add header</string>
+    <string name="metric_header_name_hint">Header name</string>
+
+    <string name="metric_checkbox_add_title">Add checkbox</string>
+    <string name="metric_checkbox_name_hint">Checkbox name</string>
+
+    <string name="metric_counter_add_title">Add counter</string>
+    <string name="metric_counter_name_hint">Counter name</string>
+    <string name="metric_counter_unit_hint">Unit</string>
+
+    <string name="metric_stopwatch_add_title">Add stopwatch</string>
+    <string name="metric_stopwatch_name_hint">Stopwatch name</string>
+
+    <string name="metric_note_add_title">Add note</string>
+    <string name="metric_note_name_hint">Note name</string>
+    <string name="metric_note_value_hint">Text</string>
+
+    <string name="metric_spinner_add_title">Add item selector</string>
+    <string name="metric_spinner_name_hint">Item selector name</string>
+    <string name="metric_spinner_item_name_hint">Item name</string>
+    <string name="metric_spinner_item_default_required_error">Default item required</string>
+
+    <string name="template_remove_metrics_title">Remove all metrics</string>
+    <string name="template_delete_title">Delete template</string>
+    <string name="template_delete_dialog_title">Delete template?</string>
+    <string name="template_delete_message">
+        This template will be permanently removed and all teams using it will instead begin using
+        the default template for future scouts. Any existing scouts won’t be affected.
+    </string>
+
+    <string name="accessibility_reorder">
+        The reorder icon. It can be used to change the order of scout metrics.
+    </string>
+    <string name="accessibility_add_spinner_item">Add a new item selector item.</string>
+    <string name="accessibility_set_default_spinner_item">Set the default item selector item.</string>
+    <string name="accessibility_delete_spinner_item">Delete the item selector item.</string>
+</resources>

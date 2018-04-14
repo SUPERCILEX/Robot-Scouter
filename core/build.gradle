@@ -1,0 +1,28 @@
+apply from: '../standard-android-config.gradle'
+apply plugin: 'kotlin-platform-android'
+
+androidExtensions {
+    defaultCacheImplementation = "NONE"
+}
+
+dependencies {
+    api project(':common')
+    expectedBy project(':common')
+
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
+    api "org.jetbrains.anko:anko-coroutines:$ankoVersion"
+    api "com.google.firebase:firebase-core:$playServicesVersion"
+    api 'com.crashlytics.sdk.android:crashlytics:2.9.1'
+    debugApi "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseApi "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    api 'androidx.core:core-ktx:0.3'
+
+    implementation "org.jetbrains.anko:anko-common:$ankoVersion"
+    implementation("com.google.firebase:firebase-firestore:$playServicesVersion") {
+        transitive = true
+    }
+
+    // Needed for override
+    api "com.android.support:support-v4:$supportLibVersion"
+}

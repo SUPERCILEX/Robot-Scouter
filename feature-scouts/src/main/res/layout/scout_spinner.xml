@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.supercilex.robotscouter.core.ui.views.CardMetricLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.ListItem">
+
+    <android.support.text.emoji.widget.EmojiAppCompatTextView
+        android:id="@+id/name"
+        style="@style/RobotScouter.ListItemNameInLinearLayout"
+        android:textIsSelectable="false"
+        tools:text="Example" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        tools:listitem="@android:layout/simple_list_item_1" />
+
+</com.supercilex.robotscouter.core.ui.views.CardMetricLinearLayout>

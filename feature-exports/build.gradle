@@ -1,0 +1,9 @@
+apply from: '../standard-android-config.gradle'
+
+dependencies {
+    implementation project(':shared')
+
+    implementation "com.github.SUPERCILEX.poi-android:poi:$poiVersion"
+    implementation "com.github.SUPERCILEX.poi-android:proguard:$poiVersion"
+    implementation 'com.google.code.gson:gson:2.8.2'
+}
