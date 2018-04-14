@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.supercilex.robotscouter.core.ui.views.CardMetricLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/RobotScouter.ListItem">
+
+    <include layout="@layout/scout_template_base_reorder" />
+
+    <android.support.text.emoji.widget.EmojiAppCompatEditText
+        android:id="@+id/name"
+        style="@style/RobotScouter.ListItemNameInLinearLayout.Editable"
+        android:hint="@string/metric_header_name_hint"
+        android:inputType="textMultiLine|textCapWords" />
+
+</com.supercilex.robotscouter.core.ui.views.CardMetricLinearLayout>

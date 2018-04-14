@@ -37,7 +37,7 @@
             android:layout_marginTop="@dimen/spacing_normal"
             android:text="@string/donate_monthly_message" />
 
-        <com.supercilex.robotscouter.util.ui.views.SupportVectorDrawablesTextView
+        <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
             android:id="@+id/donate"
             style="@style/RobotScouter.BottomSheet.Button.Compat"
             android:text="@string/donate_title"
@@ -45,7 +45,7 @@
 
     </LinearLayout>
 
-    <com.supercilex.robotscouter.util.ui.views.ContentLoadingProgressBar
+    <com.supercilex.robotscouter.core.ui.views.ContentLoadingProgressBar
         android:id="@+id/progress"
         style="@style/Base.Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"

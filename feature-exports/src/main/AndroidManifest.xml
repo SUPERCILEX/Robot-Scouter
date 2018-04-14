@@ -1,0 +1,14 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.supercilex.robotscouter.feature.exports">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application>
+
+        <service android:name=".ExportService" />
+
+    </application>
+
+</manifest>

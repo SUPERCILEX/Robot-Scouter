@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.Dialog"
+    tools:layout_height="match_parent"
+    tools:layout_width="match_parent">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/name"
+        style="@style/Widget.Design.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/team_new_number_hint">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/number"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</FrameLayout>

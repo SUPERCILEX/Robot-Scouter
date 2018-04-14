@@ -1,0 +1,14 @@
+apply plugin: 'kotlin2js'
+apply plugin: 'kotlin-platform-js'
+apply from: '../quality/quality.gradle'
+
+dependencies {
+    implementation project(':common')
+    expectedBy project(':common')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+}
+
+compileKotlin2Js.kotlinOptions {
+    moduleKind = "commonjs"
+    outputFile = "server/build/classes/kotlin/main/firebase.js"
+}

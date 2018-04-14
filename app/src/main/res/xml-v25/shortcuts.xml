@@ -10,7 +10,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="add_scout"
-            android:targetClass="com.supercilex.robotscouter.ui.teamlist.TeamListActivity"
+            android:targetClass="com.supercilex.robotscouter.HomeActivity"
             android:targetPackage="com.supercilex.robotscouter" />
         <categories android:name="android.shortcut.NEW_SCOUT" />
     </shortcut>
@@ -24,7 +24,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="export_all_teams"
-            android:targetClass="com.supercilex.robotscouter.ui.teamlist.TeamListActivity"
+            android:targetClass="com.supercilex.robotscouter.HomeActivity"
             android:targetPackage="com.supercilex.robotscouter" />
         <categories android:name="android.shortcut.EXPORT_ALL_TEAMS" />
     </shortcut>

@@ -4,44 +4,28 @@ import android.os.Build
 import android.os.StrictMode
 import android.support.multidex.MultiDexApplication
 import android.support.v7.app.AppCompatDelegate
-import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.squareup.leakcanary.LeakCanary
-import com.supercilex.robotscouter.util.LateinitVal
-import com.supercilex.robotscouter.util.data.initDatabase
-import com.supercilex.robotscouter.util.data.initIo
-import com.supercilex.robotscouter.util.data.initPrefs
-import com.supercilex.robotscouter.util.initAnalytics
-import com.supercilex.robotscouter.util.initLogging
-import com.supercilex.robotscouter.util.initRemoteConfig
-import com.supercilex.robotscouter.util.logFailures
-import com.supercilex.robotscouter.util.refWatcher
-import com.supercilex.robotscouter.util.ui.initNotifications
-import com.supercilex.robotscouter.util.ui.initUi
+import com.supercilex.robotscouter.core._app
+import com.supercilex.robotscouter.core.data.initAnalytics
+import com.supercilex.robotscouter.core.data.initDatabase
+import com.supercilex.robotscouter.core.data.initIo
+import com.supercilex.robotscouter.core.data.initNotifications
+import com.supercilex.robotscouter.core.data.initPrefs
+import com.supercilex.robotscouter.core.data.initRemoteConfig
+import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.refWatcher
+import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.experimental.async
-
-@Suppress("PropertyName")
-val RobotScouter
-    get() = app
-
-private var app: RobotScouterApp by LateinitVal()
 
 class RobotScouterApp : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) return
 
-        app = this
+        _app = this
         refWatcher // Install Leak Canary
 
-        initLogging()
-        async {
-            initIo()
-
-            // Some disk I/O sometimes occurs in these
-            AuthUI.getInstance()
-            GoogleSignIn.getLastSignedInAccount(RobotScouter)
-        }.logFailures()
+        async { initIo() }.logFailures()
         initAnalytics()
         initRemoteConfig()
         initDatabase()

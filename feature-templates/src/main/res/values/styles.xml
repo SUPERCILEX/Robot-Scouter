@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="RobotScouter.Fab">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fab_colorNormal">@color/colorPrimary</item>
+        <item name="fab_colorPressed">@color/colorPrimary</item>
+        <item name="fab_colorRipple">@color/colorPrimary</item>
+    </style>
+
+    <style name="RobotScouter.Fab.Metric">
+        <item name="fab_size">mini</item>
+    </style>
+
+</resources>

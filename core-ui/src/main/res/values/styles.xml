@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="RobotScouter" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="iconColor">@android:color/white</item>
+    </style>
+
+    <style name="RobotScouter.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="RobotScouter.NoActionBar.TransparentStatusBar" />
+
+    <style name="RobotScouter.Translucent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="RobotScouter.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
+    <style name="RobotScouter.Dialog">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:paddingLeft">@dimen/spacing_large</item>
+        <item name="android:paddingRight">@dimen/spacing_large</item>
+        <item name="android:paddingTop">@dimen/spacing_dialog_layout</item>
+        <item name="android:paddingBottom">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="RobotScouter.Dialog.BottomSheet">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/spacing_large</item>
+        <item name="android:paddingRight">@dimen/spacing_large</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Text">
+        <item name="android:paddingTop">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Button">
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:drawablePadding">@dimen/spacing_large</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textSize">@dimen/text_size_normal</item>
+    </style>
+
+    <style name="RobotScouter.BottomSheet.Button.Compat">
+        <item name="android:layout_marginTop">@dimen/spacing_large</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="RobotScouter.NoContentHint">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/light_grey_text</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="RobotScouter.List">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_vertical</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+    </style>
+
+    <style name="RobotScouter.ListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/list_item_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_vertical_within</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_vertical_within</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <style name="RobotScouter.Tmp" />
+
+    <!-- Issue number -->
+    <style name="RobotScouter.Tmp.72076683" parent="Theme.AppCompat.DayNight.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
+        <item name="bottomSheetStyle">@style/Widget.Design.BottomSheet.Modal</item>
+    </style>
+
+    <style name="Icon" />
+
+    <style name="Icon.Black">
+        <item name="iconColor">@color/night_black</item>
+    </style>
+
+    <style name="Icon.Grey">
+        <item name="iconColor">@color/night_grey</item>
+    </style>
+
+    <style name="Icon.Accent">
+        <item name="iconColor">@color/enablable_button_icon</item>
+    </style>
+
+</resources>

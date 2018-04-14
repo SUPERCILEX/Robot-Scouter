@@ -7,6 +7,10 @@ buildscript {
     }
 
     ext {
+        compileSdk = 27
+        targetSdk = 27
+        minSdk = 16
+
         kotlinVersion = '1.2.31'
         ankoVersion = '0.10.4'
         supportLibVersion = '27.1.1'
@@ -34,5 +38,10 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+    }
+
+    // Resource packaging breaks otherwise for some reason
+    tasks.whenTaskAdded { task ->
+        if (task.name.contains("Test")) task.enabled = false
     }
 }

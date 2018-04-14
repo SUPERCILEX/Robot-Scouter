@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    style="@style/RobotScouter.ListItem"
+    android:focusableInTouchMode="false"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/media"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
+        android:contentDescription="@string/accessibility_robot_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <ViewStub
+        android:id="@+id/progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:inflatedId="@id/progress"
+        android:layout="@layout/progress_bar"
+        app:layout_constraintStart_toStartOf="@id/media"
+        app:layout_constraintEnd_toEndOf="@id/media"
+        app:layout_constraintTop_toTopOf="@id/media"
+        app:layout_constraintBottom_toBottomOf="@id/media" />
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginLeft="@dimen/spacing_large"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_marginBottom="2dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textIsSelectable="false"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintStart_toEndOf="@id/media"
+        app:layout_constraintEnd_toStartOf="@id/newScout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/name"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        tools:text="@tools:sample/us_zipcodes" />
+
+    <android.support.text.emoji.widget.EmojiAppCompatTextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginLeft="@dimen/spacing_large"
+        android:layout_marginRight="@dimen/spacing_normal"
+        android:layout_marginTop="2dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/text_size_normal"
+        app:layout_constraintStart_toEndOf="@id/media"
+        app:layout_constraintEnd_toStartOf="@id/newScout"
+        app:layout_constraintTop_toBottomOf="@id/number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="@tools:sample/full_names" />
+
+    <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesImageButton
+        android:id="@+id/newScout"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/team_new_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:iconDrawable="@drawable/ic_add_colorable_24dp"
+        app:iconStyle="@style/Icon.Black" />
+
+</com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout>

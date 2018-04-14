@@ -8,20 +8,6 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
-
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".RobotScouterApp"
@@ -48,7 +34,7 @@
             android:value="false" />
 
         <activity
-            android:name=".ui.teamlist.TeamListActivity"
+            android:name=".HomeActivity"
             android:label="${appName}"
             android:launchMode="singleTask"
             android:theme="@style/RobotScouter.Launcher"
@@ -67,24 +53,40 @@
         </activity>
 
         <activity
-            android:name=".ui.scouting.scoutlist.ScoutListActivity"
+            android:name=".feature.scouts.ScoutListActivity"
             android:label="@string/scout_activity_title"
-            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:parentActivityName=".HomeActivity"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".ui.scouting.templatelist.TemplateListActivity"
+            android:name=".feature.templates.TemplateListActivity"
             android:label="@string/template_activity_title"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:parentActivityName=".HomeActivity"
             android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter
+                android:label="@string/app_name"
+                android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="supercilex.github.io"
+                    android:pathPrefix="/Robot-Scouter/data/template"
+                    android:scheme="https" />
+            </intent-filter>
+
+        </activity>
 
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".feature.settings.SettingsActivity"
             android:label="@string/settings_activity_title"
-            android:parentActivityName=".ui.teamlist.TeamListActivity"
+            android:parentActivityName=".HomeActivity"
             android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustResize">
 
@@ -97,7 +99,7 @@
         </activity>
 
         <activity
-            android:name=".data.client.LinkReceiverActivity"
+            android:name=".LinkReceiverActivity"
             android:label=""
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:excludeFromRecents="true"
@@ -121,62 +123,11 @@
         </activity>
 
         <activity
-            android:name=".util.ui.NotificationIntentForwarder"
+            android:name=".core.data.NotificationIntentForwarder"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:theme="@style/RobotScouter.Translucent" />
-
-        <service android:name=".data.client.spreadsheet.ExportService" />
-
-        <service android:name=".data.client.AccountMergeService" />
-
-        <service
-            android:name=".data.client.DownloadTeamDataJob21"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
-            android:name=".data.client.DownloadTeamDataJob14"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".data.client.UploadTeamMediaJob21"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
-            android:name=".data.client.UploadTeamMediaJob14"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".data.client.AppIndexingService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
-        <receiver
-            android:name=".data.client.AppIndexingUpdateReceiver"
-            android:exported="true"
-            android:permission="com.google.android.gms.permission.APPINDEXING">
-            <intent-filter>
-                <action android:name="com.google.firebase.appindexing.UPDATE_INDEX" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

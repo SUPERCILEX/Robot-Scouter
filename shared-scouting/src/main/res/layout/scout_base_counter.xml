@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageButton
+        android:id="@+id/decrement"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/accessibility_decrement_counter"
+        android:stateListAnimator="@null"
+        app:srcCompat="@drawable/ic_remove_colorable_24dp"
+        tools:ignore="UnusedAttribute" />
+
+    <android.support.text.emoji.widget.EmojiAppCompatTextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingStart="@dimen/spacing_large"
+        android:paddingEnd="@dimen/spacing_large"
+        android:gravity="center"
+        android:maxWidth="100dp"
+        android:minHeight="@dimen/square_view_hw"
+        android:textIsSelectable="false"
+        android:textSize="18sp"
+        android:textStyle="normal|bold"
+        tools:text="10" />
+
+    <ImageButton
+        android:id="@+id/increment"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="@dimen/square_view_hw"
+        android:layout_height="@dimen/square_view_hw"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/accessibility_increment_counter"
+        android:stateListAnimator="@null"
+        app:srcCompat="@drawable/ic_add_colorable_24dp"
+        tools:ignore="UnusedAttribute" />
+
+</merge>
