@@ -39,6 +39,7 @@ import com.supercilex.robotscouter.util.ui.TeamMediaCreator
 import com.supercilex.robotscouter.util.ui.setOnLongClickListenerCompat
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
@@ -113,8 +114,8 @@ open class AppBarViewHolderBase(
         progress.hide(true)
 
         if (resource?.isRecycled == false) {
-            async {
-                val palette = Palette.from(resource).generate()
+            async(UI) {
+                val palette = async { Palette.from(resource).generate() }.await()
 
                 val update: Palette.Swatch.() -> Unit = {
                     updateScrim(rgb, resource)
@@ -122,20 +123,22 @@ open class AppBarViewHolderBase(
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }.logFailures()
 
-            async {
-                val paletteTarget = PaletteTarget.Builder()
-                        .setExclusive(false)
-                        .setTargetLightness(1f)
-                        .setMinimumLightness(0.8f)
-                        .setLightnessWeight(1f)
-                        .setTargetSaturation(0f)
-                        .setMaximumSaturation(0f)
-                        .build()
-                val swatch = Palette.from(resource)
-                        .addTarget(paletteTarget)
-                        .setRegion(0, 0, resource.width, toolbarHeight)
-                        .generate()
-                        .getSwatchForTarget(paletteTarget) ?: return@async
+            async(UI) {
+                val swatch = async {
+                    val paletteTarget = PaletteTarget.Builder()
+                            .setExclusive(false)
+                            .setTargetLightness(1f)
+                            .setMinimumLightness(0.8f)
+                            .setLightnessWeight(1f)
+                            .setTargetSaturation(0f)
+                            .setMaximumSaturation(0f)
+                            .build()
+                    Palette.from(resource)
+                            .addTarget(paletteTarget)
+                            .setRegion(0, 0, resource.width, toolbarHeight)
+                            .generate()
+                            .getSwatchForTarget(paletteTarget)
+                }.await() ?: return@async
 
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.
