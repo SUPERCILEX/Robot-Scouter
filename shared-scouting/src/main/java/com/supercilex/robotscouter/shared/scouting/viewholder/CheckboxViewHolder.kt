@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.shared.scouting.viewholder
 
 import android.view.View
+import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
@@ -22,7 +23,7 @@ open class CheckboxViewHolder(
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.checkBox) metric.value = checkBox.isChecked
+        if (v.id == R.id.checkBox) metric.update(checkBox.isChecked)
         if (v.id == R.id.name) checkBox.performClick()
     }
 }

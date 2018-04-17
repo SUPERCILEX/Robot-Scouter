@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.view.View
+import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
@@ -38,7 +39,7 @@ internal class EditTextViewHolder(
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) metric.value = name.text.toString()
+        if (!hasFocus) metric.update(name.text.toString())
     }
 
     private companion object {

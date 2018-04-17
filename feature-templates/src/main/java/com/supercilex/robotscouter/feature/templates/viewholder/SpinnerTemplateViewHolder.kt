@@ -65,10 +65,10 @@ internal class SpinnerTemplateViewHolder(
 
     override fun onClick(v: View) {
         val position = metric.value.size
-        metric.value = mutableListOf(
+        metric.update(mutableListOf(
                 *getLatestItems().toTypedArray(),
                 Metric.List.Item(metric.ref.parent.document().id, "")
-        )
+        ))
         itemTouchCallback.pendingScrollPosition = position
         items.adapter.notifyItemInserted(position)
     }
@@ -145,7 +145,7 @@ internal class SpinnerTemplateViewHolder(
             val metric = parent.metric
             val oldDefaultId = metric.selectedValueId
             firestoreBatch {
-                metric.updateSelectedValueId(item.id, this)
+                metric.updateSelectedValueId(item.id)
                 metric.update(items, this)
             }.logFailures()
             parent.items.notifyItemsNoChangeAnimation {
@@ -160,15 +160,15 @@ internal class SpinnerTemplateViewHolder(
 
         private fun delete(items: List<Metric.List.Item>) {
             val position = items.indexOfFirst { it.id == item.id }
-            parent.metric.value = items.toMutableList().apply {
+            parent.metric.update(items.toMutableList().apply {
                 removeAt(position)
-            }
+            })
             parent.items.adapter.notifyItemRemoved(position)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
-                parent.metric.value = parent.metric.value.toMutableList().apply {
+                parent.metric.update(parent.metric.value.toMutableList().apply {
                     add(position, items[position])
-                }
+                })
                 parent.items.adapter.notifyItemInserted(position)
             }
         }
@@ -179,7 +179,7 @@ internal class SpinnerTemplateViewHolder(
                 !hasFocus && v === nameEditor && adapterPosition != -1 &&
                 metric.value.find { it.id == item.id } != null
             ) {
-                metric.value = getUpdatedItems(metric.value)
+                metric.update(getUpdatedItems(metric.value))
             }
         }
 
@@ -233,7 +233,7 @@ internal class SpinnerTemplateViewHolder(
             super.clearView(recyclerView, viewHolder)
             items.setHasFixedSize(false)
             localItems?.let {
-                metric.value = it
+                metric.update(it)
                 localItems = null
             }
         }

@@ -4,6 +4,8 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import com.supercilex.robotscouter.core.data.model.update
+import com.supercilex.robotscouter.core.data.model.updateName
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
@@ -29,7 +31,7 @@ internal class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(i
     }
 
     override fun onClick(v: View) {
-        if (name.hasFocus()) metric.name = name.text.toString()
-        if (v.id == R.id.checkBox) metric.value = checkBox.isChecked
+        if (name.hasFocus()) metric.updateName(name.text.toString())
+        if (v.id == R.id.checkBox) metric.update(checkBox.isChecked)
     }
 }

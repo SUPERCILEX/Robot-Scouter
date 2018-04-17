@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.feature.scouts.viewholder
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.supercilex.robotscouter.core.data.model.updateSelectedValueId
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.feature.scouts.R
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
@@ -40,7 +41,7 @@ internal class SpinnerViewHolder(
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, itemPosition: Int, id: Long) {
-        metric.selectedValueId = metric.value[itemPosition].id
+        metric.updateSelectedValueId(metric.value[itemPosition].id)
     }
 
     override fun onNothingSelected(view: AdapterView<*>) = Unit

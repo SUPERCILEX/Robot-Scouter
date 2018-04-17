@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.data.second
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.reportOrCancel
@@ -86,14 +87,14 @@ open class StopwatchViewHolder(
             timer = Timer(this)
         } else {
             val lap = currentTimer.cancel()
-            metric.value = metric.value.toMutableList().apply { add(lap) }
+            metric.update(metric.value.toMutableList().apply { add(lap) })
 
             metric.value.size.let { notifyCycleAdded(it, it) }
 
             longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, R.string.undo) {
                 val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
                 val newCycles = metric.value.toMutableList().apply { remove(lap) }
-                metric.value = newCycles
+                metric.update(newCycles)
 
                 notifyCycleRemoved(metric.value.size, metric.value.size, hadAverage)
                 timer = Timer(this, currentTimer.startTimeMillis)
@@ -323,16 +324,16 @@ open class StopwatchViewHolder(
 
             val newCycles = metric.value.toMutableList()
             val deletedCycle = newCycles.removeAt(position)
-            metric.value = newCycles
+            metric.update(newCycles)
 
             holder.notifyCycleRemoved(position, metric.value.size, hadAverage)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
                 val latestMetric = holder.metric
 
-                latestMetric.value = latestMetric.value.toMutableList().apply {
+                latestMetric.update(latestMetric.value.toMutableList().apply {
                     add(position, deletedCycle)
-                }
+                })
 
                 holder.notifyCycleAdded(rawPosition, latestMetric.value.size)
             }

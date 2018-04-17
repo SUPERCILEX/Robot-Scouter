@@ -4,6 +4,7 @@ import android.support.annotation.CallSuper
 import android.support.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
+import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.scouting.CounterValueDialog
@@ -44,9 +45,9 @@ open class CounterViewHolder(
         var value = valueWithoutUnit.toLong()
 
         if (id == R.id.increment) {
-            metric.value = ++value
+            metric.update(++value)
         } else if (id == R.id.decrement) {
-            metric.value = --value
+            metric.update(--value)
         }
 
         TransitionManager.beginDelayedTransition(itemView as ViewGroup)

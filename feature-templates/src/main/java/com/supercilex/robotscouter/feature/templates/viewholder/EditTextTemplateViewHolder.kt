@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.feature.templates.viewholder
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
@@ -28,6 +29,6 @@ internal class EditTextTemplateViewHolder(
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
-        if (!hasFocus && v === text) metric.value = text.text.toString()
+        if (!hasFocus && v === text) metric.update(text.text.toString())
     }
 }

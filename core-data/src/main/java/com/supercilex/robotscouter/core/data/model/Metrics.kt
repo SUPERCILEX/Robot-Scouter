@@ -44,11 +44,11 @@ fun Metric.List.update(items: List<Metric.List.Item>, batch: WriteBatch? = null)
 }
 
 @Exclude
-fun Metric.List.updateSelectedValueId(new: String?, batch: WriteBatch? = null) {
+fun Metric.List.updateSelectedValueId(new: String?) {
     if (selectedValueId != new) {
         selectedValueId = new
         logUpdate()
-        update(batch, FIRESTORE_SELECTED_VALUE_ID, new as Any)
+        update(null, FIRESTORE_SELECTED_VALUE_ID, new as Any)
     }
 }
 

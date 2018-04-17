@@ -6,6 +6,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.updateLayoutParams
+import com.supercilex.robotscouter.core.data.model.updateName
+import com.supercilex.robotscouter.core.data.model.updateUnit
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -42,7 +44,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
 
     override fun onClick(v: View) {
         super.onClick(v)
-        if (name.hasFocus()) metric.name = name.text.toString()
+        if (name.hasFocus()) metric.updateName(name.text.toString())
     }
 
     override fun setValue() {
@@ -52,7 +54,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
         if (!hasFocus && v === unit) {
-            metric.unit = unit.text.nullOrFull()?.toString()
+            metric.updateUnit(unit.text.nullOrFull()?.toString())
         }
     }
 }
