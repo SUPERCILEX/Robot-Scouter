@@ -10,13 +10,13 @@ dependencies {
     expectedBy project(':common')
 
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     api "org.jetbrains.anko:anko-coroutines:$ankoVersion"
     api "com.google.firebase:firebase-core:$playServicesVersion"
-    api 'com.crashlytics.sdk.android:crashlytics:2.9.1'
+    api "com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion"
     debugApi "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseApi "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    api 'androidx.core:core-ktx:0.3'
+    api "androidx.core:core-ktx:$ktxVersion"
 
     implementation "org.jetbrains.anko:anko-common:$ankoVersion"
     implementation("com.google.firebase:firebase-firestore:$playServicesVersion") {

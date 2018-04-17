@@ -19,7 +19,7 @@ dependencies {
 
     api "com.android.support:design:$supportLibVersion"
     api "com.android.support:support-emoji-appcompat:$supportLibVersion"
-    api 'com.android.support.constraint:constraint-layout:1.1.0'
+    api "com.android.support.constraint:constraint-layout:$constraintVersion"
     api "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$firebaseUiVersion"
     api "org.jetbrains.anko:anko-design:$ankoVersion"
     api "org.jetbrains.anko:anko-appcompat-v7-commons:$ankoVersion"

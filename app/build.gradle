@@ -100,8 +100,8 @@ dependencies {
     implementation project(':feature-exports')
 
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.billingclient:billing:1.0'
-    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.7.0'
+    implementation "com.android.billingclient:billing:$billingVersion"
+    implementation "uk.co.samuelwall:material-tap-target-prompt:$mttpVersion"
 
     implementation "com.google.firebase:firebase-perf:$playServicesVersion"
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"

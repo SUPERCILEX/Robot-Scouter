@@ -4,5 +4,5 @@ dependencies {
     implementation project(':shared')
 
     implementation "com.android.support:preference-v14:$supportLibVersion"
-    implementation 'net.yslibrary.licenseadapter:licenseadapter:2.0.2'
+    implementation "net.yslibrary.licenseadapter:licenseadapter:$licensesVersion"
 }

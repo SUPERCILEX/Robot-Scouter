@@ -6,10 +6,10 @@ dependencies {
 
     api "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$firebaseUiVersion"
     api "com.github.bumptech.glide:glide:$glideVersion"
-    api 'pub.devrel:easypermissions:1.2.0'
+    api "pub.devrel:easypermissions:$permissionsVersion"
 
-    implementation 'com.facebook.android:facebook-login:4.32.0'
-    implementation("com.twitter.sdk.android:twitter-core:3.1.1@aar") { transitive = true }
+    implementation "com.facebook.android:facebook-login:$facebookVersion"
+    implementation("com.twitter.sdk.android:twitter-core:$twitterVersion@aar") { transitive = true }
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
 
     // Needed for override

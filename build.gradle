@@ -12,19 +12,36 @@ buildscript {
         minSdk = 16
 
         kotlinVersion = '1.2.31'
+        coroutinesVersion = '0.22.5'
         ankoVersion = '0.10.4'
+        ktxVersion = '0.3'
+
         supportLibVersion = '27.1.1'
-        playServicesVersion = '15.0.0'
+        constraintVersion = '1.1.0'
         archVersion = '1.1.1'
+        playServicesVersion = '15.0.0'
+        crashlyticsVersion = '2.9.1'
         firebaseUiVersion = '3eb4c1373a'
-        poiVersion = '3.17'
-        leakCanaryVersion = '1.5.4'
-        retrofitVersion = '2.4.0'
+        facebookVersion = '4.32.0'
+        twitterVersion = '3.1.1'
+        fjdVersion = '0.8.5'
+
         glideVersion = '4.7.1'
+        permissionsVersion = '1.2.0'
+        billingVersion = '1.0'
+        snapVersion = '1.5'
+        mttpVersion = '2.7.0'
+        fabVersion = '1.6.4'
+        licensesVersion = '2.0.2'
+
+        retrofitVersion = '2.4.0'
+        gsonVersion = '2.8.2'
+        leakCanaryVersion = '1.5.4'
+        poiVersion = '3.17'
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0-alpha10'
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha11'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:3.2.1'
         classpath 'com.google.firebase:firebase-plugins:1.1.5'

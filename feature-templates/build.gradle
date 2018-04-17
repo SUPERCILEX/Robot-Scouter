@@ -4,5 +4,5 @@ dependencies {
     implementation project(':shared-scouting')
 
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
-    implementation 'com.github.clans:fab:1.6.4'
+    implementation "com.github.clans:fab:$fabVersion"
 }

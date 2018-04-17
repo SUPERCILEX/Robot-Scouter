@@ -28,7 +28,7 @@ dependencies {
     }
     implementation "com.google.firebase:firebase-storage:$playServicesVersion"
     implementation "com.google.firebase:firebase-config:$playServicesVersion"
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation "com.firebase:firebase-jobdispatcher:$fjdVersion"
 
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
