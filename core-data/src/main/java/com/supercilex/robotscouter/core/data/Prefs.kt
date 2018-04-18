@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.annotation.WorkerThread
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.preference.PreferenceDataStore
 import androidx.core.content.edit
@@ -9,8 +10,11 @@ import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.gson.Gson
 import com.supercilex.robotscouter.common.FIRESTORE_PREFS
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
+import com.supercilex.robotscouter.common.FIRESTORE_PREF_DEVICES
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_LOCK_TEMPLATES
@@ -19,9 +23,11 @@ import com.supercilex.robotscouter.common.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.data.model.deviceParser
 import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefs
 import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.model.Device
 import com.supercilex.robotscouter.core.model.TemplateType
 import kotlinx.coroutines.experimental.async
 
@@ -38,6 +44,8 @@ val prefParser = SnapshotParser<Any?> {
         FIRESTORE_PREF_NIGHT_MODE,
         FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
         -> it.getString(FIRESTORE_VALUE)!!
+
+        FIRESTORE_PREF_DEVICES -> deviceParser.parseSnapshot(it)
 
         else -> it
     }
@@ -71,6 +79,19 @@ var defaultTemplateId: String
     set(value) {
         logUpdateDefaultTemplateId(value)
         prefStore.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)
+    }
+
+@get:WorkerThread
+val devices: List<Device>
+    get() = prefStore.getStringSet(FIRESTORE_PREF_DEVICES, emptySet())!!.map {
+        Gson().fromJson(it, Device::class.java)
+    }
+
+@get:WorkerThread
+val device: Device
+    get() {
+        val id = FirebaseInstanceId.getInstance().id
+        return devices.find { it.id == id }!!
     }
 
 @get:AppCompatDelegate.NightMode
@@ -142,6 +163,13 @@ private val prefUpdater = object : ChangeEventListenerBase {
 
                         putString(id, value)
                     }
+
+                    FIRESTORE_PREF_DEVICES -> async {
+                        pref as List<Device>
+                        putStringSet(id, pref.map {
+                            Gson().toJson(it)
+                        }.toSet())
+                    }.logFailures()
                 }
             }
 
@@ -149,6 +177,15 @@ private val prefUpdater = object : ChangeEventListenerBase {
         } else if (type == ChangeEventType.REMOVED) {
             localPrefs.edit { remove(id) }
         }
+    }
+
+    override fun onDataChanged() {
+        async {
+            val id = FirebaseInstanceId.getInstance().id
+            if (!devices.map { it.id }.contains(id)) {
+                userPrefs.document(FIRESTORE_PREF_DEVICES).set(mapOf(id to Device(id)))
+            }
+        }.logFailures()
     }
 }
 

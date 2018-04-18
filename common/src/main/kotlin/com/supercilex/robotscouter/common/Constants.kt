@@ -35,6 +35,7 @@ const val FIRESTORE_TEMPLATE_ID = "templateId"
 // Prefs
 const val FIRESTORE_PREFS = "prefs"
 const val FIRESTORE_PREF_DEFAULT_TEMPLATE_ID = "defaultTemplateId"
+const val FIRESTORE_PREF_DEVICES = "devices"
 const val FIRESTORE_PREF_NIGHT_MODE = "nightMode"
 const val FIRESTORE_PREF_LOCK_TEMPLATES = "lockTemplates"
 const val FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA = "uploadMediaToTba"

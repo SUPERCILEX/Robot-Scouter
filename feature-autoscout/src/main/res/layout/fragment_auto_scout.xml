@@ -27,14 +27,29 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.text.emoji.widget.EmojiAppCompatTextView
+        <Button
+            android:id="@+id/tmpStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Auto Scout under construction 🚧"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:text="Find devices" />
+
+        <Button
+            android:id="@+id/tmpConnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect to master" />
+
+        <EditText
+            android:id="@+id/tmpEventKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Event key" />
+
+        <Button
+            android:id="@+id/tmpLoadTeams"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Load teams for event key" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -27,6 +27,9 @@ const val EXPORT_GROUP = "export_group"
 const val EXPORT_CHANNEL = "export"
 const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
 
+const val AUTO_SCOUT_GROUP = "auto_scout_group"
+const val AUTO_SCOUT_CHANNEL = "auto_scout"
+
 /**
  * Android N+ limits notification updates to 10/sec and drops the rest. This limits notification
  * updates to 5/sec.
@@ -46,16 +49,18 @@ fun initNotifications() {
                     RobotScouter.getString(R.string.export_group_title)))
     )
 
-    notificationManager.createNotificationChannels(
-            listOf(getExportChannel(), getExportInProgressChannel())
-    )
+    notificationManager.createNotificationChannels(listOf(
+            getExportChannel(),
+            getExportInProgressChannel(),
+            getAutoScoutChannel()
+    ))
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun getExportChannel(): NotificationChannel = NotificationChannel(
+private fun getExportChannel() = NotificationChannel(
         EXPORT_CHANNEL,
         RobotScouter.getString(R.string.export_channel_title),
-        NotificationManager.IMPORTANCE_HIGH
+        NotificationManager.IMPORTANCE_DEFAULT
 ).apply {
     group = EXPORT_GROUP
     description = RobotScouter.getString(R.string.export_channel_desc)
@@ -65,13 +70,26 @@ private fun getExportChannel(): NotificationChannel = NotificationChannel(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-private fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
+private fun getExportInProgressChannel() = NotificationChannel(
         EXPORT_IN_PROGRESS_CHANNEL,
         RobotScouter.getString(R.string.export_progress_channel_title),
         NotificationManager.IMPORTANCE_LOW
 ).apply {
     group = EXPORT_GROUP
     description = RobotScouter.getString(R.string.export_progress_channel_desc)
+    setShowBadge(false)
+    enableVibration(false)
+    enableLights(false)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun getAutoScoutChannel() = NotificationChannel(
+        AUTO_SCOUT_CHANNEL,
+        RobotScouter.getString(R.string.auto_scout_channel_title),
+        NotificationManager.IMPORTANCE_HIGH
+).apply {
+    group = AUTO_SCOUT_GROUP
+    description = RobotScouter.getString(R.string.auto_scout_channel_desc)
     setShowBadge(false)
     enableVibration(false)
     enableLights(false)

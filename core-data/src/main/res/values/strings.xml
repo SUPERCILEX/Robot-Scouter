@@ -8,11 +8,13 @@
     </string>
 
     <!-- Notifications -->
-    <string name="export_group_title">Spreadsheet exporting</string>
+    <string name="export_group_title">Exports</string>
     <string name="export_channel_title">Completed exports</string>
     <string name="export_channel_desc">
         Displays an actionable notification to manage the completed export.
     </string>
     <string name="export_progress_channel_title">In-progress exports</string>
     <string name="export_progress_channel_desc">Displays the status of an in-progress export.</string>
+    <string name="auto_scout_channel_title">Auto Scout</string>
+    <string name="auto_scout_channel_desc">Displays the status of Auto Scout management.</string>
 </resources>

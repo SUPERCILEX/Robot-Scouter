@@ -129,7 +129,7 @@ class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackPressedLis
     companion object {
         const val TAG = "TeamListFragment"
 
-        fun getInstance(manager: FragmentManager) =
+        fun getInstance(manager: FragmentManager): FragmentBase =
                 manager.findFragmentByTag(TAG) as TeamListFragment? ?: TeamListFragment()
     }
 }
