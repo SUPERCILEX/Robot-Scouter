@@ -4,13 +4,7 @@ import android.support.annotation.Keep
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
-import com.supercilex.robotscouter.common.FIRESTORE_ID
-import com.supercilex.robotscouter.common.FIRESTORE_NAME
-import com.supercilex.robotscouter.common.FIRESTORE_POSITION
-import com.supercilex.robotscouter.common.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_UNIT
-import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import kotlin.Boolean as IntrinsicBoolean
 import kotlin.collections.List as IntrinsicList
 
@@ -159,57 +153,4 @@ sealed class Metric<T>(
 
     override fun toString(): String = "${javaClass.simpleName}: " +
             "ref=${ref.path}, position=$position, name=\"$name\", value=$value"
-
-    companion object {
-        @Suppress("UNCHECKED_CAST") // We know what our data types are
-        fun parse(fields: Map<String, Any?>, ref: DocumentReference): Metric<*> {
-            val position = (fields[FIRESTORE_POSITION] as Long).toInt()
-            val type = (fields[FIRESTORE_TYPE] as Long).toInt()
-            val name = (fields[FIRESTORE_NAME] as String?).orEmpty()
-
-            return when (MetricType.valueOf(type)) {
-                MetricType.HEADER -> Header(name, position, ref)
-                MetricType.BOOLEAN ->
-                    Boolean(name, fields[FIRESTORE_VALUE] as IntrinsicBoolean, position, ref)
-                MetricType.NUMBER -> Number(
-                        name,
-                        fields[FIRESTORE_VALUE] as Long,
-                        fields[FIRESTORE_UNIT] as String?,
-                        position,
-                        ref
-                )
-                MetricType.STOPWATCH -> Stopwatch(
-                        name,
-                        fields[FIRESTORE_VALUE] as IntrinsicList<Long>,
-                        position,
-                        ref
-                )
-                MetricType.TEXT -> Text(
-                        name,
-                        fields[FIRESTORE_VALUE] as String?,
-                        position,
-                        ref
-                )
-                MetricType.LIST -> List(
-                        name,
-                        try {
-                            fields[FIRESTORE_VALUE] as IntrinsicList<Map<String, String>>
-                        } catch (e: ClassCastException) {
-                            // TODO remove at some point, used to support old model
-                            (fields[FIRESTORE_VALUE] as Map<String, String>).map {
-                                mapOf(
-                                        FIRESTORE_ID to it.key,
-                                        FIRESTORE_NAME to (it.value as String?).toString()
-                                )
-                            }
-                        }.map {
-                            List.Item(it[FIRESTORE_ID] as String, it[FIRESTORE_NAME] as String)
-                        },
-                        fields[FIRESTORE_SELECTED_VALUE_ID] as String?,
-                        position,
-                        ref
-                )
-            }
-        }
-    }
 }

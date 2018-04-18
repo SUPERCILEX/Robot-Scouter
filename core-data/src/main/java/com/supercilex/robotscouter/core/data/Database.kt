@@ -21,20 +21,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
-import com.supercilex.robotscouter.common.FIRESTORE_METRICS
-import com.supercilex.robotscouter.common.FIRESTORE_NAME
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_LOCK_TEMPLATES
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_NIGHT_MODE
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
-import com.supercilex.robotscouter.common.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
@@ -47,6 +36,7 @@ import com.supercilex.robotscouter.core.data.model.getScoutsRef
 import com.supercilex.robotscouter.core.data.model.isTrashed
 import com.supercilex.robotscouter.core.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.core.data.model.ref
+import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.model.teamsQueryGenerator
 import com.supercilex.robotscouter.core.data.model.trash
 import com.supercilex.robotscouter.core.data.model.updateTemplateId
@@ -54,8 +44,6 @@ import com.supercilex.robotscouter.core.data.model.userPrefsQueryGenerator
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
-import com.supercilex.robotscouter.core.model.Metric
-import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
@@ -70,39 +58,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.experimental.suspendCoroutine
 
 typealias QueryGenerator = (FirebaseUser) -> Query
-
-val teamParser = SnapshotParser {
-    it.toObject(Team::class.java)!!.apply { id = it.id }
-}
-val scoutParser = SnapshotParser { snapshot ->
-    Scout(snapshot.id,
-          snapshot.getString(FIRESTORE_TEMPLATE_ID)!!,
-          snapshot.getString(FIRESTORE_NAME),
-          snapshot.getDate(FIRESTORE_TIMESTAMP)!!,
-          @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
-          (snapshot.data!![FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
-              Metric.parse(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
-                      "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
-          })
-}
-val metricParser = SnapshotParser { Metric.parse(it.data!!, it.reference) }
-val prefParser = SnapshotParser<Any?> {
-    val id = it.id
-    when (id) {
-        FIRESTORE_PREF_LOCK_TEMPLATES,
-        FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
-        FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
-        FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
-        -> it.getBoolean(FIRESTORE_VALUE)!!
-
-        FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
-        FIRESTORE_PREF_NIGHT_MODE,
-        FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
-        -> it.getString(FIRESTORE_VALUE)!!
-
-        else -> it
-    }
-}
 
 val teams = LifecycleAwareFirestoreArray(teamsQueryGenerator, teamParser)
 val prefs = LifecycleAwareFirestoreArray(userPrefsQueryGenerator, prefParser)

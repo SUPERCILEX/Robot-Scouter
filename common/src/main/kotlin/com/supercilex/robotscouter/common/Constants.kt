@@ -15,11 +15,6 @@ const val FIRESTORE_LAST_LOGIN = "lastLogin"
 const val FIRESTORE_TEAMS = "teams"
 const val FIRESTORE_NUMBER = "number"
 
-// Templates
-const val FIRESTORE_TEMPLATES = "templates"
-const val FIRESTORE_DEFAULT_TEMPLATES = "default-templates"
-const val FIRESTORE_TEMPLATE_ID = "templateId"
-
 // Shared
 const val FIRESTORE_ACTIVE_TOKENS = "activeTokens"
 const val FIRESTORE_PENDING_APPROVALS = "pendingApprovals"
@@ -31,6 +26,11 @@ const val FIRESTORE_POSITION = "position"
 const val FIRESTORE_TYPE = "type"
 const val FIRESTORE_UNIT = "unit"
 const val FIRESTORE_SELECTED_VALUE_ID = "selectedValueId"
+
+// Templates
+const val FIRESTORE_TEMPLATES = "templates"
+const val FIRESTORE_DEFAULT_TEMPLATES = "default-templates"
+const val FIRESTORE_TEMPLATE_ID = "templateId"
 
 // Prefs
 const val FIRESTORE_PREFS = "prefs"

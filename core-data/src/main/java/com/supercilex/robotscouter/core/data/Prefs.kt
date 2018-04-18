@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceDataStore
 import androidx.core.content.edit
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ObservableSnapshotArray
+import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.common.FIRESTORE_PREFS
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
@@ -24,8 +25,22 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.TemplateType
 import kotlinx.coroutines.experimental.async
 
-private val localPrefs: SharedPreferences by lazy {
-    RobotScouter.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
+val prefParser = SnapshotParser<Any?> {
+    val id = it.id
+    when (id) {
+        FIRESTORE_PREF_LOCK_TEMPLATES,
+        FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
+        FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
+        FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
+        -> it.getBoolean(FIRESTORE_VALUE)!!
+
+        FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
+        FIRESTORE_PREF_NIGHT_MODE,
+        FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
+        -> it.getString(FIRESTORE_VALUE)!!
+
+        else -> it
+    }
 }
 
 val prefStore = object : PreferenceDataStore() {
@@ -91,6 +106,10 @@ var shouldShowRatingDialog: Boolean
     get() = showRatingDialog && prefStore.getBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, true)
     set(value) = prefStore.putBoolean(FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG, value)
 
+private val localPrefs: SharedPreferences by lazy {
+    RobotScouter.getSharedPreferences(FIRESTORE_PREFS, Context.MODE_PRIVATE)
+}
+
 private val prefUpdater = object : ChangeEventListenerBase {
     override fun onChildChanged(
             type: ChangeEventType,
@@ -104,18 +123,19 @@ private val prefUpdater = object : ChangeEventListenerBase {
             var hasDefaultTemplateChanged = false
 
             localPrefs.edit {
+                val pref = prefs[newIndex]
                 when (id) {
                     FIRESTORE_PREF_LOCK_TEMPLATES,
                     FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
                     FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
                     FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
-                    -> putBoolean(id, prefs[newIndex] as Boolean)
+                    -> putBoolean(id, pref as Boolean)
 
                     FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
                     FIRESTORE_PREF_NIGHT_MODE,
                     FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
                     -> {
-                        val value = prefs[newIndex] as String
+                        val value = pref as String
 
                         hasDefaultTemplateChanged = id == FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
                                 && defaultTemplateId != value

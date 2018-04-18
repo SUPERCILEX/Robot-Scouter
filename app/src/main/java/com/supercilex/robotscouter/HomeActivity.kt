@@ -26,6 +26,7 @@ import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.logSelect
 import com.supercilex.robotscouter.core.data.minimumAppVersion
+import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.fullVersionCode
 import com.supercilex.robotscouter.core.isOnline
@@ -247,7 +248,7 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
         if (selectedTeams == null) {
             val ref = asLifecycleReference()
             async {
-                val allTeams = com.supercilex.robotscouter.core.data.teams.waitForChange()
+                val allTeams = teams.waitForChange()
                 ExportService.exportAndShareSpreadSheet(ref(), ref().permHandler, allTeams)
             }.logFailures()
         } else {

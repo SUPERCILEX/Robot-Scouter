@@ -17,8 +17,8 @@ import com.supercilex.robotscouter.core.data.getTeamListExtra
 import com.supercilex.robotscouter.core.data.logExport
 import com.supercilex.robotscouter.core.data.model.getScouts
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
+import com.supercilex.robotscouter.core.data.model.scoutParser
 import com.supercilex.robotscouter.core.data.putExtra
-import com.supercilex.robotscouter.core.data.scoutParser
 import com.supercilex.robotscouter.core.data.shouldShowRatingDialog
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.isOnline

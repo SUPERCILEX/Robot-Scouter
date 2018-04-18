@@ -27,7 +27,7 @@ import com.supercilex.robotscouter.core.data.getTemplateLink
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.addScout
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.core.data.scoutParser
+import com.supercilex.robotscouter.core.data.model.scoutParser
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.data.viewAction
 import com.supercilex.robotscouter.core.isOffline

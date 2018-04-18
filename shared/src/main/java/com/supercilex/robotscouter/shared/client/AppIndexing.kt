@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.core.data.getTemplateIndexable
 import com.supercilex.robotscouter.core.data.indexable
 import com.supercilex.robotscouter.core.data.model.getTemplateName
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.core.data.scoutParser
+import com.supercilex.robotscouter.core.data.model.scoutParser
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.waitForChange
 import kotlinx.coroutines.experimental.async

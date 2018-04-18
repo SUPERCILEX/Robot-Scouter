@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.core.data.model
 import com.supercilex.robotscouter.core.data.LifecycleAwareFirestoreArray
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.ViewModelBase
-import com.supercilex.robotscouter.core.data.scoutParser
 import com.supercilex.robotscouter.core.model.Scout
 
 class ScoutsHolder : ViewModelBase<QueryGenerator>() {

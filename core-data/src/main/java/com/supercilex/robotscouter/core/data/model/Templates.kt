@@ -18,7 +18,6 @@ import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getTemplateIndexable
 import com.supercilex.robotscouter.core.data.getTemplateLink
 import com.supercilex.robotscouter.core.data.logAddTemplate
-import com.supercilex.robotscouter.core.data.scoutParser
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.logFailures

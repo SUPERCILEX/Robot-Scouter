@@ -1,13 +1,16 @@
 package com.supercilex.robotscouter.core.data.model
 
 import com.firebase.ui.firestore.ObservableSnapshotArray
+import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_SCOUTS
+import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
@@ -16,7 +19,6 @@ import com.supercilex.robotscouter.core.data.R
 import com.supercilex.robotscouter.core.data.defaultTemplatesRef
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logAddScout
-import com.supercilex.robotscouter.core.data.scoutParser
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
@@ -27,6 +29,18 @@ import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 import kotlin.math.abs
+
+val scoutParser = SnapshotParser { snapshot ->
+    Scout(snapshot.id,
+          snapshot.getString(FIRESTORE_TEMPLATE_ID)!!,
+          snapshot.getString(FIRESTORE_NAME),
+          snapshot.getDate(FIRESTORE_TIMESTAMP)!!,
+          @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
+          (snapshot[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
+              parseMetric(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
+                      "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
+          })
+}
 
 fun Team.getScoutsRef() = ref.collection(FIRESTORE_SCOUTS)
 

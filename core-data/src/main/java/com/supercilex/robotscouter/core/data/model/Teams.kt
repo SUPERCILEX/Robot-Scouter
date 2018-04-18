@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.data.model
 
 import android.support.annotation.WorkerThread
 import android.util.Patterns
+import com.firebase.ui.firestore.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
@@ -23,8 +24,6 @@ import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getInBatches
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.logAdd
-import com.supercilex.robotscouter.core.data.metricParser
-import com.supercilex.robotscouter.core.data.scoutParser
 import com.supercilex.robotscouter.core.data.second
 import com.supercilex.robotscouter.core.data.teamFreshnessDays
 import com.supercilex.robotscouter.core.data.teamsRef
@@ -40,6 +39,8 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.sign
+
+val teamParser = SnapshotParser { it.toObject(Team::class.java)!!.apply { id = it.id } }
 
 val teamWithSafeDefaults: (number: Long, id: String) -> Team = { number, id ->
     Team().apply {
