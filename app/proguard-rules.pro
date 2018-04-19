@@ -5,6 +5,9 @@
 # Ignore Kotlin errors TODO https://youtrack.jetbrains.com/issue/KT-23172
 -dontwarn com.supercilex.robotscouter.**
 
+# TODO temporary fix for Crashlytics analytics logging being broken
+-keep class com.google.android.gms.measurement.** { *; }
+
 # Retrofit
 -dontwarn okhttp3.**
 
