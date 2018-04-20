@@ -587,38 +587,31 @@ internal class TemplateExporter(
     }
 
     private fun buildOverviewSheet(overviewSheet: Sheet) {
-        fun Row.buildCalculatedHeader(columnIndex: Int) {
+        data class MetricColumnIndices(val average: Int, val median: Int?, val max: Int?)
+
+        fun Row.buildCalculatedHeader(indices: MetricColumnIndices) {
             fun Cell.init(title: String): Cell {
                 setCellValue(title)
                 cellStyle = cache.calculatedColumnHeaderStyle
                 return this
             }
 
-            getCell(columnIndex).init(cache.averageString)
-            getCell(columnIndex + 1)?.init(cache.medianString)
-            getCell(columnIndex + 2)?.init(cache.maxString)
+            getCell(indices.average).init(cache.averageString)
+            indices.median?.let { getCell(it).init(cache.medianString) }
+            indices.max?.let { getCell(it).init(cache.maxString) }
         }
 
-        fun Row.setFormulas(headerCell: Cell, firstCalculatedScoutCell: Cell) {
+        fun Row.setFormulas(indices: MetricColumnIndices, firstCalculatedScoutCell: Cell) {
             val scoutRow = firstCalculatedScoutCell.row
             val startColumnIndex = firstCalculatedScoutCell.columnIndex
             val safeSheetName = firstCalculatedScoutCell.sheet.sheetName.replace("'", "''")
 
-            val startColumn = headerCell.columnIndex
-            val headerRow = headerCell.row
-            val createCellIfNeeded: (offset: Int) -> Cell? = {
-                if (headerRow.getCell(startColumn + it) == null) {
-                    null
-                } else {
-                    createCell(startColumn + it)
-                }
-            }
-
-            listOfNotNull(
-                    createCell(startColumn),
-                    createCellIfNeeded(1),
-                    createCellIfNeeded(2)
+            listOf(
+                    createCell(indices.average),
+                    indices.median?.let { createCell(it) },
+                    indices.max?.let { createCell(it) }
             ).forEachIndexed { index, valueCell ->
+                valueCell ?: return@forEachIndexed
                 val scoutCell = scoutRow.getCell(startColumnIndex + index)
                 if (scoutCell == null) {
                     valueCell.cellFormula = "NA()"
@@ -642,7 +635,7 @@ internal class TemplateExporter(
         headerRow.createCell(0)
         calculatedHeaderRow.createCell(0)
 
-        val metricCache = mutableMapOf<String, Int>()
+        val metricCache = mutableMapOf<String, MetricColumnIndices>()
 
         val sheetList = workbook.toList()
         for (i in 1 until workbook.numberOfSheets) { // Excluding the overview sheet
@@ -656,7 +649,7 @@ internal class TemplateExporter(
             val team = cache.teams[workbook.getSheetIndex(scoutSheet) - 1]
             for (j in 1..scoutSheet.lastRowNum) {
                 val rootMetric = cache.getRootMetric(team, j) ?: continue
-                val metricIndex = metricCache[rootMetric.ref.id]
+                val indices = metricCache[rootMetric.ref.id]
                 val averageCell = scoutSheet.getRow(j)
                         .getCell(cache.getLastDataOrAverageColumnIndex(team))
 
@@ -666,9 +659,9 @@ internal class TemplateExporter(
                     rootMetric.type == MetricType.TEXT
                 ) continue
 
-                if (metricIndex == null) {
+                if (indices == null) {
                     val startIndex = headerRow.lastCellNum.toInt()
-                    val headerCell = headerRow.createCell(startIndex).apply {
+                    headerRow.createCell(startIndex).apply {
                         setCellValue(rootMetric.name)
                         cellStyle = cache.columnHeaderStyle
                     }
@@ -690,17 +683,23 @@ internal class TemplateExporter(
                     }
 
                     var dataCount = 0
+                    var medianIndex: Int? = null
+                    var maxIndex: Int? = null
 
-                    fun setupHeaderCells(offset: Int) {
-                        dataCount++
-
-                        val column = startIndex + offset
+                    fun setupHeaderCells() {
+                        val column = startIndex + ++dataCount
                         headerRow.createCell(column)
                         calculatedHeaderRow.createCell(column)
                     }
 
-                    if (!medians.toSet().isSingleton) setupHeaderCells(1)
-                    if (!maxes.toSet().isSingleton) setupHeaderCells(2)
+                    if (!medians.toSet().isSingleton) {
+                        setupHeaderCells()
+                        medianIndex = startIndex + dataCount
+                    }
+                    if (!maxes.toSet().isSingleton) {
+                        setupHeaderCells()
+                        maxIndex = startIndex + dataCount
+                    }
 
                     if (dataCount > 0) {
                         val rowNum = headerRow.rowNum
@@ -712,12 +711,13 @@ internal class TemplateExporter(
                         ))
                     }
 
-                    calculatedHeaderRow.buildCalculatedHeader(startIndex)
-
-                    metricCache[rootMetric.ref.id] = headerCell.columnIndex
-                    row.setFormulas(headerCell, averageCell)
+                    MetricColumnIndices(startIndex, medianIndex, maxIndex).run {
+                        calculatedHeaderRow.buildCalculatedHeader(this)
+                        metricCache[rootMetric.ref.id] = this
+                        row.setFormulas(this, averageCell)
+                    }
                 } else {
-                    row.setFormulas(headerRow.getCell(metricIndex), averageCell)
+                    row.setFormulas(indices, averageCell)
                 }
             }
         }
