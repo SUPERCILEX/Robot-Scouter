@@ -100,6 +100,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
     @Synchronized
     fun addExporter(exporter: TemplateExporter): Int {
+        if (isStopped()) throw CancellationException()
         check(exporters.size < pendingTaskCount) { "More exporters than templates" }
 
         val id = exporter.hashCode()
