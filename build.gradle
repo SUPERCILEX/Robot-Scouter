@@ -11,7 +11,7 @@ buildscript {
         targetSdk = 27
         minSdk = 16
 
-        kotlinVersion = '1.2.31'
+        kotlinVersion = '1.2.40'
         coroutinesVersion = '0.22.5'
         ankoVersion = '0.10.4'
         ktxVersion = '0.3'
