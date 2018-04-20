@@ -7,10 +7,11 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.shared.R
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.experimental.suspendCoroutine
+import java.util.concurrent.Semaphore
 
 const val RC_SIGN_IN = 100
 
@@ -36,37 +37,26 @@ private val signInIntent: Intent
             .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
             .build()
 
-suspend fun onSignedIn(): FirebaseUser = suspendCoroutine { cont ->
-    FirebaseAuth.getInstance().addAuthStateListener(object : FirebaseAuth.AuthStateListener {
-        private val called = AtomicBoolean()
+private val signInSemaphore = Semaphore(1)
 
-        override fun onAuthStateChanged(auth: FirebaseAuth) {
-            val user = auth.currentUser
-            if (user == null) {
-                AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).continueWithTask {
-                    if (it.isSuccessful) {
-                        it
-                    } else {
-                        // Ignore any exceptions since we don't care about credential fetch errors
-                        FirebaseAuth.getInstance().signInAnonymously()
-                    }
-                }.addOnCompleteListener {
-                    if (called.compareAndSet(false, true)) {
-                        if (it.isSuccessful) {
-                            cont.resume(it.result.user)
-                        } else {
-                            cont.resumeWithException(it.exception!!)
-                        }
-                    }
-                }
-            } else {
-                if (called.compareAndSet(false, true)) {
-                    cont.resume(user)
-                }
-            }
-            auth.removeAuthStateListener(this)
+suspend fun onSignedIn(): FirebaseUser {
+    signInSemaphore.acquire()
+
+    val user = user
+    return if (user == null) {
+        val result = try {
+            AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).await()
+        } catch (e: Exception) {
+            // Ignore any exceptions since we don't care about credential fetch errors
+            FirebaseAuth.getInstance().signInAnonymously().await()
         }
-    })
+
+        signInSemaphore.release()
+        result.user
+    } else {
+        signInSemaphore.release()
+        user
+    }
 }
 
 fun Activity.startSignIn() = startActivityForResult(signInIntent, RC_SIGN_IN)
