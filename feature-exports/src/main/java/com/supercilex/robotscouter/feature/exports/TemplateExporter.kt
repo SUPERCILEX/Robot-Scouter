@@ -534,17 +534,16 @@ internal class TemplateExporter(
                 }
             }
 
-            for (possibleChart in chartData.keys) {
-                if (possibleChart is XSSFChart && possibleChart.graphicFrame.anchor.row1 == 1) {
-                    chart = possibleChart
-                    return 0 to getMetricForChart(possibleChart, chartPool)
-                }
+            val topChart = chartData.keys.singleOrNull()
+            return 0 to if (topChart == null) {
+                Metric.Header(
+                        position = 0,
+                        ref = FirebaseFirestore.getInstance().document("null/null")
+                )
+            } else {
+                chart = topChart
+                getMetricForChart(topChart, chartPool)
             }
-
-            return 0 to Metric.Header(
-                    position = 0,
-                    ref = FirebaseFirestore.getInstance().document("null/null")
-            )
         }.invoke()
 
         val data: LineChartData
