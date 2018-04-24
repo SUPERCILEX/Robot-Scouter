@@ -24,7 +24,7 @@ android {
         minSdkVersion minSdk
         targetSdkVersion targetSdk
         versionCode 1 // The version code is updated on each Travis build
-        versionName '2.3.0'
+        versionName '2.3.1'
         multiDexEnabled true
         resConfigs "en"
         vectorDrawables.useSupportLibrary = true
