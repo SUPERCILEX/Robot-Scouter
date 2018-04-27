@@ -232,11 +232,11 @@ internal class TemplateExporter(
     }
 
     private fun getWorkbook(): Workbook {
-        val workbook = if (isUnsupportedDevice) {
+        val workbook = if (isSupportedDevice) {
+            XSSFWorkbook()
+        } else {
             showToast(RobotScouter.getString(R.string.export_unsupported_device_rationale))
             HSSFWorkbook()
-        } else {
-            XSSFWorkbook()
         }.also {
             cache.workbook = it
         }
@@ -520,7 +520,7 @@ internal class TemplateExporter(
             return if (defaultIndex > lastRow) defaultIndex else lastRow
         }
 
-        if (isUnsupportedDevice) return
+        if (!isSupportedDevice) return
 
         var chart: Chart? = null
         val nearestHeader = fun(): Pair<Int, Metric<*>> {
@@ -721,26 +721,28 @@ internal class TemplateExporter(
             }
         }
 
-        val template = PropertyTemplate()
-        val lastRowNum = overviewSheet.lastRowNum
-        var prevMetricStartColumnIndex = 1
-        for (i in 2 until headerRow.lastCellNum) {
-            if (headerRow.getCell(i).cellTypeEnum != CellType.BLANK) {
-                template.drawBorders(
-                        CellRangeAddress(2, lastRowNum, prevMetricStartColumnIndex, i - 1),
-                        BorderStyle.THIN,
-                        BorderExtent.OUTSIDE_VERTICAL
-                )
-                prevMetricStartColumnIndex = i
+        if (isSupportedDevice) {
+            val template = PropertyTemplate()
+            val lastRowNum = overviewSheet.lastRowNum
+            var prevMetricStartColumnIndex = 1
+            for (i in 2 until headerRow.lastCellNum) {
+                if (headerRow.getCell(i).cellTypeEnum != CellType.BLANK) {
+                    template.drawBorders(
+                            CellRangeAddress(2, lastRowNum, prevMetricStartColumnIndex, i - 1),
+                            BorderStyle.THIN,
+                            BorderExtent.OUTSIDE_VERTICAL
+                    )
+                    prevMetricStartColumnIndex = i
+                }
             }
+            template.applyBorders(overviewSheet)
         }
-        template.applyBorders(overviewSheet)
 
         buildOverviewCharts(overviewSheet)
     }
 
     private fun buildOverviewCharts(sheet: Sheet) {
-        if (isUnsupportedDevice) return
+        if (!isSupportedDevice) return
 
         val drawing = sheet.createDrawingPatriarch()
 
@@ -841,7 +843,7 @@ internal class TemplateExporter(
         const val MIME_TYPE_ALL = "*/*"
         const val JSON_FILE_EXTENSION = ".json"
 
-        val spreadsheetFileExtension = if (isUnsupportedDevice) ".xls" else ".xlsx"
+        val spreadsheetFileExtension = if (isSupportedDevice) ".xlsx" else ".xls"
 
         init {
             System.setProperty(

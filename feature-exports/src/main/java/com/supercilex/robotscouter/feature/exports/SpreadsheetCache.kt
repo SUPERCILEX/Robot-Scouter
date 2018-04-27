@@ -24,21 +24,21 @@ internal class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     val formulaEvaluator: FormulaEvaluator by lazy { creationHelper.createFormulaEvaluator() }
 
     val columnHeaderStyle: CellStyle? by lazy {
-        if (isUnsupportedDevice) null else createColumnHeaderStyle()
+        if (isSupportedDevice) createColumnHeaderStyle() else null
     }
     val calculatedColumnHeaderStyle: CellStyle? by lazy {
-        if (isUnsupportedDevice) null else createCalculatedColumnHeaderStyle()
+        if (isSupportedDevice) createCalculatedColumnHeaderStyle() else null
     }
     val rowHeaderStyle: CellStyle? by lazy {
-        if (isUnsupportedDevice) null else createRowHeaderStyle()
+        if (isSupportedDevice) createRowHeaderStyle() else null
     }
     val headerMetricRowHeaderStyle: CellStyle? by lazy {
-        if (isUnsupportedDevice) null else createRowHeaderStyle().apply {
+        if (isSupportedDevice) createRowHeaderStyle().apply {
             setFont(createBaseHeaderFont().apply {
                 italic = true
                 fontHeightInPoints = 14.toShort()
             })
-        }
+        } else null
     }
 
     val averageString: String by lazy { RobotScouter.getString(R.string.export_average_column_title) }
@@ -62,7 +62,7 @@ internal class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     }
 
     fun setCellFormat(cell: Cell, format: String) {
-        if (isUnsupportedDevice) return
+        if (!isSupportedDevice) return
 
         cell.cellStyle = formatStyles.getOrPut(format) {
             workbook.createCellStyle().apply {

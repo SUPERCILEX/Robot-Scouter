@@ -23,7 +23,7 @@ private const val MAX_SHEET_LENGTH = 31
 private const val COLUMN_WIDTH_SCALE_FACTOR = 46
 private const val CELL_WIDTH_CEILING = 7500
 
-internal val isUnsupportedDevice by lazy { VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || isLowRamDevice }
+internal val isSupportedDevice by lazy { VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && !isLowRamDevice }
 
 internal val Cell?.stringValue: String
     get() {
