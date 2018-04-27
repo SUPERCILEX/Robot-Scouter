@@ -68,8 +68,8 @@ class ExportService : IntentService(TAG) {
             }.flatten().withIndex().associate {
                 teams[it.index] to it.value
             })
-        } catch (e: Exception) {
-            notificationManager.abortCritical(e)
+        } catch (t: Throwable) {
+            notificationManager.abortCritical(t)
         }
     }
 
@@ -104,8 +104,8 @@ class ExportService : IntentService(TAG) {
                                         exportFolder,
                                         templateNames[templateId]
                                 ).export()
-                            } catch (e: Exception) {
-                                notificationManager.abortCritical(e)
+                            } catch (t: Throwable) {
+                                notificationManager.abortCritical(t)
                                 throw CancellationException()
                             }
                         }
@@ -166,10 +166,10 @@ class ExportService : IntentService(TAG) {
         return zippedScouts
     }
 
-    private fun ExportNotificationManager.abortCritical(e: Exception) {
-        if (e !is TimeoutCancellationException) CrashLogger.onFailure(e)
+    private fun ExportNotificationManager.abortCritical(t: Throwable) {
+        if (t !is TimeoutCancellationException) CrashLogger(t)
         abort()
-        if (e !is CancellationException) showToast("${getString(R.string.error_unknown)}\n\n$e")
+        if (t !is CancellationException) showToast("${getString(R.string.error_unknown)}\n\n$t")
     }
 
     companion object {
