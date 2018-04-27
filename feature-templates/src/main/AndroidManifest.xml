@@ -1,1 +1,15 @@
-<manifest package="com.supercilex.robotscouter.feature.templates" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.supercilex.robotscouter.feature.templates">
+
+    <application>
+
+        <activity
+            android:name=".TemplateListActivity"
+            android:label="@string/template_activity_title"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize" />
+
+    </application>
+
+</manifest>

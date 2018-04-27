@@ -1,1 +1,14 @@
-<manifest package="com.supercilex.robotscouter.feature.scouts" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.supercilex.robotscouter.feature.scouts">
+
+    <application>
+
+        <activity
+            android:name=".ScoutListActivity"
+            android:label="@string/scout_activity_title"
+            android:windowSoftInputMode="adjustPan" />
+
+    </application>
+
+</manifest>

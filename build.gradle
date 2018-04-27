@@ -21,7 +21,7 @@ buildscript {
         archVersion = '1.1.1'
         playServicesVersion = '15.0.0'
         crashlyticsVersion = '2.9.1'
-        firebaseUiVersion = 'f83235da93'
+        firebaseUiVersion = '38e2ece9bb'
         facebookVersion = '4.32.0'
         twitterVersion = '3.1.1'
         fjdVersion = '0.8.5'

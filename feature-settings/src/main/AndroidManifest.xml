@@ -1,1 +1,22 @@
-<manifest package="com.supercilex.robotscouter.feature.settings" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.supercilex.robotscouter.feature.settings">
+
+    <application>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings_activity_title"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.NOTIFICATION_PREFERENCES" />
+            </intent-filter>
+
+        </activity>
+
+    </application>
+
+</manifest>

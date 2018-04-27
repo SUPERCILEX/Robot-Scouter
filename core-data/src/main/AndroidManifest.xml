@@ -10,6 +10,12 @@
 
     <application>
 
+        <activity
+            android:name=".NotificationIntentForwarder"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
+
         <service
             android:name=".client.DownloadTeamDataJob21"
             android:permission="android.permission.BIND_JOB_SERVICE" />

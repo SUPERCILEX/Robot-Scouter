@@ -14,6 +14,10 @@
 
     <application>
 
+        <activity
+            android:name="com.supercilex.robotscouter.core.data.NotificationIntentForwarder"
+            android:theme="@style/RobotScouter.Translucent" />
+
         <service android:name=".client.AccountMergeService" />
 
         <service

@@ -17,7 +17,7 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/RobotScouter"
+        android:theme="@style/RobotScouter.Launcher"
         tools:ignore="UnusedAttribute">
 
         <meta-data
@@ -37,7 +37,6 @@
             android:name=".HomeActivity"
             android:label="${appName}"
             android:launchMode="singleTask"
-            android:theme="@style/RobotScouter.Launcher"
             android:windowSoftInputMode="adjustResize">
 
             <meta-data
@@ -54,33 +53,15 @@
 
         <activity
             android:name=".feature.scouts.ScoutListActivity"
-            android:label="@string/scout_activity_title"
-            android:parentActivityName=".HomeActivity"
-            android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustPan" />
+            android:parentActivityName=".HomeActivity" />
 
         <activity
             android:name=".feature.templates.TemplateListActivity"
-            android:label="@string/template_activity_title"
-            android:launchMode="singleTop"
-            android:parentActivityName=".HomeActivity"
-            android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustResize" />
+            android:parentActivityName=".HomeActivity" />
 
         <activity
             android:name=".feature.settings.SettingsActivity"
-            android:label="@string/settings_activity_title"
-            android:parentActivityName=".HomeActivity"
-            android:theme="@style/RobotScouter.Launcher"
-            android:windowSoftInputMode="adjustResize">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.NOTIFICATION_PREFERENCES" />
-            </intent-filter>
-
-        </activity>
+            android:parentActivityName=".HomeActivity" />
 
         <activity
             android:name=".LinkReceiverActivity"
@@ -105,13 +86,6 @@
             </intent-filter>
 
         </activity>
-
-        <activity
-            android:name=".core.data.NotificationIntentForwarder"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/RobotScouter.Translucent" />
 
     </application>
 
