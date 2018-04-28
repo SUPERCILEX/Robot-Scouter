@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.isPolynomial
-import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.data.model.ScoutsHolder
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.ui.Saveable
@@ -41,10 +40,12 @@ abstract class TabPagerAdapterBase(
     private var oldScouts: List<Scout> = emptyList()
     protected var currentScouts: List<Scout> = emptyList()
 
-    var currentTabId: String? = null
+    private var _currentTabId: String? = null
+    var currentTabId: String?
+        get() = _currentTabId
         set(value) {
-            field = value
-            currentScouts.indexOfFirst { it.id == field }.let { if (it != -1) selectTab(it) }
+            _currentTabId = value
+            currentScouts.indexOfFirst { it.id == value }.let { if (it != -1) selectTab(it) }
         }
     val currentTab: TabLayout.Tab?
         get() = tabs.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
@@ -65,7 +66,7 @@ abstract class TabPagerAdapterBase(
     override fun getItemId(position: Int) = currentScouts[position].id
 
     override fun onTabSelected(tab: TabLayout.Tab) {
-        currentTabId = currentScouts[tab.position].id
+        _currentTabId = currentScouts[tab.position].id
     }
 
     override fun onDataChanged() {
@@ -146,7 +147,7 @@ abstract class TabPagerAdapterBase(
         // 2. If the tabs are updated, we'll lose our position while updating so posting ensures
         //    the selection happens after the adapter has processed the notify call.
         select()
-        mainHandler.post(select)
+        tabs.post(select)
     }
 
     override fun onStart(owner: LifecycleOwner) {

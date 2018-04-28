@@ -29,9 +29,8 @@ class ScoutPagerAdapter(
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         super.onTabSelected(tab)
-        currentTabId?.let { tabId ->
-            team.logSelectScout(tabId, currentScouts.find { it.id == tabId }!!.templateId)
-        }
+        val tabId = currentTabId!!
+        team.logSelectScout(tabId, currentScouts.find { it.id == tabId }!!.templateId)
     }
 
     private companion object {

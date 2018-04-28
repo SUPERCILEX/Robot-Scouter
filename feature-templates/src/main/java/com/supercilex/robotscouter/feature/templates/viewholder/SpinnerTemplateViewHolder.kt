@@ -11,7 +11,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.firestoreBatch
-import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.data.model.updateSelectedValueId
 import com.supercilex.robotscouter.core.logFailures
@@ -207,7 +206,7 @@ internal class SpinnerTemplateViewHolder(
             viewHolder.enableDragToReorder(viewHolder, itemTouchHelper)
             if (viewHolder.adapterPosition == pendingScrollPosition) {
                 viewHolder.requestFocus()
-                mainHandler.post { viewHolder.nameEditor.showKeyboard() }
+                viewHolder.nameEditor.let { it.post { it.showKeyboard() } }
                 pendingScrollPosition = RecyclerView.NO_POSITION
             }
         }

@@ -17,7 +17,6 @@ import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.firestoreBatch
-import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.OrderedRemoteModel
 import com.supercilex.robotscouter.core.ui.isItemInRange
@@ -75,7 +74,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         if (position == scrollToPosition) {
             // Posting to the main thread b/c the fam covers the screen which makes the LLM think
             // there's only one item
-            mainHandler.post {
+            recyclerView.post {
                 if (recyclerView.isItemInRange(position)) {
                     viewHolder.requestFocus()
                     viewHolder.nameEditor.showKeyboard()

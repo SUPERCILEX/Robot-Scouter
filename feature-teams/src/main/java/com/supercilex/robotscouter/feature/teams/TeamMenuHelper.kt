@@ -23,7 +23,6 @@ import android.view.View
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSingleton
-import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animateColorChange
@@ -216,7 +215,7 @@ internal class TeamMenuHelper(
         // Post twice: 1. for speed, 2. so the items update on config change
         val updateItems = { signInItem.isVisible = visible && !isFullUser }
         updateItems()
-        mainHandler.post(updateItems)
+        toolbar.post(updateItems)
 
         if (visible) {
             fab.show()
