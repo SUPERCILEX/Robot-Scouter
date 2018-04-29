@@ -25,32 +25,28 @@ interface Saveable {
     fun onSaveInstanceState(outState: Bundle)
 }
 
-abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable {
-    protected open val keyboardShortcutHandler: KeyboardShortcutHandler =
-            object : KeyboardShortcutHandler() {
-                override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) = Unit
-            }
+abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable,
+        KeyboardShortcutListener {
+    private val filteredEvents = mutableMapOf<Long, KeyEvent>()
     private var clearFocus: Runnable? = null
 
-    override fun onKeyMultiple(keyCode: Int, count: Int, event: KeyEvent): Boolean {
-        keyboardShortcutHandler.onKeyMultiple(keyCode, count, event)
-        return super.onKeyMultiple(keyCode, count, event)
-    }
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        keyboardShortcutHandler.onKeyDown(keyCode, event)
+        event.also { filteredEvents[it.downTime] = it }
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        keyboardShortcutHandler.onKeyUp(keyCode, event)
+        if (filteredEvents.remove(event.downTime) != null) {
+            if (onShortcut(keyCode, event)) return true
+            val fragmentHandled = supportFragmentManager.fragments
+                    .filterIsInstance<KeyboardShortcutListener>()
+                    .any { it.onShortcut(keyCode, event) }
+            if (fragmentHandled) return true
+        }
         return super.onKeyUp(keyCode, event)
     }
 
-    override fun onKeyLongPress(keyCode: Int, event: KeyEvent): Boolean {
-        keyboardShortcutHandler.onKeyLongPress(keyCode, event)
-        return super.onKeyLongPress(keyCode, event)
-    }
+    override fun onShortcut(keyCode: Int, event: KeyEvent) = false
 
     @Suppress("RedundantOverride") // Needed to relax visibility
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =

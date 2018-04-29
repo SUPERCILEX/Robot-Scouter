@@ -10,13 +10,32 @@
     tools:context=".HomeActivity"
     tools:openDrawer="start">
 
-    <fragment
-        android:id="@+id/root"
-        android:name="com.supercilex.robotscouter.feature.teams.TeamListFragment"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:tag="TeamListFragment"
-        tools:layout="@layout/fragment_team_list" />
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/root"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+            tools:layout="@layout/fragment_team_list" />
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/root"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/home_bottom_navigation" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/drawer"

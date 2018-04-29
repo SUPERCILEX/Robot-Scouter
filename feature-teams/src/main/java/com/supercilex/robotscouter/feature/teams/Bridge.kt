@@ -13,3 +13,7 @@ interface TeamExporter {
 interface DrawerToggler {
     fun toggle(enabled: Boolean)
 }
+
+interface SignInResolver {
+    fun showSignInResolution()
+}

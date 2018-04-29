@@ -2,17 +2,14 @@
 <resources>
     <string name="app_name" translatable="false">Robot Scouter</string>
 
-    <!-- Tutorials -->
-    <string name="tutorial_create_first_team_title">Create your first team</string>
-    <string name="tutorial_sign_in_title">@string/sign_in_title</string>
-    <string name="tutorial_sign_in_rationale">
-        Signing in lets you easily sync data with other devices across your team.
-    </string>
-    <string name="tutorial_no_team_selected_hint">Select a team to start scouting</string>
-
     <!-- Home activity -->
+    <string name="home_teams_title">Teams</string>
+    <string name="home_autoscout_title">Auto Scout</string>
+
     <string name="navigation_drawer_open_desc">Open navigation drawer</string>
     <string name="navigation_drawer_close_desc">Close navigation drawer</string>
+
+    <string name="tutorial_no_team_selected_hint">Select a team to start scouting</string>
 
     <string name="sign_in_title">Sign in</string>
     <string name="anonymous_sign_in_failed_message">Anonymous sign in failed</string>

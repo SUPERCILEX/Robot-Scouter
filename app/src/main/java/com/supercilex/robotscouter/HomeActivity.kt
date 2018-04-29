@@ -1,11 +1,14 @@
 package com.supercilex.robotscouter
 
 import android.app.Activity
+import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
@@ -32,11 +35,11 @@ import com.supercilex.robotscouter.core.fullVersionCode
 import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.ui.ActivityBase
-import com.supercilex.robotscouter.core.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.autoscout.AutoScoutFragment
 import com.supercilex.robotscouter.feature.exports.ExportService
 import com.supercilex.robotscouter.feature.scouts.ScoutListActivity
 import com.supercilex.robotscouter.feature.scouts.TabletScoutListFragment
@@ -45,7 +48,9 @@ import com.supercilex.robotscouter.feature.teams.BuildConfig
 import com.supercilex.robotscouter.feature.teams.DrawerToggler
 import com.supercilex.robotscouter.feature.teams.NewTeamDialog
 import com.supercilex.robotscouter.feature.teams.SelectedTeamsRetriever
+import com.supercilex.robotscouter.feature.teams.SignInResolver
 import com.supercilex.robotscouter.feature.teams.TeamExporter
+import com.supercilex.robotscouter.feature.teams.TeamListFragment
 import com.supercilex.robotscouter.feature.templates.TemplateListActivity
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.UpdateDialog
@@ -55,58 +60,45 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
-class HomeActivity : ActivityBase(), View.OnClickListener,
-        NavigationView.OnNavigationItemSelectedListener, TeamSelectionListener,
-        DrawerToggler, TeamExporter {
-    override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
-        val scoutListFragment
-            get() = supportFragmentManager.findFragmentByTag(TabletScoutListFragment.TAG) as? TabletScoutListFragment
-
-        override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {
-            when (keyCode) {
-                KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
-                    scoutListFragment?.addScoutWithSelector()
-                } else {
-                    NewTeamDialog.show(supportFragmentManager)
-                }
-                KeyEvent.KEYCODE_E -> export()
-                KeyEvent.KEYCODE_D -> scoutListFragment?.showTeamDetails()
-            }
-        }
-    }
-
+class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
+        TeamSelectionListener, DrawerToggler, TeamExporter, SignInResolver {
     private val authHelper by unsafeLazy { AuthHelper(this) }
-    private val tutorialHelper: TutorialHelper by unsafeLazy {
-        ViewModelProviders.of(this).get(TutorialHelper::class.java)
-    }
     private val permHandler: PermissionRequestHandler by unsafeLazy {
         ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
     }
 
-    private val toolbar by unsafeLazy { find<Toolbar>(R.id.toolbar) }
-    private val drawerToggle by unsafeLazy {
-        ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                toolbar,
-                R.string.navigation_drawer_open_desc,
-                R.string.navigation_drawer_close_desc
-        )
-    }
+    private var drawerToggle: ActionBarDrawerToggle? = null
+
+    private val scoutListFragment
+        get() = supportFragmentManager.findFragmentByTag(TabletScoutListFragment.TAG) as? TabletScoutListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setSupportActionBar(toolbar)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().add(
+                    R.id.root,
+                    TeamListFragment.getInstance(supportFragmentManager),
+                    TeamListFragment.TAG
+            ).commit()
+        }
+        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager
+        .FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(
+                    fm: FragmentManager,
+                    f: Fragment,
+                    v: View,
+                    savedInstanceState: Bundle?
+            ) {
+                if (f.tag == TeamListFragment.TAG || f.tag == AutoScoutFragment.TAG) initToolbar()
+            }
+        }, false)
 
         permHandler.apply {
             init(ioPerms)
             onGranted.observe(this@HomeActivity, Observer { export() })
         }
-
-        drawerLayout.addDrawerListener(drawerToggle)
-        drawerToggle.syncState()
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             private val editTemplates: MenuItem = drawer.menu.findItem(R.id.action_edit_templates)
@@ -122,9 +114,29 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
             }
         })
         drawer.setNavigationItemSelectedListener(this)
+        bottomNavigation.setOnNavigationItemSelectedListener {
+            supportFragmentManager.beginTransaction()
+                    .detach(supportFragmentManager.findFragmentById(R.id.root))
+                    .apply {
+                        val (f, tag) = when (it.itemId) {
+                            R.id.teams -> TeamListFragment.getInstance(supportFragmentManager) to
+                                    TeamListFragment.TAG
+                            R.id.autoScout -> AutoScoutFragment.getInstance(supportFragmentManager) to
+                                    AutoScoutFragment.TAG
+                            else -> error("Unknown id: ${it.itemId}")
+                        }
 
-        find<View>(R.id.fab).setOnClickListener(this)
-        showAddTeamTutorial(tutorialHelper.also { it.init(null) }, this)
+                        if (f.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                            attach(f)
+                        } else {
+                            add(R.id.root, f, tag)
+                        }
+                    }
+                    .commit()
+
+            true
+        }
+
         val ref = asLifecycleReference()
         async(UI) {
             authHelper // Force initialization on the main thread
@@ -159,7 +171,6 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.home_menu, menu)
         authHelper.initMenu(menu)
-        showSignInTutorial(tutorialHelper, this)
         return true
     }
 
@@ -171,7 +182,7 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
     }
 
     override fun toggle(enabled: Boolean) {
-        drawerToggle.isDrawerIndicatorEnabled = enabled
+        drawerToggle!!.isDrawerIndicatorEnabled = enabled
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -181,10 +192,6 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
         if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
             onTeamSelected(data!!.getBundleExtra(SCOUT_ARGS_KEY), true)
         }
-    }
-
-    override fun onClick(v: View) {
-        if (v.id == R.id.fab) runIfSignedIn { NewTeamDialog.show(supportFragmentManager) }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -202,6 +209,20 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
 
         drawerLayout.closeDrawer(GravityCompat.START)
         return false
+    }
+
+    override fun onShortcut(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
+                scoutListFragment?.addScoutWithSelector()
+            } else {
+                return false
+            }
+            KeyEvent.KEYCODE_E -> export()
+            KeyEvent.KEYCODE_D -> scoutListFragment?.showTeamDetails()
+            else -> return false
+        }
+        return true
     }
 
     override fun onBackPressed() {
@@ -258,6 +279,25 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
         }
     }
 
+    private fun initToolbar() {
+        drawerToggle?.let { drawerLayout.removeDrawerListener(it) }
+
+        val toolbar = find<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar) // This must come first
+
+        val drawerToggle = ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open_desc,
+                R.string.navigation_drawer_close_desc
+        )
+        this.drawerToggle = drawerToggle
+
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+    }
+
     private fun forwardBack() {
         val ignored = supportFragmentManager.fragments
                 .filterIsInstance<OnBackPressedListener>()
@@ -295,8 +335,12 @@ class HomeActivity : ActivityBase(), View.OnClickListener,
         this.intent = Intent() // Consume Intent
     }
 
+    override fun showSignInResolution() {
+        authHelper.showSignInResolution()
+    }
+
     private inline fun runIfSignedIn(block: () -> Unit) =
-            if (isSignedIn) block() else authHelper.showSignInResolution()
+            if (isSignedIn) block() else showSignInResolution()
 
     private companion object {
         const val RC_SCOUT = 744

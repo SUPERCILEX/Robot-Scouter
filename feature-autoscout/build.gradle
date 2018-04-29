@@ -1,0 +1,7 @@
+apply from: '../standard-android-config.gradle'
+
+dependencies {
+    implementation project(':shared')
+
+    implementation "com.google.android.gms:play-services-nearby:$playServicesVersion"
+}

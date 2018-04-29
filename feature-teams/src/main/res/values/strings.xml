@@ -13,4 +13,10 @@
 
     <string name="team_select_all_title">Select all</string>
     <string name="team_multiple_selected_message">Multiple teams selected</string>
+
+    <string name="tutorial_create_first_team_title">Create your first team</string>
+    <string name="tutorial_sign_in_title">Sign in</string>
+    <string name="tutorial_sign_in_rationale">
+        Signing in lets you easily sync data with other devices across your team.
+    </string>
 </resources>

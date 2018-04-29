@@ -6,26 +6,13 @@ import android.view.KeyEvent
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.ui.ActivityBase
-import com.supercilex.robotscouter.core.ui.KeyboardShortcutHandler
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.core.unsafeLazy
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.multipleTask
 
 class ScoutListActivity : ActivityBase() {
-    override val keyboardShortcutHandler = object : KeyboardShortcutHandler() {
-        override fun onFilteredKeyUp(keyCode: Int, event: KeyEvent) {
-            when (keyCode) {
-                KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
-                    scoutListFragment.addScoutWithSelector()
-                } else {
-                    scoutListFragment.addScout()
-                }
-                KeyEvent.KEYCODE_D -> scoutListFragment.showTeamDetails()
-            }
-        }
-    }
-    private val scoutListFragment: ActivityScoutListFragment by unsafeLazy {
+    private val scoutListFragment by unsafeLazy {
         supportFragmentManager.findFragmentByTag(ActivityScoutListFragment.TAG) as ActivityScoutListFragment
     }
 
@@ -40,6 +27,19 @@ class ScoutListActivity : ActivityBase() {
                          ActivityScoutListFragment.TAG)
                     .commit()
         }
+    }
+
+    override fun onShortcut(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
+                scoutListFragment.addScoutWithSelector()
+            } else {
+                scoutListFragment.addScout()
+            }
+            KeyEvent.KEYCODE_D -> scoutListFragment.showTeamDetails()
+            else -> return false
+        }
+        return true
     }
 
     companion object {

@@ -6,4 +6,5 @@ dependencies {
     implementation "com.google.firebase:firebase-invites:$playServicesVersion"
 
     implementation "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
+    implementation "uk.co.samuelwall:material-tap-target-prompt:$mttpVersion"
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/teams"
+        android:icon="@drawable/ic_people_colorable_24dp"
+        android:title="@string/home_teams_title" />
+
+    <item
+        android:id="@+id/autoScout"
+        android:icon="@drawable/ic_auto_fix_colorable_24dp"
+        android:title="@string/home_autoscout_title" />
+
+</menu>
