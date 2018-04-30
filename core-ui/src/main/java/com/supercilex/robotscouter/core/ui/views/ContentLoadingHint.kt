@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.core.ui.animatePopReveal
 
 class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader,
         ValueAnimator.AnimatorUpdateListener {
-    override val helper = ContentLoaderHelper(this, { reveal() }, { dismiss() })
+    override val helper = ContentLoaderHelper(this, ::reveal, ::dismiss)
 
     private var animator: ValueAnimator? = null
 

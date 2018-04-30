@@ -48,13 +48,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         View.OnClickListener, View.OnFocusChangeListener {
     private lateinit var team: Team
 
-    private val permHandler: PermissionRequestHandler by unsafeLazy {
-        ViewModelProviders.of(this).get(PermissionRequestHandler::class.java).apply {
-            init(TeamMediaCreator.perms)
-            onGranted.observe(this@TeamDetailsDialog, Observer {
-                mediaCreator.capture(this@TeamDetailsDialog)
-            })
-        }
+    private val permHandler by unsafeLazy {
+        ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
     }
     private val mediaCreator by unsafeLazy {
         ViewModelProviders.of(this).get(TeamMediaCreator::class.java)
@@ -67,6 +62,12 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         team = savedInstanceState?.getTeam() ?: arguments!!.getTeam()
+        permHandler.apply {
+            init(TeamMediaCreator.perms)
+            onGranted.observe(this@TeamDetailsDialog, Observer {
+                mediaCreator.capture(this@TeamDetailsDialog)
+            })
+        }
         mediaCreator.apply {
             init(permHandler to savedInstanceState)
             onMediaCaptured.observe(this@TeamDetailsDialog, Observer {

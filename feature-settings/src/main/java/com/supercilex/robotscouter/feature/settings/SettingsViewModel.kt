@@ -11,11 +11,11 @@ import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 
-internal class SettingsViewModel : ViewModelBase<Any?>() {
+internal class SettingsViewModel : ViewModelBase<Unit?>() {
     private val _signOutListener = MutableLiveData<Any?>()
     val signOutListener: LiveData<Any?> = _signOutListener
 
-    override fun onCreate(args: Any?) = Unit
+    override fun onCreate(args: Unit?) = Unit
 
     fun signOut() {
         async(UI) {

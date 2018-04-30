@@ -70,7 +70,7 @@ internal class TemplateListFragment : FragmentBase(),
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? = View.inflate(context, R.layout.fragment_template_list, null)
+    ): View = View.inflate(context, R.layout.fragment_template_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fun initFab(@IdRes id: Int, @DrawableRes icon: Int) =

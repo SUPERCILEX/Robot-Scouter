@@ -46,11 +46,12 @@ internal class SettingsFragment : PreferenceFragmentBase(),
         TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private val settingsModel by unsafeLazy {
-        ViewModelProviders.of(this).get(SettingsViewModel::class.java).apply { init(null) }
+        ViewModelProviders.of(this).get(SettingsViewModel::class.java)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        settingsModel.init(null)
         settingsModel.signOutListener.observe(this, Observer {
             if (it == null) {
                 FirebaseAuth.getInstance().signInAnonymously()
