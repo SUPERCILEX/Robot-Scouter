@@ -6,18 +6,18 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.data.remote.TbaDownloader.Media.ChiefDelphi
-import com.supercilex.robotscouter.core.data.remote.TbaDownloader.Media.Imgur
-import com.supercilex.robotscouter.core.data.remote.TbaDownloader.Media.Instagram
-import com.supercilex.robotscouter.core.data.remote.TbaDownloader.Media.Unsupported
-import com.supercilex.robotscouter.core.data.remote.TbaDownloader.Media.YouTube
+import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.ChiefDelphi
+import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Imgur
+import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Instagram
+import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Unsupported
+import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.YouTube
 import com.supercilex.robotscouter.core.model.Team
 import org.jetbrains.anko.runOnUiThread
 import retrofit2.Response
 
-internal class TbaDownloader private constructor(
+internal class TeamDetailsDownloader private constructor(
         team: Team
-) : TbaServiceBase<TbaTeamApi>(team, TbaTeamApi::class.java) {
+) : TeamServiceBase<TeamDetailsApi>(team, TeamDetailsApi::class.java) {
     override fun execute(): Team? {
         getTeamInfo()
         getTeamMedia(year)
@@ -154,6 +154,6 @@ internal class TbaDownloader private constructor(
         private const val MAX_HISTORY = 2000
 
         @WorkerThread
-        fun load(team: Team) = TbaDownloader(team).execute()
+        fun load(team: Team) = TeamDetailsDownloader(team).execute()
     }
 }

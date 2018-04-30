@@ -4,7 +4,7 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import com.supercilex.robotscouter.core.data.model.isStale
 import com.supercilex.robotscouter.core.data.model.update
-import com.supercilex.robotscouter.core.data.remote.TbaDownloader
+import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader
 import com.supercilex.robotscouter.core.data.startInternetJob14
 import com.supercilex.robotscouter.core.data.startInternetJob21
 import com.supercilex.robotscouter.core.model.Team
@@ -25,7 +25,7 @@ private interface DownloadTeamDataJob : TeamJob {
             originalTeam: Team,
             existingFetchedTeam: Team
     ) = if (existingFetchedTeam.isStale) {
-        TbaDownloader.load(existingFetchedTeam)
+        TeamDetailsDownloader.load(existingFetchedTeam)
     } else {
         null
     }

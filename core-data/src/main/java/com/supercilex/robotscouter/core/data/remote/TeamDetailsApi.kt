@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-internal interface TbaTeamApi {
+internal interface TeamDetailsApi {
     @GET("team/frc{number}")
     fun getInfo(
             @Path("number") number: String,

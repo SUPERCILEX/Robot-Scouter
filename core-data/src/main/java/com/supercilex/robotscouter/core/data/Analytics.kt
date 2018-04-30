@@ -232,7 +232,7 @@ private fun Any?.toSafeString() = toString().let {
 }
 
 private fun safeLog(teams: List<Team>, log: (ids: String, name: String) -> Unit) {
-    val originalIds = teams.map { it.id }.toString()
+    val originalIds = teams.map(Team::id).toString()
     val originalName = teams.getNames()
 
     if (originalIds.length >= MAX_VALUE_LENGTH || originalName.length >= MAX_VALUE_LENGTH) {

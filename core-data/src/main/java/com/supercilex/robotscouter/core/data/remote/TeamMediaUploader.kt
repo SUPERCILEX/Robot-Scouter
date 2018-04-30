@@ -10,9 +10,9 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
 
-internal class TbaUploader private constructor(
+internal class TeamMediaUploader private constructor(
         team: Team
-) : TbaServiceBase<TbaTeamMediaApi>(team, TbaTeamMediaApi::class.java) {
+) : TeamServiceBase<TeamMediaApi>(team, TeamMediaApi::class.java) {
     override fun execute(): Team? {
         if (!File(team.media ?: return null).exists()) return null
 
@@ -22,8 +22,8 @@ internal class TbaUploader private constructor(
     }
 
     private fun uploadToImgur() {
-        val response: Response<JsonObject> = TbaTeamMediaApi.IMGUR_RETROFIT
-                .create(TbaTeamMediaApi::class.java)
+        val response: Response<JsonObject> = TeamMediaApi.IMGUR_RETROFIT
+                .create(TeamMediaApi::class.java)
                 .postToImgur(
                         RobotScouter.getString(R.string.imgur_client_id),
                         team.toString(),
@@ -64,10 +64,10 @@ internal class TbaUploader private constructor(
      * @return Return a period plus the file extension
      */
     private fun getFileExtension(url: String): String =
-            ".${url.split(".").dropLastWhile { it.isEmpty() }.last()}"
+            ".${url.split(".").dropLastWhile(String::isEmpty).last()}"
 
     companion object {
         @WorkerThread
-        fun upload(team: Team) = TbaUploader(team).execute()
+        fun upload(team: Team) = TeamMediaUploader(team).execute()
     }
 }

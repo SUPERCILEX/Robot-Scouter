@@ -2,21 +2,14 @@ package com.supercilex.robotscouter.core.data.remote
 
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.R
-import com.supercilex.robotscouter.core.model.Team
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Calendar
 
-internal abstract class TbaServiceBase<out T>(team: Team, clazz: Class<T>) {
-    protected val team: Team = team.copy()
+abstract class TbaServiceBase<out T>(clazz: Class<T>) {
     protected val api: T = TBA_RETROFIT.create(clazz)
 
     protected val tbaApiKey: String = RobotScouter.getString(R.string.tba_api_key)
-
-    protected val year: Int get() = Calendar.getInstance().get(Calendar.YEAR)
-
-    abstract fun execute(): Team?
 
     protected fun cannotContinue(response: Response<*>): Boolean = when {
         response.isSuccessful -> false

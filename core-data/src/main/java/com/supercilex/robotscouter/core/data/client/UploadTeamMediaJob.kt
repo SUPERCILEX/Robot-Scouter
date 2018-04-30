@@ -5,7 +5,7 @@ import android.support.annotation.RequiresApi
 import com.firebase.jobdispatcher.Lifetime
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.updateMedia
-import com.supercilex.robotscouter.core.data.remote.TbaUploader
+import com.supercilex.robotscouter.core.data.remote.TeamMediaUploader
 import com.supercilex.robotscouter.core.data.startInternetJob14
 import com.supercilex.robotscouter.core.data.startInternetJob21
 import com.supercilex.robotscouter.core.model.Team
@@ -33,7 +33,7 @@ private interface UploadTeamMediaJob : TeamJob {
         get() = { team, newTeam -> team.updateMedia(newTeam) }
 
     override fun startTask(originalTeam: Team, existingFetchedTeam: Team) =
-            TbaUploader.upload(existingFetchedTeam.apply { copyMediaInfo(originalTeam) })
+            TeamMediaUploader.upload(existingFetchedTeam.apply { copyMediaInfo(originalTeam) })
 }
 
 internal class UploadTeamMediaJob14 : TbaJobBase14(), UploadTeamMediaJob
