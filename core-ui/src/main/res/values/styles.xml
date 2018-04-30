@@ -81,14 +81,6 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="RobotScouter.Tutorial">
-        <item name="mttp_backgroundColour">@color/colorPrimary</item>
-    </style>
-
-    <style name="RobotScouter.Tutorial.Menu" parent="RobotScouter.Tutorial">
-        <item name="mttp_focalColour">@color/colorAccent</item>
-    </style>
-
     <style name="RobotScouter.List">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
