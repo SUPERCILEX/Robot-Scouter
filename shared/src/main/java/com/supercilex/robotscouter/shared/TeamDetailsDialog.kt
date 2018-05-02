@@ -28,7 +28,6 @@ import com.supercilex.robotscouter.core.data.model.formatAsTeamUrl
 import com.supercilex.robotscouter.core.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.toBundle
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
@@ -40,6 +39,7 @@ import kotlinx.android.synthetic.main.dialog_team_details.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.coroutines.experimental.asReference
 import java.util.Calendar
 import kotlin.math.hypot
@@ -183,8 +183,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         val isWebsiteValid = validateUrl(website, websiteLayout)
 
         val ref = asLifecycleReference()
-        async(UI) {
-            if (!isWebsiteValid.await() || !isMediaValid.await()) return@async
+        launch(UI) {
+            if (!isWebsiteValid.await() || !isMediaValid.await()) return@launch
 
             name.nullOrFull()?.toString().also {
                 if (it != team.name) {
@@ -214,7 +214,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             (ref().parentFragment as? OnBackPressedListener)?.onBackPressed()
 
             ref().dismiss()
-        }.logFailures()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) = super.onSaveInstanceState(outState.apply {
@@ -253,7 +253,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             inputRef().error =
                     if (isValid) null else getString(R.string.details_malformed_url_error)
             isValid
-        }.logFailures()
+        }
     }
 
     companion object {

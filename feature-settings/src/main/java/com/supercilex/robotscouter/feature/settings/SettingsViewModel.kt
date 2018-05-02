@@ -7,9 +7,9 @@ import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ViewModelBase
-import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 
 internal class SettingsViewModel : ViewModelBase<Unit?>() {
     private val _signOutListener = MutableLiveData<Any?>()
@@ -18,7 +18,7 @@ internal class SettingsViewModel : ViewModelBase<Unit?>() {
     override fun onCreate(args: Unit?) = Unit
 
     fun signOut() {
-        async(UI) {
+        launch(UI) {
             try {
                 async { AuthUI.getInstance().signOut(RobotScouter).await() }.await()
                 _signOutListener.value = null
@@ -26,6 +26,6 @@ internal class SettingsViewModel : ViewModelBase<Unit?>() {
                 _signOutListener.value = e
                 CrashLogger.onFailure(e)
             }
-        }.logFailures()
+        }
     }
 }

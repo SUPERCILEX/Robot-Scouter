@@ -27,7 +27,6 @@ import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
@@ -40,6 +39,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
 import android.support.v7.graphics.Target as PaletteTarget
@@ -113,16 +113,16 @@ open class AppBarViewHolderBase(
         progress.hide(true)
 
         if (resource?.isRecycled == false) {
-            async(UI) {
+            launch(UI) {
                 val palette = async { Palette.from(resource).generate() }.await()
 
                 val update: Palette.Swatch.() -> Unit = {
                     updateScrim(rgb, resource)
                 }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
-            }.logFailures()
+            }
 
-            async(UI) {
+            launch(UI) {
                 val swatch = async {
                     val paletteTarget = PaletteTarget.Builder()
                             .setExclusive(false)
@@ -137,14 +137,14 @@ open class AppBarViewHolderBase(
                             .setRegion(0, 0, resource.width, toolbarHeight)
                             .generate()
                             .getSwatchForTarget(paletteTarget)
-                }.await() ?: return@async
+                }.await() ?: return@launch
 
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.
                 if (swatch.hsl.first() == 0f) {
                     header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
                 }
-            }.logFailures()
+            }
         }
 
         return false

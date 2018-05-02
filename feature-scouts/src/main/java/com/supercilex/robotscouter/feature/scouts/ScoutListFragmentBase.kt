@@ -45,6 +45,7 @@ import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
@@ -163,7 +164,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                 }
 
                 val ref = asLifecycleReference()
-                async(UI) {
+                launch(UI) {
                     val ownsTemplate = try {
                         async { getTemplatesQuery().get().await() }.await()
                     } catch (e: Exception) {
@@ -179,7 +180,7 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
                         longSnackbar(ref().find(R.id.root),
                                      R.string.scout_template_access_denied_error)
                     }
-                }.logFailures()
+                }
             }
             R.id.action_edit_team_details -> showTeamDetails()
             else -> return false

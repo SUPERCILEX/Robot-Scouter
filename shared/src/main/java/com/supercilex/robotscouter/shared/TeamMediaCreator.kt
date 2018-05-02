@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
@@ -80,7 +81,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         team.logTakeMedia()
 
         val ref = host.asLifecycleReference()
-        async(UI) {
+        launch(UI) {
             val file = async {
                 try {
                     File(
@@ -94,7 +95,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                     RobotScouter.runOnUiThread { longToast(e.toString()) }
                     null
                 }
-            }.await() ?: return@async
+            }.await() ?: return@launch
 
             photoFile = file
             val photoUri = FileProvider.getUriForFile(RobotScouter, providerAuthority, file)
@@ -105,7 +106,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 RobotScouter.longToast(R.string.media_upload_reminder)
                         .setGravity(Gravity.CENTER, 0, 0)
             }
-        }.logFailures()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,11 +114,11 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val photoFile = photoFile!!
         if (resultCode == Activity.RESULT_OK) {
-            async(UI) {
+            launch(UI) {
                 val contentUri = async { photoFile.unhide()?.toUri() }.await()
                 if (contentUri == null) {
                     RobotScouter.longToast(R.string.error_unknown)
-                    return@async
+                    return@launch
                 }
 
                 _onMediaCaptured.value = team.copy().apply {
@@ -131,7 +132,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 RobotScouter.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
                     this.data = contentUri
                 })
-            }.logFailures()
+            }
         } else {
             async { photoFile.delete() }.logFailures()
         }

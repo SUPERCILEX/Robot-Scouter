@@ -57,6 +57,7 @@ import com.supercilex.robotscouter.shared.UpdateDialog
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
@@ -138,16 +139,16 @@ class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         }
 
         val ref = asLifecycleReference()
-        async(UI) {
+        launch(UI) {
             authHelper // Force initialization on the main thread
             try {
                 async { authHelper.init() }.await()
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
-                return@async
+                return@launch
             }
             ref().handleIntent(ref().intent)
-        }.logFailures()
+        }
 
         GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
     }
@@ -160,12 +161,12 @@ class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
     override fun onStart() {
         super.onStart()
         val ref = asLifecycleReference()
-        async(UI) {
+        launch(UI) {
             async { fetchAndActivate() }.await()
             if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
                 UpdateDialog.show(ref().supportFragmentManager)
             }
-        }.logFailures()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

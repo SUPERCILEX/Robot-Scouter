@@ -22,7 +22,6 @@ import com.supercilex.robotscouter.core.data.putExtra
 import com.supercilex.robotscouter.core.data.shouldShowRatingDialog
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.isOnline
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
@@ -32,6 +31,7 @@ import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.TimeoutCancellationException
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.design.snackbar
@@ -203,10 +203,10 @@ class ExportService : IntentService(TAG) {
 
             if (teams.size >= MIN_TEAMS_TO_RATE && isOnline) {
                 val a = activity.asLifecycleReference()
-                async(UI) {
+                launch(UI) {
                     async { fetchAndActivate() }.await()
                     if (shouldShowRatingDialog) RatingDialog.show(a().supportFragmentManager)
-                }.logFailures()
+                }
             }
 
             return true

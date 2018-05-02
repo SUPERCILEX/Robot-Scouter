@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 import java.util.Date
@@ -65,16 +66,16 @@ class TeamSharer private constructor(
 
     init {
         val fragmentRef = fragment.asLifecycleReference()
-        async(UI) {
+        launch(UI) {
             val intent = try {
                 async { generateIntent() }.await()
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 longSnackbar(fragmentRef().find(R.id.root), R.string.error_unknown)
-                return@async
+                return@launch
             }
             fragmentRef().startActivityForResult(intent, RC_SHARE)
-        }.logFailures()
+        }
     }
 
     private suspend fun generateIntent(): Intent {
