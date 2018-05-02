@@ -1,3 +1,8 @@
+---
+name: Bug report
+about: Help improve Robot Scouter
+---
+
 <!--
 Welcome to Robot Scouter and thanks for submitting an issue!
 
