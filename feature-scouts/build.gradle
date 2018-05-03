@@ -1,7 +1,0 @@
-apply from: '../standard-android-config.gradle'
-
-dependencies {
-    implementation project(':shared-scouting')
-
-    implementation "com.android.support:palette-v7:$supportLibVersion"
-}
