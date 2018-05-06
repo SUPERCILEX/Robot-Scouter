@@ -16,9 +16,9 @@ buildscript {
     }
 
     // TMP: remove when last .gradle files are terminated
-    extra["compileSdk"] = 27
-    extra["targetSdk"] = 27
-    extra["minSdk"] = 27
+    extra["compileSdk"] = Config.SdkVersions.compile
+    extra["targetSdk"] = Config.SdkVersions.target
+    extra["minSdk"] = Config.SdkVersions.min
 }
 
 allprojects {

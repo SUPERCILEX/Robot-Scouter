@@ -110,7 +110,7 @@ object Config {
             const val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             const val permissions = "pub.devrel:easypermissions:1.2.0"
             const val fab = "com.github.clans:fab:1.6.4"
-            const val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.7.0"
+            const val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.8.0"
             const val billing = "com.android.billingclient:billing:1.0"
             const val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.0.2"
         }
