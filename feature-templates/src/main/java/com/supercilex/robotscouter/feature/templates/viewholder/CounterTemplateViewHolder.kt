@@ -1,11 +1,13 @@
 package com.supercilex.robotscouter.feature.templates.viewholder
 
+import android.os.Build
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.view.updatePaddingRelative
 import com.supercilex.robotscouter.core.data.model.updateName
 import com.supercilex.robotscouter.core.data.model.updateUnit
 import com.supercilex.robotscouter.core.data.nullOrFull
@@ -22,9 +24,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
         MetricTemplateViewHolder<Metric.Number, Long> {
     override val reorderView: ImageView by unsafeLazy { reorder }
     override val nameEditor = name as EditText
-    override val valueWithoutUnit: String get() = count.text.toString()
-
-    private val count = containerView.find<TextView>(R.id.count)
+    override val valueWithoutUnit: (TextView) -> String = { it.text.toString() }
 
     init {
         init()
@@ -32,7 +32,11 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
         itemView as LinearLayout
         itemView.removeView(unit)
         itemView.addView(unit, itemView.childCount - 1)
-        count.updateLayoutParams<LinearLayout.LayoutParams> { rightMargin = 0 }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            itemView.find<View>(R.id.countContainer).updatePaddingRelative(end = 0)
+        } else {
+            itemView.find<View>(R.id.countContainer).updatePadding(right = 0)
+        }
 
         unit.onFocusChangeListener = this
     }
@@ -47,7 +51,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
         if (name.hasFocus()) metric.updateName(name.text.toString())
     }
 
-    override fun setValue() {
+    override fun bindValue(count: TextView) {
         count.text = String.format(Locale.getDefault(), "%d", metric.value)
     }
 

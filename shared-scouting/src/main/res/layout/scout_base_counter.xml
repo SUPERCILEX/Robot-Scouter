@@ -15,20 +15,48 @@
         app:srcCompat="@drawable/ic_remove_colorable_24dp"
         tools:ignore="UnusedAttribute" />
 
-    <android.support.text.emoji.widget.EmojiAppCompatTextView
-        android:id="@+id/count"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/countContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:paddingStart="@dimen/spacing_large"
         android:paddingEnd="@dimen/spacing_large"
-        android:gravity="center"
-        android:maxWidth="100dp"
-        android:minHeight="@dimen/square_view_hw"
-        android:textIsSelectable="false"
-        android:textSize="18sp"
-        android:textStyle="normal|bold"
-        tools:text="10" />
+        android:clipToPadding="false"
+        android:minHeight="@dimen/square_view_hw">
+
+        <android.support.text.emoji.widget.EmojiAppCompatTextView
+            android:id="@+id/count1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="68dp"
+            android:textIsSelectable="false"
+            android:textSize="18sp"
+            android:textStyle="normal|bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constrainedHeight="true"
+            tools:text="10" />
+
+        <!-- Used for animations -->
+        <android.support.text.emoji.widget.EmojiAppCompatTextView
+            android:id="@+id/count2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="68dp"
+            android:textIsSelectable="false"
+            android:textSize="18sp"
+            android:textStyle="normal|bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constrainedHeight="true" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/increment"
