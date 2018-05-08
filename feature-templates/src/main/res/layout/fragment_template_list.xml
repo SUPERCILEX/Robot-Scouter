@@ -53,49 +53,13 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fam"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:padding="@dimen/spacing_large"
-        app:layout_behavior="com.supercilex.robotscouter.feature.templates.FabMenuBehavior"
-        app:menu_backgroundColor="@color/fam_background"
-        app:menu_colorNormal="@color/colorAccent"
-        app:menu_colorPressed="@color/colorAccent"
-        app:menu_colorRipple="@color/colorAccent"
-        app:srcCompat="@drawable/ic_add_colorable_24dp">
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addHeader"
-            style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/metric_header_add_title" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addCheckbox"
-            style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/metric_checkbox_add_title" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addStopwatch"
-            style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/metric_stopwatch_add_title" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addNote"
-            style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/metric_note_add_title" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addCounter"
-            style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/metric_counter_add_title" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/addSpinner"
-            style="@style/RobotScouter.Fab.Metric"
-            app:fab_label="@string/metric_spinner_add_title" />
-
-    </com.github.clans.fab.FloatingActionMenu>
+        android:layout_margin="@dimen/spacing_large"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_add_colorable_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

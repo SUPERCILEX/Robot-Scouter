@@ -20,24 +20,26 @@
         Move cancelled: another user updated the template while you were reordering items.
     </string>
 
-    <string name="metric_header_add_title">Add header</string>
+    <string name="dialog_add_metric_title">Add</string>
+
+    <string name="metric_header_title">Header</string>
     <string name="metric_header_name_hint">Header name</string>
 
-    <string name="metric_checkbox_add_title">Add checkbox</string>
+    <string name="metric_checkbox_title">Checkbox</string>
     <string name="metric_checkbox_name_hint">Checkbox name</string>
 
-    <string name="metric_counter_add_title">Add counter</string>
+    <string name="metric_counter_title">Counter</string>
     <string name="metric_counter_name_hint">Counter name</string>
     <string name="metric_counter_unit_hint">Unit</string>
 
-    <string name="metric_stopwatch_add_title">Add stopwatch</string>
+    <string name="metric_stopwatch_title">Stopwatch</string>
     <string name="metric_stopwatch_name_hint">Stopwatch name</string>
 
-    <string name="metric_note_add_title">Add note</string>
+    <string name="metric_note_title">Note</string>
     <string name="metric_note_name_hint">Note name</string>
     <string name="metric_note_value_hint">Text</string>
 
-    <string name="metric_spinner_add_title">Add item selector</string>
+    <string name="metric_spinner_title">Item selector</string>
     <string name="metric_spinner_name_hint">Item selector name</string>
     <string name="metric_spinner_item_name_hint">Item name</string>
     <string name="metric_spinner_item_default_required_error">Default item required</string>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/RobotScouter.Dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/spacing_large"
+    android:paddingBottom="0dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_large_medium"
+        android:text="@string/dialog_add_metric_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+                android:id="@+id/header"
+                style="@style/RobotScouter.AddMetric"
+                android:text="@string/metric_header_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/checkBox"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/note"
+                app:drawableTopCompat="@drawable/ic_metric_header"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+                android:id="@+id/checkBox"
+                style="@style/RobotScouter.AddMetric"
+                android:text="@string/metric_checkbox_title"
+                app:layout_constraintStart_toEndOf="@id/header"
+                app:layout_constraintEnd_toStartOf="@id/stopwatch"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/counter"
+                app:drawableTopCompat="@drawable/ic_metric_checkbox"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+                android:id="@+id/stopwatch"
+                style="@style/RobotScouter.AddMetric"
+                android:text="@string/metric_stopwatch_title"
+                app:layout_constraintStart_toEndOf="@id/checkBox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/spinner"
+                app:drawableTopCompat="@drawable/ic_metric_stopwatch"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+                android:id="@+id/note"
+                style="@style/RobotScouter.AddMetric"
+                android:text="@string/metric_note_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/counter"
+                app:layout_constraintTop_toBottomOf="@id/header"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:drawableTopCompat="@drawable/ic_metric_notes" />
+
+            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+                android:id="@+id/counter"
+                style="@style/RobotScouter.AddMetric"
+                android:text="@string/metric_counter_title"
+                app:layout_constraintStart_toEndOf="@id/note"
+                app:layout_constraintEnd_toStartOf="@id/spinner"
+                app:layout_constraintTop_toBottomOf="@id/checkBox"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:drawableTopCompat="@drawable/ic_metric_counter" />
+
+            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+                android:id="@+id/spinner"
+                style="@style/RobotScouter.AddMetric"
+                android:text="@string/metric_spinner_title"
+                app:layout_constraintStart_toEndOf="@id/counter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/stopwatch"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:drawableTopCompat="@drawable/ic_header_spinner" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

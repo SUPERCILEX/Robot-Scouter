@@ -80,7 +80,7 @@ object Config {
         }
 
         object FirebaseUi {
-            private const val version = "38e2ece9bb"
+            private const val version = "f0a391a50b"
 
             const val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
@@ -109,7 +109,6 @@ object Config {
             const val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             const val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             const val permissions = "pub.devrel:easypermissions:1.2.0"
-            const val fab = "com.github.clans:fab:1.6.4"
             const val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.8.0"
             const val billing = "com.android.billingclient:billing:1.0"
             const val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.0.2"

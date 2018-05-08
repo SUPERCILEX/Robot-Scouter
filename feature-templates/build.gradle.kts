@@ -7,5 +7,4 @@ dependencies {
     implementation(project(":shared-scouting"))
 
     implementation(Config.Libs.Firebase.invites)
-    implementation(Config.Libs.Miscellaneous.fab)
 }
