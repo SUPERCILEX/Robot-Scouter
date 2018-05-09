@@ -18,7 +18,7 @@ internal fun Team.startUploadMediaJob() {
             setPersisted(true)
             // TODO add back once P ships
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                setEstimatedNetworkBytes(File(media).length())
+//                setEstimatedNetworkBytes(JobInfo.NETWORK_BYTES_UNKNOWN, File(media).length())
 //            }
         }
     } else {

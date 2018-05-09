@@ -49,6 +49,10 @@ class RobotScouterApp : MultiDexApplication() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 vmBuilder.detectFileUriExposure()
             }
+            // TODO add back once P ships
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+//                vmBuilder.detectNonSdkApiUsage()
+//            }
             StrictMode.setVmPolicy(vmBuilder.penaltyLog().build())
 
             StrictMode.setThreadPolicy(
