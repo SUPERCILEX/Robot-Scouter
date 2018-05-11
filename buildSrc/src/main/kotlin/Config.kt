@@ -54,9 +54,12 @@ object Config {
 
         object Arch {
             private const val version = "1.1.1"
+            private const val workVersion = "1.0.0-alpha02"
 
             const val common = "android.arch.lifecycle:common-java8:$version"
             const val extensions = "android.arch.lifecycle:extensions:$version"
+            const val work = "android.arch.work:work-runtime-ktx:$workVersion"
+            const val workFirebase = "android.arch.work:work-firebase:$workVersion"
         }
 
         object Firebase {
@@ -72,7 +75,6 @@ object Config {
             const val perf = "com.google.firebase:firebase-perf:16.0.0"
 
             const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.2"
-            const val jobs = "com.firebase:firebase-jobdispatcher:0.8.5"
         }
 
         object PlayServices {

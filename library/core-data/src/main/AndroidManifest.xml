@@ -16,30 +16,6 @@
             android:excludeFromRecents="true"
             android:taskAffinity="" />
 
-        <service
-            android:name=".client.DownloadTeamDataJob21"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
-            android:name=".client.DownloadTeamDataJob14"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".client.UploadTeamMediaJob21"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <service
-            android:name=".client.UploadTeamMediaJob14"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"

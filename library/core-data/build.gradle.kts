@@ -25,7 +25,8 @@ dependencies {
     implementation(Config.Libs.Firebase.functions)
     implementation(Config.Libs.Firebase.storage)
     implementation(Config.Libs.Firebase.config)
-    implementation(Config.Libs.Firebase.jobs)
+    implementation(Config.Libs.Arch.work)
+    implementation(Config.Libs.Arch.workFirebase)
 
     implementation(Config.Libs.Miscellaneous.retrofit)
     implementation(Config.Libs.Miscellaneous.retrofitGson)

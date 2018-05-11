@@ -1,19 +1,33 @@
 package com.supercilex.robotscouter.core.data.client
 
+import androidx.work.Worker
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.model.isTrashed
 import com.supercilex.robotscouter.core.data.model.ref
 import com.supercilex.robotscouter.core.data.model.teamParser
+import com.supercilex.robotscouter.core.data.parseTeam
 import com.supercilex.robotscouter.core.data.uid
+import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.experimental.runBlocking
 
-internal interface TeamJob {
-    val updateTeam: (team: Team, newTeam: Team) -> Unit
+internal abstract class TeamWorker : Worker() {
+    abstract val updateTeam: (team: Team, newTeam: Team) -> Unit
 
-    suspend fun startJob(team: Team) {
+    override fun doWork() = runBlocking {
+        try {
+            doWork(inputData.parseTeam())
+            WorkerResult.SUCCESS
+        } catch (e: Exception) {
+            logCrashLog("$javaClass errored: $e")
+            WorkerResult.RETRY
+        }
+    }
+
+    private suspend fun doWork(team: Team) {
         // Ensure this job isn't being scheduled after the user has signed out
         if (!team.owners.contains(uid)) return
 
@@ -34,7 +48,7 @@ internal interface TeamJob {
 
             if (existingTeam.isTrashed != false) return
 
-            val newTeam = startTask(team, existingTeam)
+            val newTeam = startTask(existingTeam, team)
             if (team.owners.contains(uid)) {
                 updateTeam(team, newTeam ?: return)
             }
@@ -43,5 +57,5 @@ internal interface TeamJob {
         }
     }
 
-    fun startTask(originalTeam: Team, existingFetchedTeam: Team): Team?
+    abstract fun startTask(latestTeam: Team, originalTeam: Team): Team?
 }

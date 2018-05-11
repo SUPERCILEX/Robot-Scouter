@@ -6,7 +6,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-abstract class TbaServiceBase<out T>(clazz: Class<T>) {
+internal abstract class TbaServiceBase<out T>(clazz: Class<T>) {
     protected val api: T = TBA_RETROFIT.create(clazz)
 
     protected val tbaApiKey: String = RobotScouter.getString(R.string.tba_api_key)

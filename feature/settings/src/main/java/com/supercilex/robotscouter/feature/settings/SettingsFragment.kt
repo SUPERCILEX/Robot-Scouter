@@ -25,7 +25,7 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
-import com.supercilex.robotscouter.core.data.cancelAllJobs
+import com.supercilex.robotscouter.core.data.cancelAllAuthenticatedJobs
 import com.supercilex.robotscouter.core.data.clearPrefs
 import com.supercilex.robotscouter.core.data.debugInfo
 import com.supercilex.robotscouter.core.data.isFullUser
@@ -142,7 +142,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
             }
             KEY_LINK_ACCOUNT -> startSignIn()
             KEY_SIGN_OUT -> {
-                cancelAllJobs()
+                cancelAllAuthenticatedJobs()
                 settingsModel.signOut()
             }
             KEY_RELEASE_NOTES -> launchUrl(

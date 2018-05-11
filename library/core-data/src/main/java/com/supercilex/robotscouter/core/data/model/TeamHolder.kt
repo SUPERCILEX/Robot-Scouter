@@ -9,7 +9,6 @@ import com.supercilex.robotscouter.core.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.isSignedIn
-import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.waitForChange
@@ -37,12 +36,6 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
 
                     team.add()
                     _teamListener.postValue(team.copy())
-
-                    try {
-                        TeamDetailsDownloader.load(team)
-                    } catch (e: Exception) {
-                        null
-                    }?.let { team.update(it) }
                 }.logFailures()
             } else {
                 _teamListener.setValue(team)
