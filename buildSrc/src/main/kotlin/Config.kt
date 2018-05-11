@@ -8,12 +8,12 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:3.2.0-alpha13"
+        const val android = "com.android.tools.build:gradle:3.2.0-alpha14"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:3.2.1"
         const val firebase = "com.google.firebase:firebase-plugins:1.1.5"
-        const val fabric = "io.fabric.tools:gradle:1.25.3"
+        const val fabric = "io.fabric.tools:gradle:1.25.4"
         const val publishing = "com.github.SUPERCILEX:gradle-play-publisher:013f54c874"
     }
 
