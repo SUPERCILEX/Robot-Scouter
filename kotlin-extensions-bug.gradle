@@ -1,0 +1,2 @@
+// See https://github.com/gradle/kotlin-dsl/issues/644
+androidExtensions {}

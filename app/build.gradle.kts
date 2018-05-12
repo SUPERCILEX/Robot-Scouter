@@ -2,9 +2,7 @@ import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 import java.io.FileInputStream
 import java.util.Properties
 
-apply(from = "../standard-android-config.gradle")
 plugins {
-    id("com.android.application")
     id("io.fabric")
     id("com.github.triplet.play")
 }
@@ -70,13 +68,13 @@ play {
 }
 
 dependencies {
-    implementation(project(":shared"))
-    implementation(project(":feature-teams"))
-    implementation(project(":feature-autoscout"))
-    implementation(project(":feature-scouts"))
-    implementation(project(":feature-templates"))
-    implementation(project(":feature-settings"))
-    implementation(project(":feature-exports"))
+    implementation(project(":library:shared"))
+    implementation(project(":feature:teams"))
+    implementation(project(":feature:autoscout"))
+    implementation(project(":feature:scouts"))
+    implementation(project(":feature:templates"))
+    implementation(project(":feature:settings"))
+    implementation(project(":feature:exports"))
 
     implementation(Config.Libs.Support.multidex)
     implementation(Config.Libs.Miscellaneous.billing)

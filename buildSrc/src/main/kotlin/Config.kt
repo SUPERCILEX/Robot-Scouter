@@ -15,6 +15,8 @@ object Config {
         const val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         const val fabric = "io.fabric.tools:gradle:1.25.4"
         const val publishing = "com.github.SUPERCILEX:gradle-play-publisher:013f54c874"
+
+        const val ktlint = "com.github.shyiko:ktlint:0.23.1"
     }
 
     object Libs {

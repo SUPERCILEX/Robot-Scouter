@@ -7,4 +7,4 @@ build
 /app/keystore.properties
 /app/*.json
 /app/keystore.jks
-*/src/main/res/values/config.xml
+**/src/main/res/values/config.xml

@@ -17,7 +17,7 @@ import com.supercilex.robotscouter.core.refWatcher
 import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.experimental.async
 
-class RobotScouterApp : MultiDexApplication() {
+class RobotScouter : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) return

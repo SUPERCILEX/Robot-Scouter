@@ -4,7 +4,6 @@ plugins {
     id("kotlin2js")
     id("kotlin-platform-js")
 }
-apply(from = "../quality/quality.gradle")
 
 dependencies {
     implementation(project(":common"))

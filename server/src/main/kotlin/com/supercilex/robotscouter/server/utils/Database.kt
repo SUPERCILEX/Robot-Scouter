@@ -62,16 +62,20 @@ private fun processInBatches(
 }.then { Unit }
 
 class FieldValue {
-    //language=JavaScript
+    // language=JavaScript
     companion object {
-        fun serverTimestamp(): dynamic = js("require(\"firebase-admin\").firestore.FieldValue.serverTimestamp()")
-        fun delete(): dynamic = js("require(\"firebase-admin\").firestore.FieldValue.delete()")
+        fun serverTimestamp(): dynamic =
+                js("require(\"firebase-admin\").firestore.FieldValue.serverTimestamp()")
+
+        fun delete(): dynamic =
+                js("require(\"firebase-admin\").firestore.FieldValue.delete()")
     }
 }
 
 class FieldPath {
-    //language=JavaScript
+    // language=JavaScript
     companion object {
-        fun documentId(): dynamic = js("require(\"firebase-admin\").firestore.FieldPath.documentId()")
+        fun documentId(): dynamic =
+                js("require(\"firebase-admin\").firestore.FieldPath.documentId()")
     }
 }

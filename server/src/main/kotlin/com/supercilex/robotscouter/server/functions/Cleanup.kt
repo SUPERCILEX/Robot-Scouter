@@ -224,11 +224,11 @@ private fun DocumentSnapshot.deleteIfSingleOwner(
 
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // We know its type
     val owners = get(FIRESTORE_OWNERS) as Json
-    //language=JavaScript
+    // language=JavaScript
     return if (js("Object.keys(owners).length") as Int > 1) {
-        //language=undefined
+        // language=undefined
         console.log("Removing $userId's ownership of ${ref.path}")
-        //language=JavaScript
+        // language=JavaScript
         js("delete owners[userId]")
         ref.update(FIRESTORE_OWNERS, owners)
     } else {
@@ -247,7 +247,7 @@ private fun Json.findOldestDeletionTime(): Date? {
 private fun Json.sanitizedDeletionRequestData(): Json {
     @Suppress("UNUSED_VARIABLE") // Used in JS
     val requests = this
-    //language=JavaScript
+    // language=JavaScript
     js("delete requests[\"$FIRESTORE_BASE_TIMESTAMP\"]")
     return this
 }

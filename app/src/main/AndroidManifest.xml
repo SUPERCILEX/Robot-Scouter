@@ -10,7 +10,7 @@
         android:required="false" />
 
     <application
-        android:name=".RobotScouterApp"
+        android:name=".RobotScouter"
         android:label="${appName}"
         android:allowBackup="false"
         android:appCategory="productivity"
