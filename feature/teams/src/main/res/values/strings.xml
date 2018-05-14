@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="team_new_title">New team/scout</string>
     <string name="team_new_number_hint">Team number</string>
     <string name="team_export_title">Export teams</string>
     <string name="team_tutorial_no_teams_hint">Teams you add appear here</string>

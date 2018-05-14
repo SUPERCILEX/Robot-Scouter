@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
@@ -48,8 +49,9 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
+import com.supercilex.robotscouter.R as RC
 
-abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
+internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener {
     override val recyclerPool = RecyclerView.RecycledViewPool()
 
@@ -65,6 +67,8 @@ abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
 
     protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null
+
+    private val tabs by unsafeLazy { find<TabLayout>(RC.id.tabs) }
 
     private val scoutId: String?
         get() {

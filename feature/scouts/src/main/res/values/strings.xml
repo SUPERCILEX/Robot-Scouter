@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="scout_activity_title">Scout editor</string>
     <string name="scout_offline_rationale">Offline. Data will be saved</string>
     <string name="scout_tutorial_no_scouts_hint">Scouts you add appear here</string>
 
     <string name="scout_new_title">New scout</string>
-    <string name="scout_new_title_long">Add a new scout or team</string>
     <string name="scout_add_title">Add scout</string>
     <string name="scout_add_media_title">Add media</string>
     <string name="scout_edit_template_title">Edit next scout template</string>

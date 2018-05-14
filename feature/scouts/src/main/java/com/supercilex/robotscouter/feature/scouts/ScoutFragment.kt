@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.feature.scouts
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
@@ -25,6 +24,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
+import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment() {
     private val team by unsafeLazy { arguments!!.getTeam() }
@@ -32,9 +32,8 @@ internal class ScoutFragment : MetricListFragment() {
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
     override val dataId get() = scoutId
 
-    val toolbar by unsafeLazy { parentFragment!!.find<Toolbar>(R.id.toolbar) }
-    private val emptyScoutHint by unsafeLazy { find<ContentLoadingHint>(R.id.emptyScoutHint) }
-    private val metricsView by unsafeLazy { find<RecyclerView>(R.id.metricsView) }
+    private val toolbar by unsafeLazy { parentFragment!!.find<Toolbar>(RC.id.toolbar) }
+    private val emptyScoutHint by unsafeLazy { find<ContentLoadingHint>(RC.id.emptyScoutHint) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +46,7 @@ internal class ScoutFragment : MetricListFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View = View.inflate(context, R.layout.fragment_scout_metric_list, null)
+    ): View = View.inflate(context, RC.layout.fragment_scout_metric_list, null)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,7 +67,7 @@ internal class ScoutFragment : MetricListFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
         team.trashScout(scoutId)
-        longSnackbar(toolbar, R.string.scout_delete_message, R.string.undo) {
+        longSnackbar(toolbar, R.string.scout_delete_message, RC.string.undo) {
             team.untrashScout(scoutId)
             (parentFragment as ScoutListFragmentBase).pagerAdapter!!.currentTabId = scoutId
         }

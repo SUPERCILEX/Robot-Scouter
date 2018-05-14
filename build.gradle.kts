@@ -60,58 +60,55 @@ fun Project.configureAndroid() {
         if (name.contains("Test")) enabled = false
     }
 
-    val tree = (project.group as String).split(".")
+    val tree = (group as String).split(".")
     when {
-        project.name == "app" -> "com.android.application"
-        tree.contains("feature") || tree.contains("library") -> "com.android.library"
-        else -> null
-    }?.let {
-        apply(plugin = it)
-        apply(plugin = "kotlin-android")
-        apply(plugin = "kotlin-android-extensions")
+        tree.contains("library") && name != "common" -> apply(plugin = "com.android.library")
+        name == "android-base" -> apply(plugin = "com.android.application")
+        tree.contains("feature") -> apply(plugin = "com.android.dynamic-feature")
+        else -> return
+    }
+    apply(plugin = "kotlin-android")
+    apply(plugin = "kotlin-android-extensions")
 
-        configure<BaseExtension> {
-            compileSdkVersion(Config.SdkVersions.compile)
+    configure<BaseExtension> {
+        compileSdkVersion(Config.SdkVersions.compile)
 
-            defaultConfig {
-                minSdkVersion(Config.SdkVersions.min)
-                targetSdkVersion(Config.SdkVersions.target)
+        defaultConfig {
+            minSdkVersion(Config.SdkVersions.min)
+            targetSdkVersion(Config.SdkVersions.target)
 
-                versionCode = 1
-                resConfigs("en")
-                vectorDrawables.useSupportLibrary = true
-            }
-
-            lintOptions {
-                isCheckAllWarnings = true
-                isWarningsAsErrors = true
-                isAbortOnError = false
-
-                baseline(file("${project.rootDir}/app/lint-baseline.xml"))
-                disable(
-                        "InvalidPackage", // Needed because of Okio
-                        "GradleDependency", "NewerVersionAvailable" // For build reproducibility
-                )
-
-                val reportsDir = "${project.buildDir}/reports"
-                setHtmlOutput(file("$reportsDir/lint-results.html"))
-                setXmlOutput(file("$reportsDir/lint-results.xml"))
-            }
-
-            compileOptions {
-                setSourceCompatibility(JavaVersion.VERSION_1_8)
-                setTargetCompatibility(JavaVersion.VERSION_1_8)
-            }
+            versionCode = 1
+            vectorDrawables.useSupportLibrary = true
         }
 
-        configure<KotlinProjectExtension> {
-            experimental.coroutines = Coroutines.ENABLE
+        lintOptions {
+            isCheckAllWarnings = true
+            isWarningsAsErrors = true
+            isAbortOnError = false
+
+            baseline(file("$rootDir/app/android-base/lint-baseline.xml"))
+            disable(
+                    "InvalidPackage", // Needed because of Okio
+                    "GradleDependency", "NewerVersionAvailable" // For build reproducibility
+            )
+
+            val reportsDir = "$buildDir/reports"
+            setHtmlOutput(file("$reportsDir/lint-results.html"))
+            setXmlOutput(file("$reportsDir/lint-results.xml"))
         }
 
-        configure<AndroidExtensionsExtension> {
-            isExperimental = true
-            defaultCacheImplementation = CacheImplementation.SPARSE_ARRAY
+        compileOptions {
+            setSourceCompatibility(JavaVersion.VERSION_1_8)
+            setTargetCompatibility(JavaVersion.VERSION_1_8)
         }
-        apply(from = "$rootDir/kotlin-extensions-bug.gradle")
+    }
+
+    configure<KotlinProjectExtension> {
+        experimental.coroutines = Coroutines.ENABLE
+    }
+
+    configure<AndroidExtensionsExtension> {
+        configure(delegateClosureOf<AndroidExtensionsExtension> { isExperimental = true })
+        defaultCacheImplementation = CacheImplementation.SPARSE_ARRAY
     }
 }

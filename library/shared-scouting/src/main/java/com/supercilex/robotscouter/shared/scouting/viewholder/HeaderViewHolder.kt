@@ -5,13 +5,13 @@ import android.view.View
 import androidx.core.view.updateLayoutParams
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
-import com.supercilex.robotscouter.shared.scouting.R
+import com.supercilex.robotscouter.core.ui.R as RC
 
 open class HeaderViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.Header, Nothing?>(itemView) {
     private val topMargin =
-            itemView.resources.getDimension(R.dimen.list_item_padding_vertical_within).toInt()
+            itemView.resources.getDimension(RC.dimen.list_item_padding_vertical_within).toInt()
 
     override fun bind() {
         super.bind()

@@ -1,12 +1,20 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.supercilex.robotscouter.feature.scouts">
+
+    <dist:module
+        dist:onDemand="false"
+        dist:title="@string/feature_scouts_title">
+        <dist:fusing dist:include="true" />
+    </dist:module>
 
     <application>
 
         <activity
             android:name=".ScoutListActivity"
             android:label="@string/scout_activity_title"
+            android:parentActivityName="com.supercilex.robotscouter.HomeActivity"
             android:windowSoftInputMode="adjustPan" />
 
     </application>

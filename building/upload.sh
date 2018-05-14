@@ -6,8 +6,8 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   git config --global user.email "saveau.alexandre@gmail.com"
   git config --global user.name "Alex Saveau"
 
-  cp Robot-Scouter/app/build/outputs/apk/release/app-release.apk uploads/Robot-Scouter/app-release.apk
-  cp Robot-Scouter/app/build/outputs/mapping/release/mapping.txt uploads/Robot-Scouter/mapping.txt
+  cp Robot-Scouter/app/android-base/build/outputs/apk/release/app-release.apk uploads/Robot-Scouter/app-release.apk
+  cp Robot-Scouter/app/android-base/build/outputs/mapping/release/mapping.txt uploads/Robot-Scouter/mapping.txt
   cd uploads/Robot-Scouter
 
   # Duplicated in build.sh

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="template_activity_title">Scout template editor</string>
     <string name="template_new_title">New template</string>
     <string name="template_set_default_message">Default template updated</string>
     <string name="template_edit_name_title">Edit template name</string>

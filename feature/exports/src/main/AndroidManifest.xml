@@ -1,6 +1,13 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.supercilex.robotscouter.feature.exports">
+
+    <dist:module
+        dist:onDemand="false"
+        dist:title="@string/feature_exports_title">
+        <dist:fusing dist:include="true" />
+    </dist:module>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

@@ -3,11 +3,14 @@ package com.supercilex.robotscouter.feature.settings
 import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
+import com.supercilex.robotscouter.Bridge
+import com.supercilex.robotscouter.SettingsActivityCompanion
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.shared.handleUpNavigation
 import org.jetbrains.anko.intentFor
 
+@Bridge
 class SettingsActivity : ActivityBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_Settings)
@@ -33,7 +36,8 @@ class SettingsActivity : ActivityBase() {
         }
     }
 
-    companion object {
-        fun show(context: Context) = context.startActivity(context.intentFor<SettingsActivity>())
+    companion object : SettingsActivityCompanion {
+        override fun show(context: Context) =
+                context.startActivity(context.intentFor<SettingsActivity>())
     }
 }

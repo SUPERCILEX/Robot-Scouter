@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Robot Scouter</string>
+
+    <!-- Home activity -->
+    <string name="home_teams_title">Teams</string>
+    <string name="home_autoscout_title">Auto Scout</string>
+
+    <string name="navigation_drawer_open_desc">Open navigation drawer</string>
+    <string name="navigation_drawer_close_desc">Close navigation drawer</string>
+
+    <string name="tutorial_no_team_selected_hint">Select a team to start scouting</string>
+
+    <string name="sign_in_title">Sign in</string>
+    <string name="anonymous_sign_in_failed_message">Anonymous sign in failed</string>
+    <string name="sign_in_try_again_title">Try again</string>
+
+    <!-- Donate dialog -->
+    <string name="donate_title">Donate</string>
+    <string name="donate_amount">$%d</string>
+    <string name="donate_monthly_message">Automatically donate each month</string>
+    <string name="donate_cancel_message">
+        Are you sure you don’t want to donate? We appreciate any donation no matter how small!
+    </string>
+    <string name="donate_thanks_message">Thank you!!! Any and all help is greatly appreciated!</string>
+
+    <!-- Link activity -->
+    <string name="link_teams_imported_message">Teams successfully imported</string>
+    <string name="link_uri_parse_error">Error: couldn’t parse URL</string>
+
+    <!-- Shortcuts -->
+    <string name="team_new_title">New team/scout</string>
+    <string name="team_new_title_long">Add a new scout or team</string>
+    <string name="export_all_teams_title">Export all teams</string>
+
+    <!-- Feature modules -->
+    <string name="scout_activity_title">Scout editor</string>
+    <string name="template_activity_title">Scout template editor</string>
+    <string name="settings_activity_title">Settings</string>
+
+    <string name="feature_teams_title">Teams</string>
+    <string name="feature_auto_scout_title">Auto Scout</string>
+    <string name="feature_scouts_title">Scout editor</string>
+    <string name="feature_templates_title">Template editor</string>
+    <string name="feature_settings_title">Settings</string>
+    <string name="feature_exports_title">Exports</string>
+
+    <!-- Other -->
+    <string name="asset_statements" translatable="false">
+        [{\n \"relation\": [\"delegate_permission/common.handle_all_urls\"],\n \"target\":
+        {\n \"namespace\": \"web\",\n \"site\": \"https://supercilex.github.io\",\n }\n}]
+    </string>
+</resources>

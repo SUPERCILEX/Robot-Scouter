@@ -14,7 +14,7 @@ object Config {
         const val google = "com.google.gms:google-services:3.2.1"
         const val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         const val fabric = "io.fabric.tools:gradle:1.25.4"
-        const val publishing = "com.github.SUPERCILEX:gradle-play-publisher:1c37a81392"
+        const val publishing = "com.github.Triple-T:gradle-play-publisher:fab6d986c1"
 
         const val ktlint = "com.github.shyiko:ktlint:0.23.1"
     }
@@ -87,6 +87,7 @@ object Config {
 
             const val auth = "com.google.android.gms:play-services-auth:$version"
             const val nearby = "com.google.android.gms:play-services-nearby:$version"
+            const val playCore = "com.google.android.play:core:1.2.0"
         }
 
         object FirebaseUi {

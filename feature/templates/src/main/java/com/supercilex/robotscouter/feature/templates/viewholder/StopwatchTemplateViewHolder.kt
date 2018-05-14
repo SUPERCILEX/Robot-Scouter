@@ -10,6 +10,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
 import com.supercilex.robotscouter.shared.scouting.viewholder.StopwatchViewHolder
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
+import com.supercilex.robotscouter.R as RC
 
 internal class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder(itemView),
         MetricTemplateViewHolder<Metric.Stopwatch, List<Long>> {
@@ -22,7 +23,7 @@ internal class StopwatchTemplateViewHolder(itemView: View) : StopwatchViewHolder
         itemView as ConstraintLayout
         val set = ConstraintSet()
         set.clone(itemView)
-        set.connect(R.id.cycles, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
+        set.connect(RC.id.cycles, ConstraintSet.START, R.id.reorder, ConstraintSet.END, 0)
         set.applyTo(itemView)
     }
 }

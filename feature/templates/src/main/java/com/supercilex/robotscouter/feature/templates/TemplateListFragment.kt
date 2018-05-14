@@ -2,8 +2,10 @@ package com.supercilex.robotscouter.feature.templates
 
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -23,6 +25,8 @@ import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_template_list.*
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.support.v4.find
+import com.supercilex.robotscouter.R as RC
 
 internal class TemplateListFragment : FragmentBase(),
         View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder,
@@ -41,6 +45,8 @@ internal class TemplateListFragment : FragmentBase(),
             }
         }
     }
+    private val toolbar by unsafeLazy { find<Toolbar>(RC.id.toolbar) }
+    private val tabs by unsafeLazy { find<TabLayout>(RC.id.tabs) }
 
     init {
         setHasOptionsMenu(true)
@@ -137,7 +143,7 @@ internal class TemplateListFragment : FragmentBase(),
 
     fun onTemplateCreated(id: String) {
         pagerAdapter.currentTabId = id
-        longSnackbar(root, R.string.template_added_title, R.string.template_set_default_title) {
+        longSnackbar(root, R.string.template_added_title, RC.string.template_set_default_title) {
             defaultTemplateId = id
         }
     }

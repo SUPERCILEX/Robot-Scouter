@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewStub
+import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.team_list_row_layout.*
 import org.jetbrains.anko.find
 import java.lang.ref.WeakReference
 import java.util.Locale
+import com.supercilex.robotscouter.R as RC
 
 internal class TeamViewHolder(
         override val containerView: View,
@@ -71,6 +73,7 @@ internal class TeamViewHolder(
         mediaLoadProgressStub.isVisible = true
         itemView.find<ContentLoadingProgressBar>(R.id.progress)
     }
+    private val name by unsafeLazy { itemView.find<TextView>(RC.id.name) }
 
     private lateinit var team: Team
     private var isItemSelected: Boolean = false
@@ -186,7 +189,7 @@ internal class TeamViewHolder(
             Glide.with(context)
                     .load(team.media)
                     .apply(RequestOptions.circleCropTransform()
-                                   .error(R.drawable.ic_person_grey_96dp))
+                                   .error(RC.drawable.ic_person_grey_96dp))
         }
 
         private val RecyclerView.isScrolling get() = scrollState != RecyclerView.SCROLL_STATE_IDLE

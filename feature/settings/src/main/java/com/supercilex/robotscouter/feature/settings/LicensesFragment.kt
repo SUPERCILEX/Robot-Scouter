@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_licenses.*
 import net.yslibrary.licenseadapter.Library
 import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.Licenses
+import com.supercilex.robotscouter.R as RC
 
 internal class LicensesFragment : FragmentBase(), OnBackPressedListener {
     override fun onCreateView(
@@ -58,7 +59,7 @@ internal class LicensesFragment : FragmentBase(), OnBackPressedListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as AppCompatActivity).setTitle(R.string.settings_activity_title)
+        (activity as AppCompatActivity).setTitle(RC.string.settings_activity_title)
     }
 
     override fun onBackPressed(): Boolean {

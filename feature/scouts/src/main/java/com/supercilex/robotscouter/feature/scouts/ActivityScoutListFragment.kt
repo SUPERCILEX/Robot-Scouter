@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.shared.handleUpNavigation
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import com.supercilex.robotscouter.R as RC
 
 internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +77,8 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
         override fun bind() {
             super.bind()
             (activity as AppCompatActivity).supportActionBar!!.title = team.toString()
-            setTaskDescription(null, ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            setTaskDescription(
+                    null, ContextCompat.getColor(requireContext(), RC.color.colorPrimary))
         }
 
         override fun updateScrim(color: Int, bitmap: Bitmap?) {

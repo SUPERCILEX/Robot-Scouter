@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Future
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
+import com.supercilex.robotscouter.core.ui.R as RC
 
 open class StopwatchViewHolder(
         itemView: View
@@ -91,7 +92,7 @@ open class StopwatchViewHolder(
 
             metric.value.size.let { notifyCycleAdded(it, it) }
 
-            longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, R.string.undo) {
+            longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, RC.string.undo) {
                 val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
                 val newCycles = metric.value.toMutableList().apply { remove(lap) }
                 metric.update(newCycles)
@@ -106,7 +107,7 @@ open class StopwatchViewHolder(
         val currentTimer = timer ?: return false
 
         currentTimer.cancel()
-        undoAddSnackbar = longSnackbar(itemView, R.string.cancelled, R.string.undo) {
+        undoAddSnackbar = longSnackbar(itemView, RC.string.cancelled, RC.string.undo) {
             timer = Timer(this, currentTimer.startTimeMillis)
         }.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
             override fun onDismissed(transientBottomBar: Snackbar, event: Int) {

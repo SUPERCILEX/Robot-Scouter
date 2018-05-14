@@ -1,6 +1,13 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.supercilex.robotscouter.feature.autoscout">
+
+    <dist:module
+        dist:onDemand="false"
+        dist:title="@string/feature_auto_scout_title">
+        <dist:fusing dist:include="true" />
+    </dist:module>
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />

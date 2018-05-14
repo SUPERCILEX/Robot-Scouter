@@ -38,6 +38,7 @@ import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
 import com.supercilex.robotscouter.shared.client.startSignIn
 import com.supercilex.robotscouter.shared.launchUrl
 import org.jetbrains.anko.support.v4.toast
+import com.supercilex.robotscouter.R as RC
 
 internal class SettingsFragment : PreferenceFragmentBase(),
         TemplateSelectionListener,
@@ -54,7 +55,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
                 FirebaseAuth.getInstance().signInAnonymously()
                 requireActivity().finish()
             } else {
-                toast(R.string.error_unknown)
+                toast(RC.string.error_unknown)
             }
         })
     }
@@ -175,18 +176,18 @@ internal class SettingsFragment : PreferenceFragmentBase(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
-                toast(R.string.signed_in_message)
+                toast(RC.string.signed_in_message)
                 logLoginEvent()
                 requireActivity().finish()
             } else {
                 val response = IdpResponse.fromResultIntent(data) ?: return
 
                 if (response.error?.errorCode == ErrorCodes.NO_NETWORK) {
-                    toast(R.string.no_connection)
+                    toast(RC.string.no_connection)
                     return
                 }
 
-                toast(R.string.sign_in_failed_message)
+                toast(RC.string.sign_in_failed_message)
             }
         }
     }

@@ -21,6 +21,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.supercilex.robotscouter.DrawerToggler
+import com.supercilex.robotscouter.TeamExporter
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.model.Team
@@ -32,6 +34,7 @@ import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import org.jetbrains.anko.find
 import java.util.Locale
+import com.supercilex.robotscouter.R as RC
 
 internal class TeamMenuHelper(
         private val fragment: TeamListFragment,
@@ -44,9 +47,9 @@ internal class TeamMenuHelper(
     lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
 
     private val fab by unsafeLazy { activity.find<FloatingActionButton>(R.id.fab) }
-    private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(R.id.drawerLayout) }
+    private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(RC.id.drawerLayout) }
     private val toolbar by unsafeLazy {
-        activity.find<Toolbar>(R.id.toolbar).apply {
+        activity.find<Toolbar>(RC.id.toolbar).apply {
             setNavigationOnClickListener(this@TeamMenuHelper)
         }
     }
@@ -81,7 +84,7 @@ internal class TeamMenuHelper(
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.team_options, menu)
 
-        signInItem = menu.findItem(R.id.action_sign_in)
+        signInItem = menu.findItem(RC.id.action_sign_in)
 
         exportItem = menu.findItem(R.id.action_export_teams)
         shareItem = menu.findItem(R.id.action_share)
@@ -249,9 +252,9 @@ internal class TeamMenuHelper(
                 color != ContextCompat.getColor(activity, newColor)
 
         @ColorRes val oldColorPrimary =
-                if (visible) R.color.selected_toolbar else R.color.colorPrimary
+                if (visible) RC.color.selected_toolbar else RC.color.colorPrimary
         @ColorRes val newColorPrimary =
-                if (visible) R.color.colorPrimary else R.color.selected_toolbar
+                if (visible) RC.color.colorPrimary else RC.color.selected_toolbar
 
         if (toolbar.background.shouldUpdateBackground(newColorPrimary)) {
             animateColorChange(
@@ -262,9 +265,9 @@ internal class TeamMenuHelper(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             @ColorRes val oldColorPrimaryDark =
-                    if (visible) R.color.selected_status_bar else R.color.colorPrimaryDark
+                    if (visible) RC.color.selected_status_bar else RC.color.colorPrimaryDark
             @ColorRes val newColorPrimaryDark =
-                    if (visible) R.color.colorPrimaryDark else R.color.selected_status_bar
+                    if (visible) RC.color.colorPrimaryDark else RC.color.selected_status_bar
 
             if (drawerLayout.statusBarBackgroundDrawable
                     .shouldUpdateBackground(newColorPrimaryDark)) {
@@ -281,7 +284,7 @@ internal class TeamMenuHelper(
 
     private fun updateToolbarTitle() {
         activity.supportActionBar!!.title = if (selectedTeams.isEmpty()) {
-            activity.getString(R.string.app_name)
+            activity.getString(RC.string.app_name)
         } else {
             String.format(Locale.getDefault(), "%d", selectedTeams.size)
         }

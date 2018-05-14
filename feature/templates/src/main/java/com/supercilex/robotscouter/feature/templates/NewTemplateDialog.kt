@@ -7,11 +7,12 @@ import android.support.v4.app.FragmentManager
 import com.supercilex.robotscouter.core.data.model.addTemplate
 import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
+import com.supercilex.robotscouter.R as RC
 
 internal class NewTemplateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(context)
             .setTitle(R.string.template_new_title)
-            .setItems(R.array.template_new_options, this)
+            .setItems(RC.array.template_new_options, this)
             .setNegativeButton(android.R.string.cancel, null)
             .create()
 

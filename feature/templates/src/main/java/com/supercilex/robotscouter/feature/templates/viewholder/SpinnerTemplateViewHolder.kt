@@ -32,6 +32,7 @@ import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.properties.Delegates
+import com.supercilex.robotscouter.R as RC
 
 internal class SpinnerTemplateViewHolder(
         itemView: View
@@ -104,7 +105,7 @@ internal class SpinnerTemplateViewHolder(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer,
             TemplateViewHolder, View.OnClickListener {
         override val reorderView: ImageView by unsafeLazy { reorder }
-        override val nameEditor: EditText = itemView.find(R.id.name)
+        override val nameEditor: EditText = itemView.find(RC.id.name)
 
         private lateinit var parent: SpinnerTemplateViewHolder
         private lateinit var item: Metric.List.Item
@@ -164,7 +165,7 @@ internal class SpinnerTemplateViewHolder(
             })
             parent.items.adapter.notifyItemRemoved(position)
 
-            longSnackbar(itemView, R.string.deleted, R.string.undo) {
+            longSnackbar(itemView, RC.string.deleted, RC.string.undo) {
                 parent.metric.update(parent.metric.value.toMutableList().apply {
                     add(position, items[position])
                 })

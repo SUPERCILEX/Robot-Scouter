@@ -1,5 +1,5 @@
 dependencies {
-    implementation(project(":library:shared"))
+    implementation(project(":app:android-base"))
 
     implementation(Config.Libs.Misc.poi)
     implementation(Config.Libs.Misc.poiProguard)

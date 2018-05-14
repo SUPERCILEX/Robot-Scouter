@@ -3,13 +3,14 @@ package com.supercilex.robotscouter.shared.scouting
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.SavedStateAdapter
 import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.fragment_scout_metric_list.*
+import org.jetbrains.anko.support.v4.find
 
 abstract class MetricListFragment : FragmentBase() {
     protected val holder: MetricListHolder by unsafeLazy {
@@ -18,6 +19,7 @@ abstract class MetricListFragment : FragmentBase() {
     abstract val metricsRef: CollectionReference
     abstract val dataId: String
 
+    protected val metricsView by unsafeLazy { find<RecyclerView>(R.id.metricsView) }
     protected var adapter: SavedStateAdapter<*, *> by LateinitVal()
         private set
 

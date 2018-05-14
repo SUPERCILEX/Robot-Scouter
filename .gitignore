@@ -5,7 +5,12 @@
 build
 node_modules
 /local.properties
-/app/keystore.properties
-/app/*.json
-/app/keystore.jks
-**/src/main/res/values/config.xml
+
+keystore.properties
+google-*.json
+*.jks
+config.xml
+!travis-dummies/keystore.properties
+!travis-dummies/google-*.json
+!travis-dummies/*.jks
+!travis-dummies/config.xml

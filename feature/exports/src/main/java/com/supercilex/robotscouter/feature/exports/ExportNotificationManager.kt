@@ -20,6 +20,7 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
+import com.supercilex.robotscouter.R as RC
 
 internal class ExportNotificationManager(private val service: ExportService) {
     private val notificationFilter = FilteringNotificationManager()
@@ -31,14 +32,14 @@ internal class ExportNotificationManager(private val service: ExportService) {
                 .setGroup(transientGroupId.toString())
                 .setGroupSummary(true)
                 .setContentTitle(RobotScouter.getString(R.string.export_overall_progress_title))
-                .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
     private val exportNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
                 .setGroup(transientGroupId.toString())
                 .setContentTitle(RobotScouter.getString(R.string.export_progress_title))
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 
@@ -208,7 +209,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     private fun showExportedPermanentNotification() {
         notificationFilter.notify(permanentGroupId, masterNotification
                 .setGroup(permanentGroupId.toString())
-                .setSmallIcon(R.drawable.ic_logo)
+                .setSmallIcon(RC.drawable.ic_logo)
                 .setSubText(RobotScouter.resources.getQuantityString(
                         R.plurals.export_complete_subtitle, nTemplates, nTemplates))
                 .setContentText(if (teams.isEmpty()) {

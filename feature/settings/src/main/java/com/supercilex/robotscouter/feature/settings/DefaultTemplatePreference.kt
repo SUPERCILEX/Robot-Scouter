@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.core.data.model.getTemplateName
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.model.TemplateType
+import com.supercilex.robotscouter.R as RC
 
 @Suppress("unused") // Used through view reflection
 internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBase,
@@ -48,7 +49,7 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
 
         entries = arrayOf(
                 *TemplateType.values.map {
-                    context.resources.getStringArray(R.array.template_new_options)[it.id]
+                    context.resources.getStringArray(RC.array.template_new_options)[it.id]
                 }.toTypedArray(),
                 *namesListener.mapIndexed { index, _ ->
                     namesListener[index].getTemplateName(index)

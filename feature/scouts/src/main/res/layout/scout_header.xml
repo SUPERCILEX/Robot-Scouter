@@ -6,7 +6,7 @@
 
     <!-- Set any style to get rid of the AppCompat one which changes the text color and whatnot. -->
     <android.support.text.emoji.widget.EmojiAppCompatTextView
-        android:id="@+id/name"
+        android:id="@id/name"
         style="@style/RobotScouter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

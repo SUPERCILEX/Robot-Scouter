@@ -59,6 +59,7 @@ import java.io.IOException
 import java.util.Collections
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import com.supercilex.robotscouter.R as RC
 
 internal class TemplateExporter(
         scouts: Map<Team, List<Scout>>,
@@ -140,19 +141,19 @@ internal class TemplateExporter(
                 .setContentIntent(sharePendingIntent)
                 .addAction(
                         R.drawable.ic_share_white_24dp,
-                        RobotScouter.getString(R.string.share),
+                        RobotScouter.getString(RC.string.share),
                         sharePendingIntent
                 )
                 .addAction(
                         R.drawable.ic_launch_white_24dp,
-                        RobotScouter.getString(R.string.open),
+                        RobotScouter.getString(RC.string.open),
                         PendingIntent.getActivity(
                                 RobotScouter,
                                 exportId,
                                 viewIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT)
                 )
-                .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
+                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
     }
@@ -352,7 +353,7 @@ internal class TemplateExporter(
 
             header.createCell(i + 1).apply {
                 setCellValue(if (scout.name.isNullOrBlank()) {
-                    RobotScouter.getString(R.string.scout_default_name, i + 1)
+                    RobotScouter.getString(RC.string.scout_default_name, i + 1)
                 } else {
                     scout.name
                 })

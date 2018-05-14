@@ -1,1 +1,11 @@
-<manifest package="com.supercilex.robotscouter.feature.teams" />
+<manifest
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.supercilex.robotscouter.feature.teams">
+
+    <dist:module
+        dist:onDemand="false"
+        dist:title="@string/feature_teams_title">
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+</manifest>

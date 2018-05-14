@@ -4,10 +4,11 @@ import android.Manifest
 import android.app.IntentService
 import android.content.Intent
 import android.support.annotation.RequiresPermission
-import android.support.annotation.Size
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
 import com.google.firebase.firestore.DocumentSnapshot
+import com.supercilex.robotscouter.Bridge
+import com.supercilex.robotscouter.ExportServiceCompanion
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.await
@@ -41,7 +42,9 @@ import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.util.concurrent.TimeUnit
+import com.supercilex.robotscouter.R as RC
 
+@Bridge
 class ExportService : IntentService(TAG) {
     init {
         setIntentRedelivery(true)
@@ -127,7 +130,7 @@ class ExportService : IntentService(TAG) {
             scoutParser.parseSnapshot(it).let { it.id to it.name }
         }.toMutableMap().apply {
             putAll(TemplateType.values.associate {
-                it.id.toString() to resources.getStringArray(R.array.template_new_options)[it.id]
+                it.id.toString() to resources.getStringArray(RC.array.template_new_options)[it.id]
             })
         }
 
@@ -168,21 +171,20 @@ class ExportService : IntentService(TAG) {
     private fun ExportNotificationManager.abortCritical(t: Throwable) {
         if (t !is TimeoutCancellationException) CrashLogger(t)
         abort()
-        if (t !is CancellationException) showToast("${getString(R.string.error_unknown)}\n\n$t")
+        if (t !is CancellationException) showToast("${getString(RC.string.error_unknown)}\n\n$t")
     }
 
-    companion object {
+    companion object : ExportServiceCompanion {
         private const val TAG = "ExportService"
         private const val SYNCHRONOUS_QUERY_CHUNK = 10
         private const val TIMEOUT = 10L
 
         private const val MIN_TEAMS_TO_RATE = 10
 
-        /** @return true if an export was attempted, false otherwise */
-        fun exportAndShareSpreadSheet(
+        override fun exportAndShareSpreadSheet(
                 activity: FragmentActivity,
                 permHandler: PermissionRequestHandler,
-                @Size(min = 1) mutableTeams: List<Team>
+                mutableTeams: List<Team>
         ): Boolean {
             val teams = mutableTeams.toList()
             if (teams.isEmpty()) return false
@@ -192,7 +194,7 @@ class ExportService : IntentService(TAG) {
                 return false
             }
 
-            snackbar(activity.find(R.id.root), R.string.export_progress_hint)
+            snackbar(activity.find(RC.id.root), R.string.export_progress_hint)
 
             teams.logExport()
             ContextCompat.startForegroundService(

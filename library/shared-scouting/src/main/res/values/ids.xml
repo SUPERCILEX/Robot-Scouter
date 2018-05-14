@@ -2,4 +2,5 @@
 <resources>
     <item name="tabs" type="id" />
     <item name="noTabsHint" type="id" />
+    <item name="metricsView" type="id" />
 </resources>

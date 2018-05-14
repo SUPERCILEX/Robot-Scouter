@@ -28,6 +28,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.math.roundToInt
+import com.supercilex.robotscouter.R as RC
 
 internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         private val rootView: View
@@ -35,7 +36,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
         ItemTouchHelper.START
 ) {
-    private val recyclerView: RecyclerView = rootView.find(R.id.metricsView)
+    private val recyclerView: RecyclerView = rootView.find(RC.id.metricsView)
     private val appBar: AppBarLayout = (rootView.context as FragmentActivity).find(R.id.appBar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
@@ -43,10 +44,10 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     private val deleteIcon: Drawable = AppCompatResources.getDrawable(
             rootView.context, R.drawable.ic_delete_black_24dp)!!
     private val deletePaint = Paint().apply {
-        color = ContextCompat.getColor(rootView.context, R.color.delete_background)
+        color = ContextCompat.getColor(rootView.context, RC.color.delete_background)
     }
     private val deleteIconPadding =
-            rootView.resources.getDimension(R.dimen.spacing_large).toInt()
+            rootView.resources.getDimension(RC.dimen.spacing_large).toInt()
 
     private val localItems = mutableListOf<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null
@@ -239,7 +240,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
                 delete(deletedRef)
             }.logFailures(deletedRef, itemsBelow)
 
-            longSnackbar(rootView, R.string.deleted, R.string.undo) {
+            longSnackbar(rootView, RC.string.deleted, RC.string.undo) {
                 firestoreBatch {
                     set(deletedRef, snapshot.data!!)
                     updatePositions(itemsBelow, 1)

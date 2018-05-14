@@ -14,6 +14,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.supercilex.robotscouter.Bridge
+import com.supercilex.robotscouter.SelectedTeamsRetriever
+import com.supercilex.robotscouter.SignInResolver
+import com.supercilex.robotscouter.TeamListFragmentCompanion
+import com.supercilex.robotscouter.TeamListFragmentCompanion.Companion.TAG
 import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.isSignedIn
@@ -26,7 +31,8 @@ import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_team_list.*
 
-class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackPressedListener,
+@Bridge
+internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackPressedListener,
         SelectedTeamsRetriever, KeyboardShortcutListener, View.OnClickListener {
     override val selectedTeams get() = menuHelper.selectedTeams
 
@@ -126,10 +132,8 @@ class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackPressedLis
 
     override fun onBackPressed(): Boolean = menuHelper.onBackPressed()
 
-    companion object {
-        const val TAG = "TeamListFragment"
-
-        fun getInstance(manager: FragmentManager) =
+    companion object : TeamListFragmentCompanion {
+        override fun getInstance(manager: FragmentManager) =
                 manager.findFragmentByTag(TAG) as TeamListFragment? ?: TeamListFragment()
     }
 }

@@ -11,6 +11,7 @@ import android.support.annotation.CallSuper
 import android.support.annotation.ColorInt
 import android.support.v4.app.ActivityCompat
 import android.support.v7.graphics.Palette
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import com.bumptech.glide.Glide
@@ -40,11 +41,13 @@ import kotlinx.android.synthetic.main.fragment_scout_list.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.find
 import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
 import android.support.v7.graphics.Target as PaletteTarget
+import com.supercilex.robotscouter.R as RC
 
-open class AppBarViewHolderBase(
+internal open class AppBarViewHolderBase(
         private val fragment: ScoutListFragmentBase,
         savedInstanceState: Bundle?,
         listener: LiveData<Team?>,
@@ -54,9 +57,11 @@ open class AppBarViewHolderBase(
         OnActivityResult, Saveable, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
-    override val containerView = fragment.view
+    final override val containerView = fragment.view!!
+    val toolbar: Toolbar = containerView.find(RC.id.toolbar)
     private val toolbarHeight =
-            fragment.resources.getDimensionPixelSize(R.dimen.scout_toolbar_height)
+            fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)
+
     private val permissionHandler = ViewModelProviders.of(fragment)
             .get(PermissionRequestHandler::class.java).apply {
                 init(TeamMediaCreator.perms)
@@ -98,7 +103,7 @@ open class AppBarViewHolderBase(
         Glide.with(backdrop)
                 .asBitmap()
                 .load(team.media)
-                .apply(RequestOptions.centerCropTransform().error(R.drawable.ic_person_grey_96dp))
+                .apply(RequestOptions.centerCropTransform().error(RC.drawable.ic_person_grey_96dp))
                 .listener(this)
                 .into(backdrop)
     }

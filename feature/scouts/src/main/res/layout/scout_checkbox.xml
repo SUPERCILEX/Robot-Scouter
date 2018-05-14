@@ -5,7 +5,7 @@
     style="@style/RobotScouter.ListItem">
 
     <android.support.text.emoji.widget.EmojiAppCompatTextView
-        android:id="@+id/name"
+        android:id="@id/name"
         style="@style/RobotScouter.ListItemNameInLinearLayout"
         android:textIsSelectable="false"
         tools:text="Example" />

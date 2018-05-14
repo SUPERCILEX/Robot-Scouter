@@ -9,8 +9,8 @@ androidExtensions {
 }
 
 dependencies {
-    api(project(":common"))
-    expectedBy(project(":common"))
+    api(project(":library:common"))
+    expectedBy(project(":library:common"))
 
     api(Config.Libs.Kotlin.jvm)
     api(Config.Libs.Kotlin.coroutinesAndroid)

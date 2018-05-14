@@ -15,7 +15,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
@@ -23,7 +23,7 @@
             app:titleMarginTop="@dimen/spacing_large" />
 
         <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
+            android:id="@id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabMode="scrollable" />
@@ -36,7 +36,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
-            android:id="@+id/noTabsHint"
+            android:id="@id/noTabsHint"
             style="@style/RobotScouter.NoContentHint"
             android:text="@string/template_tutorial_no_templates_hint"
             app:layout_constraintStart_toStartOf="parent"

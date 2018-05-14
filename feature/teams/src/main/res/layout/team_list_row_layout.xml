@@ -50,7 +50,7 @@
         tools:text="@tools:sample/us_zipcodes" />
 
     <android.support.text.emoji.widget.EmojiAppCompatTextView
-        android:id="@+id/name"
+        android:id="@id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_large"

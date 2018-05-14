@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="export_all_teams_title">Export all teams</string>
     <plurals name="export_share_title">
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>

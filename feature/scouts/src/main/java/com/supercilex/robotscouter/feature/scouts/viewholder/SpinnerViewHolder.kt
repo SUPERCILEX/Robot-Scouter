@@ -5,7 +5,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.supercilex.robotscouter.core.data.model.updateSelectedValueId
 import com.supercilex.robotscouter.core.model.Metric
-import com.supercilex.robotscouter.feature.scouts.R
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import kotlinx.android.synthetic.main.scout_spinner.*
 
@@ -20,7 +19,7 @@ internal class SpinnerViewHolder(
         ).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        spinner.setBackgroundResource(R.drawable.abc_spinner_mtrl_am_alpha)
+        spinner.setBackgroundResource(android.support.design.R.drawable.abc_spinner_mtrl_am_alpha)
         spinner.onItemSelectedListener = this
     }
 

@@ -1,6 +1,7 @@
 include(
-        ":common", ":server", ":app",
+        ":app:android-base", "app:server",
 
+        ":library:common",
         ":library:core", ":library:core-model", ":library:core-data", ":library:core-ui",
         ":library:shared", ":library:shared-scouting",
 

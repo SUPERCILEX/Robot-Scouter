@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
+import com.supercilex.robotscouter.R as RC
 
 internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
     override val metricsRef: CollectionReference by unsafeLazy {
@@ -86,7 +87,7 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
                 val oldDefaultId = defaultTemplateId
                 defaultTemplateId = metricsRef.parent!!.id
 
-                longSnackbar(metricsView, R.string.template_set_default_message, R.string.undo) {
+                longSnackbar(metricsView, R.string.template_set_default_message, RC.string.undo) {
                     defaultTemplateId = oldDefaultId
                 }
             }
@@ -103,7 +104,7 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
                         }.logFailures(metrics.map { it.reference }, metrics)
                     }.logFailures()
 
-                    longSnackbar(metricsView, R.string.deleted, R.string.undo) {
+                    longSnackbar(metricsView, RC.string.deleted, RC.string.undo) {
                         async {
                             firestoreBatch {
                                 for (metric in metrics) set(metric.reference, metric.data)
@@ -125,12 +126,12 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
         itemTouchCallback.addItemToScrollQueue(position)
 
         when (v.id) {
-            R.id.header -> Metric.Header(position = position, ref = metricRef)
-            R.id.checkBox -> Metric.Boolean(position = position, ref = metricRef)
-            R.id.counter -> Metric.Number(position = position, ref = metricRef)
-            R.id.stopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
-            R.id.note -> Metric.Text(position = position, ref = metricRef)
-            R.id.spinner -> Metric.List(position = position, ref = metricRef)
+            R.id.addHeader -> Metric.Header(position = position, ref = metricRef)
+            R.id.addCheckBox -> Metric.Boolean(position = position, ref = metricRef)
+            R.id.addCounter -> Metric.Number(position = position, ref = metricRef)
+            R.id.addStopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
+            R.id.addNote -> Metric.Text(position = position, ref = metricRef)
+            R.id.addSpinner -> Metric.List(position = position, ref = metricRef)
             else -> error("Unknown view id: $id")
         }.apply {
             logAdd()

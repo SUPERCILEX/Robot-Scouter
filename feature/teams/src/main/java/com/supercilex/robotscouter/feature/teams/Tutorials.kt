@@ -15,6 +15,7 @@ import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.data.teams
 import org.jetbrains.anko.support.v4.find
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
+import com.supercilex.robotscouter.R as RC
 
 internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
     helper.hasShownAddTeamTutorial.observe(owner, object : Observer<Boolean?> {
@@ -42,7 +43,7 @@ internal fun showSignInTutorial(helper: TutorialHelper, owner: Fragment) {
         private val prompt
             get() = MaterialTapTargetPrompt.Builder(
                     owner.requireActivity(), R.style.RobotScouter_Tutorial_Menu)
-                    .setTarget(R.id.action_sign_in)
+                    .setTarget(RC.id.action_sign_in)
                     .setClipToView(owner.find(R.id.root))
                     .setPrimaryText(R.string.tutorial_sign_in_title)
                     .setSecondaryText(R.string.tutorial_sign_in_rationale)

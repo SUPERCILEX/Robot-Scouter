@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_add_scout"
+        android:shortcutId="add_scout"
+        android:shortcutLongLabel="@string/team_new_title_long"
+        android:shortcutShortLabel="@string/team_new_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="add_scout"
+            android:targetClass="com.supercilex.robotscouter.HomeActivity"
+            android:targetPackage="com.supercilex.robotscouter" />
+        <categories android:name="android.shortcut.NEW_SCOUT" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/shortcut_export_all_teams"
+        android:shortcutId="export_all_teams"
+        android:shortcutLongLabel="@string/export_all_teams_title"
+        android:shortcutShortLabel="@string/export_all_teams_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="export_all_teams"
+            android:targetClass="com.supercilex.robotscouter.HomeActivity"
+            android:targetPackage="com.supercilex.robotscouter" />
+        <categories android:name="android.shortcut.EXPORT_ALL_TEAMS" />
+    </shortcut>
+
+</shortcuts>

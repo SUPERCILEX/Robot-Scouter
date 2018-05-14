@@ -3,6 +3,8 @@ package com.supercilex.robotscouter.feature.scouts
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import com.supercilex.robotscouter.Bridge
+import com.supercilex.robotscouter.ScoutListActivityCompanion
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.ui.ActivityBase
@@ -10,14 +12,16 @@ import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.core.unsafeLazy
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.multipleTask
+import com.supercilex.robotscouter.R as RC
 
-class ScoutListActivity : ActivityBase() {
+@Bridge
+internal class ScoutListActivity : ActivityBase() {
     private val scoutListFragment by unsafeLazy {
         supportFragmentManager.findFragmentByTag(ActivityScoutListFragment.TAG) as ActivityScoutListFragment
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
+        setTheme(RC.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scout_list)
         if (savedInstanceState == null) {
@@ -42,8 +46,8 @@ class ScoutListActivity : ActivityBase() {
         return true
     }
 
-    companion object {
-        fun createIntent(args: Bundle): Intent =
+    companion object : ScoutListActivityCompanion {
+        override fun createIntent(args: Bundle): Intent =
                 RobotScouter.intentFor<ScoutListActivity>(SCOUT_ARGS_KEY to args)
                         .multipleTask()
                         .addNewDocumentFlags()

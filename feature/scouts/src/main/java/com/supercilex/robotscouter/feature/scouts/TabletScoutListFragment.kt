@@ -5,18 +5,22 @@ import android.support.v4.app.Fragment
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import com.supercilex.robotscouter.Bridge
+import com.supercilex.robotscouter.TabletScoutListFragmentBridge
+import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.isInTabletMode
-import kotlinx.android.synthetic.main.fragment_scout_list.*
 import org.jetbrains.anko.findOptional
+import com.supercilex.robotscouter.R as RC
 
-class TabletScoutListFragment : ScoutListFragmentBase() {
+@Bridge
+internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutListFragmentBridge {
     private var noContentHint: View? = null
         get() {
-            if (field == null) field = requireActivity().findOptional(R.id.noTeamSelectedHint)
+            if (field == null) field = requireActivity().findOptional(RC.id.noTeamSelectedHint)
             return field
         }
 
@@ -72,10 +76,8 @@ class TabletScoutListFragment : ScoutListFragmentBase() {
         requireFragmentManager().beginTransaction().remove(this).commit()
     }
 
-    companion object {
-        const val TAG = "TabletScoutListFrag"
-
-        fun newInstance(args: Bundle): ScoutListFragmentBase =
+    companion object : TabletScoutListFragmentCompanion {
+        override fun newInstance(args: Bundle) =
                 TabletScoutListFragment().apply { arguments = args }
     }
 }

@@ -13,12 +13,12 @@ import com.supercilex.robotscouter.core.data.model.updateUnit
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
-import com.supercilex.robotscouter.feature.templates.R
 import com.supercilex.robotscouter.shared.scouting.viewholder.CounterViewHolder
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
 import kotlinx.android.synthetic.main.scout_template_counter.*
 import org.jetbrains.anko.find
 import java.util.Locale
+import com.supercilex.robotscouter.R as RC
 
 internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
         MetricTemplateViewHolder<Metric.Number, Long> {
@@ -32,10 +32,12 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
         itemView as LinearLayout
         itemView.removeView(unit)
         itemView.addView(unit, itemView.childCount - 1)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            itemView.find<View>(R.id.countContainer).updatePaddingRelative(end = 0)
-        } else {
-            itemView.find<View>(R.id.countContainer).updatePadding(right = 0)
+        itemView.find<View>(RC.id.countContainer).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                updatePaddingRelative(end = 0)
+            } else {
+                updatePadding(right = 0)
+            }
         }
 
         unit.onFocusChangeListener = this
