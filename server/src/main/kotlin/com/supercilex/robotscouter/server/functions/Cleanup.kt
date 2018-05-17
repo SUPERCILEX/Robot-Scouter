@@ -96,7 +96,7 @@ fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     }
 }
 
-private fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches { userSnapshot ->
+private fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches(10) { userSnapshot ->
     console.log("Deleting all data for user:\n${JSON.stringify(userSnapshot.data())}")
 
     val userId = userSnapshot.id
@@ -109,6 +109,11 @@ private fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches { us
             }
     )).then {
         deleteUser(userSnapshot)
+    }.then {
+        Promise<Unit> { resolve, _ ->
+            // Wait because there's a limit of 10 deletions/sec
+            setTimeout({ resolve(Unit) }, 1000)
+        }
     }
 }
 
@@ -188,15 +193,13 @@ private fun processDeletion(request: DocumentSnapshot): Promise<*> {
 
 private fun deleteUser(user: DocumentSnapshot): Promise<*> {
     console.log("Deleting user: ${user.id}")
-    return user.userPrefs.delete().then {
+    return auth.deleteUser(user.id).then(null) {
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // It's a JS object
+        if ((it as Json)["code"] != "auth/user-not-found") throw it
+    }.then {
+        user.userPrefs.delete()
+    }.then {
         user.ref.delete()
-    }.then {
-        Promise<Unit> { resolve, _ ->
-            // Wait because there's a limit of 10 deletions/sec
-            setTimeout({ resolve(Unit) }, 100)
-        }
-    }.then {
-        auth.deleteUser(user.id)
     }
 }
 

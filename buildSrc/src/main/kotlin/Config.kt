@@ -1,6 +1,6 @@
-private const val kotlinVersion = "1.2.41"
-
 object Config {
+    private const val kotlinVersion = "1.2.41"
+
     object SdkVersions {
         const val compile = 27
         const val target = 27
@@ -62,7 +62,7 @@ object Config {
         object Firebase {
             const val analytics = "com.google.firebase:firebase-analytics:15.0.2"
             const val auth = "com.google.firebase:firebase-auth:15.1.0"
-            const val firestore = "com.google.firebase:firebase-firestore:15.0.0"
+            const val firestore = "com.google.firebase:firebase-firestore:16.0.0"
             const val storage = "com.google.firebase:firebase-storage:15.0.2"
             const val config = "com.google.firebase:firebase-config:15.0.2"
             const val indexing = "com.google.firebase:firebase-appindexing:15.0.1"
