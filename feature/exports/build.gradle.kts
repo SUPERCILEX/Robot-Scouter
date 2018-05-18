@@ -1,7 +1,7 @@
 dependencies {
     implementation(project(":library:shared"))
 
-    implementation(Config.Libs.Miscellaneous.poi)
-    implementation(Config.Libs.Miscellaneous.poiProguard)
-    implementation(Config.Libs.Miscellaneous.gson)
+    implementation(Config.Libs.Misc.poi)
+    implementation(Config.Libs.Misc.poiProguard)
+    implementation(Config.Libs.Misc.gson)
 }

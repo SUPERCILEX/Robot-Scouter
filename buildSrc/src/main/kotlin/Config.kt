@@ -8,13 +8,13 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:3.2.0-alpha15"
+        const val android = "com.android.tools.build:gradle:3.2.0-alpha16"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:3.2.1"
         const val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         const val fabric = "io.fabric.tools:gradle:1.25.4"
-        const val publishing = "com.github.SUPERCILEX:gradle-play-publisher:013f54c874"
+        const val publishing = "com.github.SUPERCILEX:gradle-play-publisher:1c37a81392"
 
         const val ktlint = "com.github.shyiko:ktlint:0.23.1"
     }
@@ -94,7 +94,7 @@ object Config {
             const val twitter = "com.twitter.sdk.android:twitter-core:3.1.1@aar"
         }
 
-        object Miscellaneous {
+        object Misc {
             private const val leakCanaryVersion = "1.5.4"
             private const val retrofitVersion = "2.4.0"
             private const val poiVersion = "3.17"

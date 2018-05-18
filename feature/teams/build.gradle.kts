@@ -3,6 +3,6 @@ dependencies {
 
     implementation(Config.Libs.Firebase.invites)
 
-    implementation(Config.Libs.Miscellaneous.glideRv)
-    implementation(Config.Libs.Miscellaneous.mttp)
+    implementation(Config.Libs.Misc.glideRv)
+    implementation(Config.Libs.Misc.mttp)
 }

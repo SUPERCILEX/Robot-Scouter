@@ -7,9 +7,6 @@ plugins {
     id("com.github.triplet.play")
 }
 if (!project.hasProperty("devBuild")) apply(plugin = "com.google.firebase.firebase-perf")
-tasks.whenTaskAdded {
-    if (name == "assembleRelease") dependsOn("updateReleasePlayVersion")
-}
 
 android {
     defaultConfig {
@@ -77,7 +74,7 @@ dependencies {
     implementation(project(":feature:exports"))
 
     implementation(Config.Libs.Support.multidex)
-    implementation(Config.Libs.Miscellaneous.billing)
+    implementation(Config.Libs.Misc.billing)
 
     implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)

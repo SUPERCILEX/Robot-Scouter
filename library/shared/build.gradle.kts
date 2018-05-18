@@ -3,8 +3,8 @@ dependencies {
     api(project(":library:core-ui"))
 
     api(Config.Libs.FirebaseUi.auth)
-    api(Config.Libs.Miscellaneous.glide)
-    api(Config.Libs.Miscellaneous.permissions)
+    api(Config.Libs.Misc.glide)
+    api(Config.Libs.Misc.permissions)
 
     implementation(Config.Libs.FirebaseUi.facebook)
     implementation(Config.Libs.FirebaseUi.twitter) { isTransitive = true }

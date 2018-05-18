@@ -17,8 +17,8 @@ dependencies {
     api(Config.Libs.Anko.coroutines)
     api(Config.Libs.Firebase.core)
     api(Config.Libs.Firebase.crashlytics)
-    debugApi(Config.Libs.Miscellaneous.leakCanary)
-    releaseApi(Config.Libs.Miscellaneous.leakCanaryNoop)
+    debugApi(Config.Libs.Misc.leakCanary)
+    releaseApi(Config.Libs.Misc.leakCanaryNoop)
     api(Config.Libs.Kotlin.ktx)
 
     implementation(Config.Libs.Anko.common)

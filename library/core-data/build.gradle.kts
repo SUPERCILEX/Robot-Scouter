@@ -18,7 +18,7 @@ dependencies {
     implementation(Config.Libs.Anko.common)
     implementation(Config.Libs.Support.appCompat) { isTransitive = false }
     implementation(Config.Libs.Support.pref) { isTransitive = false }
-    implementation(Config.Libs.Miscellaneous.glide) { isTransitive = false }
+    implementation(Config.Libs.Misc.glide) { isTransitive = false }
 
     implementation(Config.Libs.PlayServices.auth) { isTransitive = false }
     implementation(Config.Libs.FirebaseUi.firestore) { exclude(module = "recyclerview-v7") }
@@ -28,6 +28,6 @@ dependencies {
     implementation(Config.Libs.Arch.work)
     implementation(Config.Libs.Arch.workFirebase)
 
-    implementation(Config.Libs.Miscellaneous.retrofit)
-    implementation(Config.Libs.Miscellaneous.retrofitGson)
+    implementation(Config.Libs.Misc.retrofit)
+    implementation(Config.Libs.Misc.retrofitGson)
 }
