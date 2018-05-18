@@ -13,7 +13,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
@@ -33,6 +32,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.awaitAll
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -179,7 +179,7 @@ suspend fun Team.getScouts(): List<Scout> {
     val scouts = getScoutsQuery().getInBatches().map { scoutParser.parseSnapshot(it) }
     val metricsForScouts = scouts.map {
         async { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches() }
-    }.await()
+    }.awaitAll()
     return scouts.mapIndexed { index, scout ->
         scout.copy(metrics = metricsForScouts[index].map { metricParser.parseSnapshot(it) })
     }

@@ -15,22 +15,32 @@ import com.supercilex.robotscouter.server.utils.selector
 import com.supercilex.robotscouter.server.utils.stopwatch
 import com.supercilex.robotscouter.server.utils.text
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
+import kotlinx.coroutines.experimental.asPromise
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.await
+import kotlinx.coroutines.experimental.awaitAll
 import kotlin.js.Json
 import kotlin.js.Promise
 import kotlin.js.json
 
-fun updateDefaultTemplates() = Promise.all(arrayOf(
-        defaultTemplates.updateMatchTemplate(),
-        defaultTemplates.updatePitTemplate(),
-        defaultTemplates.updateEmptyTemplate()
-)).then { Unit }
+fun updateDefaultTemplates(): Promise<*>? {
+    return async {
+        val match = async { defaultTemplates.updateMatchTemplate() }
+        val pit = async { defaultTemplates.updatePitTemplate() }
+        val empty = async { defaultTemplates.updateEmptyTemplate() }
 
-private fun CollectionReference.updateMatchTemplate() = doc("0").set(json(
-        FIRESTORE_TEMPLATE_ID to "0",
-        FIRESTORE_NAME to "Match Scout",
-        FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
-        FIRESTORE_METRICS to matchTemplateMetrics()
-).log("Match"))
+        awaitAll(match, pit, empty)
+    }.asPromise()
+}
+
+private suspend fun CollectionReference.updateMatchTemplate() {
+    doc("0").set(json(
+            FIRESTORE_TEMPLATE_ID to "0",
+            FIRESTORE_NAME to "Match Scout",
+            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
+            FIRESTORE_METRICS to matchTemplateMetrics()
+    ).log("Match")).await()
+}
 
 fun matchTemplateMetrics() = metrics {
     json(
@@ -68,12 +78,14 @@ fun matchTemplateMetrics() = metrics {
     )
 }
 
-private fun CollectionReference.updatePitTemplate() = doc("1").set(json(
-        FIRESTORE_TEMPLATE_ID to "1",
-        FIRESTORE_NAME to "Pit Scout",
-        FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
-        FIRESTORE_METRICS to pitTemplateMetrics()
-).log("Pit"))
+private suspend fun CollectionReference.updatePitTemplate() {
+    doc("1").set(json(
+            FIRESTORE_TEMPLATE_ID to "1",
+            FIRESTORE_NAME to "Pit Scout",
+            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
+            FIRESTORE_METRICS to pitTemplateMetrics()
+    ).log("Pit")).await()
+}
 
 fun pitTemplateMetrics() = metrics {
     json(
@@ -118,10 +130,12 @@ fun pitTemplateMetrics() = metrics {
     )
 }
 
-private fun CollectionReference.updateEmptyTemplate() = doc("2").set(json(
-        FIRESTORE_TEMPLATE_ID to "2",
-        FIRESTORE_NAME to "Blank Scout",
-        FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp()
-).log("Blank"))
+private suspend fun CollectionReference.updateEmptyTemplate() {
+    doc("2").set(json(
+            FIRESTORE_TEMPLATE_ID to "2",
+            FIRESTORE_NAME to "Blank Scout",
+            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp()
+    ).log("Blank")).await()
+}
 
 private fun Json.log(name: String) = apply { console.log("$name: ${JSON.stringify(this)}") }

@@ -3,6 +3,7 @@
 .idea/*
 !.idea/codeStyles
 build
+node_modules
 /local.properties
 /app/keystore.properties
 /app/*.json

@@ -36,9 +36,15 @@ import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
-import com.supercilex.robotscouter.server.utils.types.setTimeout
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
+import kotlinx.coroutines.experimental.CompletableDeferred
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.asPromise
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.await
+import kotlinx.coroutines.experimental.awaitAll
+import kotlinx.coroutines.experimental.delay
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -47,35 +53,41 @@ private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
 private const val TRASH_TIMEOUT_DAYS = 30
 
-fun deleteUnusedData(): Promise<*>? {
+fun deleteUnusedData(): Promise<*>? = async {
     console.log("Looking for users that haven't opened Robot Scouter for over a year" +
                         " or anonymous users that haven't opened Robot Scouter in over 60 days.")
-    return Promise.all(arrayOf(
-            deleteUnusedData(users.where(
-                    FIRESTORE_LAST_LOGIN,
-                    "<",
-                    moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
-            )),
-            deleteUnusedData(users.where(
-                    FIRESTORE_LAST_LOGIN,
-                    "<",
-                    moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate()
-            ).where(
-                    FIRESTORE_EMAIL, "==", null
-            ).where(
-                    FIRESTORE_PHONE_NUMBER, "==", null
-            ))
-    ))
-}
 
-fun emptyTrash(): Promise<*>? {
+    val fullUser = async {
+        deleteUnusedData(users.where(
+                FIRESTORE_LAST_LOGIN,
+                "<",
+                moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
+        ))
+    }
+    val anonymousUser = async {
+        deleteUnusedData(users.where(
+                FIRESTORE_LAST_LOGIN,
+                "<",
+                moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate()
+        ).where(
+                FIRESTORE_EMAIL, "==", null
+        ).where(
+                FIRESTORE_PHONE_NUMBER, "==", null
+        ))
+    }
+
+    awaitAll(fullUser, anonymousUser)
+}.asPromise()
+
+fun emptyTrash(): Promise<*>? = async {
     console.log("Emptying trash for all users.")
-    return deletionQueue.where(
+
+    deletionQueue.where(
             FIRESTORE_BASE_TIMESTAMP,
             "<",
             moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate()
     ).processInBatches(10) { processDeletion(it) }
-}
+}.asPromise()
 
 fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     val snapshot = event.after
@@ -94,138 +106,151 @@ fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     }
 }
 
-private fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches(10) { userSnapshot ->
-    console.log("Deleting all data for user:\n${JSON.stringify(userSnapshot.data())}")
+private suspend fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches(10) { user ->
+    console.log("Deleting all data for user:\n${JSON.stringify(user.data())}")
 
-    val userId = userSnapshot.id
-    Promise.all(arrayOf(
-            getTeamsQuery(userId).processInBatches {
-                it.deleteIfSingleOwner(userId) { deleteTeam(this) }
-            },
-            getTemplatesQuery(userId).processInBatches {
-                it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
-            }
-    )).then {
-        deleteUser(userSnapshot)
-    }.then {
-        Promise<Unit> { resolve, _ ->
-            // Wait because there's a limit of 10 deletions/sec
-            setTimeout({ resolve(Unit) }, 1000)
+    val userId = user.id
+    val teams = async {
+        getTeamsQuery(userId).processInBatches {
+            it.deleteIfSingleOwner(userId) { deleteTeam(this) }
         }
     }
+    val templates = async {
+        getTemplatesQuery(userId).processInBatches {
+            it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+        }
+    }
+
+    awaitAll(teams, templates)
+    deleteUser(user)
+
+    // Wait because there's a limit of 10 deletions/sec
+    delay(1000)
 }
 
-private fun processDeletion(request: DocumentSnapshot): Promise<*> {
+private suspend fun processDeletion(request: DocumentSnapshot) {
     val userId = request.id
 
-    fun deleteTeam(id: String) = teams.doc(id).get().then {
-        if (it.exists) it.deleteIfSingleOwner(userId) { deleteTeam(this) }
+    val deleteTeam: suspend (id: String) -> Unit = { id ->
+        val team = teams.doc(id).get().await()
+        if (team.exists) team.deleteIfSingleOwner(userId) { deleteTeam(this) }
     }
 
-    fun deleteScout(teamId: String, scoutId: String) = teams.doc(teamId)
-            .collection(FIRESTORE_SCOUTS)
-            .doc(scoutId)
-            .run {
-                console.log("Deleting scout: ${this.id}")
-                Promise.all(arrayOf(delete(), collection(FIRESTORE_METRICS).delete()))
-            }.then { Unit }
+    val deleteScout: suspend (teamId: String, scoutId: String) -> Unit = { teamId, scoutId ->
+        val scout = teams.doc(teamId).collection(FIRESTORE_SCOUTS).doc(scoutId)
 
-    fun deleteTemplate(id: String, userId: String) = templates.doc(id).get().then {
-        if (it.exists) it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+        console.log("Deleting scout: ${scout.id}")
+        scout.collection(FIRESTORE_METRICS).delete()
+        scout.delete().await()
     }
 
-    fun deleteShareToken(data: Json, token: String): Promise<*> {
-        fun CollectionReference.delete(): Promise<*> {
+    val deleteTemplate: suspend (id: String) -> Unit = { id ->
+        val template = templates.doc(id).get().await()
+        if (template.exists) template.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+    }
+
+    val deleteShareToken: suspend (data: Json, token: String) -> Unit = { data, token ->
+        fun CollectionReference.deletions(): List<Deferred<*>> {
             @Suppress("UNCHECKED_CAST") // We know its type
             val ids = data[FIRESTORE_CONTENT_ID] as Array<String>
-            return Promise.all(ids.map {
-                doc(it).get().then {
-                    if (it.exists) {
-                        it.ref.update("$FIRESTORE_ACTIVE_TOKENS.$token", FieldValue.delete())
+            return ids.map {
+                async {
+                    val content = doc(it).get().await()
+                    if (content.exists) {
+                        content.ref.update(
+                                "$FIRESTORE_ACTIVE_TOKENS.$token",
+                                FieldValue.delete()
+                        ).await()
                     }
                 }
-            }.toTypedArray()).then { Unit }
+            }
         }
 
         console.log("Deleting share token: $token")
-        return when (data[FIRESTORE_SHARE_TYPE] as Int) {
-            FIRESTORE_TEAM_TYPE -> teams.delete()
-            FIRESTORE_TEMPLATE_TYPE -> templates.delete()
+        when (data[FIRESTORE_SHARE_TYPE] as Int) {
+            FIRESTORE_TEAM_TYPE -> teams.deletions()
+            FIRESTORE_TEMPLATE_TYPE -> templates.deletions()
             else -> error("Unknown share type: ${data[FIRESTORE_SHARE_TYPE]}")
-        }
+        }.awaitAll()
     }
 
     val requests = request.data().sanitizedDeletionRequestData()
-
-    return Promise.all(requests.toMap<Json>().map { (key, data) ->
+    val results = requests.toMap<Json>().map { (key, data) ->
         val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
         if ((moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
-            return@map Promise.resolve<String?>(null)
+            return@map CompletableDeferred(null as String?)
         }
 
-        when (data[FIRESTORE_TYPE]) {
-            FIRESTORE_TEAM_TYPE -> deleteTeam(key)
-            FIRESTORE_SCOUT_TYPE -> deleteScout(data[FIRESTORE_CONTENT_ID] as String, key)
-            FIRESTORE_TEMPLATE_TYPE -> deleteTemplate(key, userId)
-            FIRESTORE_SHARE_TOKEN_TYPE -> deleteShareToken(data, key)
-            else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
-        }.then { key }
-    }.toTypedArray()).then {
-        if (it.none { it == null }) {
-            request.ref.delete()
-        } else {
-            firestore.batch {
-                for (field in it.filterNotNull()) {
-                    update(request.ref, field, FieldValue.delete())
-                }
+        async {
+            when (data[FIRESTORE_TYPE]) {
+                FIRESTORE_TEAM_TYPE -> deleteTeam(key)
+                FIRESTORE_SCOUT_TYPE -> deleteScout(data[FIRESTORE_CONTENT_ID] as String, key)
+                FIRESTORE_TEMPLATE_TYPE -> deleteTemplate(key)
+                FIRESTORE_SHARE_TOKEN_TYPE -> deleteShareToken(data, key)
+                else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
+            }
+
+            key
+        }
+    }.awaitAll()
+
+    if (results.none { it == null }) {
+        request.ref.delete().await()
+    } else {
+        firestore.batch {
+            for (field in results.filterNotNull()) {
+                update(request.ref, field, FieldValue.delete())
             }
         }
-    }.then { Unit }
-}
-
-private fun deleteUser(user: DocumentSnapshot): Promise<*> {
-    console.log("Deleting user: ${user.id}")
-    return auth.deleteUser(user.id).then(null) {
-        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // It's a JS object
-        if ((it as Json)["code"] != "auth/user-not-found") throw it
-    }.then {
-        user.userPrefs.delete()
-    }.then {
-        user.ref.delete()
     }
 }
 
-private fun deleteTeam(team: DocumentSnapshot): Promise<*> {
+private suspend fun deleteUser(user: DocumentSnapshot) {
+    console.log("Deleting user: ${user.id}")
+    try {
+        auth.deleteUser(user.id).await()
+    } catch (t: Throwable) {
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // It's a JS object
+        if ((t as Json)["code"] != "auth/user-not-found") throw t
+    }
+
+    user.userPrefs.delete()
+    user.ref.delete().await()
+}
+
+private suspend fun deleteTeam(team: DocumentSnapshot) {
     console.log("Deleting team: ${team.toTeamString()}")
-    return team.ref.collection(FIRESTORE_SCOUTS).delete {
-        it.ref.collection(FIRESTORE_METRICS).delete()
-    }.then {
-        team.ref.delete()
-    }.then { Unit }
+    team.ref.apply {
+        collection(FIRESTORE_SCOUTS).delete {
+            it.ref.collection(FIRESTORE_METRICS).delete()
+        }
+        delete().await()
+    }
 }
 
-private fun deleteTemplate(template: DocumentSnapshot): Promise<*> {
+private suspend fun deleteTemplate(template: DocumentSnapshot) {
     console.log("Deleting template: ${template.toTemplateString()}")
-    return template.ref.collection(FIRESTORE_METRICS).delete().then {
-        template.ref.delete()
-    }.then { Unit }
+    template.ref.apply {
+        collection(FIRESTORE_METRICS).delete()
+        delete().await()
+    }
 }
 
-private fun DocumentSnapshot.deleteIfSingleOwner(
+private suspend fun DocumentSnapshot.deleteIfSingleOwner(
         userId: String,
-        delete: DocumentSnapshot.() -> Promise<*>
-): Promise<*> {
+        delete: suspend DocumentSnapshot.() -> Unit
+) {
     console.log("Processing deletion request for id $id.")
 
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // We know its type
     val owners = get(FIRESTORE_OWNERS) as Json
     // language=JavaScript
-    return if (js("Object.keys(owners).length") as Int > 1) {
+    if (js("Object.keys(owners).length") as Int > 1) {
         // language=undefined
         console.log("Removing $userId's ownership of ${ref.path}")
         // language=JavaScript
         js("delete owners[userId]")
-        ref.update(FIRESTORE_OWNERS, owners)
+        ref.update(FIRESTORE_OWNERS, owners).await()
     } else {
         delete(this)
     }

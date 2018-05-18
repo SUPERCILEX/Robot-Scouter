@@ -9,36 +9,41 @@ import com.supercilex.robotscouter.server.utils.toTemplateString
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Message
 import com.supercilex.robotscouter.server.utils.types.QuerySnapshot
+import kotlinx.coroutines.experimental.asPromise
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.await
+import kotlinx.coroutines.experimental.awaitAll
 import kotlin.js.Promise
 
 fun logUserData(message: Message): Promise<*>? {
     val uid = message.json["uid"] as String
 
     console.log("Logging user data for id: $uid")
-    return Promise.all(arrayOf(
-            getTeamsQuery(uid).get().then {
-                console.log("Team ids:")
-                it.logTeamIds()
-            },
-            getTrashedTeamsQuery(uid).get().then {
-                console.log("Trashed team ids:")
-                it.logTeamIds()
-            },
-            getTemplatesQuery(uid).get().then {
-                console.log("Template ids:")
-                it.logNameIds()
-            },
-            getTrashedTemplatesQuery(uid).get().then {
-                console.log("Trashed template ids:")
-                it.logNameIds()
-            }
-    ))
+    return async {
+        val teams = async {
+            val snapshot = getTeamsQuery(uid).get().await()
+            console.log("${snapshot.size} teams:\n" + snapshot.prettyPrintTeams())
+        }
+        val trashedTeams = async {
+            val snapshot = getTrashedTeamsQuery(uid).get().await()
+            console.log("${snapshot.size} trashed teams:\n" + snapshot.prettyPrintTeams())
+        }
+        val templates = async {
+            val snapshot = getTemplatesQuery(uid).get().await()
+            console.log("${snapshot.size} template ids:\n" + snapshot.prettyPrintTemplates())
+        }
+        val trashedTemplates = async {
+            val snapshot = getTrashedTemplatesQuery(uid).get().await()
+            console.log("${snapshot.size} trashed template ids:\n" + snapshot.prettyPrintTemplates())
+        }
+
+        awaitAll(teams, trashedTeams, templates, trashedTemplates)
+    }.asPromise()
 }
 
-private fun QuerySnapshot.logTeamIds() = logIds { toTeamString() }
+private fun QuerySnapshot.prettyPrintTeams() = prettyPrint { toTeamString() }
 
-private fun QuerySnapshot.logNameIds() = logIds { toTemplateString() }
+private fun QuerySnapshot.prettyPrintTemplates() = prettyPrint { toTemplateString() }
 
-private fun QuerySnapshot.logIds(process: DocumentSnapshot.() -> String) {
-    console.log("${docs.size} items: " + docs.map(process).toString())
-}
+private fun QuerySnapshot.prettyPrint(process: DocumentSnapshot.() -> String) =
+        docs.joinToString(separator = ",\n", transform = process)

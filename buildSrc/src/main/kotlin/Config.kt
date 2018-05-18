@@ -1,5 +1,5 @@
 object Config {
-    private const val kotlinVersion = "1.2.41"
+    private const val kotlinVersion = "1.2.50"
 
     object SdkVersions {
         const val compile = 28
@@ -8,7 +8,7 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:3.2.0-alpha17"
+        const val android = "com.android.tools.build:gradle:3.2.0-alpha18"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:3.2.1"
@@ -21,9 +21,14 @@ object Config {
 
     object Libs {
         object Kotlin {
+            private const val coroutinesVersion = "0.23.3"
+
             const val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
             const val js = "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-            const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
+            const val coroutinesAndroid =
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+            const val coroutinesJs =
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutinesVersion"
             const val ktx = "androidx.core:core-ktx:0.3"
         }
 
@@ -49,7 +54,7 @@ object Config {
             const val customTabs = "com.android.support:support-emoji-appcompat:$version"
             const val pref = "com.android.support:preference-v7:$version"
 
-            const val constraint = "com.android.support.constraint:constraint-layout:1.1.1"
+            const val constraint = "com.android.support.constraint:constraint-layout:1.1.2"
         }
 
         object Arch {

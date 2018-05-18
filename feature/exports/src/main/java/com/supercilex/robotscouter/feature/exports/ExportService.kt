@@ -31,6 +31,7 @@ import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.TimeoutCancellationException
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.awaitAll
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
@@ -62,7 +63,7 @@ class ExportService : IntentService(TAG) {
 
                 runBlocking {
                     withTimeout(TIMEOUT, TimeUnit.MINUTES) {
-                        it.map { async { it.getScouts() } }.await()
+                        it.map { async { it.getScouts() } }.awaitAll()
                     }
                 }.also { notificationManager.updateLoadProgress() }
             }.flatten().withIndex().associate {
@@ -108,7 +109,7 @@ class ExportService : IntentService(TAG) {
                             }
                         }
                     }
-                }.await()
+                }.awaitAll()
             }
         }
     }

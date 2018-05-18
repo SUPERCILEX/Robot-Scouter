@@ -7,8 +7,10 @@ import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.WriteBatch
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.await
+import kotlinx.coroutines.experimental.awaitAll
 import kotlin.js.Json
-import kotlin.js.Promise
 
 fun <T> Json.toMap(): Map<String, T> {
     val map: MutableMap<String, T> = mutableMapOf()
@@ -24,42 +26,40 @@ fun DocumentSnapshot.toTeamString() =
 
 fun DocumentSnapshot.toTemplateString() = "${data()[FIRESTORE_NAME]}: $id"
 
-fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
+suspend fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
     transaction()
-    commit()
+    commit().await()
 }
 
-fun Query.processInBatches(
+suspend fun Query.processInBatches(
         batchSize: Int = 100,
-        action: (DocumentSnapshot) -> Promise<*>
+        action: suspend (DocumentSnapshot) -> Unit
 ) = processInBatches(this, batchSize) {
-    Promise.all(it.map(action).toTypedArray())
+    it.map { async { action(it) } }.awaitAll()
 }
 
-fun CollectionReference.delete(
+suspend fun CollectionReference.delete(
         batchSize: Int = 100,
-        middleMan: (DocumentSnapshot) -> Promise<*>? = { null }
+        middleMan: suspend (DocumentSnapshot) -> Unit = {}
 ) = processInBatches(orderBy(FieldPath.documentId()), batchSize) { snapshots ->
-    Promise.all(snapshots.map(middleMan).map {
-        it ?: Promise.resolve(Unit)
-    }.toTypedArray()).then {
-        firestore.batch {
-            snapshots.forEach { delete(it.ref) }
-        }
+    snapshots.map { async { middleMan(it) } }.awaitAll()
+
+    firestore.batch {
+        snapshots.forEach { delete(it.ref) }
     }
 }
 
-private fun processInBatches(
+private suspend fun processInBatches(
         query: Query,
         batchSize: Int,
-        action: (List<DocumentSnapshot>) -> Promise<*>
-): Promise<Unit> = query.limit(batchSize).get().then { snapshot ->
-    if (snapshot.size == 0) return@then Promise.resolve<DocumentSnapshot?>(null)
-    action(snapshot.docs.toList()).then { snapshot.docs.last() }
-}.then { next ->
-    if (next == null) return@then Promise.resolve(Unit)
-    processInBatches(query.startAfter(next), batchSize, action)
-}.then { Unit }
+        action: suspend (List<DocumentSnapshot>) -> Unit
+) {
+    val snapshot = query.limit(batchSize).get().await()
+    if (snapshot.docs.isEmpty()) return
+
+    action(snapshot.docs.toList())
+    processInBatches(query.startAfter(snapshot.docs.last()), batchSize, action)
+}
 
 class FieldValue {
     // language=JavaScript

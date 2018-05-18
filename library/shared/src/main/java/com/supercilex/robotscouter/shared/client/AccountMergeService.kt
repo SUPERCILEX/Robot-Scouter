@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.core.data.updateOwner
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.awaitAll
 import java.util.Date
 import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
 
@@ -39,7 +40,7 @@ internal class AccountMergeService : ManualMergeService() {
         logCrashLog("Migrating user data from $prevUid.")
 
         return async {
-            await(
+            awaitAll(
                     async { userPrefs = userPrefsRef.get().await() },
                     async { teams = teamsQuery.get().await() },
                     async { templates = getTemplatesQuery().get().await() }

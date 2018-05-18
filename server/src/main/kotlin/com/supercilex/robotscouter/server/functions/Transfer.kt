@@ -12,6 +12,9 @@ import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.types.CallableContext
 import com.supercilex.robotscouter.server.utils.types.HttpsError
+import kotlinx.coroutines.experimental.asPromise
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.await
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -49,17 +52,18 @@ fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
     val oldOwnerPath = prevUid?.let { "$FIRESTORE_OWNERS.$it" }
     val newOwnerPath = "$FIRESTORE_OWNERS.${auth.uid}"
 
-    return ref.get().then {
-        if (!it.exists) throw HttpsError("not-found")
+    return async {
+        val content = ref.get().await()
 
+        if (!content.exists) throw HttpsError("not-found")
         @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-        if ((it.get(FIRESTORE_ACTIVE_TOKENS) as Json)[token] == null) {
+        if ((content.get(FIRESTORE_ACTIVE_TOKENS) as Json)[token] == null) {
             throw HttpsError("permission-denied", "Token $token is invalid for $path")
         }
-    }.then {
+
         firestore.batch {
             oldOwnerPath?.let { update(ref, it, FieldValue.delete()) }
             update(ref, newOwnerPath, value)
         }
-    }
+    }.asPromise()
 }

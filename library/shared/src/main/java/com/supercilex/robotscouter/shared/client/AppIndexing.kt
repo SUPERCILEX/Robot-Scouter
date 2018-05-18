@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.core.data.model.scoutParser
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.waitForChange
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.awaitAll
 import kotlinx.coroutines.experimental.runBlocking
 
 internal class AppIndexingService : JobIntentService() {
@@ -25,7 +26,7 @@ internal class AppIndexingService : JobIntentService() {
                 onSignedIn()
                 FirebaseAppIndex.getInstance().removeAll().await()
 
-                await(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
+                awaitAll(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
             }

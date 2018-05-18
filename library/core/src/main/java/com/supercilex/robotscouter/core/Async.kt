@@ -12,10 +12,6 @@ import java.util.concurrent.Future
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.suspendCoroutine
 
-suspend fun <T> await(vararg jobs: Deferred<T>) = jobs.map { it.await() }
-
-suspend fun <T> List<Deferred<T>>.await() = map { it.await() }
-
 suspend fun <T> Task<T>.await(): T {
     val trace = generateStackTrace(1)
     if (isComplete) return if (isSuccessful) result else throw exception!!.injectRoot(trace)

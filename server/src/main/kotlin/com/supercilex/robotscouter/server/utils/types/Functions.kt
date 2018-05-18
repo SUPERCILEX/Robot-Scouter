@@ -19,8 +19,6 @@ val admin = require("firebase-admin").unsafeCast<Admin>()
 external val SDK_VERSION: String = definedExternally
 external val apps: Array<App> = definedExternally
 
-external fun setTimeout(callback: () -> Unit, timeoutMillis: Int)
-
 external interface AppOptions {
     var credential: Credential? get() = definedExternally; set(value) = definedExternally
     var databaseAuthVariableOverride: Any? get() = definedExternally; set(value) = definedExternally
