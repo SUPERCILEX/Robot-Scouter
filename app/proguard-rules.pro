@@ -6,7 +6,7 @@
 -dontwarn com.supercilex.robotscouter.**
 
 # Crashlytics
--keep class com.google.android.gms.measurement.AppMeasurement$* { *; }
+-keep class com.google.android.gms.measurement.** { *; }
 
 # Retrofit
 -dontwarn okhttp3.**

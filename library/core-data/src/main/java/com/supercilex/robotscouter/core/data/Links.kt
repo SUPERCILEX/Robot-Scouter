@@ -12,15 +12,17 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
 import com.supercilex.robotscouter.common.FIRESTORE_REF
+import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
-import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import java.io.File
+import java.util.Date
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
@@ -81,7 +83,14 @@ suspend fun updateOwner(
                     FIRESTORE_TOKEN to token,
                     FIRESTORE_REF to ref.path,
                     FIRESTORE_PREV_UID to prevUid,
-                    FIRESTORE_VALUE to newValue(ref)
+                    run {
+                        val value = newValue(ref)
+                        when (value) {
+                            is Number -> FIRESTORE_NUMBER to value
+                            is Date -> FIRESTORE_TIMESTAMP to value.time
+                            else -> error("Unknown data type (${value.javaClass}): $value")
+                        }
+                    }
             ))
             .addOnFailureListener {
                 if (it is FirebaseFunctionsException) {
