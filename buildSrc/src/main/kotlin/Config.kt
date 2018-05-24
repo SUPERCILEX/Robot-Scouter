@@ -60,30 +60,30 @@ object Config {
         }
 
         object Firebase {
-            const val analytics = "com.google.firebase:firebase-analytics:15.0.2"
-            const val auth = "com.google.firebase:firebase-auth:15.1.0"
-            const val firestore = "com.google.firebase:firebase-firestore:16.0.0"
-            const val functions = "com.google.firebase:firebase-functions:15.0.0"
-            const val storage = "com.google.firebase:firebase-storage:15.0.2"
-            const val config = "com.google.firebase:firebase-config:15.0.2"
+            const val core = "com.google.firebase:firebase-core:16.0.0"
+            const val auth = "com.google.firebase:firebase-auth:16.0.1"
+            const val firestore = "com.google.firebase:firebase-firestore:17.0.1"
+            const val functions = "com.google.firebase:firebase-functions:16.0.1"
+            const val storage = "com.google.firebase:firebase-storage:16.0.1"
+            const val config = "com.google.firebase:firebase-config:16.0.0"
             const val indexing = "com.google.firebase:firebase-appindexing:15.0.1"
-            const val messaging = "com.google.firebase:firebase-messaging:15.0.2"
-            const val invites = "com.google.firebase:firebase-invites:15.0.1"
-            const val perf = "com.google.firebase:firebase-perf:15.1.0"
+            const val messaging = "com.google.firebase:firebase-messaging:17.0.0"
+            const val invites = "com.google.firebase:firebase-invites:16.0.0"
+            const val perf = "com.google.firebase:firebase-perf:16.0.0"
 
             const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.2"
             const val jobs = "com.firebase:firebase-jobdispatcher:0.8.5"
         }
 
         object PlayServices {
-            private const val version = "15.0.0"
+            private const val version = "15.0.1"
 
             const val auth = "com.google.android.gms:play-services-auth:$version"
             const val nearby = "com.google.android.gms:play-services-nearby:$version"
         }
 
         object FirebaseUi {
-            private const val version = "ec2e8de817"
+            private const val version = "c280098444"
 
             const val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
@@ -112,7 +112,7 @@ object Config {
             const val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             const val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             const val permissions = "pub.devrel:easypermissions:1.2.0"
-            const val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.8.0"
+            const val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.9.0"
             const val billing = "com.android.billingclient:billing:1.0"
             const val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.0.2"
         }

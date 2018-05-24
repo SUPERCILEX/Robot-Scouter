@@ -15,7 +15,7 @@ dependencies {
     api(Config.Libs.Kotlin.jvm)
     api(Config.Libs.Kotlin.coroutines)
     api(Config.Libs.Anko.coroutines)
-    api(Config.Libs.Firebase.analytics)
+    api(Config.Libs.Firebase.core)
     api(Config.Libs.Firebase.crashlytics)
     debugApi(Config.Libs.Miscellaneous.leakCanary)
     releaseApi(Config.Libs.Miscellaneous.leakCanaryNoop)

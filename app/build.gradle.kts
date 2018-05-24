@@ -37,7 +37,7 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
             manifestPlaceholders = mapOf("appName" to "Robot Scouter DEBUG")
-            extra["alwaysUpdateBuildId"] = false
+            crashlytics.alwaysUpdateBuildId = false
         }
 
         getByName("release") {
