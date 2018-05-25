@@ -3,7 +3,7 @@
 ./gradlew clean
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
-./gradlew assembleDebug check --no-parallel
+  ./gradlew assembleDebug check --no-parallel
 
 #  ./gradlew build publishApkRelease --no-parallel
 #
