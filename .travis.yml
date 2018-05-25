@@ -26,9 +26,8 @@ before_script:
   - chmod +x gradlew building/setup.sh building/build.sh building/deploy-firebase.sh building/upload.sh
   - building/setup.sh
 script: ./gradlew clean assembleDebug check
-# TODO add back once all NDA protected libraries have graduated to public alpha/beta
-#script: building/build.sh
-#after_success: building/upload.sh
+script: building/build.sh
+#after_success: building/upload.sh # Should be moved back to the public repo at some point
 after_failure:
   - cat app/build/reports/lint-results.xml
   - cat app/build/reports/lint-results.html
