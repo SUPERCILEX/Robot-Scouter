@@ -40,7 +40,6 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.coroutines.experimental.asReference
 import java.util.Calendar
 import kotlin.math.hypot
 
@@ -247,7 +246,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     private fun validateUrl(url: CharSequence, inputLayout: TextInputLayout): Deferred<Boolean> {
-        val inputRef = inputLayout.asReference()
+        val inputRef = inputLayout.asLifecycleReference(this)
         return async(UI) {
             val isValid = async { url.isValidTeamUrl() }.await()
             inputRef().error =

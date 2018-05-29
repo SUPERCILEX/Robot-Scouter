@@ -49,17 +49,22 @@ fun <T> Future<T>.reportOrCancel(mayInterruptIfRunning: Boolean = false) {
     cancel(mayInterruptIfRunning)
 }
 
-@Suppress("UNCHECKED_CAST")
-fun <T : LifecycleOwner> T.asLifecycleReference(minState: Lifecycle.State = Lifecycle.State.STARTED) =
-        LifecycleOwnerRef(asReference(), minState)
+fun <T : LifecycleOwner> T.asLifecycleReference(
+        minState: Lifecycle.State = Lifecycle.State.STARTED
+) = asLifecycleReference(this, minState)
 
-class LifecycleOwnerRef<out T : LifecycleOwner>(
+fun <T : Any> T.asLifecycleReference(
+        owner: LifecycleOwner,
+        minState: Lifecycle.State = Lifecycle.State.STARTED
+) = LifecycleOwnerRef(asReference(), owner.asReference(), minState)
+
+class LifecycleOwnerRef<out T : Any>(
         private val obj: Ref<T>,
+        private val owner: Ref<LifecycleOwner>,
         private val minState: Lifecycle.State
 ) {
     suspend operator fun invoke(): T {
-        val ref = obj()
-        if (!ref.lifecycle.currentState.isAtLeast(minState)) throw CancellationException()
-        return ref
+        if (!owner().lifecycle.currentState.isAtLeast(minState)) throw CancellationException()
+        return obj()
     }
 }
