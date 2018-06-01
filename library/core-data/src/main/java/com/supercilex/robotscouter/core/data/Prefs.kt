@@ -165,17 +165,15 @@ fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T 
 }
 
 fun clearPrefs() {
-    for ((key, value) in localPrefs.all.entries) {
-        when (value) {
-            is Boolean -> prefStore.putBoolean(key, false)
-            is String -> prefStore.putString(key, null)
-            else -> error("Unknown value type: ${value?.let { it::class.java }}")
+    async {
+        for (pref in userPrefs.getInBatches()) {
+            val ref = pref.reference
+            ref.delete().logFailures(ref, pref.data)
         }
-    }
-    clearLocalPrefs()
-}
 
-private fun clearLocalPrefs() = localPrefs.edit { clear() }
+        localPrefs.edit(true) { clear() }
+    }.logFailures()
+}
 
 private fun updateTeamTemplateIds() {
     async {
