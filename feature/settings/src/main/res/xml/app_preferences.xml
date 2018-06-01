@@ -42,8 +42,8 @@
 
         <android.support.v7.preference.Preference
             android:icon="@drawable/ic_replay_colorable_24dp"
-            android:key="reset_tutorials"
-            android:title="@string/settings_pref_reset_tutorials_title" />
+            android:key="reset_prefs"
+            android:title="@string/settings_pref_reset_prefs_title" />
 
         <android.support.v7.preference.Preference
             android:icon="@drawable/ic_link_colorable_24dp"

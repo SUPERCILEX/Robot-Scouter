@@ -136,7 +136,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
     override fun onPreferenceClick(preference: Preference): Boolean {
         val activity = requireActivity()
         when (preference.key) {
-            KEY_RESET_TUTORIALS -> {
+            KEY_RESET_PREFS -> {
                 clearPrefs()
                 activity.finish()
             }
@@ -201,7 +201,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
     companion object {
         const val TAG = "SettingsFragment"
 
-        private const val KEY_RESET_TUTORIALS = "reset_tutorials"
+        private const val KEY_RESET_PREFS = "reset_prefs"
         private const val KEY_LINK_ACCOUNT = "link_account"
         private const val KEY_SIGN_OUT = "sign_out"
         private const val KEY_RELEASE_NOTES = "release_notes"
