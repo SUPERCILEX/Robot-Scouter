@@ -29,9 +29,10 @@
         <item quantity="other">%d teams exported</item>
     </plurals>
     <plurals name="export_complete_message">
-        <item quantity="one">Exported team %s.</item>
-        <item quantity="other">Exported teams %s.</item>
+        <item quantity="one">Exported team %s</item>
+        <item quantity="other">Exported teams %s</item>
     </plurals>
+    <string name="export_complete_none_message">No teams exported</string>
 
     <string name="export_initialize_status">Initializing</string>
     <string name="export_load_status">Loading teams</string>

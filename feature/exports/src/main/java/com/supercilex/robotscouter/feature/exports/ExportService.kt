@@ -78,8 +78,7 @@ class ExportService : IntentService(TAG) {
             newScouts: Map<Team, List<Scout>>
     ) {
         if (newScouts.values.all { it.isEmpty() }) {
-            notificationManager.setData(0, newScouts.keys)
-            notificationManager.stop()
+            notificationManager.stopEmpty()
             return
         }
 

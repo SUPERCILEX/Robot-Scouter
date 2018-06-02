@@ -19,16 +19,18 @@ import kotlin.properties.Delegates
 internal class ExportNotificationManager(private val service: ExportService) {
     private val notificationFilter = FilteringNotificationManager()
 
+    private val transientGroupId = hashCode()
+    private val permanentGroupId = transientGroupId + 1
     private val masterNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
-                .setGroup(hashCode().toString())
+                .setGroup(transientGroupId.toString())
                 .setGroupSummary(true)
                 .setContentTitle(RobotScouter.getString(R.string.export_overall_progress_title))
                 .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
     private val exportNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
-                .setGroup(hashCode().toString())
+                .setGroup(transientGroupId.toString())
                 .setContentTitle(RobotScouter.getString(R.string.export_progress_title))
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
                 .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
@@ -44,7 +46,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     private var pendingTaskCount: Int by Delegates.notNull()
 
     init {
-        service.startForeground(hashCode(), masterNotification
+        service.startForeground(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentText(RobotScouter.getString(R.string.export_load_status))
                 .updateProgress(ESTIMATED_MASTER_OPS, 0)
@@ -56,7 +58,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
         nLoadingChunks = chunks
         masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nLoadingChunks
 
-        notificationFilter.notify(hashCode(), masterNotification
+        notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentText(RobotScouter.getString(R.string.export_load_status))
                 .updateProgress(
@@ -69,7 +71,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     }
 
     fun loading(teams: List<Team>) {
-        notificationFilter.notify(hashCode(), masterNotification
+        notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentText(RobotScouter.resources.getQuantityString(
                         R.plurals.export_load_status_detail,
@@ -90,7 +92,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
         masterNotificationHolder.progress = EXTRA_MASTER_OPS + nLoadingChunks
         masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nLoadingChunks + nTemplates
 
-        notificationFilter.notify(hashCode(), masterNotification
+        notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setContentText(RobotScouter.getString(R.string.export_load_status))
                 .updateProgress(
@@ -113,7 +115,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
                 .updateProgress(maxProgress, 0)
                 .build())
         if (pendingTaskCount == nTemplates && exporters.isEmpty()) {
-            notificationFilter.notify(hashCode(), masterNotification
+            notificationFilter.notify(transientGroupId, masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.getString(
                             R.string.export_template_status, exporter.templateName))
@@ -148,30 +150,18 @@ internal class ExportNotificationManager(private val service: ExportService) {
     @Synchronized
     fun removeExporter(exporter: TemplateExporter, notification: NotificationCompat.Builder) {
         val (id) = exporters.remove(exporter)!!
+
         // The original notification must be cancelled because we're changing channels
         notificationManager.cancel(id)
         notificationFilter.notify(
-                id,
-                notification.setGroup((hashCode() + 1).toString()).build(),
-                true
-        )
+                id, notification.setGroup(permanentGroupId.toString()).build(), true)
 
-        if (pendingTaskCount == nTemplates) {
-            notificationFilter.notify(hashCode() + 1, masterNotification
-                    .setGroup((hashCode() + 1).toString())
-                    .setSmallIcon(R.drawable.ic_logo)
-                    .setContentText(RobotScouter.resources.getQuantityString(
-                            R.plurals.export_complete_message, teams.size, teams.getNames()))
-                    .setSubText(RobotScouter.resources.getQuantityString(
-                            R.plurals.export_complete_subtitle, nTemplates, nTemplates))
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .build(), true)
-        }
+        if (pendingTaskCount == nTemplates) showExportedPermanentNotification()
 
         if (--pendingTaskCount == 0) {
             stop()
         } else {
-            notificationFilter.notify(hashCode(), masterNotification
+            notificationFilter.notify(transientGroupId, masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setContentText(RobotScouter.getString(
                             R.string.export_template_status,
@@ -185,10 +175,12 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
     fun isStopped() = notificationFilter.isStopped()
 
-    fun stop() {
-        notificationFilter.cancel(hashCode())
-        notificationFilter.stop()
-        ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
+    fun stopEmpty() {
+        nTemplates = 0
+        teams = emptySet()
+
+        showExportedPermanentNotification()
+        stop()
     }
 
     fun abort() {
@@ -204,6 +196,28 @@ internal class ExportNotificationManager(private val service: ExportService) {
         notificationFilter.notify(holder.id, notification
                 .updateProgress(holder.maxProgress, ++holder.progress)
                 .build())
+    }
+
+    private fun showExportedPermanentNotification() {
+        notificationFilter.notify(permanentGroupId, masterNotification
+                .setGroup(permanentGroupId.toString())
+                .setSmallIcon(R.drawable.ic_logo)
+                .setSubText(RobotScouter.resources.getQuantityString(
+                        R.plurals.export_complete_subtitle, nTemplates, nTemplates))
+                .setContentText(if (teams.isEmpty()) {
+                    RobotScouter.getString(R.string.export_complete_none_message)
+                } else {
+                    RobotScouter.resources.getQuantityString(
+                            R.plurals.export_complete_message, teams.size, teams.getNames())
+                })
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build(), true)
+    }
+
+    private fun stop() {
+        notificationFilter.cancel(transientGroupId)
+        notificationFilter.stop()
+        ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
     private fun NotificationCompat.Builder.updateProgress(
