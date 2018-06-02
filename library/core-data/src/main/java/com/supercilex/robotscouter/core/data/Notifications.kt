@@ -184,6 +184,7 @@ class NotificationIntentForwarder : Activity() {
             val notificationId = intent.getIntExtra(KEY_NOTIFICATION_ID, -1)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Cancel group notification if there will only be one real notification left
                 activeNotifications.singleOrNull {
                     it.id == notificationId
                 }?.notification?.group?.let { key ->

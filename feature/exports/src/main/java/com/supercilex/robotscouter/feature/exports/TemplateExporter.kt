@@ -128,7 +128,11 @@ internal class TemplateExporter(
         }
 
         val sharePendingIntent = PendingIntent.getActivity(
-                RobotScouter, exportId, shareIntent, PendingIntent.FLAG_ONE_SHOT)
+                RobotScouter,
+                exportId,
+                NotificationIntentForwarder.getCancelIntent(exportId, shareIntent),
+                PendingIntent.FLAG_ONE_SHOT
+        )
 
         val builder = NotificationCompat.Builder(RobotScouter, EXPORT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_done_white_24dp)
@@ -140,14 +144,9 @@ internal class TemplateExporter(
                 .addAction(
                         R.drawable.ic_share_white_24dp,
                         RobotScouter.getString(R.string.share),
-                        PendingIntent.getActivity(
-                                RobotScouter,
-                                exportId,
-                                NotificationIntentForwarder.getCancelIntent(exportId, shareIntent),
-                                PendingIntent.FLAG_ONE_SHOT)
+                        sharePendingIntent
                 )
                 .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
-                .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
