@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.support.annotation.PluralsRes
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
@@ -115,27 +114,24 @@ internal class TemplateExporter(
             viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ANY)
         }
 
-        val shareIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val typeIntent = Intent(baseIntent).setAction(Intent.ACTION_SEND)
-                    .setType(MIME_TYPE_MS_EXCEL)
-                    .putExtra(Intent.EXTRA_STREAM, spreadsheetUri)
-                    .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, arrayOf(viewIntent))
-
-            Intent.createChooser(typeIntent, getPluralTeams(R.plurals.export_share_title))
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-        } else {
-            Intent(viewIntent)
-        }
-
+        val chooserIntent = Intent(baseIntent).setAction(Intent.ACTION_SEND)
+                .setType(MIME_TYPE_MS_EXCEL)
+                .putExtra(Intent.EXTRA_STREAM, spreadsheetUri)
+                .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, arrayOf(viewIntent))
         val sharePendingIntent = PendingIntent.getActivity(
                 RobotScouter,
                 exportId,
-                NotificationIntentForwarder.getCancelIntent(exportId, shareIntent),
+                NotificationIntentForwarder.getCancelIntent(
+                        exportId,
+                        Intent.createChooser(
+                                chooserIntent, getPluralTeams(R.plurals.export_share_title))
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                ),
                 PendingIntent.FLAG_ONE_SHOT
         )
 
-        val builder = NotificationCompat.Builder(RobotScouter, EXPORT_CHANNEL)
+        return NotificationCompat.Builder(RobotScouter, EXPORT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_done_white_24dp)
                 .setContentTitle(RobotScouter.getString(
                         R.string.export_complete_title, templateName))
@@ -147,23 +143,18 @@ internal class TemplateExporter(
                         RobotScouter.getString(R.string.share),
                         sharePendingIntent
                 )
+                .addAction(
+                        R.drawable.ic_launch_white_24dp,
+                        RobotScouter.getString(R.string.open),
+                        PendingIntent.getActivity(
+                                RobotScouter,
+                                exportId,
+                                viewIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT)
+                )
                 .setColor(ContextCompat.getColor(RobotScouter, R.color.colorPrimary))
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.addAction(
-                    R.drawable.ic_launch_white_24dp,
-                    RobotScouter.getString(R.string.open),
-                    PendingIntent.getActivity(
-                            RobotScouter,
-                            exportId,
-                            viewIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT)
-            )
-        }
-
-        return builder
     }
 
     private fun exportJson() {
