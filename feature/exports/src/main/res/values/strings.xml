@@ -5,6 +5,7 @@
         <item quantity="one">Share team %s’s scouting data</item>
         <item quantity="other">Share teams %s’s scouting data</item>
     </plurals>
+    <string name="export_browse_title">Choose a file browser</string>
     <string name="export_overall_progress_title">Spreadsheet exporter</string>
     <string name="export_progress_title">Exporting spreadsheet</string>
 

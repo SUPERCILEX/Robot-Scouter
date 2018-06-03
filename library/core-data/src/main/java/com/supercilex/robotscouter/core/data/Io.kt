@@ -7,6 +7,8 @@ import android.support.annotation.RequiresPermission
 import android.support.annotation.WorkerThread
 import java.io.File
 
+const val MIME_TYPE_ANY = "*/*"
+
 val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 private val exports = Environment.getExternalStoragePublicDirectory(

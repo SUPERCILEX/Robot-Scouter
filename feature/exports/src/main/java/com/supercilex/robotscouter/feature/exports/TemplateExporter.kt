@@ -20,6 +20,7 @@ import com.google.gson.JsonPrimitive
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.EXPORT_CHANNEL
+import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.NotificationIntentForwarder
 import com.supercilex.robotscouter.core.data.hidden
 import com.supercilex.robotscouter.core.data.isPolynomial
@@ -111,7 +112,7 @@ internal class TemplateExporter(
                 .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         if (viewIntent.resolveActivity(RobotScouter.packageManager) == null) {
-            viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ALL)
+            viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ANY)
         }
 
         val shareIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -839,7 +840,6 @@ internal class TemplateExporter(
 
     private companion object {
         const val MIME_TYPE_MS_EXCEL = "application/vnd.ms-excel"
-        const val MIME_TYPE_ALL = "*/*"
         const val JSON_FILE_EXTENSION = ".json"
 
         val spreadsheetFileExtension = if (isSupportedDevice) ".xlsx" else ".xls"

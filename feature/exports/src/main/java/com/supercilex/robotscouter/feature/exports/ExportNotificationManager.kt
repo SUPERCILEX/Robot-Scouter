@@ -1,17 +1,22 @@
 package com.supercilex.robotscouter.feature.exports
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.ServiceCompat
 import android.support.v4.content.ContextCompat
+import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.EXPORT_IN_PROGRESS_CHANNEL
 import com.supercilex.robotscouter.core.data.FilteringNotificationManager
+import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.notificationManager
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.experimental.CancellationException
+import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 import kotlin.properties.Delegates
@@ -43,6 +48,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     private var nLoadingChunks: Int by LateinitVal()
     private var nTemplates: Int by LateinitVal()
     private var teams: Set<Team> by LateinitVal()
+    private var exportFolder: File? = null
     private var pendingTaskCount: Int by Delegates.notNull()
 
     init {
@@ -84,9 +90,10 @@ internal class ExportNotificationManager(private val service: ExportService) {
                 .build())
     }
 
-    fun setData(nTemplates: Int, teams: Set<Team>) {
+    fun setData(nTemplates: Int, teams: Set<Team>, exportFolder: File) {
         this.nTemplates = nTemplates
         this.teams = teams
+        this.exportFolder = exportFolder
         pendingTaskCount = nTemplates
 
         masterNotificationHolder.progress = EXTRA_MASTER_OPS + nLoadingChunks
@@ -210,6 +217,28 @@ internal class ExportNotificationManager(private val service: ExportService) {
                     RobotScouter.resources.getQuantityString(
                             R.plurals.export_complete_message, teams.size, teams.getNames())
                 })
+                .apply {
+                    val exportFolder = exportFolder?.toUri() ?: return@apply
+                    val intent = Intent(Intent.ACTION_VIEW)
+                            .setDataAndType(exportFolder, MIME_TYPE_FOLDER)
+
+                    val openIntent = if (intent.resolveActivity(service.packageManager) == null) {
+                        intent.setDataAndType(exportFolder, MIME_TYPE_ANY)
+                        Intent.createChooser(
+                                intent, service.getString(R.string.export_browse_title))
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                    } else {
+                        intent
+                    }
+
+                    setContentIntent(PendingIntent.getActivity(
+                            service,
+                            permanentGroupId,
+                            openIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    ))
+                }
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build(), true)
     }
@@ -250,5 +279,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
         const val EXTRA_EXPORT_OPS_SINGLE = 2
         /** Accounts for the average sheet step. */
         const val EXTRA_EXPORT_OPS_POLY = EXTRA_EXPORT_OPS_SINGLE + 1
+
+        const val MIME_TYPE_FOLDER = "resource/folder"
     }
 }

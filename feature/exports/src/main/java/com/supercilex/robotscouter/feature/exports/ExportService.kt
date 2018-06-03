@@ -83,12 +83,11 @@ class ExportService : IntentService(TAG) {
         }
 
         val zippedScouts = zipScouts(newScouts)
-
-        notificationManager.setData(zippedScouts.size, newScouts.keys)
-
         val exportFolder = File(checkNotNull(exportsFolder) {
             "Couldn't get write access"
         }, "Robot Scouter export_${System.currentTimeMillis()}")
+
+        notificationManager.setData(zippedScouts.size, newScouts.keys, exportFolder)
 
         runBlocking {
             val templateNames = getTemplateNames(zippedScouts.keys)
