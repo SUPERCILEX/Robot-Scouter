@@ -49,9 +49,10 @@ suspend fun onSignedIn(): FirebaseUser {
         } catch (e: Exception) {
             // Ignore any exceptions since we don't care about credential fetch errors
             FirebaseAuth.getInstance().signInAnonymously().await()
+        } finally {
+            signInSemaphore.release()
         }
 
-        signInSemaphore.release()
         result.user
     } else {
         signInSemaphore.release()
