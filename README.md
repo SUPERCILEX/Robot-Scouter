@@ -69,7 +69,7 @@ If you know another language, please help
 
 ## Environment setup 💻
 
-1. [Move the dummy files](https://github.com/SUPERCILEX/Robot-Scouter/blob/af4f271a5169d043dc9ef289d322ddb325758304/building/setup.sh#L3-L7)
+1. [Move the dummy files](https://github.com/SUPERCILEX/Robot-Scouter/blob/564f1ba242447f4c77ddcc91b945f5d3a349b2a4/building/setup.sh#L3-L7)
    into position
 1. If you are working with Firestore or need access to other Firebase technologies,
    [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
