@@ -8,7 +8,7 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:3.2.0-alpha16"
+        const val android = "com.android.tools.build:gradle:3.2.0-alpha17"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:3.2.1"
@@ -49,7 +49,7 @@ object Config {
             const val customTabs = "com.android.support:support-emoji-appcompat:$version"
             const val pref = "com.android.support:preference-v7:$version"
 
-            const val constraint = "com.android.support.constraint:constraint-layout:1.1.0"
+            const val constraint = "com.android.support.constraint:constraint-layout:1.1.1"
         }
 
         object Arch {
@@ -115,7 +115,7 @@ object Config {
             const val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             const val permissions = "pub.devrel:easypermissions:1.2.0"
             const val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.9.0"
-            const val billing = "com.android.billingclient:billing:1.0"
+            const val billing = "com.android.billingclient:billing:1.1"
             const val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.0.2"
         }
     }

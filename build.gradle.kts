@@ -36,6 +36,10 @@ allprojects {
     configureAndroid()
 }
 
+tasks.withType<Wrapper> {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
 fun Project.configureGeneral() {
     configurations { create("ktlint") }
     task("ktlint", JavaExec::class) {
