@@ -22,10 +22,8 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_DEFAULT_TEMPLATE_ID
-import com.supercilex.robotscouter.core.data.cancelAllAuthenticatedJobs
 import com.supercilex.robotscouter.core.data.clearPrefs
 import com.supercilex.robotscouter.core.data.debugInfo
 import com.supercilex.robotscouter.core.data.isFullUser
@@ -33,7 +31,6 @@ import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.logLoginEvent
 import com.supercilex.robotscouter.core.data.prefStore
 import com.supercilex.robotscouter.core.fullVersionName
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.core.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -55,7 +52,6 @@ internal class SettingsFragment : PreferenceFragmentBase(),
         settingsModel.signOutListener.observe(this, Observer {
             if (it == null) {
                 FirebaseAuth.getInstance().signInAnonymously()
-                FirebaseAppIndex.getInstance().removeAll().logFailures()
                 requireActivity().finish()
             } else {
                 toast(R.string.error_unknown)
@@ -141,10 +137,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
                 activity.finish()
             }
             KEY_LINK_ACCOUNT -> startSignIn()
-            KEY_SIGN_OUT -> {
-                cancelAllAuthenticatedJobs()
-                settingsModel.signOut()
-            }
+            KEY_SIGN_OUT -> settingsModel.signOut()
             KEY_RELEASE_NOTES -> launchUrl(
                     activity,
                     "https://github.com/SUPERCILEX/Robot-Scouter/releases".toUri()

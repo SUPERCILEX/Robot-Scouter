@@ -46,7 +46,7 @@
     <string name="settings_pref_link_account_title">Link accounts</string>
     <string name="settings_pref_link_account_summary">Merge two accounts into one</string>
 
-    <string name="settings_pref_sign_out_title">Sign out and reset Robot Scouter</string>
+    <string name="settings_pref_sign_out_title">Sign out</string>
 
     <string name="settings_pref_about_summary">
         Robot Scouter is developed with %s by <a href="https://github.com/SUPERCILEX">Alex Saveau</a>
