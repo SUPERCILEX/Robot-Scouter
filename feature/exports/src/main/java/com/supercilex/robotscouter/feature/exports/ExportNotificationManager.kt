@@ -218,7 +218,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
                             R.plurals.export_complete_message, teams.size, teams.getNames())
                 })
                 .apply {
-                    val exportFolder = exportFolder?.toUri() ?: return@apply
+                    val exportFolder = exportFolder?.path?.toUri() ?: return@apply
                     val intent = Intent(Intent.ACTION_VIEW)
                             .setDataAndType(exportFolder, MIME_TYPE_FOLDER)
 
