@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.refWatcher
 import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.longToast
 
 class RobotScouter : MultiDexApplication() {
     override fun onCreate() {
@@ -40,19 +41,23 @@ class RobotScouter : MultiDexApplication() {
                     .detectLeakedClosableObjects()
                     .detectLeakedRegistrationObjects()
                     .detectLeakedSqlLiteObjects()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                vmBuilder.detectFileUriExposure()
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                vmBuilder.detectCleartextNetwork()
+                vmBuilder.detectCleartextNetwork().penaltyDeathOnCleartextNetwork()
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                vmBuilder.penaltyDeathOnFileUriExposure()
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vmBuilder.detectContentUriWithoutPermission()
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                vmBuilder.detectFileUriExposure()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                vmBuilder.penaltyListener(Runnable::run) {
+                    longToast(it.message.orEmpty())
+                }
             }
-            // TODO add back once P ships
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//                vmBuilder.detectNonSdkApiUsage()
-//            }
             StrictMode.setVmPolicy(vmBuilder.penaltyLog().build())
 
             StrictMode.setThreadPolicy(
