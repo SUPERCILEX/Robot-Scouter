@@ -2,9 +2,6 @@ package com.supercilex.robotscouter.core.data.remote
 
 import android.support.annotation.WorkerThread
 import com.bumptech.glide.Glide
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.ChiefDelphi
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Imgur
@@ -25,57 +22,38 @@ internal class TeamDetailsDownloader private constructor(
     }
 
     private fun getTeamInfo() {
-        val response: Response<JsonObject> =
-                api.getInfo(team.number.toString(), tbaApiKey).execute()
+        val response: Response<Team> = api.getInfo(team.number.toString(), tbaApiKey).execute()
 
         if (cannotContinue(response)) return
 
-        val result: JsonObject = response.body()!!
-        val teamNickname: JsonElement? = result.get(TEAM_NICKNAME)
-        if (teamNickname?.isJsonNull == false) {
-            val newName = teamNickname.asString
-            if (team.name == newName) {
-                team.hasCustomName = false
-            } else {
-                team.name = newName
-            }
+        val newTeam = response.body()!!
+
+        if (team.name == newTeam.name) {
+            team.hasCustomName = false
+        } else {
+            team.name = newTeam.name
         }
-        val teamWebsite: JsonElement? = result.get(TEAM_WEBSITE)
-        if (teamWebsite?.isJsonNull == false) {
-            val newWebsite = teamWebsite.asString
-            if (team.website == newWebsite) {
-                team.hasCustomWebsite = false
-            } else {
-                team.website = newWebsite
-            }
+        if (team.website == newTeam.website) {
+            team.hasCustomWebsite = false
+        } else {
+            team.website = newTeam.website
         }
     }
 
     private fun getTeamMedia(year: Int) {
-        val response: Response<JsonArray> =
+        val response: Response<List<TeamDetailsApi.Media>> =
                 api.getMedia(team.number.toString(), year, tbaApiKey).execute()
 
         if (cannotContinue(response)) return
 
-        val media = response.body()!!.asSequence().map {
-            val mediaObject: JsonObject = it.asJsonObject
-
-            val type = mediaObject.get("type").asString
-            val key = mediaObject.get("foreign_key").asString
-            val preferred = mediaObject.get("preferred").asBoolean
-
+        val media = response.body()!!.map { (type, key, preferred, details) ->
             when (type) {
                 Imgur.ID -> Imgur("https://i.imgur.com/$key.png", preferred)
                 YouTube.ID -> YouTube("https://img.youtube.com/vi/$key/0.jpg", preferred)
                 Instagram.ID ->
                     Instagram("https://www.instagram.com/p/$key/media/?size=l", preferred)
                 ChiefDelphi.ID -> ChiefDelphi(
-                        "https://www.chiefdelphi.com/media/img/" + mediaObject.get("details")
-                                .asJsonObject
-                                .get("image_partial")
-                                .asString,
-                        preferred
-                )
+                        "https://www.chiefdelphi.com/media/img/${details!!.id}", preferred)
                 else -> Unsupported(type)
             }
         }.filterNot { it is Unsupported }.sorted().firstOrNull()
@@ -149,8 +127,6 @@ internal class TeamDetailsDownloader private constructor(
     }
 
     companion object {
-        private const val TEAM_NICKNAME = "nickname"
-        private const val TEAM_WEBSITE = "website"
         private const val MAX_HISTORY = 2000
 
         @WorkerThread

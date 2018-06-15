@@ -5,6 +5,7 @@ import android.support.annotation.Keep
 import android.support.annotation.RestrictTo
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
+import com.google.gson.annotations.SerializedName
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import kotlinx.android.parcel.Parcelize
 import java.util.Date
@@ -38,6 +39,7 @@ data class Team(
         @set:Keep
         var templateId: String = TemplateType.DEFAULT.id.toString(),
 
+        @SerializedName("nickname")
         @Exclude
         @get:Keep
         @set:Keep
@@ -48,6 +50,7 @@ data class Team(
         @set:Keep
         var media: String? = null,
 
+        @SerializedName("website")
         @Exclude
         @get:Keep
         @set:Keep

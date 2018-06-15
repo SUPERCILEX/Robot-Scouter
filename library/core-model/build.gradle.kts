@@ -6,5 +6,6 @@ androidExtensions {
 
 dependencies {
     implementation(project(":library:core"))
-    implementation(Config.Libs.Firebase.firestore) { isTransitive = false }
+    compileOnly(Config.Libs.Firebase.firestore) { isTransitive = false }
+    compileOnly(Config.Libs.Misc.gson)
 }
