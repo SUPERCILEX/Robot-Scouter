@@ -8,23 +8,17 @@ import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.appinvite.AppInviteInvitation.IntentBuilder.MAX_MESSAGE_LENGTH
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.SetOptions
-import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.CachingSharer
-import com.supercilex.robotscouter.core.data.QueuedDeletion
-import com.supercilex.robotscouter.core.data.firestoreBatch
-import com.supercilex.robotscouter.core.data.generateToken
 import com.supercilex.robotscouter.core.data.getTeamsLink
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.logShare
 import com.supercilex.robotscouter.core.data.model.TeamCache
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.model.ref
-import com.supercilex.robotscouter.core.data.model.userDeletionQueue
+import com.supercilex.robotscouter.core.data.model.shareTeams
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
@@ -33,7 +27,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
-import java.util.Date
 
 class TeamSharer private constructor(
         fragment: Fragment,
@@ -81,15 +74,7 @@ class TeamSharer private constructor(
     private suspend fun generateIntent(): Intent {
         // Called first to skip token generation if task failed
         val htmlTemplate = loadFile(FILE_NAME)
-
-        val token = generateToken
-        val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-        firestoreBatch {
-            for (team in cache.teams) update(team.ref, tokenPath, Date())
-            set(userDeletionQueue,
-                QueuedDeletion.ShareToken.Team(token, cache.teams.map { it.id }).data,
-                SetOptions.merge())
-        }.logFailures(cache.teams.map { it.ref }, cache.teams)
+        val token = cache.teams.map { it.ref }.shareTeams()
 
         return getInvitationIntent(
                 cache.teams.getTeamsLink(token),

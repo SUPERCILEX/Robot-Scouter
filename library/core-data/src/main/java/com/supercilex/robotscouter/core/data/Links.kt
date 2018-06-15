@@ -8,7 +8,9 @@ import com.google.firebase.appindexing.Scope
 import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
@@ -18,6 +20,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_REF
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
 import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.data.model.userDeletionQueue
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
@@ -30,8 +33,6 @@ const val KEYS = "keys"
 
 private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teamsRef.id}/"
 private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templatesRef.id}/"
-
-val generateToken: String get() = FirebaseFirestore.getInstance().collection("null").document().id
 
 val Team.deepLink: String get() = listOf(this).getTeamsLink()
 
@@ -70,6 +71,24 @@ fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
                                      .setWorksOffline(true)
                                      .setScope(Scope.CROSS_DEVICE))
                 .build()
+
+suspend fun List<DocumentReference>.share(
+        block: Boolean,
+        deletionGenerator: (token: String, ids: List<String>) -> QueuedDeletion.ShareToken
+): String {
+    val token = generateToken()
+    val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
+    val timestamp = Date()
+
+    val update = firestoreBatch {
+        forEach { update(it, tokenPath, timestamp) }
+        set(userDeletionQueue, deletionGenerator(token, map { it.id }).data, SetOptions.merge())
+    }.logFailures(this, token)
+
+    if (block) update.await()
+
+    return token
+}
 
 suspend fun updateOwner(
         refs: Iterable<DocumentReference>,
@@ -120,3 +139,5 @@ private inline fun <T> List<T>.generateUrl(
 
 private fun Uri.Builder.encodeToken(token: String?): Uri.Builder =
         token?.let { appendQueryParameter(FIRESTORE_ACTIVE_TOKENS, it) } ?: this
+
+private fun generateToken() = FirebaseFirestore.getInstance().collection("null").document().id

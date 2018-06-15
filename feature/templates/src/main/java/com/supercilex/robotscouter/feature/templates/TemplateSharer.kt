@@ -6,19 +6,13 @@ import androidx.core.net.toUri
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.SetOptions
-import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.CachingSharer
-import com.supercilex.robotscouter.core.data.QueuedDeletion
-import com.supercilex.robotscouter.core.data.firestoreBatch
-import com.supercilex.robotscouter.core.data.generateToken
 import com.supercilex.robotscouter.core.data.getTemplateLink
 import com.supercilex.robotscouter.core.data.logShareTemplate
-import com.supercilex.robotscouter.core.data.model.userDeletionQueue
+import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
@@ -27,7 +21,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
-import java.util.Date
 
 internal class TemplateSharer private constructor(
         fragment: Fragment,
@@ -51,15 +44,7 @@ internal class TemplateSharer private constructor(
     private suspend fun generateIntent(templateId: String, templateName: String): Intent {
         // Called first to skip token generation if task failed
         val htmlTemplate = loadFile(FILE_NAME)
-
-        val token = generateToken
-        val templateRef = templatesRef.document(templateId)
-        firestoreBatch {
-            update(templateRef, FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token), Date())
-            set(userDeletionQueue,
-                QueuedDeletion.ShareToken.Template(token, templateId).data,
-                SetOptions.merge())
-        }.logFailures(templateRef)
+        val token = listOf(templatesRef.document(templateId)).shareTemplates()
 
         return getInvitationIntent(
                 getTemplateLink(templateId, token),

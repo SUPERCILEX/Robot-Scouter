@@ -45,7 +45,7 @@ class RobotScouter : MultiDexApplication() {
                 vmBuilder.detectFileUriExposure()
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                vmBuilder.detectCleartextNetwork().penaltyDeathOnCleartextNetwork()
+                vmBuilder.detectCleartextNetwork()
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 vmBuilder.penaltyDeathOnFileUriExposure()
@@ -54,9 +54,9 @@ class RobotScouter : MultiDexApplication() {
                 vmBuilder.detectContentUriWithoutPermission()
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                vmBuilder.penaltyListener(Runnable::run) {
+                vmBuilder.penaltyListener(mainExecutor, StrictMode.OnVmViolationListener {
                     longToast(it.message.orEmpty())
-                }
+                })
             }
             StrictMode.setVmPolicy(vmBuilder.penaltyLog().build())
 

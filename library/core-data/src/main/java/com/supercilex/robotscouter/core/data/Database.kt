@@ -21,7 +21,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
+import com.supercilex.robotscouter.common.FIRESTORE_SCOUT_TYPE
+import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TOKEN_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TYPE
+import com.supercilex.robotscouter.common.FIRESTORE_TEAM_TYPE
+import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.core.CrashLogger
@@ -261,11 +265,12 @@ sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, A
             *extras
     ))
 
-    class Team(id: String) : QueuedDeletion(id, 0)
+    class Team(id: String) : QueuedDeletion(id, FIRESTORE_TEAM_TYPE)
 
-    class Scout(id: String, teamId: String) : QueuedDeletion(id, 1, FIRESTORE_CONTENT_ID to teamId)
+    class Scout(id: String, teamId: String) :
+            QueuedDeletion(id, FIRESTORE_SCOUT_TYPE, FIRESTORE_CONTENT_ID to teamId)
 
-    class Template(id: String) : QueuedDeletion(id, 2)
+    class Template(id: String) : QueuedDeletion(id, FIRESTORE_TEMPLATE_TYPE)
 
     abstract class ShareToken(
             token: String,
@@ -273,13 +278,15 @@ sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, A
             contentIds: List<String>
     ) : QueuedDeletion(
             token,
-            3,
+            FIRESTORE_SHARE_TOKEN_TYPE,
             FIRESTORE_SHARE_TYPE to shareType,
             FIRESTORE_CONTENT_ID to contentIds
     ) {
-        class Team(token: String, teamIds: List<String>) : ShareToken(token, 0, teamIds)
+        class Team(token: String, teamIds: List<String>) :
+                ShareToken(token, FIRESTORE_TEAM_TYPE, teamIds)
 
-        class Template(token: String, templateId: String) : ShareToken(token, 2, listOf(templateId))
+        class Template(token: String, templateIds: List<String>) :
+                ShareToken(token, FIRESTORE_TEMPLATE_TYPE, templateIds)
     }
 }
 

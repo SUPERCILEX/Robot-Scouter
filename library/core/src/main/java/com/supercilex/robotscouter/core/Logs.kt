@@ -19,7 +19,7 @@ fun <T> Task<T>.logFailures(
 
 fun <T> Task<T>.logFailures(
         refs: List<DocumentReference>,
-        data: Any?
+        data: Any? = null
 ) = logFailures("Paths: ${refs.joinToString { it.path }}", "Data: $data")
 
 fun <T> Task<T>.logFailures(vararg hints: Any?): Task<T> {

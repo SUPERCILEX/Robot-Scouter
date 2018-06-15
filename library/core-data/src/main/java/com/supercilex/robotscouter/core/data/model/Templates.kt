@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.core.data.model
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
@@ -18,6 +19,7 @@ import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getTemplateIndexable
 import com.supercilex.robotscouter.core.data.getTemplateLink
 import com.supercilex.robotscouter.core.data.logAddTemplate
+import com.supercilex.robotscouter.core.data.share
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.logFailures
@@ -78,6 +80,12 @@ fun addTemplate(type: TemplateType): String {
     }.logFailures()
 
     return id
+}
+
+suspend fun List<DocumentReference>.shareTemplates(
+        block: Boolean = false
+) = share(block) { token, ids ->
+    QueuedDeletion.ShareToken.Template(token, ids)
 }
 
 fun Scout.getTemplateName(index: Int): String =

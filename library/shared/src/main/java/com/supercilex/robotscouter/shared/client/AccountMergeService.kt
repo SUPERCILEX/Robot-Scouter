@@ -11,9 +11,9 @@ import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
-import com.supercilex.robotscouter.core.data.firestoreBatch
-import com.supercilex.robotscouter.core.data.generateToken
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
+import com.supercilex.robotscouter.core.data.model.shareTeams
+import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.model.teamsQuery
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.updateOwner
@@ -21,67 +21,81 @@ import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
-import java.util.Date
 import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
 
 internal class AccountMergeService : ManualMergeService() {
-    private lateinit var token: String
-
-    private lateinit var prevUid: String
-    private lateinit var userPrefs: QuerySnapshot
-
-    private lateinit var teams: QuerySnapshot
-    private lateinit var templates: QuerySnapshot
+    private lateinit var instance: Instance
 
     override fun onLoadData(): Task<Void?>? {
-        token = generateToken
-        prevUid = uid!!
-
+        val prevUid = uid!!
         logCrashLog("Migrating user data from $prevUid.")
 
         return async {
+            lateinit var userPrefs: QuerySnapshot
+            lateinit var teams: QuerySnapshot
+            lateinit var templates: QuerySnapshot
+
             awaitAll(
                     async { userPrefs = userPrefsRef.get().await() },
                     async { teams = teamsQuery.get().await() },
                     async { templates = getTemplatesQuery().get().await() }
             )
 
-            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-            val refs = (teams + templates).map { it.reference }
-            firestoreBatch {
-                for (ref in refs) update(ref, tokenPath, Date())
-            }.logFailures(refs, token).await()
-        }.logFailures().asTask()
+            instance = Instance(
+                    prevUid,
+                    teams.map { it.reference }.shareTeams(true),
+                    templates.map { it.reference }.shareTemplates(true),
+                    userPrefs,
+                    teams,
+                    templates
+            )
+        }.asTask().continueWith { null }
     }
 
     override fun onTransferData(response: IdpResponse): Task<Void?>? = async {
+        val (prevUid, teamToken, templateToken, userPrefs, teams, templates) = instance
+
         for (snapshot in userPrefs) {
             userPrefsRef.document(snapshot.id).set(snapshot.data)
                     .logFailures(snapshot.reference, snapshot.data)
         }
 
-        val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-
-        val teamRefs = teams.map { it.reference }
         async {
-            updateOwner(teamRefs, token, prevUid) { ref ->
+            val teamRefs = teams.map { it.reference }
+            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, teamToken)
+
+            updateOwner(teamRefs, teamToken, prevUid) { ref ->
                 teams.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)!!
             }
             for (ref in teamRefs) {
-                ref.update(tokenPath, FieldValue.delete()).logFailures(ref, token)
+                ref.update(tokenPath, FieldValue.delete()).logFailures(ref, teamToken)
             }
         }.logFailures()
 
-        val templateRefs = templates.map { it.reference }
         async {
-            updateOwner(templateRefs, token, prevUid) { ref ->
+            val templateRefs = templates.map { it.reference }
+            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, templateToken)
+
+            updateOwner(templateRefs, templateToken, prevUid) { ref ->
                 templates.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)!!
             }
             for (ref in templateRefs) {
-                ref.update(tokenPath, FieldValue.delete()).logFailures(ref, token)
+                ref.update(tokenPath, FieldValue.delete()).logFailures(ref, templateToken)
             }
         }.logFailures()
 
         null
     }.asTask()
+
+    /** Stores an immutable representation of the current invocation to prevent race conditions. */
+    data class Instance(
+            val prevUid: String,
+
+            val teamToken: String,
+            val templateToken: String,
+
+            val userPrefs: QuerySnapshot,
+            val teams: QuerySnapshot,
+            val templates: QuerySnapshot
+    )
 }

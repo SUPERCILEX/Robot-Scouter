@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.core.data.getInBatches
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.logAdd
 import com.supercilex.robotscouter.core.data.second
+import com.supercilex.robotscouter.core.data.share
 import com.supercilex.robotscouter.core.data.teamFreshnessDays
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.uid
@@ -149,6 +150,12 @@ fun Team.forceUpdateAndRefresh() {
         set(ref, this@forceUpdateAndRefresh)
         update(ref, FIRESTORE_TIMESTAMP, Date(0))
     }.logFailures(ref, this)
+}
+
+suspend fun List<DocumentReference>.shareTeams(
+        block: Boolean = false
+) = share(block) { token, ids ->
+    QueuedDeletion.ShareToken.Team(token, ids)
 }
 
 fun Team.copyMediaInfo(newTeam: Team) {

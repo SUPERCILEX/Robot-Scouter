@@ -17,11 +17,6 @@ import kotlin.js.Date
 const val FIRESTORE_EMAIL = "email"
 const val FIRESTORE_PHONE_NUMBER = "phoneNumber"
 
-const val FIRESTORE_TEAM_TYPE = 0
-const val FIRESTORE_SCOUT_TYPE = 1
-const val FIRESTORE_TEMPLATE_TYPE = 2
-const val FIRESTORE_SHARE_TOKEN_TYPE = 3
-
 val firestore by lazy { admin.firestore() }
 val auth by lazy { admin.auth() }
 val moment: dynamic by lazy { require("moment") }

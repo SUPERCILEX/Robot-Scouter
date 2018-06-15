@@ -49,3 +49,8 @@ const val FIRESTORE_DELETION_QUEUE = "deletion-queue"
 const val FIRESTORE_CONTENT_ID = "contentId"
 const val FIRESTORE_SHARE_TYPE = "shareType"
 const val FIRESTORE_BASE_TIMESTAMP = "baseTimestamp"
+
+const val FIRESTORE_TEAM_TYPE = 0
+const val FIRESTORE_SCOUT_TYPE = 1
+const val FIRESTORE_TEMPLATE_TYPE = 2
+const val FIRESTORE_SHARE_TOKEN_TYPE = 3
