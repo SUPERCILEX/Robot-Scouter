@@ -23,10 +23,10 @@ android:
     - tools
 install: nvm install 7
 before_script:
-  - chmod +x gradlew building/setup.sh building/build.sh building/deploy-firebase.sh building/upload.sh
-  - building/setup.sh
-script: building/build.sh
-#after_success: building/upload.sh # Should be moved back to the public repo at some point
+- chmod +x gradlew .buildscript/setup.sh .buildscript/build.sh .buildscript/deploy-firebase.sh .buildscript/upload.sh
+- .buildscript/setup.sh
+script: .buildscript/build.sh
+#after_success: .buildscript/upload.sh # Should be moved back to the public repo at some point
 after_failure:
   - cat app/build/reports/lint-results.xml
   - cat app/build/reports/lint-results.html
