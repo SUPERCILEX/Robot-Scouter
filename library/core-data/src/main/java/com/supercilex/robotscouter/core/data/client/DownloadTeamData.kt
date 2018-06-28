@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.core.model.Team
 internal const val TEAM_DATA_DOWNLOAD = "team_data_download"
 
 internal fun Team.startDownloadDataJob() {
-    WorkManager.getInstance().beginUniqueWork(
+    checkNotNull(WorkManager.getInstance()).beginUniqueWork(
             number.toString(),
             ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<DownloadTeamDataWorker>()

@@ -60,7 +60,7 @@ object Config {
 
         object Arch {
             private const val version = "1.1.1"
-            private const val workVersion = "1.0.0-alpha02"
+            private const val workVersion = "1.0.0-alpha04"
 
             val common = "android.arch.lifecycle:common-java8:$version"
             val extensions = "android.arch.lifecycle:extensions:$version"

@@ -26,18 +26,19 @@ private const val MEDIA_YEAR = "media_year"
 private const val TIMESTAMP = "timestamp"
 
 fun cancelAllAuthenticatedJobs() {
-    WorkManager.getInstance().apply {
+    checkNotNull(WorkManager.getInstance()).apply {
         listOf(TEAM_DATA_DOWNLOAD, TEAM_MEDIA_UPLOAD).forEach { cancelAllWorkByTag(it) }
     }
 }
 
 internal fun Data.parseTeam() = Team(
         getLong(NUMBER, 0),
-        getString(ID, null),
-        getStringArray(OWNER_KEYS).zip(getLongArray(OWNER_VALUES).toTypedArray()).toMap(),
-        getStringArray(ACTIVE_TOKENS_KEYS)
-                .zip(getLongArray(ACTIVE_TOKENS_VALUES).map { Date(it) }).toMap(),
-        getString(TEMPLATE_ID, null),
+        checkNotNull(getString(ID, null)),
+        checkNotNull(getStringArray(OWNER_KEYS))
+                .zip(checkNotNull(getLongArray(OWNER_VALUES)).toTypedArray()).toMap(),
+        checkNotNull(getStringArray(ACTIVE_TOKENS_KEYS))
+                .zip(checkNotNull(getLongArray(ACTIVE_TOKENS_VALUES)).map { Date(it) }).toMap(),
+        checkNotNull(getString(TEMPLATE_ID, null)),
         getString(NAME, null),
         getString(MEDIA, null),
         getString(WEBSITE, null),

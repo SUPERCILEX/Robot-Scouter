@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.core.model.Team
 internal const val TEAM_MEDIA_UPLOAD = "team_media_upload"
 
 internal fun Team.startUploadMediaJob() {
-    WorkManager.getInstance().beginUniqueWork(
+    checkNotNull(WorkManager.getInstance()).beginUniqueWork(
             checkNotNull(media),
             ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<UploadTeamMediaWorker>()

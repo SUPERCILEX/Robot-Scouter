@@ -8,6 +8,7 @@ import com.supercilex.robotscouter.core.data.model.isTrashed
 import com.supercilex.robotscouter.core.data.model.ref
 import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.parseTeam
+import com.supercilex.robotscouter.core.data.toWorkData
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
@@ -18,24 +19,25 @@ internal abstract class TeamWorker : Worker() {
     abstract val updateTeam: (team: Team, newTeam: Team) -> Unit
 
     override fun doWork() = runBlocking {
+        if (runAttemptCount >= MAX_RUN_ATTEMPTS) return@runBlocking Result.FAILURE
+
         try {
             doWork(inputData.parseTeam())
-            WorkerResult.SUCCESS
         } catch (e: Exception) {
             logCrashLog("$javaClass errored: $e")
-            WorkerResult.RETRY
+            Result.RETRY
         }
     }
 
-    private suspend fun doWork(team: Team) {
+    private suspend fun doWork(team: Team): Result {
         // Ensure this job isn't being scheduled after the user has signed out
-        if (!team.owners.contains(uid)) return
+        if (!team.owners.contains(uid)) return Result.FAILURE
 
         val snapshot = try {
             team.ref.get().logFailures(team.ref, team).await()
         } catch (e: FirebaseFirestoreException) {
             if (e.code == Code.PERMISSION_DENIED) {
-                return // Don't reschedule job
+                return Result.FAILURE // Don't reschedule job
             } else {
                 throw e
             }
@@ -46,16 +48,25 @@ internal abstract class TeamWorker : Worker() {
         if (snapshot.exists()) {
             val existingTeam = teamParser.parseSnapshot(snapshot)
 
-            if (existingTeam.isTrashed != false) return
+            if (existingTeam.isTrashed != false) return Result.FAILURE
 
-            val newTeam = startTask(existingTeam, team)
-            if (team.owners.contains(uid)) {
-                updateTeam(team, newTeam ?: return)
-            }
+            val newTeam = startTask(existingTeam, team) ?: return Result.FAILURE
+            // Recheck since things could have changed since the last check
+            if (!team.owners.contains(uid)) return Result.FAILURE
+
+            updateTeam(team, newTeam)
+            outputData = newTeam.toWorkData()
+
+            return Result.SUCCESS
         } else {
             snapshot.reference.delete() // Ensure zombies cached on-device die
+            return Result.FAILURE
         }
     }
 
     abstract fun startTask(latestTeam: Team, originalTeam: Team): Team?
+
+    private companion object {
+        const val MAX_RUN_ATTEMPTS = 7
+    }
 }
