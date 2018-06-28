@@ -24,6 +24,7 @@ dependencies {
     implementation(Config.Libs.FirebaseUi.firestore) { exclude(module = "recyclerview-v7") }
     implementation(Config.Libs.Firebase.functions)
     implementation(Config.Libs.Firebase.storage)
+    implementation(Config.Libs.Firebase.messaging)
     implementation(Config.Libs.Firebase.config)
     implementation(Config.Libs.Arch.work)
     implementation(Config.Libs.Arch.workFirebase)

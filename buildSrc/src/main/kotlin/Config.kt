@@ -9,13 +9,13 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.2.0-alpha18"
+        val android = "com.android.tools.build:gradle:3.2.0-beta02"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:3.2.1"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         val fabric = "io.fabric.tools:gradle:1.25.4"
-        val publishing = "com.github.Triple-T:gradle-play-publisher:fab6d986c1"
+        val publishing = "com.github.Triple-T:gradle-play-publisher:838be415da"
 
         val ktlint = "com.github.shyiko:ktlint:0.23.1"
     }
@@ -69,18 +69,18 @@ object Config {
         }
 
         object Firebase {
-            val core = "com.google.firebase:firebase-core:16.0.0"
-            val auth = "com.google.firebase:firebase-auth:16.0.1"
-            val firestore = "com.google.firebase:firebase-firestore:17.0.1"
+            val core = "com.google.firebase:firebase-core:16.0.1"
+            val auth = "com.google.firebase:firebase-auth:16.0.2"
+            val firestore = "com.google.firebase:firebase-firestore:17.0.2"
             val functions = "com.google.firebase:firebase-functions:16.0.1"
             val storage = "com.google.firebase:firebase-storage:16.0.1"
             val config = "com.google.firebase:firebase-config:16.0.0"
-            val indexing = "com.google.firebase:firebase-appindexing:15.0.1"
-            val messaging = "com.google.firebase:firebase-messaging:17.0.0"
-            val invites = "com.google.firebase:firebase-invites:16.0.0"
+            val indexing = "com.google.firebase:firebase-appindexing:16.0.1"
+            val messaging = "com.google.firebase:firebase-messaging:17.1.0"
+            val invites = "com.google.firebase:firebase-invites:16.0.1"
             val perf = "com.google.firebase:firebase-perf:16.0.0"
 
-            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.2"
+            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.4"
         }
 
         object PlayServices {
@@ -97,7 +97,7 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.33.0"
+            val facebook = "com.facebook.android:facebook-login:4.34.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.1.1@aar"
         }
 

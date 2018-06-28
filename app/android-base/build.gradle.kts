@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
-import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -63,14 +62,14 @@ android {
 }
 
 play {
+    serviceAccountCredentials = file("google-play-auto-publisher.json")
     track = "alpha"
     resolutionStrategy = "auto"
-    versionNameOverride = { "${android.defaultConfig.versionName}.$it" }
-    jsonFile = file("google-play-auto-publisher.json")
+    outputProcessor = { versionNameOverride = "$versionNameOverride.$versionCode" }
 }
 
 dependencies {
-    api(project(":library:shared"))
+    implementation(project(":library:shared"))
 
     implementation(Config.Libs.Support.multidex)
     implementation(Config.Libs.PlayServices.playCore)
@@ -78,10 +77,12 @@ dependencies {
 
     implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)
-    implementation(Config.Libs.Firebase.messaging)
 
     // TODO https://issuetracker.google.com/issues/110012194
     implementation(project(":library:shared-scouting"))
+    // TODO remove when Firebase updates their deps
+    implementation("com.google.firebase:firebase-iid:16.2.0")
+    implementation(Config.Libs.Misc.gson) // Override Firestore
 }
 
 apply(plugin = "com.google.gms.google-services")
