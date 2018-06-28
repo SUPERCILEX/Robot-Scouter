@@ -6,7 +6,7 @@ build
 node_modules
 /local.properties
 
-keystore.properties
+*keystore.properties
 google-*.json
 *.jks
 config.xml

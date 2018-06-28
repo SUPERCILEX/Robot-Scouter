@@ -66,6 +66,7 @@ play {
     track = "alpha"
     resolutionStrategy = "auto"
     outputProcessor = { versionNameOverride = "$versionNameOverride.$versionCode" }
+    defaultToAppBundles = true
 }
 
 dependencies {

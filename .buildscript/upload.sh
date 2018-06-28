@@ -2,13 +2,13 @@
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   cd ..
-  git clone --branch=master "https://SUPERCILEX:${GIT_MAPPING_LOGIN}@github.com/SUPERCILEX/app-version-history.git" uploads &> /dev/null
+  git clone --branch=master "https://SUPERCILEX:${GIT_TOKEN}@github.com/SUPERCILEX/app-version-history.git" uploads &> /dev/null
   git config --global user.email "saveau.alexandre@gmail.com"
   git config --global user.name "Alex Saveau"
 
-  cp Robot-Scouter/app/android-base/build/outputs/apk/release/app-release.apk uploads/Robot-Scouter/app-release.apk
   cp Robot-Scouter/app/android-base/build/outputs/mapping/release/mapping.txt uploads/Robot-Scouter/mapping.txt
   cd uploads/Robot-Scouter
+  mv app-release.tmp app-release.apk
 
   # Duplicated in build.sh
   APK_DUMP=$(/usr/local/android-sdk/build-tools/${BUILD_TOOLS_VERSION}/aapt dump badging app-release.apk) &> /dev/null
