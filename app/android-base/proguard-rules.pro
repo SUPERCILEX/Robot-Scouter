@@ -10,6 +10,11 @@
 # Ignore Kotlin errors TODO https://youtrack.jetbrains.com/issue/KT-23172
 -dontwarn com.supercilex.robotscouter.**
 
+# TODO remove when Kotlin 1.2.51 comes out with Coroutines 0.23.4
+-keepclassmembers class * {
+    void $$clinit();
+}
+
 # Crashlytics
 -keep class com.google.android.gms.measurement.** { *; }
 
