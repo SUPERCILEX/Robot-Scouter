@@ -13,8 +13,8 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   # upload signing key for publishing.
   mkdir --parents ../uploads/Robot-Scouter
   mv app/android-base/build/outputs/apk/release/android-base-release.apk $_/app-release.tmp
-  mv app/upload-keystore.jks app/keystore.jks
-  mv app/upload-keystore.properties app/keystore.properties
+  mv app/android-base/upload-keystore.jks app/android-base/keystore.jks
+  mv app/android-base/upload-keystore.properties app/android-base/keystore.properties
   ./gradlew publish
 
   .buildscript/deploy-firebase.sh
