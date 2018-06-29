@@ -201,7 +201,7 @@ internal class SpinnerTemplateViewHolder(
         private var localItems: List<Metric.List.Item>? = null
 
         fun getItem(position: Int): Metric.List.Item =
-                if (localItems == null) metric.value[position] else localItems!![position]
+                if (localItems == null) metric.value[position] else checkNotNull(localItems)[position]
 
         fun onBind(viewHolder: ItemHolder) {
             viewHolder.enableDragToReorder(viewHolder, itemTouchHelper)

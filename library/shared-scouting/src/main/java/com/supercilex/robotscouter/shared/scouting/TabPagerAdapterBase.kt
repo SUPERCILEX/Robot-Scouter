@@ -32,7 +32,7 @@ abstract class TabPagerAdapterBase(
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
-    final override val containerView = fragment.view!!
+    final override val containerView = checkNotNull(fragment.view)
     private val tabs = containerView.find<TabLayout>(R.id.tabs)
     private val noTabsHint = containerView.find<View>(R.id.noTabsHint)
 
@@ -58,7 +58,7 @@ abstract class TabPagerAdapterBase(
     override fun getCount() = currentScouts.size
 
     override fun getItemPosition(f: Any): Int {
-        val id = (f as MetricListFragment).metricsRef.parent!!.id
+        val id = checkNotNull((f as MetricListFragment).metricsRef.parent).id
         val position = currentScouts.indexOfFirst { it.id == id }
         return if (position == -1) PagerAdapter.POSITION_NONE else position
     }
@@ -125,7 +125,7 @@ abstract class TabPagerAdapterBase(
 
     private fun updateTabNames() {
         (0 until tabs.tabCount).map {
-            tabs.getTabAt(it)!!
+            checkNotNull(tabs.getTabAt(it))
         }.forEachIndexed { index, tab ->
             tab.text = currentScouts[index].name ?: getPageTitle(index)
 
@@ -175,7 +175,7 @@ abstract class TabPagerAdapterBase(
                 fragment.childFragmentManager,
                 dataRef.document(currentScouts[v.id].id),
                 editTabNameRes,
-                tabs.getTabAt(v.id)!!.text!!.toString()
+                checkNotNull(tabs.getTabAt(v.id)?.text).toString()
         )
         return true
     }

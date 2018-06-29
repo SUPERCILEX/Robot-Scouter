@@ -12,7 +12,7 @@ import com.supercilex.robotscouter.core.model.Team
 fun Team.launchTba(context: Context) =
         launchUrl(context, "http://www.thebluealliance.com/team/$number".toUri())
 
-fun Team.launchWebsite(context: Context) = launchUrl(context, website!!.toUri())
+fun Team.launchWebsite(context: Context) = launchUrl(context, requireNotNull(website).toUri())
 
 fun launchUrl(context: Context, url: Uri) = CustomTabsIntent.Builder()
         .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))

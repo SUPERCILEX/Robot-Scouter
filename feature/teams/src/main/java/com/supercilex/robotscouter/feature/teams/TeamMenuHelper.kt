@@ -66,7 +66,7 @@ internal class TeamMenuHelper(
     private var selectAllSnackBar = snackBar()
 
     private fun snackBar(): Snackbar = Snackbar.make(
-            fragment.view!!,
+            requireNotNull(fragment.view),
             R.string.team_multiple_selected_message,
             Snackbar.LENGTH_INDEFINITE
     ).setAction(R.string.team_select_all_title) {
@@ -238,7 +238,7 @@ internal class TeamMenuHelper(
         if (visible) {
             toggler.toggle(true)
         } else {
-            activity.supportActionBar!!.apply {
+            checkNotNull(activity.supportActionBar).apply {
                 // Replace hamburger icon with back button
                 setDisplayHomeAsUpEnabled(false)
                 toggler.toggle(false)
@@ -283,7 +283,7 @@ internal class TeamMenuHelper(
     }
 
     private fun updateToolbarTitle() {
-        activity.supportActionBar!!.title = if (selectedTeams.isEmpty()) {
+        checkNotNull(activity.supportActionBar).title = if (selectedTeams.isEmpty()) {
             activity.getString(RC.string.app_name)
         } else {
             String.format(Locale.getDefault(), "%d", selectedTeams.size)

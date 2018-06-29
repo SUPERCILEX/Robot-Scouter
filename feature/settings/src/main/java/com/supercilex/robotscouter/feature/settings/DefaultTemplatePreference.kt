@@ -43,7 +43,7 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
     }
 
     override fun onDataChanged() {
-        val namesListener = holder!!.scouts
+        val namesListener = checkNotNull(holder).scouts
 
         isPersistent = false
 

@@ -157,7 +157,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
     @Synchronized
     fun removeExporter(exporter: TemplateExporter, notification: NotificationCompat.Builder) {
-        val (id) = exporters.remove(exporter)!!
+        val (id) = checkNotNull(exporters.remove(exporter))
 
         // The original notification must be cancelled because we're changing channels
         notificationManager.cancel(id)

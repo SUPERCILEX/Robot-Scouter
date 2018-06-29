@@ -32,9 +32,9 @@ import kotlin.math.abs
 
 val scoutParser = SnapshotParser { snapshot ->
     Scout(snapshot.id,
-          snapshot.getString(FIRESTORE_TEMPLATE_ID)!!,
+          checkNotNull(snapshot.getString(FIRESTORE_TEMPLATE_ID)),
           snapshot.getString(FIRESTORE_NAME),
-          snapshot.getDate(FIRESTORE_TIMESTAMP)!!,
+          checkNotNull(snapshot.getDate(FIRESTORE_TIMESTAMP)),
           @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
           (snapshot[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
               parseMetric(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
@@ -83,7 +83,7 @@ fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<S
                 async {
                     val snapshot = getTemplateRef(templateId)
                             .collection(FIRESTORE_METRICS).get().logFailures(templateId).await()
-                    val metrics = snapshot.documents.associate { it.id to it.data!! }
+                    val metrics = snapshot.documents.associate { it.id to checkNotNull(it.data) }
                     firestoreBatch {
                         for ((id, data) in metrics) {
                             set(metricsRef.document(id), data)
@@ -123,7 +123,7 @@ private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
         val snapshot = ref.get().logFailures(ref).await()
         if (!snapshot.exists()) return@async
 
-        val oppositeDate = Date(update(snapshot.getDate(FIRESTORE_TIMESTAMP)!!.time))
+        val oppositeDate = Date(update(checkNotNull(snapshot.getDate(FIRESTORE_TIMESTAMP)).time))
         firestoreBatch {
             this.update(ref, FIRESTORE_TIMESTAMP, oppositeDate)
             if (oppositeDate.time > 0) {

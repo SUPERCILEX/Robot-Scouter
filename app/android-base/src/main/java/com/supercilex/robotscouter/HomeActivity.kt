@@ -178,7 +178,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     }
 
     override fun toggle(enabled: Boolean) {
-        drawerToggle!!.isDrawerIndicatorEnabled = enabled
+        checkNotNull(drawerToggle).isDrawerIndicatorEnabled = enabled
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -186,7 +186,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         authHelper.onActivityResult(requestCode, resultCode, data)
         permHandler.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
-            onTeamSelected(data!!.getBundleExtra(SCOUT_ARGS_KEY), true)
+            onTeamSelected(checkNotNull(data).getBundleExtra(SCOUT_ARGS_KEY), true)
         }
     }
 

@@ -32,7 +32,7 @@ import java.util.Date
 import kotlin.math.abs
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
-        "$FIRESTORE_OWNERS.${uid!!}".let {
+        "$FIRESTORE_OWNERS.${checkNotNull(uid)}".let {
             templatesRef.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
         }
 
@@ -58,7 +58,7 @@ fun addTemplate(type: TemplateType): String {
     ref.batch {
         val scout = Scout(id, id)
         set(it, scout)
-        update(it, FIRESTORE_OWNERS, mapOf(uid!! to scout.timestamp))
+        update(it, FIRESTORE_OWNERS, mapOf(checkNotNull(uid) to scout.timestamp))
     }.logFailures(ref, id)
 
     async {
@@ -96,9 +96,9 @@ fun trashTemplate(id: String) {
     async {
         val ref = getTemplateRef(id)
         val snapshot = ref.get().logFailures(ref).await()
-        val oppositeDate = Date(-abs(snapshot.getDate(FIRESTORE_TIMESTAMP)!!.time))
+        val oppositeDate = Date(-abs(checkNotNull(snapshot.getDate(FIRESTORE_TIMESTAMP)).time))
         firestoreBatch {
-            update(snapshot.reference, "$FIRESTORE_OWNERS.${uid!!}", oppositeDate)
+            update(snapshot.reference, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", oppositeDate)
             set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())
         }.logFailures(id)
     }.logFailures()

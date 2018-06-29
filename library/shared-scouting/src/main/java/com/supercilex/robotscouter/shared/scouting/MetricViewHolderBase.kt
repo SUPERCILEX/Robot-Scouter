@@ -19,7 +19,7 @@ abstract class MetricViewHolderBase<M : Metric<T>, T>(
     protected val name: TextView = itemView.find(R.id.name)
     private lateinit var _fragmentManager: WeakReference<FragmentManager>
     // This is safe b/c we're only using it to show dialogs. Anyways, we'll be getting rid of those.
-    protected val fragmentManager get() = _fragmentManager.get()!!
+    protected val fragmentManager get() = checkNotNull(_fragmentManager.get())
 
     fun bind(metric: M, manager: FragmentManager) {
         this.metric = metric

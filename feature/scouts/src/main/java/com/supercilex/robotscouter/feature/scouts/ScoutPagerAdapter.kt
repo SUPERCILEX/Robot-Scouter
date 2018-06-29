@@ -30,8 +30,8 @@ internal class ScoutPagerAdapter(
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         super.onTabSelected(tab)
-        val tabId = currentTabId!!
-        team.logSelectScout(tabId, currentScouts.find { it.id == tabId }!!.templateId)
+        val tabId = checkNotNull(currentTabId)
+        team.logSelectScout(tabId, checkNotNull(currentScouts.find { it.id == tabId }).templateId)
     }
 
     private companion object {

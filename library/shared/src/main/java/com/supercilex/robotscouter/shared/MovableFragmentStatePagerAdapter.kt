@@ -66,7 +66,7 @@ abstract class MovableFragmentStatePagerAdapter(
         fragment.setMenuVisibility(false)
         fragment.userVisibleHint = false
 
-        currentTransaction!!.add(container.id, fragment)
+        checkNotNull(currentTransaction).add(container.id, fragment)
 
         return fragment
     }
@@ -157,7 +157,7 @@ abstract class MovableFragmentStatePagerAdapter(
             savedStates[itemId] = manager.saveFragmentInstanceState(this)
         }
 
-        currentTransaction!!.remove(this)
+        checkNotNull(currentTransaction).remove(this)
     }
 
     private fun initTransaction() {

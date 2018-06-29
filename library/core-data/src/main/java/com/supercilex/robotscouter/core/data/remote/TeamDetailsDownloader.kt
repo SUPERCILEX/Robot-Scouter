@@ -26,7 +26,7 @@ internal class TeamDetailsDownloader private constructor(
 
         if (cannotContinue(response)) return
 
-        val newTeam = response.body()!!
+        val newTeam = checkNotNull(response.body())
 
         if (team.name == newTeam.name) {
             team.hasCustomName = false
@@ -46,14 +46,16 @@ internal class TeamDetailsDownloader private constructor(
 
         if (cannotContinue(response)) return
 
-        val media = response.body()!!.map { (type, key, preferred, details) ->
+        val media = checkNotNull(response.body()).map { (type, key, preferred, details) ->
             when (type) {
                 Imgur.ID -> Imgur("https://i.imgur.com/$key.png", preferred)
                 YouTube.ID -> YouTube("https://img.youtube.com/vi/$key/0.jpg", preferred)
                 Instagram.ID ->
                     Instagram("https://www.instagram.com/p/$key/media/?size=l", preferred)
                 ChiefDelphi.ID -> ChiefDelphi(
-                        "https://www.chiefdelphi.com/media/img/${details!!.id}", preferred)
+                        "https://www.chiefdelphi.com/media/img/${checkNotNull(details).id}",
+                        preferred
+                )
                 else -> Unsupported(type)
             }
         }.filterNot { it is Unsupported }.sorted().firstOrNull()

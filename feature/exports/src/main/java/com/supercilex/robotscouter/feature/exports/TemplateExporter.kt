@@ -560,7 +560,7 @@ internal class TemplateExporter(
             chartData[newChart] = data to listOf(bottomAxis, leftAxis)
             chartPool[nearestHeader.second] = newChart
         } else {
-            data = chartData.getValue(chart!!).first
+            data = chartData.getValue(checkNotNull(chart)).first
         }
 
         val lastDataCellNum = cache.getLastDataOrAverageColumnIndex(team) - 1

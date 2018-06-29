@@ -30,7 +30,7 @@ internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
                         hasShownAddTeamTutorial = true
                     }
                 }
-                .create()!!
+                .run { checkNotNull(create()) }
 
         override fun onChanged(hasShownTutorial: Boolean?) {
             if (hasShownTutorial == false) prompt.show() else prompt.dismiss()

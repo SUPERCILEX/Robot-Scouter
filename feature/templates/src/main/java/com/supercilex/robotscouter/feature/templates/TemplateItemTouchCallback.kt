@@ -41,8 +41,8 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 
-    private val deleteIcon: Drawable = AppCompatResources.getDrawable(
-            rootView.context, R.drawable.ic_delete_black_24dp)!!
+    private val deleteIcon: Drawable = checkNotNull(AppCompatResources.getDrawable(
+            rootView.context, R.drawable.ic_delete_black_24dp))
     private val deletePaint = Paint().apply {
         color = ContextCompat.getColor(rootView.context, RC.color.delete_background)
     }
@@ -242,7 +242,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
 
             longSnackbar(rootView, RC.string.deleted, RC.string.undo) {
                 firestoreBatch {
-                    set(deletedRef, snapshot.data!!)
+                    set(deletedRef, checkNotNull(snapshot.data))
                     updatePositions(itemsBelow, 1)
                 }.logFailures(deletedRef, itemsBelow)
             }

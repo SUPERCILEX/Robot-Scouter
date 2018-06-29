@@ -29,7 +29,7 @@ internal class CounterValueDialog : ValueDialogBase<Long>() {
             valueLayout.error = getString(R.string.number_too_big_error)
             return false
         }
-        val ref = arguments!!.getRef()
+        val ref = checkNotNull(arguments).getRef()
         ref.update(FIRESTORE_VALUE, number).logFailures(ref, number)
         return true
     }

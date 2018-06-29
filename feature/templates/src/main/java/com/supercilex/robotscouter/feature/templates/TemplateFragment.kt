@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.feature.templates
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -20,6 +19,7 @@ import com.supercilex.robotscouter.core.data.getTemplateViewAction
 import com.supercilex.robotscouter.core.data.logAdd
 import com.supercilex.robotscouter.core.data.logSelectTemplate
 import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
+import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
@@ -33,21 +33,21 @@ import com.supercilex.robotscouter.R as RC
 
 internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
     override val metricsRef: CollectionReference by unsafeLazy {
-        getTemplateMetricsRef(getTabId(arguments)!!)
+        getTemplateMetricsRef(checkNotNull(getTabId(arguments)))
     }
-    override val dataId by unsafeLazy { metricsRef.parent!!.id }
+    override val dataId by unsafeLazy { checkNotNull(metricsRef.parent).id }
 
     private val itemTouchCallback by unsafeLazy {
-        TemplateItemTouchCallback<Metric<*>>(view!!)
+        TemplateItemTouchCallback<Metric<*>>(checkNotNull(view))
     }
 
     private var hasAddedItem: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        holder.metrics.asLiveData().observe(this, Observer {
-            noMetricsHint.animatePopReveal(it!!.isEmpty())
-        })
+        holder.metrics.asLiveData().observeNonNull(this) {
+            noMetricsHint.animatePopReveal(it.isEmpty())
+        }
     }
 
     override fun onCreateView(
@@ -85,7 +85,7 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
         when (id) {
             R.id.action_set_default_template -> {
                 val oldDefaultId = defaultTemplateId
-                defaultTemplateId = metricsRef.parent!!.id
+                defaultTemplateId = checkNotNull(metricsRef.parent).id
 
                 longSnackbar(metricsView, R.string.template_set_default_message, RC.string.undo) {
                     defaultTemplateId = oldDefaultId
@@ -93,7 +93,7 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
             }
             R.id.action_delete_template -> {
                 metricsView.clearFocus()
-                DeleteTemplateDialog.show(childFragmentManager, metricsRef.parent!!)
+                DeleteTemplateDialog.show(childFragmentManager, checkNotNull(metricsRef.parent))
             }
             R.id.action_remove_metrics -> {
                 metricsView.clearFocus()

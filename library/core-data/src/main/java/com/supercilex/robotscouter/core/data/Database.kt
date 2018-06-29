@@ -167,7 +167,7 @@ private val teamMerger = object : ChangeEventListenerBase {
         try {
             // Blow up if an error occurs retrieving these teams
             val ensureNotTrashed: DocumentSnapshot.() -> Unit = {
-                if (teamParser.parseSnapshot(this).isTrashed!!) error("Invalid")
+                if (checkNotNull(teamParser.parseSnapshot(this).isTrashed)) error("Invalid")
             }
             existingTeam.ref.get().await().ensureNotTrashed()
             duplicate.ref.get().await().ensureNotTrashed()
@@ -442,9 +442,9 @@ class LifecycleAwareFirestoreArray<T>(
         if (!keepAlive) array?.removeChangeEventListener(KeepAliveListener)
     }
 
-    override fun get(index: Int) = array!![index]
+    override fun get(index: Int) = checkNotNull(array)[index]
 
-    override fun getSnapshot(index: Int) = array!!.getSnapshot(index)
+    override fun getSnapshot(index: Int) = checkNotNull(array).getSnapshot(index)
 
     // Don't return `array` here since super will clear us when we're out of listeners, but we don't
     // want that since we're deciding when to kill the backing array.

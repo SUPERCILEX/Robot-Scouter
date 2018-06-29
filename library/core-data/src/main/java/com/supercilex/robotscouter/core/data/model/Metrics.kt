@@ -16,7 +16,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
 
-val metricParser = SnapshotParser { parseMetric(it.data!!, it.reference) }
+val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
 
 @Suppress("UNCHECKED_CAST") // We know what our data types are
 fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Metric<*> {

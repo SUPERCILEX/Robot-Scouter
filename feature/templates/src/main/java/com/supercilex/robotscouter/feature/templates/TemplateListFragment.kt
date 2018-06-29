@@ -83,7 +83,7 @@ internal class TemplateListFragment : FragmentBase(),
             }
         })
 
-        handleArgs(arguments!!, savedInstanceState)
+        handleArgs(checkNotNull(arguments), savedInstanceState)
     }
 
     override fun onDestroy() {
@@ -109,7 +109,7 @@ internal class TemplateListFragment : FragmentBase(),
         super.onActivityCreated(savedInstanceState)
         val activity = activity as AppCompatActivity
         activity.setSupportActionBar(toolbar)
-        activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        checkNotNull(activity.supportActionBar).setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
@@ -122,8 +122,8 @@ internal class TemplateListFragment : FragmentBase(),
             R.id.action_new_template -> NewTemplateDialog.show(childFragmentManager)
             R.id.action_share -> TemplateSharer.shareTemplate(
                     this,
-                    pagerAdapter.currentTabId!!,
-                    pagerAdapter.currentTab?.text?.toString()!!
+                    checkNotNull(pagerAdapter.currentTabId),
+                    checkNotNull(pagerAdapter.currentTab?.text?.toString())
             )
             else -> return false
         }

@@ -72,20 +72,22 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     private val scoutId: String?
         get() {
+            val savedState = savedState
             var scoutId: String? = pagerAdapter?.currentTabId
-            if (scoutId == null && savedState != null) scoutId = getTabId(savedState!!)
+            if (scoutId == null && savedState != null) scoutId = getTabId(savedState)
             if (scoutId == null) scoutId = getTabId(arguments)
             return scoutId
         }
     protected val bundle: Bundle
-        get() = getScoutBundle(team, arguments!!.getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
+        get() = getScoutBundle(
+                team, checkNotNull(arguments).getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         savedState = savedInstanceState
 
-        val state = savedInstanceState ?: arguments!!
+        val state = savedInstanceState ?: checkNotNull(arguments)
         dataHolder.init(state)
         team = state.getTeam()
         dataHolder.teamListener.observe(this, this)
@@ -197,7 +199,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     fun addScoutWithSelector() = ScoutTemplateSelectorDialog.show(childFragmentManager)
 
     fun addScout(id: String? = null) {
-        pagerAdapter!!.apply {
+        checkNotNull(pagerAdapter).apply {
             currentTabId = team.addScout(id, holder.scouts)
         }
     }
@@ -206,12 +208,12 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     private fun initScoutList() {
         pagerAdapter = ScoutPagerAdapter(this, team)
-        pagerAdapter!!.currentTabId = scoutId
+        checkNotNull(pagerAdapter).currentTabId = scoutId
 
         viewPager.adapter = pagerAdapter
         tabs.setupWithViewPager(viewPager)
 
-        arguments!!.let {
+        checkNotNull(arguments).let {
             if (it.getBoolean(KEY_ADD_SCOUT, false)) {
                 it.remove(KEY_ADD_SCOUT)
                 addScout(it.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))

@@ -18,7 +18,7 @@ val Thread.isMain get() = this === mainHandler.looper.thread
 val user get() = FirebaseAuth.getInstance().currentUser
 val uid get() = user?.uid
 val isSignedIn get() = user != null
-val isFullUser get() = isSignedIn && !user!!.isAnonymous
+val isFullUser get() = isSignedIn && !checkNotNull(user).isAnonymous
 
 val usersRef = FirebaseFirestore.getInstance().collection(FIRESTORE_USERS)
 val teamsRef = FirebaseFirestore.getInstance().collection(FIRESTORE_TEAMS)

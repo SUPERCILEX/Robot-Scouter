@@ -28,7 +28,7 @@ internal class DeleteTemplateDialog : ManualDismissDialog() {
             .createAndSetup(savedInstanceState)
 
     override fun onAttemptDismiss(): Boolean {
-        val deletedTemplateId = arguments!!.getRef().id
+        val deletedTemplateId = checkNotNull(arguments).getRef().id
         val newTemplateId = defaultTemplateId
         async {
             val teamRefs = teams.waitForChange().filter {

@@ -93,7 +93,7 @@ fun initUi() {
 }
 
 fun Activity.handleUpNavigation() = if (
-    NavUtils.shouldUpRecreateTask(this, NavUtils.getParentActivityIntent(this)!!) ||
+    NavUtils.shouldUpRecreateTask(this, checkNotNull(NavUtils.getParentActivityIntent(this))) ||
     intent.action == ACTION_FROM_DEEP_LINK
 ) {
     TaskStackBuilder.create(this).addParentStack(this).startActivities()

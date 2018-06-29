@@ -9,12 +9,12 @@ import com.supercilex.robotscouter.core.data.usersRef
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.User
 
-val userRef get() = getUserRef(uid!!)
+val userRef get() = getUserRef(checkNotNull(uid))
 
 val userPrefsQueryGenerator: QueryGenerator = { getUserPrefs(it.uid) }
-val userPrefs get() = getUserPrefs(uid!!)
+val userPrefs get() = getUserPrefs(checkNotNull(uid))
 
-val userDeletionQueue get() = deletionQueueRef.document(uid!!)
+val userDeletionQueue get() = deletionQueueRef.document(checkNotNull(uid))
 
 internal fun User.add() {
     val ref = getUserRef(uid)

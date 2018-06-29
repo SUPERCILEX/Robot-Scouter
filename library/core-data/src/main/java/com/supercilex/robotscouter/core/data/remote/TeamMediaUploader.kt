@@ -33,7 +33,8 @@ internal class TeamMediaUploader private constructor(
 
         if (cannotContinue(response)) error(response.toString())
 
-        var link: String = response.body()!!.get("data").asJsonObject.get("link").asString
+        var link: String =
+                checkNotNull(response.body()).get("data").asJsonObject.get("link").asString
         // Oh Imgur, why don't you use https by default? 😢
         link = if (link.startsWith("https://")) link else link.replace("http://", "https://")
         // And what about pngs?
@@ -47,12 +48,12 @@ internal class TeamMediaUploader private constructor(
                 team.number.toString(),
                 year,
                 tbaApiKey,
-                RequestBody.create(MediaType.parse("text/*"), team.media!!)
+                RequestBody.create(MediaType.parse("text/*"), checkNotNull(team.media))
         ).execute()
 
         if (cannotContinue(response)) return
 
-        val body: JsonObject = response.body()!!
+        val body: JsonObject = checkNotNull(response.body())
         check(body.get("success").asBoolean || body.get("message").asString.let {
             it == "media_exists" || it == "suggestion_exists"
         }) {

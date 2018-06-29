@@ -112,7 +112,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode != TAKE_PHOTO_RC) return
 
-        val photoFile = photoFile!!
+        val photoFile = checkNotNull(photoFile)
         if (resultCode == Activity.RESULT_OK) {
             launch(UI) {
                 val contentUri = async { photoFile.unhide()?.toUri() }.await()
@@ -124,7 +124,8 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 _onMediaCaptured.value = team.copy().apply {
                     media = contentUri.path
                     hasCustomMedia = true
-                    shouldUploadMediaToTba = this@TeamMediaCreator.shouldUploadMediaToTba!!
+                    shouldUploadMediaToTba =
+                            checkNotNull(this@TeamMediaCreator.shouldUploadMediaToTba)
                     mediaYear = Calendar.getInstance().get(Calendar.YEAR)
                 }
 

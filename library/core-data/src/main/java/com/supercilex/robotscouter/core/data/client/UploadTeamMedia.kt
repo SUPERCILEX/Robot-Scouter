@@ -15,7 +15,7 @@ internal const val TEAM_MEDIA_UPLOAD = "team_media_upload"
 
 internal fun Team.startUploadMediaJob() {
     WorkManager.getInstance().beginUniqueWork(
-            media!!,
+            checkNotNull(media),
             ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<UploadTeamMediaWorker>()
                     .addTag(TEAM_MEDIA_UPLOAD)

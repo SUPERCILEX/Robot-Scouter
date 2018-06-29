@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
@@ -16,6 +15,7 @@ import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.core.data.model.trashScout
 import com.supercilex.robotscouter.core.data.model.untrashScout
+import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
@@ -27,19 +27,19 @@ import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment() {
-    private val team by unsafeLazy { arguments!!.getTeam() }
-    private val scoutId by unsafeLazy { getTabId(arguments)!! }
+    private val team by unsafeLazy { checkNotNull(arguments).getTeam() }
+    private val scoutId by unsafeLazy { checkNotNull(getTabId(arguments)) }
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
     override val dataId get() = scoutId
 
-    private val toolbar by unsafeLazy { parentFragment!!.find<Toolbar>(RC.id.toolbar) }
+    private val toolbar by unsafeLazy { checkNotNull(parentFragment).find<Toolbar>(RC.id.toolbar) }
     private val emptyScoutHint by unsafeLazy { find<ContentLoadingHint>(RC.id.emptyScoutHint) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        holder.metrics.asLiveData().observe(this, Observer {
-            if (it!!.isNotEmpty()) emptyScoutHint.hide()
-        })
+        holder.metrics.asLiveData().observeNonNull(this) {
+            if (it.isNotEmpty()) emptyScoutHint.hide()
+        }
     }
 
     override fun onCreateView(
@@ -69,7 +69,8 @@ internal class ScoutFragment : MetricListFragment() {
         team.trashScout(scoutId)
         longSnackbar(toolbar, R.string.scout_delete_message, RC.string.undo) {
             team.untrashScout(scoutId)
-            (parentFragment as ScoutListFragmentBase).pagerAdapter!!.currentTabId = scoutId
+            checkNotNull((parentFragment as ScoutListFragmentBase).pagerAdapter)
+                    .currentTabId = scoutId
         }
         true
     } else {

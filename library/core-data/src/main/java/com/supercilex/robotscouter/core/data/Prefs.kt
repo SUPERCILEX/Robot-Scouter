@@ -32,12 +32,12 @@ val prefParser = SnapshotParser<Any?> {
         FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
         FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
         FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
-        -> it.getBoolean(FIRESTORE_VALUE)!!
+        -> checkNotNull(it.getBoolean(FIRESTORE_VALUE))
 
         FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
         FIRESTORE_PREF_NIGHT_MODE,
         FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
-        -> it.getString(FIRESTORE_VALUE)!!
+        -> checkNotNull(it.getString(FIRESTORE_VALUE))
 
         else -> it
     }
@@ -64,10 +64,10 @@ val prefStore = object : PreferenceDataStore() {
 }
 
 var defaultTemplateId: String
-    get() = prefStore.getString(
+    get() = checkNotNull(prefStore.getString(
             FIRESTORE_PREF_DEFAULT_TEMPLATE_ID,
             TemplateType.DEFAULT.id.toString()
-    )!!
+    ))
     set(value) {
         logUpdateDefaultTemplateId(value)
         prefStore.putString(FIRESTORE_PREF_DEFAULT_TEMPLATE_ID, value)

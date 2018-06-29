@@ -14,7 +14,11 @@ import kotlin.coroutines.experimental.suspendCoroutine
 
 suspend fun <T> Task<T>.await(): T {
     val trace = generateStackTrace(1)
-    if (isComplete) return if (isSuccessful) result else throw exception!!.injectRoot(trace)
+
+    if (isComplete) { // Fast path
+        return if (isSuccessful) result else throw checkNotNull(exception).injectRoot(trace)
+    }
+
     return suspendCoroutine { c: Continuation<T> ->
         addOnSuccessListener { c.resume(it) }
         addOnFailureListener { c.resumeWithException(it.injectRoot(trace)) }

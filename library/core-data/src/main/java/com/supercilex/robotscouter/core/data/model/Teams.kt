@@ -41,13 +41,13 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.sign
 
-val teamParser = SnapshotParser { it.toObject(Team::class.java)!!.apply { id = it.id } }
+val teamParser = SnapshotParser { checkNotNull(it.toObject(Team::class.java)).apply { id = it.id } }
 
 val teamWithSafeDefaults: (number: Long, id: String) -> Team = { number, id ->
     Team().apply {
         this.id = id
         this.number = number
-        owners = mapOf(uid!! to number)
+        owners = mapOf(checkNotNull(uid) to number)
         templateId = defaultTemplateId
     }
 }
@@ -57,7 +57,7 @@ val teamsQueryGenerator: QueryGenerator = {
         teamsRef.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
     }
 }
-val teamsQuery get() = teamsQueryGenerator(user!!)
+val teamsQuery get() = teamsQueryGenerator(checkNotNull(user))
 
 val Team.ref: DocumentReference get() = teamsRef.document(id)
 
@@ -168,7 +168,7 @@ fun Team.copyMediaInfo(newTeam: Team) {
 fun Team.trash(): Task<Void?> {
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
     return firestoreBatch {
-        update(ref, "$FIRESTORE_OWNERS.${uid!!}", if (number == 0L) {
+        update(ref, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
         } else {
             -abs(number)

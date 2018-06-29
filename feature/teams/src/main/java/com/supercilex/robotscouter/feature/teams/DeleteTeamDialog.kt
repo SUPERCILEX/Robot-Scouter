@@ -20,7 +20,7 @@ internal class DeleteTeamDialog : BottomSheetDialogFragmentBase(), View.OnClickL
     override val containerView: View by unsafeLazy {
         View.inflate(context, R.layout.dialog_delete_team, null)
     }
-    private val teams: List<Team> by unsafeLazy { arguments!!.getTeamList().sorted() }
+    private val teams: List<Team> by unsafeLazy { checkNotNull(arguments).getTeamList().sorted() }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
         message.text = run {

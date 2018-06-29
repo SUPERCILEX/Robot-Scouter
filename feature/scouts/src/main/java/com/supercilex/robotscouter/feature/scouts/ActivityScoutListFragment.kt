@@ -42,7 +42,7 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
         super.onActivityCreated(savedInstanceState)
         (activity as AppCompatActivity).apply {
             setSupportActionBar(viewHolder.toolbar)
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+            checkNotNull(supportActionBar).setDisplayHomeAsUpEnabled(true)
         }
     }
 
@@ -76,7 +76,7 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
     ) {
         override fun bind() {
             super.bind()
-            (activity as AppCompatActivity).supportActionBar!!.title = team.toString()
+            checkNotNull((activity as AppCompatActivity).supportActionBar).title = team.toString()
             setTaskDescription(
                     null, ContextCompat.getColor(requireContext(), RC.color.colorPrimary))
         }

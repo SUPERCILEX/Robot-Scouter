@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
+import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
@@ -57,7 +58,7 @@ internal open class AppBarViewHolderBase(
         OnActivityResult, Saveable, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
-    final override val containerView = fragment.view!!
+    final override val containerView = checkNotNull(fragment.view)
     val toolbar: Toolbar = containerView.find(RC.id.toolbar)
     private val toolbarHeight =
             fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)
@@ -69,10 +70,10 @@ internal open class AppBarViewHolderBase(
     private val mediaCapture = ViewModelProviders.of(fragment)
             .get(TeamMediaCreator::class.java).apply {
                 init(permissionHandler to savedInstanceState)
-                onMediaCaptured.observe(fragment, Observer {
-                    team.copyMediaInfo(it!!)
+                onMediaCaptured.observeNonNull(fragment) {
+                    team.copyMediaInfo(it)
                     team.forceUpdate()
-                })
+                }
             }
 
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()

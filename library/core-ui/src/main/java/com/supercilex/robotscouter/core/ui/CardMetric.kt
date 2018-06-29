@@ -38,7 +38,7 @@ class CardMetricHelper(private val view: View) {
     var isLastItem = false
 
     private val backgroundColors =
-            ContextCompat.getColorStateList(view.context, R.color.list_item)!!
+            checkNotNull(ContextCompat.getColorStateList(view.context, R.color.list_item))
     private val background = Paint(Paint.ANTI_ALIAS_FLAG)
     private val divider = Paint().apply {
         color = ContextCompat.getColor(view.context, R.color.list_divider)

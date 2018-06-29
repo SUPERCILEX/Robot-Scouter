@@ -27,7 +27,7 @@ internal class AccountMergeService : ManualMergeService() {
     private lateinit var instance: Instance
 
     override fun onLoadData(): Task<Void?>? {
-        val prevUid = uid!!
+        val prevUid = checkNotNull(uid)
         logCrashLog("Migrating user data from $prevUid.")
 
         return async {
@@ -65,7 +65,8 @@ internal class AccountMergeService : ManualMergeService() {
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, teamToken)
 
             updateOwner(teamRefs, teamToken, prevUid) { ref ->
-                teams.find { it.reference.path == ref.path }!!.getLong(FIRESTORE_NUMBER)!!
+                checkNotNull(teams.find { it.reference.path == ref.path }
+                                     ?.getLong(FIRESTORE_NUMBER))
             }
             for (ref in teamRefs) {
                 ref.update(tokenPath, FieldValue.delete()).logFailures(ref, teamToken)
@@ -77,7 +78,8 @@ internal class AccountMergeService : ManualMergeService() {
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, templateToken)
 
             updateOwner(templateRefs, templateToken, prevUid) { ref ->
-                templates.find { it.reference.path == ref.path }!!.getDate(FIRESTORE_TIMESTAMP)!!
+                checkNotNull(templates.find { it.reference.path == ref.path }
+                                     ?.getDate(FIRESTORE_TIMESTAMP))
             }
             for (ref in templateRefs) {
                 ref.update(tokenPath, FieldValue.delete()).logFailures(ref, templateToken)

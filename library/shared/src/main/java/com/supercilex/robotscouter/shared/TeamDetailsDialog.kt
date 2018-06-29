@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.core.data.model.forceUpdateAndRefresh
 import com.supercilex.robotscouter.core.data.model.formatAsTeamUrl
 import com.supercilex.robotscouter.core.data.model.isValidTeamUrl
 import com.supercilex.robotscouter.core.data.nullOrFull
+import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
@@ -60,7 +61,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        team = savedInstanceState?.getTeam() ?: arguments!!.getTeam()
+        team = savedInstanceState?.getTeam() ?: checkNotNull(arguments).getTeam()
         permHandler.apply {
             init(TeamMediaCreator.perms)
             onGranted.observe(this@TeamDetailsDialog, Observer {
@@ -69,10 +70,10 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         }
         mediaCreator.apply {
             init(permHandler to savedInstanceState)
-            onMediaCaptured.observe(this@TeamDetailsDialog, Observer {
-                team.copyMediaInfo(it!!)
+            onMediaCaptured.observeNonNull(this@TeamDetailsDialog) {
+                team.copyMediaInfo(it)
                 updateUi()
-            })
+            }
         }
         ViewModelProviders.of(this).get(TeamHolder::class.java).apply {
             init(team.toBundle())

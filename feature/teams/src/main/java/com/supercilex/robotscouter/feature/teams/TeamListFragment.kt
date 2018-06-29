@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.feature.teams
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
@@ -22,6 +21,7 @@ import com.supercilex.robotscouter.TeamListFragmentCompanion.Companion.TAG
 import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.isSignedIn
+import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
@@ -89,11 +89,11 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
         menuHelper.adapter = adapter
         menuHelper.restoreState(savedInstanceState)
 
-        teams.asLiveData().observe(this, Observer {
-            val noTeams = it!!.isEmpty()
+        teams.asLiveData().observeNonNull(this) {
+            val noTeams = it.isEmpty()
             noTeamsHint.animatePopReveal(noTeams)
             if (noTeams) fab.show()
-        })
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
