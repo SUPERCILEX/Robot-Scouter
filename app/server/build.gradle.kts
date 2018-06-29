@@ -17,11 +17,9 @@ kotlin {
     experimental.coroutines = Coroutines.ENABLE
 }
 
-tasks {
-    "compileKotlin2Js"(Kotlin2JsCompile::class) {
-        kotlinOptions {
-            moduleKind = "commonjs"
-            outputFile = "server/build/classes/kotlin/main/firebase.js"
-        }
+tasks.withType<Kotlin2JsCompile> {
+    kotlinOptions {
+        moduleKind = "commonjs"
+        outputFile = "$buildDir/classes/kotlin/main/firebase.js"
     }
 }

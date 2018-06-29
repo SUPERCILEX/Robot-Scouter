@@ -15,7 +15,7 @@ object Config {
         val google = "com.google.gms:google-services:3.2.1"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         val fabric = "io.fabric.tools:gradle:1.25.4"
-        val publishing = "com.github.Triple-T:gradle-play-publisher:838be415da"
+        val publishing = "com.github.Triple-T:gradle-play-publisher:42ffe9922c"
 
         val ktlint = "com.github.shyiko:ktlint:0.23.1"
     }
