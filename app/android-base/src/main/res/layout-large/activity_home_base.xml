@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".HomeActivity"
+    tools:ignore="MissingDefaultResource"
     tools:openDrawer="start">
 
     <android.support.constraint.ConstraintLayout
