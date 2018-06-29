@@ -1,12 +1,7 @@
 package com.supercilex.robotscouter.feature.templates
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import android.support.design.widget.AppBarLayout
 import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
-import android.support.v7.content.res.AppCompatResources
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
@@ -27,27 +22,15 @@ import com.supercilex.robotscouter.feature.templates.viewholder.TemplateViewHold
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Collections
-import kotlin.math.roundToInt
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         private val rootView: View
-) : ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-        ItemTouchHelper.START
-) {
+) : DeletingItemTouchCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, rootView.context) {
     private val recyclerView: RecyclerView = rootView.find(RC.id.metricsView)
     private val appBar: AppBarLayout = (rootView.context as FragmentActivity).find(R.id.appBar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
-
-    private val deleteIcon: Drawable = checkNotNull(AppCompatResources.getDrawable(
-            rootView.context, R.drawable.ic_delete_black_24dp))
-    private val deletePaint = Paint().apply {
-        color = ContextCompat.getColor(rootView.context, RC.color.delete_background)
-    }
-    private val deleteIconPadding =
-            rootView.resources.getDimension(RC.dimen.spacing_large).toInt()
 
     private val localItems = mutableListOf<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null
@@ -247,41 +230,6 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
                 }.logFailures(deletedRef, itemsBelow)
             }
         }.logFailures(deletedRef)
-    }
-
-    override fun onChildDraw(
-            c: Canvas,
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            dX: Float,
-            dY: Float,
-            actionState: Int,
-            isCurrentlyActive: Boolean
-    ) {
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-        if (actionState != ItemTouchHelper.ACTION_STATE_SWIPE) return
-
-        val v = viewHolder.itemView
-
-        c.drawRect(
-                v.right.toFloat() + dX,
-                v.top.toFloat(),
-                v.right.toFloat(),
-                v.bottom.toFloat(),
-                deletePaint
-        )
-        deleteIcon.apply {
-            val right = v.right - deleteIconPadding
-            val center = (v.height / 2.0).roundToInt()
-            val half = intrinsicHeight / 2
-            setBounds(
-                    right - intrinsicWidth,
-                    v.top + center - half,
-                    right,
-                    v.bottom - center + half
-            )
-            draw(c)
-        }
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {

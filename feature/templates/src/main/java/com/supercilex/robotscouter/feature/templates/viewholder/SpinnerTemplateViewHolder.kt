@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.showKeyboard
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.templates.DeletingItemTouchCallback
 import com.supercilex.robotscouter.feature.templates.R
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import kotlinx.android.extensions.LayoutContainer
@@ -107,14 +108,15 @@ internal class SpinnerTemplateViewHolder(
         override val reorderView: ImageView by unsafeLazy { reorder }
         override val nameEditor: EditText = itemView.find(RC.id.name)
 
-        private lateinit var parent: SpinnerTemplateViewHolder
-        private lateinit var item: Metric.List.Item
+        lateinit var item: Metric.List.Item
+            private set
         private var isDefault: Boolean by Delegates.notNull()
+
+        private lateinit var parent: SpinnerTemplateViewHolder
 
         init {
             init()
             defaultView.setOnClickListener(this)
-            delete.setOnClickListener(this)
             defaultView.setImageDrawable(itemView.context.getDrawableCompat(R.drawable.ic_default_24dp))
         }
 
@@ -131,7 +133,6 @@ internal class SpinnerTemplateViewHolder(
             val items = parent.getLatestItems()
             when (v.id) {
                 R.id.defaultView -> updateDefaultStatus(items)
-                R.id.delete -> delete(items)
                 else -> error("Unknown id: ${v.id}")
             }
         }
@@ -158,21 +159,6 @@ internal class SpinnerTemplateViewHolder(
             }
         }
 
-        private fun delete(items: List<Metric.List.Item>) {
-            val position = items.indexOfFirst { it.id == item.id }
-            parent.metric.update(items.toMutableList().apply {
-                removeAt(position)
-            })
-            parent.items.adapter.notifyItemRemoved(position)
-
-            longSnackbar(itemView, RC.string.deleted, RC.string.undo) {
-                parent.metric.update(parent.metric.value.toMutableList().apply {
-                    add(position, items[position])
-                })
-                parent.items.adapter.notifyItemInserted(position)
-            }
-        }
-
         override fun onFocusChange(v: View, hasFocus: Boolean) {
             val metric = parent.metric
             if (
@@ -192,9 +178,9 @@ internal class SpinnerTemplateViewHolder(
         }
     }
 
-    private inner class ItemTouchCallback : ItemTouchHelper.SimpleCallback(
+    private inner class ItemTouchCallback : DeletingItemTouchCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            0
+            itemView.context
     ) {
         var itemTouchHelper: ItemTouchHelper by LateinitVal()
         var pendingScrollPosition: Int = RecyclerView.NO_POSITION
@@ -229,6 +215,24 @@ internal class SpinnerTemplateViewHolder(
             return true
         }
 
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            viewHolder as ItemHolder
+
+            val items = getLatestItems()
+            val position = items.indexOfFirst { it.id == viewHolder.item.id }
+            metric.update(items.toMutableList().apply {
+                removeAt(position)
+            })
+            this@SpinnerTemplateViewHolder.items.adapter.notifyItemRemoved(position)
+
+            longSnackbar(itemView, RC.string.deleted, RC.string.undo) {
+                metric.update(metric.value.toMutableList().apply {
+                    add(position, items[position])
+                })
+                this@SpinnerTemplateViewHolder.items.adapter.notifyItemInserted(position)
+            }
+        }
+
         override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
             super.clearView(recyclerView, viewHolder)
             items.setHasFixedSize(false)
@@ -239,9 +243,6 @@ internal class SpinnerTemplateViewHolder(
         }
 
         override fun isLongPressDragEnabled() = false
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int): Unit =
-                throw UnsupportedOperationException()
     }
 
     private companion object {
