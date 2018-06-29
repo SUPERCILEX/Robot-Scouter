@@ -19,10 +19,9 @@ import android.view.MenuItem
 import android.view.View
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.supercilex.robotscouter.core.CrashLogger
-import com.supercilex.robotscouter.core.asLifecycleReference
+import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
-import com.supercilex.robotscouter.core.data.fetchAndActivate
+import com.supercilex.robotscouter.core.data.fetchAndActivateTask
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.ioPerms
 import com.supercilex.robotscouter.core.data.isSignedIn
@@ -42,11 +41,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.UpdateDialog
 import kotlinx.android.synthetic.main.activity_home_base.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
@@ -135,16 +130,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             true
         }
 
-        val ref = asLifecycleReference()
-        launch(UI) {
-            authHelper // Force initialization on the main thread
-            try {
-                withContext(CommonPool) { authHelper.init() }
-            } catch (e: Exception) {
-                CrashLogger.onFailure(e)
-                return@launch
-            }
-            ref().handleIntent(ref().intent)
+        authHelper.init().logFailures().addOnSuccessListener(this) {
+            handleIntent(intent)
         }
 
         GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
@@ -157,11 +144,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onStart() {
         super.onStart()
-        val ref = asLifecycleReference()
-        launch(UI) {
-            withContext(CommonPool) { fetchAndActivate() }
+        fetchAndActivateTask().logFailures().addOnSuccessListener(this) {
             if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
-                UpdateDialog.show(ref().supportFragmentManager)
+                UpdateDialog.show(supportFragmentManager)
             }
         }
     }
@@ -266,12 +251,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 .singleOrNull { it.isNotEmpty() }
 
         if (selectedTeams == null) {
-            val ref = asLifecycleReference()
-            async {
-                val allTeams = teams.waitForChange()
-                ExportServiceCompanion()
-                        .exportAndShareSpreadSheet(ref(), ref().permHandler, allTeams)
-            }.logFailures()
+            getAllTeams().logFailures().addOnSuccessListener(this) {
+                ExportServiceCompanion().exportAndShareSpreadSheet(this, permHandler, it)
+            }
         } else {
             if (
                 ExportServiceCompanion().exportAndShareSpreadSheet(
@@ -350,5 +332,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         const val UPDATE_EXTRA = "update_extra"
         const val ADD_SCOUT_INTENT = "add_scout"
         const val EXPORT_ALL_TEAMS_INTENT = "export_all_teams"
+
+        fun getAllTeams() = async { teams.waitForChange() }.asTask()
     }
 }

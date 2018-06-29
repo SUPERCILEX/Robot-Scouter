@@ -4,7 +4,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.supercilex.robotscouter.core.CrashLogger
+import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
+import kotlinx.coroutines.experimental.async
 import java.util.concurrent.TimeUnit
 
 // Mirrored in remote_config_defaults.xml
@@ -53,3 +55,5 @@ suspend fun fetchAndActivate() {
 
     config.activateFetched()
 }
+
+fun fetchAndActivateTask() = async { fetchAndActivate() }.asTask()

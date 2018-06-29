@@ -10,9 +10,10 @@ import android.view.MenuItem
 import android.view.View
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.asTask
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSignedIn
@@ -35,9 +36,7 @@ internal class AuthHelper(private val activity: AppCompatActivity) : (View) -> U
         activity.lifecycle.addObserver(this)
     }
 
-    suspend fun init() {
-        if (!isSignedIn) signInAnonymously().await()
-    }
+    fun init(): Task<*> = if (isSignedIn) Tasks.forResult(null) else signInAnonymously()
 
     fun initMenu(menu: Menu) {
         signInMenuItem = menu.findItem(R.id.action_sign_in)
