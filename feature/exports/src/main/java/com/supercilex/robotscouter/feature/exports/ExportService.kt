@@ -29,12 +29,14 @@ import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.RatingDialog
 import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.TimeoutCancellationException
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
@@ -205,7 +207,7 @@ class ExportService : IntentService(TAG) {
             if (teams.size >= MIN_TEAMS_TO_RATE && isOnline) {
                 val a = activity.asLifecycleReference()
                 launch(UI) {
-                    async { fetchAndActivate() }.await()
+                    withContext(CommonPool) { fetchAndActivate() }
                     if (shouldShowRatingDialog) RatingDialog.show(a().supportFragmentManager)
                 }
             }

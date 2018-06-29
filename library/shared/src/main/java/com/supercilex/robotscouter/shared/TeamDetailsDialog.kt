@@ -37,10 +37,12 @@ import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_team_details.*
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import java.util.Calendar
 import kotlin.math.hypot
 
@@ -193,7 +195,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            async { media.toString().formatAsTeamUrl() }.await().also {
+            withContext(CommonPool) { media.toString().formatAsTeamUrl() }.also {
                 if (it != team.media) {
                     team.media = it
                     team.hasCustomMedia = it?.isNotBlank() == true
@@ -201,7 +203,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            async { website.toString().formatAsTeamUrl() }.await().also {
+            withContext(CommonPool) { website.toString().formatAsTeamUrl() }.also {
                 if (it != team.website) {
                     team.website = it
                     team.hasCustomWebsite = it?.isNotBlank() == true
@@ -249,7 +251,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     private fun validateUrl(url: CharSequence, inputLayout: TextInputLayout): Deferred<Boolean> {
         val inputRef = inputLayout.asLifecycleReference(this)
         return async(UI) {
-            val isValid = async { url.isValidTeamUrl() }.await()
+            val isValid = withContext(CommonPool) { url.isValidTeamUrl() }
             inputRef().error =
                     if (isValid) null else getString(R.string.details_malformed_url_error)
             isValid

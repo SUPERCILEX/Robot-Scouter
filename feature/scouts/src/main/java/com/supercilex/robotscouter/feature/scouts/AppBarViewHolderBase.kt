@@ -39,9 +39,10 @@ import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamMediaCreator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
@@ -120,7 +121,7 @@ internal open class AppBarViewHolderBase(
 
         if (resource?.isRecycled == false) {
             launch(UI) {
-                val palette = async { Palette.from(resource).generate() }.await()
+                val palette = withContext(CommonPool) { Palette.from(resource).generate() }
 
                 val update: Palette.Swatch.() -> Unit = {
                     updateScrim(rgb, resource)
@@ -129,7 +130,7 @@ internal open class AppBarViewHolderBase(
             }
 
             launch(UI) {
-                val swatch = async {
+                val swatch = withContext(CommonPool) {
                     val paletteTarget = PaletteTarget.Builder()
                             .setExclusive(false)
                             .setTargetLightness(1f)
@@ -143,7 +144,7 @@ internal open class AppBarViewHolderBase(
                             .setRegion(0, 0, resource.width, toolbarHeight)
                             .generate()
                             .getSwatchForTarget(paletteTarget)
-                }.await() ?: return@launch
+                } ?: return@launch
 
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.

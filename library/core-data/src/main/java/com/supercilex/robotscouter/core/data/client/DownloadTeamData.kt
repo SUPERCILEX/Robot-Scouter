@@ -24,7 +24,7 @@ internal fun Team.startDownloadDataJob() {
                                             .build())
                     .setInputData(toWorkData())
                     .build()
-    ).enqueue()
+    ).synchronous().enqueueSync()
 }
 
 internal class DownloadTeamDataWorker : TeamWorker() {

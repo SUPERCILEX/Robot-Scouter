@@ -25,9 +25,11 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
@@ -82,7 +84,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val ref = host.asLifecycleReference()
         launch(UI) {
-            val file = async {
+            val file = withContext(CommonPool) {
                 try {
                     File(
                             mediaFolder ?: throw IOException("Couldn't create folder"),
@@ -95,7 +97,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                     RobotScouter.runOnUiThread { longToast(e.toString()) }
                     null
                 }
-            }.await() ?: return@launch
+            } ?: return@launch
 
             photoFile = file
             val photoUri = FileProvider.getUriForFile(RobotScouter, providerAuthority, file)
@@ -115,7 +117,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         val photoFile = checkNotNull(photoFile)
         if (resultCode == Activity.RESULT_OK) {
             launch(UI) {
-                val contentUri = async { photoFile.unhide()?.toUri() }.await()
+                val contentUri = withContext(CommonPool) { photoFile.unhide()?.toUri() }
                 if (contentUri == null) {
                     RobotScouter.longToast(R.string.error_unknown)
                     return@launch

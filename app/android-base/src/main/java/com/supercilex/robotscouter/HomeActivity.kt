@@ -42,9 +42,11 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.UpdateDialog
 import kotlinx.android.synthetic.main.activity_home_base.*
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 
@@ -137,7 +139,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         launch(UI) {
             authHelper // Force initialization on the main thread
             try {
-                async { authHelper.init() }.await()
+                withContext(CommonPool) { authHelper.init() }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 return@launch
@@ -157,7 +159,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         super.onStart()
         val ref = asLifecycleReference()
         launch(UI) {
-            async { fetchAndActivate() }.await()
+            withContext(CommonPool) { fetchAndActivate() }
             if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
                 UpdateDialog.show(ref().supportFragmentManager)
             }

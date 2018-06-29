@@ -25,9 +25,11 @@ import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import java.util.Date
+import kotlin.coroutines.experimental.coroutineContext
 import kotlin.math.abs
 
 val scoutParser = SnapshotParser { snapshot ->
@@ -80,7 +82,7 @@ fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<S
                     ).name
                 }
 
-                async {
+                withContext(coroutineContext) {
                     val snapshot = getTemplateRef(templateId)
                             .collection(FIRESTORE_METRICS).get().logFailures(templateId).await()
                     val metrics = snapshot.documents.associate { it.id to checkNotNull(it.data) }
@@ -89,7 +91,7 @@ fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<S
                             set(metricsRef.document(id), data)
                         }
                     }.logFailures(scoutRef, metrics)
-                }.await()
+                }
 
                 try {
                     deferredName.await()

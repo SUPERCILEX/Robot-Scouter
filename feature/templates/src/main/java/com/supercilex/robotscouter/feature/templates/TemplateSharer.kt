@@ -16,9 +16,10 @@ import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
@@ -32,7 +33,7 @@ internal class TemplateSharer private constructor(
         val fragmentRef = fragment.asLifecycleReference()
         launch(UI) {
             val intent = try {
-                async { generateIntent(templateId, templateName) }.await()
+                withContext(CommonPool) { generateIntent(templateId, templateName) }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 longSnackbar(fragmentRef().find(R.id.root), RC.string.error_unknown)

@@ -24,7 +24,7 @@ internal fun Team.startUploadMediaJob() {
                                             .build())
                     .setInputData(toWorkData())
                     .build()
-    ).enqueue()
+    ).synchronous().enqueueSync()
 }
 
 internal class UploadTeamMediaWorker : TeamWorker() {

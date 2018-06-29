@@ -44,9 +44,10 @@ import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
@@ -172,7 +173,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
                 val ref = asLifecycleReference()
                 launch(UI) {
                     val ownsTemplate = try {
-                        async { getTemplatesQuery().get().await() }.await()
+                        withContext(CommonPool) { getTemplatesQuery().get().await() }
                     } catch (e: Exception) {
                         CrashLogger.onFailure(e)
                         emptyList<DocumentSnapshot>()

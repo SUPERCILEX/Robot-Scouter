@@ -22,9 +22,10 @@ import com.supercilex.robotscouter.core.data.model.shareTeams
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.support.v4.find
 
@@ -61,7 +62,7 @@ class TeamSharer private constructor(
         val fragmentRef = fragment.asLifecycleReference()
         launch(UI) {
             val intent = try {
-                async { generateIntent() }.await()
+                withContext(CommonPool) { generateIntent() }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 longSnackbar(fragmentRef().find(R.id.root), R.string.error_unknown)
