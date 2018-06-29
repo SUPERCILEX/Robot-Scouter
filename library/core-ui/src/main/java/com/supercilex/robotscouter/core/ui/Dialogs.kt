@@ -152,6 +152,10 @@ abstract class KeyboardDialogBase : ManualDismissDialog() {
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)
-        lastEditText.setImeOnDoneListener { handleOnAttemptDismiss() }
+        lastEditText.apply {
+            setImeOnDoneListener { handleOnAttemptDismiss() }
+            requestFocus()
+            showKeyboard()
+        }
     }
 }
