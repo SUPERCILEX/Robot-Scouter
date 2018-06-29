@@ -6,9 +6,9 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   git config --global user.email "saveau.alexandre@gmail.com"
   git config --global user.name "Alex Saveau"
 
+  mv app-release.tmp uploads/Robot-Scouter/app-release.apk
   cp Robot-Scouter/app/android-base/build/outputs/mapping/release/mapping.txt uploads/Robot-Scouter/mapping.txt
   cd uploads/Robot-Scouter
-  mv app-release.tmp app-release.apk
 
   # Duplicated in build.sh
   APK_DUMP=$(/usr/local/android-sdk/build-tools/${BUILD_TOOLS_VERSION}/aapt dump badging app-release.apk) &> /dev/null
