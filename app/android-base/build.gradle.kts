@@ -6,7 +6,8 @@ plugins {
     id("io.fabric")
     id("com.github.triplet.play")
 }
-if (!project.hasProperty("devBuild")) apply(plugin = "com.google.firebase.firebase-perf")
+if (isReleaseBuild) apply(plugin = "com.google.firebase.firebase-perf")
+crashlytics.alwaysUpdateBuildId = isReleaseBuild
 
 android {
     dynamicFeatures = rootProject.project("feature").childProjects.mapTo(mutableSetOf()) {
@@ -38,7 +39,6 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
             manifestPlaceholders = mapOf("appName" to "Robot Scouter DEBUG")
-            crashlytics.alwaysUpdateBuildId = false
         }
 
         getByName("release") {
