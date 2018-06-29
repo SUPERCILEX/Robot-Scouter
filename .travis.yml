@@ -28,8 +28,5 @@ before_script:
 script: .buildscript/build.sh
 after_success: .buildscript/upload.sh
 after_failure:
-  - cat app/build/reports/lint-results.xml
-  - cat app/build/reports/lint-results.html
-  - cat app/build/reports/checkstyle/checkstyle.html
-  - cat app/build/reports/findbugs.html
-  - cat app/build/reports/pmd.html
+  - cat app/android-base/build/reports/lint-results.xml
+  - cat app/android-base/build/reports/lint-results.html

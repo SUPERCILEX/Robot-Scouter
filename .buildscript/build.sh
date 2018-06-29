@@ -11,7 +11,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
 
   # Copy APK generated from real signing key to upload to version history. Then generate APK from
   # upload signing key for publishing.
-  mv app/android-base/build/outputs/apk/release/app-release.apk ../uploads/Robot-Scouter/app-release.tmp
+  mv app/android-base/build/outputs/apk/release/android-base-release.apk ../uploads/Robot-Scouter/app-release.tmp
   mv app/upload-keystore.jks app/keystore.jks
   mv app/upload-keystore.properties app/keystore.properties
   ./gradlew publish
