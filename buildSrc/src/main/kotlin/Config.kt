@@ -1,6 +1,6 @@
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.2.50"
+    private const val kotlinVersion = "1.2.51"
 
     object SdkVersions {
         val compile = 28
@@ -22,7 +22,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "0.23.3"
+            private const val coroutinesVersion = "0.23.4"
 
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
             val js = "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
