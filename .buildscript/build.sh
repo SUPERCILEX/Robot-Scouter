@@ -7,7 +7,7 @@ mkdir -p library/common/build/libs
 touch library/common/build/libs/common.jar
 
 if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
-  ./gradlew build -x lint
+  ./gradlew build bundleRelease -x lint
 
   # Copy APK generated from real signing key to upload to version history. Then generate APK from
   # upload signing key for publishing.
