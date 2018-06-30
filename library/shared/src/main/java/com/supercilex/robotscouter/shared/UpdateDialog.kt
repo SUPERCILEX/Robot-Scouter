@@ -31,7 +31,7 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
 
         private val STORE_LISTING_URI = "market://details?id=com.supercilex.robotscouter".toUri()
         private val LATEST_APK_URI =
-                "https://github.com/SUPERCILEX/app-version-history/blob/master/Robot-Scouter/app-release.apk".toUri()
+                "https://github.com/SUPERCILEX/app-version-history/blob/master/Robot-Scouter/app-release.aab".toUri()
 
         fun show(manager: FragmentManager) {
             if (manager.findFragmentByTag(TAG) == null) {
