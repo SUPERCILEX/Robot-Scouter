@@ -7,7 +7,6 @@ import android.support.v4.app.ServiceCompat
 import android.support.v4.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.LateinitVal
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.EXPORT_IN_PROGRESS_CHANNEL
 import com.supercilex.robotscouter.core.data.FilteringNotificationManager
 import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
@@ -28,18 +27,18 @@ internal class ExportNotificationManager(private val service: ExportService) {
     private val transientGroupId = hashCode()
     private val permanentGroupId = transientGroupId + 1
     private val masterNotification: NotificationCompat.Builder
-        get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
+        get() = NotificationCompat.Builder(service, EXPORT_IN_PROGRESS_CHANNEL)
                 .setGroup(transientGroupId.toString())
                 .setGroupSummary(true)
-                .setContentTitle(RobotScouter.getString(R.string.export_overall_progress_title))
-                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
+                .setContentTitle(service.getString(R.string.export_overall_progress_title))
+                .setColor(ContextCompat.getColor(service, RC.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
     private val exportNotification: NotificationCompat.Builder
-        get() = NotificationCompat.Builder(RobotScouter, EXPORT_IN_PROGRESS_CHANNEL)
+        get() = NotificationCompat.Builder(service, EXPORT_IN_PROGRESS_CHANNEL)
                 .setGroup(transientGroupId.toString())
-                .setContentTitle(RobotScouter.getString(R.string.export_progress_title))
+                .setContentTitle(service.getString(R.string.export_progress_title))
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
+                .setColor(ContextCompat.getColor(service, RC.color.colorPrimary))
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 
@@ -55,7 +54,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     init {
         service.startForeground(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.getString(R.string.export_load_status))
+                .setContentText(service.getString(R.string.export_load_status))
                 .updateProgress(ESTIMATED_MASTER_OPS, 0)
                 .build())
         notificationFilter.start()
@@ -67,7 +66,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
         notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.getString(R.string.export_load_status))
+                .setContentText(service.getString(R.string.export_load_status))
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
@@ -80,7 +79,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     fun loading(teams: List<Team>) {
         notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.resources.getQuantityString(
+                .setContentText(service.resources.getQuantityString(
                         R.plurals.export_load_status_detail,
                         teams.size,
                         teams.first().number,
@@ -102,7 +101,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
         notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(RobotScouter.getString(R.string.export_load_status))
+                .setContentText(service.getString(R.string.export_load_status))
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
@@ -119,13 +118,13 @@ internal class ExportNotificationManager(private val service: ExportService) {
                 if (teams.isSingleton) EXTRA_EXPORT_OPS_SINGLE else EXTRA_EXPORT_OPS_POLY
 
         notificationFilter.notify(id, exportNotification
-                .setContentText(RobotScouter.getString(R.string.export_initialize_status))
+                .setContentText(service.getString(R.string.export_initialize_status))
                 .updateProgress(maxProgress, 0)
                 .build())
         if (pendingTaskCount == nTemplates && exporters.isEmpty()) {
             notificationFilter.notify(transientGroupId, masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
-                    .setContentText(RobotScouter.getString(
+                    .setContentText(service.getString(
                             R.string.export_template_status, exporter.templateName))
                     .updateProgress(
                             masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
@@ -142,17 +141,17 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
     fun onStartBuildingAverageSheet(exporter: TemplateExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.getString(R.string.export_average_status)))
+                .setContentText(service.getString(R.string.export_average_status)))
     }
 
     fun onStartCleanup(exporter: TemplateExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.getString(R.string.export_cleanup_status)))
+                .setContentText(service.getString(R.string.export_cleanup_status)))
     }
 
     fun onStartJsonExport(exporter: TemplateExporter) {
         next(exporter, exportNotification
-                .setContentText(RobotScouter.getString(R.string.export_json_status)))
+                .setContentText(service.getString(R.string.export_json_status)))
     }
 
     @Synchronized
@@ -171,9 +170,10 @@ internal class ExportNotificationManager(private val service: ExportService) {
         } else {
             notificationFilter.notify(transientGroupId, masterNotification
                     .setSmallIcon(android.R.drawable.stat_sys_upload)
-                    .setContentText(RobotScouter.getString(
+                    .setContentText(service.getString(
                             R.string.export_template_status,
-                            exporters.keys.first().templateName))
+                            exporters.keys.first().templateName
+                    ))
                     .updateProgress(
                             masterNotificationHolder.maxProgress,
                             ++masterNotificationHolder.progress)
@@ -210,12 +210,12 @@ internal class ExportNotificationManager(private val service: ExportService) {
         notificationFilter.notify(permanentGroupId, masterNotification
                 .setGroup(permanentGroupId.toString())
                 .setSmallIcon(RC.drawable.ic_logo)
-                .setSubText(RobotScouter.resources.getQuantityString(
+                .setSubText(service.resources.getQuantityString(
                         R.plurals.export_complete_subtitle, nTemplates, nTemplates))
                 .setContentText(if (teams.isEmpty()) {
-                    RobotScouter.getString(R.string.export_complete_none_message)
+                    service.getString(R.string.export_complete_none_message)
                 } else {
-                    RobotScouter.resources.getQuantityString(
+                    service.resources.getQuantityString(
                             R.plurals.export_complete_message, teams.size, teams.getNames())
                 })
                 .apply {

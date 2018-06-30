@@ -6,10 +6,13 @@ import android.content.Intent
 import android.support.annotation.RequiresPermission
 import android.support.v4.app.FragmentActivity
 import android.support.v4.content.ContextCompat
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.ExportServiceCompanion
 import com.supercilex.robotscouter.core.CrashLogger
+import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.exportsFolder
 import com.supercilex.robotscouter.core.data.fetchAndActivateTask
@@ -20,6 +23,9 @@ import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.core.data.model.scoutParser
 import com.supercilex.robotscouter.core.data.putExtra
 import com.supercilex.robotscouter.core.data.shouldShowRatingDialog
+import com.supercilex.robotscouter.core.data.teams
+import com.supercilex.robotscouter.core.data.waitForChange
+import com.supercilex.robotscouter.core.fastAddOnSuccessListener
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.logFailures
@@ -100,6 +106,7 @@ class ExportService : IntentService(TAG) {
                             try {
                                 TemplateExporter(
                                         scouts,
+                                        this@ExportService,
                                         notificationManager,
                                         exportFolder,
                                         templateNames[templateId]
@@ -182,11 +189,8 @@ class ExportService : IntentService(TAG) {
         override fun exportAndShareSpreadSheet(
                 activity: FragmentActivity,
                 permHandler: PermissionRequestHandler,
-                mutableTeams: List<Team>
+                teams: List<Team>
         ): Boolean {
-            val teams = mutableTeams.toList()
-            if (teams.isEmpty()) return false
-
             if (!EasyPermissions.hasPermissions(activity, *permHandler.perms.toTypedArray())) {
                 permHandler.requestPerms(activity, R.string.export_write_storage_rationale)
                 return false
@@ -194,19 +198,31 @@ class ExportService : IntentService(TAG) {
 
             snackbar(activity.find(RC.id.root), R.string.export_progress_hint)
 
-            teams.logExport()
-            ContextCompat.startForegroundService(
-                    activity,
-                    activity.intentFor<ExportService>().putExtra(teams)
-            )
-
-            if (teams.size >= MIN_TEAMS_TO_RATE && isOnline) {
-                fetchAndActivateTask().logFailures().addOnSuccessListener(activity) {
-                    if (shouldShowRatingDialog) RatingDialog.show(activity.supportFragmentManager)
+            if (teams.isEmpty()) {
+                getAllTeams()
+            } else {
+                Tasks.forResult(teams.toList())
+            }.fastAddOnSuccessListener { exportedTeams ->
+                exportedTeams.logExport()
+                ContextCompat.startForegroundService(
+                        RobotScouter,
+                        RobotScouter.intentFor<ExportService>().putExtra(exportedTeams)
+                )
+            }.continueWithTask {
+                if (it.result.size >= MIN_TEAMS_TO_RATE && isOnline) {
+                    fetchAndActivateTask().logFailures()
+                } else {
+                    Tasks.forResult<Unit>(null)
+                }
+            }.addOnSuccessListener(activity) {
+                if (it != null && shouldShowRatingDialog) {
+                    RatingDialog.show(activity.supportFragmentManager)
                 }
             }
 
             return true
         }
+
+        private fun getAllTeams() = async { teams.waitForChange() }.asTask()
     }
 }

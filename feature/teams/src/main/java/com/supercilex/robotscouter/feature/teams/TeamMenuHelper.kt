@@ -46,7 +46,7 @@ internal class TeamMenuHelper(
     val selectedTeams: List<Team> get() = _selectedTeams
     lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
 
-    private val fab by unsafeLazy { activity.find<FloatingActionButton>(R.id.fab) }
+    private val fab by unsafeLazy { activity.find<FloatingActionButton>(RC.id.fab) }
     private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(RC.id.drawerLayout) }
     private val toolbar by unsafeLazy {
         activity.find<Toolbar>(RC.id.toolbar).apply {
@@ -70,6 +70,7 @@ internal class TeamMenuHelper(
     }
 
     fun resetToolbarWithSave() {
+        if (!isMenuReady) return
         val prev = _selectedTeams
 
         _selectedTeams = mutableListOf()

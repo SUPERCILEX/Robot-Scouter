@@ -6,7 +6,6 @@ import android.os.Bundle
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.core.data.KEYS
@@ -26,7 +25,6 @@ import kotlinx.android.synthetic.main.activity_link_receiver.*
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 
 @SuppressLint("GoogleAppIndexingApiWarning")
@@ -35,6 +33,7 @@ internal class LinkReceiverActivity : ActivityBase() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_receiver)
         progress.show()
+        handleModuleInstalls(progress)
 
         async {
             onSignedIn()
@@ -76,7 +75,7 @@ internal class LinkReceiverActivity : ActivityBase() {
                                       .setAction(ACTION_FROM_DEEP_LINK))
             }
         } else {
-            RobotScouter.runOnUiThread { longToast(R.string.link_teams_imported_message) }
+            runOnUiThread { longToast(R.string.link_teams_imported_message) }
             startTeamListActivityNoArgs()
         }
     }
@@ -86,7 +85,7 @@ internal class LinkReceiverActivity : ActivityBase() {
 
         if (token != null) updateOwner(refs, token, null) { Date() }
 
-        startActivity(TemplateListActivityCompanion().createIntent(refs.single().id)
+        startActivity(TemplateListActivityCompanion().await().createIntent(refs.single().id)
                               .addNewDocumentFlags()
                               .setAction(ACTION_FROM_DEEP_LINK))
     }
@@ -98,6 +97,6 @@ internal class LinkReceiverActivity : ActivityBase() {
 
     private fun showErrorAndContinue() {
         startTeamListActivityNoArgs()
-        RobotScouter.runOnUiThread { longToast(R.string.link_uri_parse_error) }
+        runOnUiThread { longToast(R.string.link_uri_parse_error) }
     }
 }

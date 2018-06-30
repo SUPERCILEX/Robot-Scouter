@@ -8,6 +8,7 @@ import android.view.Window
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.TabletScoutListFragmentBridge
 import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
+import com.supercilex.robotscouter.core.ValueSeeker
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
@@ -18,11 +19,9 @@ import com.supercilex.robotscouter.R as RC
 
 @Bridge
 internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutListFragmentBridge {
-    private var noContentHint: View? = null
-        get() {
-            if (field == null) field = requireActivity().findOptional(RC.id.noTeamSelectedHint)
-            return field
-        }
+    private val noContentHint by ValueSeeker {
+        requireActivity().findOptional<View>(RC.id.noTeamSelectedHint)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -7,7 +7,6 @@ import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.core.CrashLogger
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.CachingSharer
 import com.supercilex.robotscouter.core.data.getTemplateLink
@@ -28,6 +27,8 @@ internal class TemplateSharer private constructor(
         templateId: String,
         templateName: String
 ) : CachingSharer() {
+    private val res = fragment.resources
+
     init {
         val fragmentRef = fragment.asLifecycleReference()
         launch(UI) {
@@ -50,19 +51,16 @@ internal class TemplateSharer private constructor(
         return getInvitationIntent(
                 getTemplateLink(templateId, token),
                 templateName,
-                htmlTemplate.format(
-                        RobotScouter.getString(R.string.template_share_cta, templateName))
+                htmlTemplate.format(res.getString(R.string.template_share_cta, templateName))
         )
     }
 
     private fun getInvitationIntent(deepLink: String, templateName: String, html: String) =
             AppInviteInvitation.IntentBuilder(
-                    RobotScouter.getString(R.string.template_share_title, templateName))
-                    .setMessage(
-                            RobotScouter.getString(R.string.template_share_message, templateName))
+                    res.getString(R.string.template_share_title, templateName))
+                    .setMessage(res.getString(R.string.template_share_message, templateName))
                     .setDeepLink(deepLink.toUri())
-                    .setEmailSubject(
-                            RobotScouter.getString(R.string.template_share_cta, templateName))
+                    .setEmailSubject(res.getString(R.string.template_share_cta, templateName))
                     .setEmailHtmlContent(html)
                     .build()
 

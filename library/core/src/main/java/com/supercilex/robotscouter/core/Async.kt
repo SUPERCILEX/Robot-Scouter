@@ -1,7 +1,9 @@
 package com.supercilex.robotscouter.core
 
+import android.app.Activity
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import kotlinx.coroutines.experimental.CancellationException
@@ -22,6 +24,23 @@ suspend fun <T> Task<T>.await(): T {
     return suspendCoroutine { c: Continuation<T> ->
         addOnSuccessListener { c.resume(it) }
         addOnFailureListener { c.resumeWithException(it.injectRoot(trace)) }
+    }
+}
+
+inline fun <T> Task<T>.fastAddOnSuccessListener(
+        activity: Activity? = null,
+        crossinline listener: (T) -> Unit
+): Task<T> {
+    if (isSuccessful) { // Fast path
+        listener(result)
+        return this
+    }
+
+    val crossedListener = OnSuccessListener<T> { listener(it) }
+    return if (activity == null) {
+        addOnSuccessListener(crossedListener)
+    } else {
+        addOnSuccessListener(activity, crossedListener)
     }
 }
 

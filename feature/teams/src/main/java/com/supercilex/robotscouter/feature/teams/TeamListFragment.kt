@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.feature.teams
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -30,6 +31,8 @@ import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_team_list.*
+import org.jetbrains.anko.find
+import com.supercilex.robotscouter.R as RC
 
 @Bridge
 internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackPressedListener,
@@ -45,6 +48,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
         ViewModelProviders.of(this).get(TutorialHelper::class.java)
     }
 
+    private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private lateinit var adapter: TeamListAdapter
     private lateinit var menuHelper: TeamMenuHelper
 
@@ -63,6 +67,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fab.setOnClickListener(this)
+        fab.show()
         showAddTeamTutorial(tutorialHelper, this)
 
         teamsView.layoutManager = LinearLayoutManager(context)
@@ -101,6 +106,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
     override fun onDestroyView() {
         super.onDestroyView()
         menuHelper.resetToolbarWithSave()
+        fab.hide()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

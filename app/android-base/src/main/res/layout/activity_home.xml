@@ -14,14 +14,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/root"
+        <include layout="@layout/activity_home_content" />
+
+        <!-- Needed to match the tablet layout guideline -->
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="1" />
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottomNavigation"

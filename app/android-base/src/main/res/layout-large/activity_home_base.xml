@@ -15,14 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/root"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+        <include layout="@layout/activity_home_content" />
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottomNavigation"

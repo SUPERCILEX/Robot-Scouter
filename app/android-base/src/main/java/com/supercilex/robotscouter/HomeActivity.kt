@@ -7,19 +7,15 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.data.fetchAndActivateTask
 import com.supercilex.robotscouter.core.data.getTeam
@@ -28,11 +24,11 @@ import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.logSelect
 import com.supercilex.robotscouter.core.data.minimumAppVersion
-import com.supercilex.robotscouter.core.data.teams
-import com.supercilex.robotscouter.core.data.waitForChange
+import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.fullVersionCode
 import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
@@ -41,18 +37,28 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.UpdateDialog
 import kotlinx.android.synthetic.main.activity_home_base.*
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.find
+import kotlinx.android.synthetic.main.activity_home_content.*
 import org.jetbrains.anko.longToast
 
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, DrawerToggler, TeamExporter, SignInResolver {
     private val authHelper by unsafeLazy { AuthHelper(this) }
-    private val permHandler: PermissionRequestHandler by unsafeLazy {
+    private val permHandler by unsafeLazy {
         ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
     }
+    private val moduleRequestHolder by unsafeLazy {
+        ViewModelProviders.of(this).get(ModuleRequestHolder::class.java)
+    }
 
-    private var drawerToggle: ActionBarDrawerToggle? = null
+    private val drawerToggle by unsafeLazy {
+        ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open_desc,
+                R.string.navigation_drawer_close_desc
+        )
+    }
 
     private val scoutListFragment
         get() = supportFragmentManager.findFragmentByTag(TabletScoutListFragmentCompanion.TAG)
@@ -64,31 +70,30 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         setContentView(R.layout.activity_home)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().add(
-                    R.id.root,
+                    R.id.content,
                     TeamListFragmentCompanion().getInstance(supportFragmentManager),
                     TeamListFragmentCompanion.TAG
             ).commit()
         }
-        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager
-        .FragmentLifecycleCallbacks() {
-            override fun onFragmentViewCreated(
-                    fm: FragmentManager,
-                    f: Fragment,
-                    v: View,
-                    savedInstanceState: Bundle?
-            ) {
-                if (
-                    f.tag == TeamListFragmentCompanion.TAG ||
-                    f.tag == AutoScoutFragmentCompanion.TAG
-                ) initToolbar()
-            }
-        }, false)
 
         permHandler.apply {
             init(ioPerms)
             onGranted.observe(this@HomeActivity, Observer { export() })
         }
+        moduleRequestHolder.onSuccess.observeNonNull(this) { (comp, args) ->
+            @Suppress("UNCHECKED_CAST") // We know our inputs
+            when (comp) {
+                is TemplateListActivityCompanion -> startActivity(comp.createIntent())
+                is SettingsActivityCompanion -> startActivity(comp.createIntent())
+                is ExportServiceCompanion -> if (
+                    comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>)
+                ) sendBackEventToChildren()
+            }
+        }
 
+        setSupportActionBar(toolbar)
+        drawerLayout.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             private val editTemplates: MenuItem = drawer.menu.findItem(R.id.action_edit_templates)
 
@@ -105,7 +110,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         drawer.setNavigationItemSelectedListener(this)
         bottomNavigation.setOnNavigationItemSelectedListener {
             supportFragmentManager.beginTransaction()
-                    .detach(supportFragmentManager.findFragmentById(R.id.root))
+                    .detach(supportFragmentManager.findFragmentById(R.id.content))
                     .apply {
                         val (f, tag) = when (it.itemId) {
                             R.id.teams -> {
@@ -122,7 +127,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                         if (f.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                             attach(f)
                         } else {
-                            add(R.id.root, f, tag)
+                            add(R.id.content, f, tag)
                         }
                     }
                     .commit()
@@ -130,6 +135,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             true
         }
 
+        handleModuleInstalls(moduleInstallProgress)
         authHelper.init().logFailures().addOnSuccessListener(this) {
             handleIntent(intent)
         }
@@ -184,8 +190,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 when (item.itemId) {
                     R.id.action_export_all_teams -> export()
                     R.id.action_edit_templates ->
-                        startActivity(TemplateListActivityCompanion().createIntent())
-                    R.id.action_settings -> SettingsActivityCompanion().show(this)
+                        moduleRequestHolder += TemplateListActivityCompanion().logFailures()
+                    R.id.action_settings ->
+                        moduleRequestHolder += SettingsActivityCompanion().logFailures()
                     else -> error("Unknown item id: ${item.itemId}")
                 }
             }
@@ -212,8 +219,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            forwardBack()
+        } else if (sendBackEventToChildren()) {
+            super.onBackPressed()
         }
     }
 
@@ -248,45 +255,14 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         val selectedTeams = supportFragmentManager.fragments
                 .filterIsInstance<SelectedTeamsRetriever>()
                 .map { it.selectedTeams }
-                .singleOrNull { it.isNotEmpty() }
+                .singleOrNull { it.isNotEmpty() } ?: emptyList()
 
-        if (selectedTeams == null) {
-            getAllTeams().logFailures().addOnSuccessListener(this) {
-                ExportServiceCompanion().exportAndShareSpreadSheet(this, permHandler, it)
-            }
-        } else {
-            if (
-                ExportServiceCompanion().exportAndShareSpreadSheet(
-                        this, permHandler, selectedTeams)
-            ) forwardBack()
-        }
+        moduleRequestHolder += ExportServiceCompanion().logFailures() to listOf(selectedTeams)
     }
 
-    private fun initToolbar() {
-        drawerToggle?.let { drawerLayout.removeDrawerListener(it) }
-
-        val toolbar = find<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar) // This must come first
-
-        val drawerToggle = ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                toolbar,
-                R.string.navigation_drawer_open_desc,
-                R.string.navigation_drawer_close_desc
-        )
-        this.drawerToggle = drawerToggle
-
-        drawerLayout.addDrawerListener(drawerToggle)
-        drawerToggle.syncState()
-    }
-
-    private fun forwardBack() {
-        val ignored = supportFragmentManager.fragments
-                .filterIsInstance<OnBackPressedListener>()
-                .none { it.onBackPressed() }
-        if (ignored) super.onBackPressed()
-    }
+    private fun sendBackEventToChildren() = supportFragmentManager.fragments
+            .filterIsInstance<OnBackPressedListener>()
+            .none { it.onBackPressed() }
 
     private fun handleIntent(intent: Intent) {
         intent.extras?.let {
@@ -332,7 +308,5 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         const val UPDATE_EXTRA = "update_extra"
         const val ADD_SCOUT_INTENT = "add_scout"
         const val EXPORT_ALL_TEAMS_INTENT = "export_all_teams"
-
-        fun getAllTeams() = async { teams.waitForChange() }.asTask()
     }
 }

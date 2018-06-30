@@ -13,24 +13,26 @@ import com.supercilex.robotscouter.core.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.data.teams
-import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.find
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import com.supercilex.robotscouter.R as RC
 
 internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
     helper.hasShownAddTeamTutorial.observe(owner, object : Observer<Boolean?> {
-        private val prompt = MaterialTapTargetPrompt.Builder(
-                owner.requireActivity(), R.style.RobotScouter_Tutorial)
-                .setTarget(R.id.fab)
-                .setClipToView(owner.find(R.id.root))
-                .setPrimaryText(R.string.tutorial_create_first_team_title)
-                .setAutoDismiss(false)
-                .setPromptStateChangeListener { _, state ->
-                    if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                        hasShownAddTeamTutorial = true
+        private val prompt = run {
+            val activity = owner.requireActivity()
+            MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
+                    .setTarget(RC.id.fab)
+                    .setClipToView(activity.find(RC.id.root))
+                    .setPrimaryText(R.string.tutorial_create_first_team_title)
+                    .setAutoDismiss(false)
+                    .setPromptStateChangeListener { _, state ->
+                        if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                            hasShownAddTeamTutorial = true
+                        }
                     }
-                }
-                .run { checkNotNull(create()) }
+                    .run { checkNotNull(create()) }
+        }
 
         override fun onChanged(hasShownTutorial: Boolean?) {
             if (hasShownTutorial == false) prompt.show() else prompt.dismiss()
@@ -41,19 +43,21 @@ internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
 internal fun showSignInTutorial(helper: TutorialHelper, owner: Fragment) {
     helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
         private val prompt
-            get() = MaterialTapTargetPrompt.Builder(
-                    owner.requireActivity(), R.style.RobotScouter_Tutorial_Menu)
-                    .setTarget(RC.id.action_sign_in)
-                    .setClipToView(owner.find(R.id.root))
-                    .setPrimaryText(R.string.tutorial_sign_in_title)
-                    .setSecondaryText(R.string.tutorial_sign_in_rationale)
-                    .setPromptStateChangeListener { _, state ->
-                        if (
-                            state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED ||
-                            state == MaterialTapTargetPrompt.STATE_NON_FOCAL_PRESSED
-                        ) hasShownSignInTutorial = true
-                    }
-                    .create()
+            get() = run {
+                val activity = owner.requireActivity()
+                MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
+                        .setTarget(RC.id.action_sign_in)
+                        .setClipToView(activity.find(RC.id.root))
+                        .setPrimaryText(R.string.tutorial_sign_in_title)
+                        .setSecondaryText(R.string.tutorial_sign_in_rationale)
+                        .setPromptStateChangeListener { _, state ->
+                            if (
+                                state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED ||
+                                state == MaterialTapTargetPrompt.STATE_NON_FOCAL_PRESSED
+                            ) hasShownSignInTutorial = true
+                        }
+                        .create()
+            }
         private var latestPrompt: MaterialTapTargetPrompt? = null
 
         override fun onChanged(hasShownTutorial: Boolean?) {

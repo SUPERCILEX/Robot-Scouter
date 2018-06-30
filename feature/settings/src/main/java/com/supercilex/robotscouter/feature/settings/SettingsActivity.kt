@@ -1,10 +1,10 @@
 package com.supercilex.robotscouter.feature.settings
 
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.SettingsActivityCompanion
+import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.shared.handleUpNavigation
@@ -37,7 +37,6 @@ class SettingsActivity : ActivityBase() {
     }
 
     companion object : SettingsActivityCompanion {
-        override fun show(context: Context) =
-                context.startActivity(context.intentFor<SettingsActivity>())
+        override fun createIntent() = RobotScouter.intentFor<SettingsActivity>()
     }
 }

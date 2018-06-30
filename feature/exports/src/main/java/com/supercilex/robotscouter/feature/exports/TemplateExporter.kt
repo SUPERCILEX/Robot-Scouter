@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.feature.exports
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.annotation.PluralsRes
@@ -17,7 +18,6 @@ import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.supercilex.robotscouter.core.CrashLogger
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.EXPORT_CHANNEL
 import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.NotificationIntentForwarder
@@ -63,15 +63,16 @@ import com.supercilex.robotscouter.R as RC
 
 internal class TemplateExporter(
         scouts: Map<Team, List<Scout>>,
+        private val context: Context,
         private val notificationManager: ExportNotificationManager,
         private val exportFolder: File,
         private val rawTemplateName: String?
 ) {
     val templateName: String by lazy {
-        rawTemplateName ?: RobotScouter.getString(R.string.export_unnamed_template_title)
+        rawTemplateName ?: context.getString(R.string.export_unnamed_template_title)
     }
     val scouts: Map<Team, List<Scout>> = Collections.unmodifiableMap(scouts)
-    private val cache = SpreadsheetCache(scouts.keys)
+    private val cache = SpreadsheetCache(context, scouts.keys)
 
     suspend fun export() {
         val spreadsheet = async { exportSpreadsheet() }
@@ -95,14 +96,14 @@ internal class TemplateExporter(
 
     private fun exportSpreadsheet(): NotificationCompat.Builder {
         fun getPluralTeams(@PluralsRes id: Int, vararg args: Any): String =
-                RobotScouter.resources.getQuantityString(id, cache.teams.size, *args)
+                context.resources.getQuantityString(id, cache.teams.size, *args)
 
         fun getPluralTeams(@PluralsRes id: Int) = getPluralTeams(id, cache.teamNames)
 
         val exportId = notificationManager.addExporter(this)
 
         val spreadsheetUri: Uri = FileProvider.getUriForFile(
-                RobotScouter, providerAuthority, writeSpreadsheetFile())
+                context, providerAuthority, writeSpreadsheetFile())
 
         val baseIntent = Intent()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -111,7 +112,7 @@ internal class TemplateExporter(
         val viewIntent = Intent(baseIntent).setAction(Intent.ACTION_VIEW)
                 .setDataAndType(spreadsheetUri, MIME_TYPE_MS_EXCEL)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        if (viewIntent.resolveActivity(RobotScouter.packageManager) == null) {
+        if (viewIntent.resolveActivity(context.packageManager) == null) {
             viewIntent.setDataAndType(spreadsheetUri, MIME_TYPE_ANY)
         }
 
@@ -120,7 +121,7 @@ internal class TemplateExporter(
                 .putExtra(Intent.EXTRA_STREAM, spreadsheetUri)
                 .putExtra(Intent.EXTRA_ALTERNATE_INTENTS, arrayOf(viewIntent))
         val sharePendingIntent = PendingIntent.getActivity(
-                RobotScouter,
+                context,
                 exportId,
                 NotificationIntentForwarder.getCancelIntent(
                         exportId,
@@ -132,28 +133,27 @@ internal class TemplateExporter(
                 PendingIntent.FLAG_ONE_SHOT
         )
 
-        return NotificationCompat.Builder(RobotScouter, EXPORT_CHANNEL)
+        return NotificationCompat.Builder(context, EXPORT_CHANNEL)
                 .setSmallIcon(R.drawable.ic_done_white_24dp)
-                .setContentTitle(RobotScouter.getString(
-                        R.string.export_complete_title, templateName))
+                .setContentTitle(context.getString(R.string.export_complete_title, templateName))
                 .setSubText(getPluralTeams(R.plurals.export_complete_summary, cache.teams.size))
                 .setContentText(getPluralTeams(R.plurals.export_complete_message))
                 .setContentIntent(sharePendingIntent)
                 .addAction(
                         R.drawable.ic_share_white_24dp,
-                        RobotScouter.getString(RC.string.share),
+                        context.getString(RC.string.share),
                         sharePendingIntent
                 )
                 .addAction(
                         R.drawable.ic_launch_white_24dp,
-                        RobotScouter.getString(RC.string.open),
+                        context.getString(RC.string.open),
                         PendingIntent.getActivity(
-                                RobotScouter,
+                                context,
                                 exportId,
                                 viewIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT)
                 )
-                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
+                .setColor(ContextCompat.getColor(context, RC.color.colorPrimary))
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
     }
@@ -227,7 +227,7 @@ internal class TemplateExporter(
         val workbook = if (isSupportedDevice) {
             XSSFWorkbook()
         } else {
-            showToast(RobotScouter.getString(R.string.export_unsupported_device_rationale))
+            showToast(context.getString(R.string.export_unsupported_device_rationale))
             HSSFWorkbook()
         }.also {
             cache.workbook = it
@@ -353,7 +353,7 @@ internal class TemplateExporter(
 
             header.createCell(i + 1).apply {
                 setCellValue(if (scout.name.isNullOrBlank()) {
-                    RobotScouter.getString(RC.string.scout_default_name, i + 1)
+                    context.getString(RC.string.scout_default_name, i + 1)
                 } else {
                     scout.name
                 })

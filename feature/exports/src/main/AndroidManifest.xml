@@ -4,7 +4,7 @@
     package="com.supercilex.robotscouter.feature.exports">
 
     <dist:module
-        dist:onDemand="false"
+        dist:onDemand="true"
         dist:title="@string/feature_exports_title">
         <dist:fusing dist:include="true" />
     </dist:module>

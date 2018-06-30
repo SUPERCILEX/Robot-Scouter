@@ -4,7 +4,7 @@
     package="com.supercilex.robotscouter.feature.templates">
 
     <dist:module
-        dist:onDemand="false"
+        dist:onDemand="true"
         dist:title="@string/feature_templates_title">
         <dist:fusing dist:include="true" />
     </dist:module>

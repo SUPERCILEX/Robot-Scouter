@@ -4,7 +4,7 @@
     package="com.supercilex.robotscouter.feature.settings">
 
     <dist:module
-        dist:onDemand="false"
+        dist:onDemand="true"
         dist:title="@string/feature_settings_title">
         <dist:fusing dist:include="true" />
     </dist:module>
