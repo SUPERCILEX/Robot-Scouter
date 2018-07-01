@@ -11,7 +11,7 @@ open class HeaderViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.Header, Nothing?>(itemView) {
     private val topMargin =
-            itemView.resources.getDimension(RC.dimen.list_item_padding_vertical_within).toInt()
+            itemView.resources.getDimensionPixelSize(RC.dimen.list_item_padding_vertical_within)
 
     override fun bind() {
         super.bind()

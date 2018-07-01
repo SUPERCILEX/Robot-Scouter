@@ -46,8 +46,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     private val deletePaint = Paint().apply {
         color = ContextCompat.getColor(rootView.context, RC.color.delete_background)
     }
-    private val deleteIconPadding =
-            rootView.resources.getDimension(RC.dimen.spacing_large).toInt()
+    private val deleteIconPadding = rootView.resources.getDimensionPixelSize(RC.dimen.spacing_large)
 
     private val localItems = mutableListOf<T>()
     private var animatorPointer: RecyclerView.ItemAnimator? = null

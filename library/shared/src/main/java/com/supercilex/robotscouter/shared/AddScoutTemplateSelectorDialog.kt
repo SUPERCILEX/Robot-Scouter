@@ -20,7 +20,7 @@ abstract class AddScoutTemplateSelectorDialog : TemplateSelectorDialog() {
             @SuppressLint("PrivateResource", "ResourceType") // I'm lazy
             layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
                 val checkboxMarginCompensation =
-                        resources.getDimension(R.dimen.spacing_checkbox_margin_hack).toInt()
+                        resources.getDimensionPixelSize(R.dimen.spacing_checkbox_margin_hack)
 
                 context.withStyledAttributes(null, intArrayOf(
                         R.attr.listPreferredItemPaddingLeft,
