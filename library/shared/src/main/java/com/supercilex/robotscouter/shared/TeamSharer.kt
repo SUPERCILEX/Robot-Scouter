@@ -27,7 +27,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
 
 class TeamSharer private constructor(
         fragment: Fragment,
@@ -65,7 +64,7 @@ class TeamSharer private constructor(
                 withContext(CommonPool) { generateIntent() }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
-                longSnackbar(fragmentRef().find(R.id.root), R.string.error_unknown)
+                longSnackbar(checkNotNull(fragmentRef().view), R.string.error_unknown)
                 return@launch
             }
             fragmentRef().startActivityForResult(intent, RC_SHARE)
@@ -118,7 +117,7 @@ class TeamSharer private constructor(
          */
         fun shareTeams(fragment: Fragment, @Size(min = 1) teams: List<Team>): Boolean {
             if (isOffline) {
-                longSnackbar(fragment.find(R.id.root), R.string.no_connection)
+                longSnackbar(checkNotNull(fragment.view), R.string.no_connection)
                 return false
             }
             if (teams.isEmpty()) return false

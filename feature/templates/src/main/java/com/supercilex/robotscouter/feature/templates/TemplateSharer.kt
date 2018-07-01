@@ -21,7 +21,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateSharer private constructor(
@@ -36,7 +35,7 @@ internal class TemplateSharer private constructor(
                 withContext(CommonPool) { generateIntent(templateId, templateName) }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
-                longSnackbar(fragmentRef().find(R.id.root), RC.string.error_unknown)
+                longSnackbar(checkNotNull(fragmentRef().view), RC.string.error_unknown)
                 return@launch
             }
             fragmentRef().startActivityForResult(intent, RC_SHARE)
@@ -80,7 +79,7 @@ internal class TemplateSharer private constructor(
                 templateName: String
         ): Boolean {
             if (isOffline) {
-                longSnackbar(fragment.find(R.id.root), RC.string.no_connection)
+                longSnackbar(checkNotNull(fragment.view), RC.string.no_connection)
                 return false
             }
 
