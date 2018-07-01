@@ -1,8 +1,6 @@
 package com.supercilex.robotscouter.feature.teams
 
 import android.animation.ValueAnimator
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -25,6 +23,7 @@ import com.supercilex.robotscouter.DrawerToggler
 import com.supercilex.robotscouter.TeamExporter
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSingleton
+import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animateColorChange
@@ -38,11 +37,12 @@ import com.supercilex.robotscouter.R as RC
 
 internal class TeamMenuHelper(
         private val fragment: TeamListFragment,
-        private val recyclerView: RecyclerView
+        private val recyclerView: RecyclerView,
+        selectedTeams: List<Team> = emptyList()
 ) : View.OnClickListener, OnBackPressedListener {
     private val activity = fragment.activity as AppCompatActivity
 
-    private var _selectedTeams = mutableListOf<Team>()
+    private var _selectedTeams = selectedTeams.toMutableList()
     val selectedTeams: List<Team> get() = _selectedTeams
     lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
 
@@ -65,14 +65,22 @@ internal class TeamMenuHelper(
 
     private var selectAllSnackBar = snackBar()
 
-    private fun snackBar(): Snackbar = Snackbar.make(
-            requireNotNull(fragment.view),
-            R.string.team_multiple_selected_message,
-            Snackbar.LENGTH_INDEFINITE
-    ).setAction(R.string.team_select_all_title) {
-        _selectedTeams = adapter.snapshots.toMutableList()
-        updateState()
-        notifyItemsChanged()
+    init {
+        if (selectedTeams.isNotEmpty()) onRestore()
+    }
+
+    fun resetToolbarWithSave() {
+        val prev = _selectedTeams
+
+        _selectedTeams = mutableListOf()
+        setNormalMenuItemsVisible(true)
+        setContextMenuItemsVisible(false)
+        setTeamSpecificItemsVisible(false)
+        updateToolbarTitle()
+        selectAllSnackBar.dismiss()
+        // Generate a new SnackBar since a user dismissed one can't be shown again.
+        selectAllSnackBar = snackBar()
+        _selectedTeams = prev
     }
 
     override fun onClick(view: View) = if (selectedTeams.isEmpty()) {
@@ -93,27 +101,6 @@ internal class TeamMenuHelper(
 
         isMenuReady = true
         updateState()
-    }
-
-    private fun updateState() {
-        if (selectedTeams.isNotEmpty()) {
-            setNormalMenuItemsVisible(false)
-            setContextMenuItemsVisible(true)
-            setTeamSpecificItemsVisible(selectedTeams.isSingleton)
-            updateToolbarTitle()
-        }
-    }
-
-    fun resetMenu() {
-        _selectedTeams = mutableListOf()
-        setNormalMenuItemsVisible(true)
-        setContextMenuItemsVisible(false)
-        setTeamSpecificItemsVisible(false)
-        updateToolbarTitle()
-        selectAllSnackBar.dismiss()
-        // Generate a new SnackBar since a user dismissed one can't be shown again.
-        selectAllSnackBar = snackBar()
-        notifyItemsChanged()
     }
 
     fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -148,16 +135,7 @@ internal class TeamMenuHelper(
             _selectedTeams = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY).map {
                 it as Team
             }.toMutableList()
-            notifyItemsChanged()
-
-            fragment.lifecycle.addObserver(object : DefaultLifecycleObserver {
-                override fun onStart(owner: LifecycleOwner) {
-                    if (selectedTeams.size in 1 until adapter.itemCount) {
-                        selectAllSnackBar.show()
-                    }
-                    fragment.lifecycle.removeObserver(this)
-                }
-            })
+            onRestore()
         }
 
         if (isMenuReady) updateState()
@@ -288,6 +266,36 @@ internal class TeamMenuHelper(
         } else {
             String.format(Locale.getDefault(), "%d", selectedTeams.size)
         }
+    }
+
+    private fun snackBar(): Snackbar = Snackbar.make(
+            checkNotNull(fragment.view),
+            R.string.team_multiple_selected_message,
+            Snackbar.LENGTH_INDEFINITE
+    ).setAction(R.string.team_select_all_title) {
+        _selectedTeams = adapter.snapshots.toMutableList()
+        updateState()
+        notifyItemsChanged()
+    }
+
+    private fun updateState() {
+        if (selectedTeams.isNotEmpty()) {
+            setNormalMenuItemsVisible(false)
+            setContextMenuItemsVisible(true)
+            setTeamSpecificItemsVisible(selectedTeams.isSingleton)
+            updateToolbarTitle()
+        }
+    }
+
+    private fun resetMenu() {
+        _selectedTeams = mutableListOf()
+        resetToolbarWithSave()
+        notifyItemsChanged()
+    }
+
+    private fun onRestore() {
+        if (selectedTeams.size in 2 until teams.size) selectAllSnackBar.show()
+        fab.post { notifyItemsChanged() }
     }
 
     private fun notifyItemsChanged() {

@@ -78,7 +78,9 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
             }
         })
 
-        menuHelper = TeamMenuHelper(this, teamsView)
+        menuHelper = TeamMenuHelper(this, teamsView, run {
+            if (::menuHelper.isInitialized) menuHelper.selectedTeams else emptyList()
+        })
         adapter = TeamListAdapter(
                 savedInstanceState,
                 this,
@@ -94,6 +96,11 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
             noTeamsHint.animatePopReveal(noTeams)
             if (noTeams) fab.show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        menuHelper.resetToolbarWithSave()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
