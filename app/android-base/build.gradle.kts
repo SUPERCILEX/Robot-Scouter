@@ -18,7 +18,6 @@ android {
         applicationId = "com.supercilex.robotscouter"
         versionName = "2.3.1"
         multiDexEnabled = true
-        manifestPlaceholders = mapOf("appName" to "@string/app_name")
     }
 
     signingConfigs {
@@ -38,7 +37,6 @@ android {
         getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
-            manifestPlaceholders = mapOf("appName" to "Robot Scouter DEBUG")
         }
 
         getByName("release") {
