@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core
 
 import android.app.ActivityManager
 import android.content.Context
+import android.os.Build
 import android.provider.Settings
 import android.support.v4.app.ActivityManagerCompat
 import com.squareup.leakcanary.LeakCanary
@@ -12,9 +13,16 @@ val fullVersionName: String by lazy {
     // from the automated build system.
     RobotScouter.packageManager.getPackageInfo(RobotScouter.packageName, 0).versionName
 }
-val fullVersionCode: Int by lazy {
+val fullVersionCode by lazy {
     // See fullVersionName
-    RobotScouter.packageManager.getPackageInfo(RobotScouter.packageName, 0).versionCode
+    RobotScouter.packageManager.getPackageInfo(RobotScouter.packageName, 0).run {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            versionCode.toLong()
+        }
+    }
 }
 val providerAuthority: String by lazy { "${RobotScouter.packageName}.provider" }
 val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter) }

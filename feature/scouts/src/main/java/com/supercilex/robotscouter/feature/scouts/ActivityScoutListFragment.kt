@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.arch.lifecycle.LiveData
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.ColorInt
@@ -77,24 +76,23 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
         override fun bind() {
             super.bind()
             checkNotNull((activity as AppCompatActivity).supportActionBar).title = team.toString()
-            setTaskDescription(
-                    null, ContextCompat.getColor(requireContext(), RC.color.colorPrimary))
+            setTaskDescription(ContextCompat.getColor(requireContext(), RC.color.colorPrimary))
         }
 
-        override fun updateScrim(color: Int, bitmap: Bitmap?) {
-            super.updateScrim(color, bitmap)
+        override fun updateScrim(color: Int) {
+            super.updateScrim(color)
             header.setStatusBarScrimColor(color)
-            setTaskDescription(bitmap, color)
+            setTaskDescription(color)
         }
 
-        private fun setTaskDescription(icon: Bitmap?, @ColorInt colorPrimary: Int) {
-            if (
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-                (icon == null || !icon.isRecycled) &&
-                activity != null
-            ) {
+        private fun setTaskDescription(@ColorInt colorPrimary: Int) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 requireActivity().setTaskDescription(
-                        ActivityManager.TaskDescription(team.toString(), icon, colorPrimary))
+                        ActivityManager.TaskDescription(team.toString(), 0, colorPrimary))
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                @Suppress("DEPRECATION")
+                requireActivity().setTaskDescription(
+                        ActivityManager.TaskDescription(team.toString(), null, colorPrimary))
             }
         }
     }

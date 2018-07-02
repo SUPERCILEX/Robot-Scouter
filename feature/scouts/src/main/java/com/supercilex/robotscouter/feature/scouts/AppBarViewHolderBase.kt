@@ -123,9 +123,7 @@ internal open class AppBarViewHolderBase(
             launch(UI) {
                 val palette = withContext(CommonPool) { Palette.from(resource).generate() }
 
-                val update: Palette.Swatch.() -> Unit = {
-                    updateScrim(rgb, resource)
-                }
+                val update: Palette.Swatch.() -> Unit = { updateScrim(rgb) }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }
 
@@ -168,7 +166,7 @@ internal open class AppBarViewHolderBase(
     }
 
     @CallSuper
-    protected open fun updateScrim(@ColorInt color: Int, bitmap: Bitmap?) =
+    protected open fun updateScrim(@ColorInt color: Int) =
             header.setContentScrimColor(getTransparentColor(color))
 
     fun initMenu() {
