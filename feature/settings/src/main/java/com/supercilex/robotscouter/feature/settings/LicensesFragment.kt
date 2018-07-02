@@ -23,13 +23,23 @@ internal class LicensesFragment : FragmentBase(), OnBackPressedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val libraries: List<Library> = listOf(
-                Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"),
+                Licenses.noContent(
+                        "Kotlin",
+                        "JetBrains",
+                        "https://github.com/JetBrains/kotlin/tree/master/license"
+                ),
+                Licenses.noContent(
+                        "Android Support Libraries",
+                        "Google",
+                        "https://source.android.com/setup/start/licenses"
+                ),
+                Licenses.noContent("Firebase", "Google", "https://firebase.google.com/terms/"),
                 Licenses.noContent(
                         "Google Play Services",
-                        "Google Inc.",
+                        "Google",
                         "https://developers.google.com/terms/"
                 ),
-                Licenses.fromGitHubApacheV2("Firebase/firebase-jobdispatcher-android"),
+                Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"),
                 Licenses.fromGitHubApacheV2("GoogleSamples/EasyPermissions"),
                 Licenses.fromGitHub(
                         "Bumptech/Glide",
@@ -37,12 +47,11 @@ internal class LicensesFragment : FragmentBase(), OnBackPressedListener {
                         "Glide license"
                 ),
                 Licenses.fromGitHub("Apache/POI", Licenses.LICENSE_APACHE_V2),
-                Licenses.fromGitHubApacheV2("Clans/FloatingActionButton"),
-                Licenses.fromGitHubApacheV2("Sjwall/MaterialTapTargetPrompt"),
-                Licenses.fromGitHubApacheV2("Firebase/FirebaseUI-Android"),
                 Licenses.fromGitHubApacheV2("Square/Retrofit"),
+                Licenses.fromGitHubApacheV2("Google/Gson"),
                 Licenses.fromGitHubApacheV2("Square/Leakcanary"),
-                Licenses.fromGitHubMIT("Triple-T/gradle-play-publisher"),
+                Licenses.fromGitHubApacheV2("Sjwall/MaterialTapTargetPrompt"),
+                Licenses.fromGitHubMIT("Triple-T/Gradle-Play-Publisher"),
                 Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter")
         )
 

@@ -123,7 +123,7 @@ object Config {
             val permissions = "pub.devrel:easypermissions:1.2.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.9.0"
             val billing = "com.android.billingclient:billing:1.1"
-            val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.0.2"
+            val licenses = "com.github.yshrsmz:LicenseAdapter:7130638755"
         }
     }
 }
