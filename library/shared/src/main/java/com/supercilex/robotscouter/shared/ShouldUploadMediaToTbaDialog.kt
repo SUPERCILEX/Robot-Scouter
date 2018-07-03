@@ -23,7 +23,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.media_should_upload_title)
-            .setMessage(R.string.media_should_upload_rationale)
+            .setMessage(getText(R.string.media_should_upload_rationale).trim())
             .setView(containerView)
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)

@@ -84,7 +84,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
             super.onBindViewHolder(holder, position)
             if (getItem(position).key == "about") {
                 (holder.findViewById(R.id.about) as TextView).apply {
-                    text = getString(R.string.settings_pref_about_summary, "\uD83D\uDC96").trim()
+                    text = resources.getText(R.string.settings_pref_about_summary).trim()
                     movementMethod = LinkMovementMethod.getInstance()
                 }
             }

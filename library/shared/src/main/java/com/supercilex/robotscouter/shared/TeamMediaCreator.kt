@@ -105,7 +105,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             ref().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
 
             if (this@TeamMediaCreator.shouldUploadMediaToTba == true) {
-                RobotScouter.longToast(R.string.media_upload_reminder)
+                RobotScouter.longToast(RobotScouter.getText(R.string.media_upload_reminder).trim())
                         .setGravity(Gravity.CENTER, 0, 0)
             }
         }
