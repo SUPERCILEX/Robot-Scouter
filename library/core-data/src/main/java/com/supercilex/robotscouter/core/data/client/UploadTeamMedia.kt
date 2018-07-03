@@ -7,6 +7,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.updateMedia
+import com.supercilex.robotscouter.core.data.parseTeam
+import com.supercilex.robotscouter.core.data.remote.TbaMediaUploader
 import com.supercilex.robotscouter.core.data.remote.TeamMediaUploader
 import com.supercilex.robotscouter.core.data.toWorkData
 import com.supercilex.robotscouter.core.model.Team
@@ -24,6 +26,12 @@ internal fun Team.startUploadMediaJob() {
                                             .build())
                     .setInputData(toWorkData())
                     .build()
+    ).then(
+            OneTimeWorkRequestBuilder<UploadTbaMediaWorker>()
+                    .setConstraints(Constraints.Builder()
+                                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                                            .build())
+                    .build()
     ).synchronous().enqueueSync()
 }
 
@@ -33,4 +41,11 @@ internal class UploadTeamMediaWorker : TeamWorker() {
 
     override fun startTask(latestTeam: Team, originalTeam: Team) =
             TeamMediaUploader.upload(latestTeam.apply { copyMediaInfo(originalTeam) })
+}
+
+internal class UploadTbaMediaWorker : WorkerBase() {
+    override suspend fun doBlockingWork(): Result {
+        TbaMediaUploader.upload(inputData.parseTeam())
+        return Result.SUCCESS
+    }
 }

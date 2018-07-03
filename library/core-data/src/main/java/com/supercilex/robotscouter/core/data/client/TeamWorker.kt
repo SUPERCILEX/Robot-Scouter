@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.core.data.client
 
-import androidx.work.Worker
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.supercilex.robotscouter.core.await
@@ -10,26 +9,15 @@ import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.parseTeam
 import com.supercilex.robotscouter.core.data.toWorkData
 import com.supercilex.robotscouter.core.data.uid
-import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
-import kotlinx.coroutines.experimental.runBlocking
 
-internal abstract class TeamWorker : Worker() {
+internal abstract class TeamWorker : WorkerBase() {
     abstract val updateTeam: (team: Team, newTeam: Team) -> Unit
 
-    override fun doWork() = runBlocking {
-        if (runAttemptCount >= MAX_RUN_ATTEMPTS) return@runBlocking Result.FAILURE
+    override suspend fun doBlockingWork(): Result {
+        val team = inputData.parseTeam()
 
-        try {
-            doWork(inputData.parseTeam())
-        } catch (e: Exception) {
-            logCrashLog("$javaClass errored: $e")
-            Result.RETRY
-        }
-    }
-
-    private suspend fun doWork(team: Team): Result {
         // Ensure this job isn't being scheduled after the user has signed out
         if (!team.owners.contains(uid)) return Result.FAILURE
 
@@ -65,8 +53,4 @@ internal abstract class TeamWorker : Worker() {
     }
 
     abstract fun startTask(latestTeam: Team, originalTeam: Team): Team?
-
-    private companion object {
-        const val MAX_RUN_ATTEMPTS = 7
-    }
 }

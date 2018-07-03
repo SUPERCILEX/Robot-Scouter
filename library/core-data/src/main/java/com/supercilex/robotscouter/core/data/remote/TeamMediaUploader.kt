@@ -17,7 +17,6 @@ internal class TeamMediaUploader private constructor(
         if (!File(team.media ?: return null).exists()) return null
 
         uploadToImgur()
-        if (team.shouldUploadMediaToTba) uploadToTba()
         return team
     }
 
@@ -41,24 +40,6 @@ internal class TeamMediaUploader private constructor(
         link = if (link.endsWith(".png")) link else link.replace(getFileExtension(link), ".png")
 
         team.media = link
-    }
-
-    private fun uploadToTba() {
-        val response: Response<JsonObject> = api.postToTba(
-                team.number.toString(),
-                year,
-                tbaApiKey,
-                RequestBody.create(MediaType.parse("text/*"), checkNotNull(team.media))
-        ).execute()
-
-        if (cannotContinue(response)) return
-
-        val body: JsonObject = checkNotNull(response.body())
-        check(body.get("success").asBoolean || body.get("message").asString.let {
-            it == "media_exists" || it == "suggestion_exists"
-        }) {
-            "Failed to upload suggestion: $body"
-        }
     }
 
     /**

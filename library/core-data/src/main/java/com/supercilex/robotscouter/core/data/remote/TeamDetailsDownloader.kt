@@ -11,13 +11,14 @@ import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.
 import com.supercilex.robotscouter.core.model.Team
 import org.jetbrains.anko.runOnUiThread
 import retrofit2.Response
+import java.util.Calendar
 
 internal class TeamDetailsDownloader private constructor(
         team: Team
 ) : TeamServiceBase<TeamDetailsApi>(team, TeamDetailsApi::class.java) {
     override fun execute(): Team? {
         getTeamInfo()
-        getTeamMedia(year)
+        getTeamMedia(Calendar.getInstance().get(Calendar.YEAR))
         return team
     }
 
