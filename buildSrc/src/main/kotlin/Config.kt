@@ -12,7 +12,7 @@ object Config {
         val android = "com.android.tools.build:gradle:3.2.0-beta02"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        val google = "com.google.gms:google-services:3.2.1"
+        val google = "com.google.gms:google-services:4.0.1"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         val fabric = "io.fabric.tools:gradle:1.25.4"
         val publishing = "com.github.Triple-T:gradle-play-publisher:42ffe9922c"
@@ -113,7 +113,7 @@ object Config {
                     "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
             val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
             val retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-            val gson = "com.google.code.gson:gson:2.8.4"
+            val gson = "com.google.code.gson:gson:2.8.5"
             val poi = "com.github.SUPERCILEX.poi-android:poi:$poiVersion"
             val poiProguard = "com.github.SUPERCILEX.poi-android:proguard:$poiVersion"
 

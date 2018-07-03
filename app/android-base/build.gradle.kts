@@ -80,7 +80,6 @@ dependencies {
     // TODO https://issuetracker.google.com/issues/110012194
     implementation(project(":library:shared-scouting"))
     // TODO remove when Firebase updates their deps
-    implementation("com.google.firebase:firebase-iid:16.2.0")
     implementation(Config.Libs.Misc.gson) // Override Firestore
 }
 

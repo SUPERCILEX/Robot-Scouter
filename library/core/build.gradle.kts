@@ -25,5 +25,7 @@ dependencies {
     implementation(Config.Libs.Firebase.firestore) { isTransitive = true }
 
     // Needed for override
+    // TODO remove when Firebase updates their deps
     api(Config.Libs.Support.v4)
+    api("com.google.firebase:firebase-iid:16.2.0")
 }
