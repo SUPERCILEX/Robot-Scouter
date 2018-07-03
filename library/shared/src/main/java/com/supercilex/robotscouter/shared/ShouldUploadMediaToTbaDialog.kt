@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import com.supercilex.robotscouter.core.ui.create
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_should_upload_media.*
-import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.find
 
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override val containerView: View by unsafeLazy {
