@@ -19,7 +19,7 @@ dependencies {
     api(Config.Libs.Firebase.crashlytics)
     debugApi(Config.Libs.Misc.leakCanary)
     releaseApi(Config.Libs.Misc.leakCanaryNoop)
-    api(Config.Libs.Kotlin.ktx)
+    api(Config.Libs.Jetpack.core)
 
     implementation(Config.Libs.Anko.common)
     implementation(Config.Libs.Firebase.firestore) { isTransitive = true }

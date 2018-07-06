@@ -69,6 +69,7 @@ play {
 
 dependencies {
     implementation(project(":library:shared"))
+    implementation(project(":library:shared-scouting"))
 
     implementation(Config.Libs.Support.multidex)
     implementation(Config.Libs.PlayServices.playCore)
@@ -77,8 +78,6 @@ dependencies {
     implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)
 
-    // TODO https://issuetracker.google.com/issues/110012194
-    implementation(project(":library:shared-scouting"))
     // TODO remove when Firebase updates their deps
     implementation(Config.Libs.Misc.gson) // Override Firestore
 }

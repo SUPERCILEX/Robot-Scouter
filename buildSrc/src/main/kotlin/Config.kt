@@ -30,7 +30,6 @@ object Config {
                     "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
             val coroutinesJs =
                     "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutinesVersion"
-            val ktx = "androidx.core:core-ktx:0.3"
         }
 
         object Anko {
@@ -56,6 +55,10 @@ object Config {
             val pref = "com.android.support:preference-v7:$version"
 
             val constraint = "com.android.support.constraint:constraint-layout:1.1.2"
+        }
+
+        object Jetpack {
+            val core = "androidx.core:core-ktx:0.3"
         }
 
         object Arch {
