@@ -5,11 +5,12 @@ import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
 import android.text.Html
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.text.parseAsHtml
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.transaction
 import com.supercilex.robotscouter.core.data.updateRequiredMessage
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 
@@ -34,8 +35,8 @@ class UpdateDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
                 "https://github.com/SUPERCILEX/app-version-history/blob/master/Robot-Scouter/app-release.aab".toUri()
 
         fun show(manager: FragmentManager) {
-            if (manager.findFragmentByTag(TAG) == null) {
-                manager.beginTransaction().add(UpdateDialog(), TAG).commitAllowingStateLoss()
+            if (manager.findFragmentByTag(TAG) == null) manager.transaction(allowStateLoss = true) {
+                add(UpdateDialog(), TAG)
             }
         }
 

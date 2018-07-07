@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.feature.templates
 
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentManager
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.core.data.defaultTemplateId

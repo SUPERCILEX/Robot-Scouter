@@ -3,9 +3,9 @@ package com.supercilex.robotscouter.feature.exports
 import android.Manifest
 import android.app.IntentService
 import android.content.Intent
-import android.support.annotation.RequiresPermission
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.ContextCompat
+import androidx.annotation.RequiresPermission
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.Bridge
@@ -32,6 +32,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
+import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.RatingDialog
 import kotlinx.coroutines.experimental.CancellationException
@@ -40,7 +41,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
-import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions

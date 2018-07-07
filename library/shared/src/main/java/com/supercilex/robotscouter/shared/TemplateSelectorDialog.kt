@@ -1,24 +1,25 @@
 package com.supercilex.robotscouter.shared
 
 import android.app.Dialog
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.content.res.AppCompatResources
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.widget.TextViewCompat
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -39,7 +40,7 @@ abstract class TemplateSelectorDialog : DialogFragmentBase() {
     @get:StringRes protected abstract val title: Int
 
     private val holder: ScoutsHolder by unsafeLazy {
-        ViewModelProviders.of(this).get(ScoutsHolder::class.java)
+        ViewModelProviders.of(this).get<ScoutsHolder>()
     }
 
     override val containerView: View by unsafeLazy {

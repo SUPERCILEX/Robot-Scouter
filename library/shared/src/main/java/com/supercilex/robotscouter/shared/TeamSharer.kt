@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.shared
 
 import android.content.Intent
-import android.support.annotation.Size
-import android.support.v4.app.Fragment
+import androidx.annotation.Size
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.appinvite.AppInviteInvitation.IntentBuilder.MAX_MESSAGE_LENGTH
 import com.google.firebase.appindexing.Action
@@ -22,11 +22,11 @@ import com.supercilex.robotscouter.core.data.model.shareTeams
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
-import org.jetbrains.anko.design.longSnackbar
 
 class TeamSharer private constructor(
         fragment: Fragment,
@@ -58,7 +58,7 @@ class TeamSharer private constructor(
         }
 
     init {
-        val fragmentRef = fragment.asLifecycleReference()
+        val fragmentRef = fragment.asLifecycleReference(fragment.viewLifecycleOwner)
         launch(UI) {
             val intent = try {
                 withContext(CommonPool) { generateIntent() }

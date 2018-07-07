@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.core.data
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -20,7 +20,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     private val observerStatuses = ConcurrentHashMap<Class<out Observer<*>>, AtomicBoolean>()
     private val observers = mutableListOf<EventFilterObserver>()
 
-    override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
+    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         observerStatuses.putIfAbsent(observer.javaClass, AtomicBoolean())
         EventFilterObserver(observer).let {
             observers.add(0, it)
@@ -28,7 +28,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         }
     }
 
-    override fun removeObserver(observer: Observer<T>) {
+    override fun removeObserver(observer: Observer<in T>) {
         (observer as? EventFilterObserver
                 ?: observers.map { it.originalObserver }.single { it === observer }).let {
             observers.remove(it)
@@ -41,8 +41,8 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         super.setValue(t)
     }
 
-    private inner class EventFilterObserver(val originalObserver: Observer<T>) : Observer<T> {
-        private val newestObserver: Observer<T>
+    private inner class EventFilterObserver(val originalObserver: Observer<in T>) : Observer<T> {
+        private val newestObserver: Observer<in T>
             get() = observers.map { it.originalObserver }.single {
                 it.javaClass == this.originalObserver.javaClass
             }

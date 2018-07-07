@@ -3,8 +3,8 @@ package com.supercilex.robotscouter.core.data
 import android.Manifest
 import android.os.Build
 import android.os.Environment
-import android.support.annotation.RequiresPermission
-import android.support.annotation.WorkerThread
+import androidx.annotation.RequiresPermission
+import androidx.annotation.WorkerThread
 import java.io.File
 
 const val MIME_TYPE_ANY = "*/*"

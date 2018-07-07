@@ -2,10 +2,10 @@ package com.supercilex.robotscouter.feature.teams
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
 import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.core.text.bold
+import androidx.fragment.app.FragmentManager
 import com.supercilex.robotscouter.core.data.getTeamList
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.model.trash

@@ -3,8 +3,8 @@ package com.supercilex.robotscouter.shared
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.content.ContextCompat
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.model.Team

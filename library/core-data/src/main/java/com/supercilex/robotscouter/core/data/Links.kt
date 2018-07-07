@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.core.data
 
 import android.net.Uri
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.Scope

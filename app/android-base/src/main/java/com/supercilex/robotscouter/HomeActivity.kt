@@ -1,20 +1,22 @@
 package com.supercilex.robotscouter
 
 import android.app.Activity
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.transaction
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.data.fetchAndActivateTask
@@ -38,16 +40,17 @@ import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.UpdateDialog
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, DrawerToggler, TeamExporter, SignInResolver {
     private val authHelper by unsafeLazy { AuthHelper(this) }
     private val permHandler by unsafeLazy {
-        ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
+        ViewModelProviders.of(this).get<PermissionRequestHandler>()
     }
     private val moduleRequestHolder by unsafeLazy {
-        ViewModelProviders.of(this).get(ModuleRequestHolder::class.java)
+        ViewModelProviders.of(this).get<ModuleRequestHolder>()
     }
 
     private val drawerToggle by unsafeLazy {
@@ -68,12 +71,10 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().add(
-                    R.id.content,
-                    TeamListFragmentCompanion().getInstance(supportFragmentManager),
-                    TeamListFragmentCompanion.TAG
-            ).commit()
+        if (savedInstanceState == null) supportFragmentManager.transaction {
+            add(R.id.content,
+                TeamListFragmentCompanion().getInstance(supportFragmentManager),
+                TeamListFragmentCompanion.TAG)
         }
 
         permHandler.apply {
@@ -109,28 +110,27 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         })
         drawer.setNavigationItemSelectedListener(this)
         bottomNavigation.setOnNavigationItemSelectedListener {
-            supportFragmentManager.beginTransaction()
-                    .detach(supportFragmentManager.findFragmentById(R.id.content))
-                    .apply {
-                        val (f, tag) = when (it.itemId) {
-                            R.id.teams -> {
-                                TeamListFragmentCompanion().getInstance(supportFragmentManager) to
-                                        TeamListFragmentCompanion.TAG
-                            }
-                            R.id.autoScout -> {
-                                AutoScoutFragmentCompanion().getInstance(supportFragmentManager) to
-                                        AutoScoutFragmentCompanion.TAG
-                            }
-                            else -> error("Unknown id: ${it.itemId}")
-                        }
+            supportFragmentManager.transaction {
+                detach(checkNotNull(supportFragmentManager.findFragmentById(R.id.content)))
 
-                        if (f.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-                            attach(f)
-                        } else {
-                            add(R.id.content, f, tag)
-                        }
+                val (f, tag) = when (it.itemId) {
+                    R.id.teams -> {
+                        TeamListFragmentCompanion().getInstance(supportFragmentManager) to
+                                TeamListFragmentCompanion.TAG
                     }
-                    .commit()
+                    R.id.autoScout -> {
+                        AutoScoutFragmentCompanion().getInstance(supportFragmentManager) to
+                                AutoScoutFragmentCompanion.TAG
+                    }
+                    else -> error("Unknown id: ${it.itemId}")
+                }
+
+                if (f.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    attach(f)
+                } else {
+                    add(R.id.content, f, tag)
+                }
+            }
 
             true
         }
@@ -228,11 +228,11 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         args.getTeam().logSelect()
 
         if (isInTabletMode()) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.scoutList,
-                             TabletScoutListFragmentCompanion().newInstance(args),
-                             TabletScoutListFragmentCompanion.TAG)
-                    .commit()
+            supportFragmentManager.transaction {
+                replace(R.id.scoutList,
+                        TabletScoutListFragmentCompanion().newInstance(args),
+                        TabletScoutListFragmentCompanion.TAG)
+            }
         } else {
             if (restoreOnConfigChange) {
                 startActivityForResult(ScoutListActivityCompanion().createIntent(args), RC_SCOUT)
@@ -285,7 +285,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         // along to the LinkReceiverActivity
         FirebaseDynamicLinks.getInstance().getDynamicLink(intent).addOnSuccessListener(this) {
             it?.link?.let {
-                startActivity(Intent(this, LinkReceiverActivity::class.java).setData(it))
+                startActivity(intentFor<LinkReceiverActivity>().setData(it))
             }
         }.addOnFailureListener(this) {
             longToast(R.string.link_uri_parse_error)

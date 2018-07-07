@@ -21,7 +21,7 @@
         android:contentDescription="@string/accessibility_set_default_spinner_item"
         tools:src="@drawable/ic_default_24dp" />
 
-    <android.support.text.emoji.widget.EmojiAppCompatEditText
+    <androidx.emoji.widget.EmojiAppCompatEditText
         android:id="@id/name"
         style="@style/RobotScouter.ListItemNameInLinearLayout.Editable"
         android:hint="@string/metric_spinner_item_name_hint"

@@ -1,17 +1,17 @@
 package com.supercilex.robotscouter.feature.templates
 
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.data.TAB_KEY
 import com.supercilex.robotscouter.core.data.defaultTemplateId
@@ -22,10 +22,10 @@ import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.core.ui.find
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_template_list.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateListFragment : FragmentBase(),

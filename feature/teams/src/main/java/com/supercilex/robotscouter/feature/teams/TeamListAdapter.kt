@@ -1,11 +1,11 @@
 package com.supercilex.robotscouter.feature.teams
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader
 import com.bumptech.glide.RequestBuilder
@@ -17,9 +17,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.SavedStateAdapter
+import com.supercilex.robotscouter.core.ui.find
 import com.supercilex.robotscouter.shared.CardListHelper
 import kotlinx.android.synthetic.main.team_list_row_layout.*
-import org.jetbrains.anko.support.v4.find
 import java.util.Collections
 
 internal class TeamListAdapter(

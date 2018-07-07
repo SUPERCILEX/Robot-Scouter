@@ -3,20 +3,18 @@ package com.supercilex.robotscouter.core.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.StringRes
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.design.widget.CoordinatorLayout
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AlertDialog
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.annotation.CallSuper
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.core.refWatcher
-import java.lang.reflect.Field
 
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
         create().apply { setOnShowListener { (it as AlertDialog).listener() } }
@@ -62,16 +60,6 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
             setOnShowListener(this)
         }
 
-        override fun onStart() {
-            // Save state TODO remove after https://issuetracker.google.com/issues/72125225
-            behavior.apply {
-                val old = get(dialog) as CoordinatorLayout.Behavior<*>?
-                set(dialog, null)
-                super.onStart()
-                set(dialog, old)
-            }
-        }
-
         override fun onShow(dialog: DialogInterface) {
             val width = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_width)
             window.setLayout(if (width > 0) {
@@ -99,12 +87,6 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
     override fun onDestroy() {
         super.onDestroy()
         refWatcher.watch(this)
-    }
-
-    companion object {
-        val behavior: Field = BottomSheetDialog::class.java.getDeclaredField("mBehavior").apply {
-            isAccessible = true
-        }
     }
 }
 

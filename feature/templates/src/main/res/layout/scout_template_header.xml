@@ -5,7 +5,7 @@
 
     <include layout="@layout/scout_template_base_reorder" />
 
-    <android.support.text.emoji.widget.EmojiAppCompatEditText
+    <androidx.emoji.widget.EmojiAppCompatEditText
         android:id="@id/name"
         style="@style/RobotScouter.ListItemNameInLinearLayout.Editable"
         android:hint="@string/metric_header_name_hint"

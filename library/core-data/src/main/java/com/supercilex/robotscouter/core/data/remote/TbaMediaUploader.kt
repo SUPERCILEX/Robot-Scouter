@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.core.data.remote
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.google.gson.JsonObject
 import com.supercilex.robotscouter.core.model.Team
 import okhttp3.MediaType

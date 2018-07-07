@@ -19,7 +19,8 @@ internal class SpinnerViewHolder(
         ).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        spinner.setBackgroundResource(android.support.design.R.drawable.abc_spinner_mtrl_am_alpha)
+        spinner.setBackgroundResource(
+                com.google.android.material.R.drawable.abc_spinner_mtrl_am_alpha)
         spinner.onItemSelectedListener = this
     }
 

@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.core.model
 
 import android.net.Uri
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import com.google.firebase.firestore.Exclude
 
 data class User(

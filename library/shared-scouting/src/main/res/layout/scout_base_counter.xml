@@ -15,7 +15,7 @@
         app:srcCompat="@drawable/ic_remove_colorable_24dp"
         tools:ignore="UnusedAttribute" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/countContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:clipToPadding="false"
         android:minHeight="@dimen/square_view_hw">
 
-        <android.support.text.emoji.widget.EmojiAppCompatTextView
+        <androidx.emoji.widget.EmojiAppCompatTextView
             android:id="@+id/count1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             tools:text="10" />
 
         <!-- Used for animations -->
-        <android.support.text.emoji.widget.EmojiAppCompatTextView
+        <androidx.emoji.widget.EmojiAppCompatTextView
             android:id="@+id/count2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constrainedHeight="true" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/increment"

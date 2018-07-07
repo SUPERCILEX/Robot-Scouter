@@ -1,14 +1,14 @@
 package com.supercilex.robotscouter.feature.templates.viewholder
 
-import android.support.v4.app.FragmentActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.model.update
@@ -17,8 +17,10 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.getDrawableCompat
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.showKeyboard
+import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
@@ -27,8 +29,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
 import kotlinx.android.synthetic.main.scout_template_spinner.*
 import kotlinx.android.synthetic.main.scout_template_spinner_item.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.properties.Delegates
@@ -41,6 +41,7 @@ internal class SpinnerTemplateViewHolder(
     override val reorderView: ImageView by unsafeLazy { reorder }
     override val nameEditor = name as EditText
     private val itemTouchCallback = ItemTouchCallback()
+    private val itemsAdapter = Adapter()
 
     init {
         init()
@@ -48,11 +49,11 @@ internal class SpinnerTemplateViewHolder(
         newItem.setOnClickListener(this)
 
         items.layoutManager = LinearLayoutManager(itemView.context)
-        items.adapter = Adapter()
-        items.recycledViewPool = (itemView.context as FragmentActivity).supportFragmentManager
-                .fragments
-                .filterIsInstance<RecyclerPoolHolder>()
-                .single().recyclerPool
+        items.adapter = itemsAdapter
+        items.setRecycledViewPool((itemView.context as FragmentActivity).supportFragmentManager
+                                          .fragments
+                                          .filterIsInstance<RecyclerPoolHolder>()
+                                          .single().recyclerPool)
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(items)
@@ -60,7 +61,7 @@ internal class SpinnerTemplateViewHolder(
 
     override fun bind() {
         super.bind()
-        items.adapter.notifyDataSetChanged()
+        itemsAdapter.notifyDataSetChanged()
     }
 
     override fun onClick(v: View) {
@@ -70,13 +71,13 @@ internal class SpinnerTemplateViewHolder(
                 Metric.List.Item(metric.ref.parent.document().id, "")
         ))
         itemTouchCallback.pendingScrollPosition = position
-        items.adapter.notifyItemInserted(position)
+        itemsAdapter.notifyItemInserted(position)
     }
 
     private fun getLatestItems(): List<Metric.List.Item> {
         val rv = items
         var items: List<Metric.List.Item> = metric.value
-        for (i in 0 until rv.adapter.itemCount) {
+        for (i in 0 until itemsAdapter.itemCount) {
             val holder = rv.findViewHolderForAdapterPosition(i) as ItemHolder?
             items = (holder ?: continue).getUpdatedItems(items)
         }
@@ -163,13 +164,13 @@ internal class SpinnerTemplateViewHolder(
             parent.metric.update(items.toMutableList().apply {
                 removeAt(position)
             })
-            parent.items.adapter.notifyItemRemoved(position)
+            parent.itemsAdapter.notifyItemRemoved(position)
 
             longSnackbar(itemView, RC.string.deleted, RC.string.undo) {
                 parent.metric.update(parent.metric.value.toMutableList().apply {
                     add(position, items[position])
                 })
-                parent.items.adapter.notifyItemInserted(position)
+                parent.itemsAdapter.notifyItemInserted(position)
             }
         }
 
@@ -222,7 +223,7 @@ internal class SpinnerTemplateViewHolder(
                 items.setHasFixedSize(true)
             }
 
-            items.adapter.swap(viewHolder, target) { i, j ->
+            itemsAdapter.swap(viewHolder, target) { i, j ->
                 Collections.swap(localItems, i, j)
             }
 

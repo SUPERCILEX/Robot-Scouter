@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.feature.templates
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.FragmentManager
 import com.supercilex.robotscouter.core.data.model.addTemplate
 import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase

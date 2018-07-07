@@ -1,10 +1,10 @@
 package com.supercilex.robotscouter.feature.autoscout
 
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import com.supercilex.robotscouter.AutoScoutFragmentCompanion
 import com.supercilex.robotscouter.AutoScoutFragmentCompanion.Companion.TAG
 import com.supercilex.robotscouter.Bridge

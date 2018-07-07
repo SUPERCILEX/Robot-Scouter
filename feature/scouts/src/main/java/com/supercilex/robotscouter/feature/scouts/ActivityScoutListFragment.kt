@@ -2,14 +2,14 @@ package com.supercilex.robotscouter.feature.scouts
 
 import android.app.Activity
 import android.app.ActivityManager
-import android.arch.lifecycle.LiveData
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.ColorInt
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
+import androidx.annotation.ColorInt
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY

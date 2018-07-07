@@ -2,7 +2,7 @@ package com.supercilex.robotscouter.core.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 
 fun Intent.addNewDocumentFlags(): Intent {
     addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)

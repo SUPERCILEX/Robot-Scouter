@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.feature.settings
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
 import com.firebase.ui.auth.AuthUI
 import com.supercilex.robotscouter.core.CrashLogger

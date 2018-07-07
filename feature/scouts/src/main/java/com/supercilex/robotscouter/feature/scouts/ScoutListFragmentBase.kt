@@ -1,11 +1,7 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,7 +9,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.CrashLogger
@@ -38,6 +39,8 @@ import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.TemplateSelectionListener
+import com.supercilex.robotscouter.core.ui.find
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
@@ -45,8 +48,6 @@ import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
@@ -57,7 +58,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         private set
 
     protected val dataHolder: TeamHolder by unsafeLazy {
-        ViewModelProviders.of(this).get(TeamHolder::class.java)
+        ViewModelProviders.of(this).get<TeamHolder>()
     }
     private lateinit var team: Team
     // It's not a lateinit because it could be used before initialization

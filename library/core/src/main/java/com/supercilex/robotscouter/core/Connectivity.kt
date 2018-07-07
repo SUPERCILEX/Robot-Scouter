@@ -1,12 +1,12 @@
 package com.supercilex.robotscouter.core
 
-import android.content.Context
 import android.net.ConnectivityManager
+import androidx.core.content.getSystemService
 
 val isOnline get() = connectivityManager.activeNetworkInfo?.isConnected == true
 
 val isOffline get() = !isOnline
 
 private val connectivityManager by lazy {
-    RobotScouter.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    checkNotNull(RobotScouter.getSystemService<ConnectivityManager>())
 }

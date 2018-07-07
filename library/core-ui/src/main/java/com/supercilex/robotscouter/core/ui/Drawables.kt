@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import android.support.annotation.DrawableRes
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.content.res.AppCompatResources
 import android.util.AttributeSet
 import android.view.ContextThemeWrapper
 import android.widget.TextView
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.withStyledAttributes
+import androidx.core.widget.TextViewCompat
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.LateinitVal
 import org.xmlpull.v1.XmlPullParser

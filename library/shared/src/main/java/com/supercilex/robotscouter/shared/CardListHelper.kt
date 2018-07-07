@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.shared
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.supercilex.robotscouter.core.ui.CardMetric

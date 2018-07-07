@@ -1,14 +1,6 @@
 package com.supercilex.robotscouter.shared.scouting.viewholder
 
 import android.os.Build
-import android.support.annotation.StringRes
-import android.support.design.widget.BaseTransientBottomBar
-import android.support.design.widget.Snackbar
-import android.support.transition.AutoTransition
-import android.support.transition.TransitionManager
-import android.support.v4.app.FragmentActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.ContextMenu
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,18 +8,26 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.data.second
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.reportOrCancel
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
 import kotlinx.android.synthetic.main.scout_base_stopwatch.*
-import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import java.lang.ref.WeakReference
@@ -44,6 +44,8 @@ open class StopwatchViewHolder(
     private var timer: Timer? = null
     private var undoAddSnackbar: Snackbar? = null
 
+    private val cyclesAdapter = Adapter()
+
     init {
         stopwatch.setOnClickListener(this)
         stopwatch.setOnLongClickListenerCompat(this)
@@ -55,19 +57,19 @@ open class StopwatchViewHolder(
         ).apply {
             initialPrefetchItemCount = 6
         }
-        cycles.adapter = Adapter()
+        cycles.adapter = cyclesAdapter
         GravitySnapHelper(Gravity.START).attachToRecyclerView(cycles)
 
         (itemView.context as FragmentActivity).supportFragmentManager.fragments
                 .filterIsInstance<RecyclerPoolHolder>()
                 .single()
-                .let { cycles.recycledViewPool = it.recyclerPool }
+                .let { cycles.setRecycledViewPool(it.recyclerPool) }
     }
 
     override fun bind() {
         super.bind()
         cycles.setHasFixedSize(false)
-        cycles.adapter.notifyDataSetChanged()
+        cyclesAdapter.notifyDataSetChanged()
 
         val timer = TIMERS[metric]
         if (timer == null) {
@@ -122,17 +124,16 @@ open class StopwatchViewHolder(
         // Force RV to request layout when adding first item
         cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
 
-        val adapter = cycles.adapter
         if (size == LIST_SIZE_WITH_AVERAGE) {
             // Add the average card
-            adapter.notifyItemInserted(0)
-            adapter.notifyItemInserted(position)
+            cyclesAdapter.notifyItemInserted(0)
+            cyclesAdapter.notifyItemInserted(position)
         } else {
             // Account for the average card being there or not. Since we are adding a new lap,
             // there are only two possible states: 1 item or n + 2 items.
-            adapter.notifyItemInserted(if (size == 1) 0 else position)
+            cyclesAdapter.notifyItemInserted(if (size == 1) 0 else position)
             // Ensure the average card is updated if it's there
-            adapter.notifyItemChanged(0)
+            cyclesAdapter.notifyItemChanged(0)
         }
     }
 
@@ -140,13 +141,12 @@ open class StopwatchViewHolder(
         // Force RV to request layout when removing last item
         cycles.setHasFixedSize(size > 0)
 
-        val adapter = cycles.adapter
-        adapter.notifyItemRemoved(if (hadAverage) position + 1 else position)
+        cyclesAdapter.notifyItemRemoved(if (hadAverage) position + 1 else position)
         if (hadAverage && size == 1) {
             // Remove the average card
-            adapter.notifyItemRemoved(0)
+            cyclesAdapter.notifyItemRemoved(0)
         } else if (size >= LIST_SIZE_WITH_AVERAGE) {
-            adapter.notifyItemChanged(0) // Ensure the average card is updated
+            cyclesAdapter.notifyItemChanged(0) // Ensure the average card is updated
         }
     }
 
@@ -292,8 +292,7 @@ open class StopwatchViewHolder(
          */
         private lateinit var holder: StopwatchViewHolder
 
-        private val hasAverage
-            get() = (holder.cycles.adapter as Adapter).hasAverageItems
+        private val hasAverage get() = holder.cyclesAdapter.hasAverageItems
         private val realPosition
             get() = if (hasAverage) adapterPosition - 1 else adapterPosition
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
-    <android.support.text.emoji.widget.EmojiAppCompatTextView
+    <androidx.emoji.widget.EmojiAppCompatTextView
         android:id="@id/name"
         style="@style/TextAppearance.AppCompat"
         android:layout_width="0dp"

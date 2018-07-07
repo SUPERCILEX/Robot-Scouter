@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RobotScouter.ListItem">
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textLayout"
         style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:hint="Text">
 
-        <com.supercilex.robotscouter.core.ui.views.EmojiCompatTextInputEditText
+        <androidx.emoji.widget.EmojiAppCompatEditText
             android:id="@id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine|textCapSentences" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </com.supercilex.robotscouter.core.ui.views.CardMetricLinearLayout>

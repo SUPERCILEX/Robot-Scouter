@@ -71,7 +71,7 @@ dependencies {
     implementation(project(":library:shared"))
     implementation(project(":library:shared-scouting"))
 
-    implementation(Config.Libs.Support.multidex)
+    implementation(Config.Libs.Jetpack.multidex)
     implementation(Config.Libs.PlayServices.playCore)
     implementation(Config.Libs.Misc.billing)
 

@@ -1,13 +1,13 @@
 package com.supercilex.robotscouter
 
 import android.app.Activity
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.tasks.Task
@@ -19,11 +19,11 @@ import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.logLoginEvent
 import com.supercilex.robotscouter.core.ui.OnActivityResult
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import com.supercilex.robotscouter.shared.client.startSignIn
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 
 internal class AuthHelper(private val activity: AppCompatActivity) : (View) -> Unit,

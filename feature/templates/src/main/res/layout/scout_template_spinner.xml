@@ -7,7 +7,7 @@
 
     <include layout="@layout/scout_template_base_reorder" />
 
-    <android.support.text.emoji.widget.EmojiAppCompatEditText
+    <androidx.emoji.widget.EmojiAppCompatEditText
         android:id="@id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:iconStyle="@style/Icon.Accent"
         tools:ignore="UnusedAttribute" />
 
-    <android.support.constraint.Barrier
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -44,7 +44,7 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="name, new_item" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/items"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

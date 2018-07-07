@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.feature.settings
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.fragment.app.transaction
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.SettingsActivityCompanion
 import com.supercilex.robotscouter.core.RobotScouter
@@ -17,9 +18,9 @@ class SettingsActivity : ActivityBase() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.settings, SettingsFragment.newInstance(), SettingsFragment.TAG)
-                    .commit()
+            supportFragmentManager.transaction {
+                add(R.id.settings, SettingsFragment.newInstance(), SettingsFragment.TAG)
+            }
         }
     }
 

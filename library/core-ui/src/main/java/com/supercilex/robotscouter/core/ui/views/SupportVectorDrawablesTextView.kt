@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.core.ui.views
 
 import android.content.Context
-import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatTextView
 import com.supercilex.robotscouter.core.ui.initSupportVectorDrawablesAttrs
 
 /**

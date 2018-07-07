@@ -1,12 +1,12 @@
 package com.supercilex.robotscouter.core.data
 
-import android.arch.lifecycle.GenericLifecycleObserver
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.GenericLifecycleObserver
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ProcessLifecycleOwner
 
 private val activitiesLifecycleOwner: LifecycleOwner = LifecycleOwner { activitiesRegistry }
 val activitiesRegistry = LifecycleRegistry(activitiesLifecycleOwner)

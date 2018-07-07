@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.core.data
 
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.firebase.ui.common.BaseObservableSnapshotArray
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ChangeEventListener
@@ -38,7 +38,7 @@ import com.supercilex.robotscouter.core.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.core.data.model.getScouts
 import com.supercilex.robotscouter.core.data.model.getScoutsRef
 import com.supercilex.robotscouter.core.data.model.isTrashed
-import com.supercilex.robotscouter.core.data.model.isValidTeamUrl
+import com.supercilex.robotscouter.core.data.model.isValidTeamUri
 import com.supercilex.robotscouter.core.data.model.ref
 import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.model.teamsQueryGenerator
@@ -114,7 +114,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
             val media = team.media
             if (media?.isNotBlank() == true && File(media).exists()) {
                 team.startUploadMediaJob()
-            } else if (media == null || media.isValidTeamUrl()) {
+            } else if (media == null || media.isValidTeamUri()) {
                 team.fetchLatestData()
                 team.indexable.let { FirebaseAppIndex.getInstance().update(it).logFailures(it) }
             } else {

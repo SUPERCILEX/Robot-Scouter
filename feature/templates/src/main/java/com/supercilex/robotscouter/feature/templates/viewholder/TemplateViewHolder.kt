@@ -1,10 +1,10 @@
 package com.supercilex.robotscouter.feature.templates.viewholder
 
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 
 internal interface TemplateViewHolder : View.OnFocusChangeListener {
     val reorderView: View

@@ -2,13 +2,13 @@ package com.supercilex.robotscouter.shared
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.v7.widget.AppCompatCheckBox
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import androidx.annotation.CallSuper
+import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.withStyledAttributes
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.unsafeLazy

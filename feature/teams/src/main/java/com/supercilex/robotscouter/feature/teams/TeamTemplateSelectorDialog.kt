@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.feature.teams
 
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.FragmentManager
 import com.supercilex.robotscouter.core.data.getScoutBundle
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.toBundle

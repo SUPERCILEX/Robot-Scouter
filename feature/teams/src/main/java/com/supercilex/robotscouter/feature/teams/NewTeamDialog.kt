@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.feature.teams
 
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.v4.app.FragmentManager
 import android.view.View
+import androidx.fragment.app.FragmentManager
+import com.google.android.material.textfield.TextInputEditText
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.NewTeamDialogCompanion
 import com.supercilex.robotscouter.core.data.getScoutBundle

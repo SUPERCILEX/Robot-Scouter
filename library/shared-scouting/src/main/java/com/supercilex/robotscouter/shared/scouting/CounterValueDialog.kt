@@ -2,8 +2,8 @@ package com.supercilex.robotscouter.shared.scouting
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
 import android.text.InputType
+import androidx.fragment.app.FragmentManager
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.data.getRef

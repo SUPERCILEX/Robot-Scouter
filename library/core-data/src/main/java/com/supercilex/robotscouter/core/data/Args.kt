@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore

@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.feature.templates
 
 import android.content.Intent
-import android.support.v4.app.Fragment
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -15,11 +15,11 @@ import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
-import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateSharer private constructor(
@@ -30,7 +30,7 @@ internal class TemplateSharer private constructor(
     private val res = fragment.resources
 
     init {
-        val fragmentRef = fragment.asLifecycleReference()
+        val fragmentRef = fragment.asLifecycleReference(fragment.viewLifecycleOwner)
         launch(UI) {
             val intent = try {
                 withContext(CommonPool) { generateIntent(templateId, templateName) }

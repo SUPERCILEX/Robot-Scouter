@@ -3,13 +3,13 @@ package com.supercilex.robotscouter.core.ui
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceFragmentCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.supercilex.robotscouter.core.refWatcher
 
@@ -19,8 +19,8 @@ interface OnActivityResult {
 
 interface Saveable {
     /**
-     * @see [android.support.v7.app.AppCompatActivity.onSaveInstanceState]
-     * @see [android.support.v4.app.Fragment.onSaveInstanceState]
+     * @see [androidx.appcompat.app.AppCompatActivity.onSaveInstanceState]
+     * @see [androidx.fragment.app.Fragment.onSaveInstanceState]
      */
     fun onSaveInstanceState(outState: Bundle)
 }

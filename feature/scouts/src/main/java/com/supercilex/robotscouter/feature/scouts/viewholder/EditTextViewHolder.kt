@@ -2,8 +2,8 @@ package com.supercilex.robotscouter.feature.scouts.viewholder
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.support.annotation.RequiresApi
 import android.view.View
+import androidx.annotation.RequiresApi
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy

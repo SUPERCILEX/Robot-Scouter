@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.feature.templates
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.fragment.app.transaction
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.TemplateListActivityCompanion
 import com.supercilex.robotscouter.core.RobotScouter
@@ -25,11 +26,11 @@ class TemplateListActivity : ActivityBase() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_template_list)
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.templateList,
-                         TemplateListFragment.newInstance(getTabId(intent.extras)),
-                         TemplateListFragment.TAG)
-                    .commit()
+            supportFragmentManager.transaction {
+                add(R.id.templateList,
+                    TemplateListFragment.newInstance(getTabId(intent.extras)),
+                    TemplateListFragment.TAG)
+            }
         }
     }
 

@@ -2,8 +2,8 @@ package com.supercilex.robotscouter.core.ui.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.supercilex.robotscouter.core.ui.CardMetric
 import com.supercilex.robotscouter.core.ui.CardMetricHelper
 

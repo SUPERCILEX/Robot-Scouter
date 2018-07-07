@@ -1,19 +1,21 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.ColorInt
-import android.support.v4.app.ActivityCompat
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.CallSuper
+import androidx.annotation.ColorInt
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.palette.graphics.Palette
+import androidx.palette.graphics.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -46,7 +48,7 @@ import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.findOptional
 import kotlin.math.roundToInt
-import android.support.v7.graphics.Target as PaletteTarget
+import androidx.palette.graphics.Target as PaletteTarget
 import com.supercilex.robotscouter.R as RC
 
 internal open class AppBarViewHolderBase(
@@ -64,18 +66,15 @@ internal open class AppBarViewHolderBase(
     private val toolbarHeight =
             fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)
 
-    private val permissionHandler = ViewModelProviders.of(fragment)
-            .get(PermissionRequestHandler::class.java).apply {
-                init(TeamMediaCreator.perms)
-            }
-    private val mediaCapture = ViewModelProviders.of(fragment)
-            .get(TeamMediaCreator::class.java).apply {
-                init(permissionHandler to savedInstanceState)
-                onMediaCaptured.observeNonNull(fragment) {
-                    team.copyMediaInfo(it)
-                    team.forceUpdate()
-                }
-            }
+    private val permissionHandler = ViewModelProviders.of(fragment).get<PermissionRequestHandler>()
+            .apply { init(TeamMediaCreator.perms) }
+    private val mediaCapture = ViewModelProviders.of(fragment).get<TeamMediaCreator>().apply {
+        init(permissionHandler to savedInstanceState)
+        onMediaCaptured.observeNonNull(fragment) {
+            team.copyMediaInfo(it)
+            team.forceUpdate()
+        }
+    }
 
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()
     private lateinit var newScoutItem: MenuItem
@@ -86,7 +85,7 @@ internal open class AppBarViewHolderBase(
         backdrop.setOnLongClickListenerCompat(this)
 
         permissionHandler.onGranted.observe(fragment, Observer { mediaCapture.capture(fragment) })
-        listener.observe(fragment, Observer {
+        listener.observe(fragment.viewLifecycleOwner, Observer {
             team = it ?: return@Observer
             bind()
         })
@@ -140,8 +139,7 @@ internal open class AppBarViewHolderBase(
                     Palette.from(resource)
                             .addTarget(paletteTarget)
                             .setRegion(0, 0, resource.width, toolbarHeight)
-                            .generate()
-                            .getSwatchForTarget(paletteTarget)
+                            .generate()[paletteTarget]
                 } ?: return@launch
 
                 // Find backgrounds that are pretty white and then display the scrim to ensure the

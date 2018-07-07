@@ -41,32 +41,29 @@ object Config {
             val design = "org.jetbrains.anko:anko-design:$version"
         }
 
-        object Support {
-            private const val version = "27.1.1"
-
-            val multidex = "com.android.support:multidex:1.0.3"
-            val v4 = "com.android.support:support-v4:$version"
-            val appCompat = "com.android.support:appcompat-v7:$version"
-            val design = "com.android.support:design:$version"
-            val palette = "com.android.support:palette-v7:$version"
-            val cardView = "com.android.support:cardview-v7:$version"
-            val emoji = "com.android.support:support-emoji-appcompat:$version"
-            val customTabs = "com.android.support:support-emoji-appcompat:$version"
-            val pref = "com.android.support:preference-v7:$version"
-
-            val constraint = "com.android.support.constraint:constraint-layout:1.1.2"
-        }
-
         object Jetpack {
-            val core = "androidx.core:core-ktx:0.3"
-        }
-
-        object Arch {
-            private const val version = "1.1.1"
+            private const val version = "1.0.0-beta01"
+            private const val lifecycleVersion = "2.0.0-beta01"
             private const val workVersion = "1.0.0-alpha04"
 
-            val common = "android.arch.lifecycle:common-java8:$version"
-            val extensions = "android.arch.lifecycle:extensions:$version"
+            val core = "androidx.core:core-ktx:$version"
+
+            val multidex = "androidx.multidex:multidex:2.0.0"
+            val appCompat = "androidx.appcompat:appcompat:$version"
+            val fragment = "androidx.fragment:fragment-ktx:$version"
+            val material = "com.google.android.material:material:$version"
+            val constraint = "androidx.constraintlayout:constraintlayout:1.1.2"
+            val cardView = "androidx.cardview:cardview:$version"
+            val palette = "androidx.palette:palette-ktx:$version"
+            val emoji = "androidx.emoji:emoji-appcompat:$version"
+            val browser = "androidx.browser:browser:$version"
+            val pref = "androidx.preference:preference:$version"
+            val prefKtx = "androidx.preference:preference-ktx:$version"
+
+            val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+            val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
+            val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+
             val work = "android.arch.work:work-runtime-ktx:$workVersion"
             val workFirebase = "android.arch.work:work-firebase:$workVersion"
         }

@@ -3,11 +3,11 @@ package com.supercilex.robotscouter.shared
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.supercilex.robotscouter.core.data.shouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase

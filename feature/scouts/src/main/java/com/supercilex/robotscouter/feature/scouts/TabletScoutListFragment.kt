@@ -1,10 +1,11 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.transaction
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.TabletScoutListFragmentBridge
 import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
@@ -72,7 +73,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutLis
     }
 
     private fun removeFragment() {
-        requireFragmentManager().beginTransaction().remove(this).commit()
+        requireFragmentManager().transaction { remove(this@TabletScoutListFragment) }
     }
 
     companion object : TabletScoutListFragmentCompanion {

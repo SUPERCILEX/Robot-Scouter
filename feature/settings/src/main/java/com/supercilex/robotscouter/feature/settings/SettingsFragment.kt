@@ -1,25 +1,28 @@
 package com.supercilex.robotscouter.feature.settings
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.support.v7.content.res.AppCompatResources
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceGroup
-import android.support.v7.preference.PreferenceGroupAdapter
-import android.support.v7.preference.PreferenceScreen
-import android.support.v7.preference.PreferenceViewHolder
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.getSystemService
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.transaction
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceGroup
+import androidx.preference.PreferenceGroupAdapter
+import androidx.preference.PreferenceScreen
+import androidx.preference.PreferenceViewHolder
+import androidx.preference.forEach
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
@@ -33,18 +36,18 @@ import com.supercilex.robotscouter.core.data.prefStore
 import com.supercilex.robotscouter.core.fullVersionName
 import com.supercilex.robotscouter.core.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.core.ui.TemplateSelectionListener
+import com.supercilex.robotscouter.core.ui.toast
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
 import com.supercilex.robotscouter.shared.client.startSignIn
 import com.supercilex.robotscouter.shared.launchUrl
-import org.jetbrains.anko.support.v4.toast
 import com.supercilex.robotscouter.R as RC
 
 internal class SettingsFragment : PreferenceFragmentBase(),
         TemplateSelectionListener,
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private val settingsModel by unsafeLazy {
-        ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+        ViewModelProviders.of(this).get<SettingsViewModel>()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -96,8 +99,8 @@ internal class SettingsFragment : PreferenceFragmentBase(),
         preference.onPreferenceClickListener = this
 
         when (preference) {
-            is PreferenceGroup -> for (i in 0 until preference.preferenceCount) {
-                onPreferenceChange(preference.getPreference(i), null)
+            is PreferenceGroup -> preference.forEach {
+                onPreferenceChange(it, null)
             }
             is ListPreference -> {
                 if (preference.value == null) {
@@ -148,21 +151,21 @@ internal class SettingsFragment : PreferenceFragmentBase(),
                     "https://www.transifex.com/supercilex/robot-scouter/".toUri()
             )
             KEY_VERSION -> {
-                (activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip =
+                checkNotNull(activity.getSystemService<ClipboardManager>()).primaryClip =
                         ClipData.newPlainText(
                                 getString(R.string.settings_debug_info_title), debugInfo)
                 toast(R.string.settings_debug_info_copied_message)
             }
-            KEY_LICENSES -> requireFragmentManager().beginTransaction()
-                    .setCustomAnimations(
-                            android.R.animator.fade_in,
-                            android.R.animator.fade_out,
-                            android.R.animator.fade_in,
-                            android.R.animator.fade_out
-                    )
-                    .replace(R.id.settings, LicensesFragment.newInstance())
-                    .addToBackStack(null)
-                    .commit()
+            KEY_LICENSES -> requireFragmentManager().transaction {
+                setCustomAnimations(
+                        android.R.animator.fade_in,
+                        android.R.animator.fade_out,
+                        android.R.animator.fade_in,
+                        android.R.animator.fade_out
+                )
+                replace(R.id.settings, LicensesFragment.newInstance())
+                addToBackStack(null)
+            }
             else -> return false
         }
         return true

@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.core.data
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import androidx.work.Data
 import androidx.work.WorkManager
 import androidx.work.toWorkData

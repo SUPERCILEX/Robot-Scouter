@@ -5,7 +5,7 @@
 
     <include layout="@layout/scout_template_base_reorder" />
 
-    <android.support.text.emoji.widget.EmojiAppCompatEditText
+    <androidx.emoji.widget.EmojiAppCompatEditText
         android:id="@id/name"
         style="@style/RobotScouter.ListItemNameInLinearLayout.Editable"
         android:layout_marginEnd="@dimen/spacing_normal"
@@ -15,7 +15,7 @@
 
     <include layout="@layout/scout_base_counter" />
 
-    <android.support.text.emoji.widget.EmojiAppCompatEditText
+    <androidx.emoji.widget.EmojiAppCompatEditText
         android:id="@+id/unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

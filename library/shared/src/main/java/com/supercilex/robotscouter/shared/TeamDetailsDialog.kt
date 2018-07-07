@@ -2,30 +2,31 @@ package com.supercilex.robotscouter.shared
 
 import android.animation.AnimatorSet
 import android.app.Dialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.transition.TransitionManager
-import android.support.v4.app.FragmentManager
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.textfield.TextInputLayout
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.logEditDetails
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.forceUpdateAndRefresh
-import com.supercilex.robotscouter.core.data.model.formatAsTeamUrl
-import com.supercilex.robotscouter.core.data.model.isValidTeamUrl
+import com.supercilex.robotscouter.core.data.model.formatAsTeamUri
+import com.supercilex.robotscouter.core.data.model.isValidTeamUri
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.toBundle
@@ -38,6 +39,7 @@ import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_team_details.*
 import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -51,10 +53,10 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     private lateinit var team: Team
 
     private val permHandler by unsafeLazy {
-        ViewModelProviders.of(this).get(PermissionRequestHandler::class.java)
+        ViewModelProviders.of(this).get<PermissionRequestHandler>()
     }
     private val mediaCreator by unsafeLazy {
-        ViewModelProviders.of(this).get(TeamMediaCreator::class.java)
+        ViewModelProviders.of(this).get<TeamMediaCreator>()
     }
 
     override val containerView by unsafeLazy {
@@ -77,7 +79,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 updateUi()
             }
         }
-        ViewModelProviders.of(this).get(TeamHolder::class.java).apply {
+        ViewModelProviders.of(this).get<TeamHolder>().apply {
             init(team.toBundle())
             var firstOverwrite = savedInstanceState
             teamListener.observe(this@TeamDetailsDialog, Observer {
@@ -177,9 +179,9 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     private fun save() {
-        val name = nameEdit.text
-        val media = mediaEdit.text
-        val website = websiteEdit.text
+        val name = nameEdit.text?.toString()
+        val media = mediaEdit.text?.toString()
+        val website = websiteEdit.text?.toString()
 
         val isMediaValid = validateUrl(media, mediaLayout)
         val isWebsiteValid = validateUrl(website, websiteLayout)
@@ -188,14 +190,14 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         launch(UI) {
             if (!isWebsiteValid.await() || !isMediaValid.await()) return@launch
 
-            name.nullOrFull()?.toString().also {
+            name.nullOrFull().also {
                 if (it != team.name) {
                     team.name = it
                     team.hasCustomName = it?.isNotBlank() == true
                 }
             }
 
-            withContext(CommonPool) { media.toString().formatAsTeamUrl() }.also {
+            withContext(CommonPool) { media?.formatAsTeamUri() }.also {
                 if (it != team.media) {
                     team.media = it
                     team.hasCustomMedia = it?.isNotBlank() == true
@@ -203,7 +205,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(CommonPool) { website.toString().formatAsTeamUrl() }.also {
+            withContext(CommonPool) { website?.formatAsTeamUri() }.also {
                 if (it != team.website) {
                     team.website = it
                     team.hasCustomWebsite = it?.isNotBlank() == true
@@ -248,10 +250,12 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         validateUrl(websiteEdit.text, websiteLayout)
     }
 
-    private fun validateUrl(url: CharSequence, inputLayout: TextInputLayout): Deferred<Boolean> {
+    private fun validateUrl(url: CharSequence?, inputLayout: TextInputLayout): Deferred<Boolean> {
+        if (url == null) return CompletableDeferred(true)
+
         val inputRef = inputLayout.asLifecycleReference(this)
         return async(UI) {
-            val isValid = withContext(CommonPool) { url.isValidTeamUrl() }
+            val isValid = withContext(CommonPool) { url.isValidTeamUri() }
             inputRef().error =
                     if (isValid) null else getString(R.string.details_malformed_url_error)
             isValid

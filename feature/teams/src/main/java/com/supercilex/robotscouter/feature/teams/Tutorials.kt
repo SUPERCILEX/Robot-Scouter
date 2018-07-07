@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.feature.teams
 
-import android.arch.lifecycle.Observer
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
@@ -18,7 +18,7 @@ import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import com.supercilex.robotscouter.R as RC
 
 internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
-    helper.hasShownAddTeamTutorial.observe(owner, object : Observer<Boolean?> {
+    helper.hasShownAddTeamTutorial.observe(owner.viewLifecycleOwner, object : Observer<Boolean?> {
         private val prompt = run {
             val activity = owner.requireActivity()
             MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
@@ -41,7 +41,7 @@ internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
 }
 
 internal fun showSignInTutorial(helper: TutorialHelper, owner: Fragment) {
-    helper.hasShownSignInTutorial.observe(owner, object : Observer<Boolean?> {
+    helper.hasShownSignInTutorial.observe(owner.viewLifecycleOwner, object : Observer<Boolean?> {
         private val prompt
             get() = run {
                 val activity = owner.requireActivity()

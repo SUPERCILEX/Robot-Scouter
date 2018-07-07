@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.core.data
 
-import android.arch.lifecycle.ViewModel
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
+import androidx.lifecycle.ViewModel
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class ViewModelBase<in T> : ViewModel() {

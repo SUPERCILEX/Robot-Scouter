@@ -3,8 +3,8 @@ package com.supercilex.robotscouter
 import android.content.Context
 import android.os.Build
 import android.os.StrictMode
-import android.support.multidex.MultiDexApplication
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.squareup.leakcanary.LeakCanary
 import com.supercilex.robotscouter.core._app

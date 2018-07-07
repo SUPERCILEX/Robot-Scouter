@@ -1,15 +1,16 @@
 package com.supercilex.robotscouter.shared.scouting
 
-import android.arch.lifecycle.DefaultLifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.widget.LinearLayout
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.viewpager.widget.PagerAdapter
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.ListenerRegistrationLifecycleOwner
@@ -36,7 +37,7 @@ abstract class TabPagerAdapterBase(
     private val tabs = containerView.find<TabLayout>(R.id.tabs)
     private val noTabsHint = containerView.find<View>(R.id.noTabsHint)
 
-    val holder = ViewModelProviders.of(fragment).get(ScoutsHolder::class.java)
+    val holder = ViewModelProviders.of(fragment).get<ScoutsHolder>()
     private var oldScouts: List<Scout> = emptyList()
     protected var currentScouts: List<Scout> = emptyList()
 
@@ -51,7 +52,7 @@ abstract class TabPagerAdapterBase(
         get() = tabs.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
 
     fun init() {
-        fragment.lifecycle.addObserver(this)
+        fragment.viewLifecycleOwner.lifecycle.addObserver(this)
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 
@@ -151,18 +152,18 @@ abstract class TabPagerAdapterBase(
     }
 
     override fun onStart(owner: LifecycleOwner) {
-        if (owner === fragment) {
+        if (owner !== ListenerRegistrationLifecycleOwner) {
             holder.scouts.addChangeEventListener(this)
         }
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        if (owner === fragment) {
-            holder.scouts.removeChangeEventListener(this)
-        } else if (owner === ListenerRegistrationLifecycleOwner) {
+        if (owner === ListenerRegistrationLifecycleOwner) {
             oldScouts = emptyList()
             currentScouts = emptyList()
             notifyDataSetChanged()
+        } else {
+            holder.scouts.removeChangeEventListener(this)
         }
     }
 

@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.logSelectScout

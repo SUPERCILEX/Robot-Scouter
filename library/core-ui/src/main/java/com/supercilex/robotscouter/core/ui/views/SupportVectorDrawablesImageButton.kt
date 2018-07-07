@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.core.ui.views
 
 import android.content.Context
-import android.support.v7.widget.AppCompatImageButton
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.withStyledAttributes
 import com.supercilex.robotscouter.core.ui.R
 import com.supercilex.robotscouter.core.ui.getDrawableCompat

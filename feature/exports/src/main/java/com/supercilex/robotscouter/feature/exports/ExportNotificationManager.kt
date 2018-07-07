@@ -2,9 +2,9 @@ package com.supercilex.robotscouter.feature.exports
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.ServiceCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.EXPORT_IN_PROGRESS_CHANNEL

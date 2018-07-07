@@ -1,13 +1,13 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
@@ -19,11 +19,11 @@ import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.core.ui.find
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.views.ContentLoadingHint
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment() {
@@ -35,13 +35,6 @@ internal class ScoutFragment : MetricListFragment() {
     private val toolbar by unsafeLazy { checkNotNull(parentFragment).find<Toolbar>(RC.id.toolbar) }
     private val emptyScoutHint by unsafeLazy { find<ContentLoadingHint>(RC.id.emptyScoutHint) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        holder.metrics.asLiveData().observeNonNull(this) {
-            if (it.isNotEmpty()) emptyScoutHint.hide()
-        }
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -50,13 +43,17 @@ internal class ScoutFragment : MetricListFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        metricsView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
+        metricsView.setRecycledViewPool((parentFragment as RecyclerPoolHolder).recyclerPool)
+
         emptyScoutHint.show()
+        holder.metrics.asLiveData().observeNonNull(viewLifecycleOwner) {
+            if (it.isNotEmpty()) emptyScoutHint.hide()
+        }
     }
 
     override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = ScoutAdapter(
             holder.metrics,
-            this,
+            viewLifecycleOwner,
             childFragmentManager,
             metricsView,
             savedInstanceState

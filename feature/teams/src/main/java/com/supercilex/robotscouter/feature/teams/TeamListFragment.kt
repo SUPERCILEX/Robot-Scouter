@@ -1,11 +1,6 @@
 package com.supercilex.robotscouter.feature.teams
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.FragmentManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.Menu
@@ -13,7 +8,13 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.SelectedTeamsRetriever
 import com.supercilex.robotscouter.SignInResolver
@@ -40,12 +41,12 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
     override val selectedTeams get() = menuHelper.selectedTeams
 
     private val holder by unsafeLazy {
-        ViewModelProviders.of(this).get(TeamListHolder::class.java)
+        ViewModelProviders.of(this).get<TeamListHolder>()
                 .also { onHolderReadyTask.setResult(it) }
     }
     private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
     private val tutorialHelper by unsafeLazy {
-        ViewModelProviders.of(this).get(TutorialHelper::class.java)
+        ViewModelProviders.of(this).get<TutorialHelper>()
     }
 
     private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
@@ -73,7 +74,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
         teamsView.layoutManager = LinearLayoutManager(context)
         teamsView.setHasFixedSize(true)
         teamsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0) {
                     // User scrolled down -> hide the FAB
                     fab.hide()
@@ -96,7 +97,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
         menuHelper.adapter = adapter
         menuHelper.restoreState(savedInstanceState)
 
-        teams.asLiveData().observeNonNull(this) {
+        teams.asLiveData().observeNonNull(viewLifecycleOwner) {
             val noTeams = it.isEmpty()
             noTeamsHint.animatePopReveal(noTeams)
             if (noTeams) fab.show()

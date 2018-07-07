@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.core.ui
 
-import android.content.Context
 import android.view.KeyEvent
 import android.view.View
 import android.view.Window
@@ -8,11 +7,10 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.core.content.getSystemService
 import com.supercilex.robotscouter.core.RobotScouter
 
-val inputMethodManager: InputMethodManager by lazy {
-    RobotScouter.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-}
+val inputMethodManager by lazy { checkNotNull(RobotScouter.getSystemService<InputMethodManager>()) }
 
 fun Window.setKeyboardModeVisible() {
     setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)

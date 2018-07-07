@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.feature.scouts
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import androidx.fragment.app.transaction
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.ScoutListActivityCompanion
 import com.supercilex.robotscouter.core.RobotScouter
@@ -25,11 +26,11 @@ internal class ScoutListActivity : ActivityBase() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scout_list)
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .add(R.id.scoutList,
-                         ActivityScoutListFragment.newInstance(intent.getBundleExtra(SCOUT_ARGS_KEY)),
-                         ActivityScoutListFragment.TAG)
-                    .commit()
+            supportFragmentManager.transaction {
+                add(R.id.scoutList,
+                    ActivityScoutListFragment.newInstance(intent.getBundleExtra(SCOUT_ARGS_KEY)),
+                    ActivityScoutListFragment.TAG)
+            }
         }
     }
 

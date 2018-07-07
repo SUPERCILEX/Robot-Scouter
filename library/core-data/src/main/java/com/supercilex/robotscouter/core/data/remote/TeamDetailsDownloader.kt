@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.core.data.remote
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.bumptech.glide.Glide
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.ChiefDelphi

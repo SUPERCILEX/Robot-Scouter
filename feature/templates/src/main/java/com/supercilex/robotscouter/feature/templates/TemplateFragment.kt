@@ -1,13 +1,13 @@
 package com.supercilex.robotscouter.feature.templates
 
 import android.os.Bundle
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.core.data.asLiveData
@@ -24,11 +24,11 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.animatePopReveal
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
@@ -43,13 +43,6 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
 
     private var hasAddedItem: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        holder.metrics.asLiveData().observeNonNull(this) {
-            noMetricsHint.animatePopReveal(it.isEmpty())
-        }
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -59,18 +52,21 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         noMetricsHint.animatePopReveal(true)
+        holder.metrics.asLiveData().observeNonNull(viewLifecycleOwner) {
+            noMetricsHint.animatePopReveal(it.isEmpty())
+        }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchCallback.adapter = adapter as TemplateAdapter
         itemTouchHelper.attachToRecyclerView(metricsView)
 
-        metricsView.recycledViewPool = (parentFragment as RecyclerPoolHolder).recyclerPool
+        metricsView.setRecycledViewPool((parentFragment as RecyclerPoolHolder).recyclerPool)
     }
 
     override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = TemplateAdapter(
             holder.metrics,
-            this,
+            viewLifecycleOwner,
             childFragmentManager,
             metricsView,
             savedInstanceState,

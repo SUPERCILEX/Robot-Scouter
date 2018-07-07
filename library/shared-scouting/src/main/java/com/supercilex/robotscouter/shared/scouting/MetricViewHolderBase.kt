@@ -1,10 +1,10 @@
 package com.supercilex.robotscouter.shared.scouting
 
-import android.support.annotation.CallSuper
-import android.support.v4.app.FragmentManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.CallSuper
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.model.Metric
 import kotlinx.android.extensions.LayoutContainer
 import org.jetbrains.anko.find

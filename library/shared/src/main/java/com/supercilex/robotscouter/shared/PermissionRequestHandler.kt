@@ -1,10 +1,10 @@
 package com.supercilex.robotscouter.shared
 
-import android.arch.lifecycle.LiveData
 import android.content.Intent
-import android.support.annotation.StringRes
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
 import com.supercilex.robotscouter.core.data.ViewModelBase

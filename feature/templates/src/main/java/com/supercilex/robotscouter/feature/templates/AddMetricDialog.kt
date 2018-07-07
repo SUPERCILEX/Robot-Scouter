@@ -2,9 +2,9 @@ package com.supercilex.robotscouter.feature.templates
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.FragmentManager
 import android.view.View
+import androidx.fragment.app.FragmentManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_add_metric.*
@@ -16,7 +16,7 @@ internal class AddMetricDialog : BottomSheetDialogFragmentBase(), View.OnClickLi
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        BottomSheetBehavior.from(dialog.find<View>(android.support.design.R.id.design_bottom_sheet))
+        BottomSheetBehavior.from(dialog.find<View>(com.google.android.material.R.id.design_bottom_sheet))
                 .state = BottomSheetBehavior.STATE_EXPANDED
         listOf(addHeader, addCheckBox, addStopwatch, addNote, addCounter, addSpinner).forEach {
             it.setOnClickListener(this)

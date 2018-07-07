@@ -5,11 +5,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
+import androidx.core.content.getSystemService
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.reportOrCancel
@@ -33,9 +33,7 @@ const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
  */
 const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200L
 
-val notificationManager: NotificationManager by lazy {
-    RobotScouter.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-}
+val notificationManager by lazy { checkNotNull(RobotScouter.getSystemService<NotificationManager>()) }
 
 fun initNotifications() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return

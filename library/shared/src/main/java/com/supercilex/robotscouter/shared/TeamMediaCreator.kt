@@ -2,14 +2,14 @@ package com.supercilex.robotscouter.shared
 
 import android.Manifest
 import android.app.Activity
-import android.arch.lifecycle.LiveData
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v4.app.Fragment
-import android.support.v4.content.FileProvider
 import android.view.Gravity
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference

@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.feature.templates
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.core.data.templatesRef

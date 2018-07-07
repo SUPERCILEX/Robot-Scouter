@@ -2,9 +2,9 @@ package com.supercilex.robotscouter.shared.scouting
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.annotation.StringRes
 import android.view.View
 import android.widget.EditText
+import androidx.annotation.StringRes
 import com.supercilex.robotscouter.core.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_value.*

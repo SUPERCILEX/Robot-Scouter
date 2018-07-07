@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.core.data.model
 
-import android.support.annotation.WorkerThread
 import android.util.Patterns
+import androidx.annotation.WorkerThread
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
@@ -193,16 +193,17 @@ suspend fun Team.getScouts(): List<Scout> {
 }
 
 @WorkerThread
-fun CharSequence.isValidTeamUrl() = toString().formatAsTeamUrl().let {
+fun CharSequence.isValidTeamUri() = toString().formatAsTeamUri().let {
     it == null || Patterns.WEB_URL.matcher(it).matches() || File(it).exists()
 }
 
 @WorkerThread
-fun String.formatAsTeamUrl(): String? {
-    if (File(this).exists()) return this
-
+fun String.formatAsTeamUri(): String? {
     val trimmedUrl = trim()
     if (trimmedUrl.isBlank()) return null
+
+    if (File(this).exists()) return this
+
     return if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
         trimmedUrl
     } else {

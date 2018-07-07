@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.core.data.model
 
-import android.arch.lifecycle.LiveData
 import android.os.Bundle
+import androidx.lifecycle.LiveData
 import com.firebase.ui.common.ChangeEventType
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase

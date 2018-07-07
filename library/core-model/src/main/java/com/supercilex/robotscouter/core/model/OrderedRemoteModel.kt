@@ -1,6 +1,6 @@
 package com.supercilex.robotscouter.core.model
 
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Exclude
 

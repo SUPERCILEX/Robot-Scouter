@@ -1,11 +1,11 @@
 package com.supercilex.robotscouter.feature.settings
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.ContextWrapper
-import android.support.v4.app.FragmentActivity
-import android.support.v7.preference.ListPreference
 import android.util.AttributeSet
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
+import androidx.preference.ListPreference
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.defaultTemplateId

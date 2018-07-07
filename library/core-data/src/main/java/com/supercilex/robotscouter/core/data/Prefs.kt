@@ -2,9 +2,9 @@ package com.supercilex.robotscouter.core.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.v7.app.AppCompatDelegate
-import android.support.v7.preference.PreferenceDataStore
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.preference.PreferenceDataStore
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser

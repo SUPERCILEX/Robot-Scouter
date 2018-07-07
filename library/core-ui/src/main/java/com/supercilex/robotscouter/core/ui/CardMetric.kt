@@ -6,9 +6,9 @@ import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Paint
 import android.os.Build
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewOutlineProvider
+import androidx.core.content.ContextCompat
 import com.supercilex.robotscouter.core.unsafeLazy
 import android.graphics.RectF as AndroidRectF
 

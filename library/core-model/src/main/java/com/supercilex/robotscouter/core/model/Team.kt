@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.core.model
 
 import android.os.Parcelable
-import android.support.annotation.Keep
-import android.support.annotation.RestrictTo
+import androidx.annotation.Keep
+import androidx.annotation.RestrictTo
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import com.google.gson.annotations.SerializedName

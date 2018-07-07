@@ -11,7 +11,5 @@ dependencies {
     implementation(Config.Libs.Firebase.invites)
 
     // Needed for override
-    api(Config.Libs.PlayServices.auth)
-    api(Config.Libs.Support.cardView)
-    api(Config.Libs.Support.customTabs)
+    api(Config.Libs.Jetpack.browser)
 }

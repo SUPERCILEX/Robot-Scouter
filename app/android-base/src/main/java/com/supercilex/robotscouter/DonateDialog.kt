@@ -3,11 +3,11 @@ package com.supercilex.robotscouter
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.BillingResponse
 import com.android.billingclient.api.BillingClientStateListener
@@ -22,11 +22,11 @@ import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
+import com.supercilex.robotscouter.core.ui.longSnackbar
+import com.supercilex.robotscouter.core.ui.longToast
+import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_donate.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.design.snackbar
-import org.jetbrains.anko.support.v4.longToast
 
 internal class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, BillingClientStateListener, PurchasesUpdatedListener {
