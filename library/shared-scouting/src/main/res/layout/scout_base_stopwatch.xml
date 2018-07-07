@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesButton
+    <Button
         android:id="@+id/stopwatch"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
@@ -17,7 +17,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/barrier"
-        app:drawableStartCompat="@drawable/ic_stopwatch_24dp"
         tools:ignore="UnusedAttribute"
         tools:text="Start (0:00)" />
 

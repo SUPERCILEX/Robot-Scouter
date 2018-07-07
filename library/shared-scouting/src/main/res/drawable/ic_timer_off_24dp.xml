@@ -1,0 +1,26 @@
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportHeight="24"
+    android:viewportWidth="24">
+
+    <path
+        android:name="timer"
+        android:fillColor="@color/colorAccent"
+        android:pathData="M 15 1 L 9 1 L 9 3 L 15 3 L 15 1 Z M 11 14 L 13 14 L 13 8 L 11 8 L 11 14 Z M 19.03 7.39 L 20.45 5.97 C 20.02 5.46 19.55 4.98 19.04 4.56 L 17.62 5.98 C 16.07 4.74 14.12 4 12 4 C 7.03 4 3 8.03 3 13 C 3 17.97 7.02 22 12 22 C 16.98 22 21 17.97 21 13 C 21 10.88 20.26 8.93 19.03 7.39 Z M 12 20 C 8.13 20 5 16.87 5 13 C 5 9.13 8.13 6 12 6 C 15.87 6 19 9.13 19 13 C 19 16.87 15.87 20 12 20 Z"
+        android:strokeWidth="1" />
+
+    <path
+        android:name="slash"
+        android:pathData="M 2.375 4.55 L 20.24 22.365"
+        android:strokeColor="@color/colorAccent"
+        android:strokeWidth="2" />
+
+    <path
+        android:name="slash_offsetter"
+        android:pathData="M 3.789 3.136 L 21.654 20.951"
+        android:strokeColor="@color/list_item_normal"
+        android:strokeWidth="2" />
+
+</vector>
