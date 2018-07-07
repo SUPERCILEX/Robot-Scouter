@@ -12,6 +12,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.transaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -157,12 +158,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
                 toast(R.string.settings_debug_info_copied_message)
             }
             KEY_LICENSES -> requireFragmentManager().transaction {
-                setCustomAnimations(
-                        android.R.animator.fade_in,
-                        android.R.animator.fade_out,
-                        android.R.animator.fade_in,
-                        android.R.animator.fade_out
-                )
+                setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 replace(R.id.settings, LicensesFragment.newInstance())
                 addToBackStack(null)
             }
