@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
@@ -69,6 +70,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fab.setOnClickListener(this)
         fab.show()
+        fab.isVisible = true // Hack: don't animate
         showAddTeamTutorial(tutorialHelper, this)
 
         teamsView.layoutManager = LinearLayoutManager(context)
@@ -108,6 +110,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
         super.onDestroyView()
         menuHelper.resetToolbarWithSave()
         fab.hide()
+        fab.isVisible = false // Hack: don't animate
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
