@@ -78,7 +78,7 @@ internal class TeamMenuHelper(
     }
 
     fun resetToolbarWithSave() {
-        if (!isMenuReady) return
+        if (!isMenuReady || selectedTeams.isEmpty()) return
         val prev = _selectedTeams
 
         _selectedTeams = mutableListOf()
