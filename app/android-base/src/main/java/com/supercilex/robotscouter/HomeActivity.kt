@@ -132,6 +132,12 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                     else -> error("Unknown tag: $newTag")
                 }
 
+                setCustomAnimations(
+                        R.anim.pop_fade_in,
+                        R.anim.fade_out,
+                        R.anim.pop_fade_in,
+                        R.anim.fade_out
+                )
                 detach(currentFragment)
                 if (newFragment.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                     attach(newFragment)

@@ -71,7 +71,6 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fab.setOnClickListener(this)
         fab.show()
-        fab.isVisible = true // Hack: don't animate
         showAddTeamTutorial(tutorialHelper, this)
 
         teamsView.layoutManager = LinearLayoutManager(context)
