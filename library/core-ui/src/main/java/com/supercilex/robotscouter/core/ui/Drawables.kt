@@ -11,6 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.withStyledAttributes
 import androidx.core.widget.TextViewCompat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.LateinitVal
 import org.xmlpull.v1.XmlPullParser
@@ -19,6 +20,7 @@ private const val SELECTOR_ATTR_NAME = "selector"
 private const val ITEM_ATTR_NAME = "item"
 private const val STATE_ATTR_NAME = "state"
 private const val DRAWABLE_ATTR_NAME = "drawable"
+private const val ANIMATED_DRAWABLE_ATTR_NAME = "animated-vector"
 
 fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
     val parser = resources.getXml(resId)
@@ -28,8 +30,15 @@ fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
             type = parser.next()
         }
 
-        if (type != XmlPullParser.START_TAG || parser.name != SELECTOR_ATTR_NAME) {
-            return AppCompatResources.getDrawable(this, resId)
+        run {
+            val tagName = parser.name
+            if (type != XmlPullParser.START_TAG || tagName != SELECTOR_ATTR_NAME) {
+                return if (tagName == ANIMATED_DRAWABLE_ATTR_NAME) {
+                    AnimatedVectorDrawableCompat.create(this, resId)
+                } else {
+                    AppCompatResources.getDrawable(this, resId)
+                }
+            }
         }
 
         val states = StateListDrawable()

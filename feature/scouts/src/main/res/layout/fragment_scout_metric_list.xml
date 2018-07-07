@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:drawableTopCompat="@drawable/ic_cloud_grey_24dp" />
+        app:drawableTopCompat="@drawable/ic_cloud_grey_96dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@id/metricsView"

@@ -17,8 +17,11 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.supercilex.robotscouter.core.RobotScouter
 
-val shortAnimationDuration: Long by lazy {
+val shortAnimationDuration by lazy {
     RobotScouter.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+}
+val mediumAnimationDuration by lazy {
+    RobotScouter.resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
 }
 
 fun animateColorChange(

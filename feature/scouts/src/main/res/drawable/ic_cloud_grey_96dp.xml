@@ -1,0 +1,175 @@
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:name="cloud_bounce"
+            android:width="192dp"
+            android:height="192dp"
+            android:viewportHeight="48"
+            android:viewportWidth="48">
+
+            <group
+                android:name="group"
+                android:pivotX="12"
+                android:pivotY="12"
+                android:translateX="12"
+                android:translateY="12">
+
+                <path
+                    android:name="path"
+                    android:fillColor="@color/light_grey"
+                    android:pathData="M 19.35 10.04 C 18.67 6.59 15.64 4 12 4 C 9.11 4 6.6 5.64 5.35 8.04 C 2.34 8.36 0 10.91 0 14 C 0 17.31 2.69 20 6 20 L 19 20 C 21.76 20 24 17.76 24 15 C 24 12.36 21.95 10.22 19.35 10.04 Z"
+                    android:strokeWidth="1" />
+
+            </group>
+
+        </vector>
+    </aapt:attr>
+
+    <target android:name="group">
+        <aapt:attr name="android:animation">
+
+            <set>
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="125"
+                    android:propertyName="rotation"
+                    android:startOffset="125"
+                    android:valueFrom="15"
+                    android:valueTo="-15"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+                    android:duration="250"
+                    android:propertyName="rotation"
+                    android:startOffset="250"
+                    android:valueFrom="-15"
+                    android:valueTo="30"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="250"
+                    android:propertyName="rotation"
+                    android:startOffset="500"
+                    android:valueFrom="30"
+                    android:valueTo="-45"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="750"
+                    android:propertyName="rotation"
+                    android:startOffset="750"
+                    android:valueFrom="-45"
+                    android:valueTo="405"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:duration="125"
+                    android:propertyName="translateY"
+                    android:startOffset="375"
+                    android:valueFrom="12"
+                    android:valueTo="9"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="250"
+                    android:propertyName="translateY"
+                    android:startOffset="500"
+                    android:valueFrom="9"
+                    android:valueTo="15"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="375"
+                    android:propertyName="translateY"
+                    android:startOffset="1125"
+                    android:valueFrom="0"
+                    android:valueTo="15"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:duration="375"
+                    android:propertyName="translateY"
+                    android:startOffset="750"
+                    android:valueFrom="15"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="125"
+                    android:propertyName="rotation"
+                    android:valueFrom="0"
+                    android:valueTo="15"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:duration="250"
+                    android:propertyName="rotation"
+                    android:startOffset="1500"
+                    android:valueFrom="45"
+                    android:valueTo="-30"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:duration="250"
+                    android:propertyName="translateY"
+                    android:startOffset="1500"
+                    android:valueFrom="15"
+                    android:valueTo="9"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:duration="125"
+                    android:propertyName="translateY"
+                    android:startOffset="1750"
+                    android:valueFrom="9"
+                    android:valueTo="12"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+                    android:duration="250"
+                    android:propertyName="rotation"
+                    android:startOffset="1750"
+                    android:valueFrom="-30"
+                    android:valueTo="15"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:duration="125"
+                    android:propertyName="rotation"
+                    android:startOffset="2000"
+                    android:valueFrom="15"
+                    android:valueTo="-15"
+                    android:valueType="floatType" />
+
+                <objectAnimator
+                    android:interpolator="@android:anim/decelerate_interpolator"
+                    android:duration="125"
+                    android:propertyName="rotation"
+                    android:startOffset="2125"
+                    android:valueFrom="-15"
+                    android:valueTo="0"
+                    android:valueType="floatType" />
+
+            </set>
+
+        </aapt:attr>
+    </target>
+
+</animated-vector>
