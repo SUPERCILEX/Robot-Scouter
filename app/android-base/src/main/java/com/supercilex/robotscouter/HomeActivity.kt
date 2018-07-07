@@ -111,24 +111,32 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         drawer.setNavigationItemSelectedListener(this)
         bottomNavigation.setOnNavigationItemSelectedListener {
             supportFragmentManager.transaction {
-                detach(checkNotNull(supportFragmentManager.findFragmentById(R.id.content)))
-
-                val (f, tag) = when (it.itemId) {
-                    R.id.teams -> {
-                        TeamListFragmentCompanion().getInstance(supportFragmentManager) to
-                                TeamListFragmentCompanion.TAG
-                    }
-                    R.id.autoScout -> {
-                        AutoScoutFragmentCompanion().getInstance(supportFragmentManager) to
-                                AutoScoutFragmentCompanion.TAG
-                    }
+                val currentFragment =
+                        checkNotNull(supportFragmentManager.findFragmentById(R.id.content))
+                val newTag = when (it.itemId) {
+                    R.id.teams -> TeamListFragmentCompanion.TAG
+                    R.id.autoScout -> AutoScoutFragmentCompanion.TAG
                     else -> error("Unknown id: ${it.itemId}")
                 }
 
-                if (f.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-                    attach(f)
+                if (currentFragment.tag == newTag) {
+                    (currentFragment as? Refreshable)?.refresh()
+                    return@transaction
+                }
+
+                val newFragment = when (newTag) {
+                    TeamListFragmentCompanion.TAG ->
+                        TeamListFragmentCompanion().getInstance(supportFragmentManager)
+                    AutoScoutFragmentCompanion.TAG ->
+                        AutoScoutFragmentCompanion().getInstance(supportFragmentManager)
+                    else -> error("Unknown tag: $newTag")
+                }
+
+                detach(currentFragment)
+                if (newFragment.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    attach(newFragment)
                 } else {
-                    add(R.id.content, f, tag)
+                    add(R.id.content, newFragment, newTag)
                 }
             }
 

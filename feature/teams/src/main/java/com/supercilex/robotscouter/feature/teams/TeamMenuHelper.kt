@@ -69,6 +69,14 @@ internal class TeamMenuHelper(
         if (selectedTeams.isNotEmpty()) onRestore()
     }
 
+    fun resetMenu() {
+        if (selectedTeams.isEmpty()) return
+
+        _selectedTeams = mutableListOf()
+        resetToolbarWithSave()
+        notifyItemsChanged()
+    }
+
     fun resetToolbarWithSave() {
         if (!isMenuReady) return
         val prev = _selectedTeams
@@ -248,16 +256,15 @@ internal class TeamMenuHelper(
             @ColorRes val newColorPrimaryDark =
                     if (visible) RC.color.colorPrimaryDark else RC.color.selected_status_bar
 
-            if (drawerLayout.statusBarBackgroundDrawable
-                    .shouldUpdateBackground(newColorPrimaryDark)) {
-                animateColorChange(
-                        oldColorPrimaryDark,
-                        newColorPrimaryDark,
-                        ValueAnimator.AnimatorUpdateListener {
-                            drawerLayout.setStatusBarBackgroundColor(it.animatedValue as Int)
-                        }
-                )
-            }
+            if (
+                drawerLayout.statusBarBackgroundDrawable.shouldUpdateBackground(newColorPrimaryDark)
+            ) animateColorChange(
+                    oldColorPrimaryDark,
+                    newColorPrimaryDark,
+                    ValueAnimator.AnimatorUpdateListener {
+                        drawerLayout.setStatusBarBackgroundColor(it.animatedValue as Int)
+                    }
+            )
         }
     }
 
@@ -286,12 +293,6 @@ internal class TeamMenuHelper(
             setTeamSpecificItemsVisible(selectedTeams.isSingleton)
             updateToolbarTitle()
         }
-    }
-
-    private fun resetMenu() {
-        _selectedTeams = mutableListOf()
-        resetToolbarWithSave()
-        notifyItemsChanged()
     }
 
     private fun onRestore() {

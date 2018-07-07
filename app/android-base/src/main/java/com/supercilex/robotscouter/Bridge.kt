@@ -70,6 +70,26 @@ internal fun ActivityBase.handleModuleInstalls(
     }
 })
 
+interface SelectedTeamsRetriever {
+    val selectedTeams: List<Team>
+}
+
+interface TeamExporter {
+    fun export()
+}
+
+interface DrawerToggler {
+    fun toggle(enabled: Boolean)
+}
+
+interface SignInResolver {
+    fun showSignInResolution()
+}
+
+interface Refreshable {
+    fun refresh()
+}
+
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 annotation class Bridge
@@ -191,22 +211,6 @@ interface ExportServiceCompanion : DownloadableBridgeCompanion {
                     ?.get<ExportServiceCompanion>()
         }
     }
-}
-
-interface SelectedTeamsRetriever {
-    val selectedTeams: List<Team>
-}
-
-interface TeamExporter {
-    fun export()
-}
-
-interface DrawerToggler {
-    fun toggle(enabled: Boolean)
-}
-
-interface SignInResolver {
-    fun showSignInResolution()
 }
 
 abstract class InstalledBridgeFinderCompanion<T : InstalledBridgeCompanion>

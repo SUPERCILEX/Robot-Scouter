@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.Bridge
+import com.supercilex.robotscouter.Refreshable
 import com.supercilex.robotscouter.SelectedTeamsRetriever
 import com.supercilex.robotscouter.SignInResolver
 import com.supercilex.robotscouter.TeamListFragmentCompanion
@@ -37,8 +38,8 @@ import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackPressedListener,
-        SelectedTeamsRetriever, KeyboardShortcutListener, View.OnClickListener {
+internal class TeamListFragment : FragmentBase(), TeamSelectionListener, SelectedTeamsRetriever,
+        OnBackPressedListener, KeyboardShortcutListener, Refreshable, View.OnClickListener {
     override val selectedTeams get() = menuHelper.selectedTeams
 
     private val holder by unsafeLazy {
@@ -145,6 +146,11 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, OnBackP
         true
     } else {
         false
+    }
+
+    override fun refresh() {
+        menuHelper.resetMenu()
+        teamsView.smoothScrollToPosition(0)
     }
 
     override fun onBackPressed(): Boolean = menuHelper.onBackPressed()
