@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.core.ui.ContentLoaderHelper
  * (from none, to a user perceivable amount).
  */
 class ContentLoadingProgressBar : ProgressBar, ContentLoader {
-    override val helper = ContentLoaderHelper(this, { isVisible = true }, { isVisible = false })
+    override val helper = ContentLoaderHelper(this) { isVisible = it }
 
     constructor(context: Context) : super(context)
 

@@ -15,7 +15,7 @@ import com.supercilex.robotscouter.core.ui.mediumAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 
 class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader {
-    override val helper = ContentLoaderHelper(this, { toggle(true) }, { toggle(false) })
+    override val helper = ContentLoaderHelper(this, ::toggle)
 
     private val animatable by unsafeLazy {
         (TextViewCompat.getCompoundDrawablesRelative(this)

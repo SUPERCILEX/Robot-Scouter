@@ -21,12 +21,12 @@ internal interface ContentLoader {
     fun hide(force: Boolean = false, callback: Runnable? = null) = helper.hide(force, callback)
 }
 
-class ContentLoaderHelper(private val view: View, show: () -> Unit, hide: () -> Unit) {
+class ContentLoaderHelper(private val view: View, toggle: (visible: Boolean) -> Unit) {
     private val delayedShow = Runnable {
         startTime = SystemClock.uptimeMillis()
-        show()
+        toggle(true)
     }
-    private val delayedHide = Runnable { hide() }
+    private val delayedHide = Runnable { toggle(false) }
 
     private var isAttachedToWindow = false
     private var isShown: Boolean = view.isVisible
