@@ -9,10 +9,10 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.2.0-beta02"
+        val android = "com.android.tools.build:gradle:3.2.0-beta04"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        val google = "com.google.gms:google-services:4.0.1"
+        val google = "com.google.gms:google-services:4.0.2"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         val fabric = "io.fabric.tools:gradle:1.25.4"
         val publishing = "com.github.Triple-T:gradle-play-publisher:42ffe9922c"
@@ -71,8 +71,8 @@ object Config {
         object Firebase {
             val core = "com.google.firebase:firebase-core:16.0.1"
             val auth = "com.google.firebase:firebase-auth:16.0.2"
-            val firestore = "com.google.firebase:firebase-firestore:17.0.2"
-            val functions = "com.google.firebase:firebase-functions:16.0.1"
+            val firestore = "com.google.firebase:firebase-firestore:17.0.3"
+            val functions = "com.google.firebase:firebase-functions:16.1.0"
             val storage = "com.google.firebase:firebase-storage:16.0.1"
             val config = "com.google.firebase:firebase-config:16.0.0"
             val indexing = "com.google.firebase:firebase-appindexing:16.0.1"
@@ -88,7 +88,7 @@ object Config {
 
             val auth = "com.google.android.gms:play-services-auth:$version"
             val nearby = "com.google.android.gms:play-services-nearby:$version"
-            val playCore = "com.google.android.play:core:1.2.0"
+            val playCore = "com.google.android.play:core:1.3.0"
         }
 
         object FirebaseUi {
@@ -123,7 +123,7 @@ object Config {
             val permissions = "pub.devrel:easypermissions:1.2.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.9.0"
             val billing = "com.android.billingclient:billing:1.1"
-            val licenses = "com.github.yshrsmz:LicenseAdapter:7130638755"
+            val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.1"
         }
     }
 }
