@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.selection.SelectionTracker
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader
 import com.bumptech.glide.RequestBuilder
@@ -14,6 +15,7 @@ import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.DocumentSnapshot
+import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.SavedStateAdapter
@@ -25,7 +27,6 @@ import java.util.Collections
 internal class TeamListAdapter(
         savedInstanceState: Bundle?,
         private val fragment: Fragment,
-        private val menuHelper: TeamMenuHelper,
         private val selectedTeamIdListener: MutableLiveData<Team?>
 ) : SavedStateAdapter<Team, TeamViewHolder>(
         FirestoreRecyclerOptions.Builder<Team>()
@@ -35,6 +36,8 @@ internal class TeamListAdapter(
         savedInstanceState,
         fragment.find(R.id.teamsView)
 ), ListPreloader.PreloadModelProvider<Team>, Observer<Team?> {
+    var selectionTracker: SelectionTracker<String> by LateinitVal()
+
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
     private val preloader = RecyclerViewPreloader<Team>(
             Glide.with(fragment),
@@ -97,8 +100,7 @@ internal class TeamListAdapter(
                             false
                     ),
                     fragment,
-                    recyclerView,
-                    menuHelper
+                    recyclerView
             ).also {
                 viewSizeProvider.setView(it.media)
             }
@@ -107,17 +109,17 @@ internal class TeamListAdapter(
         cardListHelper.onBind(teamHolder, position)
         teamHolder.bind(
                 team,
-                isTeamSelected(team),
-                menuHelper.selectedTeams.isNotEmpty(),
+                team.isSelected(),
+                selectionTracker.hasSelection(),
                 selectedTeamId == team.id
         )
     }
 
-    private fun isTeamSelected(team: Team) = menuHelper.selectedTeams.contains(team)
-
     override fun getPreloadRequestBuilder(team: Team): RequestBuilder<*> =
             TeamViewHolder.getTeamMediaRequestBuilder(
-                    isTeamSelected(team), fragment.requireContext(), team)
+                    team.isSelected(), fragment.requireContext(), team)
+
+    private fun Team.isSelected() = selectionTracker.isSelected(id)
 
     override fun getPreloadItems(position: Int): List<Team> =
             Collections.singletonList(getItem(position))
@@ -131,23 +133,16 @@ internal class TeamListAdapter(
         super.onChildChanged(type, snapshot, newIndex, oldIndex)
         cardListHelper.onChildChanged(type, oldIndex)
 
-        if (type == ChangeEventType.CHANGED) {
-            for (oldTeam in menuHelper.selectedTeams) {
-                val team = getItem(newIndex)
-                if (oldTeam.id == team.id) {
-                    menuHelper.onSelectedTeamChanged(oldTeam, team)
-                    break
-                }
-            }
-        } else if (type == ChangeEventType.REMOVED) {
+        if (type == ChangeEventType.REMOVED) {
             val id = snapshot.id
 
             if (selectedTeamIdListener.value?.id == id) {
                 selectedTeamIdListener.value = null
             }
 
-            val selectedTeam = menuHelper.selectedTeams.find { it.id == id }
-            if (selectedTeam != null) menuHelper.onSelectedTeamRemoved(selectedTeam)
+            if (selectionTracker.isSelected(id)) {
+                selectionTracker.setItemsSelected(listOf(id), false)
+            }
         }
     }
 

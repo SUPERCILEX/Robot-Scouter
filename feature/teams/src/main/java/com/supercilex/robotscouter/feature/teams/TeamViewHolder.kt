@@ -34,8 +34,7 @@ import com.supercilex.robotscouter.R as RC
 internal class TeamViewHolder(
         override val containerView: View,
         private val fragment: Fragment,
-        private val recyclerView: RecyclerView,
-        private val menuHelper: TeamMenuHelper
+        private val recyclerView: RecyclerView
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer,
         View.OnClickListener, View.OnLongClickListener {
     private val unknownName: String by unsafeLazy {
@@ -73,7 +72,8 @@ internal class TeamViewHolder(
         itemView.find<ContentLoadingProgressBar>(R.id.progress)
     }
 
-    private lateinit var team: Team
+    lateinit var team: Team
+        private set
     private var isItemSelected: Boolean = false
     private var couldItemBeSelected: Boolean = false
     private var isScouting: Boolean = false
@@ -87,12 +87,10 @@ internal class TeamViewHolder(
     init {
         recyclerView.addOnScrollListener(ScrollListener(this))
 
-        media.setOnClickListener(this)
         media.setOnLongClickListenerCompat(this)
         newScout.setOnClickListener(this)
         newScout.setOnLongClickListenerCompat(this)
         itemView.setOnClickListener(this)
-        itemView.setOnLongClickListenerCompat(this)
     }
 
     fun bind(
@@ -140,9 +138,7 @@ internal class TeamViewHolder(
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.media || isItemSelected || couldItemBeSelected) {
-            onTeamContextMenuRequested()
-        } else {
+        if (!isItemSelected && !couldItemBeSelected) {
             (itemView.context as TeamSelectionListener)
                     .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout), false)
         }
@@ -150,19 +146,12 @@ internal class TeamViewHolder(
 
     override fun onLongClick(v: View): Boolean {
         when {
-            isItemSelected || couldItemBeSelected || v.id == R.id.root -> onTeamContextMenuRequested()
             v.id == R.id.media -> TeamDetailsDialog.show(fragment.childFragmentManager, team)
             v.id == R.id.newScout -> TeamTemplateSelectorDialog.show(
                     fragment.childFragmentManager, team)
             else -> return false
         }
         return true
-    }
-
-    private fun onTeamContextMenuRequested() {
-        isItemSelected = !isItemSelected
-        updateItemStatus()
-        menuHelper.onTeamContextMenuRequested(team)
     }
 
     private class ScrollListener(holder: TeamViewHolder) : RecyclerView.OnScrollListener() {

@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,20 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import androidx.recyclerview.selection.SelectionTracker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.supercilex.robotscouter.DrawerToggler
 import com.supercilex.robotscouter.TeamExporter
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSingleton
-import com.supercilex.robotscouter.core.data.teams
-import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animateColorChange
-import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
@@ -37,14 +31,9 @@ import com.supercilex.robotscouter.R as RC
 
 internal class TeamMenuHelper(
         private val fragment: TeamListFragment,
-        private val recyclerView: RecyclerView,
-        selectedTeams: List<Team> = emptyList()
-) : View.OnClickListener, OnBackPressedListener {
-    private val activity = fragment.activity as AppCompatActivity
-
-    private var _selectedTeams = selectedTeams.toMutableList()
-    val selectedTeams: List<Team> get() = _selectedTeams
-    lateinit var adapter: FirestoreRecyclerAdapter<Team, TeamViewHolder>
+        private val tracker: SelectionTracker<String>
+) : AllChangesSelectionObserver<String>(), View.OnClickListener {
+    private val activity = fragment.requireActivity() as AppCompatActivity
 
     private val fab by unsafeLazy { activity.find<FloatingActionButton>(RC.id.fab) }
     private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(RC.id.drawerLayout) }
@@ -55,162 +44,78 @@ internal class TeamMenuHelper(
     }
 
     private var isMenuReady = false
+    private val teamMenuItems = mutableListOf<MenuItem>()
+    private val teamsMenuItems = mutableListOf<MenuItem>()
+    private val normalMenuItems = mutableListOf<MenuItem>()
 
-    private lateinit var signInItem: MenuItem
+    override fun onSelectionChanged() {
+        val selection = tracker.selection
+        onNormalMenuChanged(selection.isEmpty)
+        onTeamMenuChanged(selection.isSingleton)
+        onTeamsMenuChanged(!selection.isEmpty)
 
-    private lateinit var exportItem: MenuItem
-    private lateinit var shareItem: MenuItem
-    private lateinit var editTeamDetailsItem: MenuItem
-    private lateinit var deleteItem: MenuItem
-
-    private var selectAllSnackBar = snackBar()
-
-    init {
-        if (selectedTeams.isNotEmpty()) onRestore()
-    }
-
-    fun resetMenu() {
-        if (selectedTeams.isEmpty()) return
-
-        _selectedTeams = mutableListOf()
-        resetToolbarWithSave()
-        notifyItemsChanged()
-    }
-
-    fun resetToolbarWithSave() {
-        if (!isMenuReady || selectedTeams.isEmpty()) return
-        val prev = _selectedTeams
-
-        _selectedTeams = mutableListOf()
-        setNormalMenuItemsVisible(true)
-        setContextMenuItemsVisible(false)
-        setTeamSpecificItemsVisible(false)
         updateToolbarTitle()
-        selectAllSnackBar.dismiss()
-        // Generate a new SnackBar since a user dismissed one can't be shown again.
-        selectAllSnackBar = snackBar()
-        _selectedTeams = prev
     }
 
-    override fun onClick(view: View) = if (selectedTeams.isEmpty()) {
-        drawerLayout.openDrawer(GravityCompat.START)
-    } else {
-        resetMenu()
+    override fun onClick(view: View) {
+        if (tracker.hasSelection()) {
+            tracker.clearSelection()
+        } else {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.team_options, menu)
 
-        signInItem = menu.findItem(RC.id.action_sign_in)
+        teamMenuItems.clear()
+        teamMenuItems.addAll(menu.children.filter { teamMenuIds.contains(it.itemId) })
+        teamsMenuItems.clear()
+        teamsMenuItems.addAll(menu.children.filter { teamsMenuIds.contains(it.itemId) })
 
-        exportItem = menu.findItem(R.id.action_export_teams)
-        shareItem = menu.findItem(R.id.action_share)
-        editTeamDetailsItem = menu.findItem(R.id.action_edit_team_details)
-        deleteItem = menu.findItem(R.id.action_delete)
+        normalMenuItems.clear()
+        normalMenuItems.addAll(menu.children.filterNot { menuIds.contains(it.itemId) })
 
         isMenuReady = true
-        updateState()
+
+        if (tracker.hasSelection()) {
+            onNormalMenuChanged(false)
+            onTeamMenuChanged(tracker.selection.isSingleton)
+            onTeamsMenuChanged(true)
+
+            updateToolbarTitle()
+        }
     }
 
     fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val team = selectedTeams.first()
         when (item.itemId) {
             R.id.action_export_teams -> (activity as TeamExporter).export()
-            R.id.action_share -> if (TeamSharer.shareTeams(fragment, selectedTeams)) {
-                resetMenu()
+            R.id.action_share -> if (TeamSharer.shareTeams(fragment, fragment.selectedTeams)) {
+                tracker.clearSelection()
             }
-            R.id.action_edit_team_details ->
-                TeamDetailsDialog.show(fragment.childFragmentManager, team)
-            R.id.action_delete ->
-                DeleteTeamDialog.show(fragment.childFragmentManager, selectedTeams)
+            R.id.action_edit_team_details -> TeamDetailsDialog.show(
+                    fragment.childFragmentManager, fragment.selectedTeams.first())
+            R.id.action_delete -> DeleteTeamDialog.show(
+                    fragment.childFragmentManager, fragment.selectedTeams)
             else -> return false
         }
         return true
     }
 
-    override fun onBackPressed() = if (selectedTeams.isEmpty()) {
-        false
-    } else {
-        resetMenu()
-        true
-    }
-
-    fun saveState(outState: Bundle) {
-        outState.putParcelableArray(SELECTED_TEAMS_KEY, selectedTeams.toTypedArray())
-    }
-
-    fun restoreState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_TEAMS_KEY)) {
-            _selectedTeams = savedInstanceState.getParcelableArray(SELECTED_TEAMS_KEY).map {
-                it as Team
-            }.toMutableList()
-            onRestore()
-        }
-
-        if (isMenuReady) updateState()
-    }
-
-    fun onTeamContextMenuRequested(team: Team) {
-        val hadNormalMenu = selectedTeams.isEmpty()
-
-        if (selectedTeams.find { it.id == team.id } == null) {
-            _selectedTeams.add(team)
-        } else {
-            _selectedTeams.removeAll { it.id == team.id }
-        }
-
-        updateToolbarTitle()
-
-        if (hadNormalMenu) {
-            updateState()
-            notifyItemsChanged()
-        } else {
-            val newSize = selectedTeams.size
-            when (newSize) {
-                0 -> resetMenu()
-                1 -> setTeamSpecificItemsVisible(true)
-                adapter.itemCount -> selectAllSnackBar.dismiss()
-                else -> selectAllSnackBar.show()
+    private fun onNormalMenuChanged(visible: Boolean) {
+        // Post twice: 1. for speed, 2. so the items update when restoring from a config change
+        val updateItems = {
+            for (item in normalMenuItems) {
+                item.isVisible =
+                        visible && if (item.itemId == RC.id.action_sign_in) !isFullUser else true
             }
-            if (newSize > 1) setTeamSpecificItemsVisible(false)
         }
-    }
-
-    fun onSelectedTeamChanged(oldTeam: Team, team: Team) {
-        _selectedTeams.remove(oldTeam)
-        _selectedTeams.add(team)
-    }
-
-    fun onSelectedTeamRemoved(oldTeam: Team) {
-        _selectedTeams.remove(oldTeam)
-        if (selectedTeams.isEmpty()) {
-            resetMenu()
-        } else if (isMenuReady) {
-            updateState()
-        }
-    }
-
-    private fun setContextMenuItemsVisible(visible: Boolean) {
-        exportItem.isVisible = visible
-        shareItem.isVisible = visible
-        deleteItem.isVisible = visible
-    }
-
-    private fun setTeamSpecificItemsVisible(visible: Boolean) {
-        editTeamDetailsItem.isVisible = visible
-        if (visible) selectAllSnackBar.dismiss()
-    }
-
-    private fun setNormalMenuItemsVisible(visible: Boolean) {
-        // Post twice: 1. for speed, 2. so the items update on config change
-        val updateItems = { signInItem.isVisible = visible && !isFullUser }
         updateItems()
         toolbar.post(updateItems)
 
         if (visible) {
             fab.show()
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
-            updateToolbarTitle()
         } else {
             fab.hide()
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -218,6 +123,23 @@ internal class TeamMenuHelper(
 
         setupIcon(visible)
         updateToolbarColor(visible)
+    }
+
+    private fun onTeamMenuChanged(visible: Boolean) {
+        for (item in teamMenuItems) item.isVisible = visible
+    }
+
+    private fun onTeamsMenuChanged(visible: Boolean) {
+        for (item in teamsMenuItems) item.isVisible = visible
+    }
+
+    private fun updateToolbarTitle() {
+        val selection = tracker.selection
+        checkNotNull(activity.supportActionBar).title = if (selection.isEmpty) {
+            activity.getString(RC.string.app_name)
+        } else {
+            String.format(Locale.getDefault(), "%d", selection.size())
+        }
     }
 
     private fun setupIcon(visible: Boolean) {
@@ -268,43 +190,14 @@ internal class TeamMenuHelper(
         }
     }
 
-    private fun updateToolbarTitle() {
-        checkNotNull(activity.supportActionBar).title = if (selectedTeams.isEmpty()) {
-            activity.getString(RC.string.app_name)
-        } else {
-            String.format(Locale.getDefault(), "%d", selectedTeams.size)
-        }
-    }
-
-    private fun snackBar(): Snackbar = Snackbar.make(
-            checkNotNull(fragment.view),
-            R.string.team_multiple_selected_message,
-            Snackbar.LENGTH_INDEFINITE
-    ).setAction(R.string.team_select_all_title) {
-        _selectedTeams = adapter.snapshots.toMutableList()
-        updateState()
-        notifyItemsChanged()
-    }
-
-    private fun updateState() {
-        if (selectedTeams.isNotEmpty()) {
-            setNormalMenuItemsVisible(false)
-            setContextMenuItemsVisible(true)
-            setTeamSpecificItemsVisible(selectedTeams.isSingleton)
-            updateToolbarTitle()
-        }
-    }
-
-    private fun onRestore() {
-        if (selectedTeams.size in 2 until teams.size) selectAllSnackBar.show()
-        fab.post { notifyItemsChanged() }
-    }
-
-    private fun notifyItemsChanged() {
-        recyclerView.notifyItemsNoChangeAnimation()
-    }
-
     private companion object {
-        const val SELECTED_TEAMS_KEY = "selected_teams_key"
+        val teamMenuIds = listOf(R.id.action_edit_team_details)
+        val teamsMenuIds = listOf(
+                R.id.action_export_teams,
+                R.id.action_share,
+                R.id.action_delete
+        )
+
+        val menuIds = teamMenuIds + teamsMenuIds
     }
 }

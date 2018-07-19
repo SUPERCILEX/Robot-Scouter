@@ -69,7 +69,8 @@ internal class RobotScouter : MultiDexApplication() {
             StrictMode.setThreadPolicy(
                     StrictMode.ThreadPolicy.Builder()
                             .detectAll()
-                            .penaltyDeath()
+                            // TODO re-enable when we figure out how to ignore split loads
+//                            .penaltyDeath()
                             .penaltyLog()
                             .build()
             )

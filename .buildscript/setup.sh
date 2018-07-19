@@ -7,7 +7,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   if [ $TRAVIS_BRANCH = 'master' ]; then
     echo y | ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 "build-tools;${BUILD_TOOLS_VERSION}"
 
-    npm install -gq firebase-tools@3.19.3
+    npm install -gq firebase-tools@4.0.2
     cd app/server/functions
     npm install -q
     cd ../../..
