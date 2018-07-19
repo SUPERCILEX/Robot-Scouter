@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.transaction
 import androidx.lifecycle.Lifecycle
@@ -234,7 +235,12 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else if (sendBackEventToChildren()) {
-            super.onBackPressed()
+            val homeId = bottomNavigation.menu.children.first().itemId
+            if (bottomNavigation.selectedItemId == homeId) {
+                super.onBackPressed()
+            } else {
+                bottomNavigation.selectedItemId = homeId
+            }
         }
     }
 
