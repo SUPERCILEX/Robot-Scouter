@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentManager
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.core.data.getRef
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.putRef
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
 

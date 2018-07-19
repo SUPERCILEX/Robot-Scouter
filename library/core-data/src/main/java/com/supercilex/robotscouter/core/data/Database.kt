@@ -33,7 +33,7 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.core.data.model.fetchLatestData
-import com.supercilex.robotscouter.core.data.model.forceUpdateAndRefresh
+import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.getScoutMetricsRef
 import com.supercilex.robotscouter.core.data.model.getScouts
 import com.supercilex.robotscouter.core.data.model.getScoutsRef
@@ -121,7 +121,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
                 team.apply {
                     hasCustomMedia = false
                     this.media = null
-                    forceUpdateAndRefresh()
+                    forceUpdate(true)
                 }
             }
         }.logFailures()
@@ -258,7 +258,7 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
     }
 }
 
-sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, Any>) {
+internal sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, Any>) {
     val data = mapOf(id to mapOf(
             FIRESTORE_TYPE to type,
             FIRESTORE_TIMESTAMP to Date(),

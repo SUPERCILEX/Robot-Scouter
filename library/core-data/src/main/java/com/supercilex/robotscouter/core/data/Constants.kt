@@ -12,19 +12,20 @@ import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_USERS
 import com.supercilex.robotscouter.core.fullVersionName
 
-val mainHandler = Handler(Looper.getMainLooper())
-val Thread.isMain get() = this === mainHandler.looper.thread
+internal val mainHandler = Handler(Looper.getMainLooper())
+internal val Thread.isMain get() = this === mainHandler.looper.thread
 
 val user get() = FirebaseAuth.getInstance().currentUser
 val uid get() = user?.uid
 val isSignedIn get() = user != null
 val isFullUser get() = isSignedIn && !checkNotNull(user).isAnonymous
 
-val usersRef = FirebaseFirestore.getInstance().collection(FIRESTORE_USERS)
 val teamsRef = FirebaseFirestore.getInstance().collection(FIRESTORE_TEAMS)
 val templatesRef = FirebaseFirestore.getInstance().collection(FIRESTORE_TEMPLATES)
-val defaultTemplatesRef = FirebaseFirestore.getInstance().collection(FIRESTORE_DEFAULT_TEMPLATES)
-val deletionQueueRef = FirebaseFirestore.getInstance().collection(FIRESTORE_DELETION_QUEUE)
+internal val usersRef = FirebaseFirestore.getInstance().collection(FIRESTORE_USERS)
+internal val defaultTemplatesRef =
+        FirebaseFirestore.getInstance().collection(FIRESTORE_DEFAULT_TEMPLATES)
+internal val deletionQueueRef = FirebaseFirestore.getInstance().collection(FIRESTORE_DELETION_QUEUE)
 
 val debugInfo: String
     get() =

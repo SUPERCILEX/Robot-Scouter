@@ -27,7 +27,7 @@ private const val MEDIA_YEAR = "media_year"
 private const val TIMESTAMP = "timestamp"
 
 @WorkerThread
-fun cleanupJobs() {
+internal fun cleanupJobs() {
     checkNotNull(WorkManager.getInstance()).synchronous().apply {
         listOf(TEAM_DATA_DOWNLOAD, TEAM_MEDIA_UPLOAD).forEach { cancelAllWorkByTagSync(it) }
         pruneWorkSync()

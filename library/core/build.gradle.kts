@@ -21,9 +21,6 @@ dependencies {
     releaseApi(Config.Libs.Misc.leakCanaryNoop)
     api(Config.Libs.Jetpack.core)
 
-    implementation(Config.Libs.Anko.common)
-    implementation(Config.Libs.Firebase.firestore) { isTransitive = true }
-
     // Needed for override
     // TODO remove when Firebase updates their deps
     api("com.google.firebase:firebase-iid:16.2.0")

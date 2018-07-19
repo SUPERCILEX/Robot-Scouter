@@ -23,6 +23,7 @@ import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getInBatches
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.logAdd
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.second
 import com.supercilex.robotscouter.core.data.share
 import com.supercilex.robotscouter.core.data.teamFreshnessDays
@@ -52,7 +53,7 @@ val teamWithSafeDefaults: (number: Long, id: String) -> Team = { number, id ->
     }
 }
 
-val teamsQueryGenerator: QueryGenerator = {
+internal val teamsQueryGenerator: QueryGenerator = {
     "$FIRESTORE_OWNERS.${it.uid}".let {
         teamsRef.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
     }
@@ -61,15 +62,15 @@ val teamsQuery get() = teamsQueryGenerator(checkNotNull(user))
 
 val Team.ref: DocumentReference get() = teamsRef.document(id)
 
-val Team.isStale: Boolean
+val Team.isOutdatedMedia: Boolean
+    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
+
+internal val Team.isStale: Boolean
     get() = TimeUnit.MILLISECONDS.toDays(
             System.currentTimeMillis() - timestamp.time
     ) >= teamFreshnessDays
 
-val Team.isOutdatedMedia: Boolean
-    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
-
-val Team.isTrashed: Boolean?
+internal val Team.isTrashed: Boolean?
     get() {
         return owners[uid ?: return null]?.sign == -1
     }
@@ -99,9 +100,9 @@ fun Collection<Team>.getNames(): String {
     }
 }
 
-fun Team.add() {
+internal fun Team.add() {
     id = teamsRef.document().id
-    forceUpdateAndRefresh()
+    forceUpdate(true)
 
     logAdd()
     FirebaseUserActions.getInstance().end(
@@ -112,7 +113,7 @@ fun Team.add() {
     ).logFailures()
 }
 
-fun Team.update(newTeam: Team) {
+internal fun Team.update(newTeam: Team) {
     if (this == newTeam) {
         val timestamp = getCurrentTimestamp()
         ref.update(FIRESTORE_TIMESTAMP, timestamp).logFailures(ref, timestamp)
@@ -128,27 +129,23 @@ fun Team.update(newTeam: Team) {
     forceUpdate()
 }
 
-fun Team.updateTemplateId(id: String) {
+internal fun Team.updateTemplateId(id: String) {
     if (id == templateId) return
 
     templateId = id
     ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures(ref, templateId)
 }
 
-fun Team.updateMedia(newTeam: Team) {
+internal fun Team.updateMedia(newTeam: Team) {
     media = newTeam.media
     shouldUploadMediaToTba = false
     forceUpdate()
 }
 
-fun Team.forceUpdate() {
-    ref.set(this).logFailures(ref, this)
-}
-
-fun Team.forceUpdateAndRefresh() {
+fun Team.forceUpdate(refresh: Boolean = false) {
     firestoreBatch {
-        set(ref, this@forceUpdateAndRefresh)
-        update(ref, FIRESTORE_TIMESTAMP, Date(0))
+        set(ref, this@forceUpdate)
+        if (refresh) update(ref, FIRESTORE_TIMESTAMP, Date(0))
     }.logFailures(ref, this)
 }
 
@@ -177,7 +174,7 @@ fun Team.trash(): Task<Void?> {
     }.logFailures(ref, this)
 }
 
-fun Team.fetchLatestData() = async {
+internal fun Team.fetchLatestData() = async {
     fetchAndActivate()
     if (isStale) startDownloadDataJob()
 }.logFailures()

@@ -7,8 +7,8 @@ import androidx.fragment.app.FragmentManager
 import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.data.getRef
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.putRef
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.ui.show
 import kotlinx.android.synthetic.main.dialog_value.*
 

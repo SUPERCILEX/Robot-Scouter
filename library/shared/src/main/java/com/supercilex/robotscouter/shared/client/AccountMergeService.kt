@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.core.data.model.shareTeams
 import com.supercilex.robotscouter.core.data.model.shareTemplates

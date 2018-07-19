@@ -1,10 +1,7 @@
 package com.supercilex.robotscouter.core.data
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,25 +16,6 @@ const val KEY_ADD_SCOUT = "add_scout"
 const val KEY_OVERRIDE_TEMPLATE_KEY = "override_template_key"
 
 fun <T : CharSequence> T?.nullOrFull() = if (isNullOrBlank()) null else this
-
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun PersistableBundle.getBooleanCompat(key: String) = getInt(key) == 1
-
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun PersistableBundle.putBooleanCompat(key: String, value: Boolean) =
-        putInt(key, if (value) 1 else 0)
-
-@Suppress("UNCHECKED_CAST") // Trust the client
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-fun <T> PersistableBundle.getBundleAsMap(key: String) = getBundleAsMap(key) { get(it) as T }
-
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-inline fun <T> PersistableBundle.getBundleAsMap(
-        key: String,
-        parse: PersistableBundle.(String) -> T
-) = getPersistableBundle(key).let { bundle ->
-    bundle.keySet().associate { it to bundle.parse(it) } as Map<String, T>
-}
 
 fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
 

@@ -36,9 +36,9 @@ import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.isInTabletMode
+import com.supercilex.robotscouter.core.ui.showStoreListing
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
-import com.supercilex.robotscouter.shared.UpdateDialog
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import org.jetbrains.anko.intentFor
@@ -289,7 +289,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             when {
                 it.containsKey(SCOUT_ARGS_KEY) -> onTeamSelected(it.getBundle(SCOUT_ARGS_KEY), true)
                 it.containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
-                it.containsKey(UPDATE_EXTRA) -> UpdateDialog.showStoreListing(this)
+                it.containsKey(UPDATE_EXTRA) -> showStoreListing()
             }
         }
 

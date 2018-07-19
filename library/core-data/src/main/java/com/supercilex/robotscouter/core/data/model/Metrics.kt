@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.core.data.model
 
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
@@ -11,15 +10,16 @@ import com.supercilex.robotscouter.common.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_UNIT
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
+import com.supercilex.robotscouter.core.data.logAdd
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logUpdate
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
 
 val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
 
 @Suppress("UNCHECKED_CAST") // We know what our data types are
-fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Metric<*> {
+internal fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Metric<*> {
     val position = (fields[FIRESTORE_POSITION] as Long).toInt()
     val type = (fields[FIRESTORE_TYPE] as Long).toInt()
     val name = (fields[FIRESTORE_NAME] as String?).orEmpty()
@@ -69,6 +69,11 @@ fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Metric<*> {
     }
 }
 
+fun Metric<*>.add() {
+    logAdd()
+    ref.set(this).logFailures(ref, this)
+}
+
 fun <T> Metric<T>.update(new: T) {
     if (value != new) {
         value = new
@@ -91,7 +96,6 @@ fun Metric.Number.updateUnit(new: String?) {
     }
 }
 
-@Exclude
 fun Metric.List.update(items: List<Metric.List.Item>, batch: WriteBatch? = null) {
     if (value != items) {
         value = items
@@ -101,7 +105,6 @@ fun Metric.List.update(items: List<Metric.List.Item>, batch: WriteBatch? = null)
     }
 }
 
-@Exclude
 fun Metric.List.updateSelectedValueId(new: String?) {
     if (selectedValueId != new) {
         selectedValueId = new

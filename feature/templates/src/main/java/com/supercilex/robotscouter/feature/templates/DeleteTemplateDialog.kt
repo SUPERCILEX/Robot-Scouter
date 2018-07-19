@@ -8,6 +8,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getRef
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.ref
 import com.supercilex.robotscouter.core.data.model.trashTemplate
 import com.supercilex.robotscouter.core.data.putRef

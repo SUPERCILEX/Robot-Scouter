@@ -17,6 +17,7 @@ import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.firestoreBatch
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.OrderedRemoteModel
 import com.supercilex.robotscouter.core.ui.isItemInRange

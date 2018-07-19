@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.model.userRef
@@ -116,7 +117,7 @@ fun Team.logSelect() = analytics.logEvent(
         )
 )
 
-fun Team.logAdd() = analytics.logEvent(
+internal fun Team.logAdd() = analytics.logEvent(
         "add_team",
         bundleOf(
                 ITEM_ID to id,
@@ -165,7 +166,7 @@ fun List<Team>.logExport() {
     }.logFailures()
 }
 
-fun Team.logAddScout(scoutId: String, templateId: String) = analytics.logEvent(
+internal fun Team.logAddScout(scoutId: String, templateId: String) = analytics.logEvent(
         "add_scout",
         bundleOf(
                 ITEM_ID to id,
@@ -187,7 +188,7 @@ fun Team.logSelectScout(scoutId: String, templateId: String) = analytics.logEven
         )
 )
 
-fun logAddTemplate(templateId: String, type: TemplateType) = analytics.logEvent(
+internal fun logAddTemplate(templateId: String, type: TemplateType) = analytics.logEvent(
         "add_template",
         bundleOf(ITEM_ID to templateId, CONTENT_TYPE to type.id)
 )
@@ -202,7 +203,7 @@ fun logShareTemplate(templateId: String, templateName: String) = analytics.logEv
         bundleOf(ITEM_ID to templateId, ITEM_NAME to templateName.toSafeString())
 )
 
-fun Metric<*>.logAdd() = analytics.logEvent(
+internal fun Metric<*>.logAdd() = analytics.logEvent(
         "add_metric",
         bundleOf(
                 ITEM_ID to ref.id,
@@ -211,7 +212,7 @@ fun Metric<*>.logAdd() = analytics.logEvent(
         )
 )
 
-fun Metric<*>.logUpdate() = analytics.logEvent(
+internal fun Metric<*>.logUpdate() = analytics.logEvent(
         "update_metric",
         bundleOf(
                 ITEM_ID to ref.id,
@@ -220,7 +221,7 @@ fun Metric<*>.logUpdate() = analytics.logEvent(
         )
 )
 
-fun logUpdateDefaultTemplateId(id: String) = analytics.logEvent(
+internal fun logUpdateDefaultTemplateId(id: String) = analytics.logEvent(
         "update_default_template_id",
         bundleOf(ITEM_ID to id)
 )

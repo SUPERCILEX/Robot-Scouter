@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.core.data.R
 import com.supercilex.robotscouter.core.data.defaultTemplatesRef
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logAddScout
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout

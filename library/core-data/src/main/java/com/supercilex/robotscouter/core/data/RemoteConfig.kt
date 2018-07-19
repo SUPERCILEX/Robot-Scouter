@@ -34,7 +34,7 @@ fun initRemoteConfig() {
     }
 }
 
-suspend fun fetchAndActivate() {
+internal suspend fun fetchAndActivate() {
     val config: FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
     val cacheExpiration: Long = if (config.info.configSettings.isDeveloperModeEnabled) {
         0

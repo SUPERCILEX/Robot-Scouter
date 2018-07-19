@@ -22,7 +22,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.model.userDeletionQueue
 import com.supercilex.robotscouter.core.logCrashLog
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import java.io.File
 import java.util.Date
@@ -34,9 +33,9 @@ const val KEYS = "keys"
 private val TEAMS_LINK_BASE = "$APP_LINK_BASE${teamsRef.id}/"
 private val TEMPLATES_LINK_BASE = "$APP_LINK_BASE${templatesRef.id}/"
 
-val Team.deepLink: String get() = listOf(this).getTeamsLink()
-
 val Team.viewAction: Action get() = Actions.newView(toString(), deepLink)
+
+internal val Team.deepLink: String get() = listOf(this).getTeamsLink()
 
 @get:WorkerThread
 val Team.indexable: Indexable
@@ -72,7 +71,7 @@ fun getTemplateIndexable(templateId: String, templateName: String): Indexable =
                                      .setScope(Scope.CROSS_DEVICE))
                 .build()
 
-suspend fun List<DocumentReference>.share(
+internal suspend fun List<DocumentReference>.share(
         block: Boolean,
         deletionGenerator: (token: String, ids: List<String>) -> QueuedDeletion.ShareToken
 ): String {

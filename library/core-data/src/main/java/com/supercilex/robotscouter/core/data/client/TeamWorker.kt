@@ -3,13 +3,13 @@ package com.supercilex.robotscouter.core.data.client
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
 import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.isTrashed
 import com.supercilex.robotscouter.core.data.model.ref
 import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.parseTeam
 import com.supercilex.robotscouter.core.data.toWorkData
 import com.supercilex.robotscouter.core.data.uid
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 
 internal abstract class TeamWorker : WorkerBase() {

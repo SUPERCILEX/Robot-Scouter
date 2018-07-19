@@ -74,7 +74,7 @@ internal fun autoFitColumnWidths(sheetIterator: Iterable<Sheet>) {
 }
 
 internal fun getMetricForChart(chart: Chart, pool: Map<Metric<*>, Chart>): Metric<*> =
-        checkNotNull(pool.keys.find { pool[it] === chart })
+        pool.keys.first { pool[it] === chart }
 
 internal fun CTTitle.setValue(text: String) {
     addNewLayout()

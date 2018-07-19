@@ -16,8 +16,9 @@ import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.getTemplateViewAction
-import com.supercilex.robotscouter.core.data.logAdd
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logSelectTemplate
+import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.logFailures
@@ -129,10 +130,7 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
             R.id.addNote -> Metric.Text(position = position, ref = metricRef)
             R.id.addSpinner -> Metric.List(position = position, ref = metricRef)
             else -> error("Unknown view id: $id")
-        }.apply {
-            logAdd()
-            ref.set(this).logFailures(ref, this)
-        }
+        }.add()
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
