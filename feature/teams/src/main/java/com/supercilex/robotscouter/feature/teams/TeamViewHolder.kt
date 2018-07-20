@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewStub
-import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -73,7 +72,6 @@ internal class TeamViewHolder(
         mediaLoadProgressStub.isVisible = true
         itemView.find<ContentLoadingProgressBar>(R.id.progress)
     }
-    private val name by unsafeLazy { itemView.find<TextView>(RC.id.name) }
 
     private lateinit var team: Team
     private var isItemSelected: Boolean = false
