@@ -7,9 +7,9 @@ if [ $TRAVIS_PULL_REQUEST = "false" ]; then
   if [ $TRAVIS_BRANCH = 'master' ]; then
     echo y | ${ANDROID_HOME}tools/bin/sdkmanager --channel=3 "build-tools;${BUILD_TOOLS_VERSION}"
 
-    npm install -gq firebase-tools@3.19.1
+    npm install -gq firebase-tools@3.19.3
     cd app/server/functions
-    npm install
+    npm install -q
     cd ../../..
 
     wget -q https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-207.0.0-linux-x86_64.tar.gz
