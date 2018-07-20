@@ -19,7 +19,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.data.logFailures
+import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
 import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefs
 import com.supercilex.robotscouter.core.logFailures

@@ -17,7 +17,7 @@ object Config {
         val fabric = "io.fabric.tools:gradle:1.25.4"
         val publishing = "com.github.Triple-T:gradle-play-publisher:42ffe9922c"
 
-        val ktlint = "com.github.shyiko:ktlint:0.23.1"
+        val ktlint = "com.github.shyiko:ktlint:0.24.0"
     }
 
     object Libs {

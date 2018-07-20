@@ -13,7 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.data.logFailures
+import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
 import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.model.userRef
