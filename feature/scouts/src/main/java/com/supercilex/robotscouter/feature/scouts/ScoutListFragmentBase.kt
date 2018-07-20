@@ -16,10 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.appindexing.FirebaseUserActions
-import com.google.firebase.firestore.DocumentSnapshot
-import com.supercilex.robotscouter.core.CrashLogger
-import com.supercilex.robotscouter.core.asTask
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.core.data.KEY_OVERRIDE_TEMPLATE_KEY
 import com.supercilex.robotscouter.core.data.getScoutBundle
@@ -28,8 +24,7 @@ import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.getTemplateLink
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.addScout
-import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.core.data.model.scoutParser
+import com.supercilex.robotscouter.core.data.model.ownsTemplateTask
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.data.viewAction
 import com.supercilex.robotscouter.core.isOffline
@@ -47,7 +42,6 @@ import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
-import kotlinx.coroutines.experimental.async
 import com.supercilex.robotscouter.R as RC
 
 internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
@@ -168,7 +162,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
                     return true
                 }
 
-                ownsTemplate(templateId).logFailures().addOnSuccessListener(requireActivity()) {
+                ownsTemplateTask(templateId).logFailures().addOnSuccessListener(requireActivity()) {
                     if (it) {
                         startActivity(intent)
                     } else {
@@ -212,17 +206,4 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     protected abstract fun newViewModel(savedInstanceState: Bundle?): AppBarViewHolderBase
 
     protected abstract fun onTeamDeleted()
-
-    private companion object {
-        fun ownsTemplate(id: String) = async {
-            try {
-                getTemplatesQuery().get().await()
-            } catch (e: Exception) {
-                CrashLogger.onFailure(e)
-                emptyList<DocumentSnapshot>()
-            }.map {
-                scoutParser.parseSnapshot(it)
-            }.find { it.id == id } != null
-        }.asTask()
-    }
 }

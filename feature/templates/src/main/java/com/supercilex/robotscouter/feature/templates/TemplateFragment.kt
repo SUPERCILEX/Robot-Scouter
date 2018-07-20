@@ -12,14 +12,14 @@ import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.defaultTemplateId
-import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.getTemplateViewAction
-import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logSelectTemplate
 import com.supercilex.robotscouter.core.data.model.add
+import com.supercilex.robotscouter.core.data.model.deleteMetrics
 import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
+import com.supercilex.robotscouter.core.data.model.restoreMetrics
 import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
@@ -29,7 +29,6 @@ import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
-import kotlinx.coroutines.experimental.async
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
@@ -94,21 +93,11 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
             }
             R.id.action_remove_metrics -> {
                 metricsView.clearFocus()
-                metricsRef.get().addOnSuccessListener(requireActivity()) { metrics ->
-                    async {
-                        firestoreBatch {
-                            for (metric in metrics) delete(metric.reference)
-                        }.logFailures(metrics.map { it.reference }, metrics)
-                    }.logFailures()
-
+                deleteMetrics(metricsRef).addOnSuccessListener(requireActivity()) { metrics ->
                     longSnackbar(metricsView, RC.string.deleted, RC.string.undo) {
-                        async {
-                            firestoreBatch {
-                                for (metric in metrics) set(metric.reference, metric.data)
-                            }.logFailures(metrics.map { it.reference }, metrics)
-                        }.logFailures()
+                        restoreMetrics(metrics)
                     }
-                }.logFailures(metricsRef)
+                }
             }
             else -> return false
         }

@@ -7,10 +7,12 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.shared.R
+import kotlinx.coroutines.experimental.async
 import java.util.concurrent.Semaphore
 
 const val RC_SIGN_IN = 100
@@ -59,6 +61,8 @@ suspend fun onSignedIn(): FirebaseUser {
         user
     }
 }
+
+fun onSignedInTask() = async { onSignedIn() }.asTask()
 
 fun Activity.startSignIn() = startActivityForResult(signInIntent, RC_SIGN_IN)
 

@@ -1,7 +1,9 @@
 package com.supercilex.robotscouter.core.data.model
 
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
@@ -10,11 +12,16 @@ import com.supercilex.robotscouter.common.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_UNIT
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
+import com.supercilex.robotscouter.core.asTask
+import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logAdd
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logUpdate
+import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
+import kotlinx.coroutines.experimental.async
 
 val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
 
@@ -67,6 +74,24 @@ internal fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Met
                 ref
         )
     }
+}
+
+fun deleteMetrics(ref: CollectionReference) = async {
+    val metrics = ref.get().logFailures(ref).await()
+
+    firestoreBatch {
+        for (metric in metrics) delete(metric.reference)
+    }.logFailures(metrics.map { it.reference }, metrics)
+
+    metrics
+}.logFailures().asTask()
+
+fun restoreMetrics(metrics: QuerySnapshot) {
+    async {
+        firestoreBatch {
+            for (metric in metrics) set(metric.reference, metric.data)
+        }.logFailures(metrics.map { it.reference }, metrics)
+    }.logFailures()
 }
 
 fun Metric<*>.add() {
