@@ -19,8 +19,8 @@ import androidx.recyclerview.selection.SelectionTracker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.DrawerToggler
 import com.supercilex.robotscouter.TeamExporter
+import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.data.isFullUser
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.ui.animateColorChange
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.TeamDetailsDialog

@@ -6,8 +6,8 @@ import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.core.text.bold
 import androidx.fragment.app.FragmentManager
+import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.data.getTeamList
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.model.trash
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team

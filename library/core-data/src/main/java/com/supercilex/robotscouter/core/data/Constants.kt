@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.supercilex.robotscouter.common.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_DELETION_QUEUE
+import com.supercilex.robotscouter.common.FIRESTORE_DUPLICATE_TEAMS
 import com.supercilex.robotscouter.common.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_USERS
@@ -25,6 +26,8 @@ val templatesRef = FirebaseFirestore.getInstance().collection(FIRESTORE_TEMPLATE
 internal val usersRef = FirebaseFirestore.getInstance().collection(FIRESTORE_USERS)
 internal val defaultTemplatesRef =
         FirebaseFirestore.getInstance().collection(FIRESTORE_DEFAULT_TEMPLATES)
+internal val teamDuplicatesRef =
+        FirebaseFirestore.getInstance().collection(FIRESTORE_DUPLICATE_TEAMS)
 internal val deletionQueueRef = FirebaseFirestore.getInstance().collection(FIRESTORE_DELETION_QUEUE)
 
 val debugInfo: String

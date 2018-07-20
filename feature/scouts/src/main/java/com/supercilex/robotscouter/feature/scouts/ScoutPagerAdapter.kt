@@ -6,7 +6,7 @@ import com.google.firebase.firestore.Query
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.logSelectScout
 import com.supercilex.robotscouter.core.data.model.getScoutsQuery
-import com.supercilex.robotscouter.core.data.model.getScoutsRef
+import com.supercilex.robotscouter.core.data.model.scoutsRef
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.shared.scouting.TabPagerAdapterBase
 import com.supercilex.robotscouter.R as RC
@@ -14,7 +14,7 @@ import com.supercilex.robotscouter.R as RC
 internal class ScoutPagerAdapter(
         fragment: Fragment,
         private val team: Team
-) : TabPagerAdapterBase(fragment, team.getScoutsRef()) {
+) : TabPagerAdapterBase(fragment, team.scoutsRef) {
     override val editTabNameRes = R.string.scout_edit_name_title
 
     init {

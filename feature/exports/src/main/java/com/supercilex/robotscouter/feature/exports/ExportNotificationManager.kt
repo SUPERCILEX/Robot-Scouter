@@ -6,11 +6,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.EXPORT_IN_PROGRESS_CHANNEL
 import com.supercilex.robotscouter.core.data.FilteringNotificationManager
 import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.notificationManager
 import com.supercilex.robotscouter.core.model.Team

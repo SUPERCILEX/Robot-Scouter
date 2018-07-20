@@ -8,6 +8,7 @@
 
 package com.supercilex.robotscouter.server.utils.types
 
+import com.supercilex.robotscouter.server.utils.jsObject
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -48,8 +49,10 @@ external interface Precondition {
     val lastUpdateTime: String? get() = definedExternally
 }
 
-external interface SetOptions {
-    val merge: Boolean? get() = definedExternally
+class SetOptions {
+    companion object {
+        val merge: SetOptions get() = jsObject { this.merge = true }
+    }
 }
 
 external class WriteResult {
@@ -79,7 +82,7 @@ external class DocumentSnapshot {
     val updateTime: String = definedExternally
     val readTime: String = definedExternally
     fun data(): Json = definedExternally
-    fun get(fieldPath: String): Any = definedExternally
+    fun <T> get(fieldPath: String): T = definedExternally
 }
 
 open external class Query {
@@ -145,10 +148,9 @@ external interface DeltaDocumentSnapshot {
 
 external class DocumentBuilder {
     fun onWrite(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
-    fun onCreate(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
+    fun onCreate(handler: (snapshot: DocumentSnapshot, context: EventContext) -> Promise<*>?): dynamic = definedExternally
     fun onUpdate(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
-    fun onDelete(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
-    fun onOperation(handler: Any, eventType: Any): Unit = definedExternally
+    fun onDelete(handler: (snapshot: DocumentSnapshot, context: EventContext) -> Promise<*>?): dynamic = definedExternally
 }
 
 external class FieldValue {

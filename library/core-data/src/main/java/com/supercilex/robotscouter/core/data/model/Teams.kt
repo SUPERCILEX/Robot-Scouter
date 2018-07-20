@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.core.data.model
 import android.util.Patterns
 import androidx.annotation.WorkerThread
 import com.firebase.ui.firestore.SnapshotParser
-import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -13,6 +12,8 @@ import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
+import com.supercilex.robotscouter.common.isSingleton
+import com.supercilex.robotscouter.common.second
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
@@ -21,11 +22,10 @@ import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.fetchAndActivate
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getInBatches
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.logAdd
 import com.supercilex.robotscouter.core.data.logFailures
-import com.supercilex.robotscouter.core.data.second
 import com.supercilex.robotscouter.core.data.share
+import com.supercilex.robotscouter.core.data.teamDuplicatesRef
 import com.supercilex.robotscouter.core.data.teamFreshnessDays
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.uid
@@ -103,6 +103,7 @@ fun Collection<Team>.getNames(): String {
 internal fun Team.add() {
     id = teamsRef.document().id
     forceUpdate(true)
+    teamDuplicatesRef.document(checkNotNull(uid)).set(mapOf(id to number), SetOptions.merge())
 
     logAdd()
     FirebaseUserActions.getInstance().end(
@@ -162,14 +163,19 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = newTeam.mediaYear
 }
 
-fun Team.trash(): Task<Void?> {
+fun Team.trash() {
     FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
-    return firestoreBatch {
-        update(ref, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", if (number == 0L) {
+    firestoreBatch {
+        val newNumber = if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
         } else {
             -abs(number)
-        })
+        }
+
+        update(ref, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", newNumber)
+        set(teamDuplicatesRef.document(checkNotNull(uid)),
+            mapOf(id to newNumber),
+            SetOptions.merge())
         set(userDeletionQueue, QueuedDeletion.Team(ref.id).data, SetOptions.merge())
     }.logFailures(ref, this)
 }

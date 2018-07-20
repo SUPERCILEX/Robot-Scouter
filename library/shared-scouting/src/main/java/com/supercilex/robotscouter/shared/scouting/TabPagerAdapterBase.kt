@@ -12,10 +12,10 @@ import androidx.lifecycle.get
 import androidx.viewpager.widget.PagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.CollectionReference
+import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.core.data.getTabIdBundle
-import com.supercilex.robotscouter.core.data.isPolynomial
 import com.supercilex.robotscouter.core.data.model.ScoutsHolder
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.ui.Saveable

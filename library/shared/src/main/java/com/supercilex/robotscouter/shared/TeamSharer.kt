@@ -8,12 +8,12 @@ import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.android.gms.appinvite.AppInviteInvitation.IntentBuilder.MAX_MESSAGE_LENGTH
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
+import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.CachingSharer
 import com.supercilex.robotscouter.core.data.getTeamsLink
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.logShare
 import com.supercilex.robotscouter.core.data.model.TeamCache
 import com.supercilex.robotscouter.core.data.model.getNames

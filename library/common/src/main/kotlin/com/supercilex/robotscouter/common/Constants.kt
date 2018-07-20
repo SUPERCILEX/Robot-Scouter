@@ -13,7 +13,10 @@ const val FIRESTORE_LAST_LOGIN = "lastLogin"
 
 // Team
 const val FIRESTORE_TEAMS = "teams"
+const val FIRESTORE_DUPLICATE_TEAMS = "duplicate-teams"
 const val FIRESTORE_NUMBER = "number"
+const val FIRESTORE_MEDIA = "media"
+const val FIRESTORE_WEBSITE = "website"
 
 // Shared
 const val FIRESTORE_REF = "ref"

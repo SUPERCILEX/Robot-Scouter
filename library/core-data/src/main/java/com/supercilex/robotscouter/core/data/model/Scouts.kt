@@ -45,18 +45,18 @@ val scoutParser = SnapshotParser { snapshot ->
           })
 }
 
-fun Team.getScoutsRef() = ref.collection(FIRESTORE_SCOUTS)
+val Team.scoutsRef get() = ref.collection(FIRESTORE_SCOUTS)
 
 fun Team.getScoutsQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         FIRESTORE_TIMESTAMP.let {
-            getScoutsRef().whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
+            scoutsRef.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
         }
 
-fun Team.getScoutMetricsRef(id: String) = getScoutsRef().document(id).collection(FIRESTORE_METRICS)
+fun Team.getScoutMetricsRef(id: String) = scoutsRef.document(id).collection(FIRESTORE_METRICS)
 
 fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<Scout>): String {
     val templateId = overrideId ?: templateId
-    val scoutRef = getScoutsRef().document()
+    val scoutRef = scoutsRef.document()
 
     logAddScout(id, templateId)
     Scout(scoutRef.id, templateId).let { scoutRef.set(it).logFailures(scoutRef, it) }
@@ -122,7 +122,7 @@ fun Team.untrashScout(id: String) = updateScoutDate(id) { abs(it) }
 
 private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
     async {
-        val ref = getScoutsRef().document(id)
+        val ref = scoutsRef.document(id)
         val snapshot = ref.get().logFailures(ref).await()
         if (!snapshot.exists()) return@async
 

@@ -16,14 +16,14 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.supercilex.robotscouter.common.isPolynomial
+import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.EXPORT_CHANNEL
 import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.NotificationIntentForwarder
 import com.supercilex.robotscouter.core.data.hidden
-import com.supercilex.robotscouter.core.data.isPolynomial
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.unhide

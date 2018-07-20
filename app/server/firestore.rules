@@ -112,6 +112,10 @@ service cloud.firestore {
       }
     }
 
+    match /duplicate-teams/{uid} {
+      allow write: if uid == request.auth.uid;
+    }
+
     match /deletion-queue/{uid} {
       allow write: if uid == request.auth.uid;
     }

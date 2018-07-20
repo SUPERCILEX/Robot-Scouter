@@ -17,7 +17,6 @@ import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.R
-import com.supercilex.robotscouter.core.data.batch
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.defaultTemplatesRef
 import com.supercilex.robotscouter.core.data.firestoreBatch
@@ -63,10 +62,10 @@ fun addTemplate(type: TemplateType): String {
                     .build()
     ).logFailures()
 
-    ref.batch {
+    firestoreBatch {
         val scout = Scout(id, id)
-        set(it, scout)
-        update(it, FIRESTORE_OWNERS, mapOf(checkNotNull(uid) to scout.timestamp))
+        set(ref, scout)
+        update(ref, FIRESTORE_OWNERS, mapOf(checkNotNull(uid) to scout.timestamp))
     }.logFailures(ref, id)
 
     async {

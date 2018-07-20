@@ -1,4 +1,4 @@
-package com.supercilex.robotscouter.core.data
+package com.supercilex.robotscouter.common
 
 val Iterable<*>.isSingleton: Boolean
     get() = iterator().let {

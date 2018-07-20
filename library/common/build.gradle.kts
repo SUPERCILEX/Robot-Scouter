@@ -1,1 +1,7 @@
-apply(plugin = "kotlin-platform-common")
+plugins {
+    id("kotlin-platform-common")
+}
+
+dependencies {
+    compile(Config.Libs.Kotlin.common)
+}

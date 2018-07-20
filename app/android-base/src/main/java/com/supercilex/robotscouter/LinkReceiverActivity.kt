@@ -6,12 +6,12 @@ import android.os.Bundle
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.core.data.KEYS
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.data.getScoutBundle
-import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.model.teamWithSafeDefaults
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.templatesRef

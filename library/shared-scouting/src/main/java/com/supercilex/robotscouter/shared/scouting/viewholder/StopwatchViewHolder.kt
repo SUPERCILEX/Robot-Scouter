@@ -17,9 +17,9 @@ import androidx.transition.TransitionManager
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.supercilex.robotscouter.common.second
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.model.update
-import com.supercilex.robotscouter.core.data.second
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.reportOrCancel
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder

@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.server.utils
 
 import com.supercilex.robotscouter.common.FIRESTORE_DEFAULT_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_DELETION_QUEUE
+import com.supercilex.robotscouter.common.FIRESTORE_DUPLICATE_TEAMS
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_PREFS
 import com.supercilex.robotscouter.common.FIRESTORE_TEAMS
@@ -31,6 +32,8 @@ val teams: CollectionReference
     get() = firestore.collection(FIRESTORE_TEAMS)
 val templates: CollectionReference
     get() = firestore.collection(FIRESTORE_TEMPLATES)
+val duplicateTeams: CollectionReference
+    get() = firestore.collection(FIRESTORE_DUPLICATE_TEAMS)
 val deletionQueue: CollectionReference
     get() = firestore.collection(FIRESTORE_DELETION_QUEUE)
 

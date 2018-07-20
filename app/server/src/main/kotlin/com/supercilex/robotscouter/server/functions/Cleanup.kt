@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.server.utils.auth
 import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
+import com.supercilex.robotscouter.server.utils.duplicateTeams
 import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
@@ -233,16 +234,22 @@ private suspend fun deleteUser(user: DocumentSnapshot) {
     }
 
     deletionQueue.doc(user.id).delete().await()
+    duplicateTeams.doc(user.id).delete().await()
     user.userPrefs.delete()
     user.ref.delete().await()
 }
 
-private suspend fun deleteTeam(team: DocumentSnapshot) {
+suspend fun deleteTeam(team: DocumentSnapshot) {
     console.log("Deleting team: ${team.toTeamString()}")
     team.ref.apply {
         collection(FIRESTORE_SCOUTS).delete {
             it.ref.collection(FIRESTORE_METRICS).delete()
         }
+
+        team.get<Json>(FIRESTORE_OWNERS).toMap<Long>().map { (uid) ->
+            duplicateTeams.doc(uid).update(id, FieldValues.delete())
+        }.forEach { it.await() }
+
         delete().await()
     }
 }
@@ -261,8 +268,7 @@ private suspend fun DocumentSnapshot.deleteIfSingleOwner(
 ) {
     console.log("Processing deletion request for id $id.")
 
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE") // We know its type
-    val owners = get(FIRESTORE_OWNERS) as Json
+    val owners = get<Json>(FIRESTORE_OWNERS)
     // language=JavaScript
     if (js("Object.keys(owners).length") as Int > 1) {
         // language=undefined
