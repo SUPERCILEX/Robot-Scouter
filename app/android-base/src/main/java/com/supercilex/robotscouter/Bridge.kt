@@ -25,6 +25,7 @@ import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.ValueSeeker
+import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
@@ -276,6 +277,8 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
                             c.resumeWithException(IllegalStateException(
                                     "Module should be installed, but classpath is unavailable."))
                         } else {
+                            _globalContext =
+                                    RobotScouter.createPackageContext(RobotScouter.packageName, 0)
                             c.resume(instance)
                         }
                     }

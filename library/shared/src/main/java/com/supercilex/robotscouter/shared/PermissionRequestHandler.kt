@@ -32,12 +32,12 @@ class PermissionRequestHandler : ViewModelBase<List<String>>(), OnActivityResult
 
     fun requestPerms(host: FragmentActivity, @StringRes rationaleId: Int) {
         EasyPermissions.requestPermissions(
-                host, host.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
+                host, RobotScouter.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
     }
 
     fun requestPerms(host: Fragment, @StringRes rationaleId: Int) {
         EasyPermissions.requestPermissions(
-                host, host.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
+                host, RobotScouter.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
     }
 
     fun onRequestPermissionsResult(

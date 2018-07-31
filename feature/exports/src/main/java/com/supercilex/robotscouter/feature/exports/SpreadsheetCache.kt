@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.feature.exports
 
-import android.content.Context
 import com.supercilex.robotscouter.core.LateinitVal
+import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.model.TeamCache
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.Team
@@ -14,10 +14,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.usermodel.Workbook
 
-internal class SpreadsheetCache(
-        private val context: Context,
-        teams: Collection<Team>
-) : TeamCache(teams) {
+internal class SpreadsheetCache(teams: Collection<Team>) : TeamCache(teams) {
     private val metricCache = mutableMapOf<Team, MutableMap<Int, Metric<*>>>()
     private val lastDataOrAverageColumnIndices = mutableMapOf<Team, Int>()
     private val formatStyles = mutableMapOf<String, CellStyle>()
@@ -44,9 +41,9 @@ internal class SpreadsheetCache(
         } else null
     }
 
-    val averageString: String by lazy { context.getString(R.string.export_average_column_title) }
-    val medianString: String by lazy { context.getString(R.string.export_median_column_title) }
-    val maxString: String by lazy { context.getString(R.string.export_max_column_title) }
+    val averageString: String by lazy { RobotScouter.getString(R.string.export_average_column_title) }
+    val medianString: String by lazy { RobotScouter.getString(R.string.export_median_column_title) }
+    val maxString: String by lazy { RobotScouter.getString(R.string.export_max_column_title) }
 
     fun getRootMetric(team: Team, index: Int): Metric<*>? = metricCache.getValue(team)[index]
 

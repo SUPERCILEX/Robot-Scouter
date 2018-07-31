@@ -1,9 +1,11 @@
 package com.supercilex.robotscouter.core
 
-import android.app.Application
+import android.annotation.SuppressLint
+import android.content.Context
 
 @Suppress("PropertyName")
 val RobotScouter
-    get() = _app
+    get() = _globalContext
+@SuppressLint("StaticFieldLeak")
 @Suppress("ObjectPropertyName")
-var _app: Application by LateinitVal()
+lateinit var _globalContext: Context

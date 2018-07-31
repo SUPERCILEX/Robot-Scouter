@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.squareup.leakcanary.LeakCanary
-import com.supercilex.robotscouter.core._app
+import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.data.initAnalytics
 import com.supercilex.robotscouter.core.data.initDatabase
 import com.supercilex.robotscouter.core.data.initIo
@@ -30,7 +30,7 @@ internal class RobotScouter : MultiDexApplication() {
         if (LeakCanary.isInAnalyzerProcess(this)) return
         LeakCanary.install(this)
 
-        _app = this
+        _globalContext = this
 
         async { initIo() }.logFailures()
         initAnalytics()

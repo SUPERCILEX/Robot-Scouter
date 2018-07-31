@@ -106,7 +106,6 @@ class ExportService : IntentService(TAG) {
                             try {
                                 TemplateExporter(
                                         scouts,
-                                        this@ExportService,
                                         notificationManager,
                                         exportFolder,
                                         templateNames[templateId]
@@ -196,7 +195,10 @@ class ExportService : IntentService(TAG) {
                 return false
             }
 
-            snackbar(activity.find(RC.id.root), R.string.export_progress_hint)
+            snackbar(
+                    activity.find(RC.id.root),
+                    RobotScouter.getString(R.string.export_progress_hint)
+            )
 
             if (teams.isEmpty()) {
                 getAllTeams()

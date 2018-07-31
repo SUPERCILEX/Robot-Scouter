@@ -77,7 +77,7 @@ fun initUi() {
         }
     })
 
-    RobotScouter.registerActivityLifecycleCallbacks(ActivityHandler)
+    (RobotScouter as Application).registerActivityLifecycleCallbacks(ActivityHandler)
 
     EmojiCompat.init(FontRequestEmojiCompatConfig(
             RobotScouter,

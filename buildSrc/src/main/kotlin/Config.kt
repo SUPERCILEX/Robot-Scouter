@@ -88,7 +88,7 @@ object Config {
 
             val auth = "com.google.android.gms:play-services-auth:$version"
             val nearby = "com.google.android.gms:play-services-nearby:$version"
-            val playCore = "com.google.android.play:core:1.3.1"
+            val playCore = "com.google.android.play:core:1.2.0"
         }
 
         object FirebaseUi {
