@@ -5,10 +5,10 @@
         "CONFLICTING_OVERLOADS",
         "unused"
 )
-@file:[JsQualifier("FirebaseFirestore") JsModule("@google-cloud/firestore")]
 
 package com.supercilex.robotscouter.server.utils.types
 
+import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
 
@@ -85,7 +85,7 @@ external class DocumentSnapshot {
 open external class Query {
     val firestore: Firestore = definedExternally
     fun where(fieldPath: String, opStr: String, value: Any?): Query = definedExternally
-    fun orderBy(fieldPath: String, directionStr: Any? = definedExternally): Query = definedExternally
+    fun orderBy(fieldPath: FieldPath, directionStr: Any? = definedExternally): Query = definedExternally
     fun limit(limit: Number): Query = definedExternally
     fun offset(offset: Number): Query = definedExternally
     fun select(vararg field: dynamic): Query = definedExternally
@@ -149,4 +149,75 @@ external class DocumentBuilder {
     fun onUpdate(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
     fun onDelete(handler: (event: Change<DeltaDocumentSnapshot>, context: EventContext) -> Promise<*>?): dynamic = definedExternally
     fun onOperation(handler: Any, eventType: Any): Unit = definedExternally
+}
+
+external class FieldValue {
+    fun isEqual(other: FieldValue): Boolean = definedExternally
+}
+
+class FieldValues {
+    @Suppress("UNUSED_VARIABLE", "UnsafeCastFromDynamic", "UNUSED_PARAMETER")
+    companion object {
+        fun serverTimestamp(): FieldValue {
+            val admin = admin
+            return js("admin.firestore.FieldValue.serverTimestamp()")
+        }
+
+        fun delete(): FieldValue {
+            val admin = admin
+            return js("admin.firestore.FieldValue.delete()")
+        }
+
+        fun arrayUnion(vararg elements: Any): FieldValue {
+            val admin = admin
+            return js("admin.firestore.FieldValue.arrayUnion(elements)")
+        }
+
+        fun arrayRemove(vararg elements: Any): FieldValue {
+            val admin = admin
+            return js("admin.firestore.FieldValue.arrayRemove(elements)")
+        }
+    }
+}
+
+external class FieldPath(vararg fieldNames: String) {
+    fun isEqual(other: FieldPath): Boolean = definedExternally
+}
+
+class FieldPaths {
+    @Suppress("UNUSED_VARIABLE", "UnsafeCastFromDynamic", "UNUSED_PARAMETER")
+    companion object {
+        fun documentId(): FieldPath {
+            val admin = admin
+            return js("admin.firestore.FieldPath.documentId()")
+        }
+    }
+}
+
+external class Timestamp(seconds: Number, nanoseconds: Number) {
+    var seconds: Number = definedExternally
+    var nanoseconds: Number = definedExternally
+    fun toDate(): Date = definedExternally
+    fun toMillis(): Number = definedExternally
+    fun isEqual(other: Timestamp): Boolean = definedExternally
+}
+
+class Timestamps {
+    @Suppress("UNUSED_VARIABLE", "UnsafeCastFromDynamic", "UNUSED_PARAMETER")
+    companion object {
+        fun now(): Timestamp {
+            val admin = admin
+            return js("admin.firestore.Timestamp.now()")
+        }
+
+        fun fromDate(date: Date): Timestamp {
+            val admin = admin
+            return js("admin.firestore.Timestamp.fromDate(date)")
+        }
+
+        fun fromMillis(milliseconds: Number): Timestamp {
+            val admin = admin
+            return js("admin.firestore.Timestamp.fromMillis(milliseconds)")
+        }
+    }
 }

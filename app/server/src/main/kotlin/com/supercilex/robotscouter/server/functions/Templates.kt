@@ -4,7 +4,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.ListItem
 import com.supercilex.robotscouter.server.utils.checkbox
 import com.supercilex.robotscouter.server.utils.counter
@@ -15,6 +14,7 @@ import com.supercilex.robotscouter.server.utils.selector
 import com.supercilex.robotscouter.server.utils.stopwatch
 import com.supercilex.robotscouter.server.utils.text
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
+import com.supercilex.robotscouter.server.utils.types.FieldValues
 import kotlinx.coroutines.experimental.asPromise
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.await
@@ -37,7 +37,7 @@ private suspend fun CollectionReference.updateMatchTemplate() {
     doc("0").set(json(
             FIRESTORE_TEMPLATE_ID to "0",
             FIRESTORE_NAME to "Match Scout",
-            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
+            FIRESTORE_TIMESTAMP to FieldValues.serverTimestamp(),
             FIRESTORE_METRICS to matchTemplateMetrics()
     ).log("Match")).await()
 }
@@ -82,7 +82,7 @@ private suspend fun CollectionReference.updatePitTemplate() {
     doc("1").set(json(
             FIRESTORE_TEMPLATE_ID to "1",
             FIRESTORE_NAME to "Pit Scout",
-            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp(),
+            FIRESTORE_TIMESTAMP to FieldValues.serverTimestamp(),
             FIRESTORE_METRICS to pitTemplateMetrics()
     ).log("Pit")).await()
 }
@@ -134,7 +134,7 @@ private suspend fun CollectionReference.updateEmptyTemplate() {
     doc("2").set(json(
             FIRESTORE_TEMPLATE_ID to "2",
             FIRESTORE_NAME to "Blank Scout",
-            FIRESTORE_TIMESTAMP to FieldValue.serverTimestamp()
+            FIRESTORE_TIMESTAMP to FieldValues.serverTimestamp()
     ).log("Blank")).await()
 }
 

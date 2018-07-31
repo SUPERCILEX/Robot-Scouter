@@ -16,7 +16,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
 import com.supercilex.robotscouter.server.utils.FIRESTORE_PHONE_NUMBER
-import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.auth
 import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.delete
@@ -35,7 +34,9 @@ import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
+import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.Timestamp
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
 import kotlinx.coroutines.experimental.CompletableDeferred
@@ -90,6 +91,14 @@ fun emptyTrash(): Promise<*>? = async {
 }.asPromise()
 
 fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
+    fun Json.findOldestDeletionTime(): Date? {
+        return Date(sanitizedDeletionRequestData().toMap<Json>().map { (_, data) ->
+            data[FIRESTORE_TIMESTAMP].unsafeCast<Timestamp>()
+        }.map {
+            it.toDate().getTime()
+        }.min() ?: return null)
+    }
+
     val snapshot = event.after
     console.log("Sanitizing deletion request for user id ${snapshot.id}.")
 
@@ -97,7 +106,8 @@ fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     val recalculatedOldestDeletionRequest =
             snapshot.data().findOldestDeletionTime() ?: return snapshot.ref.delete()
 
-    val oldestDeletionRequest = snapshot.get(FIRESTORE_BASE_TIMESTAMP) as Date? ?: Date(-1)
+    val oldestDeletionRequest =
+            snapshot.get(FIRESTORE_BASE_TIMESTAMP).unsafeCast<Timestamp?>()?.toDate() ?: Date(-1)
     return if (oldestDeletionRequest.getTime() != recalculatedOldestDeletionRequest.getTime()) {
         console.log("Updating oldest deletion time to $recalculatedOldestDeletionRequest.")
         snapshot.ref.update(FIRESTORE_BASE_TIMESTAMP, recalculatedOldestDeletionRequest)
@@ -159,7 +169,7 @@ private suspend fun processDeletion(request: DocumentSnapshot) {
                     if (content.exists) {
                         content.ref.update(
                                 "$FIRESTORE_ACTIVE_TOKENS.$token",
-                                FieldValue.delete()
+                                FieldValues.delete()
                         ).await()
                     }
                 }
@@ -199,7 +209,7 @@ private suspend fun processDeletion(request: DocumentSnapshot) {
     } else {
         firestore.batch {
             for (field in results.filterNotNull()) {
-                update(request.ref, field, FieldValue.delete())
+                update(request.ref, field, FieldValues.delete())
             }
         }
     }
@@ -254,14 +264,6 @@ private suspend fun DocumentSnapshot.deleteIfSingleOwner(
     } else {
         delete(this)
     }
-}
-
-private fun Json.findOldestDeletionTime(): Date? {
-    return Date(sanitizedDeletionRequestData().toMap<Json>().map { (_, data) ->
-        data[FIRESTORE_TIMESTAMP] as Date
-    }.map {
-        it.getTime()
-    }.min() ?: return null)
 }
 
 private fun Json.sanitizedDeletionRequestData(): Json {

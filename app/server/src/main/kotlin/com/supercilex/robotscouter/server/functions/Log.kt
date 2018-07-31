@@ -30,11 +30,11 @@ fun logUserData(message: Message): Promise<*>? {
         }
         val templates = async {
             val snapshot = getTemplatesQuery(uid).get().await()
-            console.log("${snapshot.size} template ids:\n" + snapshot.prettyPrintTemplates())
+            console.log("${snapshot.size} templates:\n" + snapshot.prettyPrintTemplates())
         }
         val trashedTemplates = async {
             val snapshot = getTrashedTemplatesQuery(uid).get().await()
-            console.log("${snapshot.size} trashed template ids:\n" + snapshot.prettyPrintTemplates())
+            console.log("${snapshot.size} trashed templates:\n" + snapshot.prettyPrintTemplates())
         }
 
         awaitAll(teams, trashedTeams, templates, trashedTemplates)

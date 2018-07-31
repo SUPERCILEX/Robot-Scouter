@@ -7,10 +7,10 @@ import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
 import com.supercilex.robotscouter.common.FIRESTORE_REF
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
-import com.supercilex.robotscouter.server.utils.FieldValue
 import com.supercilex.robotscouter.server.utils.batch
 import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.types.CallableContext
+import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
 import kotlinx.coroutines.experimental.asPromise
 import kotlinx.coroutines.experimental.async
@@ -62,7 +62,7 @@ fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
         }
 
         firestore.batch {
-            oldOwnerPath?.let { update(ref, it, FieldValue.delete()) }
+            oldOwnerPath?.let { update(ref, it, FieldValues.delete()) }
             update(ref, newOwnerPath, value)
         }
     }.asPromise()

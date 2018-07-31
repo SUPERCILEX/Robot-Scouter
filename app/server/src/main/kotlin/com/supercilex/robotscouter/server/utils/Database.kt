@@ -4,22 +4,13 @@ import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
+import com.supercilex.robotscouter.server.utils.types.FieldPaths
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.WriteBatch
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.await
 import kotlinx.coroutines.experimental.awaitAll
-import kotlin.js.Json
-
-fun <T> Json.toMap(): Map<String, T> {
-    val map: MutableMap<String, T> = mutableMapOf()
-    for (key: String in js("Object").keys(this)) {
-        @Suppress("UNCHECKED_CAST") // Trust the client
-        map[key] = this[key] as T
-    }
-    return map
-}
 
 fun DocumentSnapshot.toTeamString() =
         "${data()[FIRESTORE_NUMBER]} - ${data()[FIRESTORE_NAME]}: $id"
@@ -41,7 +32,7 @@ suspend fun Query.processInBatches(
 suspend fun CollectionReference.delete(
         batchSize: Int = 100,
         middleMan: suspend (DocumentSnapshot) -> Unit = {}
-) = processInBatches(orderBy(FieldPath.documentId()), batchSize) { snapshots ->
+) = processInBatches(orderBy(FieldPaths.documentId()), batchSize) { snapshots ->
     snapshots.map { async { middleMan(it) } }.awaitAll()
 
     firestore.batch {
@@ -59,23 +50,4 @@ private suspend fun processInBatches(
 
     action(snapshot.docs.toList())
     processInBatches(query.startAfter(snapshot.docs.last()), batchSize, action)
-}
-
-class FieldValue {
-    // language=JavaScript
-    companion object {
-        fun serverTimestamp(): dynamic =
-                js("require(\"firebase-admin\").firestore.FieldValue.serverTimestamp()")
-
-        fun delete(): dynamic =
-                js("require(\"firebase-admin\").firestore.FieldValue.delete()")
-    }
-}
-
-class FieldPath {
-    // language=JavaScript
-    companion object {
-        fun documentId(): dynamic =
-                js("require(\"firebase-admin\").firestore.FieldPath.documentId()")
-    }
 }

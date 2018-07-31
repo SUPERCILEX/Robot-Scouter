@@ -7,6 +7,7 @@ import com.supercilex.robotscouter.server.functions.sanitizeDeletionRequest
 import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
 import com.supercilex.robotscouter.server.functions.updateOwners
 import com.supercilex.robotscouter.server.utils.deletionQueue
+import com.supercilex.robotscouter.server.utils.jsObject
 import com.supercilex.robotscouter.server.utils.types.admin
 import com.supercilex.robotscouter.server.utils.types.functions
 
@@ -17,9 +18,14 @@ external val exports: dynamic
 fun main(args: Array<String>) {
     admin.initializeApp()
 
-    exports.deleteUnusedData = functions.pubsub.topic("monthly-tick")
+    val cleanupRuntime = jsObject {
+        timeoutSeconds = 300
+        memory = "512MB"
+    }
+
+    exports.deleteUnusedData = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
             .onPublish { _, _ -> deleteUnusedData() }
-    exports.emptyTrash = functions.pubsub.topic("monthly-tick")
+    exports.emptyTrash = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
             .onPublish { _, _ -> emptyTrash() }
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
     exports.logUserData = functions.pubsub.topic("log-user-data")
