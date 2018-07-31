@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.core.data.initNotifications
 import com.supercilex.robotscouter.core.data.initPrefs
 import com.supercilex.robotscouter.core.data.initRemoteConfig
 import com.supercilex.robotscouter.core.logFailures
-import com.supercilex.robotscouter.core.refWatcher
 import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
@@ -29,9 +28,9 @@ internal class RobotScouter : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         if (LeakCanary.isInAnalyzerProcess(this)) return
+        LeakCanary.install(this)
 
         _app = this
-        refWatcher // Install Leak Canary
 
         async { initIo() }.logFailures()
         initAnalytics()

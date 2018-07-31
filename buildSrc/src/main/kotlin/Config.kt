@@ -9,7 +9,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.2.0-beta04"
+        val android = "com.android.tools.build:gradle:3.2.0-beta05"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
@@ -22,7 +22,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "0.23.4"
+            private const val coroutinesVersion = "0.24.0"
 
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
             val js = "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
@@ -44,7 +44,7 @@ object Config {
         object Jetpack {
             private const val version = "1.0.0-beta01"
             private const val lifecycleVersion = "2.0.0-beta01"
-            private const val workVersion = "1.0.0-alpha04"
+            private const val workVersion = "1.0.0-alpha05"
 
             val core = "androidx.core:core-ktx:$version"
 
@@ -71,7 +71,7 @@ object Config {
         object Firebase {
             val core = "com.google.firebase:firebase-core:16.0.1"
             val auth = "com.google.firebase:firebase-auth:16.0.2"
-            val firestore = "com.google.firebase:firebase-firestore:17.0.3"
+            val firestore = "com.google.firebase:firebase-firestore:17.0.4"
             val functions = "com.google.firebase:firebase-functions:16.1.0"
             val storage = "com.google.firebase:firebase-storage:16.0.1"
             val config = "com.google.firebase:firebase-config:16.0.0"
@@ -88,7 +88,7 @@ object Config {
 
             val auth = "com.google.android.gms:play-services-auth:$version"
             val nearby = "com.google.android.gms:play-services-nearby:$version"
-            val playCore = "com.google.android.play:core:1.3.0"
+            val playCore = "com.google.android.play:core:1.3.1"
         }
 
         object FirebaseUi {
@@ -97,18 +97,20 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.34.0"
+            val facebook = "com.facebook.android:facebook-login:4.35.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.1.1@aar"
         }
 
         object Misc {
-            private const val leakCanaryVersion = "1.5.4"
+            private const val leakCanaryVersion = "1.6.1"
             private const val retrofitVersion = "2.4.0"
             private const val poiVersion = "3.17"
 
             private const val glideVersion = "4.7.1"
 
             val leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+            val leakCanaryFragments =
+                    "com.squareup.leakcanary:leakcanary-support-fragment:$leakCanaryVersion"
             val leakCanaryNoop =
                     "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
             val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
@@ -121,7 +123,7 @@ object Config {
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             val permissions = "pub.devrel:easypermissions:1.2.0"
-            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.9.0"
+            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.1"
             val billing = "com.android.billingclient:billing:1.1"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.1"
         }

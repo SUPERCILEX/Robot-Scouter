@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.supercilex.robotscouter.core.refWatcher
 
 inline fun AlertDialog.Builder.create(crossinline listener: AlertDialog.() -> Unit): AlertDialog =
         create().apply { setOnShowListener { (it as AlertDialog).listener() } }
@@ -38,11 +37,6 @@ abstract class DialogFragmentBase : DialogFragment() {
         super.onResume()
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        refWatcher.watch(this)
     }
 }
 
@@ -82,11 +76,6 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
         super.onResume()
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        refWatcher.watch(this)
     }
 }
 

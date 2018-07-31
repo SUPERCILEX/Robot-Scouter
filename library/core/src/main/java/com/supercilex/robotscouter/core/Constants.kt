@@ -5,8 +5,6 @@ import android.os.Build
 import android.provider.Settings
 import androidx.core.app.ActivityManagerCompat
 import androidx.core.content.getSystemService
-import com.squareup.leakcanary.LeakCanary
-import com.squareup.leakcanary.RefWatcher
 
 val fullVersionName: String by lazy {
     // Get it from the package manager instead of the BuildConfig to support injected version names
@@ -25,7 +23,6 @@ val fullVersionCode by lazy {
     }
 }
 val providerAuthority: String by lazy { "${RobotScouter.packageName}.provider" }
-val refWatcher: RefWatcher by lazy { LeakCanary.install(RobotScouter) }
 val isLowRamDevice: Boolean by lazy {
     ActivityManagerCompat.isLowRamDevice(
             checkNotNull(RobotScouter.getSystemService<ActivityManager>()))

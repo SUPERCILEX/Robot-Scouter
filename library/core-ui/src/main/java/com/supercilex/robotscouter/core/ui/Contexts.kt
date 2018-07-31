@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.supercilex.robotscouter.core.refWatcher
 
 interface OnActivityResult {
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
@@ -87,11 +86,6 @@ abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        refWatcher.watch(this)
-    }
 }
 
 abstract class PreferenceFragmentBase : PreferenceFragmentCompat(), OnActivityResult, Saveable {
@@ -99,10 +93,5 @@ abstract class PreferenceFragmentBase : PreferenceFragmentCompat(), OnActivityRe
         super.onResume()
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        refWatcher.watch(this)
     }
 }

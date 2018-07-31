@@ -28,7 +28,7 @@ private const val TIMESTAMP = "timestamp"
 
 @WorkerThread
 internal fun cleanupJobs() {
-    checkNotNull(WorkManager.getInstance()).synchronous().apply {
+    WorkManager.getInstance().synchronous().apply {
         listOf(TEAM_DATA_DOWNLOAD, TEAM_MEDIA_UPLOAD).forEach { cancelAllWorkByTagSync(it) }
         pruneWorkSync()
     }
@@ -36,15 +36,15 @@ internal fun cleanupJobs() {
 
 internal fun Data.parseTeam() = Team(
         getLong(NUMBER, 0),
-        checkNotNull(getString(ID, null)),
+        checkNotNull(getString(ID)),
         checkNotNull(getStringArray(OWNER_KEYS))
                 .zip(checkNotNull(getLongArray(OWNER_VALUES)).toTypedArray()).toMap(),
         checkNotNull(getStringArray(ACTIVE_TOKENS_KEYS))
                 .zip(checkNotNull(getLongArray(ACTIVE_TOKENS_VALUES)).map { Date(it) }).toMap(),
-        checkNotNull(getString(TEMPLATE_ID, null)),
-        getString(NAME, null),
-        getString(MEDIA, null),
-        getString(WEBSITE, null),
+        checkNotNull(getString(TEMPLATE_ID)),
+        getString(NAME),
+        getString(MEDIA),
+        getString(WEBSITE),
         getBoolean(CUSTOM_NAME, false),
         getBoolean(CUSTOM_MEDIA, false),
         getBoolean(CUSTOM_WEBSITE, false),
