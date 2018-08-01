@@ -1,6 +1,6 @@
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.2.51"
+    private const val kotlinVersion = "1.2.60"
 
     object SdkVersions {
         val compile = 28
