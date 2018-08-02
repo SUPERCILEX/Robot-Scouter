@@ -7,9 +7,9 @@ import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.show
-import com.supercilex.robotscouter.shared.AddScoutTemplateSelectorDialog
+import com.supercilex.robotscouter.shared.TemplateSelectorDialog
 
-internal class TeamTemplateSelectorDialog : AddScoutTemplateSelectorDialog() {
+internal class TeamTemplateSelectorDialog : TemplateSelectorDialog() {
     override fun onItemSelected(id: String) {
         super.onItemSelected(id)
         (context as TeamSelectionListener)

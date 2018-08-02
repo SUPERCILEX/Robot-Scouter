@@ -4,6 +4,6 @@
 
 cd app/server
 mv build/classes/kotlin/main/firebase.js functions/index.js
-firebase deploy
+firebase deploy --non-interactive
 rm functions/index.js
 cd ../..

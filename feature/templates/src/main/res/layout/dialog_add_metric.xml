@@ -15,10 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_large_medium"
         android:text="@string/dialog_add_metric_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

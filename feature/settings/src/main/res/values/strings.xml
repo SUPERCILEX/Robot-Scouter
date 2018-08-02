@@ -24,6 +24,7 @@
 
     <string name="settings_pref_default_template_title">Default template</string>
     <string name="settings_pref_default_template_summary">%s\nChoose the default template for new scouts</string>
+    <string name="settings_pref_default_template_name">[DEFAULT] %s</string>
 
     <string name="settings_pref_should_upload_to_tba_title">Upload media to The Blue Alliance</string>
     <string name="settings_pref_should_upload_to_tba_summary">

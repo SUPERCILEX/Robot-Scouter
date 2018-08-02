@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RobotScouter.Dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -14,11 +15,34 @@
         android:indeterminate="true"
         android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/templatesView"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_large_medium"
+        android:text="@string/add_scout_selector_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:listitem="@layout/select_dialog_item_material" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/templatesView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/select_dialog_item_material" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <CheckBox
+        android:id="@+id/setAsDefault"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_checkbox_margin_hack"
+        android:layout_marginLeft="@dimen/spacing_checkbox_margin_hack"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:text="@string/template_set_default_title"
+        tools:ignore="NegativeMargin" />
 
 </LinearLayout>

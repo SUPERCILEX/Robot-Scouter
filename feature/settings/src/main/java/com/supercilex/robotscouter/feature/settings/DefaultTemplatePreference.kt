@@ -47,16 +47,19 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
 
         isPersistent = false
 
+        val defaultTemplateTypes = TemplateType.values.filterNot { it == TemplateType.EMPTY }
         entries = arrayOf(
-                *TemplateType.values.map {
+                *defaultTemplateTypes.map {
                     context.resources.getStringArray(RC.array.template_new_options)[it.id]
+                }.map {
+                    context.getString(R.string.settings_pref_default_template_name, it)
                 }.toTypedArray(),
                 *namesListener.mapIndexed { index, _ ->
                     namesListener[index].getTemplateName(index)
                 }.toTypedArray()
         )
         entryValues = arrayOf(
-                *TemplateType.values.map { it.id.toString() }.toTypedArray(),
+                *defaultTemplateTypes.map { it.id.toString() }.toTypedArray(),
                 *namesListener.map { it.id }.toTypedArray()
         )
         value = defaultTemplateId
