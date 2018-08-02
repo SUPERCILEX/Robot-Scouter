@@ -21,8 +21,8 @@
     <string name="export_progress_hint">Exporting…</string>
     <string name="export_complete_title">Export complete for %s</string>
     <plurals name="export_complete_subtitle">
-        <item quantity="one">1 file exported</item>
-        <item quantity="other">%d files exported</item>
+        <item quantity="one">1 template exported</item>
+        <item quantity="other">%d templates exported</item>
     </plurals>
     <plurals name="export_complete_summary">
         <item quantity="one">1 team exported</item>
