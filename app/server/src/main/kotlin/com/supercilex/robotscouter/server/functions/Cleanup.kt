@@ -23,6 +23,8 @@ import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
+import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
+import com.supercilex.robotscouter.server.utils.getTrashedTemplatesQuery
 import com.supercilex.robotscouter.server.utils.moment
 import com.supercilex.robotscouter.server.utils.processInBatches
 import com.supercilex.robotscouter.server.utils.teams
@@ -121,14 +123,20 @@ private suspend fun deleteUnusedData(userQuery: Query) = userQuery.processInBatc
 
     val userId = user.id
     val teams = async {
-        getTeamsQuery(userId).processInBatches {
+        val delete: suspend (DocumentSnapshot) -> Unit = {
             it.deleteIfSingleOwner(userId) { deleteTeam(this) }
         }
+
+        getTeamsQuery(userId).processInBatches(action = delete)
+        getTrashedTeamsQuery(userId).processInBatches(action = delete)
     }
     val templates = async {
-        getTemplatesQuery(userId).processInBatches {
+        val delete: suspend (DocumentSnapshot) -> Unit = {
             it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
         }
+
+        getTemplatesQuery(userId).processInBatches(action = delete)
+        getTrashedTemplatesQuery(userId).processInBatches(action = delete)
     }
 
     awaitAll(teams, templates)
@@ -224,6 +232,7 @@ private suspend fun deleteUser(user: DocumentSnapshot) {
         if ((t as Json)["code"] != "auth/user-not-found") throw t
     }
 
+    deletionQueue.doc(user.id).delete().await()
     user.userPrefs.delete()
     user.ref.delete().await()
 }
