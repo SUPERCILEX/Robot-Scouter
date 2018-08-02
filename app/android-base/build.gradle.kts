@@ -80,6 +80,7 @@ dependencies {
 
     // TODO remove when Firebase updates their deps
     implementation(Config.Libs.Misc.gson) // Override Firestore
+    implementation("com.squareup.okio:okio:1.15.0")
 }
 
 apply(plugin = "com.google.gms.google-services")
