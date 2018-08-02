@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.core.data.hidden
 import com.supercilex.robotscouter.core.data.ioPerms
 import com.supercilex.robotscouter.core.data.logTakeMedia
 import com.supercilex.robotscouter.core.data.mediaFolder
+import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.unhide
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
@@ -34,7 +35,6 @@ import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
-import java.io.IOException
 import java.util.Calendar
 import java.util.Collections
 
@@ -86,13 +86,10 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         launch(UI) {
             val file = withContext(CommonPool) {
                 try {
-                    File(
-                            mediaFolder ?: throw IOException("Couldn't create folder"),
-                            "${team}_${System.currentTimeMillis()}.jpg"
-                    ).hidden().apply {
-                        if (!createNewFile()) throw IOException("Unable to create temporary file")
-                    }
-                } catch (e: IOException) {
+                    File(mediaFolder, "${team}_${System.currentTimeMillis()}.jpg")
+                            .hidden()
+                            .safeCreateNewFile()
+                } catch (e: Exception) {
                     CrashLogger.onFailure(e)
                     RobotScouter.runOnUiThread { longToast(e.toString()) }
                     null

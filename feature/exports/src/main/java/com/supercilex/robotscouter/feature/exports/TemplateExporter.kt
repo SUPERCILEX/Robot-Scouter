@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.core.data.hidden
 import com.supercilex.robotscouter.core.data.isPolynomial
 import com.supercilex.robotscouter.core.data.isSingleton
 import com.supercilex.robotscouter.core.data.nullOrFull
+import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.unhide
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
@@ -187,14 +188,8 @@ internal class TemplateExporter(
     private fun createFile(extension: String) = synchronized(notificationManager) {
         val availableFile = findAvailableFile(extension).hidden()
         try {
-            availableFile.apply {
-                if (
-                    !parentFile.exists() && !parentFile.mkdirs() ||
-                    // Attempt deleting existing hidden file (occurs when RS crashes while exporting)
-                    !createNewFile() && (!delete() || !createNewFile())
-                ) throw IOException("Failed to create file: $this")
-            }
-        } catch (e: IOException) {
+            availableFile.safeCreateNewFile()
+        } catch (e: Exception) {
             availableFile.delete()
             throw e
         }

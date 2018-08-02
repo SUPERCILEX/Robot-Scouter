@@ -19,8 +19,11 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
+import com.google.gson.Gson
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
+import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.common.FIRESTORE_SCOUT_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TOKEN_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TYPE
@@ -32,6 +35,8 @@ import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
+import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
+import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.fetchLatestData
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.getScoutMetricsRef
@@ -45,10 +50,12 @@ import com.supercilex.robotscouter.core.data.model.teamsQueryGenerator
 import com.supercilex.robotscouter.core.data.model.trash
 import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefsQueryGenerator
+import com.supercilex.robotscouter.core.data.model.userRef
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
+import com.supercilex.robotscouter.core.model.User
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
@@ -57,6 +64,7 @@ import java.io.File
 import java.lang.reflect.Field
 import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.experimental.suspendCoroutine
@@ -65,6 +73,18 @@ typealias QueryGenerator = (FirebaseUser) -> Query
 
 val teams = LifecycleAwareFirestoreArray(teamsQueryGenerator, teamParser)
 val prefs = LifecycleAwareFirestoreArray(userPrefsQueryGenerator, prefParser)
+
+private val updateLastLogin = object : Runnable {
+    override fun run() {
+        if (isSignedIn) {
+            val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
+            userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
+        }
+
+        mainHandler.removeCallbacks(this)
+        mainHandler.postDelayed(this, TimeUnit.DAYS.toMillis(1))
+    }
+}
 
 private val teamTemplateIdUpdater = object : ChangeEventListenerBase {
     private var nTeamUpdatesForTemplateId = "" to -1
@@ -189,11 +209,30 @@ private val teamMerger = object : ChangeEventListenerBase {
     }
 }
 
+private val dbCacheLock = Mutex()
+
 fun initDatabase() {
     FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
     teams.addChangeEventListener(teamTemplateIdUpdater)
     teams.addChangeEventListener(teamUpdater)
     teams.addChangeEventListener(teamMerger)
+
+    FirebaseAuth.getInstance().addAuthStateListener {
+        val user = it.currentUser
+        if (user == null) {
+            async { dbCacheLock.withLock { dbCache.deleteRecursively() } }.logFailures()
+        } else {
+            updateLastLogin.run()
+
+            User(
+                    user.uid,
+                    user.email.nullOrFull(),
+                    user.phoneNumber.nullOrFull(),
+                    user.displayName.nullOrFull(),
+                    user.photoUrl?.toString()
+            ).smartWrite(userCache) { it.add() }
+        }
+    }
 }
 
 inline fun firestoreBatch(
@@ -256,6 +295,25 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
             }
         }
     }
+}
+
+private inline fun <reified T> T.smartWrite(file: File, crossinline write: (t: T) -> Unit) {
+    val new = this
+    async {
+        val cache = {
+            write(new)
+            file.safeCreateNewFile().writeText(Gson().toJson(new))
+        }
+
+        dbCacheLock.withLock {
+            if (file.exists()) {
+                val cached = Gson().fromJson(file.readText(), T::class.java)
+                if (new != cached) cache()
+            } else {
+                cache()
+            }
+        }
+    }.logFailures()
 }
 
 internal sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, Any>) {

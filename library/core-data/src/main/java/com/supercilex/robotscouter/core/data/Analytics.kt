@@ -10,23 +10,15 @@ import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.SetOptions
-import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
-import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.getNames
-import com.supercilex.robotscouter.core.data.model.userRef
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
-import com.supercilex.robotscouter.core.model.User
 import kotlinx.coroutines.experimental.async
-import java.util.Date
-import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -44,18 +36,6 @@ private const val SEGMENT_SIZE = 98
 private const val SEGMENT = "…"
 
 private val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(RobotScouter) }
-
-private val updateLastLogin = object : Runnable {
-    override fun run() {
-        if (isSignedIn) {
-            val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
-            userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
-        }
-
-        mainHandler.removeCallbacks(this)
-        mainHandler.postDelayed(this, TimeUnit.DAYS.toMillis(1))
-    }
-}
 
 private val prefLogger = object : ChangeEventListenerBase {
     override fun onChildChanged(
@@ -93,18 +73,6 @@ fun initAnalytics() {
         Crashlytics.setUserName(user?.displayName)
         analytics.setUserId(user?.uid)
         analytics.setUserProperty(FirebaseAnalytics.UserProperty.SIGN_UP_METHOD, user?.providerId)
-
-        if (user != null) {
-            User(
-                    user.uid,
-                    user.email.nullOrFull(),
-                    user.phoneNumber.nullOrFull(),
-                    user.displayName.nullOrFull(),
-                    user.photoUrl
-            ).add()
-
-            updateLastLogin.run()
-        }
     }
 }
 

@@ -91,9 +91,7 @@ class ExportService : IntentService(TAG) {
         }
 
         val zippedScouts = zipScouts(newScouts)
-        val exportFolder = File(checkNotNull(exportsFolder) {
-            "Couldn't get write access"
-        }, "Robot Scouter export_${System.currentTimeMillis()}")
+        val exportFolder = File(exportsFolder, "Robot Scouter export_${System.currentTimeMillis()}")
 
         notificationManager.setData(zippedScouts.size, newScouts.keys, exportFolder)
 

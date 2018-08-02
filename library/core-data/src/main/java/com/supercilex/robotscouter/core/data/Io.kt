@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Environment
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
+import com.supercilex.robotscouter.core.RobotScouter
 import java.io.File
 
 const val MIME_TYPE_ANY = "*/*"
@@ -21,20 +22,32 @@ private val exports = Environment.getExternalStoragePublicDirectory(
 private val media: File =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
+internal val dbCache = File(RobotScouter.cacheDir, "db")
+internal val userCache = File(dbCache, "user.json")
+
+@get:WorkerThread
+@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+val exportsFolder
+    get() = exports.get()
+
+@get:WorkerThread
+@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
+val mediaFolder
+    get() = media.get()
+
 @WorkerThread
 fun initIo() {
     // Do nothing, this will initialize our static fields
 }
 
-@get:WorkerThread
-@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-val exportsFolder: File?
-    get() = getFolder(exports)
+fun File.safeMkdirs() = apply {
+    check(exists() || mkdirs()) { "Unable to create $this" }
+}
 
-@get:WorkerThread
-@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-val mediaFolder: File?
-    get() = getFolder(media)
+fun File.safeCreateNewFile() = apply {
+    parentFile.safeMkdirs()
+    check(exists() || createNewFile()) { "Unable to create $this" }
+}
 
 @WorkerThread
 fun File.hidden() = File(parentFile, ".$name")
@@ -54,8 +67,9 @@ fun File.unhide(): File? {
     return if (!renameTo(unhidden)) null else unhidden
 }
 
-private fun getFolder(folder: File) =
-        if (isExternalStorageMounted() && (folder.exists() || folder.mkdirs())) folder else null
-
-private fun isExternalStorageMounted(): Boolean =
-        Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+private fun File.get(): File {
+    check(Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+        "External storage not mounted."
+    }
+    return this
+}
