@@ -8,7 +8,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
 
   mv app-base.tmp uploads/Robot-Scouter/app-base.apk
   mv app-release.tmp uploads/Robot-Scouter/app-release.aab
-  cp Robot-Scouter/app/android-base/build/outputs/mapping/release/mapping.txt uploads/Robot-Scouter/mapping.txt
+  cp Robot-Scouter/app/android-base/build/outputs/mapping/r8/release/mapping.txt uploads/Robot-Scouter/mapping.txt
   cd uploads/Robot-Scouter
 
   # Duplicated in build.sh
