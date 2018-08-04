@@ -32,19 +32,16 @@ internal class ScoutListActivity : ActivityBase() {
                     ActivityScoutListFragment.TAG)
             }
         }
-    }
 
-    override fun onShortcut(keyCode: Int, event: KeyEvent): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
-                scoutListFragment.addScoutWithSelector()
-            } else {
-                scoutListFragment.addScout()
-            }
-            KeyEvent.KEYCODE_D -> scoutListFragment.showTeamDetails()
-            else -> return false
+        registerShortcut(KeyEvent.KEYCODE_N, KeyEvent.META_SHIFT_ON, 0) {
+            scoutListFragment.addScoutWithSelector()
         }
-        return true
+        registerShortcut(KeyEvent.KEYCODE_N, 0) {
+            scoutListFragment.addScout()
+        }
+        registerShortcut(KeyEvent.KEYCODE_D, 0) {
+            scoutListFragment.showTeamDetails()
+        }
     }
 
     companion object : ScoutListActivityCompanion {

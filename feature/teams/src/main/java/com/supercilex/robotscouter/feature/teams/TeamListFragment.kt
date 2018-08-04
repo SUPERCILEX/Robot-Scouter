@@ -74,6 +74,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         setHasOptionsMenu(true)
         holder.init(savedInstanceState)
         tutorialHelper.init(null)
+
+        registerShortcut(KeyEvent.KEYCODE_N, 0) { onClick(fab) }
     }
 
     override fun onCreateView(
@@ -178,13 +180,6 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         } else {
             (activity as SignInResolver).showSignInResolution()
         }
-    }
-
-    override fun onShortcut(keyCode: Int, event: KeyEvent) = if (keyCode == KeyEvent.KEYCODE_N) {
-        onClick(fab)
-        true
-    } else {
-        false
     }
 
     override fun refresh() {

@@ -156,6 +156,12 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
 
         GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
+
+        registerShortcut(KeyEvent.KEYCODE_N, KeyEvent.META_SHIFT_ON, 0) {
+            scoutListFragment?.addScoutWithSelector()
+        }
+        registerShortcut(KeyEvent.KEYCODE_E, 0) { export() }
+        registerShortcut(KeyEvent.KEYCODE_D, 0) { scoutListFragment?.showTeamDetails() }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -215,20 +221,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
         drawerLayout.closeDrawer(GravityCompat.START)
         return false
-    }
-
-    override fun onShortcut(keyCode: Int, event: KeyEvent): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
-                scoutListFragment?.addScoutWithSelector()
-            } else {
-                return false
-            }
-            KeyEvent.KEYCODE_E -> export()
-            KeyEvent.KEYCODE_D -> scoutListFragment?.showTeamDetails()
-            else -> return false
-        }
-        return true
     }
 
     override fun onBackPressed() {

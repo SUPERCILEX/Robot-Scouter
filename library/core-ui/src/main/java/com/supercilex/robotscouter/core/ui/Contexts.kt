@@ -26,6 +26,7 @@ interface Saveable {
 
 abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable,
         KeyboardShortcutListener {
+    private val shortcutManager = ShortcutManager(this)
     private val filteredEvents = mutableMapOf<Long, KeyEvent>()
     private var clearFocus: Runnable? = null
 
@@ -36,16 +37,17 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable,
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (filteredEvents.remove(event.downTime) != null) {
-            if (onShortcut(keyCode, event)) return true
-            val fragmentHandled = supportFragmentManager.fragments
-                    .filterIsInstance<KeyboardShortcutListener>()
-                    .any { it.onShortcut(keyCode, event) }
-            if (fragmentHandled) return true
+            if (shortcutManager.onEvent(event)) return true
         }
         return super.onKeyUp(keyCode, event)
     }
 
-    override fun onShortcut(keyCode: Int, event: KeyEvent) = false
+    override fun registerShortcut(
+            keyCode: Int,
+            metaState: Int,
+            description: Int,
+            action: () -> Unit
+    ) = shortcutManager.registerShortcut(keyCode, metaState, description, action)
 
     @Suppress("RedundantOverride") // Needed to relax visibility
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
@@ -80,7 +82,14 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable,
     }
 }
 
-abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
+abstract class FragmentBase : Fragment(), OnActivityResult, Saveable, KeyboardShortcutListener {
+    override fun registerShortcut(
+            keyCode: Int,
+            metaState: Int,
+            description: Int,
+            action: () -> Unit
+    ) = (activity as ActivityBase).registerShortcut(keyCode, metaState, description, action)
+
     override fun onResume() {
         super.onResume()
         FirebaseAnalytics.getInstance(requireContext())
