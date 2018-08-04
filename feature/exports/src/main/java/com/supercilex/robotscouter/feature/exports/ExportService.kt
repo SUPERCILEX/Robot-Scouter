@@ -62,7 +62,7 @@ class ExportService : IntentService(TAG) {
 
         val teams: List<Team> = intent.getTeamListExtra().toMutableList().apply { sort() }
         val chunks = teams.chunked(SYNCHRONOUS_QUERY_CHUNK)
-        notificationManager.startLoading(chunks.size)
+        notificationManager.onStartLoading(chunks.size)
 
         try {
             onHandleScouts(notificationManager, chunks.map {
@@ -72,7 +72,7 @@ class ExportService : IntentService(TAG) {
                     withTimeout(TIMEOUT, TimeUnit.MINUTES) {
                         it.map { async { it.getScouts() } }.awaitAll()
                     }
-                }.also { notificationManager.updateLoadProgress() }
+                }.also { notificationManager.onChunkLoaded() }
             }.flatten().withIndex().associate {
                 teams[it.index] to it.value
             })
@@ -93,7 +93,7 @@ class ExportService : IntentService(TAG) {
         val zippedScouts = zipScouts(newScouts)
         val exportFolder = File(exportsFolder, "Robot Scouter export_${System.currentTimeMillis()}")
 
-        notificationManager.setData(zippedScouts.size, newScouts.keys, exportFolder)
+        notificationManager.loaded(zippedScouts.size, newScouts.keys, exportFolder)
 
         runBlocking {
             val templateNames = getTemplateNames(zippedScouts.keys)

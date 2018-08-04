@@ -35,11 +35,11 @@
     <string name="export_complete_none_message">No teams exported</string>
 
     <string name="export_initialize_status">Initializing</string>
-    <string name="export_load_status">Loading teams</string>
     <plurals name="export_load_status_detail">
         <item quantity="one">Loading team %d</item>
         <item quantity="other">Loading teams %d-%d</item>
     </plurals>
+    <string name="export_loaded_status">Teams loaded</string>
     <string name="export_template_status">Exporting teams for %s</string>
     <string name="export_average_status">Exporting overview sheet</string>
     <string name="export_cleanup_status">Cleanup</string>

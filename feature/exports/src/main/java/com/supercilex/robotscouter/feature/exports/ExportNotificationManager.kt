@@ -54,25 +54,25 @@ internal class ExportNotificationManager(private val service: ExportService) {
     init {
         service.startForeground(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(service.getString(R.string.export_load_status))
+                .setContentText(service.getString(R.string.export_initialize_status))
                 .updateProgress(ESTIMATED_MASTER_OPS, 0)
                 .build())
         notificationFilter.start()
     }
 
-    fun startLoading(chunks: Int) {
+    fun onStartLoading(chunks: Int) {
         nLoadingChunks = chunks
         masterNotificationHolder.maxProgress = EXTRA_MASTER_OPS + nLoadingChunks
 
         notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(service.getString(R.string.export_load_status))
+                .setContentText(service.getString(R.string.export_initialize_status))
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
     }
 
-    fun updateLoadProgress() {
+    fun onChunkLoaded() {
         masterNotificationHolder.progress++
     }
 
@@ -90,7 +90,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
                 .build())
     }
 
-    fun setData(nTemplates: Int, teams: Set<Team>, exportFolder: File) {
+    fun loaded(nTemplates: Int, teams: Set<Team>, exportFolder: File) {
         this.nTemplates = nTemplates
         this.teams = teams
         this.exportFolder = exportFolder
@@ -101,7 +101,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
         notificationFilter.notify(transientGroupId, masterNotification
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentText(service.getString(R.string.export_load_status))
+                .setContentText(service.getString(R.string.export_loaded_status))
                 .updateProgress(
                         masterNotificationHolder.maxProgress, masterNotificationHolder.progress)
                 .build())
