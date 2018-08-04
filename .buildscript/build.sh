@@ -15,7 +15,7 @@ if [ $TRAVIS_PULL_REQUEST = "false" ] && [ $TRAVIS_BRANCH = 'master' ]; then
   mv app/android-base/build/outputs/bundle/release/android-base.aab ../app-release.tmp
   mv app/android-base/upload-keystore.jks app/android-base/keystore.jks
   mv app/android-base/upload-keystore.properties app/android-base/keystore.properties
-  ./gradlew publish
+  ./gradlew publish crashlyticsUploadDeobs
 
   .buildscript/deploy-firebase.sh
   sleep 30 # Wait long enough to circumvent function `finished with status: 'connection error'`
