@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.core.view.ViewCompat
 import androidx.core.view.postDelayed
 import androidx.core.widget.TextViewCompat
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
@@ -18,15 +19,9 @@ class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader {
     override val helper = ContentLoaderHelper(this, ::toggle)
 
     private val animatable by unsafeLazy {
-        (TextViewCompat.getCompoundDrawablesRelative(this)
+        TextViewCompat.getCompoundDrawablesRelative(this)
                 .filterNotNull()
-                .single() as Animatable2Compat).apply {
-            registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
-                override fun onAnimationEnd(drawable: Drawable?) {
-                    postDelayed(mediumAnimationDuration) { start() }
-                }
-            })
-        }
+                .single() as Animatable2Compat
     }
 
     constructor(context: Context) : super(context)
@@ -39,11 +34,21 @@ class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         helper.onAttachedToWindow()
+
+        animatable.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                postDelayed(mediumAnimationDuration) {
+                    if (ViewCompat.isAttachedToWindow(this@ContentLoadingHint)) animatable.start()
+                }
+            }
+        })
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         helper.onDetachedFromWindow()
+
+        animatable.clearAnimationCallbacks()
         animatable.stop()
     }
 
