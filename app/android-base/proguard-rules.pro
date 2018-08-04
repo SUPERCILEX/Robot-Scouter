@@ -3,7 +3,8 @@
 -keepattributes SourceFile,LineNumberTable
 
 # Keep bridges
--keepclassmembers @com.supercilex.robotscouter.Bridge class * {
+-keep class com.supercilex.robotscouter.Bridge
+-keep @com.supercilex.robotscouter.Bridge class * {
     *** Companion;
 }
 

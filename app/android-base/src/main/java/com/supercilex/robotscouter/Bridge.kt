@@ -330,8 +330,10 @@ internal class ModuleRequestHolder : ViewModel() {
     }
 }
 
-private fun requireClass(clazz: String) = checkNotNull(getClass(clazz)) {
-    "Feature $clazz is unavailable"
+private fun requireClass(clazz: String) = try {
+    Class.forName(clazz)
+} catch (e: ClassNotFoundException) {
+    throw IllegalStateException("Feature $clazz is unavailable", e)
 }
 
 private fun getClass(clazz: String) = try {
