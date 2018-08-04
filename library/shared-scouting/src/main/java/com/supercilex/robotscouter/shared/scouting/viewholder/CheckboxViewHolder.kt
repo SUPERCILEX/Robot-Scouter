@@ -9,8 +9,7 @@ import kotlinx.android.synthetic.main.scout_base_checkbox.*
 
 open class CheckboxViewHolder(
         itemView: View
-) : MetricViewHolderBase<Metric.Boolean, Boolean>(itemView),
-        View.OnClickListener {
+) : MetricViewHolderBase<Metric.Boolean, Boolean>(itemView), View.OnClickListener {
     init {
         checkBox.setOnClickListener(this)
         name.setOnClickListener(this)

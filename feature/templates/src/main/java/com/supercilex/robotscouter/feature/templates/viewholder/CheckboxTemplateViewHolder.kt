@@ -25,11 +25,6 @@ internal class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(i
         name.setOnClickListener(null)
     }
 
-    override fun bind() {
-        super.bind()
-        name.text = metric.name
-    }
-
     override fun onClick(v: View) {
         if (name.hasFocus()) metric.updateName(name.text.toString())
         if (v.id == RC.id.checkBox) metric.update(checkBox.isChecked)

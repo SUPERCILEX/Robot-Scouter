@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.longSnackbar
+import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
@@ -138,8 +139,8 @@ open class StopwatchViewHolder(
         cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
 
         if (size == LIST_SIZE_WITH_AVERAGE) {
-            // Add the average card
-            cyclesAdapter.notifyItemInserted(0)
+            updateFirstCycleName()
+            cyclesAdapter.notifyItemInserted(0) // Add the average card
             cyclesAdapter.notifyItemInserted(position)
         } else {
             // Account for the average card being there or not. Since we are adding a new lap,
@@ -147,6 +148,8 @@ open class StopwatchViewHolder(
             cyclesAdapter.notifyItemInserted(if (size == 1) 0 else position)
             // Ensure the average card is updated if it's there
             cyclesAdapter.notifyItemChanged(0)
+
+            updateCycleNames(position, size)
         }
     }
 
@@ -156,10 +159,22 @@ open class StopwatchViewHolder(
 
         cyclesAdapter.notifyItemRemoved(if (hadAverage) position + 1 else position)
         if (hadAverage && size == 1) {
-            // Remove the average card
-            cyclesAdapter.notifyItemRemoved(0)
+            cyclesAdapter.notifyItemRemoved(0) // Remove the average card
+            updateFirstCycleName()
         } else if (size >= LIST_SIZE_WITH_AVERAGE) {
             cyclesAdapter.notifyItemChanged(0) // Ensure the average card is updated
+            updateCycleNames(position, size)
+        }
+    }
+
+    private fun updateFirstCycleName() =
+            cycles.notifyItemsNoChangeAnimation { notifyItemChanged(0) }
+
+    private fun updateCycleNames(position: Int, size: Int) {
+        if (size >= LIST_SIZE_WITH_AVERAGE) {
+            cycles.notifyItemsNoChangeAnimation {
+                notifyItemRangeChanged(position + 1, size - position)
+            }
         }
     }
 
