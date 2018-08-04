@@ -27,9 +27,6 @@ plugins {
     id("com.github.ben-manes.versions") version "0.20.0"
 }
 
-// See https://github.com/gradle/kotlin-dsl/issues/607#issuecomment-375687119
-subprojects { parent!!.path.takeIf { it != rootProject.path }?.let { evaluationDependsOn(it) } }
-
 allprojects {
     repositories {
         google()
@@ -105,8 +102,8 @@ fun Project.configureAndroid() {
             )
 
             val reportsDir = "$buildDir/reports"
-            setHtmlOutput(file("$reportsDir/lint-results.html"))
-            setXmlOutput(file("$reportsDir/lint-results.xml"))
+            htmlOutput = file("$reportsDir/lint-results.html")
+            xmlOutput = file("$reportsDir/lint-results.xml")
         }
 
         compileOptions {
