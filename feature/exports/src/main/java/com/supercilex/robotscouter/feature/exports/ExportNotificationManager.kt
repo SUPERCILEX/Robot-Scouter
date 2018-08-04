@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.LateinitVal
+import com.supercilex.robotscouter.core.data.EXPORT_CHANNEL
 import com.supercilex.robotscouter.core.data.EXPORT_IN_PROGRESS_CHANNEL
 import com.supercilex.robotscouter.core.data.FilteringNotificationManager
 import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
@@ -208,6 +209,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
 
     private fun showExportedPermanentNotification() {
         notificationFilter.notify(permanentGroupId, masterNotification
+                .setChannelId(EXPORT_CHANNEL)
                 .setGroup(permanentGroupId.toString())
                 .setSmallIcon(RC.drawable.ic_logo)
                 .setSubText(service.resources.getQuantityString(
