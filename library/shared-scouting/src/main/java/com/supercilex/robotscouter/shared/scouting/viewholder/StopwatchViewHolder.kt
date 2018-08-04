@@ -20,10 +20,8 @@ import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.supercilex.robotscouter.common.second
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
-import com.supercilex.robotscouter.core.reportOrCancel
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
@@ -31,12 +29,15 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
 import kotlinx.android.synthetic.main.scout_base_stopwatch.*
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.TimeoutCancellationException
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.find
-import org.jetbrains.anko.runOnUiThread
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Future
-import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import com.supercilex.robotscouter.core.ui.R as RC
 
@@ -191,8 +192,8 @@ open class StopwatchViewHolder(
     private class Timer(
             holder: StopwatchViewHolder,
             val startTimeMillis: Long = System.currentTimeMillis()
-    ) : Runnable {
-        private val updater: Future<*>
+    ) {
+        private val updater: Job
 
         /**
          * The ID of the metric who originally started the request. We need to validate it since
@@ -208,27 +209,31 @@ open class StopwatchViewHolder(
             }
 
         /** @return the time since this class was instantiated in milliseconds */
-        private val elapsedTime: Long
+        private val elapsedTimeMillis: Long
             get() = System.currentTimeMillis() - startTimeMillis
 
         init {
             TIMERS[holder.metric] = this
-            updater = executor.scheduleWithFixedDelay(this, 1, 1, TimeUnit.SECONDS)
+
+            updater = launch(UI) {
+                try {
+                    withTimeout(GAME_TIME_MINS, TimeUnit.MINUTES) {
+                        while (isActive) {
+                            updateButtonTime()
+                            delay(1, TimeUnit.SECONDS)
+                        }
+                    }
+                } catch (e: TimeoutCancellationException) {
+                    cancel()
+                }
+            }
+
             updateStyle()
             updateButtonTime()
         }
 
-        override fun run() {
-            if (TimeUnit.SECONDS.toMinutes(TimeUnit.MILLISECONDS.toSeconds(elapsedTime)) >= GAME_TIME) {
-                cancel()
-                return
-            }
-
-            RobotScouter.runOnUiThread { updateButtonTime() }
-        }
-
         fun updateButtonTime() {
-            setText(R.string.metric_stopwatch_stop_title, getFormattedTime(elapsedTime))
+            setText(R.string.metric_stopwatch_stop_title, getFormattedTime(elapsedTimeMillis))
         }
 
         /** @return the time since this class was instantiated and then cancelled */
@@ -238,13 +243,11 @@ open class StopwatchViewHolder(
                 TIMERS.remove(it.key)
             }
 
-            updater.reportOrCancel(true)
-            RobotScouter.runOnUiThread {
-                updateStyle()
-                setText(R.string.metric_stopwatch_start_title)
-            }
+            updater.cancel()
+            updateStyle()
+            setText(R.string.metric_stopwatch_start_title)
 
-            return elapsedTime
+            return elapsedTimeMillis
         }
 
         private fun setText(@StringRes id: Int, vararg formatArgs: Any) {
@@ -254,13 +257,12 @@ open class StopwatchViewHolder(
         private fun updateStyle() {
             val holder = holder ?: return
             TransitionManager.beginDelayedTransition(holder.itemView as ViewGroup, transition)
-            holder.updateStyle(!updater.isDone)
+            holder.updateStyle(updater.isActive)
         }
 
         private companion object {
-            const val GAME_TIME = 3
+            const val GAME_TIME_MINS = 3L
 
-            val executor = ScheduledThreadPoolExecutor(1)
             val transition = AutoTransition().apply {
                 excludeTarget(RecyclerView::class.java, true)
             }

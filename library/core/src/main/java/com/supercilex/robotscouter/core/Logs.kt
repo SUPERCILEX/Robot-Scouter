@@ -49,7 +49,7 @@ object CrashLogger : OnFailureListener, OnCompleteListener<Any>, CompletionHandl
     }
 
     override fun invoke(t: Throwable?) {
-        if (t == null || t.javaClass === CancellationException::class.java) return
+        if (t == null || t is CancellationException) return
         if (BuildConfig.DEBUG || isInTestMode) {
             Log.e("CrashLogger", "An error occurred", t)
         } else {

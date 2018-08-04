@@ -10,7 +10,6 @@ import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.Deferred
 import org.jetbrains.anko.coroutines.experimental.Ref
 import org.jetbrains.anko.coroutines.experimental.asReference
-import java.util.concurrent.Future
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.suspendCoroutine
 
@@ -54,18 +53,6 @@ fun <T> Deferred<T>.asTask(): Task<T> {
         }
     }
     return source.task
-}
-
-fun <T> Future<T>.reportOrCancel(mayInterruptIfRunning: Boolean = false) {
-    if (isDone) {
-        try {
-            get()
-        } catch (e: Exception) {
-            CrashLogger.onFailure(e)
-        }
-    }
-
-    cancel(mayInterruptIfRunning)
 }
 
 fun <T : LifecycleOwner> T.asLifecycleReference(

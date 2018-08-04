@@ -13,7 +13,8 @@ import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.shared.R
 import kotlinx.coroutines.experimental.async
-import java.util.concurrent.Semaphore
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 
 const val RC_SIGN_IN = 100
 
@@ -39,26 +40,16 @@ private val signInIntent: Intent
             .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
             .build()
 
-private val signInSemaphore = Semaphore(1)
+private val signInLock = Mutex()
 
 suspend fun onSignedIn(): FirebaseUser {
-    signInSemaphore.acquire()
-
-    val user = user
-    return if (user == null) {
-        val result = try {
+    return signInLock.withLock {
+        user ?: try {
             AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).await()
         } catch (e: Exception) {
             // Ignore any exceptions since we don't care about credential fetch errors
             FirebaseAuth.getInstance().signInAnonymously().await()
-        } finally {
-            signInSemaphore.release()
-        }
-
-        result.user
-    } else {
-        signInSemaphore.release()
-        user
+        }.user
     }
 }
 

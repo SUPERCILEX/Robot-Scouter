@@ -12,13 +12,15 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.reportOrCancel
+import com.supercilex.robotscouter.core.logFailures
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.asCoroutineDispatcher
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
-import java.util.concurrent.Future
-import java.util.concurrent.ScheduledThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -31,7 +33,7 @@ const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
  * Android N+ limits notification updates to 10/sec and drops the rest. This limits notification
  * updates to 5/sec.
  */
-const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200L
+const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200
 
 val notificationManager by lazy { checkNotNull(RobotScouter.getSystemService<NotificationManager>()) }
 
@@ -81,12 +83,12 @@ private fun getExportInProgressChannel(): NotificationChannel = NotificationChan
  *
  * @see SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS
  */
-class FilteringNotificationManager : Runnable {
+class FilteringNotificationManager {
     private val lock = ReentrantReadWriteLock()
     private val notifications: MutableMap<Int, Notification> = LinkedHashMap()
     private val vips: Queue<Int> = LinkedList()
 
-    private var updater: Future<*> by LateinitVal()
+    private var processor: Job by LateinitVal()
     private var isStopped = false
 
     /**
@@ -125,12 +127,12 @@ class FilteringNotificationManager : Runnable {
             check(!isStopped) { "Cannot start a previously stopped notification filter." }
         }
 
-        updater = executor.scheduleWithFixedDelay(
-                this,
-                0,
-                SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS,
-                TimeUnit.MILLISECONDS
-        )
+        processor = async(dispatcher) {
+            while (isActive) {
+                processQueue()
+                delay(SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS)
+            }
+        }.logFailures()
     }
 
     fun isStopped(): Boolean = lock.read { isStopped }
@@ -150,7 +152,7 @@ class FilteringNotificationManager : Runnable {
     }
 
     fun stopNow() {
-        updater.reportOrCancel(true)
+        processor.cancel()
         lock.write {
             vips.clear()
             notifications.clear()
@@ -158,7 +160,7 @@ class FilteringNotificationManager : Runnable {
         }
     }
 
-    override fun run() {
+    private fun processQueue() {
         lock.write {
             (vips.poll() ?: notifications.keys.firstOrNull())?.let {
                 notificationManager.notify(it, checkNotNull(notifications.remove(it)))
@@ -166,12 +168,14 @@ class FilteringNotificationManager : Runnable {
         }
 
         lock.read {
-            if (isStopped && notifications.isEmpty()) updater.reportOrCancel()
+            if (isStopped && notifications.isEmpty()) processor.cancel()
         }
     }
 
     private companion object {
-        val executor = ScheduledThreadPoolExecutor(1)
+        // Use a separate thread to process notifications because the default dispatcher may be
+        // saturated.
+        val dispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
     }
 }
 
