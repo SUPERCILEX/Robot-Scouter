@@ -22,7 +22,6 @@ import com.supercilex.robotscouter.TeamExporter
 import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.ui.animateColorChange
-import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import org.jetbrains.anko.find
@@ -35,18 +34,23 @@ internal class TeamMenuHelper(
 ) : AllChangesSelectionObserver<String>(), View.OnClickListener {
     private val activity = fragment.requireActivity() as AppCompatActivity
 
-    private val fab by unsafeLazy { activity.find<FloatingActionButton>(RC.id.fab) }
-    private val drawerLayout by unsafeLazy { activity.find<DrawerLayout>(RC.id.drawerLayout) }
-    private val toolbar by unsafeLazy {
-        activity.find<Toolbar>(RC.id.toolbar).apply {
-            setNavigationOnClickListener(this@TeamMenuHelper)
-        }
-    }
+    private val fab = activity.find<FloatingActionButton>(RC.id.fab)
+    private val drawerLayout = activity.find<DrawerLayout>(RC.id.drawerLayout)
+    private val toolbar = activity.find<Toolbar>(RC.id.toolbar)
 
     private var isMenuReady = false
     private val teamMenuItems = mutableListOf<MenuItem>()
     private val teamsMenuItems = mutableListOf<MenuItem>()
     private val normalMenuItems = mutableListOf<MenuItem>()
+
+    init {
+        toolbar.setNavigationOnClickListener(this)
+
+        // Initialize ColorDrawables so no-ops can be performed
+        toolbar.setBackgroundColor(ContextCompat.getColor(activity, RC.color.colorPrimary))
+        drawerLayout.setStatusBarBackgroundColor(
+                ContextCompat.getColor(activity, RC.color.colorPrimaryDark))
+    }
 
     override fun onSelectionChanged() {
         val selection = tracker.selection
@@ -156,14 +160,14 @@ internal class TeamMenuHelper(
         }
     }
 
-    private fun updateToolbarColor(visible: Boolean) {
+    private fun updateToolbarColor(normal: Boolean) {
         fun Drawable?.shouldUpdateBackground(newColor: Int): Boolean = this !is ColorDrawable ||
                 color != ContextCompat.getColor(activity, newColor)
 
         @ColorRes val oldColorPrimary =
-                if (visible) RC.color.selected_toolbar else RC.color.colorPrimary
+                if (normal) RC.color.selected_toolbar else RC.color.colorPrimary
         @ColorRes val newColorPrimary =
-                if (visible) RC.color.colorPrimary else RC.color.selected_toolbar
+                if (normal) RC.color.colorPrimary else RC.color.selected_toolbar
 
         if (toolbar.background.shouldUpdateBackground(newColorPrimary)) {
             animateColorChange(
@@ -174,9 +178,9 @@ internal class TeamMenuHelper(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             @ColorRes val oldColorPrimaryDark =
-                    if (visible) RC.color.selected_status_bar else RC.color.colorPrimaryDark
+                    if (normal) RC.color.selected_status_bar else RC.color.colorPrimaryDark
             @ColorRes val newColorPrimaryDark =
-                    if (visible) RC.color.colorPrimaryDark else RC.color.selected_status_bar
+                    if (normal) RC.color.colorPrimaryDark else RC.color.selected_status_bar
 
             if (
                 drawerLayout.statusBarBackgroundDrawable.shouldUpdateBackground(newColorPrimaryDark)
