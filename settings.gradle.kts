@@ -1,5 +1,5 @@
 include(
-        ":app:android-base", "app:server",
+        ":app:android-base", "app:server:functions",
 
         ":library:common",
         ":library:core", ":library:core-model", ":library:core-data", ":library:core-ui",

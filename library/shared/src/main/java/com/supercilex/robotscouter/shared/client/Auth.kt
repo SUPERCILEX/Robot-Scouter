@@ -23,6 +23,7 @@ private val allProviders: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.GoogleBuilder().build(),
         AuthUI.IdpConfig.FacebookBuilder().build(),
         AuthUI.IdpConfig.TwitterBuilder().build(),
+        AuthUI.IdpConfig.GitHubBuilder().build(),
         AuthUI.IdpConfig.EmailBuilder().build(),
         AuthUI.IdpConfig.PhoneBuilder().build()
 )
@@ -36,21 +37,22 @@ private val signInIntent: Intent
             })
             .setTheme(R.style.RobotScouter)
             .setLogo(R.drawable.ic_logo)
-            .setPrivacyPolicyUrl("https://supercilex.github.io/Robot-Scouter/privacy-policy/")
+            .setTosAndPrivacyPolicyUrls(
+                    "https://supercilex.github.io/Robot-Scouter/tos/",
+                    "https://supercilex.github.io/Robot-Scouter/privacy-policy/"
+            )
             .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
             .build()
 
 private val signInLock = Mutex()
 
-suspend fun onSignedIn(): FirebaseUser {
-    return signInLock.withLock {
-        user ?: try {
-            AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).await()
-        } catch (e: Exception) {
-            // Ignore any exceptions since we don't care about credential fetch errors
-            FirebaseAuth.getInstance().signInAnonymously().await()
-        }.user
-    }
+suspend fun onSignedIn(): FirebaseUser = signInLock.withLock {
+    user ?: try {
+        AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).await()
+    } catch (e: Exception) {
+        // Ignore any exceptions since we don't care about credential fetch errors
+        FirebaseAuth.getInstance().signInAnonymously().await()
+    }.user
 }
 
 fun onSignedInTask() = async { onSignedIn() }.asTask()

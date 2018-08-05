@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-./gradlew app:server:clean app:server:build
+./gradlew app:server:functions:clean app:server:functions:build
 
 cd app/server
-mv build/classes/kotlin/main/firebase.js functions/index.js
+mv functions/build/classes/kotlin/main/firebase.js functions/index.js
 firebase deploy --non-interactive
 rm functions/index.js
 cd ../..

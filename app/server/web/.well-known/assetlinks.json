@@ -1,0 +1,35 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.supercilex.robotscouter",
+      "sha256_cert_fingerprints": [
+        "AB:0B:BC:EB:D1:4C:73:91:3E:A5:6B:04:80:88:87:30:A2:9F:7C:BD:E9:6D:16:D4:AA:90:90:DB:A5:08:69:DD"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "web",
+      "site": "https://supercilex.github.io"
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.supercilex.robotscouter",
+      "sha256_cert_fingerprints": [
+        "AB:0B:BC:EB:D1:4C:73:91:3E:A5:6B:04:80:88:87:30:A2:9F:7C:BD:E9:6D:16:D4:AA:90:90:DB:A5:08:69:DD"
+      ]
+    }
+  }
+]

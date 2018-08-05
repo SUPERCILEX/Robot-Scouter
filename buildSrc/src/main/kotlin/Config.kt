@@ -94,7 +94,7 @@ object Config {
         }
 
         object FirebaseUi {
-            private const val version = "c280098444"
+            private const val version = "60f451cfea"
 
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
