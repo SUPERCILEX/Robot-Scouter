@@ -5,6 +5,7 @@
     <!-- Home activity -->
     <string name="home_teams_title">Teams</string>
     <string name="home_autoscout_title">Auto Scout</string>
+    <string name="home_templates_title">Templates</string>
 
     <string name="navigation_drawer_open_desc">Open navigation drawer</string>
     <string name="navigation_drawer_close_desc">Close navigation drawer</string>
@@ -37,7 +38,6 @@
 
     <!-- Feature modules -->
     <string name="scout_activity_title">Scout editor</string>
-    <string name="template_activity_title">Scout template editor</string>
     <string name="settings_activity_title">Settings</string>
 
     <string name="feature_teams_title">Teams</string>

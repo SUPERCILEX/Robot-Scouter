@@ -11,4 +11,9 @@
         android:icon="@drawable/ic_auto_fix_colorable_24dp"
         android:title="@string/home_autoscout_title" />
 
+    <item
+        android:id="@+id/templates"
+        android:icon="@drawable/ic_content_paste_colorable_24dp"
+        android:title="@string/home_templates_title" />
+
 </menu>

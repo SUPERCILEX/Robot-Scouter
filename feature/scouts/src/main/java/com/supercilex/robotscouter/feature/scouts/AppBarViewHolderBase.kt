@@ -30,10 +30,10 @@ import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
-import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
+import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.PermissionRequestHandler

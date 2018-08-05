@@ -4,19 +4,10 @@ import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
 
 private val activitiesLifecycleOwner: LifecycleOwner = LifecycleOwner { activitiesRegistry }
 val activitiesRegistry = LifecycleRegistry(activitiesLifecycleOwner)
-
-inline fun <T : Any> LiveData<T>.observeNonNull(
-        owner: LifecycleOwner,
-        crossinline observer: (T) -> Unit
-) {
-    observe(owner, Observer { observer(checkNotNull(it)) })
-}
 
 /**
  * Provides lifecycle for suggested listener registration status.

@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.transaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -20,6 +18,8 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
+import com.supercilex.robotscouter.core.data.TEMPLATE_ARGS_KEY
+import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.fetchAndActivateTask
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.ioPerms
@@ -27,7 +27,7 @@ import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.logSelect
 import com.supercilex.robotscouter.core.data.minimumAppVersion
-import com.supercilex.robotscouter.core.data.observeNonNull
+import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.fullVersionCode
 import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.logFailures
@@ -36,6 +36,7 @@ import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.isInTabletMode
+import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.showStoreListing
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
@@ -85,7 +86,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         moduleRequestHolder.onSuccess.observeNonNull(this) { (comp, args) ->
             @Suppress("UNCHECKED_CAST") // We know our inputs
             when (comp) {
-                is TemplateListActivityCompanion -> startActivity(comp.createIntent())
                 is SettingsActivityCompanion -> startActivity(comp.createIntent())
                 is ExportServiceCompanion -> if (
                     comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>)
@@ -96,19 +96,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
-        drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-            private val editTemplates: MenuItem = drawer.menu.findItem(R.id.action_edit_templates)
-
-            init {
-                update()
-            }
-
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) = update()
-
-            private fun update() {
-                editTemplates.isVisible = isTemplateEditingAllowed
-            }
-        })
         drawer.setNavigationItemSelectedListener(this)
         bottomNavigation.setOnNavigationItemSelectedListener {
             supportFragmentManager.transaction {
@@ -117,6 +104,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 val newTag = when (it.itemId) {
                     R.id.teams -> TeamListFragmentCompanion.TAG
                     R.id.autoScout -> AutoScoutFragmentCompanion.TAG
+                    R.id.templates -> TemplateListFragmentCompanion.TAG
                     else -> error("Unknown id: ${it.itemId}")
                 }
 
@@ -130,6 +118,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                         TeamListFragmentCompanion().getInstance(supportFragmentManager)
                     AutoScoutFragmentCompanion.TAG ->
                         AutoScoutFragmentCompanion().getInstance(supportFragmentManager)
+                    TemplateListFragmentCompanion.TAG ->
+                        TemplateListFragmentCompanion().getInstance(
+                                supportFragmentManager, intent.extras?.getBundle(TEMPLATE_ARGS_KEY))
                     else -> error("Unknown tag: $newTag")
                 }
 
@@ -149,10 +140,13 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
             true
         }
+        prefs.asLiveData().observe(this, Observer {
+            bottomNavigation.menu.findItem(R.id.templates).isEnabled = isTemplateEditingAllowed
+        })
 
         handleModuleInstalls(moduleInstallProgress)
         authHelper.init().logFailures().addOnSuccessListener(this) {
-            handleIntent(intent)
+            handleIntent()
         }
 
         GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
@@ -160,7 +154,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleIntent(intent)
+        this.intent = intent
+        handleIntent()
     }
 
     override fun onStart() {
@@ -204,8 +199,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             else -> runIfSignedIn {
                 when (item.itemId) {
                     R.id.action_export_all_teams -> export()
-                    R.id.action_edit_templates ->
-                        moduleRequestHolder += TemplateListActivityCompanion().logFailures()
                     R.id.action_settings ->
                         moduleRequestHolder += SettingsActivityCompanion().logFailures()
                     else -> error("Unknown item id: ${item.itemId}")
@@ -284,13 +277,23 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             .filterIsInstance<OnBackPressedListener>()
             .none { it.onBackPressed() }
 
-    private fun handleIntent(intent: Intent) {
-        intent.extras?.let {
+    private fun handleIntent() {
+        intent.extras?.run {
             when {
-                it.containsKey(SCOUT_ARGS_KEY) ->
-                    onTeamSelected(checkNotNull(it.getBundle(SCOUT_ARGS_KEY)), true)
-                it.containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
-                it.containsKey(UPDATE_EXTRA) -> showStoreListing()
+                containsKey(SCOUT_ARGS_KEY) ->
+                    onTeamSelected(checkNotNull(getBundle(SCOUT_ARGS_KEY)), true)
+                containsKey(TEMPLATE_ARGS_KEY) -> {
+                    val args = checkNotNull(getBundle(TEMPLATE_ARGS_KEY))
+                    if (bottomNavigation.selectedItemId == R.id.templates) {
+                        (TemplateListFragmentCompanion()
+                                .getInstance(supportFragmentManager) as TemplateListFragmentBridge)
+                                .handleArgs(args)
+                    } else {
+                        bottomNavigation.selectedItemId = R.id.templates
+                    }
+                }
+                containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
+                containsKey(UPDATE_EXTRA) -> showStoreListing()
             }
         }
 
@@ -312,7 +315,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             longToast(R.string.link_uri_parse_error)
         }.logFailures()
 
-        this.intent = Intent() // Consume Intent
+        intent = Intent() // Consume Intent
     }
 
     override fun showSignInResolution() {

@@ -12,6 +12,7 @@ const val TEAMS_KEY = "com.supercilex.robotscouter.data.util.Teams"
 const val REF_KEY = "com.supercilex.robotscouter.REF"
 const val TAB_KEY = "tab_key"
 const val SCOUT_ARGS_KEY = "scout_args"
+const val TEMPLATE_ARGS_KEY = "template_args"
 const val KEY_ADD_SCOUT = "add_scout"
 const val KEY_OVERRIDE_TEMPLATE_KEY = "override_template_key"
 

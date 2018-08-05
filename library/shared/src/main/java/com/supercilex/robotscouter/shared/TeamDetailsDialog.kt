@@ -28,12 +28,12 @@ import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.formatAsTeamUri
 import com.supercilex.robotscouter.core.data.model.isValidTeamUri
 import com.supercilex.robotscouter.core.data.nullOrFull
-import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animateCircularReveal
+import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy

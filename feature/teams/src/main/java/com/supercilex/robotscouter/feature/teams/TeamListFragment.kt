@@ -30,7 +30,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.isSignedIn
-import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.FragmentBase
@@ -39,6 +38,7 @@ import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
+import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_team_list.*
 import org.jetbrains.anko.find

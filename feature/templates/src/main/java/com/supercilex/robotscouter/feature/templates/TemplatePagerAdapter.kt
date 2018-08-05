@@ -7,7 +7,8 @@ import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.shared.scouting.TabPagerAdapterBase
 import com.supercilex.robotscouter.R as RC
 
-internal open class TemplatePagerAdapter(fragment: Fragment) : TabPagerAdapterBase(fragment, templatesRef) {
+internal open class TemplatePagerAdapter(fragment: Fragment) :
+        TabPagerAdapterBase(fragment, templatesRef) {
     override val editTabNameRes = R.string.template_edit_name_title
 
     init {

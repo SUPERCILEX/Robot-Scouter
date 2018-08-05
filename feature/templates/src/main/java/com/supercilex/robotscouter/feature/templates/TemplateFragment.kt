@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.CollectionReference
+import com.supercilex.robotscouter.Refreshable
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.getTabId
@@ -20,18 +21,18 @@ import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.deleteMetrics
 import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.core.data.model.restoreMetrics
-import com.supercilex.robotscouter.core.data.observeNonNull
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.longSnackbar
+import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
 import com.supercilex.robotscouter.R as RC
 
-internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
+internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClickListener {
     override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(checkNotNull(getTabId(arguments)))
     }
@@ -72,6 +73,10 @@ internal class TemplateFragment : MetricListFragment(), View.OnClickListener {
             savedInstanceState,
             itemTouchCallback
     )
+
+    override fun refresh() {
+        metricsView.smoothScrollToPosition(0)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             inflater.inflate(R.menu.template_options, menu)

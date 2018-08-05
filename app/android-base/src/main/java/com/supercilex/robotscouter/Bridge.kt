@@ -172,16 +172,21 @@ interface ScoutListActivityCompanion : InstalledBridgeCompanion {
     }
 }
 
-interface TemplateListActivityCompanion : DownloadableBridgeCompanion {
-    fun createIntent(templateId: String? = null): Intent
+interface TemplateListFragmentCompanion : InstalledBridgeCompanion {
+    fun getInstance(manager: FragmentManager, args: Bundle? = null): Fragment
 
-    companion object : DownloadableBridgeFinderCompanion<TemplateListActivityCompanion>() {
+    companion object : InstalledBridgeFinderCompanion<TemplateListFragmentCompanion>() {
+        const val TAG = "TemplateListFragment"
         override val moduleName = "templates"
-        override val instance by ValueSeeker {
-            getClass("com.supercilex.robotscouter.feature.templates.TemplateListActivity")
-                    ?.get<TemplateListActivityCompanion>()
-        }
+
+        override val instance =
+                requireClass("com.supercilex.robotscouter.feature.templates.TemplateListFragment")
+                        .get<TemplateListFragmentCompanion>()
     }
+}
+
+interface TemplateListFragmentBridge {
+    fun handleArgs(args: Bundle)
 }
 
 interface SettingsActivityCompanion : DownloadableBridgeCompanion {

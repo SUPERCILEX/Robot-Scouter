@@ -11,7 +11,9 @@ import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.core.data.KEYS
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
+import com.supercilex.robotscouter.core.data.TEMPLATE_ARGS_KEY
 import com.supercilex.robotscouter.core.data.getScoutBundle
+import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.model.teamWithSafeDefaults
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.templatesRef
@@ -92,7 +94,7 @@ internal class LinkReceiverActivity : ActivityBase() {
 
         if (token != null) updateOwner(refs, token, null) { Date() }
 
-        startActivity(TemplateListActivityCompanion().await().createIntent(refs.single().id)
+        startActivity(intentFor<HomeActivity>(TEMPLATE_ARGS_KEY to getTabIdBundle(refs.single().id))
                               .addNewDocumentFlags()
                               .setAction(ACTION_FROM_DEEP_LINK))
     }

@@ -1,23 +1,11 @@
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.supercilex.robotscouter.feature.templates">
 
     <dist:module
-        dist:onDemand="true"
+        dist:onDemand="false"
         dist:title="@string/feature_templates_title">
         <dist:fusing dist:include="true" />
     </dist:module>
-
-    <application>
-
-        <activity
-            android:name=".TemplateListActivity"
-            android:label="@string/template_activity_title"
-            android:launchMode="singleTop"
-            android:parentActivityName="com.supercilex.robotscouter.HomeActivity"
-            android:windowSoftInputMode="adjustResize" />
-
-    </application>
 
 </manifest>

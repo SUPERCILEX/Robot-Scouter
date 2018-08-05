@@ -353,7 +353,7 @@ class LifecycleAwareFirestoreArray<T>(
                 for (i in array.indices) {
                     notifyOnChildChanged(ChangeEventType.ADDED, getSnapshot(i), i, -1)
                 }
-                if (array.isNotEmpty()) notifyOnDataChanged()
+                if (dataChangedField.get(array) as Boolean) notifyOnDataChanged()
             }
 
             if (!array.isListening(KeepAliveListener)) {
@@ -465,6 +465,10 @@ class LifecycleAwareFirestoreArray<T>(
     private companion object {
         val listenersField: Field = BaseObservableSnapshotArray::class.java
                 .getDeclaredField("mListeners").apply {
+                    isAccessible = true
+                }
+        val dataChangedField: Field = BaseObservableSnapshotArray::class.java
+                .getDeclaredField("mHasDataChanged").apply {
                     isAccessible = true
                 }
 
