@@ -1,9 +1,9 @@
 package com.supercilex.robotscouter.shared.client
 
 import android.app.Activity
-import android.content.Intent
 import androidx.fragment.app.Fragment
 import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.util.GoogleApiUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.core.RobotScouter
@@ -18,7 +18,7 @@ import kotlinx.coroutines.experimental.sync.withLock
 
 const val RC_SIGN_IN = 100
 
-/** The list of all supported authentication providers in Firebase Auth UI.  */
+/** The list of all supported authentication providers in Firebase Auth UI. */
 private val allProviders: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.GoogleBuilder().build(),
         AuthUI.IdpConfig.FacebookBuilder().build(),
@@ -28,7 +28,13 @@ private val allProviders: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.PhoneBuilder().build()
 )
 
-private val signInIntent: Intent
+private val unlinkedProviders: List<AuthUI.IdpConfig>
+    get() {
+        val existingProviders = user?.providers.orEmpty()
+        return allProviders.filterNot { existingProviders.contains(it.providerId) }
+    }
+
+private val signInBuilder
     get() = AuthUI.getInstance().createSignInIntentBuilder()
             .setAvailableProviders(if (isInTestMode) {
                 listOf(AuthUI.IdpConfig.GoogleBuilder().build())
@@ -42,7 +48,6 @@ private val signInIntent: Intent
                     "https://supercilex.github.io/Robot-Scouter/privacy-policy/"
             )
             .setIsAccountLinkingEnabled(true, AccountMergeService::class.java)
-            .build()
 
 private val signInLock = Mutex()
 
@@ -57,6 +62,16 @@ suspend fun onSignedIn(): FirebaseUser = signInLock.withLock {
 
 fun onSignedInTask() = async { onSignedIn() }.asTask()
 
-fun Activity.startSignIn() = startActivityForResult(signInIntent, RC_SIGN_IN)
+fun Activity.startSignIn() = startActivityForResult(signInBuilder.build(), RC_SIGN_IN)
 
-fun Fragment.startSignIn() = startActivityForResult(signInIntent, RC_SIGN_IN)
+fun Fragment.startLinkingSignIn() {
+    val activity = requireActivity()
+    GoogleApiUtils.getCredentialsClient(activity)
+            .disableAutoSignIn()
+            .addOnCompleteListener(activity) {
+                startActivityForResult(
+                        signInBuilder.setAvailableProviders(unlinkedProviders).build(),
+                        RC_SIGN_IN
+                )
+            }
+}

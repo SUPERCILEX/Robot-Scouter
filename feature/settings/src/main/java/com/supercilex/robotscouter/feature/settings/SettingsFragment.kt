@@ -38,7 +38,7 @@ import com.supercilex.robotscouter.core.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.core.ui.toast
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
-import com.supercilex.robotscouter.shared.client.startSignIn
+import com.supercilex.robotscouter.shared.client.startLinkingSignIn
 import com.supercilex.robotscouter.shared.launchUrl
 import com.supercilex.robotscouter.R as RC
 
@@ -130,7 +130,7 @@ internal class SettingsFragment : PreferenceFragmentBase(),
                 clearPrefs()
                 activity.finish()
             }
-            KEY_LINK_ACCOUNT -> startSignIn()
+            KEY_LINK_ACCOUNT -> startLinkingSignIn()
             KEY_SIGN_OUT -> settingsModel.signOut()
             KEY_RELEASE_NOTES -> launchUrl(
                     activity,
