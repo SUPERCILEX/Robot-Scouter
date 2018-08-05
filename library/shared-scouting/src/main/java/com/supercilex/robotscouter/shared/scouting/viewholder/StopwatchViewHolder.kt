@@ -93,8 +93,8 @@ open class StopwatchViewHolder(
             timer.holder = this
             updateStyle(true, false)
             timer.updateButtonTime()
-            this.timer = timer
         }
+        this.timer = timer
     }
 
     override fun onClick(v: View) {
