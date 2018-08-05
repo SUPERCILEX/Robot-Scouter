@@ -1,6 +1,15 @@
 # Keeps line numbers and file name obfuscation
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
+-printconfiguration build/outputs/mapping/configuration.txt
+
+# TODO https://issuetracker.google.com/issues/112230489
+-keepclassmembers,allowobfuscation class * extends androidx.lifecycle.AndroidViewModel {
+    <init>();
+}
+-keepclassmembers,allowobfuscation class * extends androidx.lifecycle.AndroidViewModel {
+    <init>(android.app.Application);
+}
 
 # Keep bridges
 -keep class com.supercilex.robotscouter.Bridge
@@ -13,9 +22,6 @@
 
 # Crashlytics
 -keep class com.google.android.gms.measurement.** { *; }
-
-# Retrofit
--dontwarn okhttp3.**
 
 # Remove logging
 -assumenosideeffects class android.util.Log {
