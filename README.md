@@ -69,8 +69,7 @@ If you know another language, please help
 
 ## Environment setup 💻
 
-1. [Move the dummy files](https://github.com/SUPERCILEX/Robot-Scouter/blob/5105641d0df7043b9b4a20b7b63e4d9b1b47e8da/.buildscript/setup.sh#L23-L27)
-   into position
+1. Run `./gradlew setup`
 1. If you are working with Firestore or need access to other Firebase technologies,
    [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
    and replace the dummy [google-services.json](travis-dummies/google-services.json) with the one

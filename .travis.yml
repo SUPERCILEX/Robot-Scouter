@@ -22,11 +22,5 @@ android:
     - tools
     - tools
 install: nvm install 7
-before_script:
-  - chmod +x gradlew .buildscript/setup.sh .buildscript/build.sh .buildscript/deploy-firebase.sh .buildscript/upload.sh
-  - .buildscript/setup.sh
-script: .buildscript/build.sh
-after_success: .buildscript/upload.sh
-after_failure:
-  - cat app/android-base/build/reports/lint-results.xml
-  - cat app/android-base/build/reports/lint-results.html
+before_script: chmod +x gradlew && ./gradlew setup
+script: ./gradlew ciBuild --stacktrace

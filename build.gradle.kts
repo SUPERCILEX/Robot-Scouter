@@ -24,6 +24,7 @@ buildscript {
 }
 
 plugins {
+    id("com.supercilex.robotscouter.build")
     id("com.github.ben-manes.versions") version "0.20.0"
 }
 
