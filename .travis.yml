@@ -16,4 +16,4 @@ before_install:
   - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
 install: nvm install v10.13.0
 before_script: chmod +x gradlew && ./gradlew setup
-script: ./gradlew ciBuild --stacktrace
+script: ./gradlew clean ciBuild --stacktrace

@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.core.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -19,6 +20,7 @@ private const val DRAWABLE_ATTR_NAME = "drawable"
 private const val ANIMATED_DRAWABLE_ATTR_NAME = "animated-vector"
 
 fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
+    @SuppressLint("ResourceType")
     val parser = resources.getXml(resId)
     try {
         var type = parser.next()

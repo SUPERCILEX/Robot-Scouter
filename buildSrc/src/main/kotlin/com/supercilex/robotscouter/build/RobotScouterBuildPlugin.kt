@@ -36,6 +36,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             description = "Overwrites existing translations with new ones."
         }
 
+        val presubmit = project.tasks.register("presubmit")
         val generateChangelog =
                 project.tasks.register<GenerateChangelog>("generateReleaseChangelog")
         val deployAndroid = project.tasks.register("deployAndroid")
@@ -45,7 +46,6 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         val deployServer = project.tasks.register<DeployServer>("deployServer")
 
         val ciBuildLifecycle = project.tasks.register("ciBuild")
-        val ciBuildPrep = project.tasks.register("buildForCiPrep")
         val ciBuild = project.tasks.register("buildForCi")
 
         project.gradle.taskGraph.whenReady {
@@ -65,53 +65,21 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             it.configureEach { mustRunAfter(paths) }
         }
 
-        ciBuildPrep {
-            dependsOn(deepFind("clean"))
+        presubmit {
+            group = "verification"
+            description = "Runs a tailored set of checks for the build to pass."
 
-            project.gradle.taskGraph.whenReady {
-                if (!hasTask(this@ciBuildPrep)) return@whenReady
-
-                fun skip(task: String, recursive: Boolean = false) {
-                    allTasks.filter { it.name == task }.forEach {
-                        it.enabled = false
-                        if (recursive && hasTask(it)) {
-                            getDependencies(it).filter { it.enabled }.forEach {
-                                skip(it.name, recursive)
-                            }
-                        }
-                    }
-                }
-
-                if (isRelease) {
-                    skip("assembleDebug", true)
-                } else {
-                    skip("testReleaseUnitTest", true)
-                }
-                skip("lint")
-            }
+            dependsOn(deepFind("ktlint"))
+            dependsOn(":app:android-base:lint" + if (isRelease) "Release" else "Debug")
         }
-        run {
-            fun List<TaskCollection<Task>>.config() = mustRunAfter(ciBuildPrep)
-
-            fun String.config() = deepFind { it.path == this }.config()
-
-            val tasksToBeOrdered = if (isRelease) {
-                listOf(
-                        deepFind("build").config(),
-                        ":app:android-base:bundleRelease".config()
-                )
+        ciBuild {
+            dependsOn(presubmit)
+            dependsOn(":app:server:functions:assemble")
+            dependsOn(if (isRelease) {
+                ":app:android-base:bundleRelease"
             } else {
-                listOf(
-                        ":app:android-base:assembleDebug".config(),
-                        deepFind("check").config()
-                )
-            }.flatten()
-
-            ciBuild {
-                dependsOn(ciBuildPrep)
-
-                for (collection in tasksToBeOrdered) dependsOn(collection)
-            }
+                ":app:android-base:assembleDebug"
+            })
         }
 
         ciBuildLifecycle {

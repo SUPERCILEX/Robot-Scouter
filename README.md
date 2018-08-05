@@ -107,7 +107,7 @@ throughout the file and send a pull request with your changes.
    [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
    and replace the dummy [google-services.json](ci-dummies/google-services.json) with the one
    created in your Firebase project
-1. Run `./gradlew check` to make sure the Travis build will pass
+1. Run `./gradlew presubmit` to make sure the Travis build will pass
 1. That's it! 🚀
 
 ## Psst... 🤐

@@ -53,7 +53,10 @@ fun Project.configureGeneral() {
         args = listOf("src/**/*.kt")
 
         val output = File(buildDir, "reports/ktlint/log.txt")
-        inputs.dir(fileTree("src").include("**/*.kt"))
+        inputs.dir(fileTree("src").run {
+            include("**/*.kt")
+            if (dir.exists()) this else null
+        }).optional()
         outputs.file(output)
         outputs.cacheIf { true }
 
@@ -65,6 +68,8 @@ fun Project.configureGeneral() {
 }
 
 fun Project.configureAndroid() {
+    configurations.register("compileClasspath") // TODO see https://youtrack.jetbrains.com/issue/KT-27170
+
     // Resource packaging breaks otherwise for some reason
     tasks.matching { it.name.contains("Test") }.configureEach { enabled = false }
 
@@ -90,6 +95,7 @@ fun Project.configureAndroid() {
         }
 
         lintOptions {
+            isCheckDependencies = true
             isCheckAllWarnings = true
             isWarningsAsErrors = true
             isAbortOnError = false
@@ -97,7 +103,9 @@ fun Project.configureAndroid() {
             baseline(file("$rootDir/app/android-base/lint-baseline.xml"))
             disable(
                     "InvalidPackage", // Needed because of Okio
-                    "GradleDependency", "NewerVersionAvailable" // For build reproducibility
+                    "GradleDependency", "NewerVersionAvailable", // For build reproducibility
+                    "WrongThreadInterprocedural", // Slow
+                    "SyntheticAccessor" // Don't care, proguard should deal with it
             )
 
             val reportsDir = "$buildDir/reports"

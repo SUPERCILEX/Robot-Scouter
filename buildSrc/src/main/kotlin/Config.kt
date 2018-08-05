@@ -46,7 +46,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.4.0-alpha10"
+        val android = "com.android.tools.build:gradle:3.5.0-alpha01"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
@@ -86,7 +86,7 @@ object Config {
 
         object Jetpack {
             private const val lifecycleVersion = "2.1.0-alpha01"
-            private const val workVersion = "1.0.0-beta01"
+            private const val workVersion = "1.0.0-beta02"
 
             val core = "androidx.core:core-ktx:1.1.0-alpha03"
             val multidex = "androidx.multidex:multidex:2.0.1"
@@ -117,7 +117,7 @@ object Config {
             val firestore = "com.google.firebase:firebase-firestore:17.1.5"
             val functions = "com.google.firebase:firebase-functions:16.1.3"
             val storage = "com.google.firebase:firebase-storage:16.0.5"
-            val config = "com.google.firebase:firebase-config:16.1.2"
+            val config = "com.google.firebase:firebase-config:16.1.3"
             val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
             val messaging = "com.google.firebase:firebase-messaging:17.3.4"
             val invites = "com.google.firebase:firebase-invites:16.0.6"
@@ -143,7 +143,7 @@ object Config {
         }
 
         object Misc {
-            private const val leakCanaryVersion = "1.6.2"
+            private const val leakCanaryVersion = "1.6.3"
             private const val retrofitVersion = "2.5.0"
             private const val poiVersion = "3.17"
 
@@ -163,7 +163,7 @@ object Config {
             val glide = "com.github.bumptech.glide:glide:$glideVersion"
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:2.0"
-            val permissions = "pub.devrel:easypermissions:2.0.0"
+            val permissions = "pub.devrel:easypermissions:2.0.1"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.14.0"
             val billing = "com.android.billingclient:billing:1.2"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.2.2"
