@@ -7,7 +7,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-open class CiPrepForAndroidDeployement : DefaultTask() {
+open class CiPrepForAndroidDeployment : DefaultTask() {
     @TaskAction
     fun moveFiles() {
         check(isRelease) { "This action cannot be performed in a dev build." }

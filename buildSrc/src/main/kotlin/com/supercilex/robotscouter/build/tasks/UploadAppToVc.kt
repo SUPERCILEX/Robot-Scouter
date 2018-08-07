@@ -36,6 +36,7 @@ open class UploadAppToVc : DefaultTask() {
                 File(project.child("android-base").buildDir, "outputs/mapping/release/mapping.txt")
                         .copyTo(File(uploadDir, "Robot-Scouter/mapping.txt"), true)
 
+                it.patterns = setOf("Robot-Scouter")
                 it.update = true
             }
             it.commit {

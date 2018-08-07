@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.build
 
 import com.supercilex.robotscouter.build.internal.isRelease
-import com.supercilex.robotscouter.build.tasks.CiPrepForAndroidDeployement
+import com.supercilex.robotscouter.build.tasks.CiPrepForAndroidDeployment
 import com.supercilex.robotscouter.build.tasks.DeployServer
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
@@ -33,8 +33,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         val ciBuildPrep = project.tasks.register("buildForCiPrep")
         val ciBuild = project.tasks.register("buildForCi")
         val ciBuildPhase2 = project.tasks.register("buildForCiPhase2", GradleBuild::class.java)
-        val ciPrepForAndroidDeployement = project.tasks.register(
-                "ciPrepForAndroidDeployement", CiPrepForAndroidDeployement::class.java)
+        val ciPrepForAndroidDeployment = project.tasks.register(
+                "ciPrepForAndroidDeployment", CiPrepForAndroidDeployment::class.java)
 
         project.afterEvaluate {
             fun String.mustRunAfter(vararg paths: Any) = tasks.getByPath(this).mustRunAfter(paths)
@@ -45,7 +45,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             ciBuildPrep.configure {
                 dependsOn(getTasksByName("clean", true))
 
-                doLast {
+                gradle.taskGraph.whenReady {
                     fun Collection<Task>.skip(recursive: Boolean = false): Unit = forEach {
                         it.enabled = false
                         if (recursive) {
@@ -60,6 +60,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                         getTasksByName("assembleDebug", true).skip(true)
                     } else {
                         getTasksByName("processReleaseMetadata", true).skip()
+                        getTasksByName("compileReleaseKotlin", true).skip()
                     }
                     getTasksByName("lint", true).skip()
                 }
@@ -82,7 +83,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 startParameter = project.gradle.startParameter.newInstance()
                 tasks = listOf(deployAndroid.name)
 
-                mustRunAfter(ciPrepForAndroidDeployement)
+                mustRunAfter(ciPrepForAndroidDeployment)
             }
 
             ciBuildLifecycle.configure {
@@ -91,11 +92,11 @@ class RobotScouterBuildPlugin : Plugin<Project> {
 
                 dependsOn(ciBuild)
                 if (isRelease) {
-                    dependsOn(ciPrepForAndroidDeployement, ciBuildPhase2)
+                    dependsOn(ciPrepForAndroidDeployment, ciBuildPhase2)
                     dependsOn(deployServer, uploadAppToVc)
                 }
             }
-            ciPrepForAndroidDeployement.configure {
+            ciPrepForAndroidDeployment.configure {
                 dependsOn(ciBuild)
             }
             deployAndroid.configure {
@@ -112,7 +113,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 dependsOn("app:server:functions:assemble")
             }
             uploadAppToVc.configure {
-                dependsOn(ciPrepForAndroidDeployement)
+                dependsOn(ciPrepForAndroidDeployment)
             }
         }
     }
