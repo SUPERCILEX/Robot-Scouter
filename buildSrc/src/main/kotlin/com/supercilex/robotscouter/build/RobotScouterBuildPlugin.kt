@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.build
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.tasks.CiPrepForAndroidDeployement
 import com.supercilex.robotscouter.build.tasks.DeployServer
+import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
 import org.gradle.api.Plugin
@@ -17,6 +18,10 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         project.tasks.register("setup", Setup::class.java).configure {
             group = "build setup"
             description = "Performs one-time setup to prepare Robot Scouter for building."
+        }
+        project.tasks.register("rebuildSecrets", RebuildSecrets::class.java).configure {
+            group = "build setup"
+            description = "Repackages a new version of the secrets for CI."
         }
 
         val deployAndroid = project.tasks.register("deployAndroid")

@@ -3,10 +3,10 @@ package com.supercilex.robotscouter.build.tasks
 import child
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.orNull
+import com.supercilex.robotscouter.build.internal.secrets
 import com.supercilex.robotscouter.build.internal.shell
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 open class Setup : DefaultTask() {
     @TaskAction
@@ -25,7 +25,7 @@ open class Setup : DefaultTask() {
 
     private fun extractRawSecrets(): Boolean {
         val secrets = project.file("secrets.tar").orNull() ?: return false
-        shell("tar -xvf ${secrets.name}", false)
+        shell("tar -xvf ${secrets.name}")
         return true
     }
 
@@ -43,19 +43,11 @@ open class Setup : DefaultTask() {
     private fun extractDummies(): Boolean {
         check(!isRelease) { "Cannot use dummies for release builds." }
 
-        val dummies = project.file("ci-dummies").orNull() ?: return false
+        val dummies = project.file("ci-dummies").listFiles() ?: return false
 
-        val android = project.child("android-base").projectDir
-        File(dummies, "keystore.jks")
-                .copyTo(File(android, "keystore.jks"))
-        File(dummies, "keystore.properties")
-                .copyTo(File(android, "keystore.properties"))
-        File(dummies, "google-services.json")
-                .copyTo(File(android, "google-services.json"))
-        File(dummies, "google-play-auto-publisher.json")
-                .copyTo(File(android, "google-play-auto-publisher.json"))
-        File(dummies, "config.xml").copyTo(
-                File(project.child("core-data").projectDir, "src/main/res/values/config.xml"))
+        for (dummy in dummies) {
+            secrets.first { it.name == dummy.name }.let { dummy.copyTo(it) }
+        }
 
         return true
     }
