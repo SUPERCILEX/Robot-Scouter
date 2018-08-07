@@ -2,15 +2,15 @@ package com.supercilex.robotscouter.build
 
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.secrets
-import com.supercilex.robotscouter.build.tasks.CiPrepForAndroidDeployment
+import com.supercilex.robotscouter.build.tasks.DeployAndroidPrep
 import com.supercilex.robotscouter.build.tasks.DeployServer
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
+import com.supercilex.robotscouter.build.tasks.UploadAppToVcPrep
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.GradleBuild
 
 class RobotScouterBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -25,17 +25,18 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             description = "Repackages a new version of the secrets for CI."
         }
 
+        val deployAndroidPrep =
+                project.tasks.register("deployAndroidPrep", DeployAndroidPrep::class.java)
         val deployAndroid = project.tasks.register("deployAndroid")
-        val deployServer = project.tasks.register("deployServer", DeployServer::class.java)
+        val uploadAppToVcPrep =
+                project.tasks.register("uploadAppToVcPrep", UploadAppToVcPrep::class.java)
         val uploadAppToVc =
                 project.tasks.register("uploadAppToVersionHistory", UploadAppToVc::class.java)
+        val deployServer = project.tasks.register("deployServer", DeployServer::class.java)
 
         val ciBuildLifecycle = project.tasks.register("ciBuild")
         val ciBuildPrep = project.tasks.register("buildForCiPrep")
         val ciBuild = project.tasks.register("buildForCi")
-        val ciBuildPhase2 = project.tasks.register("buildForCiPhase2", GradleBuild::class.java)
-        val ciPrepForAndroidDeployment = project.tasks.register(
-                "ciPrepForAndroidDeployment", CiPrepForAndroidDeployment::class.java)
 
         project.gradle.taskGraph.whenReady {
             val creds = project.secrets.single { it.name.contains("publish") }
@@ -47,21 +48,17 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            fun String.mustRunAfter(vararg paths: Any) = tasks.getByPath(this).mustRunAfter(paths)
-
-            fun <T : Collection<Task>> T.mustRunAfter(vararg paths: Any) =
-                    onEach { it.mustRunAfter(paths) }
-
             ciBuildPrep.configure {
                 dependsOn(getTasksByName("clean", true))
 
                 gradle.taskGraph.whenReady {
+                    if (!hasTask(this@configure)) return@whenReady
+
                     fun Collection<Task>.skip(recursive: Boolean = false): Unit = forEach {
                         it.enabled = false
                         if (recursive) {
-                            val graph = gradle.taskGraph
-                            if (graph.hasTask(it)) {
-                                graph.getDependencies(it).filter { it.enabled }.skip(recursive)
+                            if (hasTask(it)) {
+                                getDependencies(it).filter { it.enabled }.skip(recursive)
                             }
                         }
                     }
@@ -69,8 +66,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                     if (isRelease) {
                         getTasksByName("assembleDebug", true).skip(true)
                     } else {
-                        getTasksByName("processReleaseMetadata", true).skip()
-                        getTasksByName("compileReleaseKotlin", true).skip()
+                        getTasksByName("testReleaseUnitTest", true).skip(true)
                     }
                     getTasksByName("lint", true).skip()
                 }
@@ -78,22 +74,19 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             ciBuild.configure {
                 dependsOn(ciBuildPrep)
 
-                if (isRelease) {
-                    dependsOn(getTasksByName("build", true).mustRunAfter(ciBuildPrep))
-                    dependsOn("app:android-base:bundleRelease".mustRunAfter(ciBuildPrep))
-                } else {
-                    dependsOn("app:android-base:assembleDebug".mustRunAfter(ciBuildPrep))
-                    dependsOn(getTasksByName("check", true).mustRunAfter(ciBuildPrep))
+                fun Collection<Task>.config() = onEach {
+                    it.mustRunAfter(ciBuildPrep, deployAndroidPrep)
                 }
-            }
-            ciBuildPhase2.configure {
-                // This task requires a full Gradle build because app packaging tasks must be re-run
-                // to apply the new signing keys.
 
-                startParameter = project.gradle.startParameter.newInstance()
-                tasks = listOf(deployAndroid.name)
+                fun String.config() = listOf(tasks.getByPath(this)).config()
 
-                mustRunAfter(ciPrepForAndroidDeployment)
+                if (isRelease) {
+                    dependsOn(getTasksByName("build", true).config())
+                    dependsOn("app:android-base:bundleRelease".config())
+                } else {
+                    dependsOn("app:android-base:assembleDebug".config())
+                    dependsOn(getTasksByName("check", true).config())
+                }
             }
 
             ciBuildLifecycle.configure {
@@ -102,28 +95,30 @@ class RobotScouterBuildPlugin : Plugin<Project> {
 
                 dependsOn(ciBuild)
                 if (isRelease) {
-                    dependsOn(ciPrepForAndroidDeployment, ciBuildPhase2)
-                    dependsOn(deployServer, uploadAppToVc)
+                    dependsOn(deployAndroid, deployServer, uploadAppToVc)
                 }
             }
-            ciPrepForAndroidDeployment.configure {
-                dependsOn(ciBuild)
-            }
+
             deployAndroid.configure {
                 group = "publishing"
                 description = "Deploys Robot Scouter to the Play Store."
 
+                dependsOn(deployAndroidPrep)
                 dependsOn(getTasksByName("publish", true))
                 dependsOn(getTasksByName("crashlyticsUploadDeobs", true))
             }
+            uploadAppToVcPrep.configure {
+                dependsOn(ciBuild)
+            }
+            uploadAppToVc.configure {
+                dependsOn(uploadAppToVcPrep)
+            }
+
             deployServer.configure {
                 group = "publishing"
                 description = "Deploys Robot Scouter to the Web and Backend."
 
                 dependsOn("app:server:functions:assemble")
-            }
-            uploadAppToVc.configure {
-                dependsOn(ciPrepForAndroidDeployment)
             }
         }
     }
