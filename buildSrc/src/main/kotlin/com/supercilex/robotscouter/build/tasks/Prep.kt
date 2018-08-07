@@ -12,17 +12,7 @@ open class DeployAndroidPrep : DefaultTask() {
     fun moveFiles() {
         check(isRelease) { "This action cannot be performed in a dev build." }
 
-        val projectDir = project.child("android-base").projectDir
-
-        // Prep for Bundle generation from upload signing key for publishing
-        Files.move(
-                File(projectDir, "upload-keystore.jks"),
-                File(projectDir, "keystore.jks")
-        )
-        Files.move(
-                File(projectDir, "upload-keystore.properties"),
-                File(projectDir, "keystore.properties")
-        )
+        // TODO dynamically generate release notes
     }
 }
 

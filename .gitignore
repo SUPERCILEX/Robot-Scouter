@@ -12,6 +12,7 @@ google-*.json
 *.jks
 config.xml
 !ci-dummies/keystore.properties
+!ci-dummies/upload-keystore.properties
 !ci-dummies/google-*.json
 !ci-dummies/*.jks
 !ci-dummies/config.xml
