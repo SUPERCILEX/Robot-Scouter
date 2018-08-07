@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.build
 
 import com.supercilex.robotscouter.build.internal.isRelease
+import com.supercilex.robotscouter.build.internal.secrets
 import com.supercilex.robotscouter.build.tasks.CiPrepForAndroidDeployment
 import com.supercilex.robotscouter.build.tasks.DeployServer
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
@@ -35,6 +36,15 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         val ciBuildPhase2 = project.tasks.register("buildForCiPhase2", GradleBuild::class.java)
         val ciPrepForAndroidDeployment = project.tasks.register(
                 "ciPrepForAndroidDeployment", CiPrepForAndroidDeployment::class.java)
+
+        project.gradle.taskGraph.whenReady {
+            val creds = project.secrets.single { it.name.contains("publish") }
+            if (!creds.exists()) {
+                project.getTasksByName("processReleaseMetadata", true).forEach {
+                    it.enabled = false
+                }
+            }
+        }
 
         project.afterEvaluate {
             fun String.mustRunAfter(vararg paths: Any) = tasks.getByPath(this).mustRunAfter(paths)
