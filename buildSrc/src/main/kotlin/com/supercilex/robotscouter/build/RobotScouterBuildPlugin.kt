@@ -2,8 +2,8 @@ package com.supercilex.robotscouter.build
 
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.secrets
-import com.supercilex.robotscouter.build.tasks.DeployAndroidPrep
 import com.supercilex.robotscouter.build.tasks.DeployServer
+import com.supercilex.robotscouter.build.tasks.GenerateChangelog
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
@@ -25,8 +25,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             description = "Repackages a new version of the secrets for CI."
         }
 
-        val deployAndroidPrep =
-                project.tasks.register("deployAndroidPrep", DeployAndroidPrep::class.java)
+        val generateChangelog =
+                project.tasks.register("generateReleaseChangelog", GenerateChangelog::class.java)
         val deployAndroid = project.tasks.register("deployAndroid")
         val uploadAppToVcPrep =
                 project.tasks.register("uploadAppToVcPrep", UploadAppToVcPrep::class.java)
@@ -48,6 +48,9 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
+            fun <T : Collection<Task>> T.mustRunAfter(vararg paths: Any) =
+                    onEach { it.mustRunAfter(paths) }
+
             ciBuildPrep.configure {
                 dependsOn(getTasksByName("clean", true))
 
@@ -74,8 +77,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             ciBuild.configure {
                 dependsOn(ciBuildPrep)
 
-                fun Collection<Task>.config() = onEach {
-                    it.mustRunAfter(ciBuildPrep, deployAndroidPrep)
+                fun Collection<Task>.config() = apply {
+                    mustRunAfter(ciBuildPrep)
                 }
 
                 fun String.config() = listOf(tasks.getByPath(this)).config()
@@ -103,8 +106,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 group = "publishing"
                 description = "Deploys Robot Scouter to the Play Store."
 
-                dependsOn(deployAndroidPrep)
-                dependsOn(getTasksByName("publish", true))
+                dependsOn(generateChangelog)
+                dependsOn(getTasksByName("publish", true).mustRunAfter(generateChangelog))
                 dependsOn(getTasksByName("crashlyticsUploadDeobs", true))
             }
             uploadAppToVcPrep.configure {

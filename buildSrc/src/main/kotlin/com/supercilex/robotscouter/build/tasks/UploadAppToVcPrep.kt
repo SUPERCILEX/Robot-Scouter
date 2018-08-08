@@ -7,15 +7,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-open class DeployAndroidPrep : DefaultTask() {
-    @TaskAction
-    fun moveFiles() {
-        check(isRelease) { "This action cannot be performed in a dev build." }
-
-        // TODO dynamically generate release notes
-    }
-}
-
 open class UploadAppToVcPrep : DefaultTask() {
     @TaskAction
     fun moveFiles() {
