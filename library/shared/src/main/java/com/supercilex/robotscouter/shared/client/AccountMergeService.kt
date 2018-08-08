@@ -66,8 +66,8 @@ internal class AccountMergeService : ManualMergeService() {
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, teamToken)
 
             updateOwner(teamRefs, teamToken, prevUid) { ref ->
-                checkNotNull(teams.find { it.reference.path == ref.path }
-                                     ?.getLong(FIRESTORE_NUMBER))
+                checkNotNull(teams.first { it.reference.path == ref.path }
+                                     .getLong(FIRESTORE_NUMBER))
             }
             for (ref in teamRefs) {
                 ref.update(tokenPath, FieldValue.delete()).logFailures(ref, teamToken)
@@ -79,8 +79,8 @@ internal class AccountMergeService : ManualMergeService() {
             val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, templateToken)
 
             updateOwner(templateRefs, templateToken, prevUid) { ref ->
-                checkNotNull(templates.find { it.reference.path == ref.path }
-                                     ?.getDate(FIRESTORE_TIMESTAMP))
+                checkNotNull(templates.first { it.reference.path == ref.path }
+                                     .getDate(FIRESTORE_TIMESTAMP))
             }
             for (ref in templateRefs) {
                 ref.update(tokenPath, FieldValue.delete()).logFailures(ref, templateToken)

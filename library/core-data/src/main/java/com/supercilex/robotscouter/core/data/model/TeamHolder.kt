@@ -68,7 +68,7 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
     }
 
     override fun onDataChanged() {
-        if (!called && teams.find { it.id == teamListener.value?.id } == null) {
+        if (!called && teams.none { it.id == teamListener.value?.id }) {
             _teamListener.setValue(null)
         }
 

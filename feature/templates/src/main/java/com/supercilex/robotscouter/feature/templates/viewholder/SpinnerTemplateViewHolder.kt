@@ -178,7 +178,7 @@ internal class SpinnerTemplateViewHolder(
             val metric = parent.metric
             if (
                 !hasFocus && v === nameEditor && adapterPosition != -1 &&
-                metric.value.find { it.id == item.id } != null
+                metric.value.any { it.id == item.id }
             ) {
                 metric.update(getUpdatedItems(metric.value))
             }

@@ -44,7 +44,6 @@ open class GenerateChangelog : DefaultTask() {
 
     private fun List<String>.generate(): String {
         val candidate = """
-            |Changes:
             |${joinToString("\n")}
 
             |Report bugs and view the full changelog here: https://github.com/SUPERCILEX/Robot-Scouter/commits/master

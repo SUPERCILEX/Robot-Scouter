@@ -175,7 +175,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
 
             val path = adapter.snapshots[index].ref.path
             // Is this change event just an update to the deleted item?
-            if (localItems.find { it.ref.path == path } == null) return true
+            if (localItems.none { it.ref.path == path }) return true
         }
         return false
     }
@@ -184,9 +184,9 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         val updatedModel = adapter.snapshots[index]
         val originalModelPosition = updatedModel.position
 
-        val hasOnlyPositionChanged = type == ChangeEventType.CHANGED && localItems.find {
+        val hasOnlyPositionChanged = type == ChangeEventType.CHANGED && localItems.any {
             it == updatedModel.apply { position = it.position }
-        } != null
+        }
         updatedModel.position = originalModelPosition
 
         return hasOnlyPositionChanged

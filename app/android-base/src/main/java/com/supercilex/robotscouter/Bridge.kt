@@ -136,9 +136,8 @@ interface AutoScoutFragmentCompanion : InstalledBridgeCompanion {
         const val TAG = "AutoScoutFragment"
         override val moduleName = "autoscout"
 
-        // TODO change to `requireClass`; https://issuetracker.google.com/issues/111017400
         override val instance =
-                Class.forName("com.supercilex.robotscouter.feature.autoscout.AutoScoutFragment")
+                requireClass("com.supercilex.robotscouter.feature.autoscout.AutoScoutFragment")
                         .get<AutoScoutFragmentCompanion>()
     }
 }

@@ -97,7 +97,7 @@ fun ownsTemplateTask(id: String) = async {
         emptyList<DocumentSnapshot>()
     }.map {
         scoutParser.parseSnapshot(it)
-    }.find { it.id == id } != null
+    }.any { it.id == id }
 }.asTask()
 
 suspend fun List<DocumentReference>.shareTemplates(
