@@ -25,7 +25,17 @@ buildscript {
 
 plugins {
     id("com.supercilex.robotscouter.build")
+    id("com.gradle.build-scan") version "1.15.1"
     id("com.github.ben-manes.versions") version "0.20.0"
+}
+
+buildScan {
+    setServer("https://svewtxrrdtkawq4bb45ov6wnha-trial.gradle.com")
+    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+    setTermsOfServiceAgree("yes")
+
+    publishAlwaysIf(isReleaseBuild)
+    tag(if (System.getenv("CI") == null) "Local" else "CI")
 }
 
 // See https://github.com/gradle/kotlin-dsl/issues/607#issuecomment-375687119
