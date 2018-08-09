@@ -122,9 +122,9 @@ abstract class MovableFragmentStatePagerAdapter(
             unusedRestoredFragments.clear()
             savedStates.clear()
 
-            val fragmentIds: List<String> = state.getStringArrayList(KEY_FRAGMENT_IDS)
+            val fragmentIds: List<String> = state.getStringArrayList(KEY_FRAGMENT_IDS).orEmpty()
             val fragmentStates: List<Fragment.SavedState> =
-                    state.getParcelableArrayList(KEY_FRAGMENT_STATES)
+                    state.getParcelableArrayList<Fragment.SavedState>(KEY_FRAGMENT_STATES).orEmpty()
 
             for ((index, id) in fragmentIds.withIndex()) {
                 savedStates[id] = fragmentStates[index]

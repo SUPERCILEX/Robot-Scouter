@@ -56,7 +56,7 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
 
         override fun onShow(dialog: DialogInterface) {
             val width = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_width)
-            window.setLayout(if (width > 0) {
+            window?.setLayout(if (width > 0) {
                 width
             } else {
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -110,7 +110,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog.window.setKeyboardModeVisible()
+        dialog.window?.setKeyboardModeVisible()
     }
 
     protected fun createDialog(@StringRes title: Int, savedInstanceState: Bundle?) =

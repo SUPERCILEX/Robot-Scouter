@@ -77,7 +77,7 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
             ViewModelProviders
                     .of((context as ContextWrapper).baseContext as FragmentActivity)
                     // Ensure our instance is unique since we're mutating the listener
-                    .get(javaClass.canonicalName + it, ScoutsHolder::class.java)
+                    .get(javaClass.name + it, ScoutsHolder::class.java)
                     .apply { init { getTemplatesQuery() } }
         }
         holder?.scouts?.addChangeEventListener(this)

@@ -55,15 +55,20 @@ internal class LinkReceiverActivity : ActivityBase() {
     }
 
     private suspend fun processTeams(link: Uri, token: String?) {
-        val refs = link.getQueryParameter(KEYS).split(",").map { teamsRef.document(it) }
+        val refs = checkNotNull(link.getQueryParameter(KEYS)).split(",").map {
+            teamsRef.document(it)
+        }
 
         if (token != null) updateOwner(refs, token, null) { ref ->
-            link.getQueryParameter(ref.id).toLong()
+            checkNotNull(link.getQueryParameter(ref.id)).toLong()
         }
 
         if (refs.isSingleton) {
             val id = refs.single().id
-            val data = getScoutBundle(teamWithSafeDefaults(link.getQueryParameter(id).toLong(), id))
+            val data = getScoutBundle(teamWithSafeDefaults(
+                    checkNotNull(link.getQueryParameter(id)).toLong(),
+                    id
+            ))
 
             if (isInTabletMode()) {
                 startActivity(intentFor<HomeActivity>(SCOUT_ARGS_KEY to data)
@@ -81,7 +86,9 @@ internal class LinkReceiverActivity : ActivityBase() {
     }
 
     private suspend fun processTemplates(link: Uri, token: String?) {
-        val refs = link.getQueryParameter(KEYS).split(",").map { templatesRef.document(it) }
+        val refs = checkNotNull(link.getQueryParameter(KEYS)).split(",").map {
+            templatesRef.document(it)
+        }
 
         if (token != null) updateOwner(refs, token, null) { Date() }
 

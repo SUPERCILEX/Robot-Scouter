@@ -19,7 +19,7 @@ fun <T : CharSequence> T?.nullOrFull() = if (isNullOrBlank()) null else this
 
 fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
 
-fun Bundle.getRef() = FirebaseFirestore.getInstance().document(getString(REF_KEY))
+fun Bundle.getRef() = FirebaseFirestore.getInstance().document(checkNotNull(getString(REF_KEY)))
 
 fun Team.toBundle() = bundleOf(TEAM_KEY to this@toBundle)
 
@@ -27,11 +27,11 @@ fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(t
 
 fun List<Team>.toBundle() = bundleOf(TEAMS_KEY to ArrayList(this@toBundle))
 
-fun Bundle.getTeam(): Team = getParcelable(TEAM_KEY)
+fun Bundle.getTeam(): Team = checkNotNull(getParcelable(TEAM_KEY))
 
 fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra(TEAMS_KEY)
 
-fun Bundle.getTeamList(): List<Team> = getParcelableArrayList(TEAMS_KEY)
+fun Bundle.getTeamList(): List<Team> = checkNotNull(getParcelableArrayList(TEAMS_KEY))
 
 fun getTabIdBundle(key: String?) = bundleOf(TAB_KEY to key)
 

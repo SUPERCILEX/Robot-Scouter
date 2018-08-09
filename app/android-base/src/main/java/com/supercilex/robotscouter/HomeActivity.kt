@@ -287,7 +287,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     private fun handleIntent(intent: Intent) {
         intent.extras?.let {
             when {
-                it.containsKey(SCOUT_ARGS_KEY) -> onTeamSelected(it.getBundle(SCOUT_ARGS_KEY), true)
+                it.containsKey(SCOUT_ARGS_KEY) ->
+                    onTeamSelected(checkNotNull(it.getBundle(SCOUT_ARGS_KEY)), true)
                 it.containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
                 it.containsKey(UPDATE_EXTRA) -> showStoreListing()
             }

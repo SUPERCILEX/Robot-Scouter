@@ -36,7 +36,7 @@ class TemplateListActivity : ActivityBase() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        templateListFragment.handleArgs(intent.extras)
+        templateListFragment.handleArgs(checkNotNull(intent.extras))
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == android.R.id.home) {
