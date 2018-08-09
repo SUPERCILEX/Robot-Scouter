@@ -46,7 +46,8 @@ open class Setup : DefaultTask() {
         val dummies = project.file("ci-dummies").listFiles() ?: return false
 
         for (dummy in dummies) {
-            secrets.first { it.name == dummy.name }.let { dummy.copyTo(it) }
+            val dest = secrets.first { it.name == dummy.name }
+            if (!dest.exists()) dummy.copyTo(dest)
         }
 
         return true
