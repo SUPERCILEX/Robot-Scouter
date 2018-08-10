@@ -12,28 +12,28 @@ import deepFind
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.kotlin.dsl.register
 
 class RobotScouterBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         check(project === project.rootProject) { "Cannot apply build plugin to subprojects." }
 
-        project.tasks.register("setup", Setup::class.java).configure {
+        project.tasks.register<Setup>("setup") {
             group = "build setup"
             description = "Performs one-time setup to prepare Robot Scouter for building."
         }
-        project.tasks.register("rebuildSecrets", RebuildSecrets::class.java).configure {
+        project.tasks.register<RebuildSecrets>("rebuildSecrets") {
             group = "build setup"
             description = "Repackages a new version of the secrets for CI."
         }
 
         val generateChangelog =
-                project.tasks.register("generateReleaseChangelog", GenerateChangelog::class.java)
+                project.tasks.register<GenerateChangelog>("generateReleaseChangelog")
         val deployAndroid = project.tasks.register("deployAndroid")
-        val uploadAppToVcPrep =
-                project.tasks.register("uploadAppToVcPrep", UploadAppToVcPrep::class.java)
+        val uploadAppToVcPrep = project.tasks.register<UploadAppToVcPrep>("uploadAppToVcPrep")
         val uploadAppToVc =
-                project.tasks.register("uploadAppToVersionHistory", UploadAppToVc::class.java)
-        val deployServer = project.tasks.register("deployServer", DeployServer::class.java)
+                project.tasks.register<UploadAppToVc>("uploadAppToVersionHistory")
+        val deployServer = project.tasks.register<DeployServer>("deployServer")
 
         val ciBuildLifecycle = project.tasks.register("ciBuild")
         val ciBuildPrep = project.tasks.register("buildForCiPrep")

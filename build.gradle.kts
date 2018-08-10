@@ -59,13 +59,11 @@ tasks.withType<Wrapper> {
 
 fun Project.configureGeneral() {
     configurations {
-        "releaseRuntimeClasspath" {
-            resolutionStrategy.activateDependencyLocking()
-        }
+        maybeCreate("releaseRuntimeClasspath").resolutionStrategy.activateDependencyLocking()
         create("ktlint")
     }
 
-    tasks.register("ktlint", JavaExec::class.java) {
+    tasks.register<JavaExec>("ktlint") {
         main = "com.github.shyiko.ktlint.Main"
         classpath = configurations.getByName("ktlint")
         args = listOf("src/**/*.kt")
