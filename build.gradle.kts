@@ -35,7 +35,7 @@ buildScan {
     setTermsOfServiceAgree("yes")
 
     publishAlways()
-    tag(if (System.getenv("CI") == null) "Local" else "CI")
+    for (tag in buildTags) tag(tag)
 }
 
 // See https://github.com/gradle/kotlin-dsl/issues/607#issuecomment-375687119
