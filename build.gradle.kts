@@ -34,7 +34,7 @@ buildScan {
     setTermsOfServiceUrl("https://gradle.com/terms-of-service")
     setTermsOfServiceAgree("yes")
 
-    publishAlwaysIf(isReleaseBuild)
+    publishAlways()
     tag(if (System.getenv("CI") == null) "Local" else "CI")
 }
 
