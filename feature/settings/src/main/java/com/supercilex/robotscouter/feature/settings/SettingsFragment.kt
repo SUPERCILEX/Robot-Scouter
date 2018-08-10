@@ -17,7 +17,6 @@ import androidx.fragment.app.transaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
-import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroup
 import androidx.preference.PreferenceGroupAdapter
@@ -91,17 +90,6 @@ internal class SettingsFragment : PreferenceFragmentBase(),
         when (preference) {
             is PreferenceGroup -> preference.forEach {
                 onPreferenceChange(it, null)
-            }
-            is ListPreference -> {
-                if (preference.value == null) {
-                    preference.apply {
-                        isPersistent = false
-                        value = Preference::class.java.getDeclaredField("mDefaultValue")
-                                .apply { isAccessible = true }
-                                .get(preference)?.toString()
-                        isPersistent = true
-                    }
-                }
             }
             else -> when (preference.key) {
                 KEY_LINK_ACCOUNT, KEY_SIGN_OUT -> preference.isVisible = isFullUser

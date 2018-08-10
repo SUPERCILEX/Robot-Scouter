@@ -17,7 +17,7 @@ object Config {
         val fabric = "io.fabric.tools:gradle:1.25.4"
         val publishing = "com.github.Triple-T:gradle-play-publisher:a0a896d878"
 
-        val ktlint = "com.github.shyiko:ktlint:0.24.0"
+        val ktlint = "com.github.shyiko:ktlint:0.27.0"
     }
 
     object Libs {
@@ -43,8 +43,8 @@ object Config {
         }
 
         object Jetpack {
-            private const val version = "1.0.0-beta01"
-            private const val lifecycleVersion = "2.0.0-beta01"
+            private const val version = "1.0.0-rc01"
+            private const val lifecycleVersion = "2.0.0-rc01"
             private const val workVersion = "1.0.0-alpha06"
 
             val core = "androidx.core:core-ktx:$version"
@@ -100,7 +100,7 @@ object Config {
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
             val facebook = "com.facebook.android:facebook-login:4.35.0"
-            val twitter = "com.twitter.sdk.android:twitter-core:3.1.1@aar"
+            val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
         object Misc {
@@ -124,7 +124,7 @@ object Config {
             val glide = "com.github.bumptech.glide:glide:$glideVersion"
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
-            val permissions = "pub.devrel:easypermissions:1.2.0"
+            val permissions = "pub.devrel:easypermissions:1.3.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.1"
             val billing = "com.android.billingclient:billing:1.1"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.1"
