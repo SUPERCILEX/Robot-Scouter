@@ -65,13 +65,13 @@ fun Project.configureGeneral() {
         create("ktlint")
     }
 
-    task("ktlint", JavaExec::class) {
+    tasks.register("ktlint", JavaExec::class.java) {
         main = "com.github.shyiko.ktlint.Main"
         classpath = configurations.getByName("ktlint")
         args = listOf("src/**/*.kt")
     }
-    tasks.whenTaskAdded {
-        if (name == "check") dependsOn("ktlint")
+    whenTaskScheduled("check") {
+        dependsOn("ktlint")
     }
 
     dependencies { "ktlint"(Config.Plugins.ktlint) }
@@ -79,8 +79,8 @@ fun Project.configureGeneral() {
 
 fun Project.configureAndroid() {
     // Resource packaging breaks otherwise for some reason
-    tasks.whenTaskAdded {
-        if (name.contains("Test")) enabled = false
+    whenTaskScheduled({ it.contains("Test") }) {
+        enabled = false
     }
 
     val tree = (group as String).split(".")

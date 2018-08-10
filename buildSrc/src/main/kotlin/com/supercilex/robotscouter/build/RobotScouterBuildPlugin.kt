@@ -8,6 +8,7 @@ import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
 import com.supercilex.robotscouter.build.tasks.UploadAppToVcPrep
+import deepFind
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -52,7 +53,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                     onEach { it.mustRunAfter(paths) }
 
             ciBuildPrep.configure {
-                dependsOn(getTasksByName("clean", true))
+                dependsOn(deepFind("clean"))
 
                 gradle.taskGraph.whenReady {
                     if (!hasTask(this@configure)) return@whenReady
@@ -67,11 +68,11 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                     }
 
                     if (isRelease) {
-                        getTasksByName("assembleDebug", true).skip(true)
+                        deepFind("assembleDebug").skip(true)
                     } else {
-                        getTasksByName("testReleaseUnitTest", true).skip(true)
+                        deepFind("testReleaseUnitTest").skip(true)
                     }
-                    getTasksByName("lint", true).skip()
+                    deepFind("lint").skip()
                 }
             }
             ciBuild.configure {
@@ -81,14 +82,14 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                     mustRunAfter(ciBuildPrep)
                 }
 
-                fun String.config() = listOf(tasks.getByPath(this)).config()
+                fun String.config() = deepFind { it.path == this }.config()
 
                 if (isRelease) {
-                    dependsOn(getTasksByName("build", true).config())
-                    dependsOn("app:android-base:bundleRelease".config())
+                    dependsOn(deepFind("build").config())
+                    dependsOn(":app:android-base:bundleRelease".config())
                 } else {
-                    dependsOn("app:android-base:assembleDebug".config())
-                    dependsOn(getTasksByName("check", true).config())
+                    dependsOn(":app:android-base:assembleDebug".config())
+                    dependsOn(deepFind("check").config())
                 }
             }
 
@@ -107,8 +108,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 description = "Deploys Robot Scouter to the Play Store."
 
                 dependsOn(generateChangelog)
-                dependsOn(getTasksByName("publish", true).mustRunAfter(generateChangelog))
-                dependsOn(getTasksByName("crashlyticsUploadDeobs", true))
+                dependsOn(deepFind("publish").mustRunAfter(generateChangelog))
+                dependsOn(deepFind("crashlyticsUploadDeobs"))
             }
             uploadAppToVcPrep.configure {
                 dependsOn(ciBuild)
