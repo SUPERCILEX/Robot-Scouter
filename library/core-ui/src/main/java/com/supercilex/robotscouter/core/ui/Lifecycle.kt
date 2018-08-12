@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.ui
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -12,6 +13,12 @@ inline fun <T : Any> LiveData<T>.observeNonNull(
         owner: LifecycleOwner,
         crossinline observer: (T) -> Unit
 ) = observe(owner, Observer { observer(checkNotNull(it)) })
+
+fun Fragment.addViewLifecycleObserver(observer: LifecycleObserver) {
+    viewLifecycleOwnerLiveData.observeForever {
+        it?.lifecycle?.addObserver(observer)
+    }
+}
 
 @Suppress("FunctionName") // Fake class
 fun <T> Fragment.LifecycleAwareLazy(evaluator: () -> T) = LifecycleAwareLazy(this, evaluator)
@@ -29,9 +36,7 @@ class LifecycleAwareLazy<T>(
     private var value: T? = null
 
     init {
-        fragment.viewLifecycleOwnerLiveData.observeForever {
-            it?.lifecycle?.addObserver(this)
-        }
+        fragment.addViewLifecycleObserver(this)
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>) =

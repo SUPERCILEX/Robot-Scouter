@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.core.data.model.ScoutsHolder
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.Saveable
+import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.find
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
@@ -56,9 +57,7 @@ abstract class TabPagerAdapterBase(
         get() = tabs.getTabAt(currentScouts.indexOfFirst { it.id == currentTabId })
 
     fun init() {
-        fragment.viewLifecycleOwnerLiveData.observeForever {
-            it?.lifecycle?.addObserver(this)
-        }
+        fragment.addViewLifecycleObserver(this)
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 

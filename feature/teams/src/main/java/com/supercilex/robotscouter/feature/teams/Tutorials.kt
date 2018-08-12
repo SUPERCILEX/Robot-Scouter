@@ -1,6 +1,8 @@
 package com.supercilex.robotscouter.feature.teams
 
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
@@ -13,13 +15,15 @@ import com.supercilex.robotscouter.core.data.hasShownSignInTutorial
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.data.teams
+import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
 import org.jetbrains.anko.find
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import com.supercilex.robotscouter.R as RC
 
 internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
-    helper.hasShownAddTeamTutorial.observe(owner.viewLifecycleOwner, object : Observer<Boolean?> {
-        private val prompt = run {
+    helper.hasShownAddTeamTutorial.observe(owner.viewLifecycleOwner, object :
+            TutorialObserverBase<Boolean?>(owner) {
+        override val prompt = run {
             val activity = owner.requireActivity()
             MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
                     .setTarget(RC.id.fab)
@@ -41,8 +45,9 @@ internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
 }
 
 internal fun showSignInTutorial(helper: TutorialHelper, owner: Fragment) {
-    helper.hasShownSignInTutorial.observe(owner.viewLifecycleOwner, object : Observer<Boolean?> {
-        private val prompt
+    helper.hasShownSignInTutorial.observe(owner.viewLifecycleOwner, object :
+            TutorialObserverBase<Boolean?>(owner) {
+        private val _prompt
             get() = run {
                 val activity = owner.requireActivity()
                 MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
@@ -58,15 +63,30 @@ internal fun showSignInTutorial(helper: TutorialHelper, owner: Fragment) {
                         }
                         .create()
             }
-        private var latestPrompt: MaterialTapTargetPrompt? = null
+        override var prompt: MaterialTapTargetPrompt? = null
 
         override fun onChanged(hasShownTutorial: Boolean?) {
-            if (hasShownAddTeamTutorial && hasShownTutorial == false) prompt?.apply {
-                show()
-                latestPrompt = this
-            } else latestPrompt?.dismiss()
+            if (hasShownAddTeamTutorial && hasShownTutorial == false) {
+                prompt = _prompt
+                prompt?.show()
+            } else {
+                prompt?.dismiss()
+            }
         }
     })
+}
+
+private abstract class TutorialObserverBase<T>(owner: Fragment) : Observer<T>,
+        DefaultLifecycleObserver {
+    protected abstract val prompt: MaterialTapTargetPrompt?
+
+    init {
+        owner.addViewLifecycleObserver(this)
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        prompt?.dismiss()
+    }
 }
 
 internal class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase {
