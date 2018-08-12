@@ -43,6 +43,7 @@ import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.itemsSequence
 import org.jetbrains.anko.longToast
 
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
@@ -101,12 +102,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             supportFragmentManager.transaction {
                 val currentFragment =
                         checkNotNull(supportFragmentManager.findFragmentById(R.id.content))
-                val newTag = when (it.itemId) {
-                    R.id.teams -> TeamListFragmentCompanion.TAG
-                    R.id.autoScout -> AutoScoutFragmentCompanion.TAG
-                    R.id.templates -> TemplateListFragmentCompanion.TAG
-                    else -> error("Unknown id: ${it.itemId}")
-                }
+                val newTag = destIdToTag(it.itemId)
 
                 if (currentFragment.tag == newTag) {
                     (currentFragment as? Refreshable)?.refresh()
@@ -150,6 +146,13 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
 
         GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
+    }
+
+    private fun destIdToTag(id: Int) = when (id) {
+        R.id.teams -> TeamListFragmentCompanion.TAG
+        R.id.autoScout -> AutoScoutFragmentCompanion.TAG
+        R.id.templates -> TemplateListFragmentCompanion.TAG
+        else -> error("Unknown id: $id")
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -262,6 +265,24 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level == TRIM_MEMORY_MODERATE || level == TRIM_MEMORY_RUNNING_LOW) {
+            supportFragmentManager.apply {
+                val currentDestId = bottomNavigation.selectedItemId
+                val unfocusedFragments = bottomNavigation.menu.itemsSequence()
+                        .filterNot { it.itemId == currentDestId }
+                        .map { it.itemId }
+                        .map(::destIdToTag)
+                        .map(::findFragmentByTag)
+                        .filterNotNull()
+                        .toList()
+
+                transaction { for (f in unfocusedFragments) remove(f) }
+            }
+        }
     }
 
     override fun export() {

@@ -18,7 +18,6 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.Refreshable
@@ -34,11 +33,13 @@ import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.observeNonNull
+import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_team_list.*
 import org.jetbrains.anko.find
@@ -48,25 +49,26 @@ import com.supercilex.robotscouter.R as RC
 internal class TeamListFragment : FragmentBase(), TeamSelectionListener, SelectedTeamsRetriever,
         OnBackPressedListener, KeyboardShortcutListener, Refreshable, View.OnClickListener {
     override val selectedTeams: List<Team>
-        get() = if (::adapter.isInitialized) {
-            selectionTracker.selection.map { id -> adapter.snapshots.first { it.id == id } }
-        } else {
+        get() = if (view == null) {
             emptyList()
+        } else {
+            selectionTracker.selection.map { id -> adapter.snapshots.first { it.id == id } }
         }
 
     private val holder by unsafeLazy {
         ViewModelProviders.of(this).get<TeamListHolder>()
-                .also { onHolderReadyTask.setResult(it) }
     }
-    private val onHolderReadyTask = TaskCompletionSource<TeamListHolder>()
     private val tutorialHelper by unsafeLazy {
         ViewModelProviders.of(this).get<TutorialHelper>()
     }
 
     private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
-    private lateinit var adapter: TeamListAdapter
-    private lateinit var selectionTracker: SelectionTracker<String>
-    private lateinit var menuHelper: TeamMenuHelper
+    private var adapter: TeamListAdapter by LifecycleAwareLazy()
+    private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
+        savedSelection = MutableSelection<String>().apply { it.copySelection(this) }
+        it.clearSelection()
+    }
+    private var menuHelper: TeamMenuHelper by LifecycleAwareLazy()
     private var savedSelection: Selection<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,17 +149,16 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
 
     override fun onDestroyView() {
         super.onDestroyView()
-        savedSelection = MutableSelection<String>().apply { selectionTracker.copySelection(this) }
-        selectionTracker.clearSelection()
-
         fab.hide()
         fab.isVisible = false // Hack: don't animate
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         holder.onSaveInstanceState(outState)
-        if (::adapter.isInitialized) adapter.onSaveInstanceState(outState)
-        if (::selectionTracker.isInitialized) selectionTracker.onSaveInstanceState(outState)
+        if (view != null) {
+            adapter.onSaveInstanceState(outState)
+            selectionTracker.onSaveInstanceState(outState)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -169,7 +170,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
 
     override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
-        onHolderReadyTask.task.addOnSuccessListener { it.selectTeam(args.getParcelable(TEAM_KEY)) }
+        holder.selectTeam(args.getParcelable(TEAM_KEY))
     }
 
     override fun onClick(v: View) {
