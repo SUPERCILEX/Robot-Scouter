@@ -3,6 +3,7 @@ dependencies {
     api(project(":library:core-ui"))
 
     api(Config.Libs.FirebaseUi.auth)
+    api(Config.Libs.PlayServices.auth)
     api(Config.Libs.Misc.glide)
     api(Config.Libs.Misc.permissions)
 

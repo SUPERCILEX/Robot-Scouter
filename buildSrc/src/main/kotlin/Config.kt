@@ -72,25 +72,24 @@ object Config {
 
         object Firebase {
             val core = "com.google.firebase:firebase-core:16.0.1"
-            val auth = "com.google.firebase:firebase-auth:16.0.2"
-            val firestore = "com.google.firebase:firebase-firestore:17.0.4"
+            val auth = "com.google.firebase:firebase-auth:16.0.3"
+            val firestore = "com.google.firebase:firebase-firestore:17.0.5"
             val functions = "com.google.firebase:firebase-functions:16.1.0"
             val storage = "com.google.firebase:firebase-storage:16.0.1"
             val config = "com.google.firebase:firebase-config:16.0.0"
             val indexing = "com.google.firebase:firebase-appindexing:16.0.1"
-            val messaging = "com.google.firebase:firebase-messaging:17.1.0"
+            val messaging = "com.google.firebase:firebase-messaging:17.3.0"
             val invites = "com.google.firebase:firebase-invites:16.0.1"
-            val perf = "com.google.firebase:firebase-perf:16.0.0"
+            val perf = "com.google.firebase:firebase-perf:16.1.0"
+            val iid = "com.google.firebase:firebase-iid:17.0.0"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.4"
         }
 
         object PlayServices {
-            private const val version = "15.0.1"
-
-            val auth = "com.google.android.gms:play-services-auth:$version"
-            val nearby = "com.google.android.gms:play-services-nearby:$version"
-            val playCore = "com.google.android.play:core:1.2.0"
+            val auth = "com.google.android.gms:play-services-auth:16.0.0"
+            val nearby = "com.google.android.gms:play-services-nearby:15.0.1"
+            val playCore = "com.google.android.play:core:1.3.1"
         }
 
         object FirebaseUi {
