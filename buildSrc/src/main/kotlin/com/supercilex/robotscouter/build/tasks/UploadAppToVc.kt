@@ -18,9 +18,9 @@ open class UploadAppToVc : DefaultTask() {
         val uploadDir = File(project.rootDir.parentFile, "uploads")
 
         Grgit.clone {
-            it.credentials = Credentials(System.getenv("GIT_TOKEN"))
-            it.uri = "https://github.com/SUPERCILEX/app-version-history.git"
-            it.dir = uploadDir
+            credentials = Credentials(System.getenv("GIT_TOKEN"))
+            uri = "https://github.com/SUPERCILEX/app-version-history.git"
+            dir = uploadDir
         }.use {
             it.repository.jgit.repository.config.apply {
                 load()
@@ -36,8 +36,8 @@ open class UploadAppToVc : DefaultTask() {
                 File(project.child("android-base").buildDir, "outputs/mapping/release/mapping.txt")
                         .copyTo(File(uploadDir, "Robot-Scouter/mapping.txt"), true)
 
-                it.patterns = setOf("Robot-Scouter")
-                it.update = true
+                patterns = setOf("Robot-Scouter")
+                update = true
             }
             it.commit {
                 val dump =
@@ -47,7 +47,7 @@ open class UploadAppToVc : DefaultTask() {
                         }()
                 val versionCode = dump.substringAfter("versionCode='").substringBefore("'")
 
-                it.message = """
+                message = """
                     |$versionCode
 
                     |https://github.com/SUPERCILEX/Robot-Scouter/compare/${System.getenv("TRAVIS_COMMIT_RANGE")}
@@ -57,7 +57,7 @@ open class UploadAppToVc : DefaultTask() {
                 """.trimMargin()
             }
             it.push {
-                it.refsOrSpecs = listOf("master")
+                refsOrSpecs = listOf("master")
             }
         }
     }

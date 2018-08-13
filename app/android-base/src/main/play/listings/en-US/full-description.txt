@@ -1,0 +1,29 @@
+﻿Robot Scouter is an open-source Android app with three core goals: make FIRST competition robot scouting easy, efficient, and collaborative.
+
+GitHub repo: https://github.com/SUPERCILEX/Robot-Scouter
+
+
+<h3><b>Features</b></h3>
+&#8195;&#8226; <b>Full offline support</b> 📡
+&#8195;&#8226; <b>No setup required e.g. no databases</b> 🗄️ (managing databases = 💩)
+&#8195;&#8226; Easy sharing between users 🔗
+&#8195;&#8226; Seamless collaboration: multiple people can scout the same team, different teams, or go solo on Android N and use split screen mode to scout several teams at once.
+&#8195;&#8226; <b>Customizable scouting templates</b> 📃 with several different metrics to choose from:
+&#8195;&#8195;&#8226; header/title 🔖
+&#8195;&#8195;&#8226; true/false (checkbox)
+&#8195;&#8195;&#8226; stopwatch (for keeping track of cycle time) ⏱️
+&#8195;&#8195;&#8226; number (counter)
+&#8195;&#8195;&#8226; list (item selector)
+&#8195;&#8195;&#8226; text (notes) 📜
+&#8195;&#8226; <b>Integration with The Blue Alliance</b> to automatically populate relevant team info
+&#8195;&#8226; <b>Advanced spreadsheet exporting:</b>
+&#8195;&#8195;&#8226; Averages are computed for each team automatically
+&#8195;&#8195;&#8226; A global average sheet is included to compare teams against each other 📊
+&#8195;&#8195;&#8226; Fancy formatting on devices with Android Lollipop (21) and above 🎀
+&#8195;&#8195;&#8226; <b>Charts!</b> 📈
+&#8195;&#8195;&#8226; PSA: Excel spreadsheets can easily be converted to Google Sheets: https://support.google.com/docs/answer/6055139.
+&#8195;&#8195;&#8226; JSON exports are also supported for custom analysis (e.g. in Tableau)
+&#8195;&#8226; And more!
+
+
+<b>Note: in-app purchases are only used for donations. <i>Robot Scouter​ is and always will be 100% free.</i></b>

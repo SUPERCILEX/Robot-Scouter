@@ -31,7 +31,7 @@ open class GenerateChangelog : DefaultTask() {
 
         Grgit.open().use {
             val changelog = it.log {
-                it.range(old, head)
+                range(old, head)
             }.reversed().map {
                 "- ${it.shortMessage}"
             }.generate()

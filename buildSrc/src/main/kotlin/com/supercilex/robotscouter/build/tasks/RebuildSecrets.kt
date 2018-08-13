@@ -21,7 +21,7 @@ open class RebuildSecrets : DefaultTask() {
         val tarTargets = files.map { it.relativeTo(project.projectDir) }.joinToString(" ")
         shell("tar -cvf $rawSecrets $tarTargets")
         shell("travis encrypt-file -f $rawSecrets")
-        Grgit.open().use { it.add { it.patterns = setOf(output.name) } }
+        Grgit.open().use { it.add { patterns = setOf(output.name) } }
 
         project.delete(rawSecrets)
     }
