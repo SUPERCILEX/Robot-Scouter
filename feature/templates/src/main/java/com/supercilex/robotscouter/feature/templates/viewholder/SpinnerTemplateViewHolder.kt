@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.LateinitVal
-import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.data.model.updateSelectedValueId
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.getDrawableCompat
@@ -145,10 +143,7 @@ internal class SpinnerTemplateViewHolder(
 
             val metric = parent.metric
             val oldDefaultId = metric.selectedValueId
-            firestoreBatch {
-                metric.updateSelectedValueId(item.id)
-                metric.update(items, this)
-            }.logFailures()
+            metric.updateSelectedValueId(item.id)
             parent.items.notifyItemsNoChangeAnimation {
                 parent.items.setHasFixedSize(true)
                 notifyItemChanged(items.indexOfFirst { it.id == oldDefaultId }.let {

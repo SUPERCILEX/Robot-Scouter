@@ -20,7 +20,8 @@ import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.supercilex.robotscouter.common.second
-import com.supercilex.robotscouter.core.data.model.update
+import com.supercilex.robotscouter.core.data.model.add
+import com.supercilex.robotscouter.core.data.model.remove
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.longSnackbar
@@ -104,14 +105,13 @@ open class StopwatchViewHolder(
             timer = Timer(this)
         } else {
             val lap = currentTimer.cancel()
-            metric.update(metric.value.toMutableList().apply { add(lap) })
+            metric.add(metric.value.size, lap)
 
             metric.value.size.let { notifyCycleAdded(it, it) }
 
             longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, RC.string.undo) {
                 val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
-                val newCycles = metric.value.toMutableList().apply { remove(lap) }
-                metric.update(newCycles)
+                metric.remove(lap)
 
                 notifyCycleRemoved(metric.value.size, metric.value.size, hadAverage)
                 timer = Timer(this, currentTimer.startTimeMillis)
@@ -359,17 +359,13 @@ open class StopwatchViewHolder(
 
             val newCycles = metric.value.toMutableList()
             val deletedCycle = newCycles.removeAt(position)
-            metric.update(newCycles)
+            metric.remove(deletedCycle)
 
             holder.notifyCycleRemoved(position, metric.value.size, hadAverage)
 
             longSnackbar(itemView, R.string.deleted, R.string.undo) {
                 val latestMetric = holder.metric
-
-                latestMetric.update(latestMetric.value.toMutableList().apply {
-                    add(position, deletedCycle)
-                })
-
+                latestMetric.add(position, deletedCycle)
                 holder.notifyCycleAdded(rawPosition, latestMetric.value.size)
             }
 

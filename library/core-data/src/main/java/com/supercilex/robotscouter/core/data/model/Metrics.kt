@@ -3,8 +3,8 @@ package com.supercilex.robotscouter.core.data.model
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.WriteBatch
 import com.supercilex.robotscouter.common.FIRESTORE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
@@ -121,27 +121,41 @@ fun Metric.Number.updateUnit(new: String?) {
     }
 }
 
-fun Metric.List.update(items: List<Metric.List.Item>, batch: WriteBatch? = null) {
+fun Metric.Stopwatch.add(index: Int, lap: Long) {
+    value = value.toMutableList().apply { add(index, lap) }
+    logUpdate()
+
+    ref.update(FIRESTORE_VALUE, if (index == value.lastIndex) { // Append
+        FieldValue.arrayUnion(lap)
+    } else { // Insert
+        value // No APIs for this yet, just rewrite the whole array
+    }).logFailures(ref, "Adding lap at position $index: $lap")
+}
+
+fun Metric.Stopwatch.remove(lap: Long) {
+    value = value.toMutableList().apply { remove(lap) }
+    logUpdate()
+
+    ref.update(FIRESTORE_VALUE, FieldValue.arrayRemove(lap))
+            .logFailures(ref, "Removing lap: $lap")
+}
+
+fun Metric.List.update(items: List<Metric.List.Item>) {
     if (value != items) {
         value = items
-        update(batch, FIRESTORE_VALUE, items.map {
+
+        ref.update(FIRESTORE_VALUE, items.map {
             mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
-        })
+        }).logFailures(ref, "Updating items: $items")
     }
 }
 
-fun Metric.List.updateSelectedValueId(new: String?) {
+fun Metric.List.updateSelectedValueId(new: String) {
     if (selectedValueId != new) {
         selectedValueId = new
         logUpdate()
-        update(null, FIRESTORE_SELECTED_VALUE_ID, new as Any)
-    }
-}
 
-private fun Metric.List.update(batch: WriteBatch?, id: String, any: Any) {
-    if (batch == null) {
-        ref.update(id, any).logFailures(ref, "Id: $id, update: $any")
-    } else {
-        batch.update(ref, id, any)
+        ref.update(FIRESTORE_SELECTED_VALUE_ID, new)
+                .logFailures(ref, "Updated selected value: $new")
     }
 }
