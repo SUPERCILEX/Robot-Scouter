@@ -8,6 +8,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url = uri("https://plugins.gradle.org/m2/") }
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://maven.fabric.io/public") }
         maven { url = uri("https://dl.bintray.com/kotlin/kotlin-dev/") }
@@ -38,9 +39,6 @@ buildScan {
     for (tag in buildTags) tag(tag)
 }
 
-// See https://github.com/gradle/kotlin-dsl/issues/607#issuecomment-375687119
-subprojects { parent!!.path.takeIf { it != rootProject.path }?.let { evaluationDependsOn(it) } }
-
 allprojects {
     repositories {
         google()
@@ -58,18 +56,14 @@ tasks.withType<Wrapper> {
 }
 
 fun Project.configureGeneral() {
-    configurations {
-        maybeCreate("releaseRuntimeClasspath").resolutionStrategy.activateDependencyLocking()
-        create("ktlint")
-    }
-
-    tasks.register<JavaExec>("ktlint") {
+    val ktlintConfig = configurations.create("ktlint")
+    val ktlint = tasks.register<JavaExec>("ktlint") {
         main = "com.github.shyiko.ktlint.Main"
-        classpath = configurations.getByName("ktlint")
+        classpath = ktlintConfig
         args = listOf("src/**/*.kt")
     }
     whenTaskScheduled("check") {
-        dependsOn("ktlint")
+        dependsOn(ktlint)
     }
 
     dependencies { "ktlint"(Config.Plugins.ktlint) }
