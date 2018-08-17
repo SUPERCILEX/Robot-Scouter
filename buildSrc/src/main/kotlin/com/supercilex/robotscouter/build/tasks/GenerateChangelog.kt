@@ -22,7 +22,7 @@ open class GenerateChangelog : DefaultTask() {
 
     init {
         val base = project.child("android-base").file("src/main/play/release-notes/en-US")
-        files = listOf(File(base, "internal"), File(base, "alpha"))
+        files = listOf(File(base, "internal.txt"), File(base, "alpha.txt"))
     }
 
     @TaskAction
