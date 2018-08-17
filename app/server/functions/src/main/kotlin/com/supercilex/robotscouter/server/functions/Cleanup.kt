@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.server.functions
 
+import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.FIRESTORE_BASE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
@@ -7,11 +8,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_SCOUTS
-import com.supercilex.robotscouter.common.FIRESTORE_SCOUT_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TOKEN_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_TEAM_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_EMAIL
@@ -33,11 +30,13 @@ import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.toTemplateString
+import com.supercilex.robotscouter.server.utils.types.CallableContext
 import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
+import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.Timestamp
 import com.supercilex.robotscouter.server.utils.userPrefs
@@ -93,6 +92,22 @@ fun emptyTrash(): Promise<*>? = async {
     ).processInBatches(10) { processDeletion(it) }
 }.asPromise()
 
+fun emptyTrash(data: Array<String>?, context: CallableContext): Promise<*>? {
+    val auth = context.auth ?: throw HttpsError("unauthenticated")
+
+    console.log("Emptying trash for ${auth.uid}.")
+    return async {
+        val requests = deletionQueue.doc(auth.uid).get().await()
+
+        if (!requests.exists) {
+            console.log("Nothing to delete")
+            return@async
+        }
+
+        processDeletion(requests, data.orEmpty().toList())
+    }.asPromise()
+}
+
 fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     fun Json.findOldestDeletionTime(): Date? {
         return Date(sanitizedDeletionRequestData().toMap<Json>().map { (_, data) ->
@@ -147,7 +162,14 @@ private suspend fun deleteUnusedData(userQuery: Query) = userQuery.processInBatc
     delay(1000)
 }
 
-private suspend fun processDeletion(request: DocumentSnapshot) {
+/**
+ * Deletes data referenced in [request].
+ *
+ * @param ids If unspecified, items are only deleted after [TRASH_TIMEOUT_DAYS]. If specified but
+ *            empty, all data is deleted. Otherwise, only the specified items are deleted.
+ * @see deletionQueue
+ */
+private suspend fun processDeletion(request: DocumentSnapshot, ids: List<String>? = null) {
     val userId = request.id
 
     val deleteTeam: suspend (id: String) -> Unit = { id ->
@@ -171,8 +193,8 @@ private suspend fun processDeletion(request: DocumentSnapshot) {
     val deleteShareToken: suspend (data: Json, token: String) -> Unit = { data, token ->
         fun CollectionReference.deletions(): List<Deferred<*>> {
             @Suppress("UNCHECKED_CAST") // We know its type
-            val ids = data[FIRESTORE_CONTENT_ID] as Array<String>
-            return ids.map {
+            val backingIds = data[FIRESTORE_CONTENT_ID] as Array<String>
+            return backingIds.map {
                 async {
                     val content = doc(it).get().await()
                     if (content.exists) {
@@ -186,27 +208,27 @@ private suspend fun processDeletion(request: DocumentSnapshot) {
         }
 
         console.log("Deleting share token: $token")
-        when (data[FIRESTORE_SHARE_TYPE] as Int) {
-            FIRESTORE_TEAM_TYPE -> teams.deletions()
-            FIRESTORE_TEMPLATE_TYPE -> templates.deletions()
-            else -> error("Unknown share type: ${data[FIRESTORE_SHARE_TYPE]}")
+        when (DeletionType.valueOf(data[FIRESTORE_SHARE_TYPE] as Int)) {
+            DeletionType.TEAM -> teams.deletions()
+            DeletionType.TEMPLATE -> templates.deletions()
+            else -> error("Unsupported share type: ${data[FIRESTORE_SHARE_TYPE]}")
         }.awaitAll()
     }
 
     val requests = request.data().sanitizedDeletionRequestData()
     val results = requests.toMap<Json>().map { (key, data) ->
         val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
-        if ((moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS) {
-            return@map CompletableDeferred(null as String?)
-        }
+        if (
+            (moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS &&
+            (ids == null || ids.isNotEmpty() && !ids.contains(key))
+        ) return@map CompletableDeferred(null as String?)
 
         async {
-            when (data[FIRESTORE_TYPE]) {
-                FIRESTORE_TEAM_TYPE -> deleteTeam(key)
-                FIRESTORE_SCOUT_TYPE -> deleteScout(data[FIRESTORE_CONTENT_ID] as String, key)
-                FIRESTORE_TEMPLATE_TYPE -> deleteTemplate(key)
-                FIRESTORE_SHARE_TOKEN_TYPE -> deleteShareToken(data, key)
-                else -> error("Unknown type: ${data[FIRESTORE_TYPE]}")
+            when (DeletionType.valueOf(data[FIRESTORE_TYPE] as Int)) {
+                DeletionType.TEAM -> deleteTeam(key)
+                DeletionType.SCOUT -> deleteScout(data[FIRESTORE_CONTENT_ID] as String, key)
+                DeletionType.TEMPLATE -> deleteTemplate(key)
+                DeletionType.SHARE_TOKEN -> deleteShareToken(data, key)
             }
 
             key

@@ -1,10 +1,11 @@
 package com.supercilex.robotscouter.feature.teams
 
 import android.view.MotionEvent
-import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.data.nullOrFull
+import com.supercilex.robotscouter.core.ui.ItemDetailsBase
+import com.supercilex.robotscouter.core.ui.ItemDetailsLookupBase
 import kotlinx.android.synthetic.main.team_list_row_layout.*
 
 internal class TeamKeyProvider(
@@ -15,19 +16,12 @@ internal class TeamKeyProvider(
     override fun getPosition(key: String) = adapter.snapshots.indexOfFirst { it.id == key }
 }
 
-internal class TeamDetailsLookup(
-        private val recyclerView: RecyclerView
-) : ItemDetailsLookup<String>() {
-    override fun getItemDetails(e: MotionEvent) = recyclerView.findChildViewUnder(e.x, e.y)?.let {
-        recyclerView.getChildViewHolder(it) as? TeamViewHolder
-    }?.let(::TeamDetails)
-}
+internal class TeamDetailsLookup(recyclerView: RecyclerView) :
+        ItemDetailsLookupBase<String, TeamViewHolder, TeamDetails>(recyclerView, ::TeamDetails)
 
 internal class TeamDetails(
         private val holder: TeamViewHolder
-) : ItemDetailsLookup.ItemDetails<String>() {
-    override fun getPosition() = holder.adapterPosition
-
+) : ItemDetailsBase<String, TeamViewHolder>(holder) {
     override fun getSelectionKey() = holder.team.id.nullOrFull()
 
     override fun inSelectionHotspot(e: MotionEvent): Boolean {

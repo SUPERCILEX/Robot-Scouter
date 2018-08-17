@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.selection.SelectionTracker
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.google.android.material.snackbar.Snackbar
+import com.supercilex.robotscouter.core.ui.AllChangesSelectionObserver
 
 internal class SnackbarSelectionObserver(
         private val rootView: View,

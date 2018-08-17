@@ -38,14 +38,16 @@
 
     <!-- Feature modules -->
     <string name="scout_activity_title">Scout editor</string>
+    <string name="trash_activity_title">Trash</string>
     <string name="settings_activity_title">Settings</string>
 
     <string name="feature_teams_title">Teams</string>
     <string name="feature_auto_scout_title">Auto Scout</string>
-    <string name="feature_scouts_title">Scout editor</string>
     <string name="feature_templates_title">Template editor</string>
-    <string name="feature_settings_title">Settings</string>
+    <string name="feature_scouts_title">@string/scout_activity_title</string>
     <string name="feature_exports_title">Exports</string>
+    <string name="feature_trash_title">@string/trash_activity_title</string>
+    <string name="feature_settings_title">@string/settings_activity_title</string>
 
     <!-- Other -->
     <string name="asset_statements" translatable="false">

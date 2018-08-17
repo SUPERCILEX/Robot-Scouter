@@ -189,18 +189,6 @@ interface TemplateListFragmentBridge {
     fun handleArgs(args: Bundle)
 }
 
-interface SettingsActivityCompanion : DownloadableBridgeCompanion {
-    fun createIntent(): Intent
-
-    companion object : DownloadableBridgeFinderCompanion<SettingsActivityCompanion>() {
-        override val moduleName = "settings"
-        override val instance by ValueSeeker {
-            getClass("com.supercilex.robotscouter.feature.settings.SettingsActivity")
-                    ?.get<SettingsActivityCompanion>()
-        }
-    }
-}
-
 interface ExportServiceCompanion : DownloadableBridgeCompanion {
     /** @return true if an export was attempted, false otherwise */
     fun exportAndShareSpreadSheet(
@@ -214,6 +202,29 @@ interface ExportServiceCompanion : DownloadableBridgeCompanion {
         override val instance by ValueSeeker {
             getClass("com.supercilex.robotscouter.feature.exports.ExportService")
                     ?.get<ExportServiceCompanion>()
+        }
+    }
+}
+
+interface TrashActivityCompanion : InstalledBridgeCompanion {
+    fun createIntent(): Intent
+
+    companion object : InstalledBridgeFinderCompanion<TrashActivityCompanion>() {
+        override val moduleName = "trash"
+        override val instance =
+                requireClass("com.supercilex.robotscouter.feature.trash.TrashActivity")
+                        .get<TrashActivityCompanion>()
+    }
+}
+
+interface SettingsActivityCompanion : DownloadableBridgeCompanion {
+    fun createIntent(): Intent
+
+    companion object : DownloadableBridgeFinderCompanion<SettingsActivityCompanion>() {
+        override val moduleName = "settings"
+        override val instance by ValueSeeker {
+            getClass("com.supercilex.robotscouter.feature.settings.SettingsActivity")
+                    ?.get<SettingsActivityCompanion>()
         }
     }
 }

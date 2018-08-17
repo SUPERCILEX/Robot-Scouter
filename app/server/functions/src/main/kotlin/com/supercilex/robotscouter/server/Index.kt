@@ -14,6 +14,7 @@ import com.supercilex.robotscouter.server.utils.jsObject
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.types.admin
 import com.supercilex.robotscouter.server.utils.types.functions
+import kotlin.js.Json
 
 external fun require(module: String): dynamic
 external val exports: dynamic
@@ -33,15 +34,17 @@ fun main(args: Array<String>) {
     exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates")
             .onPublish { _, _ -> updateDefaultTemplates() }
 
-    exports.emptyTrash = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
+    exports.cleanup = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
             .onPublish { _, _ -> emptyTrash() }
     exports.deleteUnusedData = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
             .onPublish { _, _ -> deleteUnusedData() }
     exports.sanitizeDeletionQueue = functions.firestore.document("${deletionQueue.id}/{uid}")
             .onWrite { event, _ -> sanitizeDeletionRequest(event) }
+    exports.emptyTrash = functions.https
+            .onCall { data: Array<String>?, context -> emptyTrash(data, context) }
 
     exports.updateOwners = functions.https
-            .onCall { data, context -> updateOwners(data, context) }
+            .onCall { data: Json, context -> updateOwners(data, context) }
     exports.mergeDuplicateTeams = functions.firestore.document("${duplicateTeams.id}/{uid}")
             .onWrite { event, _ -> mergeDuplicateTeams(event) }
     exports.mergeDuplicateTeamsCompat = functions.firestore.document("${teams.id}/{id}")

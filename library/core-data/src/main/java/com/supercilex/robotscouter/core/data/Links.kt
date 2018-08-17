@@ -12,7 +12,6 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.FirebaseFunctionsException
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
@@ -21,7 +20,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.model.userDeletionQueue
-import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.model.Team
 import java.io.File
 import java.util.Date
@@ -110,11 +108,6 @@ suspend fun updateOwner(
                         }
                     }
             ))
-            .addOnFailureListener {
-                if (it is FirebaseFunctionsException) {
-                    logCrashLog("Functions failed (${it.code}) with details: ${it.details}")
-                }
-            }
             .logFailures(ref, "Token: $token, from user: $prevUid")
 }.forEach {
     it.await()

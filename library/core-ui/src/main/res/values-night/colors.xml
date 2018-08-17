@@ -5,6 +5,7 @@
 
     <color name="light_grey">#757575</color>
     <color name="light_grey_text">#BDBDBD</color>
+    <color name="notice_grey">@color/material_grey_700</color>
     <color name="off_white">@color/material_grey_600</color>
     <color name="pale_blue">#46264CAC</color>
     <color name="pale_white">#dc111111</color>

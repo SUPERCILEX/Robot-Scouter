@@ -5,12 +5,12 @@ import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
-import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asTask
@@ -36,7 +36,6 @@ import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import java.util.Date
-import kotlin.math.abs
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         "$FIRESTORE_OWNERS.${checkNotNull(uid)}".let {
@@ -125,12 +124,28 @@ fun trashTemplate(id: String) {
 
         FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
 
-        val ref = getTemplateRef(id)
-        val snapshot = ref.get().logFailures(ref).await()
-        val oppositeDate = Date(-abs(checkNotNull(snapshot.getDate(FIRESTORE_TIMESTAMP)).time))
-        firestoreBatch {
-            update(snapshot.reference, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", oppositeDate)
-            set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())
-        }.logFailures(id)
+        toggleTemplateTrashStatus(id)
     }.logFailures()
+}
+
+fun untrashTemplate(id: String) {
+    async { toggleTemplateTrashStatus(id) }.logFailures()
+}
+
+private suspend fun toggleTemplateTrashStatus(id: String) {
+    val ref = getTemplateRef(id)
+    val snapshot = ref.get().logFailures(ref).await()
+
+    val ownerField = "$FIRESTORE_OWNERS.${checkNotNull(uid)}"
+    val oppositeDate = Date(-checkNotNull(snapshot.getDate(ownerField)).time)
+    val isTrash = oppositeDate.time <= 0
+
+    firestoreBatch {
+        update(ref, ownerField, oppositeDate)
+        if (isTrash) {
+            set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())
+        } else {
+            update(userDeletionQueue, id, FieldValue.delete())
+        }
+    }.logFailures(id)
 }

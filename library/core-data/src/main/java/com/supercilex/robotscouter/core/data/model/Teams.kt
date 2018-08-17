@@ -7,13 +7,16 @@ import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
+import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.common.second
+import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
@@ -178,6 +181,20 @@ fun Team.trash() {
             SetOptions.merge())
         set(userDeletionQueue, QueuedDeletion.Team(ref.id).data, SetOptions.merge())
     }.logFailures(ref, this)
+}
+
+fun untrashTeam(id: String) {
+    async {
+        val ref = teamsRef.document(id)
+        val snapshot = ref.get().logFailures(ref).await()
+
+        val newNumber = checkNotNull(snapshot.getLong(FIRESTORE_NUMBER))
+        firestoreBatch {
+            update(ref, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", newNumber)
+            update(teamDuplicatesRef.document(checkNotNull(uid)), id, newNumber)
+            update(userDeletionQueue, id, FieldValue.delete())
+        }.logFailures(id)
+    }.logFailures()
 }
 
 internal fun Team.fetchLatestData() = async {

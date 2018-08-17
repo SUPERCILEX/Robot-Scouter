@@ -87,10 +87,10 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         moduleRequestHolder.onSuccess.observeNonNull(this) { (comp, args) ->
             @Suppress("UNCHECKED_CAST") // We know our inputs
             when (comp) {
-                is SettingsActivityCompanion -> startActivity(comp.createIntent())
                 is ExportServiceCompanion -> if (
                     comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>)
                 ) sendBackEventToChildren()
+                is SettingsActivityCompanion -> startActivity(comp.createIntent())
             }
         }
 
@@ -202,6 +202,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             else -> runIfSignedIn {
                 when (item.itemId) {
                     R.id.action_export_all_teams -> export()
+                    R.id.action_view_trash -> startActivity(TrashActivityCompanion().createIntent())
                     R.id.action_settings ->
                         moduleRequestHolder += SettingsActivityCompanion().logFailures()
                     else -> error("Unknown item id: ${item.itemId}")

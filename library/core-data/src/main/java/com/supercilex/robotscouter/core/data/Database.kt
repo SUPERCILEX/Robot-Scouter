@@ -21,13 +21,10 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import com.google.gson.Gson
+import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
 import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
-import com.supercilex.robotscouter.common.FIRESTORE_SCOUT_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TOKEN_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_SHARE_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_TEAM_TYPE
-import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.isPolynomial
@@ -243,35 +240,39 @@ private inline fun <reified T> T.smartWrite(file: File, crossinline write: (t: T
     }.logFailures()
 }
 
-internal sealed class QueuedDeletion(id: String, type: Int, vararg extras: Pair<String, Any>) {
+internal sealed class QueuedDeletion(
+        id: String,
+        type: DeletionType,
+        vararg extras: Pair<String, Any>
+) {
     val data = mapOf(id to mapOf(
-            FIRESTORE_TYPE to type,
+            FIRESTORE_TYPE to type.id,
             FIRESTORE_TIMESTAMP to Date(),
             *extras
     ))
 
-    class Team(id: String) : QueuedDeletion(id, FIRESTORE_TEAM_TYPE)
+    class Team(id: String) : QueuedDeletion(id, DeletionType.TEAM)
 
     class Scout(id: String, teamId: String) :
-            QueuedDeletion(id, FIRESTORE_SCOUT_TYPE, FIRESTORE_CONTENT_ID to teamId)
+            QueuedDeletion(id, DeletionType.SCOUT, FIRESTORE_CONTENT_ID to teamId)
 
-    class Template(id: String) : QueuedDeletion(id, FIRESTORE_TEMPLATE_TYPE)
+    class Template(id: String) : QueuedDeletion(id, DeletionType.TEMPLATE)
 
     abstract class ShareToken(
             token: String,
-            shareType: Int,
+            shareType: DeletionType,
             contentIds: List<String>
     ) : QueuedDeletion(
             token,
-            FIRESTORE_SHARE_TOKEN_TYPE,
-            FIRESTORE_SHARE_TYPE to shareType,
+            DeletionType.SHARE_TOKEN,
+            FIRESTORE_SHARE_TYPE to shareType.id,
             FIRESTORE_CONTENT_ID to contentIds
     ) {
         class Team(token: String, teamIds: List<String>) :
-                ShareToken(token, FIRESTORE_TEAM_TYPE, teamIds)
+                ShareToken(token, DeletionType.TEAM, teamIds)
 
         class Template(token: String, templateIds: List<String>) :
-                ShareToken(token, FIRESTORE_TEMPLATE_TYPE, templateIds)
+                ShareToken(token, DeletionType.TEMPLATE, templateIds)
     }
 }
 

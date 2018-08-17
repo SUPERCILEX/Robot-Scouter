@@ -117,7 +117,7 @@ service cloud.firestore {
     }
 
     match /deletion-queue/{uid} {
-      allow write: if uid == request.auth.uid;
+      allow read, write: if uid == request.auth.uid;
     }
   }
 }

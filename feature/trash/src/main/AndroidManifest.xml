@@ -1,0 +1,22 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.supercilex.robotscouter.feature.trash">
+
+    <dist:module
+        dist:onDemand="false"
+        dist:title="@string/feature_trash_title">
+        <dist:fusing dist:include="true" />
+    </dist:module>
+
+    <application>
+
+        <activity
+            android:name=".TrashActivity"
+            android:label="@string/trash_activity_title"
+            android:parentActivityName="com.supercilex.robotscouter.HomeActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+    </application>
+
+</manifest>

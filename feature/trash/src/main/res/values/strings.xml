@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trash_tutorial_no_trash_hint">Nothing in Trash</string>
+
+    <string name="trash_processing_notice">
+        Items that have been in Trash more than 30 days will be automatically deleted.
+    </string>
+    <string name="trash_action_empty">Empty Trash now</string>
+    <string name="trash_action_delete">Delete permanently</string>
+    <string name="trash_action_restore">Restore</string>
+
+    <string name="trash_empty_dialog_title">Empty Trash?</string>
+    <plurals name="trash_empty_dialog_message">
+        <item quantity="one">1 item will be permanently deleted.</item>
+        <item quantity="other">%d items will be permanently deleted.</item>
+    </plurals>
+    <string name="trash_empty_dialog_action">Empty</string>
+    <plurals name="trash_emptied_message">
+        <item quantity="one">1 item permanently deleted</item>
+        <item quantity="other">%d items permanently deleted</item>
+    </plurals>
+    <string name="trash_empty_failed_message">
+        Failed to delete item(s). Check your internet connection.
+    </string>
+    <plurals name="trash_restored_message">
+        <item quantity="one">1 item restored from trash</item>
+        <item quantity="other">%d items restored from trash</item>
+    </plurals>
+
+    <string name="trash_unnamed_item">Unnamed</string>
+    <string name="trash_loading_item">Loading…</string>
+
+    <string name="accessibility_trash_type">Trash item type</string>
+</resources>

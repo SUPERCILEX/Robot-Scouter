@@ -14,6 +14,13 @@
 
     <group android:id="@+id/two">
         <item
+            android:id="@+id/action_view_trash"
+            android:icon="@drawable/ic_delete_black_24dp"
+            android:title="@string/trash_activity_title" />
+    </group>
+
+    <group android:id="@+id/three">
+        <item
             android:id="@+id/action_donate"
             android:icon="@drawable/ic_donate_grey_24dp"
             android:title="@string/donate_title" />

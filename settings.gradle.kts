@@ -6,6 +6,7 @@ include(
         ":library:shared", ":library:shared-scouting",
 
         ":feature:teams", ":feature:autoscout",
-        ":feature:scouts", ":feature:templates", ":feature:settings",
-        ":feature:exports"
+        ":feature:scouts", ":feature:templates",
+        ":feature:exports",
+        ":feature:trash", ":feature:settings"
 )

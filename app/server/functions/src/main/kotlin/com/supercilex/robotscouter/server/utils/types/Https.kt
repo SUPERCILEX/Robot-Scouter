@@ -8,7 +8,6 @@
 
 package com.supercilex.robotscouter.server.utils.types
 
-import kotlin.js.Json
 import kotlin.js.Promise
 
 @Suppress("FunctionName", "UNUSED_PARAMETER", "UNUSED_VARIABLE") // Fake class
@@ -19,7 +18,7 @@ fun HttpsError(code: String, message: String? = null, details: Any? = null): Not
 }
 
 external class Https {
-    fun onCall(handler: (data: Json, context: CallableContext) -> Promise<*>?): dynamic = definedExternally
+    fun <T> onCall(handler: (data: T, context: CallableContext) -> Promise<*>?): dynamic = definedExternally
 }
 
 external interface CallableContext {

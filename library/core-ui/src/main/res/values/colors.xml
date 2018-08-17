@@ -9,6 +9,7 @@
     <color name="night_grey">@color/material_grey_600</color>
     <color name="light_grey">#CFCFCF</color>
     <color name="light_grey_text">#9B9B9B</color>
+    <color name="notice_grey">@color/material_grey_300</color>
     <color name="off_white">#E1E1E1</color>
     <color name="pale_blue">#463971FF</color>
     <color name="pale_white">#DCF1F1F1</color>
