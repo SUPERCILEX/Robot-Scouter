@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.core.data
 import androidx.annotation.WorkerThread
 import androidx.work.Data
 import androidx.work.WorkManager
-import androidx.work.toWorkData
+import androidx.work.workDataOf
 import com.supercilex.robotscouter.core.data.client.TEAM_DATA_DOWNLOAD
 import com.supercilex.robotscouter.core.data.client.TEAM_MEDIA_UPLOAD
 import com.supercilex.robotscouter.core.model.Team
@@ -53,9 +53,7 @@ internal fun Data.parseTeam() = Team(
         Date(getLong(TIMESTAMP, 0))
 )
 
-internal fun Team.toWorkData() = toMap().toWorkData()
-
-private fun Team.toMap() = mapOf(
+internal fun Team.toWorkData() = workDataOf(
         NUMBER to number,
         ID to id,
         OWNER_KEYS to owners.map { it.key }.toTypedArray(),

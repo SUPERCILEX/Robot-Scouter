@@ -45,7 +45,7 @@ object Config {
         object Jetpack {
             private const val version = "1.0.0-rc01"
             private const val lifecycleVersion = "2.0.0-rc01"
-            private const val workVersion = "1.0.0-alpha06"
+            private const val workVersion = "1.0.0-alpha07"
 
             val core = "androidx.core:core-ktx:$version"
 
@@ -73,7 +73,7 @@ object Config {
         object Firebase {
             val core = "com.google.firebase:firebase-core:16.0.1"
             val auth = "com.google.firebase:firebase-auth:16.0.3"
-            val firestore = "com.google.firebase:firebase-firestore:17.0.5"
+            val firestore = "com.google.firebase:firebase-firestore:17.1.0"
             val functions = "com.google.firebase:firebase-functions:16.1.0"
             val storage = "com.google.firebase:firebase-storage:16.0.1"
             val config = "com.google.firebase:firebase-config:16.0.0"
@@ -89,7 +89,7 @@ object Config {
         object PlayServices {
             val auth = "com.google.android.gms:play-services-auth:16.0.0"
             val nearby = "com.google.android.gms:play-services-nearby:15.0.1"
-            val playCore = "com.google.android.play:core:1.3.1"
+            val playCore = "com.google.android.play:core:1.3.4"
         }
 
         object FirebaseUi {
@@ -107,7 +107,7 @@ object Config {
             private const val retrofitVersion = "2.4.0"
             private const val poiVersion = "3.17"
 
-            private const val glideVersion = "4.7.1"
+            private const val glideVersion = "4.8.0"
 
             val leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
             val leakCanaryFragments =
