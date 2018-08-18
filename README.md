@@ -77,9 +77,6 @@ If you know another language, please help
 1. Run `./gradlew check` to make sure the Travis build will pass
 1. That's it! 🚀
 
-**Note:** to improve build performance, pass in the `devBuild` flag to Gradle by searching for
-`Gradle-Android Compiler` in Intellij and adding `-PdevBuild` to the CLI options.
-
 ## Psst... 🤐
 
 If you want to get the latest build from master, you can join the
