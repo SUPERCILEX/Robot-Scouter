@@ -32,6 +32,7 @@ import com.supercilex.robotscouter.core.model.MetricType
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
+import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.async
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.BorderExtent
@@ -75,8 +76,8 @@ internal class TemplateExporter(
     private val cache = SpreadsheetCache(scouts.keys)
 
     suspend fun export() {
-        val spreadsheet = async { exportSpreadsheet() }
-        val json = async {
+        val spreadsheet = async(IO) { exportSpreadsheet() }
+        val json = async(IO) {
             try {
                 exportJson()
             } catch (e: Exception) {

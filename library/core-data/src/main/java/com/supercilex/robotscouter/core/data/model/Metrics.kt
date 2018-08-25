@@ -87,11 +87,9 @@ fun deleteMetrics(ref: CollectionReference) = async {
 }.logFailures().asTask()
 
 fun restoreMetrics(metrics: QuerySnapshot) {
-    async {
-        firestoreBatch {
-            for (metric in metrics) set(metric.reference, metric.data)
-        }.logFailures(metrics.map { it.reference }, metrics)
-    }.logFailures()
+    firestoreBatch {
+        for (metric in metrics) set(metric.reference, metric.data)
+    }.logFailures(metrics.map { it.reference }, metrics)
 }
 
 fun Metric<*>.add() {

@@ -38,8 +38,8 @@ import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_team_details.*
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.CompletableDeferred
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -197,7 +197,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(CommonPool) { media?.formatAsTeamUri() }.also {
+            withContext(DefaultDispatcher) { media?.formatAsTeamUri() }.also {
                 if (it != team.media) {
                     team.media = it
                     team.hasCustomMedia = it?.isNotBlank() == true
@@ -205,7 +205,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(CommonPool) { website?.formatAsTeamUri() }.also {
+            withContext(DefaultDispatcher) { website?.formatAsTeamUri() }.also {
                 if (it != team.website) {
                     team.website = it
                     team.hasCustomWebsite = it?.isNotBlank() == true
@@ -255,7 +255,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
         val inputRef = inputLayout.asLifecycleReference(this)
         return async(UI) {
-            val isValid = withContext(CommonPool) { url.isValidTeamUri() }
+            val isValid = withContext(DefaultDispatcher) { url.isValidTeamUri() }
             inputRef().error =
                     if (isValid) null else getString(R.string.details_malformed_url_error)
             isValid

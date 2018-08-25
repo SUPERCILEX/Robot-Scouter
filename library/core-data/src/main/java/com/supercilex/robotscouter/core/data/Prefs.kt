@@ -24,7 +24,9 @@ import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefs
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.TemplateType
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 
 internal val prefParser = SnapshotParser<Any?> {
     val id = it.id
@@ -177,7 +179,7 @@ fun clearPrefs() {
 }
 
 private fun updateTeamTemplateIds() {
-    async {
+    launch(UI) {
         for (team in teams.waitForChange()) team.updateTemplateId(defaultTemplateId)
-    }.logFailures()
+    }
 }

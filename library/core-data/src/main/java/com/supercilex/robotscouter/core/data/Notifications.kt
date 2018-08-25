@@ -14,13 +14,11 @@ import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
-import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -127,7 +125,7 @@ class FilteringNotificationManager {
             check(!isStopped) { "Cannot start a previously stopped notification filter." }
         }
 
-        processor = async(dispatcher) {
+        processor = async {
             while (isActive) {
                 processQueue()
                 delay(SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS)
@@ -170,12 +168,6 @@ class FilteringNotificationManager {
         lock.read {
             if (isStopped && notifications.isEmpty()) processor.cancel()
         }
-    }
-
-    private companion object {
-        // Use a separate thread to process notifications because the default dispatcher may be
-        // saturated.
-        val dispatcher = Executors.newFixedThreadPool(1).asCoroutineDispatcher()
     }
 }
 

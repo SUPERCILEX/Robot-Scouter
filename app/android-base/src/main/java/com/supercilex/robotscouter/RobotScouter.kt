@@ -16,6 +16,7 @@ import com.supercilex.robotscouter.core.data.initPrefs
 import com.supercilex.robotscouter.core.data.initRemoteConfig
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.shared.initUi
+import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
 
@@ -32,7 +33,7 @@ internal class RobotScouter : MultiDexApplication() {
 
         _globalContext = this
 
-        async { initIo() }.logFailures()
+        async(IO) { initIo() }.logFailures()
         initAnalytics()
         initRemoteConfig()
         initDatabase()

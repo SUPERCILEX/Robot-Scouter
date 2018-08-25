@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.feature.teams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
@@ -90,15 +91,14 @@ private abstract class TutorialObserverBase<T>(owner: Fragment) : Observer<T>,
 }
 
 internal class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase {
-    val hasShownAddTeamTutorial = UniqueMutableLiveData<Boolean?>()
-    val hasShownSignInTutorial = UniqueMutableLiveData<Boolean?>()
+    val hasShownAddTeamTutorial: MutableLiveData<Boolean?> = UniqueMutableLiveData()
+    val hasShownSignInTutorial: MutableLiveData<Boolean?> = UniqueMutableLiveData()
 
     private val signInPrefUpdater = object : ChangeEventListenerBase {
         override fun onDataChanged() {
-            hasShownSignInTutorial.setValue(
+            hasShownSignInTutorial.value =
                     prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false) ||
-                            teams.size < MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL
-            )
+                    teams.size < MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL
         }
     }
 
@@ -114,8 +114,8 @@ internal class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase 
             removeChangeEventListener(signInPrefUpdater)
             addChangeEventListener(signInPrefUpdater)
         }
-        hasShownAddTeamTutorial.setValue(prefs.getPrefOrDefault(
-                FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false))
+        hasShownAddTeamTutorial.value = prefs.getPrefOrDefault(
+                FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL, false)
     }
 
     override fun onCleared() {

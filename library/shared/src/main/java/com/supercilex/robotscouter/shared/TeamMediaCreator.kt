@@ -26,7 +26,7 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
-import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
@@ -84,7 +84,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val ref = host.asLifecycleReference()
         launch(UI) {
-            val file = withContext(CommonPool) {
+            val file = withContext(IO) {
                 try {
                     File(mediaFolder, "${team}_${System.currentTimeMillis()}.jpg")
                             .hidden()
@@ -114,7 +114,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         val photoFile = checkNotNull(photoFile)
         if (resultCode == Activity.RESULT_OK) {
             launch(UI) {
-                val contentUri = withContext(CommonPool) { photoFile.unhide()?.toUri() }
+                val contentUri = withContext(IO) { photoFile.unhide()?.toUri() }
                 if (contentUri == null) {
                     RobotScouter.longToast(R.string.error_unknown)
                     return@launch
@@ -134,7 +134,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 })
             }
         } else {
-            async { photoFile.delete() }.logFailures()
+            async(IO) { photoFile.delete() }.logFailures()
         }
     }
 

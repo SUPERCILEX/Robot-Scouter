@@ -9,11 +9,11 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "kotlin": "^1.2.60",
-    "kotlinx-coroutines-core": "^0.24.0",
+    "kotlin": "^1.2.61",
+    "kotlinx-coroutines-core": "^0.25.3",
     "firebase-admin": "~6.0.0",
-    "firebase-functions": "^2.0.4",
-    "@google-cloud/firestore": "^0.16.0",
+    "firebase-functions": "^2.0.5",
+    "@google-cloud/firestore": "^0.16.1",
     "moment": "^2.22.2"
   },
   "private": true

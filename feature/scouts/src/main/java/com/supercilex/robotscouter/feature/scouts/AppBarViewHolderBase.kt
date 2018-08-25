@@ -41,7 +41,7 @@ import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamMediaCreator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
-import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
@@ -120,14 +120,14 @@ internal open class AppBarViewHolderBase(
 
         if (resource?.isRecycled == false) {
             launch(UI) {
-                val palette = withContext(CommonPool) { Palette.from(resource).generate() }
+                val palette = withContext(DefaultDispatcher) { Palette.from(resource).generate() }
 
                 val update: Palette.Swatch.() -> Unit = { updateScrim(rgb) }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }
 
             launch(UI) {
-                val swatch = withContext(CommonPool) {
+                val swatch = withContext(DefaultDispatcher) {
                     val paletteTarget = PaletteTarget.Builder()
                             .setExclusive(false)
                             .setTargetLightness(1f)

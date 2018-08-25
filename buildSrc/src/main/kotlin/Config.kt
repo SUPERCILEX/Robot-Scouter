@@ -29,7 +29,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "0.24.0"
+            private const val coroutinesVersion = "0.25.3"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
