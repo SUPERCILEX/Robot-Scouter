@@ -33,8 +33,10 @@ open class UploadAppToVc : DefaultTask() {
                         File(project.rootDir.parentFile, "app-release.tmp"),
                         File(uploadDir, "Robot-Scouter/app-release.aab")
                 )
-                File(project.child("android-base").buildDir, "outputs/mapping/release/mapping.txt")
-                        .copyTo(File(uploadDir, "Robot-Scouter/mapping.txt"), true)
+                File(
+                        project.child("android-base").buildDir,
+                        "outputs/mapping/r8/release/mapping.txt"
+                ).copyTo(File(uploadDir, "Robot-Scouter/mapping.txt"), true)
 
                 patterns = setOf("Robot-Scouter")
                 update = true
