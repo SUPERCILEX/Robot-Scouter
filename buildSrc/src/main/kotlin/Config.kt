@@ -1,6 +1,6 @@
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.2.60"
+    private const val kotlinVersion = "1.2.61"
 
     object SdkVersions {
         val compile = 28
@@ -9,7 +9,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.3.0-alpha05"
+        val android = "com.android.tools.build:gradle:3.3.0-alpha07"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
@@ -71,7 +71,7 @@ object Config {
         }
 
         object Firebase {
-            val core = "com.google.firebase:firebase-core:16.0.1"
+            val core = "com.google.firebase:firebase-core:16.0.3"
             val auth = "com.google.firebase:firebase-auth:16.0.3"
             val firestore = "com.google.firebase:firebase-firestore:17.1.0"
             val functions = "com.google.firebase:firebase-functions:16.1.0"
@@ -79,11 +79,11 @@ object Config {
             val config = "com.google.firebase:firebase-config:16.0.0"
             val indexing = "com.google.firebase:firebase-appindexing:16.0.1"
             val messaging = "com.google.firebase:firebase-messaging:17.3.0"
-            val invites = "com.google.firebase:firebase-invites:16.0.1"
+            val invites = "com.google.firebase:firebase-invites:16.0.3"
             val perf = "com.google.firebase:firebase-perf:16.1.0"
             val iid = "com.google.firebase:firebase-iid:17.0.0"
 
-            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.4"
+            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.5"
         }
 
         object PlayServices {
@@ -126,7 +126,7 @@ object Config {
             val permissions = "pub.devrel:easypermissions:1.3.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.1"
             val billing = "com.android.billingclient:billing:1.1"
-            val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.1"
+            val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.2"
         }
     }
 }

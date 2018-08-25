@@ -26,7 +26,7 @@ buildscript {
 
 plugins {
     id("com.supercilex.robotscouter.build")
-    id("com.gradle.build-scan") version "1.15.2"
+    `build-scan` version "1.16"
     id("com.github.ben-manes.versions") version "0.20.0"
 }
 
