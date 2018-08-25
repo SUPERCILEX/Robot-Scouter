@@ -22,10 +22,10 @@ import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.Saveable
 import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
 import com.supercilex.robotscouter.core.ui.animatePopReveal
-import com.supercilex.robotscouter.core.ui.find
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.MovableFragmentStatePagerAdapter
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.find
 
 abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,

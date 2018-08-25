@@ -19,10 +19,10 @@ import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.SavedStateAdapter
-import com.supercilex.robotscouter.core.ui.find
 import com.supercilex.robotscouter.shared.CardListHelper
 import kotlinx.android.synthetic.main.team_list_row_layout.*
 import java.util.Collections
+import org.jetbrains.anko.support.v4.find
 
 internal class TeamListAdapter(
         savedInstanceState: Bundle?,

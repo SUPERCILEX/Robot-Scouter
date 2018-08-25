@@ -22,11 +22,11 @@ import com.supercilex.robotscouter.core.data.model.shareTeams
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.longSnackbar
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
+import org.jetbrains.anko.design.longSnackbar
 
 class TeamSharer private constructor(
         fragment: Fragment,

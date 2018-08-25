@@ -10,8 +10,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.SavedStateAdapter
-import com.supercilex.robotscouter.core.ui.find
 import com.supercilex.robotscouter.core.unsafeLazy
+import org.jetbrains.anko.support.v4.find
 
 abstract class MetricListFragment : FragmentBase() {
     protected val holder: MetricListHolder by unsafeLazy {

@@ -27,10 +27,10 @@ import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
-import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_template_list.*
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 

@@ -25,11 +25,11 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.animatePopReveal
-import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
+import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClickListener {

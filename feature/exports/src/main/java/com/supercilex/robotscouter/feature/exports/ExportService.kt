@@ -32,7 +32,6 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
-import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.RatingDialog
 import kotlinx.coroutines.experimental.CancellationException
@@ -41,6 +40,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions

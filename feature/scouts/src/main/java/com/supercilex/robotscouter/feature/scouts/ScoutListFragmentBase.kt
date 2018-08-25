@@ -34,14 +34,14 @@ import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.TemplateSelectionListener
-import com.supercilex.robotscouter.core.ui.find
-import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,

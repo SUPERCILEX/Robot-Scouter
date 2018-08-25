@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.remove
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
-import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -37,6 +36,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeout
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap

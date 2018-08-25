@@ -34,12 +34,12 @@ import com.supercilex.robotscouter.core.data.logLoginEvent
 import com.supercilex.robotscouter.core.data.prefStore
 import com.supercilex.robotscouter.core.fullVersionName
 import com.supercilex.robotscouter.core.ui.PreferenceFragmentBase
-import com.supercilex.robotscouter.core.ui.toast
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
 import com.supercilex.robotscouter.shared.client.startLinkingSignIn
 import com.supercilex.robotscouter.shared.launchUrl
 import com.supercilex.robotscouter.R as RC
+import org.jetbrains.anko.support.v4.toast
 
 internal class SettingsFragment : PreferenceFragmentBase(),
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {

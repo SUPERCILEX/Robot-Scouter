@@ -21,11 +21,11 @@ import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.OrderedRemoteModel
 import com.supercilex.robotscouter.core.ui.isItemInRange
-import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.maxAnimationDuration
 import com.supercilex.robotscouter.core.ui.showKeyboard
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.feature.templates.viewholder.TemplateViewHolder
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.math.roundToInt
