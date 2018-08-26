@@ -1,3 +1,7 @@
+import org.gradle.kotlin.dsl.`build-scan`
+import org.gradle.kotlin.dsl.version
+import org.gradle.plugin.use.PluginDependenciesSpec
+
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
     private const val kotlinVersion = "1.2.61"
@@ -18,6 +22,9 @@ object Config {
         val publishing = "com.github.Triple-T:gradle-play-publisher:860be50bec"
 
         val ktlint = "com.github.shyiko:ktlint:0.27.0"
+
+        val PluginDependenciesSpec.scan get() = `build-scan` version "1.16"
+        val PluginDependenciesSpec.versionChecker get() = id("com.github.ben-manes.versions") version "0.20.0"
     }
 
     object Libs {

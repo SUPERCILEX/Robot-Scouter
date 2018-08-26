@@ -26,8 +26,10 @@ buildscript {
 
 plugins {
     id("com.supercilex.robotscouter.build")
-    `build-scan` version "1.16"
-    id("com.github.ben-manes.versions") version "0.20.0"
+    Config.Plugins.run {
+        scan
+        versionChecker
+    }
 }
 
 buildScan {
