@@ -49,7 +49,7 @@
     <string name="details_media_hint">Team media url</string>
     <string name="details_website_hint">Team website</string>
     <string name="details_malformed_url_error">Make sure you have a valid url.</string>
-    <string name="details_action_visit_tba_title">TBA</string>
+    <string name="details_action_visit_tba_title" translatable="false">TBA</string>
     <string name="details_action_visit_website_title">Website</string>
     <string name="accessibility_robot_icon">A picture of the team’s robot.</string>
     <string name="accessibility_edit_team_name">Edit the team name</string>

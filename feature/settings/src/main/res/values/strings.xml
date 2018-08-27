@@ -10,7 +10,7 @@
         <item>On</item>
         <item>Off</item>
     </string-array>
-    <string-array name="settings_pref_night_mode_values">
+    <string-array name="settings_pref_night_mode_values" translatable="false">
         <item>auto</item>
         <item>yes</item>
         <item>no</item>
@@ -32,10 +32,10 @@
     </string>
     <string-array name="settings_pref_should_upload_to_tba_entries">
         <item>Ask every time</item>
-        <item>Yes</item>
-        <item>No</item>
+        <item>@string/yes</item>
+        <item>@string/no</item>
     </string-array>
-    <string-array name="settings_pref_should_upload_to_tba_values">
+    <string-array name="settings_pref_should_upload_to_tba_values" translatable="false">
         <item>ask</item>
         <item>yes</item>
         <item>no</item>
