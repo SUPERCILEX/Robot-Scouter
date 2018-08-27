@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+import org.apache.commons.io.output.TeeOutputStream
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
@@ -63,6 +64,13 @@ fun Project.configureGeneral() {
         main = "com.github.shyiko.ktlint.Main"
         classpath = ktlintConfig
         args = listOf("src/**/*.kt")
+
+        val output = File(buildDir, "reports/ktlint/log.txt")
+        inputs.dir(fileTree("src").include("**/*.kt"))
+        outputs.file(output)
+        outputs.cacheIf { true }
+
+        doFirst { standardOutput = TeeOutputStream(standardOutput, output.outputStream()) }
     }
     tasks.matching { it.name == "check" }.configureEach { dependsOn(ktlint) }
 
