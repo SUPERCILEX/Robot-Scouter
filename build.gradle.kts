@@ -64,18 +64,14 @@ fun Project.configureGeneral() {
         classpath = ktlintConfig
         args = listOf("src/**/*.kt")
     }
-    whenTaskScheduled("check") {
-        dependsOn(ktlint)
-    }
+    tasks.matching { it.name == "check" }.configureEach { dependsOn(ktlint) }
 
     dependencies { "ktlint"(Config.Plugins.ktlint) }
 }
 
 fun Project.configureAndroid() {
     // Resource packaging breaks otherwise for some reason
-    whenTaskScheduled({ it.contains("Test") }) {
-        enabled = false
-    }
+    tasks.matching { it.name.contains("Test") }.configureEach { enabled = false }
 
     val tree = (group as String).split(".")
     when {
