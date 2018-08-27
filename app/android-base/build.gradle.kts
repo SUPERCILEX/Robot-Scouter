@@ -21,7 +21,7 @@ android {
     }
 
     signingConfigs {
-        create("release") {
+        register("release") {
             val keystorePropertiesFile = file(if (isReleaseBuild) {
                 "upload-keystore.properties"
             } else {
@@ -30,7 +30,7 @@ android {
 
             if (!keystorePropertiesFile.exists()) {
                 logger.warn("Release builds may not work: signing config not found.")
-                return@create
+                return@register
             }
 
             val keystoreProperties = Properties()
@@ -44,12 +44,12 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        named("debug").configure {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
         }
 
-        getByName("release") {
+        named("release").configure {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             setProguardFiles(listOf(

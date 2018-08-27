@@ -54,7 +54,7 @@ allprojects {
     configureAndroid()
 }
 
-tasks.withType<Wrapper> {
+tasks.withType<Wrapper>().configureEach {
     distributionType = Wrapper.DistributionType.ALL
 }
 
