@@ -8,10 +8,10 @@ import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
 import com.supercilex.robotscouter.build.tasks.UploadAppToVcPrep
-import deepFind
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskCollection
 import org.gradle.kotlin.dsl.register
 
 class RobotScouterBuildPlugin : Plugin<Project> {
@@ -49,8 +49,13 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         }
 
         project.afterEvaluate {
-            fun <T : Collection<Task>> T.mustRunAfter(vararg paths: Any) =
-                    onEach { it.mustRunAfter(paths) }
+            fun deepFind(spec: (Task) -> Boolean) = allprojects.map { it.tasks.matching(spec) }
+
+            fun deepFind(name: String) = deepFind { it.name == name }
+
+            fun List<TaskCollection<Task>>.mustRunAfter(vararg paths: Any) = onEach {
+                it.configureEach { mustRunAfter(paths) }
+            }
 
             ciBuildPrep.configure {
                 dependsOn(deepFind("clean"))
@@ -58,29 +63,29 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 gradle.taskGraph.whenReady {
                     if (!hasTask(this@configure)) return@whenReady
 
-                    fun Collection<Task>.skip(recursive: Boolean = false): Unit = forEach {
-                        it.enabled = false
-                        if (recursive) {
-                            if (hasTask(it)) {
-                                getDependencies(it).filter { it.enabled }.skip(recursive)
+                    fun skip(task: String, recursive: Boolean = false) {
+                        allTasks.filter { it.name == task }.forEach {
+                            it.enabled = false
+                            if (recursive && hasTask(it)) {
+                                getDependencies(it).filter { it.enabled }.forEach {
+                                    skip(it.name, recursive)
+                                }
                             }
                         }
                     }
 
                     if (isRelease) {
-                        deepFind("assembleDebug").skip(true)
+                        skip("assembleDebug", true)
                     } else {
-                        deepFind("testReleaseUnitTest").skip(true)
+                        skip("testReleaseUnitTest", true)
                     }
-                    deepFind("lint").skip()
+                    skip("lint")
                 }
             }
             ciBuild.configure {
                 dependsOn(ciBuildPrep)
 
-                fun Collection<Task>.config() = apply {
-                    mustRunAfter(ciBuildPrep)
-                }
+                fun List<TaskCollection<Task>>.config() = mustRunAfter(ciBuildPrep)
 
                 fun String.config() = deepFind { it.path == this }.config()
 
