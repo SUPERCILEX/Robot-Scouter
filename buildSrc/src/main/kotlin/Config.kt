@@ -50,17 +50,15 @@ object Config {
         }
 
         object Jetpack {
-            private const val version = "1.0.0-rc01"
+            private const val version = "1.0.0-rc02"
             private const val lifecycleVersion = "2.0.0-rc01"
-            private const val workVersion = "1.0.0-alpha07"
+            private const val workVersion = "1.0.0-alpha08"
 
             val core = "androidx.core:core-ktx:$version"
-
             val multidex = "androidx.multidex:multidex:2.0.0"
             val appCompat = "androidx.appcompat:appcompat:$version"
             val fragment = "androidx.fragment:fragment-ktx:$version"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:$version"
-            val material = "com.google.android.material:material:$version"
             val constraint = "androidx.constraintlayout:constraintlayout:1.1.2"
             val cardView = "androidx.cardview:cardview:$version"
             val palette = "androidx.palette:palette-ktx:$version"
@@ -68,6 +66,8 @@ object Config {
             val browser = "androidx.browser:browser:$version"
             val pref = "androidx.preference:preference:$version"
             val prefKtx = "androidx.preference:preference-ktx:$version"
+
+            val material = "com.google.android.material:material:1.0.0-rc01"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"

@@ -3,14 +3,6 @@
 -keepattributes SourceFile,LineNumberTable
 -printconfiguration build/outputs/mapping/configuration.txt
 
-# TODO https://issuetracker.google.com/issues/112230489
--keepclassmembers,allowobfuscation class * extends androidx.lifecycle.AndroidViewModel {
-    <init>();
-}
--keepclassmembers,allowobfuscation class * extends androidx.lifecycle.AndroidViewModel {
-    <init>(android.app.Application);
-}
-
 # Keep bridges
 -keep class com.supercilex.robotscouter.Bridge
 -keep @com.supercilex.robotscouter.Bridge class * {
@@ -33,7 +25,7 @@
     public static int e(...);
 }
 
-# Apache POI - remove once the next POIA version comes out
+# Apache POI - TODO remove once the next POIA version comes out
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellProtection { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTCellProtectionImpl { *; }
 -keep class org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle$Enum { *; }

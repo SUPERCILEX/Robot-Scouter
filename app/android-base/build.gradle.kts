@@ -91,6 +91,9 @@ dependencies {
     // TODO remove when Firebase updates their deps
     implementation(Config.Libs.Misc.gson) // Override Firestore
     implementation("com.squareup.okio:okio:1.15.0")
+    implementation(Config.Libs.Jetpack.browser)
+    implementation(Config.Libs.Jetpack.cardView)
+    implementation("androidx.recyclerview:recyclerview:1.0.0-rc02")
 }
 
 apply(plugin = "com.google.gms.google-services")

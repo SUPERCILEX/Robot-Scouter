@@ -10,7 +10,4 @@ dependencies {
     implementation(Config.Libs.FirebaseUi.facebook)
     implementation(Config.Libs.FirebaseUi.twitter) { isTransitive = true }
     implementation(Config.Libs.Firebase.invites)
-
-    // Needed for override
-    api(Config.Libs.Jetpack.browser)
 }
