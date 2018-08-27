@@ -42,7 +42,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         project.gradle.taskGraph.whenReady {
             val creds = project.secrets.single { it.name.contains("publish") }
             if (!creds.exists()) {
-                project.getTasksByName("processReleaseMetadata", true).forEach {
+                allTasks.filter { it.name == "processReleaseMetadata" }.forEach {
                     it.enabled = false
                 }
             }
