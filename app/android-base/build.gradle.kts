@@ -71,10 +71,10 @@ android {
 
 play {
     serviceAccountCredentials = file("google-play-auto-publisher.json")
-    track = "alpha"
+    defaultToAppBundles = true
+
     resolutionStrategy = "auto"
     outputProcessor = { versionNameOverride = "$versionNameOverride.$versionCode" }
-    defaultToAppBundles = true
 }
 
 dependencies {

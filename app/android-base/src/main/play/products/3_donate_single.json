@@ -1,0 +1,327 @@
+{
+  "defaultLanguage": "en-US",
+  "defaultPrice": {
+    "currency": "USD",
+    "priceMicros": "3000000"
+  },
+  "listings": {
+    "en-US": {
+      "description": "Help Robot Scouter pay for maintenance costs, new features, and bug fixes!",
+      "title": "Donate"
+    }
+  },
+  "packageName": "com.supercilex.robotscouter",
+  "prices": {
+    "DZ": {
+      "currency": "DZD",
+      "priceMicros": "325000000"
+    },
+    "AU": {
+      "currency": "AUD",
+      "priceMicros": "4290000"
+    },
+    "AT": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "BH": {
+      "currency": "USD",
+      "priceMicros": "2990000"
+    },
+    "BD": {
+      "currency": "BDT",
+      "priceMicros": "250000000"
+    },
+    "BE": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "BO": {
+      "currency": "BOB",
+      "priceMicros": "20990000"
+    },
+    "BR": {
+      "currency": "BRL",
+      "priceMicros": "9990000"
+    },
+    "BG": {
+      "currency": "BGN",
+      "priceMicros": "6190000"
+    },
+    "KH": {
+      "currency": "USD",
+      "priceMicros": "2990000"
+    },
+    "CA": {
+      "currency": "CAD",
+      "priceMicros": "3890000"
+    },
+    "CL": {
+      "currency": "CLP",
+      "priceMicros": "2000000000"
+    },
+    "CO": {
+      "currency": "COP",
+      "priceMicros": "9000000000"
+    },
+    "CR": {
+      "currency": "CRC",
+      "priceMicros": "1700000000"
+    },
+    "HR": {
+      "currency": "HRK",
+      "priceMicros": "24000000"
+    },
+    "CY": {
+      "currency": "EUR",
+      "priceMicros": "3090000"
+    },
+    "CZ": {
+      "currency": "CZK",
+      "priceMicros": "84990000"
+    },
+    "DK": {
+      "currency": "DKK",
+      "priceMicros": "24000000"
+    },
+    "EG": {
+      "currency": "EGP",
+      "priceMicros": "53990000"
+    },
+    "EE": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "FI": {
+      "currency": "EUR",
+      "priceMicros": "3290000"
+    },
+    "FR": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "DE": {
+      "currency": "EUR",
+      "priceMicros": "3090000"
+    },
+    "GH": {
+      "currency": "GHS",
+      "priceMicros": "15000000"
+    },
+    "GR": {
+      "currency": "EUR",
+      "priceMicros": "3290000"
+    },
+    "HK": {
+      "currency": "HKD",
+      "priceMicros": "23000000"
+    },
+    "HU": {
+      "currency": "HUF",
+      "priceMicros": "999000000"
+    },
+    "IN": {
+      "currency": "INR",
+      "priceMicros": "190000000"
+    },
+    "ID": {
+      "currency": "IDR",
+      "priceMicros": "40000000000"
+    },
+    "IE": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "IL": {
+      "currency": "ILS",
+      "priceMicros": "10900000"
+    },
+    "IT": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "JP": {
+      "currency": "JPY",
+      "priceMicros": "340000000"
+    },
+    "KZ": {
+      "currency": "KZT",
+      "priceMicros": "990000000"
+    },
+    "KE": {
+      "currency": "KES",
+      "priceMicros": "300000000"
+    },
+    "KW": {
+      "currency": "USD",
+      "priceMicros": "2990000"
+    },
+    "LV": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "LB": {
+      "currency": "LBP",
+      "priceMicros": "4500000000"
+    },
+    "LI": {
+      "currency": "CHF",
+      "priceMicros": "2900000"
+    },
+    "LT": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "LU": {
+      "currency": "EUR",
+      "priceMicros": "3090000"
+    },
+    "MY": {
+      "currency": "MYR",
+      "priceMicros": "12990000"
+    },
+    "MX": {
+      "currency": "MXN",
+      "priceMicros": "55000000"
+    },
+    "MA": {
+      "currency": "MAD",
+      "priceMicros": "28990000"
+    },
+    "NL": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "NZ": {
+      "currency": "NZD",
+      "priceMicros": "4690000"
+    },
+    "NG": {
+      "currency": "NGN",
+      "priceMicros": "970000000"
+    },
+    "NO": {
+      "currency": "NOK",
+      "priceMicros": "31000000"
+    },
+    "OM": {
+      "currency": "USD",
+      "priceMicros": "2990000"
+    },
+    "PK": {
+      "currency": "PKR",
+      "priceMicros": "310000000"
+    },
+    "PE": {
+      "currency": "PEN",
+      "priceMicros": "9990000"
+    },
+    "PH": {
+      "currency": "PHP",
+      "priceMicros": "150000000"
+    },
+    "PL": {
+      "currency": "PLN",
+      "priceMicros": "13990000"
+    },
+    "PT": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "QA": {
+      "currency": "QAR",
+      "priceMicros": "11000000"
+    },
+    "RO": {
+      "currency": "RON",
+      "priceMicros": "13990000"
+    },
+    "RU": {
+      "currency": "RUB",
+      "priceMicros": "179000000"
+    },
+    "SA": {
+      "currency": "SAR",
+      "priceMicros": "10990000"
+    },
+    "SG": {
+      "currency": "SGD",
+      "priceMicros": "3990000"
+    },
+    "SK": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "SI": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "ZA": {
+      "currency": "ZAR",
+      "priceMicros": "38990000"
+    },
+    "KR": {
+      "currency": "KRW",
+      "priceMicros": "3400000000"
+    },
+    "ES": {
+      "currency": "EUR",
+      "priceMicros": "3190000"
+    },
+    "LK": {
+      "currency": "LKR",
+      "priceMicros": "450000000"
+    },
+    "SE": {
+      "currency": "SEK",
+      "priceMicros": "32000000"
+    },
+    "CH": {
+      "currency": "CHF",
+      "priceMicros": "2900000"
+    },
+    "TW": {
+      "currency": "TWD",
+      "priceMicros": "96000000"
+    },
+    "TZ": {
+      "currency": "TZS",
+      "priceMicros": "6500000000"
+    },
+    "TH": {
+      "currency": "THB",
+      "priceMicros": "100000000"
+    },
+    "TR": {
+      "currency": "TRY",
+      "priceMicros": "10990000"
+    },
+    "UA": {
+      "currency": "UAH",
+      "priceMicros": "79990000"
+    },
+    "AE": {
+      "currency": "AED",
+      "priceMicros": "10990000"
+    },
+    "GB": {
+      "currency": "GBP",
+      "priceMicros": "2790000"
+    },
+    "US": {
+      "currency": "USD",
+      "priceMicros": "2990000"
+    },
+    "VN": {
+      "currency": "VND",
+      "priceMicros": "68000000000"
+    },
+    "MO": {
+      "currency": "MOP",
+      "priceMicros": "23990000"
+    }
+  },
+  "purchaseType": "managedUser",
+  "sku": "3_donate_single",
+  "status": "active"
+}

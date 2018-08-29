@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.build
 
+import child
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.secrets
 import com.supercilex.robotscouter.build.tasks.DeployServer
@@ -12,7 +13,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskCollection
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withGroovyBuilder
 
 class RobotScouterBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -114,6 +117,17 @@ class RobotScouterBuildPlugin : Plugin<Project> {
 
                 dependsOn(generateChangelog)
                 dependsOn(deepFind("publish").mustRunAfter(generateChangelog))
+                dependsOn(deepFind {
+                    it.name.startsWith("promote") && it.name.endsWith("Artifact")
+                }.onEach {
+                    it.configureEach {
+                        doFirst {
+                            project.child("android-base").extensions["play"].withGroovyBuilder {
+                                invokeMethod("setTrack", "alpha")
+                            }
+                        }
+                    }
+                }.mustRunAfter(deepFind("publish")))
                 dependsOn(deepFind("crashlyticsUploadDeobs"))
             }
             uploadAppToVcPrep.configure {
