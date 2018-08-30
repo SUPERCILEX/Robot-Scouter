@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scout_name_title">Nom du repérage</string>
+    <string name="tutorial_loading_metrics_hint">Chargement…\nVérifiez votre connexion Internet</string>
+
+    <!-- Counter -->
+    <string name="scout_edit_counter_value_title">Modifier la valeur</string>
+    <string name="scout_counter_value_title">Valeur</string>
+    <string name="accessibility_increment_counter">Incrémenter le compteur</string>
+    <string name="accessibility_decrement_counter">Décrémenter le compteur</string>
+
+    <!-- Stopwatch -->
+    <string name="metric_stopwatch_start_title">Démarrer</string>
+    <string name="metric_stopwatch_stop_title">Arrêter (%s)</string>
+    <string name="metric_stopwatch_cycle_title">Cycle %d</string>
+    <string name="metric_stopwatch_cycle_average_title">Moyenne</string>
+    <string name="scout_stopwatch_lap_added_message">Tour de chronomètre ajouté</string>
+</resources>

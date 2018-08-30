@@ -1,0 +1,29 @@
+Robot Scouter est une application Android open-source avec trois buts primaires : rendre le repérage de robots de la compétition de robotique FIRST facile, efficace et collaboratif.
+
+Repo GitHub : https://github.com/SUPERCILEX/Robot-Scouter
+
+
+<h3><b>Fonctionnalités</b></h3>
+&#8195;&#8226; <b>Utilisable hors ligne</b> 📡
+&#8195;&#8226; <b>Aucune infrastructure externe requise, e. g. une base de données</b> 🗄️ (gérer des bases de données = 💩 )
+&#8195;&#8226; Partage facile entre utilisateurs 🔗
+&#8195;&#8226; Collaboration simple et facile : plusieurs utilisateurs peuvent faire du repérage sur plusieurs équipes, la même équipe ou partir en solo sur Android N et diviser l’écran pour observer plusieurs équipes en même temps
+&#8195;&#8226; <b>Modèles de repérage personnalisables</b> 📃 avec plusieurs options disponibles :
+&#8195;&#8195;&#8226; entête/titre 🔖
+&#8195;&#8195;&#8226; vrai/faux (case à cocher)
+&#8195;&#8195;&#8226; chronomètre (pour mesurer la longueur des cycles) ⏱️
+&#8195;&#8195;&#8226; nombre (compteur)
+&#8195;&#8195;&#8226; liste déroulante
+&#8195;&#8195;&#8226; texte (notes) 📜
+&#8195;&#8226; <b>Intégration avec The Blue Alliance</b> pour remplir automatiquement les informations utiles sur l’équipe
+&#8195;&#8226; <b>Exportation en tableur avancée :</b>
+&#8195;&#8195;&#8226; Moyennes calculées automatiquement pour chaque équipe
+&#8195;&#8195;&#8226; Une feuille des moyennes globales est incluse pour comparer les équipes entre elles 📊
+&#8195;&#8195;&#8226; Formatage qui a la classe sur Android Lollipop (21) et plus récent 🎀
+&#8195;&#8195;&#8226; <b>Graphiques !</b> 📈
+&#8195;&#8195;&#8226; Note: Les tableurs Excel peuvent facilement être convertis à des tableurs Google Sheets : https://support.google.com/docs/answer/6055139
+&#8195;&#8195;&#8226; L’exportation JSON est aussi supportée pour de l’analyse personnalisée (e.g. dans Tableau)
+&#8195;&#8226; Et plus encore !
+
+
+<b>Note : les achats via l’application sont uniquement utilisés pour les donations. <i>Robot Scouter est et restera toujours 100% gratuit.</i></b>

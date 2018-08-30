@@ -7,6 +7,7 @@ import com.supercilex.robotscouter.build.tasks.DeployServer
 import com.supercilex.robotscouter.build.tasks.GenerateChangelog
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
+import com.supercilex.robotscouter.build.tasks.UpdateTranslations
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
 import com.supercilex.robotscouter.build.tasks.UploadAppToVcPrep
 import org.gradle.api.Plugin
@@ -28,6 +29,10 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         project.tasks.register<RebuildSecrets>("rebuildSecrets") {
             group = "build setup"
             description = "Repackages a new version of the secrets for CI."
+        }
+        project.tasks.register<UpdateTranslations>("updateTranslations") {
+            group = "build setup"
+            description = "Overwrites existing translations with new ones."
         }
 
         val generateChangelog =

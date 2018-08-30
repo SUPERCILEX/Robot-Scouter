@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="template_tab_default_title">Modèle %d</string>
+    <string name="scout_add_template_not_cached_error">Erreur dans la création du repérage:\nLe modèle que vous tentez d‘utiliser n’a pas encore été mis en cache. Veuillez ajouter au moins un repérage pendant que vous avez une connexion Internet pour que votremodèle puisse être mis en cache et utilisé hors ligne.</string>
+
+    <!-- Notifications -->
+    <string name="export_group_title">Exportation en tableur</string>
+    <string name="export_channel_title">Exportations complétées</string>
+    <string name="export_channel_desc">Affiche une notification actionnable pour gérer l\'exportation  complétée.</string>
+    <string name="export_progress_channel_title">Exportations en cours</string>
+    <string name="export_progress_channel_desc">Affiche le statut d\'une exportation en cours.</string>
+</resources>

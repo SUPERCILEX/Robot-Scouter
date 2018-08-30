@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home activity -->
+    <string name="home_teams_title">Équipes</string>
+    <string name="home_autoscout_title">Repérage automatique</string>
+    <string name="home_templates_title">Modèles</string>
+
+    <string name="navigation_drawer_open_desc">Ouvrir le menu de navigation</string>
+    <string name="navigation_drawer_close_desc">Fermer le menu de navigation</string>
+
+    <string name="tutorial_no_team_selected_hint">Sélectionnez une équipe pour commencer à faire le repérage</string>
+
+    <string name="sign_in_title">Se connecter</string>
+    <string name="anonymous_sign_in_failed_message">Connexion anonyme échouée</string>
+    <string name="sign_in_try_again_title">Veuillez réessayer</string>
+
+    <string name="installing_module">Installation du module…</string>
+
+    <!-- Donate dialog -->
+    <string name="donate_title">Faites un don</string>
+    <string name="donate_amount">%d€</string>
+    <string name="donate_monthly_message">Faire un don automatiquement chaque mois</string>
+    <string name="donate_cancel_message">Êtes-vous certains de ne pas vouloir faire de don ? Nous apprécions toute contribution, peu importe la taille !</string>
+    <string name="donate_thanks_message">Merci beaucoup ! Toute aide possible est grandement appréciée !</string>
+
+    <!-- Link activity -->
+    <string name="link_teams_imported_message">Équipes importées avec succès</string>
+    <string name="link_uri_parse_error">Erreur : analyse de l\'URL impossible</string>
+
+    <!-- Shortcuts -->
+    <string name="team_new_title">Nouveau repérage/équipe</string>
+    <string name="team_new_title_long">Ajouter un nouveau repérage ou équipe</string>
+    <string name="export_all_teams_title">Exporter toutes les équipes</string>
+
+    <!-- Feature modules -->
+    <string name="scout_activity_title">Éditeur de repérage</string>
+    <string name="settings_activity_title">Paramètres</string>
+
+    <string name="feature_teams_title">Équipes</string>
+    <string name="feature_auto_scout_title">Repérage automatique</string>
+    <string name="feature_scouts_title">Éditeur de repérage</string>
+    <string name="feature_templates_title">Éditeur de modèles</string>
+    <string name="feature_settings_title">Paramètres</string>
+    <string name="feature_exports_title">Exportations</string>
+
+</resources>

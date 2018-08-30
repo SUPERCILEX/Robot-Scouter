@@ -54,7 +54,10 @@
         you want to try out new features before everyone else, feel free to join
         <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">the beta</a>.\n\nAlso,
         Robot Scouter is <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a>
-        so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!
+        so please <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">file bugs and feature requests</a>!\n\nSignificant
+        contributions:\n ● French translations provided by
+        <a href="https://twitter.com/samgd14">Sami G.-D.</a> from team
+        <a href="http://www.thebluealliance.com/team/6929">#6929</a>
     </string>
 
     <string name="settings_pref_release_notes_title">Release notes</string>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_category_ui_title">Interface utilistaeur</string>
+    <string name="settings_category_general_title">Général</string>
+    <string name="settings_category_about_title">À propos</string>
+
+    <string name="settings_pref_night_mode_title">Mode nuit</string>
+    <string-array name="settings_pref_night_mode_entries">
+        <item>Auto</item>
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+    <string name="settings_pref_lock_templates_title">Empêcher la modification de modèles</string>
+    <string name="settings_pref_lock_templates_summary">Choisissez si l‘éditeur de modèles sera affiché ou non. Utile pour empêcher des modifications accidentelles par d’autres membres de l‘équipe.</string>
+
+    <string name="settings_pref_default_template_title">Modèle par défaut</string>
+    <string name="settings_pref_default_template_summary">%s\nChoisissez le modèle par défaut pour les nouveaux repérages</string>
+    <string name="settings_pref_default_template_name">[PAR DÉFAUT] %s</string>
+
+    <string name="settings_pref_should_upload_to_tba_title">Envoyer des médias à The Blue Alliance</string>
+    <string name="settings_pref_should_upload_to_tba_summary">%s\nChoisissez ce qui se passe lorsque vous prenez une photo avec Robot Scouter</string>
+    <string-array name="settings_pref_should_upload_to_tba_entries">
+        <item>Demander chaque fois</item>
+        <item>@string/yes</item>
+        <item>@string/no</item>
+    </string-array>
+    <string name="settings_pref_reset_prefs_title">Réinitialiser les préférences et les tutoriels</string>
+
+    <string name="settings_pref_link_account_title">Lier les comptes</string>
+    <string name="settings_pref_link_account_summary">Combiner deux comptes en un</string>
+
+    <string name="settings_pref_sign_out_title">Se déconnecter</string>
+
+    <string name="settings_pref_about_summary">Robot Scouter est développé avec 💖 par <a href="https://github.com/SUPERCILEX">Alex Saveau</a> et l\'icône a été conçue par <a href="https://github.com/andrewda">Andrew Dassonville</a>.\n\nSi vous désirez essayer de nouvelles fonctions avant le public, n\'hésitez pas à rejoindre <a href="https://play.google.com/apps/testing/com.supercilex.robotscouter">la bêta</a>.\n\nAussi, Robot Scouter est <a href="https://github.com/SUPERCILEX/Robot-Scouter">open-source</a> donc s\'il-vous-plaît, <a href="https://github.com/SUPERCILEX/Robot-Scouter/issues/new">remplissez les demandes de correctifs et de fonctions</a> !</string>
+
+    <string name="settings_pref_release_notes_title">Notes de version</string>
+    <string name="settings_pref_release_notes_summary">Voir les dernières notes de version</string>
+
+    <string name="settings_pref_translate_title">Aidez à traduire Robot Scouter</string>
+    <string name="settings_pref_translate_summary">Vous connaissez un autre langue ? Aidez à traduire !</string>
+
+    <string name="settings_pref_version_title">Version</string>
+    <string name="settings_debug_info_title">Information de débug de Robot Scouter</string>
+    <string name="settings_debug_info_copied_message">Information de débug copiée dans le presse-papiers</string>
+
+    <string name="settings_pref_licenses_title">Licenses</string>
+</resources>

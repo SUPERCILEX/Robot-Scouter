@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="template_new_title">Nouveau modèle</string>
+    <string name="template_set_default_message">Modèle par défaut mis à jour</string>
+    <string name="template_edit_name_title">Modifier le nom du modèle</string>
+    <string name="template_added_title">Modèle ajouté</string>
+    <string name="template_added_message">Modèle ajouté et déterminé par défaut</string>
+
+    <string name="template_tutorial_no_templates_hint">Les modèles ajoutées apparaissent ici</string>
+    <string name="template_tutorial_no_metrics_hint">Les mesures ajoutées apparaissent ici</string>
+
+    <string name="template_share_title">Partager le modèle %s</string>
+    <string name="template_share_message">Vous êtes invité(e) à modifier le modèle %s avec moi dans Robot Scouter !</string>
+    <string name="template_share_cta">Importer le modèle de repérage %s dans Robot Scouter</string>
+
+    <string name="template_move_cancelled_rationale">Déplacement annulé : un autre utilisateur a mis a jour le modèle pendant que vous réorganisiez des éléments.</string>
+
+    <string name="dialog_add_metric_title">Ajouter</string>
+
+    <string name="metric_header_title">Entête</string>
+    <string name="metric_header_name_hint">Nom de l\'entête</string>
+
+    <string name="metric_checkbox_title">Case à cocher</string>
+    <string name="metric_checkbox_name_hint">Nom de la case à cocher</string>
+
+    <string name="metric_counter_title">Compteur</string>
+    <string name="metric_counter_name_hint">Nom du compteur</string>
+    <string name="metric_counter_unit_hint">Unité</string>
+
+    <string name="metric_stopwatch_title">Chronomètre</string>
+    <string name="metric_stopwatch_name_hint">Nom du chronomètre</string>
+
+    <string name="metric_note_title">Note</string>
+    <string name="metric_note_name_hint">Nom de la note</string>
+    <string name="metric_note_value_hint">Texte</string>
+
+    <string name="metric_spinner_title">Liste déroulante</string>
+    <string name="metric_spinner_name_hint">Nom de la liste déroulante</string>
+    <string name="metric_spinner_item_name_hint">Nom de l\'élément</string>
+    <string name="metric_spinner_item_default_required_error">Élément par défaut requis</string>
+
+    <string name="template_remove_metrics_title">Supprimer toutes les mesures</string>
+    <string name="template_delete_title">Supprimer le modèle</string>
+    <string name="template_delete_dialog_title">Supprimer le modèle ?</string>
+    <string name="template_delete_message">Ce modèle sera retiré définitivement et toutes les équipes l\'utilisant se serviront plutôt du modèle par défaut pour les repérages futurs. Tout repérage existant ne sera pas affecté</string>
+
+    <string name="accessibility_reorder">L\'icône de réorganisation. Il peut être utilisé pour changer l\'ordre des mesures dans les repérages.</string>
+    <string name="accessibility_add_spinner_item">Ajouter une nouvelle liste déroulante</string>
+    <string name="accessibility_set_default_spinner_item">Définir l\'élément sélectionné par défaut dans la liste déroulante</string>
+    <string name="accessibility_delete_spinner_item">Supprimer la liste déroulante</string>
+</resources>

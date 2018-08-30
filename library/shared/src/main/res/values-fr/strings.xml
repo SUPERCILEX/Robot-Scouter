@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="scout_default_name">Repérage %d</string>
+    <string-array name="template_new_options">
+        <item>Repérage de match</item>
+        <item>Repérage de puits</item>
+        <item>Repérage vierge</item>
+    </string-array>
+    <string name="add_scout_selector_title">Ajouter un repérage depuis un modèle</string>
+    <string name="template_set_default_title">Sélectionner comme modèle par défaut</string>
+    <string name="number_too_big_error">Veuillez entrer un nombre entre 0 et 2^63 – 1</string>
+
+    <!-- Media upload -->
+    <string name="media_upload_reminder">Prenez des photos <b>claires</b> des <b>robots</b> <i>seulement</i>.</string>
+    <string name="media_write_storage_rationale">Robot Scouter a besoin d\'avoir accès à votre stockage pour sauvegarder vos photos.</string>
+    <string name="media_should_upload_title">Envoyer le média à The Blue Alliance ?</string>
+    <string name="media_should_upload_rationale">Si vous choisissez de participer, vos fichiers médias seront partagés avec <a href="https://thebluealliance.com">The Blue Alliance</a> pou aider les autres Robot Scouters et l\'incroyable communauté TBA.\n\nVeuillez <b>lire cela</b> :\n ● De vraies personnes passent en revue vos suggestions, soyez gracieusement professionnels.\n ● Prenez uniquement des photos de robots.\n ● Assurez vous que le robot est clairement visible.</string>
+    <string name="media_save_response_title">Ne plus m\'afficher cela</string>
+
+    <!-- Sharing -->
+    <plurals name="team_share_title">
+        <item quantity="one">%sPartager l\'équipe </item>
+        <item quantity="other">Partager les équipes %s</item>
+    </plurals>
+    <plurals name="team_share_message">
+        <item quantity="one">Vous êtes invité(e) à modifier l\'équipe %s ! avec moi dans Robot Scouter</item>
+        <item quantity="other">Vous êtes invité(e) à modifier les équipes %s avec moi dans Robot Scouter !</item>
+    </plurals>
+    <plurals name="team_share_cta">
+        <item quantity="one">Importer l\'équipe %s dans Robot Scouter</item>
+        <item quantity="other">Importer les équipes %s dans Robot Scouter</item>
+    </plurals>
+
+    <!-- Team details -->
+    <string name="details_title">Détails sur l\'équipe</string>
+    <string name="details_name_hint">Nom</string>
+    <string name="details_media_hint">URL média</string>
+    <string name="details_website_hint">Site internet</string>
+    <string name="details_malformed_url_error">Assurez-vous d\'avoir une URL valide.</string>
+    <string name="details_action_visit_website_title">Site internet</string>
+    <string name="accessibility_robot_icon">Une image du robot de l\'équipe</string>
+    <string name="accessibility_edit_team_name">Modifier le nom de l\'équipe</string>
+
+    <!-- Rating dialog -->
+    <string name="rate_title">Appréciez-vous Robot Scouter ?</string>
+    <string name="rate_message">Pendant que vous patientez pour obtenir vos résultats de repérage, pourquoi ne pas évaluer Robot Scouter !</string>
+    <string name="rate_positive">Évaluez</string>
+    <string name="rate_negative">Pas maintenant</string>
+    <string name="rate_neutral">Me le rappeler plus tard</string>
+
+    <!-- Update dialog -->
+    <string name="update_title">Mise à jour</string>
+    <string name="update_required_title">Mettre Robot Scouter à jour</string>
+</resources>

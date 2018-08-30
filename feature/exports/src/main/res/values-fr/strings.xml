@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="export_share_title">
+        <item quantity="one">Partager les données de l\'équipe %s</item>
+        <item quantity="other">Partager les données des équipes %s</item>
+    </plurals>
+    <string name="export_browse_title">Sélectionner un navigateur de fichiers</string>
+    <string name="export_overall_progress_title">Exportateur en tableur</string>
+    <string name="export_progress_title">Exportation du tableur</string>
+
+    <string name="export_unnamed_template_title">Modèle sans nom</string>
+    <string name="export_unknown_template_title">Modèle inconnu</string>
+    <string name="export_offline_rationale">L\'exportation d\'un tableur tout en étant hors connexion pourrait produire des résultats incomplets.</string>
+    <string name="export_unsupported_device_rationale">Avertissement : vous utilisez un appareil non supporté</string>
+
+    <string name="export_write_storage_rationale">Robot Scouter a besoin d\'avoir accès à votre stockage pour créer les fichiers tableurs.</string>
+    <string name="export_progress_hint">Exportation…</string>
+    <string name="export_complete_title">Exportation complétée pour %s</string>
+    <plurals name="export_complete_subtitle">
+        <item quantity="one">1 modèle exporté</item>
+        <item quantity="other">%d modèles exportés</item>
+    </plurals>
+    <plurals name="export_complete_summary">
+        <item quantity="one">1 équipe exportée</item>
+        <item quantity="other">%d équipes exportées</item>
+    </plurals>
+    <plurals name="export_complete_message">
+        <item quantity="one">L\'équipe %s a été exportée</item>
+        <item quantity="other">Les équipes %s ont été exportées</item>
+    </plurals>
+    <string name="export_complete_none_message">Aucune équipe exportée</string>
+
+    <string name="export_initialize_status">Initialisation</string>
+    <plurals name="export_load_status_detail">
+        <item quantity="one">Chargement de l\'équipe %d</item>
+        <item quantity="other">Chargement des équipes %d-%d</item>
+    </plurals>
+    <string name="export_loaded_status">Équipes chargées</string>
+    <string name="export_template_status">Exportation des équipes pour %s</string>
+    <string name="export_average_status">Exportation de la feuille de vue d\'ensemble</string>
+    <string name="export_cleanup_status">Nettoyage</string>
+    <string name="export_json_status">Exportation du JSON</string>
+
+    <string name="export_average_column_title">Moyenne</string>
+    <string name="export_median_column_title">Médiane</string>
+    <string name="export_max_column_title">Max</string>
+</resources>

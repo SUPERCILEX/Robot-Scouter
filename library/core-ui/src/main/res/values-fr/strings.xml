@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="save">Sauvegarder</string>
+    <string name="undo">Annuler</string>
+
+    <string name="share">Partager</string>
+    <string name="open">Ouvrir</string>
+    <string name="delete">Supprimer</string>
+    <string name="deleted">Supprimé</string>
+    <string name="cancelled">Annulé</string>
+
+    <string name="no_connection">Aucune connexion Internet</string>
+    <string name="sign_in_required">Connexion requise</string>
+    <string name="signed_in_message">Connexion réussie !</string>
+    <string name="sign_in_failed_message">Échec de la connexion</string>
+    <string name="error_unknown">Une erreur inconnue s\'est produite</string>
+</resources>
