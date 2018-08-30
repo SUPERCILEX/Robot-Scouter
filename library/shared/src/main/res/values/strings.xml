@@ -45,9 +45,9 @@
 
     <!-- Team details -->
     <string name="details_title">Team details</string>
-    <string name="details_name_hint">Team name</string>
-    <string name="details_media_hint">Team media url</string>
-    <string name="details_website_hint">Team website</string>
+    <string name="details_name_hint">Name</string>
+    <string name="details_media_hint">Media url</string>
+    <string name="details_website_hint">Website</string>
     <string name="details_malformed_url_error">Make sure you have a valid url.</string>
     <string name="details_action_visit_tba_title" translatable="false">TBA</string>
     <string name="details_action_visit_website_title">Website</string>
