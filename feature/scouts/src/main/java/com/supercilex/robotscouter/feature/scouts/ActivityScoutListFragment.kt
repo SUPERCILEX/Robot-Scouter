@@ -87,11 +87,11 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
 
         private fun setTaskDescription(@ColorInt colorPrimary: Int) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                requireActivity().setTaskDescription(
+                activity?.setTaskDescription(
                         ActivityManager.TaskDescription(team.toString(), 0, colorPrimary))
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 @Suppress("DEPRECATION")
-                requireActivity().setTaskDescription(
+                activity?.setTaskDescription(
                         ActivityManager.TaskDescription(team.toString(), null, colorPrimary))
             }
         }
