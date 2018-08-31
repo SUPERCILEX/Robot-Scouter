@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
+import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.Refreshable
 import com.supercilex.robotscouter.SignInResolver
 import com.supercilex.robotscouter.TemplateListFragmentBridge
@@ -34,6 +35,7 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
+@Bridge
 internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge, Refreshable,
         View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
