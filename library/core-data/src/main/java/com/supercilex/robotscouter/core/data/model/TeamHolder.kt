@@ -20,8 +20,6 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
     private val _teamListener = UniqueMutableLiveData<Team?>()
     val teamListener: LiveData<Team?> = _teamListener
 
-    private var called = true
-
     override fun onCreate(args: Bundle) {
         val team = args.getTeam()
         if (isSignedIn && team.owners.contains(uid)) {
@@ -55,7 +53,6 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
             oldIndex: Int
     ) {
         if (teamListener.value?.id != snapshot.id) return
-        called = true
 
         if (type == ChangeEventType.REMOVED) {
             _teamListener.setValue(null)
@@ -68,11 +65,8 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
     }
 
     override fun onDataChanged() {
-        if (!called && teams.none { it.id == teamListener.value?.id }) {
-            _teamListener.setValue(null)
-        }
-
-        called = false
+        val current = teamListener.value ?: return
+        if (teams.none { it.id == current.id }) _teamListener.setValue(null)
     }
 
     override fun onCleared() {
