@@ -5,9 +5,9 @@
     <string name="team_tutorial_no_teams_hint">Teams you add appear here</string>
 
     <string name="team_unknown_team_title">Unknown</string>
-    <plurals name="team_delete_message">
-        <item quantity="one">Delete team %s?</item>
-        <item quantity="other">Delete the following teams?</item>
+    <plurals name="teams_deleted_message">
+        <item quantity="one">Team deleted</item>
+        <item quantity="other">%s teams deleted</item>
     </plurals>
 
     <string name="team_select_all_title">Select all</string>

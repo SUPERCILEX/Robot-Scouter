@@ -43,7 +43,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 
     private val deleteIcon: Drawable = checkNotNull(AppCompatResources.getDrawable(
-            rootView.context, RC.drawable.ic_delete_black_24dp))
+            rootView.context, R.drawable.ic_delete_black_24dp))
     private val deletePaint = Paint().apply {
         color = ContextCompat.getColor(rootView.context, RC.color.delete_background)
     }

@@ -12,9 +12,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.DrawerToggler
 import com.supercilex.robotscouter.TeamExporter
 import com.supercilex.robotscouter.core.data.isFullUser
+import com.supercilex.robotscouter.core.data.model.trash
+import com.supercilex.robotscouter.core.data.model.untrashTeam
 import com.supercilex.robotscouter.core.ui.DrawerMenuHelperBase
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
@@ -55,8 +58,19 @@ internal class TeamMenuHelper(
             }
             R.id.action_edit_team_details -> TeamDetailsDialog.show(
                     fragment.childFragmentManager, fragment.selectedTeams.first())
-            R.id.action_delete -> DeleteTeamDialog.show(
-                    fragment.childFragmentManager, fragment.selectedTeams)
+            R.id.action_delete -> {
+                val deleted = fragment.selectedTeams.toList()
+                for (team in deleted) team.trash()
+
+                longSnackbar(
+                        checkNotNull(fragment.view),
+                        activity.resources.getQuantityString(
+                                R.plurals.teams_deleted_message, deleted.size, deleted.size),
+                        activity.getString(RC.string.undo)
+                ) {
+                    for (team in deleted) untrashTeam(team.id)
+                }
+            }
             else -> return false
         }
         return true

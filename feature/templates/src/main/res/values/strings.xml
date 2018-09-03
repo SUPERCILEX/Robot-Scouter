@@ -44,10 +44,9 @@
     <string name="metric_spinner_item_default_required_error">Default item required</string>
 
     <string name="template_remove_metrics_title">Remove all metrics</string>
-    <string name="template_delete_title">Delete template</string>
     <string name="template_delete_dialog_title">Delete template?</string>
     <string name="template_delete_message">
-        This template will be permanently removed and all teams using it will instead begin using
+        This template will be moved to the Trash and all teams using it will instead begin using
         the default template for future scouts. Any existing scouts won’t be affected.
     </string>
 
