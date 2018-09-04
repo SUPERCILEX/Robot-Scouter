@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
+import com.supercilex.robotscouter.core.data.logRatingDialogResponse
 import com.supercilex.robotscouter.core.data.shouldShowRatingDialog
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import com.supercilex.robotscouter.core.ui.showStoreListing
@@ -21,9 +22,13 @@ class RatingDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
         shouldShowRatingDialog = when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
                 requireActivity().showStoreListing()
+                logRatingDialogResponse(true)
                 false
             }
-            DialogInterface.BUTTON_NEGATIVE -> false
+            DialogInterface.BUTTON_NEGATIVE -> {
+                logRatingDialogResponse(false)
+                false
+            }
             else -> true
         }
     }

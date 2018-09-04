@@ -105,7 +105,7 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.35.0"
+            val facebook = "com.facebook.android:facebook-login:4.36.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 

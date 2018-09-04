@@ -8,6 +8,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Param.CONTENT_TYPE
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_ID
 import com.google.firebase.analytics.FirebaseAnalytics.Param.ITEM_NAME
+import com.google.firebase.analytics.FirebaseAnalytics.Param.SUCCESS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.RobotScouter
@@ -192,6 +193,11 @@ internal fun Metric<*>.logUpdate() = analytics.logEvent(
 internal fun logUpdateDefaultTemplateId(id: String) = analytics.logEvent(
         "update_default_template_id",
         bundleOf(ITEM_ID to id)
+)
+
+fun logRatingDialogResponse(yes: Boolean) = analytics.logEvent(
+        "rating_response",
+        bundleOf(SUCCESS to yes)
 )
 
 fun logLoginEvent() = analytics.logEvent(FirebaseAnalytics.Event.LOGIN, Bundle.EMPTY)
