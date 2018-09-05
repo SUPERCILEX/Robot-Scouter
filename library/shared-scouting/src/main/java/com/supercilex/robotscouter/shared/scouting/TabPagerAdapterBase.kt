@@ -146,6 +146,7 @@ abstract class TabPagerAdapterBase(
             outState.putAll(getTabIdBundle(currentTabId))
 
     private fun selectTab(index: Int) {
+        val tabs = tabs
         val select: () -> Unit = { tabs.getTabAt(index)?.select() }
 
         // Select the tab twice:
