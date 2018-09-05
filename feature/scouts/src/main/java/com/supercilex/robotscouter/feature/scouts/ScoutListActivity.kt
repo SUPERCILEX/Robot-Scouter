@@ -50,6 +50,7 @@ internal class ScoutListActivity : ActivityBase() {
     companion object : ScoutListActivityCompanion {
         override fun createIntent(args: Bundle): Intent =
                 RobotScouter.intentFor<ScoutListActivity>(SCOUT_ARGS_KEY to args)
+                        .putExtra("android.intent.extra.shortcut.SHELF_GROUP_ID", "scouts")
                         .multipleTask()
                         .addNewDocumentFlags()
     }
