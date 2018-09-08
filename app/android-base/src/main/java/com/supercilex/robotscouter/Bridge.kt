@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ProgressBar
@@ -35,6 +36,7 @@ import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
@@ -70,6 +72,8 @@ internal fun ActivityBase.handleModuleInstalls(
         if (isVisible) bringToFront()
     }
 })
+
+fun Context.home(vararg params: Pair<String, Any?>) = intentFor<HomeActivity>(*params)
 
 interface SelectedTeamsRetriever {
     val selectedTeams: List<Team>
@@ -118,6 +122,10 @@ interface TeamListFragmentCompanion : InstalledBridgeCompanion {
     }
 }
 
+interface TeamSelectionListener {
+    fun onTeamSelected(args: Bundle)
+}
+
 interface NewTeamDialogCompanion : InstalledBridgeCompanion {
     fun show(manager: FragmentManager)
 
@@ -142,23 +150,34 @@ interface AutoScoutFragmentCompanion : InstalledBridgeCompanion {
     }
 }
 
-interface TabletScoutListFragmentCompanion : InstalledBridgeCompanion {
+interface ScoutListFragmentCompanionBase : InstalledBridgeCompanion {
     fun newInstance(args: Bundle): Fragment
 
+    companion object {
+        const val TAG = "ScoutListFragment"
+    }
+}
+
+interface TabletScoutListFragmentCompanion : ScoutListFragmentCompanionBase {
     companion object : InstalledBridgeFinderCompanion<TabletScoutListFragmentCompanion>() {
-        const val TAG = "TabletScoutListFrag"
         override val moduleName = "scouts"
 
         override val instance =
-                requireClass("com.supercilex.robotscouter.feature.scouts.TabletScoutListFragment")
+                requireClass("com.supercilex.robotscouter.feature.scouts.TabletScoutListContainer")
                         .get<TabletScoutListFragmentCompanion>()
     }
 }
 
-interface TabletScoutListFragmentBridge {
-    fun addScoutWithSelector()
+interface IntegratedScoutListFragmentCompanion : ScoutListFragmentCompanionBase {
+    fun getInstance(manager: FragmentManager): Fragment?
 
-    fun showTeamDetails()
+    companion object : InstalledBridgeFinderCompanion<IntegratedScoutListFragmentCompanion>() {
+        override val moduleName = "scouts"
+
+        override val instance =
+                requireClass("com.supercilex.robotscouter.feature.scouts.IntegratedScoutListFragment")
+                        .get<IntegratedScoutListFragmentCompanion>()
+    }
 }
 
 interface ScoutListActivityCompanion : InstalledBridgeCompanion {

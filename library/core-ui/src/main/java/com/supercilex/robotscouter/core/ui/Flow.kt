@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.core.ui
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 
 fun Intent.addNewDocumentFlags(): Intent {
@@ -13,14 +12,6 @@ fun Intent.addNewDocumentFlags(): Intent {
 interface OnBackPressedListener {
     /** @return true if the back press was consumed, false otherwise. */
     fun onBackPressed(): Boolean
-}
-
-interface TeamSelectionListener {
-    fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean = false)
-}
-
-interface TemplateSelectionListener {
-    fun onTemplateSelected(id: String)
 }
 
 interface RecyclerPoolHolder {

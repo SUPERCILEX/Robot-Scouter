@@ -13,8 +13,8 @@ import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_USERS
 import com.supercilex.robotscouter.core.fullVersionName
 
-internal val mainHandler = Handler(Looper.getMainLooper())
-internal val Thread.isMain get() = this === mainHandler.looper.thread
+val mainHandler = Handler(Looper.getMainLooper())
+val Thread.isMain get() = this === mainHandler.looper.thread
 
 val user get() = FirebaseAuth.getInstance().currentUser
 val uid get() = user?.uid

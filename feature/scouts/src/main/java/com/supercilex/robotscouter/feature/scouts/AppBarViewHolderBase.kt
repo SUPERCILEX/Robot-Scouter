@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
+import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.forceUpdate
@@ -40,7 +41,7 @@ import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamMediaCreator
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -61,8 +62,8 @@ internal open class AppBarViewHolderBase(
         OnActivityResult, Saveable, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
-    final override val containerView = checkNotNull(fragment.view)
-    val toolbar: Toolbar = containerView.find(RC.id.toolbar)
+    final override val containerView = fragment.requireActivity().find<View>(R.id.header)
+    val toolbar: Toolbar = scoutsToolbar
     private val toolbarHeight =
             fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)
 
@@ -119,10 +120,12 @@ internal open class AppBarViewHolderBase(
         progress.hide(true)
 
         if (resource?.isRecycled == false) {
+            val holderRef = asLifecycleReference(fragment.viewLifecycleOwner)
             launch(UI) {
                 val palette = withContext(DefaultDispatcher) { Palette.from(resource).generate() }
 
-                val update: Palette.Swatch.() -> Unit = { updateScrim(rgb) }
+                val holder = holderRef()
+                val update: Palette.Swatch.() -> Unit = { holder.updateScrim(rgb) }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }
 
@@ -145,7 +148,7 @@ internal open class AppBarViewHolderBase(
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.
                 if (swatch.hsl.first() == 0f) {
-                    header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
+                    holderRef().header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
                 }
             }
         }

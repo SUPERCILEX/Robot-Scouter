@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import androidx.fragment.app.FragmentManager
-import com.supercilex.robotscouter.core.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.shared.TemplateSelectorDialog
 
 internal class ScoutTemplateSelectorDialog : TemplateSelectorDialog() {

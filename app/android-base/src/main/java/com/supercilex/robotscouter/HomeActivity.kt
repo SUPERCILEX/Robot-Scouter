@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -9,6 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.transaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -34,7 +34,6 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
-import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.showStoreListing
@@ -66,10 +65,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         )
     }
 
-    private val scoutListFragment
-        get() = supportFragmentManager.findFragmentByTag(TabletScoutListFragmentCompanion.TAG)
-                as TabletScoutListFragmentBridge?
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
@@ -98,27 +93,26 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         drawer.setNavigationItemSelectedListener(this)
-        bottomNavigation.setOnNavigationItemSelectedListener {
-            supportFragmentManager.transaction {
-                val currentFragment =
-                        checkNotNull(supportFragmentManager.findFragmentById(R.id.content))
-                val newTag = destIdToTag(it.itemId)
+        bottomNavigation.setOnNavigationItemSelectedListener listener@{
+            val manager = supportFragmentManager
 
-                if (currentFragment.tag == newTag) {
-                    (currentFragment as? Refreshable)?.refresh()
-                    return@transaction
-                }
+            val currentFragment = checkNotNull(manager.findFragmentById(R.id.content))
+            val newTag = destIdToTag(it.itemId)
 
-                val newFragment = when (newTag) {
-                    TeamListFragmentCompanion.TAG ->
-                        TeamListFragmentCompanion().getInstance(supportFragmentManager)
-                    AutoScoutFragmentCompanion.TAG ->
-                        AutoScoutFragmentCompanion().getInstance(supportFragmentManager)
-                    TemplateListFragmentCompanion.TAG ->
-                        TemplateListFragmentCompanion().getInstance(
-                                supportFragmentManager, intent.extras?.getBundle(TEMPLATE_ARGS_KEY))
-                    else -> error("Unknown tag: $newTag")
-                }
+            if (currentFragment.tag == newTag) {
+                (currentFragment as? Refreshable)?.refresh()
+                return@listener true
+            }
+            if (
+                it.itemId == R.id.teams &&
+                currentFragment.tag === ScoutListFragmentCompanionBase.TAG
+            ) {
+                manager.popBackStack()
+                return@listener true
+            }
+
+            manager.transaction {
+                val newFragment = manager.destTagToFragment(newTag)
 
                 setCustomAnimations(
                         R.anim.pop_fade_in,
@@ -153,6 +147,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         R.id.autoScout -> AutoScoutFragmentCompanion.TAG
         R.id.templates -> TemplateListFragmentCompanion.TAG
         else -> error("Unknown id: $id")
+    }
+
+    private fun FragmentManager.destTagToFragment(tag: String) = when (tag) {
+        TeamListFragmentCompanion.TAG -> IntegratedScoutListFragmentCompanion().getInstance(this)
+                ?: TeamListFragmentCompanion().getInstance(this)
+        AutoScoutFragmentCompanion.TAG -> AutoScoutFragmentCompanion().getInstance(this)
+        TemplateListFragmentCompanion.TAG -> TemplateListFragmentCompanion().getInstance(
+                this, intent.extras?.getBundle(TEMPLATE_ARGS_KEY))
+        else -> error("Unknown tag: $tag")
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -191,9 +194,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         super.onActivityResult(requestCode, resultCode, data)
         authHelper.onActivityResult(requestCode, resultCode, data)
         permHandler.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SCOUT && resultCode == Activity.RESULT_OK) {
-            onTeamSelected(checkNotNull(data).getBundleExtra(SCOUT_ARGS_KEY), true)
-        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -216,13 +216,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onShortcut(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
-            KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
-                scoutListFragment?.addScoutWithSelector()
-            } else {
-                return false
-            }
             KeyEvent.KEYCODE_E -> export()
-            KeyEvent.KEYCODE_D -> scoutListFragment?.showTeamDetails()
             else -> return false
         }
         return true
@@ -241,20 +235,34 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
     }
 
-    override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
+    override fun onTeamSelected(args: Bundle) {
         args.getTeam().logSelect()
 
-        if (isInTabletMode()) {
-            supportFragmentManager.transaction {
+        val manager = supportFragmentManager
+        manager.transaction {
+            val existing = IntegratedScoutListFragmentCompanion().getInstance(manager)?.also {
+                manager.popBackStack()
+            }
+
+            if (isInTabletMode()) {
                 replace(R.id.scoutList,
                         TabletScoutListFragmentCompanion().newInstance(args),
-                        TabletScoutListFragmentCompanion.TAG)
-            }
-        } else {
-            if (restoreOnConfigChange) {
-                startActivityForResult(ScoutListActivityCompanion().createIntent(args), RC_SCOUT)
+                        ScoutListFragmentCompanionBase.TAG)
             } else {
-                startActivity(ScoutListActivityCompanion().createIntent(args))
+                setReorderingAllowed(true)
+                if (bottomNavigation.selectedItemId != R.id.teams) {
+                    bottomNavigation.selectedItemId = R.id.teams
+                } else if (existing != null) {
+                    setReorderingAllowed(false)
+                }
+
+                if (existing == null) detach(checkNotNull(manager.findFragmentById(R.id.content)))
+                detach(TeamListFragmentCompanion().getInstance(manager))
+
+                add(R.id.content,
+                    IntegratedScoutListFragmentCompanion().newInstance(args),
+                    ScoutListFragmentCompanionBase.TAG)
+                addToBackStack(null)
             }
         }
     }
@@ -303,7 +311,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         intent.extras?.run {
             when {
                 containsKey(SCOUT_ARGS_KEY) ->
-                    onTeamSelected(checkNotNull(getBundle(SCOUT_ARGS_KEY)), true)
+                    onTeamSelected(checkNotNull(getBundle(SCOUT_ARGS_KEY)))
                 containsKey(TEMPLATE_ARGS_KEY) -> {
                     val args = checkNotNull(getBundle(TEMPLATE_ARGS_KEY))
                     if (bottomNavigation.selectedItemId == R.id.templates) {
@@ -348,8 +356,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             if (isSignedIn) block() else showSignInResolution()
 
     private companion object {
-        const val RC_SCOUT = 744
-
         const val DONATE_EXTRA = "donate_extra"
         const val UPDATE_EXTRA = "update_extra"
         const val ADD_SCOUT_INTENT = "add_scout"

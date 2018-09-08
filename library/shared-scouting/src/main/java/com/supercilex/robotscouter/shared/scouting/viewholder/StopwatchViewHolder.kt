@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.CallSuper
 import androidx.annotation.StringRes
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
@@ -27,6 +26,7 @@ import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
 import kotlinx.android.synthetic.main.scout_base_stopwatch.*
@@ -44,7 +44,8 @@ import java.util.concurrent.TimeUnit
 import com.supercilex.robotscouter.core.ui.R as RC
 
 open class StopwatchViewHolder(
-        itemView: View
+        itemView: View,
+        fragment: MetricListFragment
 ) : MetricViewHolderBase<Metric.Stopwatch, List<Long>>(itemView),
         View.OnClickListener, View.OnLongClickListener {
     private var timer: Timer? = null
@@ -75,10 +76,7 @@ open class StopwatchViewHolder(
         cycles.adapter = cyclesAdapter
         GravitySnapHelper(Gravity.START).attachToRecyclerView(cycles)
 
-        (itemView.context as FragmentActivity).supportFragmentManager.fragments
-                .filterIsInstance<RecyclerPoolHolder>()
-                .single()
-                .let { cycles.setRecycledViewPool(it.recyclerPool) }
+        cycles.setRecycledViewPool((fragment.parentFragment as RecyclerPoolHolder).recyclerPool)
     }
 
     override fun bind() {

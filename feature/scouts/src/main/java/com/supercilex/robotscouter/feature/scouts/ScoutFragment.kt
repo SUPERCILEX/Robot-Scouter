@@ -7,7 +7,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
@@ -21,9 +20,9 @@ import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
+import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.android.synthetic.main.fragment_scout_metric_list.*
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment() {
@@ -32,7 +31,7 @@ internal class ScoutFragment : MetricListFragment() {
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
     override val dataId get() = scoutId
 
-    private val toolbar by unsafeLazy { checkNotNull(parentFragment).find<Toolbar>(RC.id.toolbar) }
+    private val toolbar by unsafeLazy { requireActivity().scoutsToolbar }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -51,9 +50,8 @@ internal class ScoutFragment : MetricListFragment() {
     }
 
     override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = ScoutAdapter(
+            this,
             holder.metrics,
-            viewLifecycleOwner,
-            childFragmentManager,
             metricsView,
             savedInstanceState
     )

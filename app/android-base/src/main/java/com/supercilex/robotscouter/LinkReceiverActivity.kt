@@ -21,7 +21,6 @@ import com.supercilex.robotscouter.core.data.updateOwner
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
-import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import kotlinx.android.synthetic.main.activity_link_receiver.*
 import kotlinx.coroutines.experimental.async
@@ -72,15 +71,9 @@ internal class LinkReceiverActivity : ActivityBase() {
                     id
             ))
 
-            if (isInTabletMode()) {
-                startActivity(intentFor<HomeActivity>(SCOUT_ARGS_KEY to data)
-                                      .addNewDocumentFlags()
-                                      .setAction(ACTION_FROM_DEEP_LINK))
-            } else {
-                startActivity(ScoutListActivityCompanion()
-                                      .createIntent(data)
-                                      .setAction(ACTION_FROM_DEEP_LINK))
-            }
+            startActivity(intentFor<HomeActivity>(SCOUT_ARGS_KEY to data)
+                                  .addNewDocumentFlags()
+                                  .setAction(ACTION_FROM_DEEP_LINK))
         } else {
             runOnUiThread { longToast(R.string.link_teams_imported_message) }
             startTeamListActivityNoArgs()

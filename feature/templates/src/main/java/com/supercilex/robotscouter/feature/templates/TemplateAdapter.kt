@@ -3,8 +3,6 @@ package com.supercilex.robotscouter.feature.templates
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -19,23 +17,23 @@ import com.supercilex.robotscouter.feature.templates.viewholder.HeaderTemplateVi
 import com.supercilex.robotscouter.feature.templates.viewholder.SpinnerTemplateViewHolder
 import com.supercilex.robotscouter.feature.templates.viewholder.StopwatchTemplateViewHolder
 import com.supercilex.robotscouter.shared.scouting.MetricListAdapterBase
+import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 
 internal class TemplateAdapter(
+        private val fragment: MetricListFragment,
         metrics: ObservableSnapshotArray<Metric<*>>,
-        owner: LifecycleOwner,
-        manager: FragmentManager,
         recyclerView: RecyclerView,
         savedInstanceState: Bundle?,
         private val callback: TemplateItemTouchCallback<Metric<*>>
 ) : MetricListAdapterBase(
         FirestoreRecyclerOptions.Builder<Metric<*>>()
                 .setSnapshotArray(metrics)
-                .setLifecycleOwner(owner)
+                .setLifecycleOwner(fragment.viewLifecycleOwner)
                 .build(),
         recyclerView,
         savedInstanceState,
-        manager
+        fragment.childFragmentManager
 ) {
     override fun getItem(position: Int) = callback.getItem(position)
 
@@ -63,7 +61,7 @@ internal class TemplateAdapter(
             MetricType.NUMBER -> CounterTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_counter, parent, false))
             MetricType.STOPWATCH -> StopwatchTemplateViewHolder(
-                    inflater.inflate(R.layout.scout_template_stopwatch, parent, false))
+                    inflater.inflate(R.layout.scout_template_stopwatch, parent, false), fragment)
             MetricType.TEXT -> EditTextTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_notes, parent, false))
             MetricType.LIST -> SpinnerTemplateViewHolder(

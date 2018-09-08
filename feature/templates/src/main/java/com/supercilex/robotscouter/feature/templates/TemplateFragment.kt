@@ -66,9 +66,8 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
     }
 
     override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = TemplateAdapter(
+            this,
             holder.metrics,
-            viewLifecycleOwner,
-            childFragmentManager,
             metricsView,
             savedInstanceState,
             itemTouchCallback

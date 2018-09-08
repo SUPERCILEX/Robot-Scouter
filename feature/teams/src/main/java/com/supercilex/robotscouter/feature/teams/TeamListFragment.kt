@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.SelectedTeamsRetriever
 import com.supercilex.robotscouter.SignInResolver
 import com.supercilex.robotscouter.TeamListFragmentCompanion
 import com.supercilex.robotscouter.TeamListFragmentCompanion.Companion.TAG
+import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.common.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
@@ -36,7 +37,6 @@ import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
-import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.observeNonNull
@@ -170,7 +170,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
 
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
 
-    override fun onTeamSelected(args: Bundle, restoreOnConfigChange: Boolean) {
+    override fun onTeamSelected(args: Bundle) {
         holder.selectTeam(args.getParcelable(TEAM_KEY))
     }
 

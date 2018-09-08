@@ -253,7 +253,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     private fun validateUrl(url: CharSequence?, inputLayout: TextInputLayout): Deferred<Boolean> {
         if (url == null) return CompletableDeferred(true)
 
-        val inputRef = inputLayout.asLifecycleReference(this)
+        val inputRef = inputLayout.asLifecycleReference(viewLifecycleOwner)
         return async(UI) {
             val isValid = withContext(DefaultDispatcher) { url.isValidTeamUri() }
             inputRef().error =

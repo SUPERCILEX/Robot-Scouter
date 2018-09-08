@@ -2,13 +2,14 @@ package com.supercilex.robotscouter.feature.scouts
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
@@ -18,10 +19,11 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.core.data.KEY_ADD_SCOUT
 import com.supercilex.robotscouter.core.data.KEY_OVERRIDE_TEMPLATE_KEY
+import com.supercilex.robotscouter.core.data.TEMPLATE_ARGS_KEY
 import com.supercilex.robotscouter.core.data.getScoutBundle
 import com.supercilex.robotscouter.core.data.getTabId
+import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.getTeam
-import com.supercilex.robotscouter.core.data.getTemplateLink
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.addScout
 import com.supercilex.robotscouter.core.data.model.ownsTemplateTask
@@ -32,23 +34,26 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
+import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
-import com.supercilex.robotscouter.core.ui.TemplateSelectionListener
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.home
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.support.v4.find
+import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
-        TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener {
-    override val recyclerPool = RecyclerView.RecycledViewPool()
+        TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener,
+        KeyboardShortcutListener {
+    override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
-    protected lateinit var viewHolder: AppBarViewHolderBase
+    protected var viewHolder: AppBarViewHolderBase by LifecycleAwareLazy()
         private set
 
     protected val dataHolder: TeamHolder by unsafeLazy {
@@ -61,7 +66,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null
 
-    private val tabs by unsafeLazy { find<TabLayout>(RC.id.tabs) }
+    private val tabs by LifecycleAwareLazy { requireActivity().find<TabLayout>(RC.id.tabs) }
 
     private val scoutId: String?
         get() {
@@ -108,6 +113,11 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         if (savedInstanceState == null && isOffline) {
             longSnackbar(view, R.string.scout_offline_rationale)
         }
+
+        if (pagerAdapter != null) {
+            viewPager.adapter = pagerAdapter
+            tabs.setupWithViewPager(viewPager)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -131,7 +141,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     override fun onSaveInstanceState(outState: Bundle) {
         pagerAdapter?.onSaveInstanceState(outState)
-        viewHolder.onSaveInstanceState(outState)
+        if (view != null) viewHolder.onSaveInstanceState(outState)
         outState.putAll(dataHolder.teamListener.value?.toBundle() ?: Bundle.EMPTY)
     }
 
@@ -154,8 +164,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
             R.id.action_share -> TeamSharer.shareTeams(this, listOf(team))
             R.id.action_edit_template -> {
                 val templateId = team.templateId
-                val intent: Intent = Intent(Intent.ACTION_VIEW)
-                        .setData(getTemplateLink(templateId).toUri())
+                val intent = requireContext().home(TEMPLATE_ARGS_KEY to getTabIdBundle(templateId))
 
                 TemplateType.coerce(templateId)?.let {
                     startActivity(intent)
@@ -165,8 +174,8 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
                 ownsTemplateTask(templateId).logFailures().addOnSuccessListener(requireActivity()) {
                     if (it) {
                         startActivity(intent)
-                    } else {
-                        longSnackbar(find(R.id.root), R.string.scout_template_access_denied_error)
+                    } else if (view != null) {
+                        longSnackbar(tabs, R.string.scout_template_access_denied_error)
                     }
                 }
             }
@@ -176,11 +185,24 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         return true
     }
 
-    fun showTeamDetails() = TeamDetailsDialog.show(childFragmentManager, team)
+    override fun onShortcut(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_N -> if (event.isShiftPressed) {
+                addScoutWithSelector()
+            } else {
+                addScout()
+            }
+            KeyEvent.KEYCODE_D -> showTeamDetails()
+            else -> return false
+        }
+        return true
+    }
 
-    fun addScoutWithSelector() = ScoutTemplateSelectorDialog.show(childFragmentManager)
+    private fun showTeamDetails() = TeamDetailsDialog.show(childFragmentManager, team)
 
-    fun addScout(id: String? = null) {
+    private fun addScoutWithSelector() = ScoutTemplateSelectorDialog.show(childFragmentManager)
+
+    private fun addScout(id: String? = null) {
         checkNotNull(pagerAdapter).apply {
             currentTabId = team.addScout(id, holder.scouts)
         }
@@ -206,4 +228,15 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     protected abstract fun newViewModel(savedInstanceState: Bundle?): AppBarViewHolderBase
 
     protected abstract fun onTeamDeleted()
+
+    protected companion object {
+        private val performOptionsItemSelectedField by unsafeLazy {
+            Fragment::class.java
+                    .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)
+                    .apply { isAccessible = true }
+        }
+
+        fun Fragment.forceRecursiveMenuItemSelection(item: MenuItem) =
+                performOptionsItemSelectedField.invoke(this, item) as Boolean
+    }
 }

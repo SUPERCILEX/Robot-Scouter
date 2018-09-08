@@ -1,25 +1,20 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.view.Window
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.transaction
-import com.supercilex.robotscouter.Bridge
-import com.supercilex.robotscouter.TabletScoutListFragmentBridge
-import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
+import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ValueSeeker
+import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
-@Bridge
-internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutListFragmentBridge {
+internal class TabletScoutListFragment : ScoutListFragmentBase() {
     private val noContentHint by ValueSeeker {
         requireActivity().findOptional<View>(RC.id.noTeamSelectedHint)
     }
@@ -28,7 +23,9 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutLis
         super.onCreate(savedInstanceState)
         if (!requireContext().isInTabletMode()) {
             val listener = context as TeamSelectionListener
-            listener.onTeamSelected(bundle, true)
+            val bundle = bundle
+            mainHandler.post { listener.onTeamSelected(bundle) }
+
             removeFragment()
         }
     }
@@ -39,10 +36,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutLis
             toolbar.setOnMenuItemClickListener {
                 // We need to be able to guarantee that our `onOptionsItemSelected`s are called
                 // before that of TeamListActivity because of duplicate menu item ids
-                Fragment::class.java
-                        .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)
-                        .apply { isAccessible = true }
-                        .invoke(this@TabletScoutListFragment, it) as Boolean ||
+                forceRecursiveMenuItemSelection(it) ||
                         requireActivity().onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, it)
             }
         }
@@ -73,11 +67,13 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), TabletScoutLis
     }
 
     private fun removeFragment() {
-        requireFragmentManager().transaction { remove(this@TabletScoutListFragment) }
+        val parent = checkNotNull(parentFragment)
+        parent.requireFragmentManager().transaction { remove(parent) }
     }
 
-    companion object : TabletScoutListFragmentCompanion {
-        override fun newInstance(args: Bundle) =
-                TabletScoutListFragment().apply { arguments = args }
+    companion object {
+        const val TAG = "TabletScoutListFrag"
+
+        fun newInstance(args: Bundle) = TabletScoutListFragment().apply { arguments = args }
     }
 }

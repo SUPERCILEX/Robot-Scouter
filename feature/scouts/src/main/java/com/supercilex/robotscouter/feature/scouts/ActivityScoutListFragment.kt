@@ -1,8 +1,6 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.app.Activity
 import android.app.ActivityManager
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,21 +10,14 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.shared.handleUpNavigation
-import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import com.supercilex.robotscouter.R as RC
 
 internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val activity = requireActivity()
-        if (activity.callingActivity != null && activity.isInTabletMode()) {
-            activity.setResult(Activity.RESULT_OK, Intent().putExtra(SCOUT_ARGS_KEY, bundle))
-            activity.finish()
-        }
         FirebaseAuth.getInstance().addAuthStateListener(this)
     }
 

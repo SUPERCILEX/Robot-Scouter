@@ -16,9 +16,9 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.data.getScoutBundle
 import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.core.ui.views.ContentLoadingProgressBar
@@ -140,7 +140,7 @@ internal class TeamViewHolder(
     override fun onClick(v: View) {
         if (!isItemSelected && !couldItemBeSelected) {
             (itemView.context as TeamSelectionListener)
-                    .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout), false)
+                    .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout))
         }
     }
 
