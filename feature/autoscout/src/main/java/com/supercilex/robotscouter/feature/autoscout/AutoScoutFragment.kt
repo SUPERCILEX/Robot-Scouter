@@ -16,7 +16,7 @@ internal class AutoScoutFragment : FragmentBase() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View = View.inflate(context, R.layout.fragment_auto_scout, null)
+    ): View = inflater.inflate(R.layout.fragment_auto_scout, container, false)
 
     companion object : AutoScoutFragmentCompanion {
         override fun getInstance(manager: FragmentManager) =

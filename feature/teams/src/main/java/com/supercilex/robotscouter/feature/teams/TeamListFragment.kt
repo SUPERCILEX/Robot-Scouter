@@ -83,7 +83,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View = View.inflate(context, R.layout.fragment_team_list, null)
+    ): View = inflater.inflate(R.layout.fragment_team_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fab.setOnClickListener(this)

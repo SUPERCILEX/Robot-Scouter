@@ -102,7 +102,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View = View.inflate(context, R.layout.fragment_scout_list, null)
+    ): View = inflater.inflate(R.layout.fragment_scout_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null && isOffline) {

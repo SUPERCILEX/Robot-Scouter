@@ -48,7 +48,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View = View.inflate(context, R.layout.fragment_template_metric_list, null)
+    ): View = inflater.inflate(R.layout.fragment_template_metric_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

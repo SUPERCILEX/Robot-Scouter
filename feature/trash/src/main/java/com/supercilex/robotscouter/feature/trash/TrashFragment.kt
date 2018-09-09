@@ -51,7 +51,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View = View.inflate(context, R.layout.fragment_trash, null)
+    ): View = inflater.inflate(R.layout.fragment_trash, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         actionEmptyTrash.setOnClickListener(this)
