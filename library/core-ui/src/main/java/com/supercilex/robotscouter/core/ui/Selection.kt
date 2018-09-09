@@ -53,6 +53,8 @@ abstract class MenuHelperBase<T>(
 ) : AllChangesSelectionObserver<T>(), View.OnClickListener {
     private val toolbar = activity.find<Toolbar>(R.id.toolbar)
 
+    private var prevSelection = emptyList<T>()
+
     init {
         toolbar.setNavigationOnClickListener(this)
 
@@ -61,10 +63,14 @@ abstract class MenuHelperBase<T>(
     }
 
     final override fun onSelectionChanged() {
-        val selection = tracker.selection
-        onNormalMenuChanged(selection.isEmpty)
+        val selection = tracker.selection.toList()
+
+        if (prevSelection == selection) return
+        prevSelection = selection
+
+        onNormalMenuChanged(selection.isEmpty())
         onSingleSelectMenuChanged(selection.isSingleton)
-        onMultiSelectMenuChanged(!selection.isEmpty)
+        onMultiSelectMenuChanged(!selection.isEmpty())
 
         updateToolbarTitle()
     }
