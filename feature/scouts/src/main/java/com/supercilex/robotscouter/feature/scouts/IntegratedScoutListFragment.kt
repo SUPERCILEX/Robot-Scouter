@@ -3,6 +3,9 @@ package com.supercilex.robotscouter.feature.scouts
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -64,6 +67,21 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
                 forceRecursiveMenuItemSelection(it) || onOptionsItemSelected(it)
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.integrated_scout_list_menu, viewHolder.toolbar.menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_move_window) {
+            val bundle = bundle
+            removeFragment()
+            startActivity(ScoutListActivity.createIntent(bundle))
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {

@@ -7,6 +7,7 @@
     <string name="scout_add_title">Add scout</string>
     <string name="scout_add_media_title">Add media</string>
     <string name="scout_edit_template_title">Edit next scout template</string>
+    <string name="scout_move_window_title">Move to new window</string>
     <string name="scout_template_access_denied_error">
         Access denied: template owned by another user
     </string>
