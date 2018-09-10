@@ -19,6 +19,7 @@ import androidx.palette.graphics.get
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -106,6 +107,7 @@ internal open class AppBarViewHolderBase(
                 .asBitmap()
                 .load(team.media)
                 .apply(RequestOptions.centerCropTransform().error(RC.drawable.ic_person_grey_96dp))
+                .transition(BitmapTransitionOptions.withCrossFade())
                 .listener(this)
                 .into(backdrop)
     }
