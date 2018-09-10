@@ -3,6 +3,7 @@ package com.supercilex.robotscouter
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ProgressBar
 import androidx.annotation.Size
 import androidx.core.view.isVisible
@@ -123,7 +124,7 @@ interface TeamListFragmentCompanion : InstalledBridgeCompanion {
 }
 
 interface TeamSelectionListener {
-    fun onTeamSelected(args: Bundle)
+    fun onTeamSelected(args: Bundle, transitionView: View? = null)
 }
 
 interface NewTeamDialogCompanion : InstalledBridgeCompanion {

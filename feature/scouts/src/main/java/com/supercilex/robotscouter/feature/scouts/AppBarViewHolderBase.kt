@@ -107,7 +107,11 @@ internal open class AppBarViewHolderBase(
                 .asBitmap()
                 .load(team.media)
                 .apply(RequestOptions.centerCropTransform().error(RC.drawable.ic_person_grey_96dp))
-                .transition(BitmapTransitionOptions.withCrossFade())
+                .apply {
+                    if (fragment.sharedElementEnterTransition == null) {
+                        transition(BitmapTransitionOptions.withCrossFade())
+                    }
+                }
                 .listener(this)
                 .into(backdrop)
     }
@@ -120,6 +124,7 @@ internal open class AppBarViewHolderBase(
             isFirstResource: Boolean
     ): Boolean {
         progress.hide(true)
+        fragment.startPostponedEnterTransition()
 
         if (resource?.isRecycled == false) {
             val holderRef = asLifecycleReference(fragment.viewLifecycleOwner)
@@ -165,6 +170,7 @@ internal open class AppBarViewHolderBase(
             isFirstResource: Boolean
     ): Boolean {
         progress.hide(true)
+        fragment.startPostponedEnterTransition()
         return false
     }
 

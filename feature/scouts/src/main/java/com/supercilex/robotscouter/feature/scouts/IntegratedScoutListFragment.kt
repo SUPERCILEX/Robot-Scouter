@@ -1,13 +1,13 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -34,6 +34,8 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             mainHandler.post { listener.onTeamSelected(bundle) }
 
             removeFragment()
+        } else {
+            postponeEnterTransition()
         }
     }
 
@@ -42,16 +44,15 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        val toolbar = LayoutInflater.from(ContextThemeWrapper(
-                requireContext(),
-                RC.style.ThemeOverlay_AppCompat_Dark_ActionBar
-        )).inflate(R.layout.fragment_scout_list_toolbar, appBar, false)
-        appBar.apply {
-            children.forEach { it.isVisible = false }
-            addView(toolbar, 0)
-        }
+        val root = inflater.inflate(R.layout.activity_scout_list, container, false)
+        root.find<FrameLayout>(R.id.scoutList).addView(
+                inflater.inflate(R.layout.fragment_scout_list, container, false))
+        return root
+    }
 
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mainHandler.post { appBar.children.forEach { it.isVisible = false } }
     }
 
     override fun newViewModel(savedInstanceState: Bundle?) = AppBarViewHolderBase(
@@ -86,10 +87,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        appBar.apply {
-            removeViewAt(0)
-            children.forEach { it.isVisible = true }
-        }
+        appBar.children.forEach { it.isVisible = true }
     }
 
     override fun onStop() {

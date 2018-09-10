@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewStub
+import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -124,6 +125,7 @@ internal class TeamViewHolder(
         getTeamMediaRequestBuilder(isItemSelected, media.context, team)
                 .listener(mediaLoadProgressListener)
                 .into(media)
+        ViewCompat.setTransitionName(media, team.id)
 
         newScout.animatePopReveal(!couldItemBeSelected)
         itemView.isActivated = !isItemSelected && !couldItemBeSelected && isScouting
@@ -141,7 +143,7 @@ internal class TeamViewHolder(
     override fun onClick(v: View) {
         if (!isItemSelected && !couldItemBeSelected) {
             (itemView.context as TeamSelectionListener)
-                    .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout))
+                    .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout), media)
         }
     }
 

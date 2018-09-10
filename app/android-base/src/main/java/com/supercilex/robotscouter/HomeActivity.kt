@@ -1,10 +1,12 @@
 package com.supercilex.robotscouter
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
@@ -14,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
+import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -235,7 +238,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
     }
 
-    override fun onTeamSelected(args: Bundle) {
+    override fun onTeamSelected(args: Bundle, transitionView: View?) {
         args.getTeam().logSelect()
 
         val manager = supportFragmentManager
@@ -249,19 +252,34 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                         TabletScoutListFragmentCompanion().newInstance(args),
                         ScoutListFragmentCompanionBase.TAG)
             } else {
+                val fragment = IntegratedScoutListFragmentCompanion().newInstance(args)
+
                 setReorderingAllowed(true)
                 if (bottomNavigation.selectedItemId != R.id.teams) {
                     bottomNavigation.selectedItemId = R.id.teams
                 } else if (existing != null) {
                     setReorderingAllowed(false)
+                } else if (
+                    transitionView != null &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                ) {
+                    addSharedElement(transitionView, "media")
+                    fragment.sharedElementEnterTransition =
+                            TransitionInflater.from(this@HomeActivity)
+                                    .inflateTransition(android.R.transition.move)
+                    fragment.sharedElementReturnTransition = null
                 }
 
                 if (existing == null) detach(checkNotNull(manager.findFragmentById(R.id.content)))
                 detach(TeamListFragmentCompanion().getInstance(manager))
 
-                add(R.id.content,
-                    IntegratedScoutListFragmentCompanion().newInstance(args),
-                    ScoutListFragmentCompanionBase.TAG)
+                setCustomAnimations(
+                        R.anim.pop_fade_in,
+                        R.anim.pop_fade_out,
+                        R.anim.pop_fade_in,
+                        R.anim.pop_fade_out
+                )
+                add(R.id.content, fragment, ScoutListFragmentCompanionBase.TAG)
                 addToBackStack(null)
             }
         }

@@ -170,7 +170,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
 
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
 
-    override fun onTeamSelected(args: Bundle) {
+    override fun onTeamSelected(args: Bundle, transitionView: View?) {
         holder.selectTeam(args.getParcelable(TEAM_KEY))
     }
 
