@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.Animation.AnimationListener
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -85,6 +88,27 @@ abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
         super.onResume()
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        if (nextAnim == 0) return null
+        val animation = AnimationUtils.loadAnimation(activity, nextAnim)
+
+        val view = view
+        if (animation != null && view != null) {
+            val prevType = view.layerType
+            view.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            animation.setAnimationListener(object : AnimationListener {
+                override fun onAnimationEnd(animation: Animation) =
+                        view.setLayerType(prevType, null)
+
+                override fun onAnimationRepeat(animation: Animation?) = Unit
+
+                override fun onAnimationStart(animation: Animation?) = Unit
+            })
+        }
+
+        return animation
     }
 }
 
