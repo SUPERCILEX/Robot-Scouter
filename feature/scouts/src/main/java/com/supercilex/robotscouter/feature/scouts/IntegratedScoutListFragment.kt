@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +39,10 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        val toolbar = inflater.inflate(R.layout.fragment_scout_list_toolbar, container, false)
+        val toolbar = LayoutInflater.from(ContextThemeWrapper(
+                requireContext(),
+                RC.style.ThemeOverlay_AppCompat_Dark_ActionBar
+        )).inflate(R.layout.fragment_scout_list_toolbar, appBar, false)
         appBar.apply {
             children.forEach { it.isVisible = false }
             addView(toolbar, 0)

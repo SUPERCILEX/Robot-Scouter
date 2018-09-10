@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.feature.templates
 
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -55,7 +56,10 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
     private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private val tabs by LifecycleAwareLazy {
-        val tabs = TabLayout(requireContext()).apply {
+        val tabs = TabLayout(ContextThemeWrapper(
+                requireContext(),
+                RC.style.ThemeOverlay_AppCompat_Dark_ActionBar
+        )).apply {
             id = RC.id.tabs
             tabMode = TabLayout.MODE_SCROLLABLE
         }
