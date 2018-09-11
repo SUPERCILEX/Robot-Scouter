@@ -13,7 +13,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.3.0-alpha08"
+        val android = "com.android.tools.build:gradle:3.3.0-alpha09"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
@@ -82,13 +82,13 @@ object Config {
             val auth = "com.google.firebase:firebase-auth:16.0.3"
             val firestore = "com.google.firebase:firebase-firestore:17.1.0"
             val functions = "com.google.firebase:firebase-functions:16.1.0"
-            val storage = "com.google.firebase:firebase-storage:16.0.1"
+            val storage = "com.google.firebase:firebase-storage:16.0.2"
             val config = "com.google.firebase:firebase-config:16.0.0"
             val indexing = "com.google.firebase:firebase-appindexing:16.0.1"
-            val messaging = "com.google.firebase:firebase-messaging:17.3.0"
+            val messaging = "com.google.firebase:firebase-messaging:17.3.1"
             val invites = "com.google.firebase:firebase-invites:16.0.3"
             val perf = "com.google.firebase:firebase-perf:16.1.0"
-            val iid = "com.google.firebase:firebase-iid:17.0.0"
+            val iid = "com.google.firebase:firebase-iid:17.0.1"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.5"
         }
@@ -131,7 +131,7 @@ object Config {
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             val permissions = "pub.devrel:easypermissions:1.3.0"
-            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.1"
+            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.3"
             val billing = "com.android.billingclient:billing:1.1"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.2"
         }

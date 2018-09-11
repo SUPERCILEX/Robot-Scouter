@@ -94,6 +94,7 @@ dependencies {
     implementation(Config.Libs.Jetpack.browser)
     implementation(Config.Libs.Jetpack.cardView)
     implementation("androidx.recyclerview:recyclerview:1.0.0-rc02")
+    implementation("com.google.firebase:firebase-common:16.0.2")
 }
 
 apply(plugin = "com.google.gms.google-services")
