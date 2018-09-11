@@ -60,7 +60,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
                 requireContext(),
                 RC.style.ThemeOverlay_AppCompat_Dark_ActionBar
         )).apply {
-            id = RC.id.tabs
+            id = R.id.tabs
             tabMode = TabLayout.MODE_SCROLLABLE
         }
         appBar.addView(

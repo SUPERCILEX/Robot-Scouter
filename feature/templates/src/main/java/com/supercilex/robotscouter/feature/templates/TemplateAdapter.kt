@@ -65,7 +65,7 @@ internal class TemplateAdapter(
             MetricType.TEXT -> EditTextTemplateViewHolder(
                     inflater.inflate(R.layout.scout_template_notes, parent, false))
             MetricType.LIST -> SpinnerTemplateViewHolder(
-                    inflater.inflate(R.layout.scout_template_spinner, parent, false))
+                    inflater.inflate(R.layout.scout_template_spinner, parent, false), fragment)
         }
     }
 

@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +19,7 @@ import com.supercilex.robotscouter.core.ui.showKeyboard
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
+import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
@@ -33,7 +33,8 @@ import kotlin.properties.Delegates
 import com.supercilex.robotscouter.R as RC
 
 internal class SpinnerTemplateViewHolder(
-        itemView: View
+        itemView: View,
+        fragment: MetricListFragment
 ) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>>(itemView),
         MetricTemplateViewHolder<Metric.List, List<Metric.List.Item>>, View.OnClickListener {
     override val reorderView: ImageView by unsafeLazy { reorder }
@@ -48,10 +49,7 @@ internal class SpinnerTemplateViewHolder(
 
         items.layoutManager = LinearLayoutManager(itemView.context)
         items.adapter = itemsAdapter
-        items.setRecycledViewPool((itemView.context as FragmentActivity).supportFragmentManager
-                                          .fragments
-                                          .filterIsInstance<RecyclerPoolHolder>()
-                                          .single().recyclerPool)
+        items.setRecycledViewPool((fragment.parentFragment as RecyclerPoolHolder).recyclerPool)
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(items)

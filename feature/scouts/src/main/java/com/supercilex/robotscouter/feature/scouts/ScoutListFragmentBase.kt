@@ -46,7 +46,6 @@ import com.supercilex.robotscouter.shared.TeamSharer
 import kotlinx.android.synthetic.main.fragment_scout_list.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
-import com.supercilex.robotscouter.R as RC
 
 internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
         TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener,
@@ -66,7 +65,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null
 
-    private val tabs by LifecycleAwareLazy { requireActivity().find<TabLayout>(RC.id.tabs) }
+    private val tabs by LifecycleAwareLazy { requireActivity().find<TabLayout>(R.id.tabs) }
 
     private val scoutId: String?
         get() {

@@ -24,7 +24,6 @@ import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.MovableFragmentStatePagerAdapter
-import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.find
 
 abstract class TabPagerAdapterBase(
@@ -35,9 +34,7 @@ abstract class TabPagerAdapterBase(
         TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
         ChangeEventListenerBase {
     @get:StringRes protected abstract val editTabNameRes: Int
-    private val tabs by fragment.LifecycleAwareLazy {
-        fragment.requireActivity().find<TabLayout>(R.id.tabs)
-    }
+    protected abstract val tabs: TabLayout
     private val noTabsHint by fragment.LifecycleAwareLazy {
         fragment.find<View>(R.id.noTabsHint)
     }
