@@ -248,6 +248,12 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
 
             if (isInTabletMode()) {
+                setCustomAnimations(
+                        R.anim.pop_fade_in_right,
+                        R.anim.fade_out,
+                        R.anim.pop_fade_in_right,
+                        R.anim.fade_out
+                )
                 replace(R.id.scoutList,
                         TabletScoutListFragmentCompanion().newInstance(args),
                         ScoutListFragmentCompanionBase.TAG)
