@@ -38,6 +38,7 @@ import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
+import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.onDestroy
@@ -77,6 +78,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         setHasOptionsMenu(true)
         holder.init(savedInstanceState)
         tutorialHelper.init(null)
+
+        if (!requireContext().isInTabletMode()) holder.selectTeam(null)
     }
 
     override fun onCreateView(

@@ -47,13 +47,13 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
         select(team)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         noContentHint?.animatePopReveal(false)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         select(null)
         noContentHint?.animatePopReveal(true)
     }
@@ -61,9 +61,10 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
     override fun onTeamDeleted() = removeFragment()
 
     private fun select(team: Team?) {
-        requireFragmentManager().fragments.filterIsInstance<TeamSelectionListener>().forEach {
-            it.onTeamSelected(team?.toBundle() ?: Bundle.EMPTY)
-        }
+        requireActivity().supportFragmentManager.fragments
+                .filterIsInstance<TeamSelectionListener>()
+                .firstOrNull()
+                ?.onTeamSelected(team?.toBundle() ?: Bundle.EMPTY)
     }
 
     private fun removeFragment() {
