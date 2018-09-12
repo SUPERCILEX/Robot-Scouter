@@ -1,3 +1,4 @@
+import com.google.gms.googleservices.GoogleServicesPlugin
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 import java.io.FileInputStream
 import java.util.Properties
@@ -87,14 +88,7 @@ dependencies {
 
     implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)
-
-    // TODO remove when Firebase updates their deps
-    implementation(Config.Libs.Misc.gson) // Override Firestore
-    implementation("com.squareup.okio:okio:1.15.0")
-    implementation(Config.Libs.Jetpack.browser)
-    implementation(Config.Libs.Jetpack.cardView)
-    implementation("androidx.recyclerview:recyclerview:1.0.0-rc02")
-    implementation("com.google.firebase:firebase-common:16.0.2")
 }
 
 apply(plugin = "com.google.gms.google-services")
+GoogleServicesPlugin.config.disableVersionCheck = true

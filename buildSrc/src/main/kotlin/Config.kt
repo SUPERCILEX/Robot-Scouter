@@ -13,7 +13,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.3.0-alpha09"
+        val android = "com.android.tools.build:gradle:3.3.0-alpha10"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
@@ -21,9 +21,8 @@ object Config {
         val fabric = "io.fabric.tools:gradle:1.25.4"
         val publishing = "com.github.Triple-T:gradle-play-publisher:7829c8646f"
 
-        val ktlint = "com.github.shyiko:ktlint:0.27.0"
+        val ktlint = "com.github.shyiko:ktlint:0.28.0"
 
-        val PluginDependenciesSpec.scan get() = `build-scan` version "1.16"
         val PluginDependenciesSpec.versionChecker get() = id("com.github.ben-manes.versions") version "0.20.0"
     }
 
@@ -67,7 +66,7 @@ object Config {
             val pref = "androidx.preference:preference:$version"
             val prefKtx = "androidx.preference:preference-ktx:$version"
 
-            val material = "com.google.android.material:material:1.0.0-rc01"
+            val material = "com.google.android.material:material:1.0.0-rc02"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
@@ -88,7 +87,6 @@ object Config {
             val messaging = "com.google.firebase:firebase-messaging:17.3.1"
             val invites = "com.google.firebase:firebase-invites:16.0.3"
             val perf = "com.google.firebase:firebase-perf:16.1.0"
-            val iid = "com.google.firebase:firebase-iid:17.0.1"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.5"
         }

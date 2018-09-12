@@ -27,10 +27,8 @@ buildscript {
 
 plugins {
     id("com.supercilex.robotscouter.build")
-    Config.Plugins.run {
-        scan
-        versionChecker
-    }
+    `build-scan`
+    Config.Plugins.run { versionChecker }
 }
 
 buildScan {
