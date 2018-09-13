@@ -23,3 +23,7 @@ tasks.withType<Kotlin2JsCompile>().configureEach {
         outputFile = "$buildDir/classes/kotlin/main/firebase.js"
     }
 }
+
+tasks.named<Delete>("clean").configure {
+    delete("index.js")
+}

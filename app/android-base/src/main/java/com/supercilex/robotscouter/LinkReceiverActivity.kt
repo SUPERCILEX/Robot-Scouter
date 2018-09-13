@@ -23,13 +23,17 @@ import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import kotlinx.android.synthetic.main.activity_link_receiver.*
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import java.util.Date
 
 @SuppressLint("GoogleAppIndexingApiWarning")
-internal class LinkReceiverActivity : ActivityBase() {
+internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
+    override val coroutineContext = Job()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_link_receiver)
@@ -100,5 +104,10 @@ internal class LinkReceiverActivity : ActivityBase() {
     private fun showErrorAndContinue() {
         startTeamListActivityNoArgs()
         runOnUiThread { longToast(R.string.link_uri_parse_error) }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineContext.cancel()
     }
 }

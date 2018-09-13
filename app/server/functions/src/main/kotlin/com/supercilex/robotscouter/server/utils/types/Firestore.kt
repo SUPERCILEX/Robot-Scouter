@@ -102,7 +102,6 @@ open external class Query {
 
 external class QuerySnapshot {
     val query: Query = definedExternally
-    val docChanges: Array<DocumentChange> = definedExternally
     val docs: Array<DocumentSnapshot> = definedExternally
     val size: Number = definedExternally
     val empty: Boolean = definedExternally

@@ -35,6 +35,7 @@ import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.RatingDialog
 import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.TimeoutCancellationException
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
@@ -223,6 +224,6 @@ class ExportService : IntentService(TAG) {
             return true
         }
 
-        private fun getAllTeams() = async { teams.waitForChange() }.asTask()
+        private fun getAllTeams() = GlobalScope.async { teams.waitForChange() }.asTask()
     }
 }

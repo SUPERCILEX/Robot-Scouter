@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.updateOwner
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
 import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
@@ -31,7 +32,7 @@ internal class AccountMergeService : ManualMergeService() {
         val prevUid = checkNotNull(uid)
         logCrashLog("Migrating user data from $prevUid.")
 
-        return async {
+        return GlobalScope.async {
             lateinit var userPrefs: QuerySnapshot
             lateinit var teams: QuerySnapshot
             lateinit var templates: QuerySnapshot
@@ -53,7 +54,7 @@ internal class AccountMergeService : ManualMergeService() {
         }.asTask().continueWith { null }
     }
 
-    override fun onTransferData(response: IdpResponse): Task<Void?>? = async {
+    override fun onTransferData(response: IdpResponse): Task<Void?>? = GlobalScope.async {
         val (prevUid, teamToken, templateToken, userPrefs, teams, templates) = instance
 
         for (snapshot in userPrefs) {

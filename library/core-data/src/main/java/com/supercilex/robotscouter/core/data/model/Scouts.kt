@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
@@ -59,7 +60,7 @@ fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<S
     logAddScout(id, templateId)
     Scout(scoutRef.id, templateId).let { scoutRef.set(it).logFailures(scoutRef, it) }
 
-    async {
+    GlobalScope.async {
         val templateName = try {
             val metricsRef = getScoutMetricsRef(scoutRef.id)
             TemplateType.coerce(templateId)?.let { type ->
@@ -117,7 +118,7 @@ fun Team.trashScout(id: String) = updateScoutDate(id) { -abs(it) }
 fun Team.untrashScout(id: String) = updateScoutDate(id) { abs(it) }
 
 private fun Team.updateScoutDate(id: String, update: (Long) -> Long) {
-    async {
+    GlobalScope.async {
         val ref = scoutsRef.document(id)
         val snapshot = ref.get().logFailures(ref).await()
         if (!snapshot.exists()) return@async

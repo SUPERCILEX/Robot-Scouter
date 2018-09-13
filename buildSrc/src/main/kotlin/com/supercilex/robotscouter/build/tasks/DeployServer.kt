@@ -25,6 +25,7 @@ open class DeployServer : DefaultTask() {
         val functions = project.child("functions")
         transpiledJs = File(functions.buildDir, "classes/kotlin/main/firebase.js")
         targetJs = File(functions.projectDir, "index.js")
+        inputs.file(File(functions.projectDir, "package-lock.json"))
     }
 
     @TaskAction

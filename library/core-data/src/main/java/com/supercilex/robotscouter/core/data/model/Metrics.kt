@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.core.data.logUpdate
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 
 val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
@@ -76,7 +77,7 @@ internal fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Met
     }
 }
 
-fun deleteMetrics(ref: CollectionReference) = async {
+fun deleteMetrics(ref: CollectionReference) = GlobalScope.async {
     val metrics = ref.get().logFailures(ref).await()
 
     firestoreBatch {

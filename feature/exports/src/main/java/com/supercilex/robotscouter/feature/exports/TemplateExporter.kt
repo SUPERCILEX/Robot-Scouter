@@ -32,8 +32,10 @@ import com.supercilex.robotscouter.core.model.MetricType
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.currentScope
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.BorderExtent
 import org.apache.poi.ss.usermodel.BorderStyle
@@ -75,9 +77,9 @@ internal class TemplateExporter(
     val scouts: Map<Team, List<Scout>> = Collections.unmodifiableMap(scouts)
     private val cache = SpreadsheetCache(scouts.keys)
 
-    suspend fun export() {
-        val spreadsheet = async(IO) { exportSpreadsheet() }
-        val json = async(IO) {
+    suspend fun export() = currentScope {
+        val spreadsheet = async(Dispatchers.IO) { exportSpreadsheet() }
+        val json = async(Dispatchers.IO) {
             try {
                 exportJson()
             } catch (e: Exception) {
@@ -87,11 +89,11 @@ internal class TemplateExporter(
         }
 
         val notification = spreadsheet.await()
-        notificationManager.onStartJsonExport(this)
+        notificationManager.onStartJsonExport(this@TemplateExporter)
         json.await()
 
         if (!notificationManager.isStopped()) {
-            notificationManager.removeExporter(this, notification)
+            notificationManager.removeExporter(this@TemplateExporter, notification)
         }
     }
 

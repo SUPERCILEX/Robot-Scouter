@@ -7,10 +7,12 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.async
 
-fun cleanup(): Deferred<*> = async(IO) {
+fun cleanup(): Deferred<*> = GlobalScope.async(Dispatchers.IO) {
     Glide.get(RobotScouter).clearDiskCache()
     cleanupJobs()
     FirebaseAppIndex.getInstance().removeAll().await()

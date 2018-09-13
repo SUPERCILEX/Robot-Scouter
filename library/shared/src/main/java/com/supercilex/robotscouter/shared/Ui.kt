@@ -28,6 +28,7 @@ import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.shared.client.onSignedIn
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
@@ -37,7 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 private val visibleActivities = CopyOnWriteArrayList<Activity>()
 
 fun initUi() {
-    async {
+    GlobalScope.async {
         // Disk I/O sometimes occurs in these
         AuthUI.getInstance()
         GoogleSignIn.getLastSignedInAccount(RobotScouter)
@@ -53,7 +54,7 @@ fun initUi() {
                 // If we got a user not found error, it means we've deleted the user record and
                 // all associated data, but the user was still using Robot Scouter somehow.
                 if (it.message?.contains("USER_NOT_FOUND") == true) {
-                    async {
+                    GlobalScope.async {
                         AuthUI.getInstance().signOut(RobotScouter).await()
                         onSignedIn()
                         RobotScouter.runOnUiThread {

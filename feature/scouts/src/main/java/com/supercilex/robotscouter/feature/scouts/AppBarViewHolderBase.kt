@@ -43,8 +43,9 @@ import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamMediaCreator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.find
@@ -128,16 +129,16 @@ internal open class AppBarViewHolderBase(
 
         if (resource?.isRecycled == false) {
             val holderRef = asLifecycleReference(fragment.viewLifecycleOwner)
-            launch(UI) {
-                val palette = withContext(DefaultDispatcher) { Palette.from(resource).generate() }
+            GlobalScope.launch(Dispatchers.Main) {
+                val palette = withContext(Dispatchers.Default) { Palette.from(resource).generate() }
 
                 val holder = holderRef()
                 val update: Palette.Swatch.() -> Unit = { holder.updateScrim(rgb) }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }
 
-            launch(UI) {
-                val swatch = withContext(DefaultDispatcher) {
+            GlobalScope.launch(Dispatchers.Main) {
+                val swatch = withContext(Dispatchers.Default) {
                     val paletteTarget = PaletteTarget.Builder()
                             .setExclusive(false)
                             .setTargetLightness(1f)

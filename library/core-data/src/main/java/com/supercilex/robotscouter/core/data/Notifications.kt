@@ -13,9 +13,11 @@ import androidx.core.content.getSystemService
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.logFailures
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.isActive
 import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
@@ -125,7 +127,7 @@ class FilteringNotificationManager {
             check(!isStopped) { "Cannot start a previously stopped notification filter." }
         }
 
-        processor = async {
+        processor = GlobalScope.async {
             while (isActive) {
                 processQueue()
                 delay(SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS)

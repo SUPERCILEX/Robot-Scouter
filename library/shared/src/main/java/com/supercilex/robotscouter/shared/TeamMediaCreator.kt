@@ -26,8 +26,10 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
@@ -83,8 +85,8 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         team.logTakeMedia()
 
         val ref = host.asLifecycleReference()
-        launch(UI) {
-            val file = withContext(IO) {
+        GlobalScope.launch(Dispatchers.Main) {
+            val file = withContext(Dispatchers.IO) {
                 try {
                     File(mediaFolder, "${team}_${System.currentTimeMillis()}.jpg")
                             .hidden()
@@ -113,8 +115,8 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val photoFile = checkNotNull(photoFile)
         if (resultCode == Activity.RESULT_OK) {
-            launch(UI) {
-                val contentUri = withContext(IO) { photoFile.unhide()?.toUri() }
+            GlobalScope.launch(Dispatchers.Main) {
+                val contentUri = withContext(Dispatchers.IO) { photoFile.unhide()?.toUri() }
                 if (contentUri == null) {
                     RobotScouter.longToast(R.string.error_unknown)
                     return@launch
@@ -134,7 +136,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 })
             }
         } else {
-            async(IO) { photoFile.delete() }.logFailures()
+            GlobalScope.async(Dispatchers.IO) { photoFile.delete() }.logFailures()
         }
     }
 

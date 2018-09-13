@@ -14,7 +14,9 @@ import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.model.Team
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 
 class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
@@ -25,7 +27,7 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
         val team = args.getTeam()
         if (isSignedIn && team.owners.contains(uid)) {
             if (team.id.isBlank()) {
-                launch(UI) {
+                GlobalScope.launch(Dispatchers.Main) {
                     for (potentialTeam in teams.waitForChange()) {
                         if (team.number == potentialTeam.number) {
                             _teamListener.value = potentialTeam.copy()

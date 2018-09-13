@@ -36,6 +36,7 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
@@ -261,7 +262,7 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
     abstract val instance: T?
 
     operator fun invoke(): Task<T> {
-        return instance?.let { Tasks.forResult(it) } ?: async {
+        return instance?.let { Tasks.forResult(it) } ?: GlobalScope.async {
             val existingRequests = manager.sessionStates.await().filter {
                 it.moduleNames().contains(moduleName)
             }

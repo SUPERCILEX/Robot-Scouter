@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlin.math.ceil
 import kotlin.math.min
@@ -114,7 +115,7 @@ fun Team.logTakeMedia() = analytics.logEvent(
 )
 
 fun List<Team>.logShare() {
-    async {
+    GlobalScope.async {
         safeLog(this@logShare) { ids, name ->
             analytics.logEvent(
                     "share_teams",
@@ -125,7 +126,7 @@ fun List<Team>.logShare() {
 }
 
 fun List<Team>.logExport() {
-    async {
+    GlobalScope.async {
         safeLog(this@logExport) { ids, name ->
             analytics.logEvent(
                     "export_teams",

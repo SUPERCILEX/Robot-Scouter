@@ -9,8 +9,9 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.cleanup
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 
@@ -21,13 +22,13 @@ internal class SettingsViewModel : ViewModelBase<Unit?>() {
     override fun onCreate(args: Unit?) = Unit
 
     fun signOut() {
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             try {
                 cleanup()
                 Glide.get(RobotScouter).clearMemory()
 
                 // Move to background since signOut sometimes does disk I/O
-                withContext(DefaultDispatcher) {
+                withContext(Dispatchers.Default) {
                     AuthUI.getInstance().signOut(RobotScouter).await()
                 }
                 _signOutListener.value = null

@@ -30,10 +30,13 @@ import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
 import kotlinx.android.synthetic.main.scout_base_stopwatch.*
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.TimeoutCancellationException
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.isActive
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.design.longSnackbar
@@ -228,7 +231,7 @@ open class StopwatchViewHolder(
         init {
             TIMERS[holder.metric] = this
 
-            updater = launch(UI) {
+            updater = GlobalScope.launch(Dispatchers.Main) {
                 try {
                     withTimeout(GAME_TIME_MINS, TimeUnit.MINUTES) {
                         while (isActive) {

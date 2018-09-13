@@ -6,6 +6,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import java.util.concurrent.TimeUnit
 
@@ -56,4 +57,4 @@ internal suspend fun fetchAndActivate() {
     config.activateFetched()
 }
 
-fun fetchAndActivateTask() = async { fetchAndActivate() }.asTask()
+fun fetchAndActivateTask() = GlobalScope.async { fetchAndActivate() }.asTask()

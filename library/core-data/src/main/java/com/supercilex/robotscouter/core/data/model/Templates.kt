@@ -32,6 +32,7 @@ import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.TemplateType
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
@@ -67,7 +68,7 @@ fun addTemplate(type: TemplateType): String {
         update(ref, FIRESTORE_OWNERS, mapOf(checkNotNull(uid) to scout.timestamp))
     }.logFailures(ref, id)
 
-    async {
+    GlobalScope.async {
         val templateSnapshot = try {
             val defaultRef = defaultTemplatesRef.document(type.id.toString())
             defaultRef.get().logFailures(defaultRef).await()
@@ -88,7 +89,7 @@ fun addTemplate(type: TemplateType): String {
     return id
 }
 
-fun ownsTemplateTask(id: String) = async {
+fun ownsTemplateTask(id: String) = GlobalScope.async {
     try {
         getTemplatesQuery().get().await()
     } catch (e: Exception) {
@@ -110,7 +111,7 @@ fun Scout.getTemplateName(index: Int): String =
 
 fun trashTemplate(id: String) {
     val newTemplateId = defaultTemplateId
-    async {
+    GlobalScope.async {
         val teamRefs = teams.waitForChange().filter {
             id == it.templateId
         }.map { it.ref }
@@ -129,7 +130,7 @@ fun trashTemplate(id: String) {
 }
 
 fun untrashTemplate(id: String) {
-    async { toggleTemplateTrashStatus(id) }.logFailures()
+    GlobalScope.async { toggleTemplateTrashStatus(id) }.logFailures()
 }
 
 private suspend fun toggleTemplateTrashStatus(id: String) {

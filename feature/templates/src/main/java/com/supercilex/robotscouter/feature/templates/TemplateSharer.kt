@@ -16,8 +16,9 @@ import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.logFailures
-import kotlinx.coroutines.experimental.DefaultDispatcher
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import org.jetbrains.anko.design.longSnackbar
@@ -30,9 +31,9 @@ internal class TemplateSharer private constructor(
 ) : CachingSharer() {
     init {
         val fragmentRef = fragment.asLifecycleReference(fragment.viewLifecycleOwner)
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             val intent = try {
-                withContext(DefaultDispatcher) { generateIntent(templateId, templateName) }
+                withContext(Dispatchers.Default) { generateIntent(templateId, templateName) }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 longSnackbar(checkNotNull(fragmentRef().view), RC.string.error_unknown)

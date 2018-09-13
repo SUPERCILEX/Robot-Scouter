@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.shared.R
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
@@ -60,7 +61,7 @@ suspend fun onSignedIn(): FirebaseUser = signInLock.withLock {
     }.user
 }
 
-fun onSignedInTask() = async { onSignedIn() }.asTask()
+fun onSignedInTask() = GlobalScope.async { onSignedIn() }.asTask()
 
 fun Activity.startSignIn() = startActivityForResult(signInBuilder.build(), RC_SIGN_IN)
 

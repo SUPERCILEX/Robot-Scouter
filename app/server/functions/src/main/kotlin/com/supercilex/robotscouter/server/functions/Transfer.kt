@@ -118,14 +118,11 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     return async {
         duplicates.map { ids ->
             @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-            inner@ async {
-                val teamData = ids.map { teams.doc(it) }
+            async inner@{
+                val teams = ids.map { teams.doc(it) }
                         .map { async { it.get().await() } }
                         .awaitAll()
-
-                if (teamData.any { !it.exists }) return@inner
-
-                val teams = teamData
+                        .apply { if (any { !it.exists }) return@inner }
                         .associate { it to it.ref.collection(FIRESTORE_SCOUTS).get() }
                         .mapValues { (_, scout) -> scout.await().docs }
                         .mapValues { (_, scouts) ->

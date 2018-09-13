@@ -45,6 +45,8 @@ import com.supercilex.robotscouter.core.data.model.userRef
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.User
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
@@ -120,7 +122,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
         if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
         val team = teams[newIndex]
-        async(IO) {
+        GlobalScope.async(Dispatchers.IO) {
             val media = team.media
             if (media?.isNotBlank() == true && File(media).exists()) {
                 team.startUploadMediaJob()
@@ -148,7 +150,9 @@ fun initDatabase() {
     FirebaseAuth.getInstance().addAuthStateListener {
         val user = it.currentUser
         if (user == null) {
-            async(IO) { dbCacheLock.withLock { dbCache.deleteRecursively() } }.logFailures()
+            GlobalScope.async(Dispatchers.IO) {
+                dbCacheLock.withLock { dbCache.deleteRecursively() }
+            }.logFailures()
         } else {
             updateLastLogin.run()
 
@@ -224,7 +228,7 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
 
 private inline fun <reified T> T.smartWrite(file: File, crossinline write: (t: T) -> Unit) {
     val new = this
-    async(IO) {
+    GlobalScope.async(Dispatchers.IO) {
         val cache = {
             write(new)
             file.safeCreateNewFile().writeText(Gson().toJson(new))

@@ -24,7 +24,9 @@ import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefs
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.TemplateType
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 
@@ -168,7 +170,7 @@ fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T 
 }
 
 fun clearPrefs() {
-    async {
+    GlobalScope.async {
         for (pref in userPrefs.getInBatches()) {
             val ref = pref.reference
             ref.delete().logFailures(ref, pref.data)
@@ -179,7 +181,7 @@ fun clearPrefs() {
 }
 
 private fun updateTeamTemplateIds() {
-    launch(UI) {
+    GlobalScope.launch(Dispatchers.Main) {
         for (team in teams.waitForChange()) team.updateTemplateId(defaultTemplateId)
     }
 }

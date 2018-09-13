@@ -36,8 +36,10 @@ import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
+import kotlinx.coroutines.experimental.currentScope
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -184,7 +186,7 @@ fun Team.trash() {
 }
 
 fun untrashTeam(id: String) {
-    async {
+    GlobalScope.async {
         val ref = teamsRef.document(id)
         val snapshot = ref.get().logFailures(ref).await()
 
@@ -197,12 +199,12 @@ fun untrashTeam(id: String) {
     }.logFailures()
 }
 
-internal fun Team.fetchLatestData() = async {
+internal fun Team.fetchLatestData() = GlobalScope.async {
     fetchAndActivate()
     if (isStale) startDownloadDataJob()
 }.logFailures()
 
-suspend fun Team.getScouts(): List<Scout> {
+suspend fun Team.getScouts(): List<Scout> = currentScope {
     val scouts = getScoutsQuery().getInBatches().map { scoutParser.parseSnapshot(it) }
     val metricsForScouts = scouts.map {
         async { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches() }

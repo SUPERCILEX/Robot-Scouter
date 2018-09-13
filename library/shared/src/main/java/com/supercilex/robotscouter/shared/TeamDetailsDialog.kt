@@ -40,9 +40,10 @@ import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_team_details.*
 import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
@@ -189,7 +190,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         val isWebsiteValid = validateUrl(website, websiteLayout)
 
         val ref = asLifecycleReference()
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             if (!isWebsiteValid.await() || !isMediaValid.await()) return@launch
 
             name.nullOrFull().also {
@@ -199,7 +200,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(DefaultDispatcher) { media?.formatAsTeamUri() }.also {
+            withContext(Dispatchers.Default) { media?.formatAsTeamUri() }.also {
                 if (it != team.media) {
                     team.media = it
                     team.hasCustomMedia = it?.isNotBlank() == true
@@ -207,7 +208,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(DefaultDispatcher) { website?.formatAsTeamUri() }.also {
+            withContext(Dispatchers.Default) { website?.formatAsTeamUri() }.also {
                 if (it != team.website) {
                     team.website = it
                     team.hasCustomWebsite = it?.isNotBlank() == true
@@ -256,8 +257,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         if (url == null) return CompletableDeferred(true)
 
         val inputRef = inputLayout.asLifecycleReference(viewLifecycleOwner)
-        return async(UI) {
-            val isValid = withContext(DefaultDispatcher) { url.isValidTeamUri() }
+        return GlobalScope.async(Dispatchers.Main) {
+            val isValid = withContext(Dispatchers.Default) { url.isValidTeamUri() }
             inputRef().error =
                     if (isValid) null else getString(R.string.details_malformed_url_error)
             isValid
