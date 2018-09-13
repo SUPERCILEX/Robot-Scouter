@@ -117,12 +117,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             manager.transaction {
                 val newFragment = manager.destTagToFragment(newTag)
 
-                setCustomAnimations(
-                        R.anim.pop_fade_in,
-                        R.anim.fade_out,
-                        R.anim.pop_fade_in,
-                        R.anim.fade_out
-                )
+                setCustomAnimations(R.anim.pop_fade_in, R.anim.fade_out)
                 detach(currentFragment)
                 if (newFragment.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
                     attach(newFragment)
@@ -248,12 +243,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
 
             if (isInTabletMode()) {
-                setCustomAnimations(
-                        R.anim.pop_fade_in_right,
-                        R.anim.fade_out,
-                        R.anim.pop_fade_in_right,
-                        R.anim.fade_out
-                )
+                setCustomAnimations(R.anim.pop_fade_in_right, R.anim.fade_out)
                 replace(R.id.scoutList,
                         TabletScoutListFragmentCompanion().newInstance(args),
                         ScoutListFragmentCompanionBase.TAG)
@@ -275,17 +265,17 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                                     .inflateTransition(android.R.transition.move)
                     fragment.sharedElementReturnTransition = null
                 }
+                setCustomAnimations(
+                        R.anim.pop_fade_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.pop_fade_out
+                )
 
+                add(R.id.content, fragment, ScoutListFragmentCompanionBase.TAG)
                 if (existing == null) detach(checkNotNull(manager.findFragmentById(R.id.content)))
                 detach(TeamListFragmentCompanion().getInstance(manager))
 
-                setCustomAnimations(
-                        R.anim.pop_fade_in,
-                        R.anim.pop_fade_out,
-                        R.anim.pop_fade_in,
-                        R.anim.pop_fade_out
-                )
-                add(R.id.content, fragment, ScoutListFragmentCompanionBase.TAG)
                 addToBackStack(null)
             }
         }
