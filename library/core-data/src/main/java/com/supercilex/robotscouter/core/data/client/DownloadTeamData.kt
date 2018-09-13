@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.core.data.client
 
+import androidx.annotation.WorkerThread
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -13,6 +14,7 @@ import com.supercilex.robotscouter.core.model.Team
 
 internal const val TEAM_DATA_DOWNLOAD = "team_data_download"
 
+@WorkerThread
 internal fun Team.startDownloadDataJob() {
     WorkManager.getInstance().beginUniqueWork(
             number.toString(),

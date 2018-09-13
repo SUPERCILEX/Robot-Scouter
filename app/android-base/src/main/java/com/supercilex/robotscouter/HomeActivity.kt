@@ -23,7 +23,6 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.data.TEMPLATE_ARGS_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
-import com.supercilex.robotscouter.core.data.fetchAndActivateTask
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.ioPerms
 import com.supercilex.robotscouter.core.data.isSignedIn
@@ -164,10 +163,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onStart() {
         super.onStart()
-        fetchAndActivateTask().logFailures().addOnSuccessListener(this) {
-            if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
-                UpdateDialog.show(supportFragmentManager)
-            }
+        if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
+            UpdateDialog.show(supportFragmentManager)
         }
     }
 

@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.exportsFolder
-import com.supercilex.robotscouter.core.data.fetchAndActivateTask
 import com.supercilex.robotscouter.core.data.getTeamListExtra
 import com.supercilex.robotscouter.core.data.logExport
 import com.supercilex.robotscouter.core.data.model.getScouts
@@ -28,7 +27,6 @@ import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.fastAddOnSuccessListener
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.isOnline
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
@@ -209,14 +207,8 @@ class ExportService : IntentService(TAG) {
                         RobotScouter,
                         RobotScouter.intentFor<ExportService>().putExtra(exportedTeams)
                 )
-            }.continueWithTask {
-                if (it.result.size >= MIN_TEAMS_TO_RATE && isOnline) {
-                    fetchAndActivateTask().logFailures()
-                } else {
-                    Tasks.forResult<Unit>(null)
-                }
             }.addOnSuccessListener(activity) {
-                if (it != null && shouldShowRatingDialog) {
+                if (it.size >= MIN_TEAMS_TO_RATE && isOnline && shouldShowRatingDialog) {
                     RatingDialog.show(activity.supportFragmentManager)
                 }
             }

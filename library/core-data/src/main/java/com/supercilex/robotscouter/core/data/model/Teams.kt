@@ -22,7 +22,6 @@ import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
 import com.supercilex.robotscouter.core.data.deepLink
 import com.supercilex.robotscouter.core.data.defaultTemplateId
-import com.supercilex.robotscouter.core.data.fetchAndActivate
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.getInBatches
 import com.supercilex.robotscouter.core.data.logAdd
@@ -199,10 +198,9 @@ fun untrashTeam(id: String) {
     }.logFailures()
 }
 
-internal fun Team.fetchLatestData() = GlobalScope.async {
-    fetchAndActivate()
+internal fun Team.fetchLatestData() {
     if (isStale) startDownloadDataJob()
-}.logFailures()
+}
 
 suspend fun Team.getScouts(): List<Scout> = currentScope {
     val scouts = getScoutsQuery().getInBatches().map { scoutParser.parseSnapshot(it) }

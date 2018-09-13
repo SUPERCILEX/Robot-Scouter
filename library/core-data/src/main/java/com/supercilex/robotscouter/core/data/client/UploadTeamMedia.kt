@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.core.data.client
 
+import androidx.annotation.WorkerThread
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -15,6 +16,7 @@ import com.supercilex.robotscouter.core.model.Team
 
 internal const val TEAM_MEDIA_UPLOAD = "team_media_upload"
 
+@WorkerThread
 internal fun Team.startUploadMediaJob() {
     WorkManager.getInstance().beginUniqueWork(
             checkNotNull(media),

@@ -3,9 +3,8 @@ package com.supercilex.robotscouter.core.data
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.supercilex.robotscouter.core.CrashLogger
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import java.util.concurrent.TimeUnit
@@ -32,29 +31,19 @@ fun initRemoteConfig() {
         setConfigSettings(FirebaseRemoteConfigSettings.Builder()
                                   .setDeveloperModeEnabled(BuildConfig.DEBUG)
                                   .build())
+
+        activateFetched()
+        GlobalScope.async {
+            try {
+                fetch(if (info.configSettings.isDeveloperModeEnabled) {
+                    0
+                } else {
+                    TimeUnit.HOURS.toSeconds(12)
+                }).await()
+            } catch (e: FirebaseRemoteConfigFetchException) {
+                // Ignore throttling since it shouldn't happen on release builds and isn't really a public
+                // API error.
+            }
+        }.logFailures()
     }
 }
-
-internal suspend fun fetchAndActivate() {
-    val config: FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-    val cacheExpiration: Long = if (config.info.configSettings.isDeveloperModeEnabled) {
-        0
-    } else {
-        TimeUnit.HOURS.toSeconds(12)
-    }
-
-    try {
-        config.fetch(cacheExpiration).await()
-    } catch (e: FirebaseRemoteConfigFetchException) {
-        // Ignore throttling since it shouldn't happen on release builds and isn't really a public
-        // API error.
-        return
-    } catch (e: Exception) {
-        CrashLogger.onFailure(e)
-        return
-    }
-
-    config.activateFetched()
-}
-
-fun fetchAndActivateTask() = GlobalScope.async { fetchAndActivate() }.asTask()
