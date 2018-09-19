@@ -44,7 +44,6 @@ import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.itemsSequence
 import org.jetbrains.anko.longToast
 
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
@@ -292,15 +291,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         if (level == TRIM_MEMORY_MODERATE || level == TRIM_MEMORY_RUNNING_LOW) {
             supportFragmentManager.apply {
                 val currentDestId = bottomNavigation.selectedItemId
-                val unfocusedFragments = bottomNavigation.menu.itemsSequence()
+                val unfocusedFragments = bottomNavigation.menu.children
                         .filterNot { it.itemId == currentDestId }
-                        .map { it.itemId }
+                        .map(MenuItem::getItemId)
                         .map(::destIdToTag)
                         .map(::findFragmentByTag)
                         .filterNotNull()
                         .toList()
 
-                transaction { for (f in unfocusedFragments) remove(f) }
+                transaction(allowStateLoss = true) { for (f in unfocusedFragments) remove(f) }
             }
         }
     }
