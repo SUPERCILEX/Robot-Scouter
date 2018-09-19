@@ -110,7 +110,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null && isOffline) {
-            longSnackbar(view, R.string.scout_offline_rationale)
+            view.longSnackbar(R.string.scout_offline_rationale)
         }
 
         if (pagerAdapter != null) {
@@ -174,7 +174,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
                     if (it) {
                         startActivity(intent)
                     } else if (view != null) {
-                        longSnackbar(tabs, R.string.scout_template_access_denied_error)
+                        tabs.longSnackbar(R.string.scout_template_access_denied_error)
                     }
                 }
             }

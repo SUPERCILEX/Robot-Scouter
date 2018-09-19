@@ -92,8 +92,8 @@ internal class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListe
         dismiss()
     }.addOnFailureListener {
         when ((it as PurchaseException).errorCode) {
-            BillingResponse.USER_CANCELED -> longSnackbar(view, R.string.donate_cancel_message)
-            BillingResponse.SERVICE_UNAVAILABLE -> longSnackbar(view, R.string.no_connection)
+            BillingResponse.USER_CANCELED -> view.longSnackbar(R.string.donate_cancel_message)
+            BillingResponse.SERVICE_UNAVAILABLE -> view.longSnackbar(R.string.no_connection)
             BillingResponse.ITEM_ALREADY_OWNED, BillingResponse.ERROR -> Unit
             else -> {
                 CrashLogger.onFailure(it)
@@ -134,7 +134,7 @@ internal class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListe
                         .addOnSuccessListener { purchaseStartTask.setResult(null) }
             }
         } else if (result == BillingResponse.FEATURE_NOT_SUPPORTED) {
-            snackbar(view, R.string.error_unknown)
+            view.snackbar(R.string.error_unknown)
         } else {
             PurchaseException(result, sku).let {
                 CrashLogger.onFailure(it)
@@ -176,7 +176,7 @@ internal class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListe
 
     private fun showError() {
         updateProgress(false)
-        longSnackbar(view, R.string.error_unknown)
+        view.longSnackbar(R.string.error_unknown)
     }
 
     override fun onBillingSetupFinished(resultCode: Int) {

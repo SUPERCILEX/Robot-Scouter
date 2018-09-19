@@ -110,7 +110,7 @@ open class StopwatchViewHolder(
 
             metric.value.size.let { notifyCycleAdded(it, it) }
 
-            longSnackbar(itemView, R.string.scout_stopwatch_lap_added_message, RC.string.undo) {
+            itemView.longSnackbar(R.string.scout_stopwatch_lap_added_message, RC.string.undo) {
                 val hadAverage = metric.value.size >= LIST_SIZE_WITH_AVERAGE
                 metric.remove(lap)
 
@@ -124,7 +124,7 @@ open class StopwatchViewHolder(
         val currentTimer = timer ?: return false
 
         currentTimer.cancel()
-        undoAddSnackbar = longSnackbar(itemView, RC.string.cancelled, RC.string.undo) {
+        undoAddSnackbar = itemView.longSnackbar(RC.string.cancelled, RC.string.undo) {
             timer = Timer(this, currentTimer.startTimeMillis)
         }.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
             override fun onDismissed(transientBottomBar: Snackbar, event: Int) {
@@ -364,7 +364,7 @@ open class StopwatchViewHolder(
 
             holder.notifyCycleRemoved(position, metric.value.size, hadAverage)
 
-            longSnackbar(itemView, R.string.deleted, R.string.undo) {
+            itemView.longSnackbar(R.string.deleted, R.string.undo) {
                 val latestMetric = holder.metric
                 latestMetric.add(position, deletedCycle)
                 holder.notifyCycleAdded(rawPosition, latestMetric.value.size)

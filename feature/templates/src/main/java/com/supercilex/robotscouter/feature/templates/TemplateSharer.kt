@@ -36,7 +36,7 @@ internal class TemplateSharer private constructor(
                 withContext(Dispatchers.Default) { generateIntent(templateId, templateName) }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
-                longSnackbar(checkNotNull(fragmentRef().view), RC.string.error_unknown)
+                checkNotNull(fragmentRef().view).longSnackbar(RC.string.error_unknown)
                 return@launch
             }
             fragmentRef().startActivityForResult(intent, RC_SHARE)
@@ -80,7 +80,7 @@ internal class TemplateSharer private constructor(
                 templateName: String
         ): Boolean {
             if (isOffline) {
-                longSnackbar(checkNotNull(fragment.view), RC.string.no_connection)
+                checkNotNull(fragment.view).longSnackbar(RC.string.no_connection)
                 return false
             }
 

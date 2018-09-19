@@ -87,7 +87,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
                 val oldDefaultId = defaultTemplateId
                 defaultTemplateId = checkNotNull(metricsRef.parent).id
 
-                longSnackbar(metricsView, R.string.template_set_default_message, RC.string.undo) {
+                metricsView.longSnackbar(R.string.template_set_default_message, RC.string.undo) {
                     defaultTemplateId = oldDefaultId
                 }
             }
@@ -98,7 +98,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
             R.id.action_remove_metrics -> {
                 metricsView.clearFocus()
                 deleteMetrics(metricsRef).addOnSuccessListener(requireActivity()) { metrics ->
-                    longSnackbar(metricsView, RC.string.deleted, RC.string.undo) {
+                    metricsView.longSnackbar(RC.string.deleted, RC.string.undo) {
                         restoreMetrics(metrics)
                     }
                 }

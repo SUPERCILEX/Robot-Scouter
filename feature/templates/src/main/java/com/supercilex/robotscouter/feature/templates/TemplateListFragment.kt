@@ -109,7 +109,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
         val templateId = getTabId(args)
         if (templateId != null) {
             pagerAdapter.currentTabId = TemplateType.coerce(templateId)?.let {
-                longSnackbar(viewPager, R.string.template_added_message)
+                viewPager.longSnackbar(R.string.template_added_message)
                 addTemplate(it).also { defaultTemplateId = it }
             } ?: templateId
 
@@ -155,8 +155,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
 
     fun onTemplateCreated(id: String) {
         pagerAdapter.currentTabId = id
-        longSnackbar(
-                viewPager,
+        viewPager.longSnackbar(
                 R.string.template_added_title,
                 RC.string.template_set_default_title
         ) { defaultTemplateId = id }

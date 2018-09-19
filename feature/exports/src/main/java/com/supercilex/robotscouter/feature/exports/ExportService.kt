@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.feature.exports
 import android.Manifest
 import android.app.IntentService
 import android.content.Intent
+import android.view.View
 import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -192,10 +193,8 @@ class ExportService : IntentService(TAG) {
                 return false
             }
 
-            snackbar(
-                    activity.find(RC.id.root),
-                    RobotScouter.getString(R.string.export_progress_hint)
-            )
+            activity.find<View>(RC.id.root)
+                    .snackbar(RobotScouter.getString(R.string.export_progress_hint))
 
             if (teams.isEmpty()) {
                 getAllTeams()

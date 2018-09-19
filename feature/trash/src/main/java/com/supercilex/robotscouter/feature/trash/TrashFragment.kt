@@ -131,7 +131,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
         }
 
         if (restored.isNotEmpty()) {
-            longSnackbar(checkNotNull(view), resources.getQuantityString(
+            checkNotNull(view).longSnackbar(resources.getQuantityString(
                     R.plurals.trash_restored_message, restored.size, restored.size))
         }
     }
@@ -141,7 +141,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
     }
 
     fun onEmptyTrashConfirmed(deleted: List<String>, emptyTrashResult: Task<*>) {
-        longSnackbar(checkNotNull(view), resources.getQuantityString(
+        checkNotNull(view).longSnackbar(resources.getQuantityString(
                 R.plurals.trash_emptied_message, deleted.size, deleted.size))
 
         // Visual hack to pretend items were deleted really fast (usually takes a few seconds)

@@ -62,14 +62,11 @@ internal class TeamMenuHelper(
                 val deleted = fragment.selectedTeams.toList()
                 for (team in deleted) team.trash()
 
-                longSnackbar(
-                        checkNotNull(fragment.view),
+                checkNotNull(fragment.view).longSnackbar(
                         activity.resources.getQuantityString(
                                 R.plurals.teams_deleted_message, deleted.size, deleted.size),
                         activity.getString(RC.string.undo)
-                ) {
-                    for (team in deleted) untrashTeam(team.id)
-                }
+                ) { for (team in deleted) untrashTeam(team.id) }
             }
             else -> return false
         }

@@ -135,7 +135,7 @@ internal class SpinnerTemplateViewHolder(
 
         private fun updateDefaultStatus(items: List<Metric.List.Item>) {
             if (isDefault) {
-                snackbar(itemView, R.string.metric_spinner_item_default_required_error)
+                itemView.snackbar(R.string.metric_spinner_item_default_required_error)
                 return
             }
 
@@ -159,7 +159,7 @@ internal class SpinnerTemplateViewHolder(
             })
             parent.itemsAdapter.notifyItemRemoved(position)
 
-            longSnackbar(itemView, RC.string.deleted, RC.string.undo) {
+            itemView.longSnackbar(RC.string.deleted, RC.string.undo) {
                 parent.metric.update(parent.metric.value.toMutableList().apply {
                     add(position, items[position])
                 })

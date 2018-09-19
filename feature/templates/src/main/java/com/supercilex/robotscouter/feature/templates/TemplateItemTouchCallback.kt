@@ -200,7 +200,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
 
     private fun cleanupFailure() {
         cleanup()
-        longSnackbar(rootView, R.string.template_move_cancelled_rationale)
+        rootView.longSnackbar(R.string.template_move_cancelled_rationale)
         adapter.notifyDataSetChanged()
     }
 
@@ -240,7 +240,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
                 delete(deletedRef)
             }.logFailures(deletedRef, itemsBelow)
 
-            longSnackbar(rootView, RC.string.deleted, RC.string.undo) {
+            rootView.longSnackbar(RC.string.deleted, RC.string.undo) {
                 firestoreBatch {
                     set(deletedRef, checkNotNull(snapshot.data))
                     updatePositions(itemsBelow, 1)
