@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
@@ -101,6 +102,12 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
         // committed. Only reset the adapter if the user is switching destinations.
         if (isDetached) pagerAdapter.reset()
         super.onStop()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        fab.hide()
+        fab.isVisible = false // TODO hack: don't animate
     }
 
     override fun handleArgs(args: Bundle) = handleArgs(args, null)

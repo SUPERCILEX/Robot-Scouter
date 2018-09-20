@@ -68,7 +68,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
     private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
         savedSelection = MutableSelection<String>().apply { it.copySelection(this) }
-        it.clearSelection()
+        it.clearSelection() // Reset menu
     }
     private var menuHelper: TeamMenuHelper by LifecycleAwareLazy()
     private var savedSelection: Selection<String>? = null
@@ -154,7 +154,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     override fun onDestroyView() {
         super.onDestroyView()
         fab.hide()
-        fab.isVisible = false // Hack: don't animate
+        fab.isVisible = false // TODO hack: don't animate
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

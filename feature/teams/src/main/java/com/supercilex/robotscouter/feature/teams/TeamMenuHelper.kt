@@ -80,12 +80,13 @@ internal class TeamMenuHelper(
         }
 
         if (visible) {
-            fab.show()
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
         } else {
-            fab.hide()
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
+
+        // Don't change global FAB state unless we own the fragment
+        if (!fragment.isDetached) if (visible) fab.show() else fab.hide()
     }
 
     override fun updateSingleSelectMenu(visible: Boolean) {
