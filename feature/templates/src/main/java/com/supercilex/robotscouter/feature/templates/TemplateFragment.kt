@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.Refreshable
@@ -23,7 +24,6 @@ import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.core.data.model.restoreMetrics
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
-import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -52,9 +52,14 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val parent = parentFragment as TemplateListFragment
+        val fab = parent.fab
+
         noMetricsHint.animatePopReveal(true)
         holder.metrics.asLiveData().observeNonNull(viewLifecycleOwner) {
-            noMetricsHint.animatePopReveal(it.isEmpty())
+            val noMetrics = it.isEmpty()
+            noMetricsHint.animatePopReveal(noMetrics)
+            if (noMetrics) fab.show()
         }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
@@ -62,7 +67,12 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
         itemTouchCallback.adapter = adapter as TemplateAdapter
         itemTouchHelper.attachToRecyclerView(metricsView)
 
-        metricsView.setRecycledViewPool((parentFragment as RecyclerPoolHolder).recyclerPool)
+        metricsView.setRecycledViewPool(parent.recyclerPool)
+        metricsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) fab.hide() else if (dy < 0) fab.show()
+            }
+        })
     }
 
     override fun onCreateRecyclerAdapter(savedInstanceState: Bundle?) = TemplateAdapter(

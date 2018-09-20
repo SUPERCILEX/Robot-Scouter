@@ -55,7 +55,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
             }
         }
     }
-    private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
+    val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private val tabs by LifecycleAwareLazy {
         val tabs = TabLayout(ContextThemeWrapper(
