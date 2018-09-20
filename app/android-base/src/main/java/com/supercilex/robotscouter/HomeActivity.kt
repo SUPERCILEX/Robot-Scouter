@@ -112,6 +112,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 return@listener true
             }
 
+            appBar.setExpanded(true)
             manager.transaction {
                 val newFragment = manager.destTagToFragment(newTag)
 

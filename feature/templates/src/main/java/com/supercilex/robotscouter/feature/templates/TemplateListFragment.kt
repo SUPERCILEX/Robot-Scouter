@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.supercilex.robotscouter.Bridge
@@ -65,7 +66,9 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
             tabMode = TabLayout.MODE_SCROLLABLE
         }
         appBar.addView(
-                tabs, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                tabs, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
+            scrollFlags = LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+        })
         tabs
     } onDestroy {
         appBar.removeView(it)
