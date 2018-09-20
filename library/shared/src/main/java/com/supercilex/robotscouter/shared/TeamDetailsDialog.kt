@@ -120,7 +120,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         TransitionManager.beginDelayedTransition(containerView)
 
         progress.show()
-        Glide.with(media)
+        Glide.with(this)
                 .load(team.media)
                 .apply(RequestOptions.circleCropTransform().error(R.drawable.ic_person_grey_96dp))
                 .transition(DrawableTransitionOptions.withCrossFade())

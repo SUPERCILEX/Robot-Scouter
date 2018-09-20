@@ -80,7 +80,7 @@ internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
                                   .setAction(ACTION_FROM_DEEP_LINK))
         } else {
             runOnUiThread { longToast(R.string.link_teams_imported_message) }
-            startTeamListActivityNoArgs()
+            startHomeActivityNoArgs()
         }
     }
 
@@ -96,13 +96,13 @@ internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
                               .setAction(ACTION_FROM_DEEP_LINK))
     }
 
-    private fun startTeamListActivityNoArgs() =
+    private fun startHomeActivityNoArgs() =
             startActivity(intentFor<HomeActivity>()
                                   .addNewDocumentFlags()
                                   .setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
-        startTeamListActivityNoArgs()
+        startHomeActivityNoArgs()
         runOnUiThread { longToast(R.string.link_uri_parse_error) }
     }
 

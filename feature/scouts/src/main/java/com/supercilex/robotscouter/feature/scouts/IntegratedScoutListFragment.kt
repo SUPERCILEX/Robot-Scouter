@@ -34,7 +34,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             mainHandler.post { listener.onTeamSelected(bundle) }
 
             removeFragment()
-        } else {
+        } else if (sharedElementEnterTransition != null) {
             postponeEnterTransition()
         }
     }

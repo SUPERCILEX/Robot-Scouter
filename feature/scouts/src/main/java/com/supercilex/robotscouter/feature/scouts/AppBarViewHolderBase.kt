@@ -104,7 +104,7 @@ internal open class AppBarViewHolderBase(
 
     private fun loadImages() {
         progress.show()
-        Glide.with(backdrop)
+        Glide.with(fragment)
                 .asBitmap()
                 .load(team.media)
                 .apply(RequestOptions.centerCropTransform().error(RC.drawable.ic_person_grey_96dp))

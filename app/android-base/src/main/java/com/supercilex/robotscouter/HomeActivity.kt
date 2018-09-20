@@ -247,6 +247,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             } else {
                 val fragment = IntegratedScoutListFragmentCompanion().newInstance(args)
 
+                appBar.setExpanded(true)
                 setReorderingAllowed(true)
                 if (bottomNavigation.selectedItemId != R.id.teams) {
                     bottomNavigation.selectedItemId = R.id.teams
