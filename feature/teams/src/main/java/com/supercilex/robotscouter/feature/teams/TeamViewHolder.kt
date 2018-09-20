@@ -148,6 +148,8 @@ internal class TeamViewHolder(
     }
 
     override fun onLongClick(v: View): Boolean {
+        if (couldItemBeSelected) return false
+
         when {
             v.id == R.id.media -> TeamDetailsDialog.show(fragment.childFragmentManager, team)
             v.id == R.id.newScout -> TeamTemplateSelectorDialog.show(
