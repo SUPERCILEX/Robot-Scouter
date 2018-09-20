@@ -28,7 +28,6 @@ import com.supercilex.robotscouter.core.data.logAdd
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.share
 import com.supercilex.robotscouter.core.data.teamDuplicatesRef
-import com.supercilex.robotscouter.core.data.teamFreshnessDays
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.user
@@ -69,10 +68,11 @@ val Team.ref: DocumentReference get() = teamsRef.document(id)
 val Team.isOutdatedMedia: Boolean
     get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
 
+private const val TEAM_FRESHNESS_DAYS = 4
 internal val Team.isStale: Boolean
     get() = TimeUnit.MILLISECONDS.toDays(
             System.currentTimeMillis() - timestamp.time
-    ) >= teamFreshnessDays
+    ) >= TEAM_FRESHNESS_DAYS
 
 internal val Team.isTrashed: Boolean?
     get() {

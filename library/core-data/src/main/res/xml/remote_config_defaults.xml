@@ -8,10 +8,6 @@
         <key>update_required_message</key>
         <value>An update is required for Robot Scouter to work correctly.</value>
     </entry>
-    <entry>
-        <key>team_freshness</key>
-        <value>4</value>
-    </entry>
 
     <entry>
         <key>show_rating_dialog</key>
