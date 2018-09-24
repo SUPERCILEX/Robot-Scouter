@@ -3,7 +3,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.2.70"
+    private const val kotlinVersion = "1.2.71"
 
     object SdkVersions {
         val compile = 28
@@ -12,12 +12,12 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.3.0-alpha10"
+        val android = "com.android.tools.build:gradle:3.3.0-alpha11"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
-        val fabric = "io.fabric.tools:gradle:1.25.4"
+        val fabric = "io.fabric.tools:gradle:1.26.0"
         val publishing = "com.github.Triple-T:gradle-play-publisher:7829c8646f"
 
         val ktlint = "com.github.shyiko:ktlint:0.28.0"
@@ -49,8 +49,8 @@ object Config {
         }
 
         object Jetpack {
-            private const val version = "1.0.0-rc02"
-            private const val lifecycleVersion = "2.0.0-rc01"
+            private const val version = "1.0.0"
+            private const val lifecycleVersion = "2.0.0"
             private const val workVersion = "1.0.0-alpha08"
 
             val core = "androidx.core:core-ktx:$version"
@@ -58,7 +58,7 @@ object Config {
             val appCompat = "androidx.appcompat:appcompat:$version"
             val fragment = "androidx.fragment:fragment-ktx:$version"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:$version"
-            val constraint = "androidx.constraintlayout:constraintlayout:1.1.2"
+            val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
             val cardView = "androidx.cardview:cardview:$version"
             val palette = "androidx.palette:palette-ktx:$version"
             val emoji = "androidx.emoji:emoji-appcompat:$version"
@@ -66,7 +66,7 @@ object Config {
             val pref = "androidx.preference:preference:$version"
             val prefKtx = "androidx.preference:preference-ktx:$version"
 
-            val material = "com.google.android.material:material:1.0.0-rc02"
+            val material = "com.google.android.material:material:1.0.0"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
@@ -103,7 +103,7 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.36.0"
+            val facebook = "com.facebook.android:facebook-login:4.36.1"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
@@ -129,7 +129,7 @@ object Config {
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             val permissions = "pub.devrel:easypermissions:1.3.0"
-            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.3"
+            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.4"
             val billing = "com.android.billingclient:billing:1.1"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.2"
         }

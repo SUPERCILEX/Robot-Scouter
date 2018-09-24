@@ -23,7 +23,7 @@ const val RC_SIGN_IN = 100
 private val allProviders: List<AuthUI.IdpConfig> = listOf(
         AuthUI.IdpConfig.GoogleBuilder().build(),
         AuthUI.IdpConfig.FacebookBuilder().build(),
-//        AuthUI.IdpConfig.TwitterBuilder().build(), // TODO re-enable after https://issuetracker.google.com/issues/113513217
+        AuthUI.IdpConfig.TwitterBuilder().build(),
         AuthUI.IdpConfig.GitHubBuilder().build(),
         AuthUI.IdpConfig.EmailBuilder().build(),
         AuthUI.IdpConfig.PhoneBuilder().build()
