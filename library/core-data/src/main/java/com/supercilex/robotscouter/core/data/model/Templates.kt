@@ -13,7 +13,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.R
@@ -34,6 +33,7 @@ import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.TemplateType
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.tasks.asTask
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import java.util.Date

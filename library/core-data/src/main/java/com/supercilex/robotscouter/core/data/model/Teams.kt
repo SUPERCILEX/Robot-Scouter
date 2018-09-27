@@ -34,14 +34,15 @@ import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
-import kotlinx.coroutines.experimental.currentScope
 import java.io.File
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.experimental.coroutineContext
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -202,11 +203,14 @@ internal fun Team.fetchLatestData() {
     if (isStale) startDownloadDataJob()
 }
 
-suspend fun Team.getScouts(): List<Scout> = currentScope {
+suspend fun Team.getScouts(): List<Scout> {
+    val scope = CoroutineScope(coroutineContext)
+
     val scouts = getScoutsQuery().getInBatches().map { scoutParser.parseSnapshot(it) }
     val metricsForScouts = scouts.map {
-        async { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches() }
+        scope.async { getScoutMetricsRef(it.id).orderBy(FIRESTORE_POSITION).getInBatches() }
     }.awaitAll()
+
     return scouts.mapIndexed { index, scout ->
         scout.copy(metrics = metricsForScouts[index].map { metricParser.parseSnapshot(it) })
     }

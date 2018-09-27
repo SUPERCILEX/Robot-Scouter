@@ -5,24 +5,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
 import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.tasks.await
 import org.jetbrains.anko.coroutines.experimental.Ref
 import org.jetbrains.anko.coroutines.experimental.asReference
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.suspendCoroutine
 
 suspend fun <T> Task<T>.await(): T {
     val trace = generateStackTrace()
-
-    if (isComplete) { // Fast path
-        return if (isSuccessful) result else throw checkNotNull(exception).injectRoot(trace)
-    }
-
-    return suspendCoroutine { c: Continuation<T> ->
-        addOnSuccessListener { c.resume(it) }
-        addOnFailureListener { c.resumeWithException(it.injectRoot(trace)) }
+    return try {
+        await()
+    } catch (t: Throwable) {
+        throw t.injectRoot(trace)
     }
 }
 
@@ -41,18 +34,6 @@ inline fun <T> Task<T>.fastAddOnSuccessListener(
     } else {
         addOnSuccessListener(activity, crossedListener)
     }
-}
-
-fun <T> Deferred<T>.asTask(): Task<T> {
-    val source = TaskCompletionSource<T>()
-    invokeOnCompletion {
-        try {
-            source.setResult(getCompleted())
-        } catch (e: Exception) {
-            source.setException(e)
-        }
-    }
-    return source.task
 }
 
 fun <T : LifecycleOwner> T.asLifecycleReference(

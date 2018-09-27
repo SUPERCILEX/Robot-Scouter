@@ -33,7 +33,7 @@ const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
  * Android N+ limits notification updates to 10/sec and drops the rest. This limits notification
  * updates to 5/sec.
  */
-const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200
+const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200L
 
 val notificationManager by lazy { checkNotNull(RobotScouter.getSystemService<NotificationManager>()) }
 

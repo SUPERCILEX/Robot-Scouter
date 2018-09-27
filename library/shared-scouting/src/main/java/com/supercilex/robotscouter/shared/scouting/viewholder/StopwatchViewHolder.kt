@@ -233,10 +233,10 @@ open class StopwatchViewHolder(
 
             updater = GlobalScope.launch(Dispatchers.Main) {
                 try {
-                    withTimeout(GAME_TIME_MINS, TimeUnit.MINUTES) {
+                    withTimeout(TimeUnit.MINUTES.toMillis(GAME_TIME_MINS)) {
                         while (isActive) {
                             updateButtonTime()
-                            delay(1, TimeUnit.SECONDS)
+                            delay(1000)
                         }
                     }
                 } catch (e: TimeoutCancellationException) {

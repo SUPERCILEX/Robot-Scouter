@@ -32,10 +32,10 @@ import com.supercilex.robotscouter.core.model.MetricType
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
+import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.IO
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.currentScope
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.BorderExtent
 import org.apache.poi.ss.usermodel.BorderStyle
@@ -63,6 +63,7 @@ import java.io.IOException
 import java.util.Collections
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.experimental.coroutineContext
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateExporter(
@@ -77,9 +78,11 @@ internal class TemplateExporter(
     val scouts: Map<Team, List<Scout>> = Collections.unmodifiableMap(scouts)
     private val cache = SpreadsheetCache(scouts.keys)
 
-    suspend fun export() = currentScope {
-        val spreadsheet = async(Dispatchers.IO) { exportSpreadsheet() }
-        val json = async(Dispatchers.IO) {
+    suspend fun export() {
+        val scope = CoroutineScope(coroutineContext)
+
+        val spreadsheet = scope.async(Dispatchers.IO) { exportSpreadsheet() }
+        val json = scope.async(Dispatchers.IO) {
             try {
                 exportJson()
             } catch (e: Exception) {

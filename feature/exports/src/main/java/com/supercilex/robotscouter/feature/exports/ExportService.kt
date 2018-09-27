@@ -13,7 +13,6 @@ import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.ExportServiceCompanion
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.exportsFolder
 import com.supercilex.robotscouter.core.data.getTeamListExtra
@@ -39,6 +38,7 @@ import kotlinx.coroutines.experimental.TimeoutCancellationException
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
 import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.tasks.asTask
 import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
@@ -69,7 +69,7 @@ class ExportService : IntentService(TAG) {
                 notificationManager.loading(it)
 
                 runBlocking {
-                    withTimeout(TIMEOUT, TimeUnit.MINUTES) {
+                    withTimeout(TimeUnit.MINUTES.toMillis(TIMEOUT)) {
                         it.map { async { it.getScouts() } }.awaitAll()
                     }
                 }.also { notificationManager.onChunkLoaded() }
@@ -97,7 +97,7 @@ class ExportService : IntentService(TAG) {
 
         runBlocking {
             val templateNames = getTemplateNames(zippedScouts.keys)
-            withTimeout(TIMEOUT, TimeUnit.MINUTES) {
+            withTimeout(TimeUnit.MINUTES.toMillis(TIMEOUT)) {
                 zippedScouts.map { (templateId, scouts) ->
                     async {
                         if (!notificationManager.isStopped()) {

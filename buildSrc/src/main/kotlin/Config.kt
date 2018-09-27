@@ -12,7 +12,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.3.0-alpha11"
+        val android = "com.android.tools.build:gradle:3.3.0-alpha12"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
@@ -27,13 +27,15 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "0.26.1"
+            private const val coroutinesVersion = "0.27.0"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
             val js = "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
             val coroutinesAndroid =
                     "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+            val coroutinesTasks =
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion"
             // TODO figure out JS bugs
             val coroutinesJs =
                     "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:0.24.0"
@@ -128,7 +130,7 @@ object Config {
             val glide = "com.github.bumptech.glide:glide:$glideVersion"
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
-            val permissions = "pub.devrel:easypermissions:1.3.0"
+            val permissions = "pub.devrel:easypermissions:2.0.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.4"
             val billing = "com.android.billingclient:billing:1.1"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.2"

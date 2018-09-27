@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_UNIT
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logAdd
@@ -23,6 +22,7 @@ import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.tasks.asTask
 
 val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
 

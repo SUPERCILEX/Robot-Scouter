@@ -7,7 +7,6 @@ import com.firebase.ui.auth.util.GoogleApiUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
@@ -16,6 +15,7 @@ import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.experimental.tasks.asTask
 
 const val RC_SIGN_IN = 100
 

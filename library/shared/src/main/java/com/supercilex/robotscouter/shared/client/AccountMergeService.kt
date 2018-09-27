@@ -9,7 +9,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
@@ -23,6 +22,7 @@ import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.awaitAll
+import kotlinx.coroutines.experimental.tasks.asTask
 import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
 
 internal class AccountMergeService : ManualMergeService() {

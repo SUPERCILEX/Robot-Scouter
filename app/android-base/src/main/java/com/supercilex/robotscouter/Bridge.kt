@@ -28,7 +28,6 @@ import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.ValueSeeker
 import com.supercilex.robotscouter.core._globalContext
-import com.supercilex.robotscouter.core.asTask
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
 import com.supercilex.robotscouter.core.fastAddOnSuccessListener
@@ -38,6 +37,7 @@ import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.tasks.asTask
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
