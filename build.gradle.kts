@@ -55,6 +55,10 @@ tasks.withType<Wrapper>().configureEach {
     distributionType = Wrapper.DistributionType.ALL
 }
 
+tasks.register<Delete>("clean").configure {
+    delete("build")
+}
+
 fun Project.configureGeneral() {
     val ktlintConfig = configurations.create("ktlint")
     val ktlint = tasks.register<JavaExec>("ktlint") {
