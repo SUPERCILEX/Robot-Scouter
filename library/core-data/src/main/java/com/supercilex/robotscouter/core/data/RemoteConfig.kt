@@ -5,8 +5,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.logFailures
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.util.concurrent.TimeUnit
 
 // Mirrored in remote_config_defaults.xml

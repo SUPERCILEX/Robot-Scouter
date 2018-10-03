@@ -1,7 +1,6 @@
 import com.android.build.gradle.BaseExtension
 import org.apache.commons.io.output.TeeOutputStream
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
@@ -123,10 +122,6 @@ fun Project.configureAndroid() {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
         }
-    }
-
-    configure<KotlinProjectExtension> {
-        experimental.coroutines = Coroutines.ENABLE
     }
 
     configure<AndroidExtensionsExtension> {

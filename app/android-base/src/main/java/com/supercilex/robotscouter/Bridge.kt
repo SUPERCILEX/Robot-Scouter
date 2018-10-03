@@ -34,17 +34,19 @@ import com.supercilex.robotscouter.core.fastAddOnSuccessListener
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.tasks.asTask
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.asTask
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 import java.lang.reflect.Modifier
-import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 import com.google.android.play.core.tasks.Task as PlayTask
 
 private val moduleStatus = MutableLiveData<SplitInstallSessionState?>()

@@ -20,9 +20,9 @@ import com.supercilex.robotscouter.core.data.logUpdate
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.tasks.asTask
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.asTask
 
 val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
 

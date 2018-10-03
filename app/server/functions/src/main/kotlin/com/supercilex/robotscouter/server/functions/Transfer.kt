@@ -26,10 +26,11 @@ import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.SetOptions
-import kotlinx.coroutines.experimental.asPromise
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.await
-import kotlinx.coroutines.experimental.awaitAll
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asPromise
+import kotlinx.coroutines.async
+import kotlinx.coroutines.await
+import kotlinx.coroutines.awaitAll
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -69,7 +70,7 @@ fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
     val oldOwnerPath = prevUid?.let { "$FIRESTORE_OWNERS.$it" }
     val newOwnerPath = "$FIRESTORE_OWNERS.${auth.uid}"
 
-    return async {
+    return GlobalScope.async {
         val content = ref.get().await()
 
         if (!content.exists) throw HttpsError("not-found")
@@ -115,7 +116,7 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
         return null
     }
 
-    return async {
+    return GlobalScope.async {
         duplicates.map { ids ->
             @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
             async inner@{
@@ -176,7 +177,7 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
 }
 
 // TODO remove after v3.0 ships
-fun mergeDuplicateTeamsCompat(team: DocumentSnapshot) = async {
+fun mergeDuplicateTeamsCompat(team: DocumentSnapshot) = GlobalScope.async {
     val uid = team.get<Json>(FIRESTORE_OWNERS).toMap<Long>().map { it.key }.single()
 
     duplicateTeams.doc(uid)

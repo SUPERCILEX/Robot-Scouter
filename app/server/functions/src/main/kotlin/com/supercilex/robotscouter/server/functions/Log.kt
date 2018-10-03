@@ -9,17 +9,18 @@ import com.supercilex.robotscouter.server.utils.toTemplateString
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Message
 import com.supercilex.robotscouter.server.utils.types.QuerySnapshot
-import kotlinx.coroutines.experimental.asPromise
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.await
-import kotlinx.coroutines.experimental.awaitAll
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asPromise
+import kotlinx.coroutines.async
+import kotlinx.coroutines.await
+import kotlinx.coroutines.awaitAll
 import kotlin.js.Promise
 
 fun logUserData(message: Message): Promise<*>? {
     val uid = message.json["uid"] as String
 
     console.log("Logging user data for id: $uid")
-    return async {
+    return GlobalScope.async {
         val teams = async {
             val snapshot = getTeamsQuery(uid).get().await()
             console.log("${snapshot.size} teams:\n" + snapshot.prettyPrintTeams())

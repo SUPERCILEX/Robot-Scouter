@@ -15,9 +15,9 @@ import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.core.data.model.scoutParser
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.waitForChange
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.awaitAll
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 
 internal class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {

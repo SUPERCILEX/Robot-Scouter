@@ -28,8 +28,8 @@ import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.shared.client.onSignedIn
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread

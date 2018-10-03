@@ -3,9 +3,8 @@ package com.supercilex.robotscouter.core.data
 import com.google.firebase.storage.FirebaseStorage
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.TimeUnit
 

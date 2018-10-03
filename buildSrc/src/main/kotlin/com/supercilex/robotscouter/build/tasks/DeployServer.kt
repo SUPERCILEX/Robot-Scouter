@@ -8,7 +8,9 @@ import com.google.pubsub.v1.PubsubMessage
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.shell
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -16,6 +18,8 @@ import java.io.File
 
 open class DeployServer : DefaultTask() {
     @Option(description = "See firebase help documentation")
+    @get:Optional
+    @get:Input
     var only: String? = null
 
     @get:InputFile protected val transpiledJs: File

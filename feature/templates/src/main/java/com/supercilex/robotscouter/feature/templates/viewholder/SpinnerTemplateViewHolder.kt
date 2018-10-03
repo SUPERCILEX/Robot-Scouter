@@ -126,10 +126,10 @@ internal class SpinnerTemplateViewHolder(
 
         override fun onClick(v: View) {
             val items = parent.getLatestItems()
-            when (v.id) {
+            when (val id = v.id) {
                 R.id.defaultView -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)
-                else -> error("Unknown id: ${v.id}")
+                else -> error("Unknown id: $id")
             }
         }
 

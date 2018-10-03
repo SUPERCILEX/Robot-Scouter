@@ -11,11 +11,11 @@ import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.shared.R
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
-import kotlinx.coroutines.experimental.tasks.asTask
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.tasks.asTask
 
 const val RC_SIGN_IN = 100
 

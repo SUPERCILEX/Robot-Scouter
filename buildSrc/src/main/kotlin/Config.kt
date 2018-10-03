@@ -3,7 +3,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.2.71"
+    private const val kotlinVersion = "1.3.20-dev-682"
 
     object SdkVersions {
         val compile = 28
@@ -12,22 +12,22 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.3.0-alpha12"
+        val android = "com.android.tools.build:gradle:3.3.0-alpha13"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.0.2"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
-        val fabric = "io.fabric.tools:gradle:1.26.0"
+        val fabric = "io.fabric.tools:gradle:1.26.1"
         val publishing = "com.github.Triple-T:gradle-play-publisher:7829c8646f"
 
-        val ktlint = "com.github.shyiko:ktlint:0.28.0"
+        val ktlint = "com.github.shyiko:ktlint:0.29.0"
 
         val PluginDependenciesSpec.versionChecker get() = id("com.github.ben-manes.versions") version "0.20.0"
     }
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "0.30.0"
+            private const val coroutinesVersion = "0.30.1-eap13"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -36,13 +36,12 @@ object Config {
                     "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
             val coroutinesTasks =
                     "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion"
-            // TODO figure out JS bugs
             val coroutinesJs =
-                    "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:0.24.0"
+                    "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutinesVersion"
         }
 
         object Anko {
-            private const val version = "0.10.6"
+            private const val version = "0.10.7-rc13"
 
             val common = "org.jetbrains.anko:anko-common:$version"
             val coroutines = "org.jetbrains.anko:anko-coroutines:$version"
@@ -79,23 +78,23 @@ object Config {
         }
 
         object Firebase {
-            val core = "com.google.firebase:firebase-core:16.0.3"
-            val auth = "com.google.firebase:firebase-auth:16.0.3"
-            val firestore = "com.google.firebase:firebase-firestore:17.1.0"
-            val functions = "com.google.firebase:firebase-functions:16.1.0"
-            val storage = "com.google.firebase:firebase-storage:16.0.2"
-            val config = "com.google.firebase:firebase-config:16.0.0"
-            val indexing = "com.google.firebase:firebase-appindexing:16.0.1"
-            val messaging = "com.google.firebase:firebase-messaging:17.3.2"
-            val invites = "com.google.firebase:firebase-invites:16.0.3"
-            val perf = "com.google.firebase:firebase-perf:16.1.0"
+            val core = "com.google.firebase:firebase-core:16.0.4"
+            val auth = "com.google.firebase:firebase-auth:16.0.4"
+            val firestore = "com.google.firebase:firebase-firestore:17.1.1"
+            val functions = "com.google.firebase:firebase-functions:16.1.1"
+            val storage = "com.google.firebase:firebase-storage:16.0.3"
+            val config = "com.google.firebase:firebase-config:16.0.1"
+            val indexing = "com.google.firebase:firebase-appindexing:16.0.2"
+            val messaging = "com.google.firebase:firebase-messaging:17.3.3"
+            val invites = "com.google.firebase:firebase-invites:16.0.4"
+            val perf = "com.google.firebase:firebase-perf:16.1.2"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.5"
         }
 
         object PlayServices {
-            val auth = "com.google.android.gms:play-services-auth:16.0.0"
-            val nearby = "com.google.android.gms:play-services-nearby:15.0.1"
+            val auth = "com.google.android.gms:play-services-auth:16.0.1"
+            val nearby = "com.google.android.gms:play-services-nearby:16.0.0"
             val playCore = "com.google.android.play:core:1.3.4"
         }
 
@@ -105,7 +104,7 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.36.1"
+            val facebook = "com.facebook.android:facebook-login:4.37.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
@@ -131,9 +130,9 @@ object Config {
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val snap = "com.github.rubensousa:gravitysnaphelper:1.5"
             val permissions = "pub.devrel:easypermissions:2.0.0"
-            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.12.4"
+            val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.13.0"
             val billing = "com.android.billingclient:billing:1.1"
-            val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.1.2"
+            val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.2.1"
         }
     }
 }

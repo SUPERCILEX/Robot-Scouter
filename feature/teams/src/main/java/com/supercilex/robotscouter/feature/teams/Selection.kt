@@ -26,6 +26,6 @@ internal class TeamDetails(
 
     override fun inSelectionHotspot(e: MotionEvent): Boolean {
         val media = holder.media
-        return e.rawX in media.left..media.right
+        return e.rawX.toInt() in media.left..media.right
     }
 }

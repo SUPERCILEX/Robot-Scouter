@@ -99,13 +99,10 @@ suspend fun updateOwner(
                     FIRESTORE_TOKEN to token,
                     FIRESTORE_REF to ref.path,
                     FIRESTORE_PREV_UID to prevUid,
-                    run {
-                        val value = newValue(ref)
-                        when (value) {
-                            is Number -> FIRESTORE_NUMBER to value
-                            is Date -> FIRESTORE_TIMESTAMP to value.time
-                            else -> error("Unknown data type (${value.javaClass}): $value")
-                        }
+                    when (val value = newValue(ref)) {
+                        is Number -> FIRESTORE_NUMBER to value
+                        is Date -> FIRESTORE_TIMESTAMP to value.time
+                        else -> error("Unknown data type (${value.javaClass}): $value")
                     }
             ))
             .logFailures(ref, "Token: $token, from user: $prevUid")

@@ -15,7 +15,7 @@ import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.notificationManager
 import com.supercilex.robotscouter.core.model.Team
-import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.CancellationException
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt

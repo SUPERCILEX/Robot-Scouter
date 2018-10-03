@@ -23,9 +23,9 @@ import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import kotlinx.android.synthetic.main.activity_link_receiver.*
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import java.util.Date

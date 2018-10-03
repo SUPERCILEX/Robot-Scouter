@@ -47,10 +47,10 @@ internal class TrashViewHolder(
             else -> error("Unsupported type: ${trash.type}")
         })
 
-        when (trash.type) {
+        when (val type = trash.type) {
             DeletionType.TEAM -> teamsRef.document(trash.id)
             DeletionType.TEMPLATE -> templatesRef.document(trash.id)
-            else -> error("Unsupported type: ${trash.type}")
+            else -> error("Unsupported type: $type")
         }.let {
             // Getting it from the cache is faster and we don't really care about up-to-date-ness
             it.get(Source.CACHE).logFailures(it, trash).addOnCompleteListener(Listener(this, it))
@@ -78,14 +78,14 @@ internal class TrashViewHolder(
                 return
             }
 
-            val snapshot = task.result
+            val snapshot = checkNotNull(task.result)
             if (snapshot.id != trash.id) return // Holder might have changed
 
-            holder.name.text = when (trash.type) {
+            holder.name.text = when (val type = trash.type) {
                 DeletionType.TEAM -> teamParser.parseSnapshot(snapshot).toString()
                 DeletionType.TEMPLATE ->
                     scoutParser.parseSnapshot(snapshot).name ?: holder.unknownName
-                else -> error("Unsupported type: ${trash.type}")
+                else -> error("Unsupported type: $type")
             }
         }
     }

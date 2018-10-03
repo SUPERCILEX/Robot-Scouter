@@ -39,14 +39,13 @@ import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_team_details.*
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import kotlin.math.hypot
 
@@ -154,13 +153,13 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         websiteEdit.setText(team.website)
     }
 
-    override fun onClick(v: View) = when (v.id) {
+    override fun onClick(v: View) = when (val id = v.id) {
         R.id.media -> ShouldUploadMediaToTbaDialog.show(this)
         R.id.editNameButton -> revealNameEditor()
         R.id.linkTba -> team.launchTba(view.context)
         R.id.linkWebsite -> team.launchWebsite(view.context)
         R.id.save -> save()
-        else -> error("Unknown id: ${v.id}")
+        else -> error("Unknown id: $id")
     }
 
     private fun revealNameEditor() {

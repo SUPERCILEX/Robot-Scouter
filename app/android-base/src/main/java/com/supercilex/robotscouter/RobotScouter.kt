@@ -16,10 +16,9 @@ import com.supercilex.robotscouter.core.data.initPrefs
 import com.supercilex.robotscouter.core.data.initRemoteConfig
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.shared.initUi
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.IO
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.jetbrains.anko.longToast
 
 internal class RobotScouter : MultiDexApplication() {

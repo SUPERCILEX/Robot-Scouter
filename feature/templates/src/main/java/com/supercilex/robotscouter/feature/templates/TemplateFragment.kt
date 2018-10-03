@@ -91,8 +91,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
             inflater.inflate(R.menu.template_options, menu)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        when (item.itemId) {
             R.id.action_set_default_template -> {
                 val oldDefaultId = defaultTemplateId
                 defaultTemplateId = checkNotNull(metricsRef.parent).id
@@ -125,7 +124,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
         hasAddedItem = true
         itemTouchCallback.addItemToScrollQueue(position)
 
-        when (v.id) {
+        when (val id = v.id) {
             R.id.addHeader -> Metric.Header(position = position, ref = metricRef)
             R.id.addCheckBox -> Metric.Boolean(position = position, ref = metricRef)
             R.id.addCounter -> Metric.Number(position = position, ref = metricRef)

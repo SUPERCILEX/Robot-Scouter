@@ -192,15 +192,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        when (val id = item.itemId) {
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             else -> runIfSignedIn {
-                when (item.itemId) {
+                when (id) {
                     R.id.action_export_all_teams -> export()
                     R.id.action_view_trash -> startActivity(TrashActivityCompanion().createIntent())
                     R.id.action_settings ->
                         moduleRequestHolder += SettingsActivityCompanion().logFailures()
-                    else -> error("Unknown item id: ${item.itemId}")
+                    else -> error("Unknown item id: $id")
                 }
             }
         }

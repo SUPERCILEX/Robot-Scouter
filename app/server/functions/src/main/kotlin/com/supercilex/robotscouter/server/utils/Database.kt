@@ -8,9 +8,10 @@ import com.supercilex.robotscouter.server.utils.types.FieldPaths
 import com.supercilex.robotscouter.server.utils.types.Firestore
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.WriteBatch
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.await
-import kotlinx.coroutines.experimental.awaitAll
+import kotlinx.coroutines.async
+import kotlinx.coroutines.await
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 fun DocumentSnapshot.toTeamString() =
         "${data()[FIRESTORE_NUMBER]} - ${data()[FIRESTORE_NAME]}: $id"
@@ -25,18 +26,22 @@ suspend fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
 suspend fun Query.processInBatches(
         batchSize: Int = 100,
         action: suspend (DocumentSnapshot) -> Unit
-) = processInBatches(this, batchSize) {
-    it.map { async { action(it) } }.awaitAll()
+) = coroutineScope {
+    processInBatches(this@processInBatches, batchSize) {
+        it.map { async { action(it) } }.awaitAll()
+    }
 }
 
 suspend fun CollectionReference.delete(
         batchSize: Int = 100,
         middleMan: suspend (DocumentSnapshot) -> Unit = {}
-) = processInBatches(orderBy(FieldPaths.documentId()), batchSize) { snapshots ->
-    snapshots.map { async { middleMan(it) } }.awaitAll()
+) = coroutineScope {
+    processInBatches(orderBy(FieldPaths.documentId()), batchSize) { snapshots ->
+        snapshots.map { async { middleMan(it) } }.awaitAll()
 
-    firestore.batch {
-        snapshots.forEach { delete(it.ref) }
+        firestore.batch {
+            snapshots.forEach { delete(it.ref) }
+        }
     }
 }
 

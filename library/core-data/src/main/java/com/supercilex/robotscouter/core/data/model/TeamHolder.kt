@@ -14,10 +14,9 @@ import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.model.Team
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
     private val _teamListener: MutableLiveData<Team?> = UniqueMutableLiveData()

@@ -31,9 +31,9 @@ import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.TemplateType
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.tasks.asTask
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.asTask
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import java.util.Date

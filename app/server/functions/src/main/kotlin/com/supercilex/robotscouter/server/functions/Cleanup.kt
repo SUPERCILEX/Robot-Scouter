@@ -41,13 +41,15 @@ import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.Timestamp
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.asPromise
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.await
-import kotlinx.coroutines.experimental.awaitAll
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asPromise
+import kotlinx.coroutines.async
+import kotlinx.coroutines.await
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -56,7 +58,7 @@ private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
 private const val TRASH_TIMEOUT_DAYS = 30
 
-fun deleteUnusedData(): Promise<*>? = async {
+fun deleteUnusedData(): Promise<*>? = GlobalScope.async {
     console.log("Looking for users that haven't opened Robot Scouter for over a year" +
                         " or anonymous users that haven't opened Robot Scouter in over 60 days.")
 
@@ -82,7 +84,7 @@ fun deleteUnusedData(): Promise<*>? = async {
     awaitAll(fullUser, anonymousUser)
 }.asPromise()
 
-fun emptyTrash(): Promise<*>? = async {
+fun emptyTrash(): Promise<*>? = GlobalScope.async {
     console.log("Emptying trash for all users.")
 
     deletionQueue.where(
@@ -96,7 +98,7 @@ fun emptyTrash(data: Array<String>?, context: CallableContext): Promise<*>? {
     val auth = context.auth ?: throw HttpsError("unauthenticated")
 
     console.log("Emptying trash for ${auth.uid}.")
-    return async {
+    return GlobalScope.async {
         val requests = deletionQueue.doc(auth.uid).get().await()
 
         if (!requests.exists) {
@@ -134,7 +136,9 @@ fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     }
 }
 
-private suspend fun deleteUnusedData(userQuery: Query) = userQuery.processInBatches(10) { user ->
+private suspend fun CoroutineScope.deleteUnusedData(
+        userQuery: Query
+) = userQuery.processInBatches(10) { user ->
     console.log("Deleting all data for user:\n${JSON.stringify(user.data())}")
 
     val userId = user.id
@@ -169,7 +173,10 @@ private suspend fun deleteUnusedData(userQuery: Query) = userQuery.processInBatc
  *            empty, all data is deleted. Otherwise, only the specified items are deleted.
  * @see deletionQueue
  */
-private suspend fun processDeletion(request: DocumentSnapshot, ids: List<String>? = null) {
+private suspend fun CoroutineScope.processDeletion(
+        request: DocumentSnapshot,
+        ids: List<String>? = null
+) {
     val userId = request.id
 
     val deleteTeam: suspend (id: String) -> Unit = { id ->
@@ -208,10 +215,10 @@ private suspend fun processDeletion(request: DocumentSnapshot, ids: List<String>
         }
 
         console.log("Deleting share token: $token")
-        when (DeletionType.valueOf(data[FIRESTORE_SHARE_TYPE] as Int)) {
+        when (val type = DeletionType.valueOf(data[FIRESTORE_SHARE_TYPE] as Int)) {
             DeletionType.TEAM -> teams.deletions()
             DeletionType.TEMPLATE -> templates.deletions()
-            else -> error("Unsupported share type: ${data[FIRESTORE_SHARE_TYPE]}")
+            else -> error("Unsupported share type: $type")
         }.awaitAll()
     }
 

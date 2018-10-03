@@ -5,6 +5,7 @@
 build
 !**/src/**/build
 node_modules
+.firebase
 /local.properties
 
 *keystore.properties

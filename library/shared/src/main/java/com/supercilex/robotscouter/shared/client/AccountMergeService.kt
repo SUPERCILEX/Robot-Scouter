@@ -19,10 +19,10 @@ import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.updateOwner
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.awaitAll
-import kotlinx.coroutines.experimental.tasks.asTask
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.tasks.asTask
 import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
 
 internal class AccountMergeService : ManualMergeService() {

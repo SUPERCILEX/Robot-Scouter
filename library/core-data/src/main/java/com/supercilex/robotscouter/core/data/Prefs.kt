@@ -24,15 +24,13 @@ import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefs
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.TemplateType
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 internal val prefParser = SnapshotParser<Any?> {
-    val id = it.id
-    when (id) {
+    when (it.id) {
         FIRESTORE_PREF_LOCK_TEMPLATES,
         FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL,
         FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL,
@@ -80,14 +78,11 @@ var defaultTemplateId: String
 
 @get:AppCompatDelegate.NightMode
 val nightMode: Int
-    get() {
-        val mode = prefStore.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")
-        return when (mode) {
-            "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
-            "yes" -> AppCompatDelegate.MODE_NIGHT_YES
-            "no" -> AppCompatDelegate.MODE_NIGHT_NO
-            else -> error("Unknown night mode value: $mode")
-        }
+    get() = when (val mode = prefStore.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")) {
+        "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
+        "yes" -> AppCompatDelegate.MODE_NIGHT_YES
+        "no" -> AppCompatDelegate.MODE_NIGHT_NO
+        else -> error("Unknown night mode value: $mode")
     }
 
 val isTemplateEditingAllowed get() = !prefStore.getBoolean(FIRESTORE_PREF_LOCK_TEMPLATES, false)

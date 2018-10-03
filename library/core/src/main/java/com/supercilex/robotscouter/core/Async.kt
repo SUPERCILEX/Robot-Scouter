@@ -5,8 +5,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.tasks.await
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.tasks.await
 import org.jetbrains.anko.coroutines.experimental.Ref
 import org.jetbrains.anko.coroutines.experimental.asReference
 
@@ -24,7 +24,8 @@ inline fun <T> Task<T>.fastAddOnSuccessListener(
         crossinline listener: (T) -> Unit
 ): Task<T> {
     if (isSuccessful) { // Fast path
-        listener(result)
+        @Suppress("UNCHECKED_CAST") // Let the caller decide nullability
+        listener(result as T)
         return this
     }
 

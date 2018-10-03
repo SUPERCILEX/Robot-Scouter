@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
@@ -11,10 +10,6 @@ dependencies {
     expectedBy(project(":library:common"))
     implementation(Config.Libs.Kotlin.js)
     implementation(Config.Libs.Kotlin.coroutinesJs)
-}
-
-kotlin {
-    experimental.coroutines = Coroutines.ENABLE
 }
 
 tasks.withType<Kotlin2JsCompile>().configureEach {

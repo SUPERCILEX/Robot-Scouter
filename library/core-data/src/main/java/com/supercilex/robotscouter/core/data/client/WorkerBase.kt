@@ -2,7 +2,7 @@ package com.supercilex.robotscouter.core.data.client
 
 import androidx.work.Worker
 import com.supercilex.robotscouter.core.logCrashLog
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 
 internal abstract class WorkerBase : Worker() {
     override fun doWork() = runBlocking {

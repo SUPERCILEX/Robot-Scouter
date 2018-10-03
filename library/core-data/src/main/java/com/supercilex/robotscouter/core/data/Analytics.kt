@@ -19,8 +19,8 @@ import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -49,8 +49,7 @@ private val prefLogger = object : ChangeEventListenerBase {
         if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
         val id = snapshot.id
-        val pref = prefs[newIndex]
-        when (pref) {
+        when (val pref = prefs[newIndex]) {
             is Boolean -> Crashlytics.setBool(id, pref)
             is String -> Crashlytics.setString(id, pref)
             is Int -> Crashlytics.setInt(id, pref)

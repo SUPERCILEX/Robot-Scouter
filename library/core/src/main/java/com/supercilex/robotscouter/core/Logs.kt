@@ -5,9 +5,9 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.CompletionHandler
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.Deferred
 
 fun <T> Task<T>.logFailures(vararg hints: Any?): Task<T> {
     val trace = generateStackTrace()
