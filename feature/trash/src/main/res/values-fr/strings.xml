@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trash_tutorial_no_trash_hint">Rien dans la corbeille</string>
+
+    <string name="trash_processing_notice">Les éléments présents dans la corbeille depuis plus de 30 jours seront automatiquement supprimés.</string>
+    <string name="trash_action_empty">Vider la corbeille maintenant</string>
+    <string name="trash_action_delete">Supprimer définitivement</string>
+    <string name="trash_action_restore">Restaurer</string>
+
+    <string name="trash_empty_dialog_title">Vider la corbeille?</string>
+    <plurals name="trash_empty_dialog_message">
+        <item quantity="one">1 élément sera supprimé définitivement.</item>
+        <item quantity="other">%d éléments seront supprimés définitivement.</item>
+    </plurals>
+    <string name="trash_empty_dialog_action">Vider</string>
+    <plurals name="trash_emptied_message">
+        <item quantity="one">1 élément définitivement supprimé</item>
+        <item quantity="other">%d éléments définitivement supprimés</item>
+    </plurals>
+    <string name="trash_empty_failed_message">Échec de la suppression des éléments. Vérifiez votre connexion Internet.</string>
+    <plurals name="trash_restored_message">
+        <item quantity="one">1 élément restauré de la corbeille</item>
+        <item quantity="other">%d éléments restaurés de la corbeille</item>
+    </plurals>
+
+    <string name="trash_unnamed_item">Sans nom</string>
+    <string name="trash_loading_item">Chargement…</string>
+
+    <string name="accessibility_trash_type">Type d\'élément dans la corbeille</string>
+</resources>

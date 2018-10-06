@@ -34,13 +34,15 @@
 
     <!-- Feature modules -->
     <string name="scout_activity_title">Éditeur de repérage</string>
+    <string name="trash_activity_title">Corbeille</string>
     <string name="settings_activity_title">Paramètres</string>
 
     <string name="feature_teams_title">Équipes</string>
     <string name="feature_auto_scout_title">Repérage automatique</string>
-    <string name="feature_scouts_title">Éditeur de repérage</string>
     <string name="feature_templates_title">Éditeur de modèles</string>
-    <string name="feature_settings_title">Paramètres</string>
+    <string name="feature_scouts_title">@string/scout_activity_title</string>
     <string name="feature_exports_title">Exportations</string>
+    <string name="feature_trash_title">@string/trash_activity_title</string>
+    <string name="feature_settings_title">@string/settings_activity_title</string>
 
 </resources>

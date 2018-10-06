@@ -3,7 +3,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.20-dev-682"
+    private const val kotlinVersion = "1.3.20-dev-696"
 
     object SdkVersions {
         val compile = 28
@@ -18,7 +18,7 @@ object Config {
         val google = "com.google.gms:google-services:4.0.2"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         val fabric = "io.fabric.tools:gradle:1.26.1"
-        val publishing = "com.github.Triple-T:gradle-play-publisher:7829c8646f"
+        val publishing = "com.github.triplet.gradle:play-publisher:2.0.0-beta1"
 
         val ktlint = "com.github.shyiko:ktlint:0.29.0"
 
@@ -27,7 +27,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "0.30.1-eap13"
+            private const val coroutinesVersion = "0.30.2-eap13"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"

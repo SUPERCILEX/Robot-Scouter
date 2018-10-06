@@ -40,9 +40,8 @@
     <string name="metric_spinner_item_default_required_error">Élément par défaut requis</string>
 
     <string name="template_remove_metrics_title">Supprimer toutes les mesures</string>
-    <string name="template_delete_title">Supprimer le modèle</string>
     <string name="template_delete_dialog_title">Supprimer le modèle ?</string>
-    <string name="template_delete_message">Ce modèle sera retiré définitivement et toutes les équipes l\'utilisant se serviront plutôt du modèle par défaut pour les repérages futurs. Tout repérage existant ne sera pas affecté</string>
+    <string name="template_delete_message">Ce modèle sera déplacé dans la corbeille et toutes les équipes l\'utilisant auront leur modèle par défaut réinitialisé. Tout repérage existant ne sera pas affecté.</string>
 
     <string name="accessibility_reorder">L\'icône de réorganisation. Il peut être utilisé pour changer l\'ordre des mesures dans les repérages.</string>
     <string name="accessibility_add_spinner_item">Ajouter une nouvelle liste déroulante</string>

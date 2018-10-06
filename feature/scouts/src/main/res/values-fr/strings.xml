@@ -7,6 +7,7 @@
     <string name="scout_add_title">Ajouter un repérage</string>
     <string name="scout_add_media_title">Ajouter un média</string>
     <string name="scout_edit_template_title">Modifier le modèle de repérage suivant</string>
+    <string name="scout_move_window_title">Envoyer à une nouvelle fenêtre</string>
     <string name="scout_template_access_denied_error">Accès refusé : modèle possédé par un autre utilisateur</string>
 
     <string name="scout_edit_name_title">Modifier le nom du match</string>
