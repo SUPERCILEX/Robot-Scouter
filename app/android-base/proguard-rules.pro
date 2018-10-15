@@ -12,6 +12,11 @@
 # Ignore Kotlin errors TODO https://youtrack.jetbrains.com/issue/KT-23172
 -dontwarn com.supercilex.robotscouter.**
 
+# For coroutines, see https://github.com/Kotlin/kotlinx.coroutines#proguard
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}
+
 # Crashlytics
 -keep class com.google.android.gms.measurement.** { *; }
 
