@@ -52,7 +52,7 @@ object Config {
         object Jetpack {
             private const val version = "1.0.0"
             private const val lifecycleVersion = "2.0.0"
-            private const val workVersion = "1.0.0-alpha08"
+            private const val workVersion = "1.0.0-alpha11"
 
             val core = "androidx.core:core-ktx:$version"
             val multidex = "androidx.multidex:multidex:2.0.0"

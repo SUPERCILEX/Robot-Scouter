@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.core.data
 
-import androidx.annotation.WorkerThread
 import androidx.work.Data
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -26,11 +25,10 @@ private const val SHOULD_UPLOAD_MEDIA = "should_upload_media"
 private const val MEDIA_YEAR = "media_year"
 private const val TIMESTAMP = "timestamp"
 
-@WorkerThread
 internal fun cleanupJobs() {
-    WorkManager.getInstance().synchronous().apply {
-        listOf(TEAM_DATA_DOWNLOAD, TEAM_MEDIA_UPLOAD).forEach { cancelAllWorkByTagSync(it) }
-        pruneWorkSync()
+    WorkManager.getInstance().apply {
+        listOf(TEAM_DATA_DOWNLOAD, TEAM_MEDIA_UPLOAD).forEach { cancelAllWorkByTag(it) }
+        pruneWork()
     }
 }
 
