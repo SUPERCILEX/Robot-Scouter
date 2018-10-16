@@ -21,6 +21,9 @@ open class DeployServer : DefaultTask() {
     @get:Optional
     @get:Input
     var only: String? = null
+    @Option(option = "update-templates", description = "Trigger default templates update")
+    @get:Input
+    var updateTemplates: Boolean = false
 
     @get:InputFile protected val transpiledJs: File
     @get:OutputFile protected val targetJs: File
@@ -40,7 +43,9 @@ open class DeployServer : DefaultTask() {
         only?.let { command += " --only $only" }
         shell(command) { directory(project.child("server").projectDir) }
 
-        if (isRelease) {
+        if (isRelease || updateTemplates) {
+            Thread.sleep(30_000) // Wait to ensure function has redeployed
+
             val updateTemplates = ProjectTopicName.of(
                     "robot-scouter-app", "update-default-templates")
             val messageId = Publisher.newBuilder(updateTemplates).build()
