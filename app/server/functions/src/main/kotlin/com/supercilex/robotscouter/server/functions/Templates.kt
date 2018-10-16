@@ -4,7 +4,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
-import com.supercilex.robotscouter.server.utils.ListItem
 import com.supercilex.robotscouter.server.utils.checkbox
 import com.supercilex.robotscouter.server.utils.counter
 import com.supercilex.robotscouter.server.utils.defaultTemplates
@@ -44,39 +43,35 @@ private suspend fun CollectionReference.updateMatchTemplate() {
 }
 
 fun matchTemplateMetrics() = metrics {
-    json(
-            "a" to header("Scout info"),
-            "b" to text("Name"),
+    header("a", "Scout info")
+    text("b", "Name")
 
-            "c" to header("Auto"),
-            "d" to checkbox("Crossed baseline"),
-            "e" to selector(
-                    "Put cube in Switch", "d",
-                    ListItem("a", "Didn't attempt"),
-                    ListItem("b", "Attempted"),
-                    ListItem("c", "Successful"),
-                    ListItem("d", "Unknown")
-            ),
-            "f" to selector(
-                    "Put cube in Scale", "d",
-                    ListItem("a", "Didn't attempt"),
-                    ListItem("b", "Attempted"),
-                    ListItem("c", "Successful"),
-                    ListItem("d", "Unknown")
-            ),
-            "g" to checkbox("Picked up cube"),
+    header("c", "Auto")
+    checkbox("d", "Crossed baseline")
+    selector("e", "Put cube in Switch") {
+        +Item("a", "Didn't attempt")
+        +Item("b", "Attempted")
+        +Item("c", "Successful")
+        +Item("d", "Unknown", true)
+    }
+    selector("f", "Put cube in Scale") {
+        +Item("a", "Didn't attempt")
+        +Item("b", "Attempted")
+        +Item("c", "Successful")
+        +Item("d", "Unknown", true)
+    }
+    checkbox("g", "Picked up cube")
 
-            "h" to header("Teleop"),
-            "i" to counter("Cubes put in the Switch"),
-            "j" to counter("Cubes put in the Scale"),
-            "k" to counter("Cubes put in the Exchange"),
-            "l" to stopwatch("Cycle time"),
-            "m" to checkbox("Climbed"),
+    header("h", "Teleop")
+    counter("i", "Cubes put in the Switch")
+    counter("j", "Cubes put in the Scale")
+    counter("k", "Cubes put in the Exchange")
+    stopwatch("l", "Cycle time")
+    checkbox("m", "Climbed")
 
-            "n" to header("Post-game"),
-            "o" to checkbox("Robot broke"),
-            "p" to text("Other")
-    )
+    header("n", "Post-game")
+    checkbox("o", "Robot broke")
+    text("p", "Other")
 }
 
 private suspend fun CollectionReference.updatePitTemplate() {
@@ -89,46 +84,44 @@ private suspend fun CollectionReference.updatePitTemplate() {
 }
 
 fun pitTemplateMetrics() = metrics {
-    json(
-            "a" to header("Scout info"),
-            "b" to text("Name"),
+    header("a", "Scout info")
+    text("b", "Name")
 
-            "c" to header("Hardware"),
-            "d" to selector(
-                    "What's their drivetrain?", "d",
-                    ListItem("d", "Unknown"),
-                    ListItem("a", "Standard 6/8 wheel"),
-                    ListItem("b", "Swerve"),
-                    ListItem("c", "Omni/Mecanum"),
-                    ListItem("e", "Other")
-            ),
-            "n" to text("If other, please specify"),
-            "o" to checkbox("Does it climb?"),
-            "e" to text("How does it climb?"),
-            "f" to checkbox("Can they help us climb?"),
-            "g" to text("If so, how?"),
-            "h" to counter("Subjective quality assessment (?/5)", 0, "⭐"),
+    header("c", "Hardware")
+    selector("d", "What's their drivetrain?") {
+        +Item("d", "Unknown")
+        +Item("a", "Standard 6/8 wheel")
+        +Item("b", "Swerve")
+        +Item("c", "Omni/Mecanum")
+        +Item("e", "Other")
+    }
+    text("n", "If other, please specify")
+    checkbox("o", "Does it climb?")
+    text("e", "How does it climb?")
+    checkbox("f", "Can they help us climb?")
+    text("g", "If so, how?")
+    counter("h", "Subjective quality assessment (?/5)") {
+        count = 0
+        unit = "⭐"
+    }
 
-            "i" to header("Strategy"),
-            "j" to selector(
-                    "What's their autonomous?", "a",
-                    ListItem("a", "None"),
-                    ListItem("b", "Drive"),
-                    ListItem("c", "Switch"),
-                    ListItem("d", "Scale"),
-                    ListItem("e", "Switch OR Scale"),
-                    ListItem("f", "Switch AND Scale")
-            ),
-            "m" to selector(
-                    "Where can they place cubes?", "a",
-                    ListItem("a", "Just the exchange zone"),
-                    ListItem("b", "Switch"),
-                    ListItem("c", "Scale"),
-                    ListItem("c", "Switch and scale")
-            ),
-            "k" to text("What is special about your robot or something you want us to know?"),
-            "l" to text("Other")
-    )
+    header("i", "Strategy")
+    selector("j", "What's their autonomous?") {
+        +Item("a", "None")
+        +Item("b", "Drive")
+        +Item("c", "Switch")
+        +Item("d", "Scale")
+        +Item("e", "Switch OR Scale")
+        +Item("f", "Switch AND Scale")
+    }
+    selector("m", "Where can they place cubes?") {
+        +Item("a", "Just the exchange zone")
+        +Item("b", "Switch")
+        +Item("c", "Scale")
+        +Item("d", "Switch and scale")
+    }
+    text("k", "What is special about your robot or something you want us to know?")
+    text("l", "Other")
 }
 
 private suspend fun CollectionReference.updateEmptyTemplate() {
