@@ -43,7 +43,6 @@ import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
@@ -143,16 +142,16 @@ private suspend fun CoroutineScope.deleteUnusedData(
 
     val userId = user.id
     val teams = async {
-        val delete: suspend (DocumentSnapshot) -> Unit = {
-            it.deleteIfSingleOwner(userId) { deleteTeam(this) }
+        val delete: suspend DocumentSnapshot.() -> Unit = {
+            deleteIfSingleOwner(userId) { deleteTeam(it) }
         }
 
         getTeamsQuery(userId).processInBatches(action = delete)
         getTrashedTeamsQuery(userId).processInBatches(action = delete)
     }
     val templates = async {
-        val delete: suspend (DocumentSnapshot) -> Unit = {
-            it.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+        val delete: suspend DocumentSnapshot.() -> Unit = {
+            deleteIfSingleOwner(userId) { deleteTemplate(it) }
         }
 
         getTemplatesQuery(userId).processInBatches(action = delete)
@@ -179,12 +178,12 @@ private suspend fun CoroutineScope.processDeletion(
 ) {
     val userId = request.id
 
-    val deleteTeam: suspend (id: String) -> Unit = { id ->
+    suspend fun deleteTeam(id: String) {
         val team = teams.doc(id).get().await()
-        if (team.exists) team.deleteIfSingleOwner(userId) { deleteTeam(this) }
+        if (team.exists) team.deleteIfSingleOwner(userId) { deleteTeam(it) }
     }
 
-    val deleteScout: suspend (teamId: String, scoutId: String) -> Unit = { teamId, scoutId ->
+    suspend fun deleteScout(teamId: String, scoutId: String) {
         val scout = teams.doc(teamId).collection(FIRESTORE_SCOUTS).doc(scoutId)
 
         console.log("Deleting scout: ${scout.id}")
@@ -192,16 +191,16 @@ private suspend fun CoroutineScope.processDeletion(
         scout.delete().await()
     }
 
-    val deleteTemplate: suspend (id: String) -> Unit = { id ->
+    suspend fun deleteTemplate(id: String) {
         val template = templates.doc(id).get().await()
-        if (template.exists) template.deleteIfSingleOwner(userId) { deleteTemplate(this) }
+        if (template.exists) template.deleteIfSingleOwner(userId) { deleteTemplate(it) }
     }
 
-    val deleteShareToken: suspend (data: Json, token: String) -> Unit = { data, token ->
-        fun CollectionReference.deletions(): List<Deferred<*>> {
+    suspend fun deleteShareToken(data: Json, token: String) {
+        suspend fun CollectionReference.deleteAll() {
             @Suppress("UNCHECKED_CAST") // We know its type
             val backingIds = data[FIRESTORE_CONTENT_ID] as Array<String>
-            return backingIds.map {
+            backingIds.map {
                 async {
                     val content = doc(it).get().await()
                     if (content.exists) {
@@ -211,15 +210,15 @@ private suspend fun CoroutineScope.processDeletion(
                         ).await()
                     }
                 }
-            }
+            }.awaitAll()
         }
 
         console.log("Deleting share token: $token")
         when (val type = DeletionType.valueOf(data[FIRESTORE_SHARE_TYPE] as Int)) {
-            DeletionType.TEAM -> teams.deletions()
-            DeletionType.TEMPLATE -> templates.deletions()
+            DeletionType.TEAM -> teams.deleteAll()
+            DeletionType.TEMPLATE -> templates.deleteAll()
             else -> error("Unsupported share type: $type")
-        }.awaitAll()
+        }
     }
 
     val requests = request.data().sanitizedDeletionRequestData()
@@ -293,7 +292,7 @@ private suspend fun deleteTemplate(template: DocumentSnapshot) {
 
 private suspend fun DocumentSnapshot.deleteIfSingleOwner(
         userId: String,
-        delete: suspend DocumentSnapshot.() -> Unit
+        delete: suspend (DocumentSnapshot) -> Unit
 ) {
     console.log("Processing deletion request for id $id.")
 
