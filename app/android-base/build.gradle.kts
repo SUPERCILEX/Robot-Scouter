@@ -75,7 +75,7 @@ play {
     defaultToAppBundles = true
 
     resolutionStrategy = "auto"
-    outputProcessor = { versionNameOverride = "$versionNameOverride.$versionCode" }
+    outputProcessor { versionNameOverride = "$versionNameOverride.$versionCode" }
 }
 
 dependencies {

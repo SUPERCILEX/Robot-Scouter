@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.core.ui
 
 import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ArgbEvaluator
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
@@ -9,6 +8,8 @@ import android.os.Build
 import android.view.View
 import android.view.ViewAnimationUtils
 import androidx.annotation.ColorRes
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
@@ -57,15 +58,8 @@ fun View.animateCircularReveal(
             if (visible) radius else 0f
     )
 
-    anim.addListener(object : AnimatorListenerAdapter() {
-        override fun onAnimationStart(animation: Animator?) {
-            if (visible) isVisible = true
-        }
-
-        override fun onAnimationEnd(animation: Animator) {
-            if (!visible) isVisible = false
-        }
-    })
+    if (visible) anim.doOnStart { isVisible = true }
+    if (!visible) anim.doOnEnd { isVisible = false }
 
     anim
 }
