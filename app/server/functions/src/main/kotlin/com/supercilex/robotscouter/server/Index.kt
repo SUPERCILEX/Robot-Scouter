@@ -34,9 +34,9 @@ fun main(args: Array<String>) {
     exports.updateDefaultTemplates = functions.pubsub.topic("update-default-templates")
             .onPublish { _, _ -> updateDefaultTemplates() }
 
-    exports.cleanup = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
+    exports.cleanup = functions.runWith(cleanupRuntime).pubsub.topic("daily-tick")
             .onPublish { _, _ -> emptyTrash() }
-    exports.deleteUnusedData = functions.runWith(cleanupRuntime).pubsub.topic("monthly-tick")
+    exports.deleteUnusedData = functions.runWith(cleanupRuntime).pubsub.topic("daily-tick")
             .onPublish { _, _ -> deleteUnusedData() }
     exports.sanitizeDeletionQueue = functions.firestore.document("${deletionQueue.id}/{uid}")
             .onWrite { event, _ -> sanitizeDeletionRequest(event) }
