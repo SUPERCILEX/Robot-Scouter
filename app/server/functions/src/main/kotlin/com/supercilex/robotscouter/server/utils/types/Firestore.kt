@@ -8,10 +8,10 @@
 
 package com.supercilex.robotscouter.server.utils.types
 
-import com.supercilex.robotscouter.server.utils.jsObject
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
+import kotlin.js.json
 
 external class Firestore(options: Any? = definedExternally) {
     fun collection(collectionPath: String): CollectionReference = definedExternally
@@ -51,7 +51,7 @@ external interface Precondition {
 
 class SetOptions {
     companion object {
-        val merge: SetOptions get() = jsObject { this.merge = true }
+        val merge: SetOptions get() = json("merge" to true).asDynamic()
     }
 }
 

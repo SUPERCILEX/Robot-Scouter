@@ -10,9 +10,3 @@ fun <T> Json.toMap(): Map<String, T> {
     }
     return map
 }
-
-fun jsObject(init: dynamic.() -> Unit): dynamic {
-    val o = js("{}")
-    init(o)
-    return o
-}

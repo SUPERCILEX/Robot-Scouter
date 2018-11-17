@@ -38,20 +38,25 @@ import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.SetOptions
 import com.supercilex.robotscouter.server.utils.types.Timestamp
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
+import kotlin.js.json
 
 private const val MAX_INACTIVE_USER_DAYS = 365
 private const val MAX_INACTIVE_ANONYMOUS_USER_DAYS = 45
@@ -201,7 +206,7 @@ private suspend fun CoroutineScope.processDeletion(
             @Suppress("UNCHECKED_CAST") // We know its type
             val backingIds = data[FIRESTORE_CONTENT_ID] as Array<String>
             backingIds.map {
-                async {
+                launch {
                     val content = doc(it).get().await()
                     if (content.exists) {
                         content.ref.update(
@@ -210,7 +215,7 @@ private suspend fun CoroutineScope.processDeletion(
                         ).await()
                     }
                 }
-            }.awaitAll()
+            }.joinAll()
         }
 
         console.log("Deleting share token: $token")

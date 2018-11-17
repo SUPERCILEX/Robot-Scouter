@@ -10,23 +10,20 @@ import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
 import com.supercilex.robotscouter.server.functions.updateOwners
 import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.duplicateTeams
-import com.supercilex.robotscouter.server.utils.jsObject
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.types.admin
 import com.supercilex.robotscouter.server.utils.types.functions
 import kotlin.js.Json
+import kotlin.js.json
 
 external fun require(module: String): dynamic
 external val exports: dynamic
 
 @Suppress("unused") // Used by Cloud Functions
-fun main(args: Array<String>) {
+fun main() {
     admin.initializeApp()
 
-    val cleanupRuntime = jsObject {
-        timeoutSeconds = 300
-        memory = "512MB"
-    }
+    val cleanupRuntime = json("timeoutSeconds" to 300, "memory" to "512MB")
 
     // Trigger: `gcloud beta pubsub topics publish log-user-data '{"uid":"..."}'`
     exports.logUserData = functions.pubsub.topic("log-user-data")

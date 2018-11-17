@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":library:common"))
     expectedBy(project(":library:common"))
+
     implementation(Config.Libs.Kotlin.js)
     implementation(Config.Libs.Kotlin.coroutinesJs)
 }
