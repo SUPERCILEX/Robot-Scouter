@@ -280,8 +280,10 @@ suspend fun deleteTeam(team: DocumentSnapshot) {
         }
 
         team.get<Json>(FIRESTORE_OWNERS).toMap<Long>().map { (uid) ->
-            duplicateTeams.doc(uid).update(id, FieldValues.delete())
-        }.forEach { it.await() }
+            duplicateTeams.doc(uid)
+                    .set(json(id to FieldValues.delete()), SetOptions.merge)
+                    .asDeferred()
+        }.awaitAll()
 
         delete().await()
     }
