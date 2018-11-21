@@ -28,15 +28,28 @@ open class DeployServer : DefaultTask() {
     @get:InputFile protected val transpiledJs: File
     @get:OutputFile protected val targetJs: File
 
+    private val functionsProject = project.child("functions")
+
     init {
-        val functions = project.child("functions")
-        transpiledJs = File(functions.buildDir, "classes/kotlin/main/firebase.js")
-        targetJs = File(functions.projectDir, "index.js")
-        inputs.file(File(functions.projectDir, "package-lock.json"))
+        transpiledJs = File(functionsProject.buildDir, "classes/kotlin/main/functions.js")
+        targetJs = File(functionsProject.projectDir, "index.js")
+        inputs.file(File(functionsProject.projectDir, "package-lock.json"))
     }
 
     @TaskAction
     fun deploy() {
+        for (file in functionsProject.configurations.getByName("compile")) {
+            functionsProject.copy {
+                includeEmptyDirs = false
+
+                from(functionsProject.zipTree(file.absolutePath))
+                into("common")
+                include { it.name == "common.js" }
+                rename("common.js", "index.js")
+            }
+        }
+        shell("npm install") { directory(functionsProject.projectDir) }
+
         transpiledJs.copyTo(targetJs, true)
 
         var command = "firebase deploy --non-interactive"

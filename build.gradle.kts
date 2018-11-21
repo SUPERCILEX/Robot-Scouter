@@ -19,7 +19,6 @@ buildscript {
         classpath(Config.Plugins.google)
         classpath(Config.Plugins.firebase)
         classpath(Config.Plugins.fabric)
-        classpath(Config.Plugins.publishing)
     }
 }
 
@@ -30,8 +29,8 @@ plugins {
 }
 
 buildScan {
-    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-    setTermsOfServiceAgree("yes")
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
 
     publishAlways()
     for (tag in buildTags) tag(tag)
@@ -49,7 +48,7 @@ allprojects {
     configureAndroid()
 }
 
-tasks.withType<Wrapper>().configureEach {
+tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 

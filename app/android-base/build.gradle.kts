@@ -5,7 +5,7 @@ import java.util.Properties
 
 plugins {
     id("io.fabric")
-    id("com.github.triplet.play")
+    Config.Plugins.run { publishing }
 }
 if (isReleaseBuild) apply(plugin = "com.google.firebase.firebase-perf")
 crashlytics.alwaysUpdateBuildId = isReleaseBuild

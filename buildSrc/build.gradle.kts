@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation("com.google.guava:guava:26.0-jre")
-    implementation("org.ajoberstar.grgit:grgit-gradle:3.0.0-rc.2")
-    implementation("com.google.cloud:google-cloud-pubsub:1.41.0")
+    implementation("com.google.guava:guava:27.0-jre")
+    implementation("org.ajoberstar.grgit:grgit-gradle:3.0.0")
+    implementation("com.google.cloud:google-cloud-pubsub:1.52.0")
 }

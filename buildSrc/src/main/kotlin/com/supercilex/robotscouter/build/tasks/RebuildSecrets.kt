@@ -7,11 +7,15 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 
 @CacheableTask
 open class RebuildSecrets : DefaultTask() {
-    @get:InputFiles protected val files = secrets
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    protected val files = secrets
     @get:OutputFile protected val output = project.file("secrets.tar.enc")
 
     @TaskAction

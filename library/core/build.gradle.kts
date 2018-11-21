@@ -1,16 +1,11 @@
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
-plugins {
-    id("kotlin-platform-android")
-}
-
 androidExtensions {
     defaultCacheImplementation = CacheImplementation.NONE
 }
 
 dependencies {
     api(project(":library:common"))
-    expectedBy(project(":library:common"))
 
     api(Config.Libs.Kotlin.jvm)
     api(Config.Libs.Kotlin.coroutinesAndroid)

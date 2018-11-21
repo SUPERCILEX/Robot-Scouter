@@ -8,6 +8,8 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -18,6 +20,7 @@ open class UpdateTranslations : DefaultTask() {
     @get:Input
     @set:Option(option = "locale", description = "Set the language to update.")
     var language: String? = null
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:SkipWhenEmpty
     @get:InputDirectory
     val translationFolder = project.file("tmp-translations")
