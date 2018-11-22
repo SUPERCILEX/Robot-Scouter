@@ -19,6 +19,7 @@ buildscript {
         classpath(Config.Plugins.google)
         classpath(Config.Plugins.firebase)
         classpath(Config.Plugins.fabric)
+        classpath(Config.Plugins.publishing)
     }
 }
 

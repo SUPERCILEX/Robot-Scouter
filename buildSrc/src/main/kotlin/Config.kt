@@ -18,7 +18,7 @@ object Config {
         val google = "com.google.gms:google-services:4.2.0"
         val firebase = "com.google.firebase:firebase-plugins:1.1.5"
         val fabric = "io.fabric.tools:gradle:1.26.1"
-        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.0.0-rc2"
+        val publishing = "com.github.Triple-T:gradle-play-publisher:0d1d5487b2"
 
         val ktlint = "com.github.shyiko:ktlint:0.29.0"
 
