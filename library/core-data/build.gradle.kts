@@ -28,7 +28,6 @@ dependencies {
     implementation(Config.Libs.Firebase.messaging)
     implementation(Config.Libs.Firebase.config)
     implementation(Config.Libs.Jetpack.work)
-    implementation(Config.Libs.Jetpack.workFirebase)
 
     implementation(Config.Libs.Misc.retrofit)
     implementation(Config.Libs.Misc.retrofitGson)

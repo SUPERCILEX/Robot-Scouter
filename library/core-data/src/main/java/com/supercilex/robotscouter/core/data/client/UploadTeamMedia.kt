@@ -52,8 +52,8 @@ internal class UploadTbaMediaWorker(
         context: Context,
         workerParams: WorkerParameters
 ) : WorkerBase(context, workerParams) {
-    override suspend fun doBlockingWork(): Payload {
+    override suspend fun doBlockingWork(): Result {
         TbaMediaUploader.upload(inputData.parseTeam())
-        return Payload(Result.SUCCESS)
+        return Result.success()
     }
 }

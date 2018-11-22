@@ -20,17 +20,17 @@ internal abstract class TeamWorker(
 ) : WorkerBase(context, workerParams) {
     abstract val updateTeam: (team: Team, newTeam: Team) -> Unit
 
-    override suspend fun doBlockingWork(): Payload {
+    override suspend fun doBlockingWork(): Result {
         val team = inputData.parseTeam()
 
         // Ensure this job isn't being scheduled after the user has signed out
-        if (!team.owners.contains(uid)) return Payload(Result.FAILURE)
+        if (!team.owners.contains(uid)) return Result.failure()
 
         val snapshot = try {
             team.ref.get().logFailures(team.ref, team).await()
         } catch (e: FirebaseFirestoreException) {
             if (e.code == Code.PERMISSION_DENIED) {
-                return Payload(Result.FAILURE) // Don't reschedule job
+                return Result.failure() // Don't reschedule job
             } else {
                 throw e
             }
@@ -41,18 +41,18 @@ internal abstract class TeamWorker(
         if (snapshot.exists()) {
             val existingTeam = teamParser.parseSnapshot(snapshot)
 
-            if (existingTeam.isTrashed != false) return Payload(Result.FAILURE)
+            if (existingTeam.isTrashed != false) return Result.failure()
 
-            val newTeam = startTask(existingTeam, team) ?: return Payload(Result.FAILURE)
+            val newTeam = startTask(existingTeam, team) ?: return Result.failure()
             // Recheck since things could have changed since the last check
-            if (!team.owners.contains(uid)) return Payload(Result.FAILURE)
+            if (!team.owners.contains(uid)) return Result.failure()
 
             updateTeam(team, newTeam)
 
-            return Payload(Result.SUCCESS, newTeam.toWorkData())
+            return Result.success(newTeam.toWorkData())
         } else {
             snapshot.reference.delete() // Ensure zombies cached on-device die
-            return Payload(Result.FAILURE)
+            return Result.failure()
         }
     }
 

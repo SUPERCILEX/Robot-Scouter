@@ -5,13 +5,7 @@ import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
 buildscript {
-    repositories {
-        google()
-        jcenter()
-        maven("https://jitpack.io")
-        maven("https://maven.fabric.io/public")
-        maven("https://dl.bintray.com/kotlin/kotlin-dev/")
-    }
+    Config.run { repositories.deps() }
 
     dependencies {
         classpath(Config.Plugins.android)
@@ -19,7 +13,6 @@ buildscript {
         classpath(Config.Plugins.google)
         classpath(Config.Plugins.firebase)
         classpath(Config.Plugins.fabric)
-        classpath(Config.Plugins.publishing)
     }
 }
 
@@ -38,12 +31,7 @@ buildScan {
 }
 
 allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven("https://jitpack.io")
-        maven("https://dl.bintray.com/kotlin/kotlin-dev/")
-    }
+    Config.run { repositories.deps() }
 
     configureGeneral()
     configureAndroid()

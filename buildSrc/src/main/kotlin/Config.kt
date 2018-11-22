@@ -1,9 +1,43 @@
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.kotlin.dsl.version
 import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.20-dev-1906"
+    private const val kotlinVersion = "1.3.30-dev-482"
+
+    fun RepositoryHandler.deps() {
+        maven {
+            setUrl("https://maven.google.com")
+
+            content {
+                includeGroupByRegex("com\\.android\\..*")
+                includeGroupByRegex("com\\.google\\..*")
+                includeGroupByRegex("androidx\\..*")
+
+                includeGroup("android.arch.work")
+                includeGroup("com.crashlytics.sdk.android")
+                includeGroup("io.fabric.sdk.android")
+            }
+        }
+
+        maven {
+            setUrl("https://dl.bintray.com/kotlin/kotlin-dev/")
+            content { includeGroup("org.jetbrains.kotlin") }
+        }
+
+        maven {
+            setUrl("https://maven.fabric.io/public")
+            content { includeGroup("io.fabric.tools") }
+        }
+
+        maven {
+            setUrl("https://jitpack.io")
+            content { includeGroupByRegex("com.github.SUPERCILEX\\..*") }
+        }
+
+        jcenter()
+    }
 
     object SdkVersions {
         val compile = 28
@@ -12,22 +46,22 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.4.0-alpha04"
+        val android = "com.android.tools.build:gradle:3.4.0-alpha09"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
-        val firebase = "com.google.firebase:firebase-plugins:1.1.5"
-        val fabric = "io.fabric.tools:gradle:1.26.1"
-        val publishing = "com.github.Triple-T:gradle-play-publisher:0d1d5487b2"
+        val firebase = "com.google.firebase:perf-plugin:1.1.5"
+        val fabric = "io.fabric.tools:gradle:1.27.0"
 
         val ktlint = "com.github.shyiko:ktlint:0.29.0"
 
+        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.0.0"
         val PluginDependenciesSpec.versionChecker get() = id("com.github.ben-manes.versions") version "0.20.0"
     }
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "1.0.1"
+            private const val coroutinesVersion = "1.1.0"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -51,10 +85,10 @@ object Config {
 
         object Jetpack {
             private const val lifecycleVersion = "2.0.0"
-            private const val workVersion = "1.0.0-alpha11"
+            private const val workVersion = "1.0.0-beta01"
 
             val core = "androidx.core:core-ktx:1.0.1"
-            val multidex = "androidx.multidex:multidex:2.0.0"
+            val multidex = "androidx.multidex:multidex:2.0.1"
             val appCompat = "androidx.appcompat:appcompat:1.0.2"
             val fragment = "androidx.fragment:fragment-ktx:1.0.0"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:1.0.0"
@@ -73,22 +107,21 @@ object Config {
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
 
             val work = "android.arch.work:work-runtime-ktx:$workVersion"
-            val workFirebase = "android.arch.work:work-firebase:$workVersion"
         }
 
         object Firebase {
-            val core = "com.google.firebase:firebase-core:16.0.5"
-            val auth = "com.google.firebase:firebase-auth:16.0.5"
-            val firestore = "com.google.firebase:firebase-firestore:17.1.3"
+            val core = "com.google.firebase:firebase-core:16.0.6"
+            val auth = "com.google.firebase:firebase-auth:16.1.0"
+            val firestore = "com.google.firebase:firebase-firestore:17.1.5"
             val functions = "com.google.firebase:firebase-functions:16.1.3"
             val storage = "com.google.firebase:firebase-storage:16.0.5"
-            val config = "com.google.firebase:firebase-config:16.1.0"
-            val indexing = "com.google.firebase:firebase-appindexing:16.0.2"
+            val config = "com.google.firebase:firebase-config:16.1.2"
+            val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
             val messaging = "com.google.firebase:firebase-messaging:17.3.4"
-            val invites = "com.google.firebase:firebase-invites:16.0.5"
-            val perf = "com.google.firebase:firebase-perf:16.2.0"
+            val invites = "com.google.firebase:firebase-invites:16.0.6"
+            val perf = "com.google.firebase:firebase-perf:16.2.3"
 
-            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.6"
+            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.8"
         }
 
         object PlayServices {
@@ -103,13 +136,13 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.38.1"
+            val facebook = "com.facebook.android:facebook-login:4.39.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
         object Misc {
             private const val leakCanaryVersion = "1.6.2"
-            private const val retrofitVersion = "2.4.0"
+            private const val retrofitVersion = "2.5.0"
             private const val poiVersion = "3.17"
 
             private const val glideVersion = "4.8.0"

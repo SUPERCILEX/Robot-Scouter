@@ -8,6 +8,7 @@ import com.supercilex.robotscouter.core.model.Team
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.create
 import java.io.File
 
 internal class TeamMediaUploader private constructor(
@@ -22,7 +23,7 @@ internal class TeamMediaUploader private constructor(
 
     private fun uploadToImgur() {
         val response: Response<JsonObject> = TeamMediaApi.IMGUR_RETROFIT
-                .create(TeamMediaApi::class.java)
+                .create<TeamMediaApi>()
                 .postToImgur(
                         RobotScouter.getString(R.string.imgur_client_id),
                         team.toString(),
