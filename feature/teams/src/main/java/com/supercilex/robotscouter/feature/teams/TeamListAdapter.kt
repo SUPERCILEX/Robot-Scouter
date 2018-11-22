@@ -99,8 +99,7 @@ internal class TeamListAdapter(
                             parent,
                             false
                     ),
-                    fragment,
-                    recyclerView
+                    fragment
             ).also {
                 viewSizeProvider.setView(it.media)
             }

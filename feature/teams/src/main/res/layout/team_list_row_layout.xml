@@ -17,17 +17,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:src="@tools:sample/avatars" />
 
-    <ViewStub
-        android:id="@+id/progress"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:inflatedId="@id/progress"
-        android:layout="@layout/progress_bar"
-        app:layout_constraintStart_toStartOf="@id/media"
-        app:layout_constraintEnd_toEndOf="@id/media"
-        app:layout_constraintTop_toTopOf="@id/media"
-        app:layout_constraintBottom_toBottomOf="@id/media" />
-
     <TextView
         android:id="@+id/number"
         android:layout_width="0dp"
