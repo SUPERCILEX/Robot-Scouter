@@ -17,4 +17,5 @@ tasks.withType<Kotlin2JsCompile>().configureEach {
 
 tasks.named<Delete>("clean").configure {
     delete("index.js")
+    delete("common/index.js")
 }

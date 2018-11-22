@@ -54,8 +54,8 @@ open class Setup : DefaultTask() {
     }
 
     private fun prepForReleaseBuild() {
-        shell("echo y | \${ANDROID_HOME}tools/bin/sdkmanager --channel=3 \"build-tools;\${BUILD_TOOLS_VERSION}\"")
-        shell("npm install -gq firebase-tools@6.1.0")
+        shell("npm install -gq npm@6.4.1")
+        shell("npm install -gq firebase-tools@6.1.1")
         shell("npm install -q") { directory(project.child("functions").projectDir) }
     }
 }

@@ -42,8 +42,13 @@ open class UploadAppToVc : DefaultTask() {
                 update = true
             }
             it.commit {
+                val buildToolsVersion = File("/usr/local/android-sdk/build-tools")
+                        .listFiles()
+                        .sortedDescending()
+                        .first().name
+
                 val dump =
-                        shell("/usr/local/android-sdk/build-tools/\${BUILD_TOOLS_VERSION}/aapt" +
+                        shell("/usr/local/android-sdk/build-tools/$buildToolsVersion/aapt" +
                                       " dump badging app-base.tmp") {
                             directory(project.rootDir.parentFile)
                         }()
