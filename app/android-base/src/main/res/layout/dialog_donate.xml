@@ -37,7 +37,7 @@
             android:layout_marginTop="@dimen/spacing_normal"
             android:text="@string/donate_monthly_message" />
 
-        <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+        <TextView
             android:id="@+id/donate"
             style="@style/RobotScouter.BottomSheet.Button.Compat"
             android:text="@string/donate_title"

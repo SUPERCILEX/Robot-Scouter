@@ -5,10 +5,9 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
 import androidx.viewpager.widget.PagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.CollectionReference
@@ -39,7 +38,7 @@ abstract class TabPagerAdapterBase(
         fragment.find<View>(R.id.noTabsHint)
     }
 
-    val holder = ViewModelProviders.of(fragment).get<ScoutsHolder>()
+    val holder by fragment.viewModels<ScoutsHolder>()
     private var oldScouts: List<Scout> = emptyList()
     protected var currentScouts: List<Scout> = emptyList()
 

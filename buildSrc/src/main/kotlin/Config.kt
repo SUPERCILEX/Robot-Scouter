@@ -84,26 +84,27 @@ object Config {
         }
 
         object Jetpack {
-            private const val lifecycleVersion = "2.0.0"
+            private const val lifecycleVersion = "2.1.0-alpha01"
             private const val workVersion = "1.0.0-beta01"
 
-            val core = "androidx.core:core-ktx:1.0.1"
+            val core = "androidx.core:core-ktx:1.1.0-alpha03"
             val multidex = "androidx.multidex:multidex:2.0.1"
-            val appCompat = "androidx.appcompat:appcompat:1.0.2"
-            val fragment = "androidx.fragment:fragment-ktx:1.0.0"
-            val rvSelection = "androidx.recyclerview:recyclerview-selection:1.0.0"
+            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha01"
+            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha03"
+            val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-alpha01"
             val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
             val cardView = "androidx.cardview:cardview:1.0.0"
             val palette = "androidx.palette:palette-ktx:1.0.0"
             val emoji = "androidx.emoji:emoji-appcompat:1.0.0"
             val browser = "androidx.browser:browser:1.0.0"
-            val pref = "androidx.preference:preference:1.0.0"
-            val prefKtx = "androidx.preference:preference-ktx:1.0.0"
+            val pref = "androidx.preference:preference:1.1.0-alpha02"
+            val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha02"
 
-            val material = "com.google.android.material:material:1.0.0"
+            val material = "com.google.android.material:material:1.1.0-alpha02"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
+            val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
 
             val work = "android.arch.work:work-runtime-ktx:$workVersion"

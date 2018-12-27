@@ -10,10 +10,9 @@ import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
+import androidx.lifecycle.observe
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.get
 import com.bumptech.glide.Glide
@@ -35,7 +34,6 @@ import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
-import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
@@ -68,15 +66,8 @@ internal open class AppBarViewHolderBase(
     private val toolbarHeight =
             fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)
 
-    private val permissionHandler = ViewModelProviders.of(fragment).get<PermissionRequestHandler>()
-            .apply { init(TeamMediaCreator.perms) }
-    private val mediaCapture = ViewModelProviders.of(fragment).get<TeamMediaCreator>().apply {
-        init(permissionHandler to savedInstanceState)
-        onMediaCaptured.observeNonNull(fragment) {
-            team.copyMediaInfo(it)
-            team.forceUpdate()
-        }
-    }
+    private val permissionHandler by fragment.viewModels<PermissionRequestHandler>()
+    private val mediaCapture by fragment.viewModels<TeamMediaCreator>()
 
     private val onMenuReadyTask = TaskCompletionSource<Nothing?>()
     private lateinit var newScoutItem: MenuItem
@@ -84,13 +75,22 @@ internal open class AppBarViewHolderBase(
     private lateinit var editTemplateItem: MenuItem
 
     init {
+        permissionHandler.init(TeamMediaCreator.perms)
+        mediaCapture.apply {
+            init(permissionHandler to savedInstanceState)
+            onMediaCaptured.observe(fragment) {
+                team.copyMediaInfo(it)
+                team.forceUpdate()
+            }
+        }
+
         backdrop.setOnLongClickListenerCompat(this)
 
-        permissionHandler.onGranted.observe(fragment, Observer { mediaCapture.capture(fragment) })
-        listener.observe(fragment.viewLifecycleOwner, Observer {
-            team = it ?: return@Observer
+        permissionHandler.onGranted.observe(fragment) { mediaCapture.capture(fragment) }
+        listener.observe(fragment.viewLifecycleOwner) {
+            team = it ?: return@observe
             bind()
-        })
+        }
     }
 
     @CallSuper

@@ -66,7 +66,7 @@ internal class TeamViewHolder(
     }
 
     private fun setTeamName() {
-        name.text = if (team.name?.isNotBlank() == true) team.name else unknownName
+        name.text = if (team.name.isNullOrBlank()) unknownName else team.name
     }
 
     private fun updateItemStatus() {

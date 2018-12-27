@@ -8,12 +8,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
+import androidx.lifecycle.observe
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -25,9 +25,7 @@ import com.supercilex.robotscouter.core.data.model.untrashTeam
 import com.supercilex.robotscouter.core.data.model.untrashTemplate
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
-import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
-import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_trash.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
@@ -35,8 +33,8 @@ import org.jetbrains.anko.support.v4.longToast
 import com.supercilex.robotscouter.R as RC
 
 internal class TrashFragment : FragmentBase(), View.OnClickListener,
-        OnBackPressedListener, KeyboardShortcutListener {
-    private val holder by unsafeLazy { ViewModelProviders.of(this).get<TrashHolder>() }
+        OnBackPressedCallback, KeyboardShortcutListener {
+    private val holder by viewModels<TrashHolder>()
 
     private lateinit var selectionTracker: SelectionTracker<String>
     private lateinit var menuHelper: TrashMenuHelper
@@ -45,6 +43,11 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         holder.init(null)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requireActivity().addOnBackPressedCallback(this, this)
     }
 
     override fun onCreateView(
@@ -79,7 +82,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
             onRestoreInstanceState(savedInstanceState)
         }
 
-        holder.trashListener.observe(viewLifecycleOwner, Observer {
+        holder.trashListener.observe(viewLifecycleOwner) {
             val hasTrash = it.orEmpty().isNotEmpty()
 
             noTrashHint.animatePopReveal(!hasTrash)
@@ -91,7 +94,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
                 if (!it.contains(item)) selectionTracker.deselect(item.id)
             }
             adapter.submitList(it)
-        })
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -117,7 +120,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
         emptyAll()
     }
 
-    override fun onBackPressed() = selectionTracker.clearSelection()
+    override fun handleOnBackPressed() = selectionTracker.clearSelection()
 
     fun restoreSelected() {
         val restored = selectionTracker.selection.toList().map { key ->
@@ -131,7 +134,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
         }
 
         if (restored.isNotEmpty()) {
-            checkNotNull(view).longSnackbar(resources.getQuantityString(
+            requireView().longSnackbar(resources.getQuantityString(
                     R.plurals.trash_restored_message, restored.size, restored.size))
         }
     }
@@ -141,7 +144,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
     }
 
     fun onEmptyTrashConfirmed(deleted: List<String>, emptyTrashResult: Task<*>) {
-        checkNotNull(view).longSnackbar(resources.getQuantityString(
+        requireView().longSnackbar(resources.getQuantityString(
                 R.plurals.trash_emptied_message, deleted.size, deleted.size))
 
         // Visual hack to pretend items were deleted really fast (usually takes a few seconds)

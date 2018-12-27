@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.feature.settings
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.util.AttributeSet
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -75,7 +74,7 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
         }
         holder = uid?.let {
             ViewModelProviders
-                    .of((context as ContextWrapper).baseContext as FragmentActivity)
+                    .of(context as FragmentActivity)
                     // Ensure our instance is unique since we're mutating the listener
                     .get(javaClass.name + it, ScoutsHolder::class.java)
                     .apply { init { getTemplatesQuery() } }

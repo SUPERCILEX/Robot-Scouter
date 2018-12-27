@@ -1,12 +1,11 @@
 package com.supercilex.robotscouter.core.data.model
 
 import android.os.Bundle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.distinctUntilChanged
 import com.firebase.ui.common.ChangeEventType
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
-import com.supercilex.robotscouter.core.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.isSignedIn
@@ -19,8 +18,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
-    private val _teamListener: MutableLiveData<Team?> = UniqueMutableLiveData()
-    val teamListener: LiveData<Team?> = _teamListener
+    private val _teamListener = MutableLiveData<Team?>()
+    val teamListener = _teamListener.distinctUntilChanged()
 
     override fun onCreate(args: Bundle) {
         val team = args.getTeam()
@@ -54,7 +53,7 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
             newIndex: Int,
             oldIndex: Int
     ) {
-        if (teamListener.value?.id != snapshot.id) return
+        if (_teamListener.value?.id != snapshot.id) return
 
         if (type == ChangeEventType.REMOVED) {
             _teamListener.value = null
@@ -67,7 +66,7 @@ class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
     }
 
     override fun onDataChanged() {
-        val current = teamListener.value ?: return
+        val current = _teamListener.value ?: return
         if (teams.none { it.id == current.id }) _teamListener.value = null
     }
 

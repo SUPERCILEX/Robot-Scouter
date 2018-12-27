@@ -29,7 +29,6 @@ import com.supercilex.robotscouter.core.data.model.addTemplate
 import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
-import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -40,7 +39,7 @@ import com.supercilex.robotscouter.R as RC
 
 @Bridge
 internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge, Refreshable,
-        View.OnClickListener, OnBackPressedListener, RecyclerPoolHolder {
+        View.OnClickListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
     val pagerAdapter: TemplatePagerAdapter by unsafeLazy {
@@ -170,9 +169,6 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
                 RC.string.template_set_default_title
         ) { defaultTemplateId = id }
     }
-
-    override fun onBackPressed(): Boolean =
-            childFragmentManager.fragments.any { it is OnBackPressedListener && it.onBackPressed() }
 
     companion object : TemplateListFragmentCompanion {
         override fun getInstance(

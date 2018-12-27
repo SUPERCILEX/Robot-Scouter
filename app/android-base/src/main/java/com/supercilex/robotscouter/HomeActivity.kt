@@ -7,15 +7,15 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
+import androidx.lifecycle.observe
 import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
@@ -35,9 +35,7 @@ import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
-import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.isInTabletMode
-import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.showStoreListing
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
@@ -49,12 +47,8 @@ import org.jetbrains.anko.longToast
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, DrawerToggler, TeamExporter, SignInResolver {
     private val authHelper by unsafeLazy { AuthHelper(this) }
-    private val permHandler by unsafeLazy {
-        ViewModelProviders.of(this).get<PermissionRequestHandler>()
-    }
-    private val moduleRequestHolder by unsafeLazy {
-        ViewModelProviders.of(this).get<ModuleRequestHolder>()
-    }
+    private val permHandler by viewModels<PermissionRequestHandler>()
+    private val moduleRequestHolder by viewModels<ModuleRequestHolder>()
 
     private val drawerToggle by unsafeLazy {
         ActionBarDrawerToggle(
@@ -70,7 +64,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        if (savedInstanceState == null) supportFragmentManager.transaction {
+        if (savedInstanceState == null) supportFragmentManager.commit {
             add(R.id.content,
                 TeamListFragmentCompanion().getInstance(supportFragmentManager),
                 TeamListFragmentCompanion.TAG)
@@ -78,9 +72,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
         permHandler.apply {
             init(ioPerms)
-            onGranted.observe(this@HomeActivity, Observer { export() })
+            onGranted.observe(this@HomeActivity) { export() }
         }
-        moduleRequestHolder.onSuccess.observeNonNull(this) { (comp, args) ->
+        moduleRequestHolder.onSuccess.observe(this) { (comp, args) ->
             @Suppress("UNCHECKED_CAST") // We know our inputs
             when (comp) {
                 is ExportServiceCompanion -> if (
@@ -113,7 +107,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
 
             appBar.setExpanded(true)
-            manager.transaction {
+            manager.commit {
                 val newFragment = manager.destTagToFragment(newTag)
 
                 setCustomAnimations(R.anim.pop_fade_in, R.anim.fade_out)
@@ -127,9 +121,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
             true
         }
-        prefs.asLiveData().observe(this, Observer {
+        prefs.asLiveData().observe(this) {
             bottomNavigation.menu.findItem(R.id.templates).isEnabled = isTemplateEditingAllowed
-        })
+        }
 
         handleModuleInstalls(moduleInstallProgress)
         authHelper.init().logFailures().addOnSuccessListener(this) {
@@ -220,7 +214,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        } else if (sendBackEventToChildren()) {
+        } else {
             val homeId = bottomNavigation.menu.children.first().itemId
             if (bottomNavigation.selectedItemId == homeId) {
                 super.onBackPressed()
@@ -234,7 +228,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         args.getTeam().logSelect()
 
         val manager = supportFragmentManager
-        manager.transaction {
+        manager.commit {
             val existing = IntegratedScoutListFragmentCompanion().getInstance(manager)?.also {
                 manager.popBackStack()
             }
@@ -301,7 +295,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                         .filterNotNull()
                         .toList()
 
-                transaction(allowStateLoss = true) { for (f in unfocusedFragments) remove(f) }
+                commit(allowStateLoss = true) { for (f in unfocusedFragments) remove(f) }
             }
         }
     }
@@ -316,8 +310,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     }
 
     private fun sendBackEventToChildren() = supportFragmentManager.fragments
-            .filterIsInstance<OnBackPressedListener>()
-            .none { it.onBackPressed() }
+            .filterIsInstance<OnBackPressedCallback>()
+            .none { it.handleOnBackPressed() }
 
     private fun handleIntent() {
         intent.extras?.run {

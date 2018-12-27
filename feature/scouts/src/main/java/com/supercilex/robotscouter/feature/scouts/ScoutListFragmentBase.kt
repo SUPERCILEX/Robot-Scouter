@@ -10,9 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.material.tabs.TabLayout
@@ -55,9 +54,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     protected var viewHolder: AppBarViewHolderBase by LifecycleAwareLazy()
         private set
 
-    protected val dataHolder: TeamHolder by unsafeLazy {
-        ViewModelProviders.of(this).get<TeamHolder>()
-    }
+    protected val dataHolder by viewModels<TeamHolder>()
     private lateinit var team: Team
     // It's not a lateinit because it could be used before initialization
     var pagerAdapter: ScoutPagerAdapter? = null

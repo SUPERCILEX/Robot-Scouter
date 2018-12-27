@@ -7,10 +7,12 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
+import androidx.lifecycle.observe
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -32,9 +34,7 @@ import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
-import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animateCircularReveal
-import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -53,12 +53,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         View.OnClickListener, View.OnFocusChangeListener {
     private lateinit var team: Team
 
-    private val permHandler by unsafeLazy {
-        ViewModelProviders.of(this).get<PermissionRequestHandler>()
-    }
-    private val mediaCreator by unsafeLazy {
-        ViewModelProviders.of(this).get<TeamMediaCreator>()
-    }
+    private val permHandler by viewModels<PermissionRequestHandler>()
+    private val mediaCreator by viewModels<TeamMediaCreator>()
 
     override val containerView by unsafeLazy {
         View.inflate(context, R.layout.dialog_team_details, null) as ViewGroup
@@ -69,13 +65,13 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         team = savedInstanceState?.getTeam() ?: checkNotNull(arguments).getTeam()
         permHandler.apply {
             init(TeamMediaCreator.perms)
-            onGranted.observe(this@TeamDetailsDialog, Observer {
+            onGranted.observe(this@TeamDetailsDialog) {
                 mediaCreator.capture(this@TeamDetailsDialog)
-            })
+            }
         }
         mediaCreator.apply {
             init(permHandler to savedInstanceState)
-            onMediaCaptured.observeNonNull(this@TeamDetailsDialog) {
+            onMediaCaptured.observe(this@TeamDetailsDialog) {
                 team.copyMediaInfo(it)
                 updateUi()
             }
@@ -83,7 +79,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         ViewModelProviders.of(this).get<TeamHolder>().apply {
             init(team.toBundle())
             var firstOverwrite = savedInstanceState
-            teamListener.observe(this@TeamDetailsDialog, Observer {
+            teamListener.observe(this@TeamDetailsDialog) {
                 if (it == null) {
                     dismiss()
                 } else {
@@ -95,7 +91,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                     if (firstOverwrite == null) updateUi()
                     firstOverwrite = null
                 }
-            })
+            }
         }
     }
 
@@ -195,14 +191,14 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             name.nullOrFull().also {
                 if (it != team.name) {
                     team.name = it
-                    team.hasCustomName = it?.isNotBlank() == true
+                    team.hasCustomName = !it.isNullOrBlank()
                 }
             }
 
             withContext(Dispatchers.Default) { media?.formatAsTeamUri() }.also {
                 if (it != team.media) {
                     team.media = it
-                    team.hasCustomMedia = it?.isNotBlank() == true
+                    team.hasCustomMedia = !it.isNullOrBlank()
                     team.mediaYear = Calendar.getInstance().get(Calendar.YEAR)
                 }
             }
@@ -210,14 +206,14 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             withContext(Dispatchers.Default) { website?.formatAsTeamUri() }.also {
                 if (it != team.website) {
                     team.website = it
-                    team.hasCustomWebsite = it?.isNotBlank() == true
+                    team.hasCustomWebsite = !it.isNullOrBlank()
                 }
             }
 
             team.forceUpdate(true)
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed
-            (ref().parentFragment as? OnBackPressedListener)?.onBackPressed()
+            (ref().parentFragment as? OnBackPressedCallback)?.handleOnBackPressed()
 
             ref().dismiss()
         }

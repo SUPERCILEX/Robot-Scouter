@@ -110,7 +110,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog.window?.setKeyboardModeVisible()
+        dialog?.window?.setKeyboardModeVisible()
     }
 
     protected fun createDialog(@StringRes title: Int, savedInstanceState: Bundle?) =

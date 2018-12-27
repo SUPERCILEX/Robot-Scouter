@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -25,7 +26,6 @@ import com.supercilex.robotscouter.core.data.model.restoreMetrics
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.animatePopReveal
-import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
@@ -39,7 +39,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
     override val dataId by unsafeLazy { checkNotNull(metricsRef.parent).id }
 
     private val itemTouchCallback by unsafeLazy {
-        TemplateItemTouchCallback<Metric<*>>(checkNotNull(view))
+        TemplateItemTouchCallback<Metric<*>>(requireView())
     }
 
     private var hasAddedItem: Boolean = false
@@ -56,7 +56,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
         val fab = parent.fab
 
         noMetricsHint.animatePopReveal(true)
-        holder.metrics.asLiveData().observeNonNull(viewLifecycleOwner) {
+        holder.metrics.asLiveData().observe(viewLifecycleOwner) {
             val noMetrics = it.isEmpty()
             noMetricsHint.animatePopReveal(noMetrics)
             if (noMetrics) fab.show()

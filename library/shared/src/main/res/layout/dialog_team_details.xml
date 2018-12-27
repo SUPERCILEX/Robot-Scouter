@@ -110,7 +110,7 @@
             android:layout_marginTop="@dimen/spacing_large"
             android:layout_marginBottom="@dimen/spacing_large">
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesButton
+            <Button
                 android:id="@+id/linkTba"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
@@ -119,8 +119,7 @@
                 android:text="@string/details_action_visit_tba_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/center"
-                app:drawableStartCompat="@drawable/ic_launch_colorable_24dp"
-                app:iconStyle="@style/Icon.Accent" />
+                app:drawableStartCompat="@drawable/ic_launch_accent_24dp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/center"
@@ -129,7 +128,7 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.5" />
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesButton
+            <Button
                 android:id="@+id/linkWebsite"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
@@ -138,8 +137,7 @@
                 android:text="@string/details_action_visit_website_title"
                 app:layout_constraintStart_toEndOf="@id/center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:drawableStartCompat="@drawable/ic_launch_colorable_24dp"
-                app:iconStyle="@style/Icon.Accent" />
+                app:drawableStartCompat="@drawable/ic_launch_accent_24dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -175,7 +173,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+        <TextView
             android:id="@+id/save"
             style="@style/RobotScouter.BottomSheet.Button.Compat"
             android:text="@string/save"

@@ -4,21 +4,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-inline fun <T : Any> LiveData<T>.observeNonNull(
-        owner: LifecycleOwner,
-        crossinline observer: (T) -> Unit
-) = observe(owner, Observer { observer(checkNotNull(it)) })
+inline fun Fragment.observeViewLifecycle(crossinline observer: (LifecycleOwner) -> Unit) {
+    viewLifecycleOwnerLiveData.observeForever { it?.let(observer) }
+}
 
 fun Fragment.addViewLifecycleObserver(observer: LifecycleObserver) {
-    viewLifecycleOwnerLiveData.observeForever {
-        it?.lifecycle?.addObserver(observer)
-    }
+    observeViewLifecycle { it.lifecycle.addObserver(observer) }
 }
 
 @Suppress("FunctionName") // Fake class

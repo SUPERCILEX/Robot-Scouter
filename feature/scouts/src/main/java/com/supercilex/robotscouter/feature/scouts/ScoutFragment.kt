@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.observe
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
@@ -17,7 +18,6 @@ import com.supercilex.robotscouter.core.data.model.untrashScout
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
-import com.supercilex.robotscouter.core.ui.observeNonNull
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
@@ -44,7 +44,7 @@ internal class ScoutFragment : MetricListFragment() {
         metricsView.setRecycledViewPool((parentFragment as RecyclerPoolHolder).recyclerPool)
 
         emptyScoutHint.show()
-        holder.metrics.asLiveData().observeNonNull(viewLifecycleOwner) {
+        holder.metrics.asLiveData().observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) emptyScoutHint.hide()
         }
     }

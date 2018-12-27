@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.feature.teams
 
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import com.supercilex.robotscouter.core.data.UniqueMutableLiveData
 import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.toBundle
@@ -10,7 +9,7 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.Saveable
 
 internal class TeamListHolder : ViewModelBase<Bundle?>(), Saveable {
-    val selectedTeamIdListener: MutableLiveData<Team?> = UniqueMutableLiveData()
+    val selectedTeamIdListener = MutableLiveData<Team?>()
 
     override fun onCreate(args: Bundle?) {
         selectedTeamIdListener.value = args?.getParcelable(TEAM_KEY)

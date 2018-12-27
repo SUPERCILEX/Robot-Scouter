@@ -42,7 +42,7 @@ val Team.indexable: Indexable
             .setName(toString())
             .apply {
                 val media = media
-                if (media?.isNotBlank() == true && !File(media).exists()) {
+                if (!media.isNullOrBlank() && !File(media).exists()) {
                     setImage(media)
                 }
             }

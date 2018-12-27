@@ -2,9 +2,13 @@ package com.supercilex.robotscouter.core.ui.views
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.Animatable2
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.postDelayed
 import androidx.core.widget.TextViewCompat
@@ -15,13 +19,13 @@ import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.mediumAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 
-class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader {
+class ContentLoadingHint : AppCompatTextView, ContentLoader {
     override val helper = ContentLoaderHelper(this, ::toggle)
 
     private val animatable by unsafeLazy {
         TextViewCompat.getCompoundDrawablesRelative(this)
                 .filterNotNull()
-                .single() as Animatable2Compat
+                .single() as Animatable
     }
 
     constructor(context: Context) : super(context)
@@ -35,13 +39,11 @@ class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader {
         super.onAttachedToWindow()
         helper.onAttachedToWindow()
 
-        animatable.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
-            override fun onAnimationEnd(drawable: Drawable?) {
-                postDelayed(mediumAnimationDuration) {
-                    if (ViewCompat.isAttachedToWindow(this@ContentLoadingHint)) animatable.start()
-                }
+        animatable.registerOnEndCallback {
+            postDelayed(mediumAnimationDuration) {
+                if (ViewCompat.isAttachedToWindow(this@ContentLoadingHint)) animatable.start()
             }
-        })
+        }
     }
 
     override fun onDetachedFromWindow() {
@@ -58,5 +60,33 @@ class ContentLoadingHint : SupportVectorDrawablesTextView, ContentLoader {
                 if (visible) animatable.start() else animatable.stop()
             }
         })
+    }
+
+    @SuppressLint("NewApi")
+    private inline fun Animatable.registerOnEndCallback(crossinline onEnd: () -> Unit) {
+        if (this is Animatable2Compat) {
+            registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+                override fun onAnimationEnd(drawable: Drawable?) {
+                    onEnd()
+                }
+            })
+        } else {
+            this as Animatable2
+            registerAnimationCallback(object : Animatable2.AnimationCallback() {
+                override fun onAnimationEnd(drawable: Drawable?) {
+                    onEnd()
+                }
+            })
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun Animatable.clearAnimationCallbacks() {
+        if (this is Animatable2Compat) {
+            clearAnimationCallbacks()
+        } else {
+            this as Animatable2
+            clearAnimationCallbacks()
+        }
     }
 }

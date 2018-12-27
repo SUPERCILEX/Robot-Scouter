@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.distinctUntilChanged
 import androidx.recyclerview.selection.SelectionTracker
 import com.bumptech.glide.Glide
 import com.bumptech.glide.ListPreloader
@@ -31,7 +32,7 @@ internal class TeamListAdapter(
 ) : SavedStateAdapter<Team, TeamViewHolder>(
         FirestoreRecyclerOptions.Builder<Team>()
                 .setSnapshotArray(teams)
-                .setLifecycleOwner(fragment)
+                .setLifecycleOwner(fragment.viewLifecycleOwner)
                 .build(),
         savedInstanceState,
         fragment.find(R.id.teamsView)
@@ -48,12 +49,13 @@ internal class TeamListAdapter(
 
     private val cardListHelper = CardListHelper(this, recyclerView)
 
+    private val distinctSelectedTeamIdListener = selectedTeamIdListener.distinctUntilChanged()
     private var selectedTeamId: String? = null
     private var hasSelectedTeamChanged = false
 
     init {
         recyclerView.addOnScrollListener(preloader)
-        selectedTeamIdListener.observeForever(this)
+        distinctSelectedTeamIdListener.observeForever(this)
     }
 
     override fun startListening() {
@@ -62,7 +64,7 @@ internal class TeamListAdapter(
         // More annoying constructor bugs: this will be called before we can assign our fields,
         // thus the NPE
         @Suppress("UNNECESSARY_SAFE_CALL")
-        selectedTeamIdListener?.observeForever(this)
+        distinctSelectedTeamIdListener?.observeForever(this)
     }
 
     override fun onChanged(team: Team?) {
@@ -148,6 +150,6 @@ internal class TeamListAdapter(
     override fun stopListening() {
         super.stopListening()
         recyclerView.removeOnScrollListener(preloader)
-        selectedTeamIdListener.removeObserver(this)
+        distinctSelectedTeamIdListener.removeObserver(this)
     }
 }

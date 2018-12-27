@@ -2,8 +2,7 @@ package com.supercilex.robotscouter.shared.scouting
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
@@ -14,9 +13,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import org.jetbrains.anko.support.v4.find
 
 abstract class MetricListFragment : FragmentBase() {
-    protected val holder: MetricListHolder by unsafeLazy {
-        ViewModelProviders.of(this).get<MetricListHolder>()
-    }
+    protected val holder by viewModels<MetricListHolder>()
     abstract val metricsRef: CollectionReference
     abstract val dataId: String
 

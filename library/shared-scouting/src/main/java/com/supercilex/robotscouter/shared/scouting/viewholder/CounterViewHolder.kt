@@ -29,7 +29,7 @@ open class CounterViewHolder(
     protected open val valueWithoutUnit: (TextView) -> String = {
         val unit: String? = metric.unit
         val count = it.text.toString()
-        if (unit?.isNotBlank() == true) count.removeSuffix(unit) else count
+        if (unit.isNullOrBlank()) count else count.removeSuffix(unit)
     }
 
     private var count = count1
@@ -140,7 +140,7 @@ open class CounterViewHolder(
     protected open fun bindValue(count: TextView) {
         val value = metric.value.toString()
         val unit: String? = metric.unit
-        count.text = if (unit?.isNotBlank() == true) value + unit else value
+        count.text = if (unit.isNullOrBlank()) value else value + unit
     }
 
     override fun onLongClick(v: View): Boolean {

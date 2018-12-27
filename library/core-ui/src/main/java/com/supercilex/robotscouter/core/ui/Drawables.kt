@@ -4,13 +4,9 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import android.util.AttributeSet
 import android.view.ContextThemeWrapper
-import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.withStyledAttributes
-import androidx.core.widget.TextViewCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.LateinitVal
@@ -67,40 +63,6 @@ fun Context.getDrawableCompat(@DrawableRes resId: Int): Drawable? {
         return null
     } finally {
         parser.close()
-    }
-}
-
-internal fun TextView.initSupportVectorDrawablesAttrs(attrs: AttributeSet?) {
-    if (attrs == null) return
-
-    context.withStyledAttributes(attrs, R.styleable.SupportVectorDrawables) {
-        val compute: Int.() -> Drawable? = compute@{
-            if (this == -1) {
-                null
-            } else {
-                var result: Drawable? = null
-                context.withStyledAttributes(attrs, R.styleable.Icon) {
-                    result = getIconThemedContext(context).getDrawableCompat(this@compute)
-                }
-                result
-            }
-        }
-        val drawableStart = getResourceId(
-                R.styleable.SupportVectorDrawables_drawableStartCompat, -1).compute()
-        val drawableEnd = getResourceId(
-                R.styleable.SupportVectorDrawables_drawableEndCompat, -1).compute()
-        val drawableBottom = getResourceId(
-                R.styleable.SupportVectorDrawables_drawableBottomCompat, -1).compute()
-        val drawableTop = getResourceId(
-                R.styleable.SupportVectorDrawables_drawableTopCompat, -1).compute()
-
-        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                this@initSupportVectorDrawablesAttrs,
-                drawableStart,
-                drawableTop,
-                drawableEnd,
-                drawableBottom
-        )
     }
 }
 

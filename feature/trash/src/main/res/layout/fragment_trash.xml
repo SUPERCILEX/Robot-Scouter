@@ -20,7 +20,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+    <TextView
         android:id="@+id/noTrashHint"
         style="@style/RobotScouter.NoContentHint"
         android:layout_gravity="center"

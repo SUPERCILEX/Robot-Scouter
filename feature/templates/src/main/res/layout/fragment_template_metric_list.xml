@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+    <TextView
         android:id="@+id/noMetricsHint"
         style="@style/RobotScouter.NoContentHint"
         android:text="@string/template_tutorial_no_metrics_hint"

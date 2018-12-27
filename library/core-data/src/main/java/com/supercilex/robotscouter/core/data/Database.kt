@@ -125,7 +125,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
         val team = teams[newIndex]
         GlobalScope.async(Dispatchers.IO) {
             val media = team.media
-            if (media?.isNotBlank() == true && File(media).exists()) {
+            if (!media.isNullOrBlank() && File(media).exists()) {
                 team.startUploadMediaJob()
             } else if (media == null || media.isValidTeamUri()) {
                 team.fetchLatestData()
@@ -279,18 +279,6 @@ internal sealed class QueuedDeletion(
 
         class Template(token: String, templateIds: List<String>) :
                 ShareToken(token, DeletionType.TEMPLATE, templateIds)
-    }
-}
-
-class UniqueMutableLiveData<T> : MutableLiveData<T>() {
-    private val initialized = AtomicBoolean()
-
-    override fun postValue(value: T) = runIfDifferent(value) { super.postValue(value) }
-
-    override fun setValue(value: T) = runIfDifferent(value) { super.setValue(value) }
-
-    private inline fun runIfDifferent(value: T, block: () -> Unit) {
-        if (this.value != value || initialized.compareAndSet(false, true)) block()
     }
 }
 

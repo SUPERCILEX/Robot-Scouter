@@ -9,11 +9,6 @@ fun Intent.addNewDocumentFlags(): Intent {
     return this
 }
 
-interface OnBackPressedListener {
-    /** @return true if the back press was consumed, false otherwise. */
-    fun onBackPressed(): Boolean
-}
-
 interface RecyclerPoolHolder {
     val recyclerPool: RecyclerView.RecycledViewPool
 }

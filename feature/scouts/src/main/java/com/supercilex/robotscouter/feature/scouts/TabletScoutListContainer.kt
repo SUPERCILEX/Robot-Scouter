@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commitNow
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
 import com.supercilex.robotscouter.core.ui.FragmentBase
@@ -19,7 +19,7 @@ internal class TabletScoutListContainer : FragmentBase() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            childFragmentManager.transaction(now = true) {
+            childFragmentManager.commitNow {
                 add(R.id.scoutList,
                     TabletScoutListFragment.newInstance(checkNotNull(arguments)),
                     TabletScoutListFragment.TAG)

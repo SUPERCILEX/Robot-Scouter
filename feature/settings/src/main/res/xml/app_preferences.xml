@@ -1,110 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.preference.PreferenceCategory android:title="@string/settings_category_ui_title">
+    <androidx.preference.PreferenceCategory app:title="@string/settings_category_ui_title">
 
         <androidx.preference.ListPreference
-            android:defaultValue="auto"
-            android:entries="@array/settings_pref_night_mode_entries"
-            android:entryValues="@array/settings_pref_night_mode_values"
-            android:icon="@drawable/ic_weather_night_colorable_24dp"
-            android:key="nightMode"
-            android:summary="%s"
-            android:title="@string/settings_pref_night_mode_title" />
+            app:defaultValue="auto"
+            app:entries="@array/settings_pref_night_mode_entries"
+            app:entryValues="@array/settings_pref_night_mode_values"
+            app:icon="@drawable/ic_weather_night_colorable_24dp"
+            app:key="nightMode"
+            app:title="@string/settings_pref_night_mode_title"
+            app:useSimpleSummaryProvider="true" />
 
         <androidx.preference.SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:icon="@drawable/ic_lock_outline_colorable_24dp"
-            android:key="lockTemplates"
-            android:summary="@string/settings_pref_lock_templates_summary"
-            android:title="@string/settings_pref_lock_templates_title" />
+            app:defaultValue="false"
+            app:icon="@drawable/ic_lock_outline_colorable_24dp"
+            app:key="lockTemplates"
+            app:summary="@string/settings_pref_lock_templates_summary"
+            app:title="@string/settings_pref_lock_templates_title" />
 
     </androidx.preference.PreferenceCategory>
 
-    <androidx.preference.PreferenceCategory android:title="@string/settings_category_general_title">
+    <androidx.preference.PreferenceCategory app:title="@string/settings_category_general_title">
 
         <com.supercilex.robotscouter.feature.settings.DefaultTemplatePreference
-            android:icon="@drawable/ic_content_paste_colorable_24dp"
-            android:key="defaultTemplateId"
-            android:summary="@string/settings_pref_default_template_summary"
-            android:title="@string/settings_pref_default_template_title" />
+            app:icon="@drawable/ic_content_paste_colorable_24dp"
+            app:key="defaultTemplateId"
+            app:summary="@string/settings_pref_default_template_summary"
+            app:title="@string/settings_pref_default_template_title" />
 
         <androidx.preference.ListPreference
-            android:defaultValue="ask"
-            android:entries="@array/settings_pref_should_upload_to_tba_entries"
-            android:entryValues="@array/settings_pref_should_upload_to_tba_values"
-            android:icon="@android:drawable/stat_sys_upload_done"
-            android:key="uploadMediaToTba"
-            android:summary="@string/settings_pref_should_upload_to_tba_summary"
-            android:title="@string/settings_pref_should_upload_to_tba_title" />
+            app:defaultValue="ask"
+            app:entries="@array/settings_pref_should_upload_to_tba_entries"
+            app:entryValues="@array/settings_pref_should_upload_to_tba_values"
+            app:icon="@android:drawable/stat_sys_upload_done"
+            app:key="uploadMediaToTba"
+            app:summary="@string/settings_pref_should_upload_to_tba_summary"
+            app:title="@string/settings_pref_should_upload_to_tba_title" />
 
         <androidx.preference.Preference
-            android:icon="@drawable/ic_link_colorable_24dp"
-            android:key="link_account"
-            android:summary="@string/settings_pref_link_account_summary"
-            android:title="@string/settings_pref_link_account_title" />
+            app:icon="@drawable/ic_link_colorable_24dp"
+            app:key="link_account"
+            app:summary="@string/settings_pref_link_account_summary"
+            app:title="@string/settings_pref_link_account_title" />
 
         <androidx.preference.Preference
-            android:icon="@drawable/ic_replay_colorable_24dp"
-            android:key="reset_prefs"
-            android:title="@string/settings_pref_reset_prefs_title" />
+            app:icon="@drawable/ic_replay_colorable_24dp"
+            app:key="reset_prefs"
+            app:title="@string/settings_pref_reset_prefs_title" />
 
         <androidx.preference.Preference
-            android:icon="@drawable/ic_sign_out_colorable_24dp"
-            android:key="sign_out"
-            android:title="@string/settings_pref_sign_out_title" />
+            app:icon="@drawable/ic_sign_out_colorable_24dp"
+            app:key="sign_out"
+            app:title="@string/settings_pref_sign_out_title" />
 
     </androidx.preference.PreferenceCategory>
 
-    <androidx.preference.PreferenceCategory android:title="@string/settings_category_about_title">
+    <androidx.preference.PreferenceCategory app:title="@string/settings_category_about_title">
 
-        <androidx.preference.Preference android:key="about">
-
-            <aapt:attr name="android:layout">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
-                    android:layout_marginLeft="?android:attr/listPreferredItemPaddingLeft"
-                    android:paddingStart="@dimen/preference_category_padding_start"
-                    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                    android:paddingLeft="@dimen/preference_category_padding_start"
-                    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp">
-
-                    <androidx.emoji.widget.EmojiAppCompatTextView
-                        android:id="@+id/about"
-                        style="@style/TextAppearance.AppCompat"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
-            </aapt:attr>
-
-        </androidx.preference.Preference>
+        <androidx.preference.Preference app:key="about" />
 
         <androidx.preference.Preference
-            android:key="release_notes"
-            android:summary="@string/settings_pref_release_notes_summary"
-            android:title="@string/settings_pref_release_notes_title" />
+            app:key="release_notes"
+            app:summary="@string/settings_pref_release_notes_summary"
+            app:title="@string/settings_pref_release_notes_title" />
 
         <androidx.preference.Preference
-            android:key="translate"
-            android:summary="@string/settings_pref_translate_summary"
-            android:title="@string/settings_pref_translate_title" />
+            app:key="translate"
+            app:summary="@string/settings_pref_translate_summary"
+            app:title="@string/settings_pref_translate_title" />
 
         <androidx.preference.Preference
-            android:key="version"
-            android:title="@string/settings_pref_version_title" />
+            app:key="version"
+            app:title="@string/settings_pref_version_title" />
 
         <androidx.preference.Preference
-            android:key="licenses"
-            android:title="@string/settings_pref_licenses_title" />
+            app:fragment="com.supercilex.robotscouter.feature.settings.LicensesFragment"
+            app:key="licenses"
+            app:title="@string/settings_pref_licenses_title" />
 
     </androidx.preference.PreferenceCategory>
 

@@ -109,6 +109,7 @@ internal class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListe
         val purchaseStartTask = TaskCompletionSource<Unit?>()
 
         logCrashLog("Starting purchase flow for sku: $sku")
+        @Suppress("DEPRECATION")
         val result = billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
                 .setSku(sku)
                 .setType(type)

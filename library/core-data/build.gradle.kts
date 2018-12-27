@@ -14,6 +14,7 @@ dependencies {
 
     api(Config.Libs.Jetpack.common)
     api(Config.Libs.Jetpack.extensions)
+    api(Config.Libs.Jetpack.liveData)
     api(Config.Libs.Jetpack.viewModel)
 
     implementation(Config.Libs.Anko.common)

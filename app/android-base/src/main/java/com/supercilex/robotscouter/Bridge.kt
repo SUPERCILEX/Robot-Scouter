@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.observe
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
@@ -53,16 +53,16 @@ private val moduleStatus = MutableLiveData<SplitInstallSessionState?>()
 
 internal fun ActivityBase.handleModuleInstalls(
         progressBar: ProgressBar
-) = moduleStatus.observe(this, Observer { state ->
+) = moduleStatus.observe(this) { state ->
     if (state == null) {
         progressBar.isVisible = false
-        return@Observer
+        return@observe
     }
 
     state.resolutionIntent()?.let {
         startIntentSender(it.intentSender, null, 0, 0, 0)
         moduleStatus.value = null
-        return@Observer
+        return@observe
     }
 
     progressBar.apply {
@@ -75,7 +75,7 @@ internal fun ActivityBase.handleModuleInstalls(
 
         if (isVisible) bringToFront()
     }
-})
+}.let { Unit }
 
 fun Context.home(vararg params: Pair<String, Any?>) = intentFor<HomeActivity>(*params)
 

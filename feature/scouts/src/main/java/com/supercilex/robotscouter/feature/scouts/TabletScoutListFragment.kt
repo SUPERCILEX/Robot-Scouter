@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.feature.scouts
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import androidx.fragment.app.transaction
+import androidx.fragment.app.commit
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ValueSeeker
 import com.supercilex.robotscouter.core.data.mainHandler
@@ -68,8 +68,8 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
     }
 
     private fun removeFragment() {
-        val parent = checkNotNull(parentFragment)
-        parent.requireFragmentManager().transaction { remove(parent) }
+        val parent = requireParentFragment()
+        parent.requireFragmentManager().commit { remove(parent) }
     }
 
     companion object {

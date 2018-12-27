@@ -64,7 +64,7 @@ class TeamSharer private constructor(
                 withContext(Dispatchers.Default) { generateIntent() }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
-                checkNotNull(fragmentRef().view).longSnackbar(R.string.error_unknown)
+                fragmentRef().requireView().longSnackbar(R.string.error_unknown)
                 return@launch
             }
             fragmentRef().startActivityForResult(intent, RC_SHARE)
@@ -117,7 +117,7 @@ class TeamSharer private constructor(
          */
         fun shareTeams(fragment: Fragment, @Size(min = 1) teams: List<Team>): Boolean {
             if (isOffline) {
-                checkNotNull(fragment.view).longSnackbar(R.string.no_connection)
+                fragment.requireView().longSnackbar(R.string.no_connection)
                 return false
             }
             if (teams.isEmpty()) return false

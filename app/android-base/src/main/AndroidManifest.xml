@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto"
     package="com.supercilex.robotscouter">
+
+    <dist:module dist:instant="false" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -70,10 +73,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="supercilex.github.io"
-                    android:pathPrefix="/Robot-Scouter/data"
-                    android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="supercilex.github.io" />
+                <data android:pathPrefix="/Robot-Scouter/data" />
             </intent-filter>
 
         </activity>

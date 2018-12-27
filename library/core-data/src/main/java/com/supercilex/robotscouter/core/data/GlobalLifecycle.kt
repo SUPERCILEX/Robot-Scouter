@@ -1,7 +1,7 @@
 package com.supercilex.robotscouter.core.data
 
-import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -17,7 +17,7 @@ val activitiesRegistry = LifecycleRegistry(activitiesLifecycleOwner)
  *
  * @see ProcessLifecycleOwner
  */
-object ListenerRegistrationLifecycleOwner : LifecycleOwner, Runnable, GenericLifecycleObserver {
+object ListenerRegistrationLifecycleOwner : LifecycleOwner, Runnable, LifecycleEventObserver {
     private const val TIMEOUT_IN_MILLIS = 300000L // 5 minutes
 
     private val registry = LifecycleRegistry(this)

@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+            <TextView
                 android:id="@+id/addHeader"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_header_title"
@@ -37,7 +37,7 @@
                 app:drawableTopCompat="@drawable/ic_metric_header"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+            <TextView
                 android:id="@+id/addCheckBox"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_checkbox_title"
@@ -48,7 +48,7 @@
                 app:drawableTopCompat="@drawable/ic_metric_checkbox"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+            <TextView
                 android:id="@+id/addStopwatch"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_stopwatch_title"
@@ -59,7 +59,7 @@
                 app:drawableTopCompat="@drawable/ic_metric_stopwatch"
                 app:layout_constraintVertical_chainStyle="packed" />
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+            <TextView
                 android:id="@+id/addNote"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_note_title"
@@ -69,7 +69,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:drawableTopCompat="@drawable/ic_metric_notes" />
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+            <TextView
                 android:id="@+id/addCounter"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_counter_title"
@@ -79,7 +79,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:drawableTopCompat="@drawable/ic_metric_counter" />
 
-            <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesTextView
+            <TextView
                 android:id="@+id/addSpinner"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_spinner_title"

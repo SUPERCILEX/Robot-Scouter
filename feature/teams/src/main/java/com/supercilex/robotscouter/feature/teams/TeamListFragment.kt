@@ -8,10 +8,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.get
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.Selection
 import androidx.recyclerview.selection.SelectionTracker
@@ -36,11 +37,10 @@ import com.supercilex.robotscouter.core.ui.AllChangesSelectionObserver
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
-import com.supercilex.robotscouter.core.ui.OnBackPressedListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
-import com.supercilex.robotscouter.core.ui.observeNonNull
+import com.supercilex.robotscouter.core.ui.observeViewLifecycle
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_team_list.*
@@ -49,7 +49,7 @@ import com.supercilex.robotscouter.R as RC
 
 @Bridge
 internal class TeamListFragment : FragmentBase(), TeamSelectionListener, SelectedTeamsRetriever,
-        OnBackPressedListener, KeyboardShortcutListener, Refreshable, View.OnClickListener {
+        OnBackPressedCallback, KeyboardShortcutListener, Refreshable, View.OnClickListener {
     override val selectedTeams: List<Team>
         get() = if (view == null) {
             emptyList()
@@ -57,12 +57,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
             selectionTracker.selection.map { id -> adapter.snapshots.first { it.id == id } }
         }
 
-    private val holder by unsafeLazy {
-        ViewModelProviders.of(this).get<TeamListHolder>()
-    }
-    private val tutorialHelper by unsafeLazy {
-        ViewModelProviders.of(this).get<TutorialHelper>()
-    }
+    private val holder by viewModels<TeamListHolder>()
+    private val tutorialHelper by viewModels<TutorialHelper>()
 
     private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
@@ -80,6 +76,11 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         tutorialHelper.init(null)
 
         if (!requireContext().isInTabletMode()) holder.selectTeam(null)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        observeViewLifecycle { requireActivity().addOnBackPressedCallback(it, this) }
     }
 
     override fun onCreateView(
@@ -144,7 +145,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         }
         adapter.selectionTracker = selectionTracker
 
-        teams.asLiveData().observeNonNull(viewLifecycleOwner) {
+        teams.asLiveData().observe(viewLifecycleOwner) {
             val noTeams = it.isEmpty()
             noTeamsHint.animatePopReveal(noTeams)
             if (noTeams) fab.show()
@@ -197,7 +198,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         teamsView.smoothScrollToPosition(0)
     }
 
-    override fun onBackPressed() = selectionTracker.clearSelection()
+    override fun handleOnBackPressed() = selectionTracker.clearSelection()
 
     companion object : TeamListFragmentCompanion {
         override fun getInstance(manager: FragmentManager) =

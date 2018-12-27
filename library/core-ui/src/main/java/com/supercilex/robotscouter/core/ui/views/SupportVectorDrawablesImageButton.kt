@@ -8,7 +8,7 @@ import com.supercilex.robotscouter.core.ui.R
 import com.supercilex.robotscouter.core.ui.getDrawableCompat
 import com.supercilex.robotscouter.core.ui.getIconThemedContext
 
-/** @see SupportVectorDrawablesTextView */
+/** Supports custom icon styling. */
 open class SupportVectorDrawablesImageButton : AppCompatImageButton {
     constructor(context: Context) : super(context)
 
