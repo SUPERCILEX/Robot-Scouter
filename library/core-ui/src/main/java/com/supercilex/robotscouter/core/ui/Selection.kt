@@ -21,7 +21,6 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.common.isSingleton
 import org.jetbrains.anko.find
-import java.util.Locale
 
 abstract class AllChangesSelectionObserver<T> : SelectionTracker.SelectionObserver<T>() {
     override fun onSelectionRefresh() = onSelectionChanged()
@@ -128,7 +127,7 @@ abstract class MenuHelperBase<T>(
         checkNotNull(activity.supportActionBar).title = if (selection.isEmpty) {
             activity.title
         } else {
-            String.format(Locale.getDefault(), "%d", selection.size())
+            selection.size().toString()
         }
     }
 

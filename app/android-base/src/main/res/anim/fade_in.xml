@@ -2,7 +2,7 @@
 <set
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:interpolator/accelerate_quad"
-    android:duration="@android:integer/config_shortAnimTime">
+    android:duration="@integer/transition_anim_time">
 
     <alpha
         android:fromAlpha="0"

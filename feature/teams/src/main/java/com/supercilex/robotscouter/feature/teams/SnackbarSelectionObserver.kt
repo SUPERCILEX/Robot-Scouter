@@ -11,7 +11,14 @@ internal class SnackbarSelectionObserver(
         private val tracker: SelectionTracker<String>,
         private val items: ObservableSnapshotArray<*>
 ) : AllChangesSelectionObserver<String>() {
-    private var selectAllSnackbar = snackbar()
+    private var _selectAllSnackbar: Snackbar? = null
+    private var selectAllSnackbar: Snackbar
+        get() {
+            return _selectAllSnackbar ?: snackbar().also { _selectAllSnackbar = it }
+        }
+        set(value) {
+            _selectAllSnackbar = value
+        }
 
     override fun onSelectionChanged() {
         val isSnackbarShown = selectAllSnackbar.isShown

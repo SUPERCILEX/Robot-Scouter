@@ -31,7 +31,11 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
     }
 
     override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
-            this, savedInstanceState, dataHolder.teamListener, onScoutingReadyTask.task) {
+            this@TabletScoutListFragment,
+            savedInstanceState,
+            dataHolder.teamListener,
+            onScoutingReadyTask.task
+    ) {
         init {
             toolbar.setOnMenuItemClickListener {
                 // We need to be able to guarantee that our `onOptionsItemSelected`s are called

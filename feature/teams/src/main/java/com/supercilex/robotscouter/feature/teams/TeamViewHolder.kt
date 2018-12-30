@@ -20,7 +20,6 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.team_list_row_layout.*
-import java.util.Locale
 import com.supercilex.robotscouter.R as RC
 
 internal class TeamViewHolder(
@@ -62,7 +61,7 @@ internal class TeamViewHolder(
     }
 
     private fun setTeamNumber() {
-        number.text = String.format(Locale.getDefault(), "%d", team.number)
+        number.text = team.number.toString()
     }
 
     private fun setTeamName() {

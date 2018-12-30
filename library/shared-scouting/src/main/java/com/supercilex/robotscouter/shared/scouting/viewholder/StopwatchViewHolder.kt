@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.CallSuper
-import androidx.annotation.StringRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
@@ -18,6 +17,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.DocumentReference
 import com.supercilex.robotscouter.common.second
 import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.remove
@@ -61,6 +61,9 @@ open class StopwatchViewHolder(
         checkNotNull(AnimatedVectorDrawableCompat.create(
                 itemView.context, R.drawable.ic_timer_off_to_on_24dp))
     }
+    private val startStopwatchTitle by unsafeLazy {
+        itemView.resources.getString(R.string.metric_stopwatch_start_title)
+    }
 
     private val cyclesAdapter = Adapter()
 
@@ -86,9 +89,9 @@ open class StopwatchViewHolder(
         cycles.setHasFixedSize(false)
         cyclesAdapter.notifyDataSetChanged()
 
-        val timer = TIMERS[metric]
+        val timer = TIMERS[metric.ref]
         if (timer == null) {
-            setText(R.string.metric_stopwatch_start_title)
+            setStartTitle()
             updateStyle(false, false)
         } else {
             timer.holder = this
@@ -104,7 +107,7 @@ open class StopwatchViewHolder(
             undoAddSnackbar?.dismiss()
             timer = Timer(this)
         } else {
-            val lap = currentTimer.cancel()
+            val lap = currentTimer.stop()
             metric.add(metric.value.size, lap)
 
             metric.value.size.let { notifyCycleAdded(it, it) }
@@ -122,7 +125,7 @@ open class StopwatchViewHolder(
     override fun onLongClick(v: View): Boolean {
         val currentTimer = timer ?: return false
 
-        currentTimer.cancel()
+        currentTimer.stop()
         undoAddSnackbar = itemView.longSnackbar(RC.string.cancelled, RC.string.undo) {
             timer = Timer(this, currentTimer.startTimeMillis)
         }.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
@@ -178,8 +181,13 @@ open class StopwatchViewHolder(
         }
     }
 
-    private fun setText(@StringRes id: Int, vararg formatArgs: Any) {
-        stopwatch.text = itemView.resources.getString(id, *formatArgs)
+    private fun setStartTitle() {
+        stopwatch.text = startStopwatchTitle
+    }
+
+    private fun setStopTitle(formattedTime: String) {
+        stopwatch.text = itemView.resources
+                .getString(R.string.metric_stopwatch_stop_title, formattedTime)
     }
 
     private fun updateStyle(isRunning: Boolean, animate: Boolean = true) {
@@ -228,7 +236,7 @@ open class StopwatchViewHolder(
             get() = System.currentTimeMillis() - startTimeMillis
 
         init {
-            TIMERS[holder.metric] = this
+            TIMERS[holder.metric.ref] = this
 
             updater = GlobalScope.launch(Dispatchers.Main) {
                 try {
@@ -239,7 +247,7 @@ open class StopwatchViewHolder(
                         }
                     }
                 } catch (e: TimeoutCancellationException) {
-                    cancel()
+                    stop()
                 }
             }
 
@@ -248,25 +256,19 @@ open class StopwatchViewHolder(
         }
 
         fun updateButtonTime() {
-            setText(R.string.metric_stopwatch_stop_title, getFormattedTime(elapsedTimeMillis))
+            holder?.setStopTitle(getFormattedTime(elapsedTimeMillis))
         }
 
         /** @return the time since this class was instantiated and then cancelled */
-        fun cancel(): Long {
+        fun stop(): Long {
             holder?.timer = null
-            TIMERS.filter { it.value == this }.forEach {
-                TIMERS.remove(it.key)
-            }
+            TIMERS.remove(metric.ref)
 
             updater.cancel()
             updateStyle()
-            setText(R.string.metric_stopwatch_start_title)
+            holder?.setStartTitle()
 
             return elapsedTimeMillis
-        }
-
-        private fun setText(@StringRes id: Int, vararg formatArgs: Any) {
-            holder?.setText(id, *formatArgs)
         }
 
         private fun updateStyle() {
@@ -397,7 +399,7 @@ open class StopwatchViewHolder(
     }
 
     private companion object {
-        val TIMERS = ConcurrentHashMap<Metric.Stopwatch, Timer>()
+        val TIMERS = ConcurrentHashMap<DocumentReference, Timer>()
 
         const val LIST_SIZE_WITH_AVERAGE = 2
         // Don't conflict with metric types since the pool is shared

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,11 +9,8 @@
     <TextView
         android:id="@+id/noTeamsHint"
         style="@style/RobotScouter.NoContentHint"
+        android:layout_gravity="center"
         android:text="@string/team_tutorial_no_teams_hint"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:drawableTopCompat="@drawable/ic_group_grey_96dp"
         tools:visibility="visible" />
 
@@ -22,4 +19,4 @@
         style="@style/RobotScouter.List"
         tools:listitem="@layout/team_list_row_layout" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

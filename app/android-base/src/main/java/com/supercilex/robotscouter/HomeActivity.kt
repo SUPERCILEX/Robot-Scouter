@@ -20,6 +20,7 @@ import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.data.TEMPLATE_ARGS_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
@@ -37,10 +38,13 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.showStoreListing
+import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 
@@ -80,7 +84,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 is ExportServiceCompanion -> if (
                     comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>)
                 ) sendBackEventToChildren()
-                is SettingsActivityCompanion -> startActivity(comp.createIntent())
             }
         }
 
@@ -192,8 +195,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 when (id) {
                     R.id.action_export_all_teams -> export()
                     R.id.action_view_trash -> startActivity(TrashActivityCompanion().createIntent())
-                    R.id.action_settings ->
-                        moduleRequestHolder += SettingsActivityCompanion().logFailures()
+                    R.id.action_settings -> startActivity(SettingsActivityCompanion().createIntent())
                     else -> error("Unknown item id: $id")
                 }
             }
@@ -241,7 +243,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             } else {
                 val fragment = IntegratedScoutListFragmentCompanion().newInstance(args)
 
-                appBar.setExpanded(true)
                 setReorderingAllowed(true)
                 if (bottomNavigation.selectedItemId != R.id.teams) {
                     bottomNavigation.selectedItemId = R.id.teams
@@ -252,9 +253,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 ) {
                     addSharedElement(transitionView, "media")
-                    fragment.sharedElementEnterTransition =
-                            TransitionInflater.from(this@HomeActivity)
-                                    .inflateTransition(android.R.transition.move)
+                    fragment.sharedElementEnterTransition = fragmentTransition.clone()
                     fragment.sharedElementReturnTransition = null
                 }
                 setCustomAnimations(
@@ -366,5 +365,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         const val UPDATE_EXTRA = "update_extra"
         const val ADD_SCOUT_INTENT = "add_scout"
         const val EXPORT_ALL_TEAMS_INTENT = "export_all_teams"
+
+        val fragmentTransition by unsafeLazy {
+            TransitionInflater.from(RobotScouter)
+                    .inflateTransition(android.R.transition.move)
+                    .setDuration(transitionAnimationDuration)
+        }
+
+        init {
+            GlobalScope.async { fragmentTransition }.logFailures()
+        }
     }
 }

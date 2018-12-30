@@ -9,22 +9,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.children
-import androidx.core.view.isVisible
+import androidx.core.view.postDelayed
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.appbar.AppBarLayout
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.IntegratedScoutListFragmentCompanion
 import com.supercilex.robotscouter.ScoutListFragmentCompanionBase.Companion.TAG
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.ui.isInTabletMode
+import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
 internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
-    private val appBar by unsafeLazy { requireActivity().find<ViewGroup>(RC.id.appBar) }
+    private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,16 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mainHandler.post { appBar.children.forEach { it.isVisible = false } }
+        if (sharedElementEnterTransition == null) {
+            mainHandler.post { appBar.setExpanded(false) }
+        }
+    }
+
+    override fun startPostponedEnterTransition() {
+        super.startPostponedEnterTransition()
+        appBar.postDelayed(transitionAnimationDuration) {
+            appBar.setExpanded(false)
+        }
     }
 
     override fun newViewModel(savedInstanceState: Bundle?) = AppBarViewHolderBase(
@@ -87,7 +97,8 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        appBar.children.forEach { it.isVisible = true }
+        appBar.setExpanded(true)
+        sharedElementEnterTransition = null
     }
 
     override fun onStop() {

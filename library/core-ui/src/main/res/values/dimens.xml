@@ -27,4 +27,6 @@
     <dimen name="text_size_normal">16sp</dimen>
 
     <dimen name="shortcut_inset">25%</dimen>
+
+    <integer name="transition_anim_time">300</integer>
 </resources>

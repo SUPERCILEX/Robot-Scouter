@@ -5,8 +5,10 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
+import com.bumptech.glide.Glide
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.squareup.leakcanary.LeakCanary
+import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.data.initAnalytics
 import com.supercilex.robotscouter.core.data.initDatabase
@@ -34,13 +36,22 @@ internal class RobotScouter : MultiDexApplication() {
 
         _globalContext = this
 
-        GlobalScope.async(Dispatchers.IO) { initIo() }.logFailures()
-        initAnalytics()
-        initRemoteConfig()
+        GlobalScope.apply {
+            // Prep slow init calls
+            async(Dispatchers.IO) { initIo() }.logFailures()
+            async { Dispatchers.Main }.logFailures()
+            async { initBridges() }.logFailures()
+            async { Glide.get(RobotScouter) }.logFailures()
+
+            async { initAnalytics() }.logFailures()
+            async { initRemoteConfig() }.logFailures()
+            async { initNotifications() }.logFailures()
+        }
+
+        // These calls must occur synchronously
         initDatabase()
         initPrefs()
         initUi()
-        initNotifications()
 
         if (BuildConfig.DEBUG) {
             // Purposefully put this after initialization since Google is terrible with disk I/O.

@@ -51,6 +51,17 @@ import com.google.android.play.core.tasks.Task as PlayTask
 
 private val moduleStatus = MutableLiveData<SplitInstallSessionState?>()
 
+internal fun initBridges() {
+    TeamListFragmentCompanion()
+    IntegratedScoutListFragmentCompanion()
+    AutoScoutFragmentCompanion()
+    TemplateListFragmentCompanion()
+    NewTeamDialogCompanion()
+    ScoutListActivityCompanion()
+    TrashActivityCompanion()
+    SettingsActivityCompanion()
+}
+
 internal fun ActivityBase.handleModuleInstalls(
         progressBar: ProgressBar
 ) = moduleStatus.observe(this) { state ->
@@ -240,15 +251,14 @@ interface TrashActivityCompanion : InstalledBridgeCompanion {
     }
 }
 
-interface SettingsActivityCompanion : DownloadableBridgeCompanion {
+interface SettingsActivityCompanion : InstalledBridgeCompanion {
     fun createIntent(): Intent
 
-    companion object : DownloadableBridgeFinderCompanion<SettingsActivityCompanion>() {
+    companion object : InstalledBridgeFinderCompanion<SettingsActivityCompanion>() {
         override val moduleName = "settings"
-        override val instance by ValueSeeker {
-            getClass("com.supercilex.robotscouter.feature.settings.SettingsActivity")
-                    ?.get<SettingsActivityCompanion>()
-        }
+        override val instance =
+                requireClass("com.supercilex.robotscouter.feature.settings.SettingsActivity")
+                        .get<SettingsActivityCompanion>()
     }
 }
 

@@ -10,6 +10,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.view.postDelayed
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
@@ -124,7 +125,7 @@ internal open class AppBarViewHolderBase(
             isFirstResource: Boolean
     ): Boolean {
         progress.hide(true)
-        fragment.startPostponedEnterTransition()
+        toolbar.postDelayed(ARTIFICIAL_POSTPONE_DELAY) { fragment.startPostponedEnterTransition() }
 
         if (resource?.isRecycled == false) {
             val holderRef = asLifecycleReference(fragment.viewLifecycleOwner)
@@ -170,7 +171,7 @@ internal open class AppBarViewHolderBase(
             isFirstResource: Boolean
     ): Boolean {
         progress.hide(true)
-        fragment.startPostponedEnterTransition()
+        toolbar.postDelayed(ARTIFICIAL_POSTPONE_DELAY) { fragment.startPostponedEnterTransition() }
         return false
     }
 
@@ -240,5 +241,16 @@ internal open class AppBarViewHolderBase(
             permissions: Array<String>,
             grantResults: IntArray
     ) = permissionHandler.onRequestPermissionsResult(
-            fragment, requestCode, permissions, grantResults)
+            fragment, requestCode, permissions, grantResults
+    )
+
+    private companion object {
+        /**
+         * Because the scout list fragment is too beefy and takes too long to load, we have to
+         * introduce an artificial delay so the animation appears smooth. In the end, this feels
+         * faster than the stuttery mess. As performance is improved, this number should be lowered
+         * and eventually removed.
+         */
+        const val ARTIFICIAL_POSTPONE_DELAY = 100L
+    }
 }

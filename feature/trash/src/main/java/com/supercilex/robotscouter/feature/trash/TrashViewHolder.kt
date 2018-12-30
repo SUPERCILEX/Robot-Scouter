@@ -53,7 +53,7 @@ internal class TrashViewHolder(
             else -> error("Unsupported type: $type")
         }.let {
             // Getting it from the cache is faster and we don't really care about up-to-date-ness
-            it.get(Source.CACHE).logFailures(it, trash).addOnCompleteListener(Listener(this, it))
+            it.get(Source.CACHE).addOnCompleteListener(Listener(this, it))
         }
     }
 

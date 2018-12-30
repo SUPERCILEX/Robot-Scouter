@@ -22,12 +22,12 @@ open class CardListHelper(
         viewHolder.setBackground(position)
 
         // Update the items above and below to ensure the correct corner configuration is shown
-        recyclerView.post {
-            val abovePos = position - 1
-            val belowPos = position + 1
-
-            recyclerView.findViewHolderForLayoutPosition(abovePos)?.setBackground(abovePos)
-            recyclerView.findViewHolderForLayoutPosition(belowPos)?.setBackground(belowPos)
+        val rv = recyclerView
+        val abovePos = position - 1
+        val belowPos = position + 1
+        rv.post {
+            rv.findViewHolderForLayoutPosition(abovePos)?.setBackground(abovePos)
+            rv.findViewHolderForLayoutPosition(belowPos)?.setBackground(belowPos)
         }
     }
 

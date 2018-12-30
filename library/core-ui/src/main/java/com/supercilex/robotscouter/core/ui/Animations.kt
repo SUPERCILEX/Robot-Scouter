@@ -21,6 +21,9 @@ import com.supercilex.robotscouter.core.RobotScouter
 val shortAnimationDuration by lazy {
     RobotScouter.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 }
+val transitionAnimationDuration by lazy {
+    RobotScouter.resources.getInteger(R.integer.transition_anim_time).toLong()
+}
 val mediumAnimationDuration by lazy {
     RobotScouter.resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
 }

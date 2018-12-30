@@ -69,13 +69,15 @@ val prefs = LifecycleAwareFirestoreArray(userPrefsQueryGenerator, prefParser)
 
 private val updateLastLogin = object : Runnable {
     override fun run() {
-        if (isSignedIn) {
-            val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
-            userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
-        }
+        if (isSignedIn) GlobalScope.async { update() }.logFailures()
 
         mainHandler.removeCallbacks(this)
         mainHandler.postDelayed(this, TimeUnit.DAYS.toMillis(1))
+    }
+
+    private fun update() {
+        val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
+        userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
     }
 }
 
@@ -144,7 +146,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
 private val dbCacheLock = Mutex()
 
 fun initDatabase() {
-    FirebaseFirestore.setLoggingEnabled(BuildConfig.DEBUG)
+    if (BuildConfig.DEBUG) FirebaseFirestore.setLoggingEnabled(true)
     teams.addChangeEventListener(teamTemplateIdUpdater)
     teams.addChangeEventListener(teamUpdater)
 

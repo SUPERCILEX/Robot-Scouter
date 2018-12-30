@@ -21,17 +21,13 @@ import com.supercilex.robotscouter.shared.scouting.CounterValueDialog
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
 import kotlinx.android.synthetic.main.scout_base_counter.*
+import java.text.NumberFormat
+import java.util.Locale
 
 open class CounterViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.Number, Long>(itemView),
         View.OnClickListener, View.OnLongClickListener {
-    protected open val valueWithoutUnit: (TextView) -> String = {
-        val unit: String? = metric.unit
-        val count = it.text.toString()
-        if (unit.isNullOrBlank()) count else count.removeSuffix(unit)
-    }
-
     private var count = count1
     private var tmpCount = count2
 
@@ -51,7 +47,7 @@ open class CounterViewHolder(
     @CallSuper
     override fun onClick(v: View) {
         val id = v.id
-        var value = valueWithoutUnit(count).toLong()
+        var value = metric.value
 
         val up = if (id == R.id.increment) {
             metric.update(++value)
@@ -138,13 +134,17 @@ open class CounterViewHolder(
     }
 
     protected open fun bindValue(count: TextView) {
-        val value = metric.value.toString()
+        val value = countFormat.format(metric.value)
         val unit: String? = metric.unit
         count.text = if (unit.isNullOrBlank()) value else value + unit
     }
 
     override fun onLongClick(v: View): Boolean {
-        CounterValueDialog.show(fragmentManager, metric.ref, valueWithoutUnit(count))
+        CounterValueDialog.show(fragmentManager, metric.ref, metric.value.toString())
         return true
+    }
+
+    protected companion object {
+        val countFormat: NumberFormat = NumberFormat.getInstance(Locale.US)
     }
 }

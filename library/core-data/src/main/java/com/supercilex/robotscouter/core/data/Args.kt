@@ -26,13 +26,9 @@ fun Team.toBundle() = bundleOf(TEAM_KEY to this@toBundle)
 
 fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(teams))
 
-fun List<Team>.toBundle() = bundleOf(TEAMS_KEY to ArrayList(this@toBundle))
-
 fun Bundle.getTeam(): Team = checkNotNull(getParcelable(TEAM_KEY))
 
 fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra(TEAMS_KEY)
-
-fun Bundle.getTeamList(): List<Team> = checkNotNull(getParcelableArrayList(TEAMS_KEY))
 
 fun getTabIdBundle(key: String?) = bundleOf(TAB_KEY to key)
 

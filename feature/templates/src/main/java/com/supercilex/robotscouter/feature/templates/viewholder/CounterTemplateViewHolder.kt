@@ -17,14 +17,12 @@ import com.supercilex.robotscouter.shared.scouting.viewholder.CounterViewHolder
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
 import kotlinx.android.synthetic.main.scout_template_counter.*
 import org.jetbrains.anko.find
-import java.util.Locale
 import com.supercilex.robotscouter.R as RC
 
 internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
         MetricTemplateViewHolder<Metric.Number, Long> {
     override val reorderView: ImageView by unsafeLazy { reorder }
     override val nameEditor = name as EditText
-    override val valueWithoutUnit: (TextView) -> String = { it.text.toString() }
 
     init {
         init()
@@ -54,7 +52,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
     }
 
     override fun bindValue(count: TextView) {
-        count.text = String.format(Locale.getDefault(), "%d", metric.value)
+        count.text = countFormat.format(metric.value)
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
