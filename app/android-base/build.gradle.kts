@@ -7,8 +7,7 @@ plugins {
     id("io.fabric")
     Config.Plugins.run { publishing }
 }
-// TODO see below
-//if (isReleaseBuild) apply(plugin = "com.google.firebase.firebase-perf")
+if (isReleaseBuild) apply(plugin = "com.google.firebase.firebase-perf")
 crashlytics.alwaysUpdateBuildId = isReleaseBuild
 
 android {
@@ -87,8 +86,7 @@ dependencies {
     implementation(Config.Libs.PlayServices.playCore)
     implementation(Config.Libs.Misc.billing)
 
-    // TODO re-enable after https://github.com/firebase/firebase-android-sdk/issues/183
-//    implementation(Config.Libs.Firebase.perf)
+    implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)
 }
 
