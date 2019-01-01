@@ -42,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="name, new_item" />
+        app:constraint_referenced_ids="name, newItem" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/items"
