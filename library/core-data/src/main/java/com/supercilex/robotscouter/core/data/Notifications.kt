@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.RobotScouter
@@ -35,9 +36,19 @@ const val EXPORT_IN_PROGRESS_CHANNEL = "export_in_progress"
  */
 const val SAFE_NOTIFICATION_RATE_LIMIT_IN_MILLIS = 200L
 
-val notificationManager by lazy { checkNotNull(RobotScouter.getSystemService<NotificationManager>()) }
+val notificationManager by lazy { NotificationManagerCompat.from(RobotScouter) }
+private val systemNotificationManager by lazy {
+    checkNotNull(RobotScouter.getSystemService<NotificationManager>())
+}
 
 fun initNotifications() {
+    logNotificationsEnabled(
+            notificationManager.areNotificationsEnabled(),
+            notificationManager.notificationChannels.associate {
+                it.id to (it.importance != NotificationManagerCompat.IMPORTANCE_NONE)
+            }
+    )
+
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
     notificationManager.createNotificationChannelGroups(
@@ -176,7 +187,7 @@ class FilteringNotificationManager {
 class NotificationIntentForwarder : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notificationManager.apply {
+        systemNotificationManager.apply {
             val notificationId = intent.getIntExtra(KEY_NOTIFICATION_ID, -1)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

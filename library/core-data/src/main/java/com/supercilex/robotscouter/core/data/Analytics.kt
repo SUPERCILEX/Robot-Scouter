@@ -77,6 +77,14 @@ fun initAnalytics() {
     }
 }
 
+internal fun logNotificationsEnabled(
+        enabled: Boolean,
+        channels: Map<String, Boolean>
+) = analytics.logEvent(
+        "notifications_enabled_status",
+        bundleOf("enabled" to enabled, *channels.map { it.toPair() }.toTypedArray())
+)
+
 fun Team.logSelect() = analytics.logEvent(
         "select_team",
         bundleOf(
