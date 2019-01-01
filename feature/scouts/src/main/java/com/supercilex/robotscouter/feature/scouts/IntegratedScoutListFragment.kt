@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.postDelayed
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.appbar.AppBarLayout
 import com.supercilex.robotscouter.Bridge
@@ -26,6 +27,7 @@ import com.supercilex.robotscouter.R as RC
 @Bridge
 internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
+    private val drawer by unsafeLazy { requireActivity().find<DrawerLayout>(RC.id.drawerLayout) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +58,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
         if (sharedElementEnterTransition == null) {
             mainHandler.post { appBar.setExpanded(false) }
         }
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 
     override fun startPostponedEnterTransition() {
@@ -97,8 +100,9 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        appBar.setExpanded(true)
         sharedElementEnterTransition = null
+        appBar.setExpanded(true)
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
     }
 
     override fun onStop() {
