@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.core.data.model.restoreMetrics
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
@@ -38,7 +39,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
     }
     override val dataId by unsafeLazy { checkNotNull(metricsRef.parent).id }
 
-    private val itemTouchCallback by unsafeLazy {
+    private val itemTouchCallback by LifecycleAwareLazy {
         TemplateItemTouchCallback<Metric<*>>(requireView())
     }
 

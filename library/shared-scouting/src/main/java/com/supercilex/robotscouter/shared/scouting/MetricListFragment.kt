@@ -6,10 +6,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
-import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.ui.FragmentBase
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.SavedStateAdapter
-import com.supercilex.robotscouter.core.unsafeLazy
 import org.jetbrains.anko.support.v4.find
 
 abstract class MetricListFragment : FragmentBase() {
@@ -17,8 +16,8 @@ abstract class MetricListFragment : FragmentBase() {
     abstract val metricsRef: CollectionReference
     abstract val dataId: String
 
-    protected val metricsView by unsafeLazy { find<RecyclerView>(R.id.metricsView) }
-    protected var adapter: SavedStateAdapter<*, *> by LateinitVal()
+    protected val metricsView by LifecycleAwareLazy { find<RecyclerView>(R.id.metricsView) }
+    protected var adapter: SavedStateAdapter<*, *> by LifecycleAwareLazy()
         private set
 
     /**
