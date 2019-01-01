@@ -141,6 +141,12 @@ private suspend fun toggleTemplateTrashStatus(id: String) {
     val oppositeDate = Date(-checkNotNull(snapshot.getDate(ownerField)).time)
     val isTrash = oppositeDate.time <= 0
 
+    if (!isTrash) {
+        FirebaseAppIndex.getInstance()
+                .update(getTemplateIndexable(id, "Template"))
+                .logFailures()
+    }
+
     firestoreBatch {
         update(ref, ownerField, oppositeDate)
         if (isTrash) {
