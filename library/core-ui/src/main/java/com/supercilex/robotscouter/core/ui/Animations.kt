@@ -7,6 +7,7 @@ import android.animation.ValueAnimator
 import android.os.Build
 import android.view.View
 import android.view.ViewAnimationUtils
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
@@ -32,11 +33,18 @@ fun animateColorChange(
         @ColorRes from: Int,
         @ColorRes to: Int,
         listener: ValueAnimator.AnimatorUpdateListener
+) = animateRawColorChange(
+        ContextCompat.getColor(RobotScouter, from),
+        ContextCompat.getColor(RobotScouter, to),
+        listener
+)
+
+fun animateRawColorChange(
+        @ColorInt from: Int,
+        @ColorInt to: Int,
+        listener: ValueAnimator.AnimatorUpdateListener
 ) {
-    ValueAnimator.ofObject(
-            ArgbEvaluator(),
-            ContextCompat.getColor(RobotScouter, from),
-            ContextCompat.getColor(RobotScouter, to)).apply {
+    ValueAnimator.ofObject(ArgbEvaluator(), from, to).apply {
         addUpdateListener(listener)
         start()
     }

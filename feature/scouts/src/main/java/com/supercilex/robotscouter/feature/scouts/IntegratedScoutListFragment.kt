@@ -1,5 +1,7 @@
 package com.supercilex.robotscouter.feature.scouts
 
+import android.animation.ValueAnimator
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
@@ -18,6 +21,8 @@ import com.supercilex.robotscouter.IntegratedScoutListFragmentCompanion
 import com.supercilex.robotscouter.ScoutListFragmentCompanionBase.Companion.TAG
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.data.mainHandler
+import com.supercilex.robotscouter.core.ui.animateRawColorChange
+import com.supercilex.robotscouter.core.ui.colorPrimaryDark
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -68,8 +73,22 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
         }
     }
 
-    override fun newViewModel(savedInstanceState: Bundle?) = AppBarViewHolderBase(
-            this, savedInstanceState, dataHolder.teamListener, onScoutingReadyTask.task)
+    override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
+            this@IntegratedScoutListFragment,
+            savedInstanceState,
+            dataHolder.teamListener,
+            onScoutingReadyTask.task
+    ) {
+        override fun bind() {
+            super.bind()
+            updateStatusBarColor(colorPrimaryDark)
+        }
+
+        override fun updateScrim(color: Int) {
+            super.updateScrim(color)
+            updateStatusBarColor(color)
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -103,6 +122,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
         sharedElementEnterTransition = null
         appBar.setExpanded(true)
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED)
+        updateStatusBarColor(colorPrimaryDark)
     }
 
     override fun onStop() {
@@ -116,6 +136,22 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
 
     private fun removeFragment() {
         requireFragmentManager().popBackStack()
+    }
+
+    private fun updateStatusBarColor(@ColorInt color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window = activity?.window ?: return
+            val current = window.statusBarColor
+            if (color == current) return
+
+            animateRawColorChange(
+                    current,
+                    color,
+                    ValueAnimator.AnimatorUpdateListener {
+                        window.statusBarColor = it.animatedValue as Int
+                    }
+            )
+        }
     }
 
     companion object : IntegratedScoutListFragmentCompanion {

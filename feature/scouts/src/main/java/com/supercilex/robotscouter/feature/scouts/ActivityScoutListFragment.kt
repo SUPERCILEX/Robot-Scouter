@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.model.Team
+import com.supercilex.robotscouter.core.ui.colorPrimary
 import com.supercilex.robotscouter.shared.handleUpNavigation
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import com.supercilex.robotscouter.R as RC
@@ -67,7 +67,7 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
         override fun bind() {
             super.bind()
             checkNotNull((activity as AppCompatActivity).supportActionBar).title = team.toString()
-            setTaskDescription(ContextCompat.getColor(requireContext(), RC.color.colorPrimary))
+            setTaskDescription(colorPrimary)
         }
 
         override fun updateScrim(color: Int) {

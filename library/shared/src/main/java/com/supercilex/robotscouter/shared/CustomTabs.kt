@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.model.Team
+import com.supercilex.robotscouter.core.ui.colorPrimary
 
 fun Team.launchTba(context: Context) =
         launchUrl(context, "http://www.thebluealliance.com/team/$number".toUri())
@@ -15,7 +15,7 @@ fun Team.launchTba(context: Context) =
 fun Team.launchWebsite(context: Context) = launchUrl(context, requireNotNull(website).toUri())
 
 fun launchUrl(context: Context, url: Uri) = CustomTabsIntent.Builder()
-        .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        .setToolbarColor(colorPrimary)
         .setShowTitle(true)
         .addDefaultShareMenuItem()
         .enableUrlBarHiding()

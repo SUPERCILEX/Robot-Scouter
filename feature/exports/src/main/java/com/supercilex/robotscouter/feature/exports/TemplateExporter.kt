@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.PluralsRes
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -32,6 +31,7 @@ import com.supercilex.robotscouter.core.model.MetricType
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
+import com.supercilex.robotscouter.core.ui.colorPrimary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -156,7 +156,7 @@ internal class TemplateExporter(
                                 viewIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT)
                 )
-                .setColor(ContextCompat.getColor(RobotScouter, RC.color.colorPrimary))
+                .setColor(colorPrimary)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
     }

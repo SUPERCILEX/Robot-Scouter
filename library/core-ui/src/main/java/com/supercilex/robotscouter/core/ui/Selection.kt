@@ -58,7 +58,7 @@ abstract class MenuHelperBase<T>(
         toolbar.setNavigationOnClickListener(this)
 
         // Initialize ColorDrawables so no-ops can be performed
-        toolbar.setBackgroundColor(ContextCompat.getColor(activity, R.color.colorPrimary))
+        toolbar.setBackgroundColor(colorPrimary)
     }
 
     final override fun onSelectionChanged() {
@@ -178,8 +178,7 @@ abstract class ToolbarMenuHelperBase<T>(
 ) : MenuHelperBase<T>(activity, tracker) {
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.window.statusBarColor =
-                    ContextCompat.getColor(activity, R.color.colorPrimaryDark)
+            activity.window.statusBarColor = colorPrimaryDark
         }
     }
 
@@ -200,8 +199,7 @@ abstract class DrawerMenuHelperBase<T>(
     private val drawer = activity.find<DrawerLayout>(R.id.drawerLayout)
 
     init {
-        drawer.setStatusBarBackgroundColor(
-                ContextCompat.getColor(activity, R.color.colorPrimaryDark))
+        drawer.setStatusBarBackgroundColor(colorPrimaryDark)
     }
 
     override fun shouldUpdateStatusBarColor(new: Int) =

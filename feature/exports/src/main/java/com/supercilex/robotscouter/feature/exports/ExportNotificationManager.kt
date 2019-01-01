@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.core.LateinitVal
@@ -15,6 +14,7 @@ import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.notificationManager
 import com.supercilex.robotscouter.core.model.Team
+import com.supercilex.robotscouter.core.ui.colorPrimary
 import kotlinx.coroutines.CancellationException
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
@@ -32,14 +32,14 @@ internal class ExportNotificationManager(private val service: ExportService) {
                 .setGroup(transientGroupId.toString())
                 .setGroupSummary(true)
                 .setContentTitle(service.getString(R.string.export_overall_progress_title))
-                .setColor(ContextCompat.getColor(service, RC.color.colorPrimary))
+                .setColor(colorPrimary)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
     private val exportNotification: NotificationCompat.Builder
         get() = NotificationCompat.Builder(service, EXPORT_IN_PROGRESS_CHANNEL)
                 .setGroup(transientGroupId.toString())
                 .setContentTitle(service.getString(R.string.export_progress_title))
                 .setSmallIcon(android.R.drawable.stat_sys_upload)
-                .setColor(ContextCompat.getColor(service, RC.color.colorPrimary))
+                .setColor(colorPrimary)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 
