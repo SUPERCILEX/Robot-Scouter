@@ -86,8 +86,9 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable,
 abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
     override fun onResume() {
         super.onResume()
+        val screenName = javaClass.simpleName
         FirebaseAnalytics.getInstance(requireContext())
-                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), screenName, screenName)
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -115,7 +116,8 @@ abstract class FragmentBase : Fragment(), OnActivityResult, Saveable {
 abstract class PreferenceFragmentBase : PreferenceFragmentCompat(), OnActivityResult, Saveable {
     override fun onResume() {
         super.onResume()
+        val screenName = javaClass.simpleName
         FirebaseAnalytics.getInstance(requireContext())
-                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), screenName, screenName)
     }
 }

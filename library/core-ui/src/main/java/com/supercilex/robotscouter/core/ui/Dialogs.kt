@@ -35,8 +35,9 @@ abstract class DialogFragmentBase : DialogFragment() {
 
     override fun onResume() {
         super.onResume()
+        val screenName = javaClass.simpleName
         FirebaseAnalytics.getInstance(requireContext())
-                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), screenName, screenName)
     }
 }
 
@@ -74,8 +75,9 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
 
     override fun onResume() {
         super.onResume()
+        val screenName = javaClass.simpleName
         FirebaseAnalytics.getInstance(requireContext())
-                .setCurrentScreen(requireActivity(), null, javaClass.simpleName)
+                .setCurrentScreen(requireActivity(), screenName, screenName)
     }
 }
 
