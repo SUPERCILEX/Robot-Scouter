@@ -19,7 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.activitiesRegistry
@@ -27,6 +26,7 @@ import com.supercilex.robotscouter.core.data.nightMode
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.logCrashLog
 import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.shared.client.idpSignOut
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -55,7 +55,7 @@ fun initUi() {
                 // all associated data, but the user was still using Robot Scouter somehow.
                 if (it.message?.contains("USER_NOT_FOUND") == true) {
                     GlobalScope.async {
-                        AuthUI.getInstance().signOut(RobotScouter).await()
+                        idpSignOut()
                         onSignedIn()
                         RobotScouter.runOnUiThread {
                             longToast("User account deleted due to inactivity. " +

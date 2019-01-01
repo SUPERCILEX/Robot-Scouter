@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.shared.client
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import com.facebook.FacebookSdk
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.util.GoogleApiUtils
 import com.google.firebase.auth.FirebaseAuth
@@ -11,11 +12,13 @@ import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.shared.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.asTask
+import kotlinx.coroutines.withContext
 
 const val RC_SIGN_IN = 100
 
@@ -40,6 +43,7 @@ private val signInBuilder
             .setAvailableProviders(if (isInTestMode) {
                 listOf(AuthUI.IdpConfig.GoogleBuilder().build())
             } else {
+                initFacebook()
                 allProviders
             })
             .setTheme(R.style.RobotScouter)
@@ -75,4 +79,16 @@ fun Fragment.startLinkingSignIn() {
                         RC_SIGN_IN
                 )
             }
+}
+
+suspend fun idpSignOut() {
+    // Move to background since signOut sometimes does disk I/O
+    withContext(Dispatchers.IO) {
+        initFacebook()
+        AuthUI.getInstance().signOut(RobotScouter).await()
+    }
+}
+
+private fun initFacebook() {
+    @Suppress("DEPRECATION") FacebookSdk.sdkInitialize(RobotScouter)
 }

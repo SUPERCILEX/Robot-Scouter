@@ -81,6 +81,11 @@
 
         </activity>
 
+        <provider
+            android:name="com.facebook.internal.FacebookInitProvider"
+            android:authorities="com.supercilex.robotscouter.debug.FacebookInitProvider"
+            tools:node="remove" />
+
     </application>
 
 </manifest>

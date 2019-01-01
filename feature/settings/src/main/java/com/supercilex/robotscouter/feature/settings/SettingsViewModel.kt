@@ -3,16 +3,14 @@ package com.supercilex.robotscouter.feature.settings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bumptech.glide.Glide
-import com.firebase.ui.auth.AuthUI
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.cleanup
+import com.supercilex.robotscouter.shared.client.idpSignOut
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 internal class SettingsViewModel : ViewModelBase<Unit?>() {
     private val _signOutListener = MutableLiveData<Any?>()
@@ -26,10 +24,7 @@ internal class SettingsViewModel : ViewModelBase<Unit?>() {
                 cleanup()
                 Glide.get(RobotScouter).clearMemory()
 
-                // Move to background since signOut sometimes does disk I/O
-                withContext(Dispatchers.Default) {
-                    AuthUI.getInstance().signOut(RobotScouter).await()
-                }
+                idpSignOut()
                 _signOutListener.value = null
             } catch (e: Exception) {
                 _signOutListener.value = e
