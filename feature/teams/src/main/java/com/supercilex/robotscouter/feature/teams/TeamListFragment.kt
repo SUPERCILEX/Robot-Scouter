@@ -19,6 +19,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.Refreshable
@@ -61,6 +62,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     private val tutorialHelper by viewModels<TutorialHelper>()
 
     private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
+    private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
     private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
         savedSelection = MutableSelection<String>().apply { it.copySelection(this) }
@@ -127,10 +129,17 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
                 addObserver(SnackbarSelectionObserver(view, this, adapter.snapshots))
                 addObserver(object : AllChangesSelectionObserver<String>() {
                     override fun onItemStateChanged(key: String, selected: Boolean) {
-                        if (selection.size() <= 1) { // First item added or last one removed
+                        val notify = {
                             teamsView.notifyItemsNoChangeAnimation(
                                     // Prevent recursive loop
                                     SelectionTracker.SELECTION_CHANGED_MARKER)
+                        }
+
+                        if (selection.size() == 0 && !selected) { // Last item removed
+                            notify()
+                        } else if (selection.size() == 1 && selected) { // First item added
+                            notify()
+                            appBar.setExpanded(true)
                         }
                     }
                 })
