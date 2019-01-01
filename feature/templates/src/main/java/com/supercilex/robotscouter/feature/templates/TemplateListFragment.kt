@@ -108,8 +108,11 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
 
     override fun onDestroyView() {
         super.onDestroyView()
-        fab.hide()
-        fab.isVisible = false // TODO hack: don't animate
+        fab.apply {
+            setOnClickListener(null)
+            hide()
+            isVisible = false // TODO hack: don't animate
+        }
     }
 
     override fun handleArgs(args: Bundle) = handleArgs(args, null)
