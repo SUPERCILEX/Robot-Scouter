@@ -13,7 +13,6 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.colorPrimary
 import com.supercilex.robotscouter.shared.handleUpNavigation
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
-import com.supercilex.robotscouter.R as RC
 
 internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
