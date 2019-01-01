@@ -4,9 +4,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.selection.SelectionTracker
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.supercilex.robotscouter.DrawerToggler
@@ -23,16 +26,25 @@ import com.supercilex.robotscouter.R as RC
 
 internal class TeamMenuHelper(
         private val fragment: TeamListFragment,
-        private val tracker: SelectionTracker<String>
-) : DrawerMenuHelperBase<String>(fragment.requireActivity() as AppCompatActivity, tracker) {
-    private val activity = fragment.requireActivity() as AppCompatActivity
-
+        private val tracker: SelectionTracker<String>,
+        private val activity: AppCompatActivity = fragment.requireActivity() as AppCompatActivity
+) : DrawerMenuHelperBase<String>(activity, tracker) {
     private val fab = activity.find<FloatingActionButton>(RC.id.fab)
     private val drawerLayout = activity.find<DrawerLayout>(RC.id.drawerLayout)
 
     private val teamMenuItems = mutableListOf<MenuItem>()
     private val teamsMenuItems = mutableListOf<MenuItem>()
     private val normalMenuItems = mutableListOf<MenuItem>()
+
+    init {
+        fragment.viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                // The SelectionTracker holds a reference to some views somewhere down the stack.
+                // Make sure to clean up after ourselves.
+                activity.find<Toolbar>(RC.id.toolbar).setNavigationOnClickListener(null)
+            }
+        })
+    }
 
     override fun handleNavigationClick(hasSelection: Boolean) {
         if (!hasSelection) drawerLayout.openDrawer(GravityCompat.START)
