@@ -11,6 +11,8 @@ import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.
 import com.supercilex.robotscouter.core.model.Team
 import org.jetbrains.anko.runOnUiThread
 import retrofit2.Response
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.Calendar
 
 internal class TeamDetailsDownloader private constructor(
@@ -59,7 +61,15 @@ internal class TeamDetailsDownloader private constructor(
                 )
                 else -> Unsupported(type)
             }
-        }.filterNot { it is Unsupported }.sortedDescending().firstOrNull()
+        }.filterNot { it is Unsupported }.sortedDescending().firstOrNull { (url) ->
+            try {
+                val connection = URL(url).openConnection() as HttpURLConnection
+                connection.requestMethod = "HEAD" // Don't download body
+                connection.responseCode == 200
+            } catch (e: Exception) {
+                false
+            }
+        }
 
         if (media != null) {
             setAndCacheMedia(media.url, year)
@@ -81,6 +91,8 @@ internal class TeamDetailsDownloader private constructor(
     }
 
     private sealed class Media(val url: String, private val importance: Int) : Comparable<Media> {
+        operator fun component1() = url
+
         override fun compareTo(other: Media) = importance.compareTo(other.importance)
 
         override fun equals(other: Any?): Boolean {
