@@ -14,6 +14,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.observe
 import androidx.transition.TransitionInflater
@@ -112,7 +113,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
 
             appBar.setExpanded(true)
-            manager.commit {
+            manager.commitNow {
                 val newFragment = manager.destTagToFragment(newTag)
 
                 setCustomAnimations(R.anim.pop_fade_in, R.anim.fade_out)
