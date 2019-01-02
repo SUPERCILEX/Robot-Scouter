@@ -42,7 +42,8 @@
                 style="@style/RobotScouter.List"
                 android:layout_height="wrap_content"
                 android:background="@color/notice_grey"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
