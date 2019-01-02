@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.core.ui
 
 import android.animation.ValueAnimator
-import android.annotation.TargetApi
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -144,31 +143,27 @@ abstract class MenuHelperBase<T>(
             })
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            @ColorRes val oldColorPrimaryDark =
-                    if (normal) R.color.selected_status_bar else R.color.colorPrimaryDark
-            @ColorRes val newColorPrimaryDark =
-                    if (normal) R.color.colorPrimaryDark else R.color.selected_status_bar
+        @ColorRes val oldColorPrimaryDark =
+                if (normal) R.color.selected_status_bar else R.color.colorPrimaryDark
+        @ColorRes val newColorPrimaryDark =
+                if (normal) R.color.colorPrimaryDark else R.color.selected_status_bar
 
-            if (shouldUpdateStatusBarColor(newColorPrimaryDark)) {
-                animateColorChange(
-                        oldColorPrimaryDark,
-                        newColorPrimaryDark,
-                        ValueAnimator.AnimatorUpdateListener {
-                            updateStatusBarColor(it.animatedValue as Int)
-                        }
-                )
-            }
+        if (shouldUpdateStatusBarColor(newColorPrimaryDark)) {
+            animateColorChange(
+                    oldColorPrimaryDark,
+                    newColorPrimaryDark,
+                    ValueAnimator.AnimatorUpdateListener {
+                        updateStatusBarColor(it.animatedValue as Int)
+                    }
+            )
         }
     }
 
     internal fun Drawable?.shouldUpdate(@ColorRes new: Int) =
             this !is ColorDrawable || color != ContextCompat.getColor(activity, new)
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     internal abstract fun shouldUpdateStatusBarColor(@ColorRes new: Int): Boolean
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     internal abstract fun updateStatusBarColor(@ColorInt value: Int)
 }
 
@@ -182,13 +177,18 @@ abstract class ToolbarMenuHelperBase<T>(
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun shouldUpdateStatusBarColor(new: Int): Boolean =
+    override fun shouldUpdateStatusBarColor(new: Int): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity.window.statusBarColor != ContextCompat.getColor(activity, new)
+        } else {
+            false
+        }
+    }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun updateStatusBarColor(value: Int) {
-        activity.window.statusBarColor = value
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.window.statusBarColor = value
+        }
     }
 }
 
