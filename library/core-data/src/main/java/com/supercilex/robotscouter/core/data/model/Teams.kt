@@ -120,7 +120,7 @@ internal fun Team.add() {
 
 internal fun Team.update(newTeam: Team) {
     if (this == newTeam) {
-        val timestamp = getCurrentTimestamp()
+        val timestamp = Date()
         ref.update(FIRESTORE_TIMESTAMP, timestamp).logFailures(ref, timestamp)
         return
     }
@@ -148,10 +148,8 @@ internal fun Team.updateMedia(newTeam: Team) {
 }
 
 fun Team.forceUpdate(refresh: Boolean = false) {
-    firestoreBatch {
-        set(ref, this@forceUpdate)
-        if (refresh) update(ref, FIRESTORE_TIMESTAMP, Date(0))
-    }.logFailures(ref, this)
+    timestamp = if (refresh) Date(0) else Date()
+    ref.set(this).logFailures(ref, this)
 }
 
 suspend fun List<DocumentReference>.shareTeams(
