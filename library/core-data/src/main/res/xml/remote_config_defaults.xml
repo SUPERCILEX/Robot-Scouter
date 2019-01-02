@@ -13,4 +13,9 @@
         <key>show_rating_dialog</key>
         <value>true</value>
     </entry>
+
+    <entry>
+        <key>enable_auto_scout</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

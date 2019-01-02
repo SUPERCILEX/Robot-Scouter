@@ -24,6 +24,7 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
 import com.supercilex.robotscouter.core.data.TEMPLATE_ARGS_KEY
 import com.supercilex.robotscouter.core.data.asLiveData
+import com.supercilex.robotscouter.core.data.enableAutoScout
 import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.ioPerms
 import com.supercilex.robotscouter.core.data.isSignedIn
@@ -91,6 +92,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
         drawer.setNavigationItemSelectedListener(this)
+        if (enableAutoScout) bottomNavigation.menu.findItem(R.id.autoScout).isVisible = true
         bottomNavigation.setOnNavigationItemSelectedListener listener@{
             val manager = supportFragmentManager
 
