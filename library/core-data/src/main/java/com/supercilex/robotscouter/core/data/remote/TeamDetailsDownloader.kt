@@ -59,7 +59,7 @@ internal class TeamDetailsDownloader private constructor(
                 )
                 else -> Unsupported(type)
             }
-        }.filterNot { it is Unsupported }.sorted().firstOrNull()
+        }.filterNot { it is Unsupported }.sortedDescending().firstOrNull()
 
         if (media != null) {
             setAndCacheMedia(media.url, year)
@@ -81,7 +81,7 @@ internal class TeamDetailsDownloader private constructor(
     }
 
     private sealed class Media(val url: String, private val importance: Int) : Comparable<Media> {
-        override fun compareTo(other: Media) = other.importance.compareTo(importance)
+        override fun compareTo(other: Media) = importance.compareTo(other.importance)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
