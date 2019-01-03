@@ -1,3 +1,3 @@
-Robot Scouter v2.3 adds more powerful spreadsheets and JSON exports for custom data analysis. In addition, the usual bug fixes and performance improvements were made.
+Robot Scouter v3.0 is out!!! v3.0 completely reworks Robot Scouter's user experience, supports trashing teams and templates instead of permanently deleting them, includes rewritten internals to make future development easier, and fixes swaths of bugs.
 
 For more details, see the full release notes: https://github.com/SUPERCILEX/Robot-Scouter/releases.
