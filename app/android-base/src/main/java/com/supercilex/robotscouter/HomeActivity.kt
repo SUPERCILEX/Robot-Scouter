@@ -1,12 +1,14 @@
 package com.supercilex.robotscouter
 
 import android.content.Intent
+import android.graphics.Outline
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewOutlineProvider
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -129,6 +131,18 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
         prefs.asLiveData().observe(this) {
             bottomNavigation.menu.findItem(R.id.templates).isEnabled = isTemplateEditingAllowed
+        }
+
+        if (isInTabletMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            scoutList.outlineProvider = object : ViewOutlineProvider() {
+                private val padding = resources.getDimensionPixelSize(R.dimen.spacing_mini)
+
+                override fun getOutline(view: View, outline: Outline) {
+                    // Without negative starting values, the outline will show up on top of the
+                    // toolbar.
+                    outline.setRect(-bottomNavigation.width - 100, -100, padding, view.height)
+                }
+            }
         }
 
         handleModuleInstalls(moduleInstallProgress)

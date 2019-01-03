@@ -28,21 +28,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:menu="@menu/home_bottom_navigation" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:elevation="@dimen/card_elevation"
-            android:outlineProvider="bounds"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/padding"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:ignore="UnusedAttribute" />
-
         <FrameLayout
             android:id="@+id/scoutList"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:elevation="@dimen/card_elevation"
             android:keyboardNavigationCluster="true"
             app:layout_constraintStart_toEndOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,14 +58,6 @@
             android:layout_height="0dp"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.33" />
-
-        <View
-            android:id="@+id/padding"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/card_elevation"
-            android:layout_marginLeft="@dimen/card_elevation"
-            app:layout_constraintStart_toEndOf="@id/guideline" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
