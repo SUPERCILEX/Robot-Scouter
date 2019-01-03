@@ -46,7 +46,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.4.0-alpha09"
+        val android = "com.android.tools.build:gradle:3.4.0-alpha10"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
