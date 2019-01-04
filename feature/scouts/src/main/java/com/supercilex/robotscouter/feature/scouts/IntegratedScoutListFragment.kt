@@ -109,9 +109,8 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_move_window) {
-            val bundle = bundle
-            removeFragment()
             startActivity(ScoutListActivity.createIntent(bundle))
+            removeFragment()
             return true
         }
         return super.onOptionsItemSelected(item)

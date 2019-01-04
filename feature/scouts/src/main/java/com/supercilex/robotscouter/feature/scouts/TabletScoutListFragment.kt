@@ -1,6 +1,9 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import androidx.fragment.app.commit
@@ -54,6 +57,20 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         noContentHint?.animatePopReveal(false)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.integrated_scout_list_menu, viewHolder.toolbar.menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_move_window) {
+            startActivity(ScoutListActivity.createIntent(bundle))
+            removeFragment()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {
