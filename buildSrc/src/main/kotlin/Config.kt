@@ -1,4 +1,7 @@
 import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.artifacts.repositories.RepositoryContentDescriptor
+import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.version
 import org.gradle.plugin.use.PluginDependenciesSpec
 
@@ -7,33 +10,30 @@ object Config {
     private const val kotlinVersion = "1.3.30-dev-482"
 
     fun RepositoryHandler.deps() {
-        maven {
-            setUrl("https://maven.google.com")
+        fun MavenArtifactRepository.ensureGroups(
+                block: RepositoryContentDescriptor.() -> Unit
+        ) = content(block)
 
-            content {
-                includeGroupByRegex("com\\.android\\..*")
-                includeGroupByRegex("com\\.google\\..*")
-                includeGroupByRegex("androidx\\..*")
+        google().ensureGroups {
+            includeGroupByRegex("com\\.android\\..*")
+            includeGroupByRegex("com\\.google\\..*")
+            includeGroupByRegex("androidx\\..*")
 
-                includeGroup("android.arch.work")
-                includeGroup("com.crashlytics.sdk.android")
-                includeGroup("io.fabric.sdk.android")
-            }
+            includeGroup("android.arch.work")
+            includeGroup("com.crashlytics.sdk.android")
+            includeGroup("io.fabric.sdk.android")
         }
 
-        maven {
-            setUrl("https://dl.bintray.com/kotlin/kotlin-dev/")
-            content { includeGroup("org.jetbrains.kotlin") }
+        maven("https://dl.bintray.com/kotlin/kotlin-dev/").ensureGroups {
+            includeGroup("org.jetbrains.kotlin")
         }
 
-        maven {
-            setUrl("https://maven.fabric.io/public")
-            content { includeGroup("io.fabric.tools") }
+        maven("https://maven.fabric.io/public").ensureGroups {
+            includeGroup("io.fabric.tools")
         }
 
-        maven {
-            setUrl("https://jitpack.io")
-            content { includeGroupByRegex("com.github.SUPERCILEX\\..*") }
+        maven("https://jitpack.io").ensureGroups {
+            includeGroupByRegex("com.github.SUPERCILEX\\..*")
         }
 
         jcenter()
@@ -56,7 +56,8 @@ object Config {
         val ktlint = "com.github.shyiko:ktlint:0.29.0"
 
         val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.0.0"
-        val PluginDependenciesSpec.versionChecker get() = id("com.github.ben-manes.versions") version "0.20.0"
+        val PluginDependenciesSpec.versionChecker
+            get() = id("com.github.ben-manes.versions") version "0.20.0"
     }
 
     object Libs {
