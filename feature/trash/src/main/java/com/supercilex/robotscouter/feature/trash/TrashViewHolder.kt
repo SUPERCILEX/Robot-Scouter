@@ -31,6 +31,9 @@ internal class TrashViewHolder(
     private val loadingName: String by unsafeLazy {
         itemView.context.getString(R.string.trash_loading_item)
     }
+    private val deletingName: String by unsafeLazy {
+        itemView.context.getString(R.string.trash_deleting_item)
+    }
 
     lateinit var trash: Trash
 
@@ -79,6 +82,7 @@ internal class TrashViewHolder(
             }
 
             val snapshot = checkNotNull(task.result)
+            if (!snapshot.exists()) holder.name.text = holder.deletingName
             if (snapshot.id != trash.id) return // Holder might have changed
 
             holder.name.text = when (val type = trash.type) {

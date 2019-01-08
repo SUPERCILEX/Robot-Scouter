@@ -29,6 +29,7 @@
 
     <string name="trash_unnamed_item">Unnamed</string>
     <string name="trash_loading_item">Loading…</string>
+    <string name="trash_deleting_item">Deleting…</string>
 
     <string name="accessibility_trash_type">Trash item type</string>
 </resources>
