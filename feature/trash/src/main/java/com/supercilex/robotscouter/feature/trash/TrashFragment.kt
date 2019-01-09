@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -64,8 +65,10 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
         }
 
         trashList.layoutManager = LinearLayoutManager(requireContext())
-        trashList.addItemDecoration(
-                DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        divider.setDrawable(checkNotNull(AppCompatResources.getDrawable(
+                requireContext(), R.drawable.trash_item_divider)))
+        trashList.addItemDecoration(divider)
 
         val adapter = TrashListAdapter()
         trashList.adapter = adapter
