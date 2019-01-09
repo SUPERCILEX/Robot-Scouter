@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.server.utils.duplicateTeams
 import com.supercilex.robotscouter.server.utils.firestore
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.toMap
+import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.types.CallableContext
 import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
@@ -26,7 +27,9 @@ import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.SetOptions
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
@@ -99,81 +102,108 @@ fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
 }
 
 fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
+    fun findDups(data: Json) = data.toMap<Int>().toList()
+            .groupBy { (_, number) -> number }
+            .mapValues { (_, duplicates) -> duplicates.map { (teamId) -> teamId } }
+            .filter { (number) -> number >= 0 } // Exclude trashed teams
+            .filter { (_, ids) -> ids.isPolynomial }
+            .onEach { console.log("Found duplicates: $it") }
+            .map { (_, ids) -> ids }
+
     val snapshot = event.after
     val uid = snapshot.id
     console.log("Checking for duplicate teams for $uid.")
 
+    // Fast paths
     if (!snapshot.exists) return null
-    val duplicates = snapshot.data().toMap<Long>().toList()
-            .groupBy { (_, number) -> number }
-            .mapValues { (_, duplicates) -> duplicates.map { (teamId) -> teamId } }
-            .filter { (number) -> number.asDynamic() >= 0 } // Exclude trashed teams
-            .filter { (_, ids) -> ids.isPolynomial }
-            .onEach { console.log("Found duplicates: $it") }
-            .map { (_, ids) -> ids }
-    if (duplicates.isEmpty()) {
+    if (findDups(snapshot.data()).isEmpty()) {
         console.log("No duplicates found.")
         return null
     }
 
-    return GlobalScope.async {
-        duplicates.map { ids ->
-            @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-            async inner@{
-                val teams = ids.map { teams.doc(it) }
-                        .map { async { it.get().await() } }
-                        .awaitAll()
-                        .apply { if (any { !it.exists }) return@inner }
-                        .associate { it to it.ref.collection(FIRESTORE_SCOUTS).get() }
-                        .mapValues { (_, scout) -> scout.await().docs }
-                        .mapValues { (_, scouts) ->
-                            scouts.associate { it to it.ref.collection(FIRESTORE_METRICS).get() }
-                                    .mapValues { (_, metric) -> metric.await().docs }
-                        }
-                        .toList()
-                        .sortedBy { (team) -> team.get<Date>(FIRESTORE_TIMESTAMP).getTime() }
+    // Slow path
+    return firestore.runTransaction t@{ t ->
+        CoroutineScope(SupervisorJob()).async {
+            val duplicates = findDups(t.get(snapshot.ref).await().data())
+            if (duplicates.isEmpty()) return@async
 
-                val (keep) = teams.first()
-                val merges = teams.subList(1, teams.size)
-
-                val oldKeepData = keep.data().toMap<Any?>()
-                val newKeepData = oldKeepData.toMutableMap()
-                val newKeepOwners =
-                        (newKeepData[FIRESTORE_OWNERS] as Json).toMap<Long>().toMutableMap()
-
-                for ((merge, scouts) in merges) {
-                    val mergeData = merge.data().toMap<Any?>()
-
-                    fun mergeValue(name: String) {
-                        if (newKeepData[name] == null) newKeepData[name] = mergeData[name]
-                    }
-                    mergeValue(FIRESTORE_NAME)
-                    mergeValue(FIRESTORE_MEDIA)
-                    mergeValue(FIRESTORE_WEBSITE)
-                    newKeepOwners.putAll((mergeData[FIRESTORE_OWNERS] as Json).toMap())
-
-                    firestore.batch {
-                        for ((scout, metrics) in scouts) {
-                            console.log("Copying scout ${scout.ref.path} into team ${keep.id}.")
-
-                            val ref = keep.ref.collection(FIRESTORE_SCOUTS).doc(scout.id)
-                            set(ref, scout.data())
-                            for (metric in metrics) {
-                                set(ref.collection(FIRESTORE_METRICS).doc(metric.id),
-                                    metric.data())
+            duplicates.map { ids ->
+                @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+                async inner@{
+                    val teams = ids.map { teams.doc(it).get() }
+                            .map { it.await() }
+                            .apply { if (any { !it.exists }) return@inner }
+                            .associate { it to it.ref.collection(FIRESTORE_SCOUTS).get() }
+                            .mapValues { (_, scout) -> scout.await().docs }
+                            .mapValues { (_, scouts) ->
+                                scouts.associate { it to it.ref.collection(FIRESTORE_METRICS).get() }
+                                        .mapValues { (_, metric) -> metric.await().docs }
                             }
+                            .toList()
+                            .sortedBy { (team) -> team.get<Date>(FIRESTORE_TIMESTAMP).getTime() }
+
+                    val (keep) = teams.first()
+                    val merges = teams.subList(1, teams.size)
+
+                    val oldKeepData = keep.data().toMap<Any?>()
+                    val newKeepData = oldKeepData.toMutableMap()
+                    val newKeepOwners =
+                            (newKeepData[FIRESTORE_OWNERS] as Json).toMap<Long>().toMutableMap()
+
+                    for ((merge, scouts) in merges) {
+                        val mergeData = merge.data().toMap<Any?>()
+
+                        fun mergeValue(name: String) {
+                            if (newKeepData[name] == null) newKeepData[name] = mergeData[name]
                         }
+                        mergeValue(FIRESTORE_NAME)
+                        mergeValue(FIRESTORE_MEDIA)
+                        mergeValue(FIRESTORE_WEBSITE)
+                        newKeepOwners.putAll((mergeData[FIRESTORE_OWNERS] as Json).toMap())
+
+                        scouts.map { (scout, metrics) ->
+                            async {
+                                firestore.batch {
+                                    console.log("Copying scout ${scout.ref.path} into team ${keep.id}.")
+
+                                    val ref = keep.ref.collection(FIRESTORE_SCOUTS).doc(scout.id)
+                                    set(ref, scout.data())
+                                    for (metric in metrics) {
+                                        set(ref.collection(FIRESTORE_METRICS).doc(metric.id),
+                                            metric.data())
+                                    }
+                                }
+                            }
+                        }.awaitAll()
+                    }
+
+                    newKeepData[FIRESTORE_OWNERS] = json(*newKeepOwners.toList().toTypedArray())
+                    console.log("Updating team to\n$newKeepData\n\nfrom\n$oldKeepData")
+                    keep.ref.set(json(*newKeepData.toList().toTypedArray())).await()
+
+                    for ((merge, scouts) in merges) {
+                        console.log("Deleting team: ${merge.toTeamString()}")
+
+                        scouts.map { (scout, metrics) ->
+                            async {
+                                firestore.batch {
+                                    for (metric in metrics) delete(metric.ref)
+                                    delete(scout.ref)
+                                }
+                            }
+                        }.awaitAll()
+
+                        for ((owner) in merge.get<Json>(FIRESTORE_OWNERS).toMap<Any>()) {
+                            t.set(duplicateTeams.doc(owner),
+                                  json(merge.id to FieldValues.delete()),
+                                  SetOptions.merge)
+                        }
+                        merge.ref.delete()
                     }
                 }
-
-                newKeepData[FIRESTORE_OWNERS] = json(*newKeepOwners.toList().toTypedArray())
-                console.log("Updating team to\n$newKeepData\n\nfrom\n$oldKeepData")
-                keep.ref.set(json(*newKeepData.toList().toTypedArray())).await()
-
-                for ((merge) in merges) deleteTeam(merge)
-            }
-        }.awaitAll()
-    }.asPromise()
+            }.awaitAll()
+        }.asPromise()
+    }
 }
 
 // TODO remove after v3.0 ships
