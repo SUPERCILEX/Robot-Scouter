@@ -55,6 +55,11 @@
         <item name="android:paddingVertical">@dimen/list_item_padding_vertical_scout</item>
     </style>
 
+    <style name="RobotScouter.List.Scouting.Template">
+        <item name="android:paddingHorizontal">@dimen/list_item_padding_horizontal_template</item>
+        <item name="android:paddingVertical">@dimen/list_item_padding_vertical_template</item>
+    </style>
+
     <style name="RobotScouter.ListItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

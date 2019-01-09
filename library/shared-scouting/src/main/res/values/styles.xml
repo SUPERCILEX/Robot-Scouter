@@ -8,6 +8,13 @@
         <item name="android:paddingBottom">@dimen/list_item_padding_vertical_scout</item>
     </style>
 
+    <style name="RobotScouter.List.Scouting.Template">
+        <item name="android:paddingLeft">@dimen/list_item_padding_horizontal_template</item>
+        <item name="android:paddingRight">@dimen/list_item_padding_horizontal_template</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_vertical_template</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_vertical_template</item>
+    </style>
+
     <style name="RobotScouter.ListItemNameInLinearLayout">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>

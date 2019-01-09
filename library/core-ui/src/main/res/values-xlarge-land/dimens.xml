@@ -4,4 +4,6 @@
     <dimen name="list_item_padding_vertical">@dimen/spacing_large</dimen>
     <dimen name="list_item_padding_horizontal_scout">@dimen/spacing_xxlarge</dimen>
     <dimen name="list_item_padding_vertical_scout">@dimen/spacing_large</dimen>
+    <dimen name="list_item_padding_horizontal_template">@dimen/spacing_xlarge</dimen>
+    <dimen name="list_item_padding_vertical_template">@dimen/spacing_large</dimen>
 </resources>

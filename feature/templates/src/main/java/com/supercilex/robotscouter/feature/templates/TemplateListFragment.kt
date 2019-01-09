@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.feature.templates
 
+import android.animation.FloatEvaluator
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Guideline
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +33,8 @@ import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
+import com.supercilex.robotscouter.core.ui.animateChange
+import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_template_list.*
@@ -72,6 +77,10 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
     } onDestroy {
         appBar.removeView(it)
     }
+    private val homeDivider by unsafeLazy {
+        val activity = requireActivity()
+        if (activity.isInTabletMode()) activity.find<Guideline>(RC.id.guideline) else null
+    }
 
     init {
         setHasOptionsMenu(true)
@@ -84,6 +93,8 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
     ): View = inflater.inflate(R.layout.fragment_template_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        animateContainerMorph(2f / 3)
+
         tabs // Force init
         viewPager.adapter = pagerAdapter
         tabs.setupWithViewPager(viewPager)
@@ -108,6 +119,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
 
     override fun onDestroyView() {
         super.onDestroyView()
+        animateContainerMorph(1f / 3)
         fab.apply {
             setOnClickListener(null)
             hide()
@@ -171,6 +183,14 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
                 R.string.template_added_title,
                 RC.string.template_set_default_title
         ) { defaultTemplateId = id }
+    }
+
+    private fun animateContainerMorph(new: Float) {
+        val div = homeDivider ?: return
+        val current = (div.layoutParams as ConstraintLayout.LayoutParams).guidePercent
+        animateChange(FloatEvaluator(), current, new) {
+            div.setGuidelinePercent(it.animatedValue as Float)
+        }
     }
 
     companion object : TemplateListFragmentCompanion {

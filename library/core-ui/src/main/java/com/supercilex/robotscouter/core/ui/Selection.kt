@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.core.ui
 
-import android.animation.ValueAnimator
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -137,10 +136,9 @@ abstract class MenuHelperBase<T>(
                 if (normal) R.color.colorPrimary else R.color.selected_toolbar
 
         if (toolbar.background.shouldUpdate(newColorPrimary)) {
-            animateColorChange(
-                    oldColorPrimary, newColorPrimary, ValueAnimator.AnimatorUpdateListener {
+            animateColorChange(oldColorPrimary, newColorPrimary) {
                 toolbar.setBackgroundColor(it.animatedValue as Int)
-            })
+            }
         }
 
         @ColorRes val oldColorPrimaryDark =
@@ -149,13 +147,9 @@ abstract class MenuHelperBase<T>(
                 if (normal) R.color.colorPrimaryDark else R.color.selected_status_bar
 
         if (shouldUpdateStatusBarColor(newColorPrimaryDark)) {
-            animateColorChange(
-                    oldColorPrimaryDark,
-                    newColorPrimaryDark,
-                    ValueAnimator.AnimatorUpdateListener {
-                        updateStatusBarColor(it.animatedValue as Int)
-                    }
-            )
+            animateColorChange(oldColorPrimaryDark, newColorPrimaryDark) {
+                updateStatusBarColor(it.animatedValue as Int)
+            }
         }
     }
 

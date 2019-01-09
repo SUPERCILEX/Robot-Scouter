@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.core.ui
 import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.TimeInterpolator
+import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
 import android.os.Build
 import android.view.View
@@ -32,7 +33,7 @@ val mediumAnimationDuration by lazy {
 fun animateColorChange(
         @ColorRes from: Int,
         @ColorRes to: Int,
-        listener: ValueAnimator.AnimatorUpdateListener
+        listener: (ValueAnimator) -> Unit
 ) = animateRawColorChange(
         ContextCompat.getColor(RobotScouter, from),
         ContextCompat.getColor(RobotScouter, to),
@@ -42,9 +43,16 @@ fun animateColorChange(
 fun animateRawColorChange(
         @ColorInt from: Int,
         @ColorInt to: Int,
-        listener: ValueAnimator.AnimatorUpdateListener
+        listener: (ValueAnimator) -> Unit
+) = animateChange(ArgbEvaluator(), from, to, listener)
+
+fun <T> animateChange(
+        evaluator: TypeEvaluator<T>,
+        from: T,
+        to: T,
+        listener: (ValueAnimator) -> Unit
 ) {
-    ValueAnimator.ofObject(ArgbEvaluator(), from, to).apply {
+    ValueAnimator.ofObject(evaluator, from, to).apply {
         addUpdateListener(listener)
         start()
     }

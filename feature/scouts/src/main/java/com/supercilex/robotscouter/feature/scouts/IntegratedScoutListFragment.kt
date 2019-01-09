@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.animation.ValueAnimator
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -142,13 +141,9 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
                 ?: colorPrimaryDark
         if (color == current) return
 
-        animateRawColorChange(
-                current,
-                color,
-                ValueAnimator.AnimatorUpdateListener {
-                    drawer.setStatusBarBackgroundColor(it.animatedValue as Int)
-                }
-        )
+        animateRawColorChange(current, color) {
+            drawer.setStatusBarBackgroundColor(it.animatedValue as Int)
+        }
     }
 
     companion object : IntegratedScoutListFragmentCompanion {
