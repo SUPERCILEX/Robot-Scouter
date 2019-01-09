@@ -41,7 +41,8 @@ internal class TrashMenuHelper(
     private val toolbar = fragment.requireActivity().find<Toolbar>(RC.id.toolbar)
     private val defaultNavIcon = toolbar.navigationIcon
 
-    private val menuItems = mutableListOf<MenuItem>()
+    private val normalMenuItems = mutableListOf<MenuItem>()
+    private val selectedMenuItems = mutableListOf<MenuItem>()
 
     override fun handleNavigationClick(hasSelection: Boolean) {
         if (!hasSelection) fragment.requireActivity().onBackPressed()
@@ -50,21 +51,27 @@ internal class TrashMenuHelper(
     override fun createMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.trash_options, menu)
 
-        menuItems.clear()
-        menuItems.addAll(menu.children.filter { menuIds.contains(it.itemId) })
+        normalMenuItems.clear()
+        normalMenuItems.addAll(menu.children.filterNot { selectedMenuIds.contains(it.itemId) })
+        selectedMenuItems.clear()
+        selectedMenuItems.addAll(menu.children.filter { selectedMenuIds.contains(it.itemId) })
     }
 
     override fun handleItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_restore -> fragment.restoreSelected()
+            R.id.action_restore_all, R.id.action_restore -> fragment.restoreItems()
             R.id.action_delete -> fragment.emptySelected()
             else -> return false
         }
         return true
     }
 
+    override fun updateNormalMenu(visible: Boolean) {
+        for (item in normalMenuItems) item.isVisible = visible
+    }
+
     override fun updateMultiSelectMenu(visible: Boolean) {
-        for (item in menuItems) item.isVisible = visible
+        for (item in selectedMenuItems) item.isVisible = visible
     }
 
     override fun updateNavigationIcon(default: Boolean) {
@@ -76,6 +83,6 @@ internal class TrashMenuHelper(
     }
 
     private companion object {
-        val menuIds = listOf(R.id.action_restore, R.id.action_delete)
+        val selectedMenuIds = listOf(R.id.action_restore, R.id.action_delete)
     }
 }

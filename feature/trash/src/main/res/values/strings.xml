@@ -8,6 +8,7 @@
     <string name="trash_action_empty">Empty Trash now</string>
     <string name="trash_action_delete">Delete permanently</string>
     <string name="trash_action_restore">Restore</string>
+    <string name="trash_action_restore_all">Restore all</string>
 
     <string name="trash_empty_dialog_title">Empty Trash?</string>
     <plurals name="trash_empty_dialog_message">

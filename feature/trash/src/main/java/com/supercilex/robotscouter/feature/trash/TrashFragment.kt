@@ -36,6 +36,7 @@ import com.supercilex.robotscouter.R as RC
 internal class TrashFragment : FragmentBase(), View.OnClickListener,
         OnBackPressedCallback, KeyboardShortcutListener {
     private val holder by viewModels<TrashHolder>()
+    private val allItems get() = holder.trashListener.value.orEmpty()
 
     private lateinit var selectionTracker: SelectionTracker<String>
     private lateinit var menuHelper: TrashMenuHelper
@@ -125,10 +126,11 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
 
     override fun handleOnBackPressed() = selectionTracker.clearSelection()
 
-    fun restoreSelected() {
+    fun restoreItems() {
+        val all = allItems
         val restored = selectionTracker.selection.toList().map { key ->
-            holder.trashListener.value.orEmpty().single { it.id == key }
-        }.onEach { (id, _, type) ->
+            all.single { it.id == key }
+        }.ifEmpty { all }.onEach { (id, _, type) ->
             when (type) {
                 DeletionType.TEAM -> untrashTeam(id)
                 DeletionType.TEMPLATE -> untrashTemplate(id)
@@ -162,7 +164,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
     }
 
     private fun emptyAll() {
-        showEmptyTrashDialog(holder.trashListener.value.orEmpty().map { it.id }, true)
+        showEmptyTrashDialog(allItems.map { it.id }, true)
     }
 
     private fun showEmptyTrashDialog(ids: List<String>, emptyAll: Boolean = false) {
