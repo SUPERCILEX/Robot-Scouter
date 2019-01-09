@@ -15,6 +15,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withGroovyBuilder
 
@@ -64,11 +65,11 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             it.configureEach { mustRunAfter(paths) }
         }
 
-        ciBuildPrep.configure {
+        ciBuildPrep {
             dependsOn(deepFind("clean"))
 
             project.gradle.taskGraph.whenReady {
-                if (!hasTask(this@configure)) return@whenReady
+                if (!hasTask(this@ciBuildPrep)) return@whenReady
 
                 fun skip(task: String, recursive: Boolean = false) {
                     allTasks.filter { it.name == task }.forEach {
@@ -106,14 +107,14 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 )
             }.flatten()
 
-            ciBuild.configure {
+            ciBuild {
                 dependsOn(ciBuildPrep)
 
                 for (collection in tasksToBeOrdered) dependsOn(collection)
             }
         }
 
-        ciBuildLifecycle.configure {
+        ciBuildLifecycle {
             group = "build"
             description = "Runs a specialized build for CI."
 
@@ -139,7 +140,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 }
             }
 
-            deployAndroid.configure {
+            deployAndroid {
                 group = "publishing"
                 description = "Deploys Robot Scouter to the Play Store."
 
@@ -149,14 +150,14 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 dependsOn(deepFind("crashlyticsUploadDeobs"))
             }
         }
-        uploadAppToVcPrep.configure {
+        uploadAppToVcPrep {
             dependsOn(ciBuild)
         }
-        uploadAppToVc.configure {
+        uploadAppToVc {
             dependsOn(uploadAppToVcPrep)
         }
 
-        deployServer.configure {
+        deployServer {
             group = "publishing"
             description = "Deploys Robot Scouter to the Web and Backend."
 

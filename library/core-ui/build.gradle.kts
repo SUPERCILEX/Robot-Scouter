@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
 android {
     buildTypes {
-        named("release").configure {
+        named("release") {
             postprocessing {
                 consumerProguardFile("proguard-rules.pro")
             }

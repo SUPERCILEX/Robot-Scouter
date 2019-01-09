@@ -41,7 +41,7 @@ tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-tasks.register<Delete>("clean").configure {
+tasks.register<Delete>("clean") {
     delete("build")
 }
 

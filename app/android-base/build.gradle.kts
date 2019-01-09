@@ -45,12 +45,12 @@ android {
     }
 
     buildTypes {
-        named("debug").configure {
+        named("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
         }
 
-        named("release").configure {
+        named("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             setProguardFiles(listOf(

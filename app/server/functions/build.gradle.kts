@@ -15,7 +15,7 @@ tasks.withType<Kotlin2JsCompile>().configureEach {
     kotlinOptions.moduleKind = "commonjs"
 }
 
-tasks.named<Delete>("clean").configure {
+tasks.named<Delete>("clean") {
     delete("index.js")
     delete("common/index.js")
 }
