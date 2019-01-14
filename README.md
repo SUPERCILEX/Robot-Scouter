@@ -37,6 +37,7 @@ to make FIRST competition robot scouting _easy_, _efficient_, and _collaborative
   - [Templates](#templates-)
   - [Exporting](#exporting-)
 - [Contributing](#contributing-)
+  - [Updating templates](#updating-templates-️)
   - [Learning](#learning-)
 - [Environment setup](#environment-setup-)
 - [Psst...](#psst-)
@@ -82,10 +83,16 @@ to make FIRST competition robot scouting _easy_, _efficient_, and _collaborative
 ## Contributing 💗
 
 Want to add features, fix bugs, or just poke around the code? No problem! Just make sure to read
-the [contribution guidelines](.github/CONTRIBUTING.md) before getting in too deep.
+the [contribution guidelines](CONTRIBUTING.md) before getting in too deep.
 
 If you know another language, please help
 [translate Robot Scouter](https://www.transifex.com/supercilex/robot-scouter/)!
+
+### Updating templates ⬆️
+
+Anyone can do it! Simply follow
+[the instructions](https://github.com/SUPERCILEX/Robot-Scouter/blob/master/app/server/functions/src/main/kotlin/com/supercilex/robotscouter/server/functions/Templates.kt)
+throughout the file and send a pull request with your changes.
 
 ### Learning 📚
 
@@ -98,7 +105,7 @@ If you know another language, please help
 1. Run `./gradlew setup`
 1. If you are working with Firestore or need access to other Firebase technologies,
    [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
-   and replace the dummy [google-services.json](travis-dummies/google-services.json) with the one
+   and replace the dummy [google-services.json](ci-dummies/google-services.json) with the one
    created in your Firebase project
 1. Run `./gradlew check` to make sure the Travis build will pass
 1. That's it! 🚀
