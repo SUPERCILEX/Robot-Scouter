@@ -33,7 +33,7 @@ buildScan {
 allprojects {
     Config.run { repositories.deps() }
 
-    configureGeneral()
+    configureKtlint()
     configureAndroid()
 }
 
@@ -45,18 +45,20 @@ tasks.register<Delete>("clean") {
     delete("build")
 }
 
-fun Project.configureGeneral() {
+fun Project.configureKtlint() {
     val ktlintConfig = configurations.create("ktlint")
     val ktlint = tasks.register<JavaExec>("ktlint") {
+        if (!file("src").exists()) {
+            isEnabled = false
+            return@register
+        }
+
         main = "com.github.shyiko.ktlint.Main"
         classpath = ktlintConfig
         args = listOf("src/**/*.kt")
 
         val output = File(buildDir, "reports/ktlint/log.txt")
-        inputs.dir(fileTree("src").run {
-            include("**/*.kt")
-            if (dir.exists()) this else null
-        }).optional()
+        inputs.dir(fileTree("src").apply { include("**/*.kt") })
         outputs.file(output)
         outputs.cacheIf { true }
 
