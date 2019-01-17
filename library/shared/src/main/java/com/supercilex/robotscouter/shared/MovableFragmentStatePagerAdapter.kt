@@ -97,6 +97,8 @@ abstract class MovableFragmentStatePagerAdapter(
         currentTransaction?.let {
             it.commitAllowingStateLoss()
             currentTransaction = null
+
+            if (fragmentsToItemIds.isEmpty()) currentPrimaryItem = null
         }
     }
 

@@ -9,6 +9,7 @@ import com.supercilex.robotscouter.core.data.model.getScoutsQuery
 import com.supercilex.robotscouter.core.data.model.scoutsRef
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
+import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.shared.scouting.TabPagerAdapterBase
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
@@ -20,6 +21,8 @@ internal class ScoutPagerAdapter(
     override val editTabNameRes = R.string.scout_edit_name_title
     override val tabs: TabLayout by fragment.LifecycleAwareLazy {
         fragment.requireActivity().find<TabLayout>(R.id.tabs)
+    } onDestroy {
+        it.setupWithViewPager(null)
     }
 
     init {
