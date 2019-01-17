@@ -29,9 +29,8 @@ abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,
         private val dataRef: CollectionReference
 ) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager),
-        Saveable,
-        TabLayout.OnTabSelectedListener, View.OnLongClickListener, DefaultLifecycleObserver,
-        ChangeEventListenerBase {
+        Saveable, ChangeEventListenerBase,
+        View.OnLongClickListener, TabLayout.OnTabSelectedListener, DefaultLifecycleObserver {
     @get:StringRes protected abstract val editTabNameRes: Int
     protected abstract val tabs: TabLayout
     private val noTabsHint by fragment.LifecycleAwareLazy {

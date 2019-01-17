@@ -43,8 +43,6 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
         TemplateItemTouchCallback<Metric<*>>(requireView())
     }
 
-    private var hasAddedItem: Boolean = false
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -122,7 +120,6 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
         val position = adapter.itemCount
         val metricRef = metricsRef.document()
 
-        hasAddedItem = true
         itemTouchCallback.addItemToScrollQueue(position)
 
         when (val id = v.id) {

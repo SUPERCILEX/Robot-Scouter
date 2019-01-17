@@ -95,7 +95,7 @@ abstract class MovableFragmentStatePagerAdapter(
         unusedRestoredFragments.clear()
 
         currentTransaction?.let {
-            it.commitAllowingStateLoss()
+            it.commitNowAllowingStateLoss()
             currentTransaction = null
 
             if (fragmentsToItemIds.isEmpty()) currentPrimaryItem = null
