@@ -162,6 +162,7 @@ object Config {
 
             val glide = "com.github.bumptech.glide:glide:$glideVersion"
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
+            val flexbox = "com.google.android:flexbox:1.1.0"
             val snap = "com.github.rubensousa:gravitysnaphelper:2.0"
             val permissions = "pub.devrel:easypermissions:2.0.1"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.14.0"
