@@ -10,6 +10,10 @@
     <color name="pale_blue">#46264CAC</color>
     <color name="pale_white">#dc111111</color>
 
+    <!-- Uses -->
+    <color name="bottom_app_bar">#3A3A3A</color>
+
     <color name="list_item_normal">@color/material_grey_800</color>
+
     <color name="selected_icon">#EEEEEE</color>
 </resources>

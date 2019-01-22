@@ -18,8 +18,11 @@
     <color name="material_red_500">#F44336</color>
 
     <!-- Uses -->
+    <color name="bottom_app_bar">@android:color/white</color>
+
     <color name="list_item_normal">@android:color/white</color>
     <color name="list_divider">@color/off_white</color>
+
     <color name="selected_list_item">@color/pale_blue</color>
     <color name="selected_toolbar">@color/material_grey_700</color>
     <color name="selected_status_bar">@color/material_grey_800</color>

@@ -55,7 +55,7 @@ object Config {
 
         val ktlint = "com.github.shyiko:ktlint:0.29.0"
 
-        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.0.0"
+        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.1.0"
         val PluginDependenciesSpec.versionChecker
             get() = id("com.github.ben-manes.versions") version "0.20.0"
     }
