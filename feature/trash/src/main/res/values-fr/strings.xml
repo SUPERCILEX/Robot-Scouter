@@ -6,6 +6,7 @@
     <string name="trash_action_empty">Vider la corbeille maintenant</string>
     <string name="trash_action_delete">Supprimer définitivement</string>
     <string name="trash_action_restore">Restaurer</string>
+    <string name="trash_action_restore_all">Tout restaurer</string>
 
     <string name="trash_empty_dialog_title">Vider la corbeille?</string>
     <plurals name="trash_empty_dialog_message">
@@ -25,6 +26,7 @@
 
     <string name="trash_unnamed_item">Sans nom</string>
     <string name="trash_loading_item">Chargement…</string>
+    <string name="trash_deleting_item">Suppression…</string>
 
     <string name="accessibility_trash_type">Type d\'élément dans la corbeille</string>
 </resources>

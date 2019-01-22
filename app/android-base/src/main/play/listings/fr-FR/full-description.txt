@@ -1,29 +1,38 @@
-Robot Scouter est une application Android open-source avec trois buts primaires : rendre le repérage de robots de la compétition de robotique FIRST facile, efficace et collaboratif.
+Robot Scouter est une application Android open-source avec trois buts primaires : rendre le repérage de robots de la compétition de robotique FIRST <i>facile</i>, <i>efficace</i> et <i>collaboratif</i>.
 
 Repo GitHub : https://github.com/SUPERCILEX/Robot-Scouter
 
 
-<h3><b>Fonctionnalités</b></h3>
-&#8195;&#8226; <b>Utilisable hors ligne</b> 📡
-&#8195;&#8226; <b>Aucune infrastructure externe requise, e. g. une base de données</b> 🗄️ (gérer des bases de données = 💩 )
-&#8195;&#8226; Partage facile entre utilisateurs 🔗
-&#8195;&#8226; Collaboration simple et facile : plusieurs utilisateurs peuvent faire du repérage sur plusieurs équipes, la même équipe ou partir en solo sur Android N et diviser l’écran pour observer plusieurs équipes en même temps
-&#8195;&#8226; <b>Modèles de repérage personnalisables</b> 📃 avec plusieurs options disponibles :
-&#8195;&#8195;&#8226; entête/titre 🔖
-&#8195;&#8195;&#8226; vrai/faux (case à cocher)
-&#8195;&#8195;&#8226; chronomètre (pour mesurer la longueur des cycles) ⏱️
-&#8195;&#8195;&#8226; nombre (compteur)
-&#8195;&#8195;&#8226; liste déroulante
-&#8195;&#8195;&#8226; texte (notes) 📜
-&#8195;&#8226; <b>Intégration avec The Blue Alliance</b> pour remplir automatiquement les informations utiles sur l’équipe
-&#8195;&#8226; <b>Exportation en tableur avancée :</b>
-&#8195;&#8195;&#8226; Moyennes calculées automatiquement pour chaque équipe
-&#8195;&#8195;&#8226; Une feuille des moyennes globales est incluse pour comparer les équipes entre elles 📊
-&#8195;&#8195;&#8226; Formatage qui a la classe sur Android Lollipop (21) et plus récent 🎀
-&#8195;&#8195;&#8226; <b>Graphiques !</b> 📈
-&#8195;&#8195;&#8226; Note: Les tableurs Excel peuvent facilement être convertis à des tableurs Google Sheets : https://support.google.com/docs/answer/6055139
-&#8195;&#8195;&#8226; L’exportation JSON est aussi supportée pour de l’analyse personnalisée (e.g. dans Tableau)
-&#8195;&#8226; Et plus encore !
+<h2><b>Fonctionnalités</b></h2>
+<b>Le plus important d'abord ✨</b>
+&#8195;&#8226; Utilisable hors ligne 📡
+&#8195;&#8226; Aucune infrastructure externe requise (ex : aucune base de données)
+&#8195;&#8226; Modèles de repérage personnalisables
+&#8195;&#8226; Fonctions d'exportation avancées
+&#8195;&#8226; Intégration avec The Blue Alliance
+
+<b>Repérage 📃</b>
+&#8195;&#8226; Collaboration simple mais efficace entre membres de l'équipe tout comme entre équipes 🔗
+&#8195;&#8226; Plusieurs utilisateurs peuvent faire du repérage sur plusieurs équipes, la même équipe ou partir en solo sur Android N et diviser l’écran pour observer plusieurs équipes en même temps 😎
+&#8195;&#8226; Plusieurs types de données parmi lesquels choisir :
+&#8195;&#8195;&#8226; Entête (titre) 🔖
+&#8195;&#8195;&#8226; Case à cocher (vrai/faux) ✅
+&#8195;&#8195;&#8226; Chronomètre (pour mesurer le temps de cycle) ⏱️
+&#8195;&#8195;&#8226; Compteur (numérique) 🔢
+&#8195;&#8195;&#8226; liste déroulante 📝
+&#8195;&#8195;&#8226; Notes (textuel) 📜
+
+<b>Modèles 📋</b>
+&#8195;&#8226; Entièrement personnalisables et indépendants pour chaque saison
+&#8195;&#8226; Modèles par défaut offerts pour la saison en cours
+
+<b>Expoortation 📊</b>
+&#8195;&#8226; Exportation en tableur avancée:
+&#8195;&#8195;&#8226; Les statistiques et les chartes sont générées automatiquement pour chaque équipe
+&#8195;&#8195;&#8226; Une feuille de moyennes globales est inclue pour comparer les équipes entre elles
+&#8195;&#8195;&#8226; Formatage avancé sur Android Lollipop (API 21) et plus récent
+&#8195;&#8226; PSA : les tableurs Excel peuvent facilement être convertis pour Google Sheets : https://support.google.com/docs/answer/6055139
+&#8195;&#8226; L’exportation JSON est aussi supportée pour de l’analyse personnalisée (ex : dans Tableau)
 
 
 <b>Note : les achats via l’application sont uniquement utilisés pour les donations. <i>Robot Scouter est et restera toujours 100% gratuit.</i></b>
