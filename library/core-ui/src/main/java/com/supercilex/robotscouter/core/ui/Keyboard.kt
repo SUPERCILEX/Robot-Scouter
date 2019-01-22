@@ -20,6 +20,10 @@ fun View.showKeyboard() {
     inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
+fun View.hideKeyboard() {
+    inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+}
+
 inline fun EditText.setImeOnDoneListener(
         crossinline listener: () -> Unit
 ) = setOnEditorActionListener { _, actionId, event: KeyEvent? ->

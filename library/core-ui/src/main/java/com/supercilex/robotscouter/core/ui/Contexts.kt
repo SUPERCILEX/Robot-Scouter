@@ -66,7 +66,7 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, Saveable,
                 clearFocus = Runnable {
                     if (currentFocus === v || currentFocus !is EditText) {
                         v.clearFocus()
-                        inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
+                        v.hideKeyboard()
                     }
                     clearFocus = null
                 }.also {

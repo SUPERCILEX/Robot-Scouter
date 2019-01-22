@@ -5,6 +5,7 @@ import android.os.Build
 import android.view.View
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
+import com.supercilex.robotscouter.core.ui.hideKeyboard
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import kotlinx.android.synthetic.main.scout_notes.*
 
@@ -38,6 +39,9 @@ internal class EditTextViewHolder(
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
-        if (!hasFocus) metric.update(name.text.toString())
+        if (!hasFocus) {
+            metric.update(name.text.toString())
+            name.hideKeyboard()
+        }
     }
 }
