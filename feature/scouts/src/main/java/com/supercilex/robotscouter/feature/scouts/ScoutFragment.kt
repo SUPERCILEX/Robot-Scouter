@@ -27,7 +27,7 @@ import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.android.synthetic.main.fragment_scout_metric_list.*
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
+import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment(), View.OnLayoutChangeListener {
@@ -40,7 +40,7 @@ internal class ScoutFragment : MetricListFragment(), View.OnLayoutChangeListener
 
     private val homeDivider by unsafeLazy {
         if (requireContext().isInTabletMode()) {
-            requireActivity().find<Guideline>(RC.id.guideline)
+            requireActivity().findOptional<Guideline>(RC.id.guideline)
         } else {
             null
         }
