@@ -174,7 +174,7 @@ abstract class TabPagerAdapterBase(
     fun reset() {
         oldScouts = emptyList()
         currentScouts = emptyList()
-        tabs.removeOnTabSelectedListener(this)
+        if (fragment.view != null) tabs.removeOnTabSelectedListener(this)
         notifyDataSetChanged()
     }
 
