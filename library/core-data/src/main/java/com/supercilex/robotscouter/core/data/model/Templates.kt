@@ -37,6 +37,7 @@ import kotlinx.coroutines.tasks.asTask
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import java.util.Date
+import kotlin.math.abs
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         "$FIRESTORE_OWNERS.${checkNotNull(uid)}".let {
@@ -122,33 +123,33 @@ fun trashTemplate(id: String) {
         if (id == newTemplateId) {
             defaultTemplateId = TemplateType.DEFAULT.id.toString()
         }
-
-        FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
-
-        toggleTemplateTrashStatus(id)
+        updateTemplateTrashStatus(true, id)
     }.logFailures()
 }
 
 fun untrashTemplate(id: String) {
-    GlobalScope.async { toggleTemplateTrashStatus(id) }.logFailures()
+    GlobalScope.async { updateTemplateTrashStatus(false, id) }.logFailures()
 }
 
-private suspend fun toggleTemplateTrashStatus(id: String) {
+private suspend fun updateTemplateTrashStatus(delete: Boolean, id: String) {
     val ref = getTemplateRef(id)
     val snapshot = ref.get().logFailures(ref).await()
 
     val ownerField = "$FIRESTORE_OWNERS.${checkNotNull(uid)}"
-    val oppositeDate = Date(-checkNotNull(snapshot.getDate(ownerField)).time)
-    val isTrash = oppositeDate.time <= 0
+    val newDate = Date(
+            (if (delete) -1 else 1) * abs(checkNotNull(snapshot.getDate(ownerField)).time))
+    val isTrash = newDate.time <= 0
 
-    if (!isTrash) {
+    if (isTrash) {
+        FirebaseAppIndex.getInstance().remove(getTemplateLink(id)).logFailures()
+    } else {
         FirebaseAppIndex.getInstance()
                 .update(getTemplateIndexable(id, "Template"))
                 .logFailures()
     }
 
     firestoreBatch {
-        update(ref, ownerField, oppositeDate)
+        update(ref, ownerField, newDate)
         if (isTrash) {
             set(userDeletionQueue, QueuedDeletion.Template(id).data, SetOptions.merge())
         } else {

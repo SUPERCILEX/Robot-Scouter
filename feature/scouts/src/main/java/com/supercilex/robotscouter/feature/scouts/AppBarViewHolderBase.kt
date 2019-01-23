@@ -97,7 +97,7 @@ internal open class AppBarViewHolderBase(
     @CallSuper
     protected open fun bind() {
         toolbar.title = team.toString()
-        mediaCapture.team = team
+        mediaCapture.team = team.copy()
         loadImages()
         bindMenu()
     }

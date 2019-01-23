@@ -112,6 +112,7 @@ internal class ScoutFragment : MetricListFragment(), View.OnLayoutChangeListener
         val div = homeDivider ?: return
         val guide = (div.layoutParams as ConstraintLayout.LayoutParams).guidePercent
 
+        val metricsView = metricsView
         val (horizontal, vertical) = if (guide > .5) minimizedPadding else expandedPadding
         metricsView.post {
             ViewCompat.setPaddingRelative(metricsView, horizontal, vertical, horizontal, vertical)

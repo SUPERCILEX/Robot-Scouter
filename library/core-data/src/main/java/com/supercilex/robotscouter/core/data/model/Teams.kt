@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.core.data.model
 import android.util.Patterns
 import androidx.annotation.WorkerThread
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.android.gms.tasks.Task
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -106,8 +107,7 @@ fun Collection<Team>.getNames(): String {
 
 internal fun Team.add() {
     id = teamsRef.document().id
-    forceUpdate(true)
-    teamDuplicatesRef.document(checkNotNull(uid)).set(mapOf(id to number), SetOptions.merge())
+    rawSet(true, true)
 
     logAdd()
     FirebaseUserActions.getInstance().end(
@@ -148,8 +148,7 @@ internal fun Team.updateMedia(newTeam: Team) {
 }
 
 fun Team.forceUpdate(refresh: Boolean = false) {
-    timestamp = if (refresh) Date(0) else Date()
-    ref.set(this).logFailures(ref, this)
+    rawSet(refresh, false)
 }
 
 suspend fun List<DocumentReference>.shareTeams(
@@ -187,7 +186,7 @@ fun untrashTeam(id: String) {
         val ref = teamsRef.document(id)
         val snapshot = ref.get().logFailures(ref).await()
 
-        val newNumber = checkNotNull(snapshot.getLong(FIRESTORE_NUMBER))
+        val newNumber = abs(checkNotNull(snapshot.getLong(FIRESTORE_NUMBER)))
         firestoreBatch {
             update(ref, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", newNumber)
             update(teamDuplicatesRef.document(checkNotNull(uid)), id, newNumber)
@@ -228,4 +227,19 @@ fun String.formatAsTeamUri(): String? {
     } else {
         "http://$trimmedUrl"
     }
+}
+
+private fun Team.rawSet(refresh: Boolean, new: Boolean): Task<*> {
+    timestamp = if (refresh) Date(0) else Date()
+
+    return if (new) {
+        firestoreBatch {
+            set(ref, this@rawSet)
+            set(teamDuplicatesRef.document(checkNotNull(uid)),
+                mapOf(id to number),
+                SetOptions.merge())
+        }
+    } else {
+        ref.set(this)
+    }.logFailures(ref, this)
 }

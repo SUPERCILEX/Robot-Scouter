@@ -16,12 +16,13 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.lifecycle.Lifecycle
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.activitiesRegistry
+import com.supercilex.robotscouter.core.data.cleanup
 import com.supercilex.robotscouter.core.data.nightMode
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.logCrashLog
@@ -47,23 +48,22 @@ fun initUi() {
     }.logFailures()
 
     FirebaseAuth.getInstance().addAuthStateListener {
-        it.currentUser?.reload()?.addOnFailureListener {
-            if (it is FirebaseException) {
-                logCrashLog("User refresh error: $it")
+        it.currentUser?.reload()?.addOnFailureListener f@{
+            if (
+                it !is FirebaseAuthInvalidUserException ||
+                it.errorCode != "ERROR_USER_NOT_FOUND" && it.errorCode != "ERROR_USER_DISABLED"
+            ) return@f
 
-                // If we got a user not found error, it means we've deleted the user record and
-                // all associated data, but the user was still using Robot Scouter somehow.
-                if (it.message?.contains("USER_NOT_FOUND") == true) {
-                    GlobalScope.async {
-                        idpSignOut()
-                        onSignedIn()
-                        RobotScouter.runOnUiThread {
-                            longToast("User account deleted due to inactivity. " +
-                                              "Starting a fresh session.")
-                        }
-                    }.logFailures()
+            logCrashLog("User deleted or disabled. Re-initializing Robot Scouter.")
+            GlobalScope.async {
+                cleanup()
+                idpSignOut()
+                onSignedIn()
+                RobotScouter.runOnUiThread {
+                    longToast("User account deleted due to inactivity. " +
+                                      "Starting a fresh session.")
                 }
-            }
+            }.logFailures()
         }
     }
 

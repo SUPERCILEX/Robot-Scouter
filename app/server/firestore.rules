@@ -32,12 +32,14 @@ service cloud.firestore {
           return request.auth.uid in get(/databases/$(database)/documents/teams/$(teamId)).data.owners;
         }
 
-        allow read: if isScoutOwner();
+        allow get: if resource == null || isScoutOwner();
+        allow list: if isScoutOwner();
         allow create, update: if isScoutOwner() && isValidScout();
         allow delete: if isScoutOwner();
 
         match /metrics/{metricId} {
-          allow read: if isScoutOwner();
+          allow get: if resource == null || isScoutOwner();
+          allow list: if isScoutOwner();
           allow create, update: if isScoutOwner() && isValidMetric();
           allow delete: if isScoutOwner();
         }

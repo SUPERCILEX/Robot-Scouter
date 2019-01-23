@@ -41,6 +41,7 @@ open class CardListHelper(
                 isFirstItem = isFirstItem(position)
                 isLastItem = isLastItem(position)
             }
+            itemView.invalidate()
         } catch (e: IndexOutOfBoundsException) {
             // Ideally, we'd like to check whether or not `position == adapterPosition`, but getting
             // the adapter position is an expensive computation. Instead, we use a try block which

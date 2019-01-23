@@ -131,15 +131,15 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
 
     private fun handleArgs(args: Bundle?, savedInstanceState: Bundle?) {
         val templateId = getTabId(args)
-        if (templateId != null) {
+        if (templateId == null) {
+            getTabId(savedInstanceState)?.let { pagerAdapter.currentTabId = it }
+        } else {
             pagerAdapter.currentTabId = TemplateType.coerce(templateId)?.let {
                 viewPager.longSnackbar(R.string.template_added_message)
                 addTemplate(it).also { defaultTemplateId = it }
             } ?: templateId
 
             args?.remove(TAB_KEY)
-        } else {
-            getTabId(savedInstanceState)?.let { pagerAdapter.currentTabId = it }
         }
     }
 

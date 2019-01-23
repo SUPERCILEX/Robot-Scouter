@@ -13,8 +13,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
-import androidx.recyclerview.selection.MutableSelection
-import androidx.recyclerview.selection.Selection
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,11 +63,11 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
     private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
-        savedSelection = MutableSelection<String>().apply { it.copySelection(this) }
+        savedSelection = Bundle().apply { it.onSaveInstanceState(this) }
         it.clearSelection() // Reset menu
     }
     private var menuHelper: TeamMenuHelper by LifecycleAwareLazy()
-    private var savedSelection: Selection<String>? = null
+    private var savedSelection: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -144,12 +142,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
                     }
                 })
 
-                val savedSelection = savedSelection
-                if (savedSelection == null) {
-                    onRestoreInstanceState(savedInstanceState)
-                } else {
-                    setItemsSelected(savedSelection, true)
-                }
+                onRestoreInstanceState(savedSelection ?: savedInstanceState)
             }
         }
         adapter.selectionTracker = selectionTracker
@@ -175,6 +168,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         if (view != null) {
             adapter.onSaveInstanceState(outState)
             selectionTracker.onSaveInstanceState(outState)
+        } else {
+            savedSelection?.let { outState.putAll(it) }
         }
     }
 

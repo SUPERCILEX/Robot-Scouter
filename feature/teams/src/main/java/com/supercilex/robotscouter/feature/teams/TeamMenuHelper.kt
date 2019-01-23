@@ -17,6 +17,8 @@ import com.supercilex.robotscouter.TeamExporter
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.model.trash
 import com.supercilex.robotscouter.core.data.model.untrashTeam
+import com.supercilex.robotscouter.core.data.teams
+import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.DrawerMenuHelperBase
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
@@ -38,6 +40,15 @@ internal class TeamMenuHelper(
 
     init {
         fragment.viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                if (!tracker.hasSelection()) return
+
+                // Check for deleted teams
+                val remaining = tracker.selection.toMutableList()
+                remaining.removeAll(teams.map(Team::id))
+                for (deleted in remaining) tracker.deselect(deleted)
+            }
+
             override fun onDestroy(owner: LifecycleOwner) {
                 // The SelectionTracker holds a reference to some views somewhere down the stack.
                 // Make sure to clean up after ourselves.

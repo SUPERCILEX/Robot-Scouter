@@ -50,6 +50,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:drawableTopCompat="@drawable/ic_person_grey_96dp"
+            app:layout_constrainedWidth="true"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline

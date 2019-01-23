@@ -7,6 +7,7 @@ import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.ui.ItemDetailsBase
 import com.supercilex.robotscouter.core.ui.ItemDetailsLookupBase
 import kotlinx.android.synthetic.main.team_list_row_layout.*
+import kotlin.math.roundToInt
 
 internal class TeamKeyProvider(
         private val adapter: TeamListAdapter
@@ -26,6 +27,11 @@ internal class TeamDetails(
 
     override fun inSelectionHotspot(e: MotionEvent): Boolean {
         val media = holder.media
-        return e.rawX.toInt() in media.left..media.right
+        val location = IntArray(2)
+        media.getLocationInWindow(location)
+
+        val (left) = location
+        val right = left + media.width
+        return e.rawX.roundToInt() in left..right // Include vertical space for #FatFingers
     }
 }

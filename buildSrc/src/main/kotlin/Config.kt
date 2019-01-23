@@ -46,7 +46,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.5.0-alpha01"
+        val android = "com.android.tools.build:gradle:3.5.0-alpha02"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
@@ -62,7 +62,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "1.1.0"
+            private const val coroutinesVersion = "1.1.1"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -86,7 +86,7 @@ object Config {
 
         object Jetpack {
             private const val lifecycleVersion = "2.1.0-alpha01"
-            private const val workVersion = "1.0.0-beta02"
+            private const val workVersion = "1.0.0-beta03"
 
             val core = "androidx.core:core-ktx:1.1.0-alpha03"
             val multidex = "androidx.multidex:multidex:2.0.1"
@@ -138,7 +138,7 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.39.0"
+            val facebook = "com.facebook.android:facebook-login:4.40.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
@@ -164,7 +164,7 @@ object Config {
             val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
             val flexbox = "com.google.android:flexbox:1.1.0"
             val snap = "com.github.rubensousa:gravitysnaphelper:2.0"
-            val permissions = "pub.devrel:easypermissions:2.0.1"
+            val permissions = "pub.devrel:easypermissions:3.0.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.14.0"
             val billing = "com.android.billingclient:billing:1.2"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.2.2"
