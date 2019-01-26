@@ -41,14 +41,11 @@ internal fun getSafeSheetName(workbook: Workbook, team: Team): String {
     var originalName = WorkbookUtil.createSafeSheetName(team.toString())
     var safeName = originalName
     var i = 1
-    while (true) {
-        if (workbook.getSheet(safeName) == null) break
-        else {
-            safeName = "$originalName ($i)"
-            if (safeName.length > MAX_SHEET_LENGTH) {
-                originalName = team.number.toString()
-                safeName = originalName
-            }
+    while (workbook.getSheet(safeName) != null) {
+        safeName = "$originalName ($i)"
+        if (safeName.length > MAX_SHEET_LENGTH) {
+            originalName = team.number.toString()
+            safeName = originalName
         }
         i++
     }

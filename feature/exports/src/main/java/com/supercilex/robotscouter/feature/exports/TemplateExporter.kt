@@ -771,7 +771,7 @@ internal class TemplateExporter(
         }
     }
 
-    private fun getJson(): JsonElement? {
+    private fun getJson(): JsonElement {
         val json = JsonObject()
 
         val teamsJson = JsonObject()
@@ -791,6 +791,7 @@ internal class TemplateExporter(
         val scoutJson = JsonObject()
 
         scoutJson.addProperty("name", scout.name)
+        scoutJson.addProperty("timestamp", scout.timestamp.time)
 
         val metricsJson = JsonObject()
         var currentHeader: Metric.Header? = null
