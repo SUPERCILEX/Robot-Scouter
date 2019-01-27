@@ -21,15 +21,15 @@ import kotlinx.coroutines.runBlocking
 
 internal class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
-        runBlocking {
-            try {
+        try {
+            runBlocking {
                 onSignedIn()
                 FirebaseAppIndex.getInstance().removeAll().await()
 
                 awaitAll(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
-            } catch (e: Exception) {
-                CrashLogger.onFailure(e)
             }
+        } catch (e: Exception) {
+            CrashLogger.onFailure(e)
         }
     }
 
