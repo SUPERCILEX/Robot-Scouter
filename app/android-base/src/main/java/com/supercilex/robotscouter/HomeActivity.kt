@@ -394,7 +394,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
 
         init {
-            GlobalScope.async { fragmentTransition }.logFailures()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                GlobalScope.async { fragmentTransition }.logFailures()
+            }
         }
     }
 }
