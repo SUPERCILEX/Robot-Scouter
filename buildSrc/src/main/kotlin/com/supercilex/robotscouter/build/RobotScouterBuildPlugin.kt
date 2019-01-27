@@ -98,11 +98,13 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 it.name.startsWith("promote") && it.name.endsWith("Artifact")
             }.mustRunAfter(publish)
 
-            for (collection in promote) {
-                collection.configureEach {
-                    doFirst {
-                        project.child("android-base").extensions["play"].withGroovyBuilder {
-                            invokeMethod("setTrack", "alpha")
+            if (isRelease) {
+                for (collection in promote) {
+                    collection.configureEach {
+                        doFirst {
+                            project.child("android-base").extensions["play"].withGroovyBuilder {
+                                invokeMethod("setTrack", "alpha")
+                            }
                         }
                     }
                 }
