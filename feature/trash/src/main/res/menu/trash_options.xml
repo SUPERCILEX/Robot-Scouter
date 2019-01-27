@@ -6,6 +6,7 @@
     <item
         android:id="@+id/action_restore_all"
         android:title="@string/trash_action_restore_all"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item

@@ -82,6 +82,10 @@ internal class TrashMenuHelper(
         }
     }
 
+    fun onTrashCountUpdate(hasTrash: Boolean) {
+        for (item in normalMenuItems) item.isVisible = hasTrash
+    }
+
     private companion object {
         val selectedMenuIds = listOf(R.id.action_restore, R.id.action_delete)
     }

@@ -91,6 +91,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
 
             noTrashHint.animatePopReveal(!hasTrash)
             notice.isVisible = hasTrash
+            menuHelper.onTrashCountUpdate(hasTrash)
 
             if (it != null) for (i in 0 until adapter.itemCount) {
                 // Unselect deleted items
