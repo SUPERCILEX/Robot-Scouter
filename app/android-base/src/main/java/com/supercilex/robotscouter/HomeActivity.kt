@@ -12,6 +12,7 @@ import android.view.ViewOutlineProvider
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.fragment.app.FragmentManager
@@ -45,6 +46,7 @@ import com.supercilex.robotscouter.core.ui.showStoreListing
 import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
+import com.supercilex.robotscouter.shared.launchUrl
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import kotlinx.coroutines.GlobalScope
@@ -208,6 +210,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (val id = item.itemId) {
             R.id.action_donate -> DonateDialog.show(supportFragmentManager)
+            R.id.action_donate_patreon ->
+                launchUrl(this, "https://www.patreon.com/SUPERCILEX".toUri())
             else -> runIfSignedIn {
                 when (id) {
                     R.id.action_export_all_teams -> export()

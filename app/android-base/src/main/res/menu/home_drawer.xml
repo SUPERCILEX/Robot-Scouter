@@ -26,6 +26,11 @@
             android:title="@string/donate_title" />
 
         <item
+            android:id="@+id/action_donate_patreon"
+            android:icon="@drawable/ic_launch_accent_24dp"
+            android:title="@string/donate_patreon_title" />
+
+        <item
             android:id="@+id/action_settings"
             android:icon="@drawable/ic_settings_colorable_24dp"
             android:title="@string/settings_activity_title" />

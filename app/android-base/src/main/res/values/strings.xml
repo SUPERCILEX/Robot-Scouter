@@ -20,6 +20,7 @@
 
     <!-- Donate dialog -->
     <string name="donate_title">Donate</string>
+    <string name="donate_patreon_title">Support development</string>
     <string name="donate_amount">$%d</string>
     <string name="donate_monthly_message">Automatically donate each month</string>
     <string name="donate_cancel_message">
