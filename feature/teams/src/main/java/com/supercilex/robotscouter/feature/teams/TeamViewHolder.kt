@@ -5,7 +5,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.view.ViewCompat
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
@@ -37,6 +39,9 @@ internal class TeamViewHolder(
     private var couldItemBeSelected: Boolean = false
     private var isScouting: Boolean = false
 
+    private var willItemBeSelectedHack = false
+    private var lastUnselectTimestampHack = 0L
+
     init {
         media.setOnLongClickListenerCompat(this)
         newScout.setOnClickListener(this)
@@ -48,12 +53,23 @@ internal class TeamViewHolder(
             team: Team,
             isItemSelected: Boolean,
             couldItemBeSelected: Boolean,
-            isScouting: Boolean
+            isScouting: Boolean,
+            trackerForHack: SelectionTracker<String>
     ) {
+        lastUnselectTimestampHack = 0
+        if (this.isItemSelected && !isItemSelected) {
+            lastUnselectTimestampHack = System.currentTimeMillis()
+        }
+
         this.team = team
         this.isItemSelected = isItemSelected
         this.couldItemBeSelected = couldItemBeSelected
         this.isScouting = isScouting
+
+        if (isItemSelected && willItemBeSelectedHack) {
+            itemView.postDelayed(1000) { trackerForHack.clearSelection() }
+        }
+        willItemBeSelectedHack = false
 
         setTeamNumber()
         setTeamName()
@@ -78,6 +94,7 @@ internal class TeamViewHolder(
     }
 
     override fun onClick(v: View) {
+        if (System.currentTimeMillis() - lastUnselectTimestampHack < 50) return
         if (!isItemSelected && !couldItemBeSelected) {
             (itemView.context as TeamSelectionListener)
                     .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout), media)
@@ -93,6 +110,7 @@ internal class TeamViewHolder(
                     fragment.childFragmentManager, team)
             else -> return false
         }
+        willItemBeSelectedHack = true
         return true
     }
 

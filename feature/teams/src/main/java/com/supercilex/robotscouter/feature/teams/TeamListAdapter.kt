@@ -112,7 +112,8 @@ internal class TeamListAdapter(
                 team,
                 team.isSelected(),
                 selectionTracker.hasSelection(),
-                selectedTeamId == team.id
+                selectedTeamId == team.id,
+                selectionTracker
         )
     }
 
