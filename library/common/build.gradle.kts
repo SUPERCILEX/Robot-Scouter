@@ -6,8 +6,8 @@ plugins {
 
 kotlin {
     targets {
-        add(presets["jvm"].createTarget("android"))
-        add(presets["js"].createTarget("server"))
+        jvm("android")
+        js("server")
     }
 
     sourceSets {

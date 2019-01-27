@@ -1,8 +1,8 @@
 import com.android.build.gradle.BaseExtension
 import org.apache.commons.io.output.TeeOutputStream
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 buildscript {
     Config.run { repositories.deps() }
@@ -32,6 +32,10 @@ buildScan {
 
 allprojects {
     Config.run { repositories.deps() }
+
+    tasks.withType<Kotlin2JsCompile>().configureEach {
+        kotlinOptions.freeCompilerArgs = listOf("-progressive")
+    }
 
     configureKtlint()
     configureAndroid()
