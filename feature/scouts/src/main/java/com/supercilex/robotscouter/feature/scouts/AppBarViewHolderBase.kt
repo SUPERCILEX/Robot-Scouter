@@ -204,7 +204,7 @@ internal open class AppBarViewHolderBase(
 
     override fun onSuccess(voids: List<Void?>) {
         newScoutItem.isVisible = true
-        addMediaItem.isVisible = team.isOutdatedMedia
+        if (::team.isInitialized) addMediaItem.isVisible = team.isOutdatedMedia
         editTemplateItem.isVisible = isTemplateEditingAllowed
     }
 
