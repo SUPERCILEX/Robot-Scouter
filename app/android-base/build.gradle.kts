@@ -1,5 +1,4 @@
 import com.google.gms.googleservices.GoogleServicesPlugin
-import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -17,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.supercilex.robotscouter"
-        versionName = "3.0.0-beta1"
+        versionName = "3.0.0"
         multiDexEnabled = true
     }
 
