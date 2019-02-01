@@ -1,8 +1,10 @@
 import com.android.build.gradle.BaseExtension
 import org.apache.commons.io.output.TeeOutputStream
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     Config.run { repositories.deps() }
@@ -33,10 +35,7 @@ buildScan {
 allprojects {
     Config.run { repositories.deps() }
 
-    tasks.withType<Kotlin2JsCompile>().configureEach {
-        kotlinOptions.freeCompilerArgs = listOf("-progressive")
-    }
-
+    configureGeneral()
     configureKtlint()
     configureAndroid()
 }
@@ -47,6 +46,14 @@ tasks.wrapper {
 
 tasks.register<Delete>("clean") {
     delete("build")
+}
+
+fun Project.configureGeneral() {
+    val compilerArgs: KotlinCommonToolOptions.() -> Unit = {
+        freeCompilerArgs = listOf("-progressive")
+    }
+    tasks.withType<KotlinCompile>().configureEach { kotlinOptions(compilerArgs) }
+    tasks.withType<Kotlin2JsCompile>().configureEach { kotlinOptions(compilerArgs) }
 }
 
 fun Project.configureKtlint() {
