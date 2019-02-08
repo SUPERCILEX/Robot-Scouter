@@ -20,7 +20,7 @@ internal class DeleteTemplateDialog : ManualDismissDialog() {
             .createAndSetup(savedInstanceState)
 
     override fun onAttemptDismiss(): Boolean {
-        trashTemplate(checkNotNull(arguments).getRef().id)
+        trashTemplate(requireArguments().getRef().id)
         return true
     }
 

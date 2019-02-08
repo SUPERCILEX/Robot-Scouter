@@ -21,7 +21,7 @@ internal class TabletScoutListContainer : FragmentBase() {
         if (savedInstanceState == null) {
             childFragmentManager.commitNow {
                 add(R.id.scoutList,
-                    TabletScoutListFragment.newInstance(checkNotNull(arguments)),
+                    TabletScoutListFragment.newInstance(requireArguments()),
                     TabletScoutListFragment.TAG)
             }
         }

@@ -31,7 +31,7 @@ import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment(), View.OnLayoutChangeListener {
-    private val team by unsafeLazy { checkNotNull(arguments).getTeam() }
+    private val team by unsafeLazy { requireArguments().getTeam() }
     private val scoutId by unsafeLazy { checkNotNull(getTabId(arguments)) }
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
     override val dataId get() = scoutId

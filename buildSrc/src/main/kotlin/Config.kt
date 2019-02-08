@@ -7,7 +7,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.30-dev-482"
+    private const val kotlinVersion = "1.3.30-dev-1477"
 
     fun RepositoryHandler.deps() {
         fun MavenArtifactRepository.ensureGroups(
@@ -51,9 +51,9 @@ object Config {
 
         val google = "com.google.gms:google-services:4.2.0"
         val firebase = "com.google.firebase:perf-plugin:1.1.5"
-        val fabric = "io.fabric.tools:gradle:1.27.0"
+        val fabric = "io.fabric.tools:gradle:1.27.1"
 
-        val ktlint = "com.github.shyiko:ktlint:0.29.0"
+        val ktlint = "com.github.shyiko:ktlint:0.30.0"
 
         val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.1.0"
         val PluginDependenciesSpec.versionChecker
@@ -85,23 +85,24 @@ object Config {
         }
 
         object Jetpack {
-            private const val lifecycleVersion = "2.1.0-alpha01"
-            private const val workVersion = "1.0.0-beta03"
+            private const val lifecycleVersion = "2.1.0-alpha02"
+            private const val workVersion = "1.0.0-beta05"
 
-            val core = "androidx.core:core-ktx:1.1.0-alpha03"
+            val core = "androidx.core:core-ktx:1.1.0-alpha04"
             val multidex = "androidx.multidex:multidex:2.0.1"
-            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha01"
-            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha03"
+            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha02"
+            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha04"
+            val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha02"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-alpha01"
             val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
             val cardView = "androidx.cardview:cardview:1.0.0"
             val palette = "androidx.palette:palette-ktx:1.0.0"
             val emoji = "androidx.emoji:emoji-appcompat:1.0.0"
             val browser = "androidx.browser:browser:1.0.0"
-            val pref = "androidx.preference:preference:1.1.0-alpha02"
-            val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha02"
+            val pref = "androidx.preference:preference:1.1.0-alpha03"
+            val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha03"
 
-            val material = "com.google.android.material:material:1.1.0-alpha02"
+            val material = "com.google.android.material:material:1.1.0-alpha03"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
@@ -112,15 +113,15 @@ object Config {
         }
 
         object Firebase {
-            val core = "com.google.firebase:firebase-core:16.0.6"
+            val core = "com.google.firebase:firebase-core:16.0.7"
             val auth = "com.google.firebase:firebase-auth:16.1.0"
             val firestore = "com.google.firebase:firebase-firestore:17.1.5"
             val functions = "com.google.firebase:firebase-functions:16.1.3"
             val storage = "com.google.firebase:firebase-storage:16.0.5"
-            val config = "com.google.firebase:firebase-config:16.1.3"
+            val config = "com.google.firebase:firebase-config:16.3.0"
             val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
             val messaging = "com.google.firebase:firebase-messaging:17.3.4"
-            val invites = "com.google.firebase:firebase-invites:16.0.6"
+            val invites = "com.google.firebase:firebase-invites:16.1.0"
             val perf = "com.google.firebase:firebase-perf:16.2.3"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.8"

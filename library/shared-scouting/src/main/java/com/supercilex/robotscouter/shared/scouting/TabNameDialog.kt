@@ -16,7 +16,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 
 internal class TabNameDialog : ValueDialogBase<String>() {
     override val value get() = lastEditText.text.nullOrFull()?.toString()
-    override val title by unsafeLazy { checkNotNull(arguments).getInt(TITLE_KEY) }
+    override val title by unsafeLazy { requireArguments().getInt(TITLE_KEY) }
     override val hint = R.string.scout_name_title
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
@@ -25,7 +25,7 @@ internal class TabNameDialog : ValueDialogBase<String>() {
     }
 
     override fun onAttemptDismiss(): Boolean {
-        val ref = checkNotNull(arguments).getRef()
+        val ref = requireArguments().getRef()
         ref.update(FIRESTORE_NAME, value).logFailures(ref, value)
         return true
     }
