@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.feature.exports
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.net.toUri
@@ -164,7 +165,9 @@ internal class ExportNotificationManager(private val service: ExportService) {
         notificationFilter.notify(
                 id, notification.setGroup(permanentGroupId.toString()).build(), true)
 
-        if (pendingTaskCount == nTemplates) showExportedPermanentNotification()
+        if (pendingTaskCount == nTemplates && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            showExportedPermanentNotification()
+        }
 
         if (--pendingTaskCount == 0) {
             stop()
