@@ -52,8 +52,8 @@ fun matchTemplateMetrics() = metrics {
 
     header("c", "Sandstorm")
     selector("d", "Starting location") {
-        +Item("a", "HAB Level 2")
-        +Item("b", "HAB Level 1")
+        +Item("a", "HAB Level 1")
+        +Item("b", "HAB Level 2")
         +Item("c", "Unknown", true)
     }
     checkbox("e", "Successfully crossed HAB line")
@@ -71,17 +71,18 @@ fun matchTemplateMetrics() = metrics {
     counter("p", "Cargo in Cargo Ship")
     counter("q", "Cargo in low Rocket Bays")
     counter("r", "Cargo in middle/high Rocket Bays")
-    stopwatch("s", "Cycle time")
-    selector("t", "Endgame location") {
+    stopwatch("s", "Cycle times on Panels")
+    stopwatch("t", "Cycle times on Cargo")
+    selector("u", "Endgame location") {
         +Item("a", "HAB Level 1")
         +Item("b", "HAB Level 2")
         +Item("c", "HAB Level 3")
-        +Item("d", "Not on HAB")
+        +Item("d", "Not on HAB", true)
     }
 
-    header("u", "Post-game")
-    checkbox("v", "Robot broke")
-    text("w", "Other")
+    header("v", "Post-game")
+    checkbox("w", "Robot broke")
+    text("x", "Other")
 }
 
 /** @see [matchTemplateMetrics] */
