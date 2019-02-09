@@ -25,7 +25,7 @@ internal class TrashHolder : ViewModelBase<Unit?>(), DefaultLifecycleObserver,
     private val _trashListener = MutableLiveData<List<Trash>?>()
     val trashListener: LiveData<List<Trash>?> = _trashListener
 
-    private lateinit var registration: ListenerRegistration
+    private var registration: ListenerRegistration? = null
 
     override fun onCreate(args: Unit?) {
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
@@ -62,7 +62,7 @@ internal class TrashHolder : ViewModelBase<Unit?>(), DefaultLifecycleObserver,
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        registration.remove()
+        registration?.remove()
     }
 
     public override fun onCleared() {

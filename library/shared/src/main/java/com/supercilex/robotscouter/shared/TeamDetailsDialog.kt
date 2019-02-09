@@ -62,7 +62,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        team = savedInstanceState?.getTeam() ?: checkNotNull(arguments).getTeam()
+        team = savedInstanceState?.getTeam() ?: requireArguments().getTeam()
         permHandler.apply {
             init(TeamMediaCreator.perms)
             onGranted.observe(this@TeamDetailsDialog) {

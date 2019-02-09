@@ -9,9 +9,9 @@ import com.supercilex.robotscouter.core.data.emptyTrash
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import com.supercilex.robotscouter.core.unsafeLazy
 
-internal class EmtpyTrashDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    private val ids by unsafeLazy { checkNotNull(arguments?.getStringArray(IDS_KEY)).toList() }
-    private val emptyAll by unsafeLazy { checkNotNull(arguments).getBoolean(EMPTY_ALL_KEY) }
+internal class EmptyTrashDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
+    private val ids by unsafeLazy { requireArguments().getStringArray(IDS_KEY).orEmpty().toList() }
+    private val emptyAll by unsafeLazy { requireArguments().getBoolean(EMPTY_ALL_KEY) }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.trash_empty_dialog_title)
@@ -27,13 +27,13 @@ internal class EmtpyTrashDialog : DialogFragmentBase(), DialogInterface.OnClickL
     }
 
     companion object {
-        private const val TAG = "EmtpyTrashDialog"
+        private const val TAG = "EmptyTrashDialog"
         private const val IDS_KEY = "ids"
         private const val EMPTY_ALL_KEY = "empty_all"
 
         fun show(manager: FragmentManager, ids: List<String>, emptyAll: Boolean) {
             require(ids.isNotEmpty())
-            EmtpyTrashDialog().apply {
+            EmptyTrashDialog().apply {
                 arguments = bundleOf(IDS_KEY to ids.toTypedArray(), EMPTY_ALL_KEY to emptyAll)
             }.show(manager, TAG)
         }

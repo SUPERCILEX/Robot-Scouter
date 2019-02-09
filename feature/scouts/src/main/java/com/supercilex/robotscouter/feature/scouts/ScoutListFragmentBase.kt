@@ -74,14 +74,14 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         }
     protected val bundle: Bundle
         get() = getScoutBundle(
-                team, checkNotNull(arguments).getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
+                team, requireArguments().getBoolean(KEY_ADD_SCOUT), scoutId = scoutId)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         savedState = savedInstanceState
 
-        val state = savedInstanceState ?: checkNotNull(arguments)
+        val state = savedInstanceState ?: requireArguments()
         dataHolder.init(state)
         team = state.getTeam()
         dataHolder.teamListener.observe(this, this)
@@ -213,7 +213,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         viewPager.adapter = pagerAdapter
         tabs.setupWithViewPager(viewPager)
 
-        checkNotNull(arguments).let {
+        requireArguments().let {
             if (it.getBoolean(KEY_ADD_SCOUT, false)) {
                 it.remove(KEY_ADD_SCOUT)
                 addScout(it.getString(KEY_OVERRIDE_TEMPLATE_KEY, null))

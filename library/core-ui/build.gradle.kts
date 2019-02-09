@@ -25,6 +25,7 @@ dependencies {
     api(Config.Libs.FirebaseUi.firestore)
     api(Config.Libs.Anko.design)
     api(Config.Libs.Anko.appCompat)
+    api(Config.Libs.Jetpack.rv)
     api(Config.Libs.Jetpack.rvSelection)
 
     implementation(Config.Libs.Jetpack.browser)

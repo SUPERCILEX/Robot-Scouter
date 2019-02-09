@@ -169,7 +169,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
     }
 
     private fun showEmptyTrashDialog(ids: List<String>, emptyAll: Boolean = false) {
-        EmtpyTrashDialog.show(childFragmentManager, ids, emptyAll)
+        EmptyTrashDialog.show(childFragmentManager, ids, emptyAll)
     }
 
     companion object {

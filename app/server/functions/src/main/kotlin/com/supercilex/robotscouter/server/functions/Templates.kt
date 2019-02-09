@@ -36,6 +36,7 @@ import kotlin.js.json
  * 1. Increment the letter for each new metric added (e.g. 'a' -> 'b' -> 'c')
  *      - Should the template exceed 26 items, start with `aa` -> 'ab' -> 'ac"
  * 1. Always start with a header and space the metrics in code by grouping
+ * 1. In terms of punctuation, use Title Case for headers and Sentence case for all other metrics
  * 1. **For examples of correct metric DSL usage**, take a look at the current template or the Git
  *    log for past templates
  *

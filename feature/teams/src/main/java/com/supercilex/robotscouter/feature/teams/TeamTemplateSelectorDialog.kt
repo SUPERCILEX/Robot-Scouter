@@ -13,7 +13,7 @@ internal class TeamTemplateSelectorDialog : TemplateSelectorDialog() {
     override fun onItemSelected(id: String) {
         super.onItemSelected(id)
         (context as TeamSelectionListener)
-                .onTeamSelected(getScoutBundle(checkNotNull(arguments).getTeam(), true, id))
+                .onTeamSelected(getScoutBundle(requireArguments().getTeam(), true, id))
     }
 
     companion object {

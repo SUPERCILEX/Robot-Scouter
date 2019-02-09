@@ -26,7 +26,7 @@ internal abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
         super.onShow(dialog, savedInstanceState)
         valueLayout.hint = getString(hint)
         lastEditText.apply {
-            setText(checkNotNull(arguments).getString(CURRENT_VALUE))
+            setText(requireArguments().getString(CURRENT_VALUE))
             if (savedInstanceState == null) post { selectAll() }
         }
     }
