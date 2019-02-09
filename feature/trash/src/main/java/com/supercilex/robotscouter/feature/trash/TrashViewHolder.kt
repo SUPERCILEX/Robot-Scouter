@@ -83,7 +83,10 @@ internal class TrashViewHolder(
 
             val snapshot = checkNotNull(task.result)
             if (snapshot.id != trash.id) return // Holder might have changed
-            if (snapshot.data.isNullOrEmpty()) holder.name.text = holder.deletingName
+            if (!snapshot.exists()) {
+                holder.name.text = holder.deletingName
+                return
+            }
 
             holder.name.text = when (val type = trash.type) {
                 DeletionType.TEAM -> teamParser.parseSnapshot(snapshot).toString()
