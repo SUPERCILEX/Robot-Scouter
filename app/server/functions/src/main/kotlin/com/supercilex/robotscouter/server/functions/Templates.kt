@@ -49,32 +49,37 @@ fun matchTemplateMetrics() = metrics {
     header("a", "Scout info")
     text("b", "Name")
 
-    header("c", "Auto")
-    checkbox("d", "Crossed baseline")
-    selector("e", "Put cube in Switch") {
-        +Item("a", "Didn't attempt")
-        +Item("b", "Attempted")
-        +Item("c", "Successful")
-        +Item("d", "Unknown", true)
+    header("c", "Sandstorm")
+    selector("d", "Starting Location") {
+        +Item("a", "HAB Level 2")
+        +Item("b", "HAB Level 1")
     }
-    selector("f", "Put cube in Scale") {
-        +Item("a", "Didn't attempt")
-        +Item("b", "Attempted")
-        +Item("c", "Successful")
-        +Item("d", "Unknown", true)
+    checkbox("e", "Successfully crossed HAB line")
+    counter("f", "Panels on Cargo Ship")
+    counter("g", "Panels on Low Rocket Hatches")
+    counter("h", "Panels on Middle/High Rocket Hatches")
+    counter("i", "Cargo in Cargo Ship")
+    counter("j", "Cargo in Low Rocket Bays")
+    counter("k", "Cargo in Middle/High Rocket Bays")
+
+    header("l", "Teleop")
+    counter("m", "Panels on Cargo Ship")
+    counter("n", "Panels on Low Rocket Hatches")
+    counter("o", "Panels on Middle/High Rocket Hatches")
+    counter("p", "Cargo in Cargo Ship")
+    counter("q", "Cargo in Low Rocket Bays")
+    counter("r", "Cargo in Middle/High Rocket Bays")
+    stopwatch("s", "Cycle Time")
+    selector("t", "Endgame Location") {
+        +Item("a", "HAB Level 1")
+        +Item("b", "HAB Level 2")
+        +Item("c", "HAB Level 3")
+        +Item("d", "Not on HAB")
     }
-    checkbox("g", "Picked up cube")
 
-    header("h", "Teleop")
-    counter("i", "Cubes put in the Switch")
-    counter("j", "Cubes put in the Scale")
-    counter("k", "Cubes put in the Exchange")
-    stopwatch("l", "Cycle time")
-    checkbox("m", "Climbed")
-
-    header("n", "Post-game")
-    checkbox("o", "Robot broke")
-    text("p", "Other")
+    header("u", "Post-game")
+    checkbox("v", "Robot Broke")
+    text("w", "Other")
 }
 
 /** @see [matchTemplateMetrics] */
@@ -84,39 +89,83 @@ fun pitTemplateMetrics() = metrics {
 
     header("c", "Hardware")
     selector("d", "What's their drivetrain?") {
-        +Item("d", "Unknown")
-        +Item("a", "Standard 6/8 wheel")
-        +Item("b", "Swerve")
-        +Item("c", "Omni/Mecanum")
+        +Item("a", "Unknown")
+        +Item("b", "Standard 6/8 wheel")
+        +Item("c", "Swerve")
+        +Item("d", "Omni/Mecanum")
         +Item("e", "Other")
     }
+    text("e", "If other, please specify")
+    checkbox("f", "Do they have a Hatch Panel ground intake?")
+    checkbox("g", "Do they have a Cargo ground intake?")
+
+    header("h", "Sandstorm Strategy")
+    selector("i", "From where does their robot start from?") {
+        +Item("a", "HAB Level 1")
+        +Item("b", "HAB Level 2")
+    }
+    selector("j", "How does their robot move during the Sandstorm?") {
+        +Item("a", "Autonomous Code")
+        +Item("b", "Driver Control")
+        +Item("c", "No Sandstorm Movement")
+        +Item("d", "Hybrid")
+    }
+    selector("k", "Where can they place Hatch Panels during the Sandstorm?") {
+        +Item("a", "Can't place Panels durin the Sandstorm")
+        +Item("b", "Cargo Ship Only")
+        +Item("c", "Cargo Ship and Low Rocket Hatches")
+        +Item("d", "Cargo Ship and Low/Middle Rocket Hatches")
+        +Item("e", "Everywhere")
+        +Item("f", "Other")
+    }
+    text("l", "If other, please specify")
+    selector("m", "Where can they place Cargo during the Sandstorm?") {
+        +Item("a", "Can't place Cargo during the Sandstorm")
+        +Item("b", "Cargo Ship Only")
+        +Item("c", "Cargo Ship and Low Rocket Bays")
+        +Item("d", "Cargo Ship and Low/Middle Rocket Bays")
+        +Item("e", "Everywhere")
+        +Item("f", "Other")
+    }
     text("n", "If other, please specify")
-    checkbox("o", "Does it climb?")
-    text("e", "How does it climb?")
-    checkbox("f", "Can they help us climb?")
-    text("g", "If so, how?")
-    counter("h", "Subjective quality assessment (?/5)") {
+
+    header("o", "Teleop Strategy")
+    selector("p", "Where can they place Hatch Panels during Teleop?") {
+        +Item("a", "Can't place Panels during Teleop")
+        +Item("b", "Cargo Ship Only")
+        +Item("c", "Cargo Ship and Low Rocket Hatches")
+        +Item("d", "Cargo Ship and Low/Middle Rocket Hatches")
+        +Item("e", "Everywhere")
+        +Item("f", "Other")
+    }
+    text("q", "If other, please specify")
+    selector("r", "Where do they place Cargo during Teleop?") {
+        +Item("a", "Can't place Cargo during Teleop")
+        +Item("b", "Cargo Ship Only")
+        +Item("c", "Cargo Ship and Low Rocket Bays")
+        +Item("d", "Cargo Ship and Low/Middle Rocket Bays")
+        +Item("e", "Everywhere")
+        +Item("f", "Other")
+    }
+    text("s", "If other, please specify")
+    selector("t", "Where does their robot end the game?") {
+        +Item("a", "Off the HAB Platform")
+        +Item("b", "Only HAB Level 1")
+        +Item("c", "Only HAB Level 2")
+        +Item("d", "Only HAB Level 3")
+        +Item("e", "HAB Level 1 OR 2")
+        +Item("f", "HAB Level 1 OR 3")
+        +Item("g", "HAB Level 1, 2, OR 3")
+    }
+    checkbox("u", "Can they help another robot climb? ")
+
+    header("v", "Other")
+    counter("w", "Subjective quality assessment (?/5)") {
         count = 0
         unit = "⭐"
     }
-
-    header("i", "Strategy")
-    selector("j", "What's their autonomous?") {
-        +Item("a", "None")
-        +Item("b", "Drive")
-        +Item("c", "Switch")
-        +Item("d", "Scale")
-        +Item("e", "Switch OR Scale")
-        +Item("f", "Switch AND Scale")
-    }
-    selector("m", "Where can they place cubes?") {
-        +Item("a", "Just the exchange zone")
-        +Item("b", "Switch")
-        +Item("c", "Scale")
-        +Item("d", "Switch and scale")
-    }
-    text("k", "What is special about your robot or something you want us to know?")
-    text("l", "Other")
+    text("x", "What is something special you want us to know about your robot?")
+    text("y", "Other Comments")
 }
 
 fun updateDefaultTemplates(): Promise<*>? {
