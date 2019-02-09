@@ -71,8 +71,8 @@ fun matchTemplateMetrics() = metrics {
     counter("p", "Cargo in Cargo Ship")
     counter("q", "Cargo in low Rocket Bays")
     counter("r", "Cargo in middle/high Rocket Bays")
-    stopwatch("s", "Cycle times on Panels")
-    stopwatch("t", "Cycle times on Cargo")
+    stopwatch("s", "Panel delivery cycle time")
+    stopwatch("t", "Cargo delivery cycle time")
     selector("u", "Endgame location") {
         +Item("a", "HAB Level 1")
         +Item("b", "HAB Level 2")
