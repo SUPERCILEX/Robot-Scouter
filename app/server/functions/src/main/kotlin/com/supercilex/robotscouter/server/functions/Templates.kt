@@ -173,7 +173,7 @@ fun pitTemplateMetrics() = metrics {
         unit = "⭐"
     }
     text("x", "What is something special you want us to know about your robot?")
-    text("y", "Other Comments")
+    text("y", "Other comments")
 }
 
 fun updateDefaultTemplates(): Promise<*>? {
