@@ -52,7 +52,7 @@ abstract class MetricListFragment : FragmentBase() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putAll(tmpSavedAdapterState ?: run {
-            adapter.onSaveInstanceState(outState)
+            if (view != null) adapter.onSaveInstanceState(outState)
             tmpSavedAdapterState = outState
             outState
         })
