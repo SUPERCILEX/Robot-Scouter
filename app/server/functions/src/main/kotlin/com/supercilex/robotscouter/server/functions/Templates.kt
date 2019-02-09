@@ -50,27 +50,28 @@ fun matchTemplateMetrics() = metrics {
     text("b", "Name")
 
     header("c", "Sandstorm")
-    selector("d", "Starting Location") {
+    selector("d", "Starting location") {
         +Item("a", "HAB Level 2")
         +Item("b", "HAB Level 1")
+        +Item("c", "Unknown", true)
     }
     checkbox("e", "Successfully crossed HAB line")
     counter("f", "Panels on Cargo Ship")
-    counter("g", "Panels on Low Rocket Hatches")
-    counter("h", "Panels on Middle/High Rocket Hatches")
+    counter("g", "Panels on low Rocket Hatches")
+    counter("h", "Panels on middle/high Rocket Hatches")
     counter("i", "Cargo in Cargo Ship")
-    counter("j", "Cargo in Low Rocket Bays")
-    counter("k", "Cargo in Middle/High Rocket Bays")
+    counter("j", "Cargo in low Rocket Bays")
+    counter("k", "Cargo in middle/high Rocket Bays")
 
     header("l", "Teleop")
     counter("m", "Panels on Cargo Ship")
-    counter("n", "Panels on Low Rocket Hatches")
-    counter("o", "Panels on Middle/High Rocket Hatches")
+    counter("n", "Panels on low Rocket Hatches")
+    counter("o", "Panels on middle/high Rocket Hatches")
     counter("p", "Cargo in Cargo Ship")
-    counter("q", "Cargo in Low Rocket Bays")
-    counter("r", "Cargo in Middle/High Rocket Bays")
-    stopwatch("s", "Cycle Time")
-    selector("t", "Endgame Location") {
+    counter("q", "Cargo in low Rocket Bays")
+    counter("r", "Cargo in middle/high Rocket Bays")
+    stopwatch("s", "Cycle time")
+    selector("t", "Endgame location") {
         +Item("a", "HAB Level 1")
         +Item("b", "HAB Level 2")
         +Item("c", "HAB Level 3")
@@ -78,7 +79,7 @@ fun matchTemplateMetrics() = metrics {
     }
 
     header("u", "Post-game")
-    checkbox("v", "Robot Broke")
+    checkbox("v", "Robot broke")
     text("w", "Other")
 }
 
@@ -89,63 +90,69 @@ fun pitTemplateMetrics() = metrics {
 
     header("c", "Hardware")
     selector("d", "What's their drivetrain?") {
-        +Item("a", "Unknown")
-        +Item("b", "Standard 6/8 wheel")
-        +Item("c", "Swerve")
-        +Item("d", "Omni/Mecanum")
-        +Item("e", "Other")
+        +Item("a", "Standard 6/8 wheel")
+        +Item("b", "Swerve")
+        +Item("c", "Omni/Mecanum")
+        +Item("d", "Other")
+        +Item("e", "Unknown", true)
     }
     text("e", "If other, please specify")
     checkbox("f", "Do they have a Hatch Panel ground intake?")
     checkbox("g", "Do they have a Cargo ground intake?")
 
     header("h", "Sandstorm Strategy")
-    selector("i", "From where does their robot start from?") {
+    selector("i", "Where does their robot start from?") {
         +Item("a", "HAB Level 1")
         +Item("b", "HAB Level 2")
+        +Item("c", "Unknown", true)
     }
     selector("j", "How does their robot move during the Sandstorm?") {
-        +Item("a", "Autonomous Code")
-        +Item("b", "Driver Control")
-        +Item("c", "No Sandstorm Movement")
-        +Item("d", "Hybrid")
+        +Item("a", "Autonomous code")
+        +Item("b", "Driver control")
+        +Item("c", "Hybrid")
+        +Item("d", "No movement")
+        +Item("e", "Unknown", true)
     }
     selector("k", "Where can they place Hatch Panels during the Sandstorm?") {
-        +Item("a", "Can't place Panels durin the Sandstorm")
-        +Item("b", "Cargo Ship Only")
-        +Item("c", "Cargo Ship and Low Rocket Hatches")
-        +Item("d", "Cargo Ship and Low/Middle Rocket Hatches")
-        +Item("e", "Everywhere")
+        +Item("a", "Nowhere")
+        +Item("b", "Cargo Ship only")
+        +Item("c", "Cargo Ship and low Rocket Hatches")
+        +Item("d", "Cargo Ship and low/middle Rocket Hatches")
+        +Item("e", "Anywhere")
         +Item("f", "Other")
+        +Item("g", "Unknown", true)
     }
     text("l", "If other, please specify")
     selector("m", "Where can they place Cargo during the Sandstorm?") {
-        +Item("a", "Can't place Cargo during the Sandstorm")
-        +Item("b", "Cargo Ship Only")
-        +Item("c", "Cargo Ship and Low Rocket Bays")
-        +Item("d", "Cargo Ship and Low/Middle Rocket Bays")
-        +Item("e", "Everywhere")
+        +Item("a", "Nowhere")
+        +Item("b", "Cargo Ship only")
+        +Item("c", "Cargo Ship and low Rocket Hatches")
+        +Item("d", "Cargo Ship and low/middle Rocket Hatches")
+        +Item("e", "Anywhere")
         +Item("f", "Other")
+        +Item("g", "Unknown", true)
     }
     text("n", "If other, please specify")
 
     header("o", "Teleop Strategy")
     selector("p", "Where can they place Hatch Panels during Teleop?") {
-        +Item("a", "Can't place Panels during Teleop")
-        +Item("b", "Cargo Ship Only")
-        +Item("c", "Cargo Ship and Low Rocket Hatches")
-        +Item("d", "Cargo Ship and Low/Middle Rocket Hatches")
-        +Item("e", "Everywhere")
+        +Item("a", "Nowhere")
+        +Item("b", "Cargo Ship only")
+        +Item("c", "Cargo Ship and low Rocket Hatches")
+        +Item("d", "Cargo Ship and low/middle Rocket Hatches")
+        +Item("e", "Anywhere")
         +Item("f", "Other")
+        +Item("g", "Unknown", true)
     }
     text("q", "If other, please specify")
     selector("r", "Where do they place Cargo during Teleop?") {
-        +Item("a", "Can't place Cargo during Teleop")
-        +Item("b", "Cargo Ship Only")
-        +Item("c", "Cargo Ship and Low Rocket Bays")
-        +Item("d", "Cargo Ship and Low/Middle Rocket Bays")
-        +Item("e", "Everywhere")
+        +Item("a", "Nowhere")
+        +Item("b", "Cargo Ship only")
+        +Item("c", "Cargo Ship and low Rocket Hatches")
+        +Item("d", "Cargo Ship and low/middle Rocket Hatches")
+        +Item("e", "Anywhere")
         +Item("f", "Other")
+        +Item("g", "Unknown", true)
     }
     text("s", "If other, please specify")
     selector("t", "Where does their robot end the game?") {
@@ -153,15 +160,15 @@ fun pitTemplateMetrics() = metrics {
         +Item("b", "Only HAB Level 1")
         +Item("c", "Only HAB Level 2")
         +Item("d", "Only HAB Level 3")
-        +Item("e", "HAB Level 1 OR 2")
-        +Item("f", "HAB Level 1 OR 3")
-        +Item("g", "HAB Level 1, 2, OR 3")
+        +Item("e", "HAB Level 1 or 2")
+        +Item("f", "HAB Level 1 or 3")
+        +Item("g", "Any HAB Level")
+        +Item("h", "Unknown", true)
     }
-    checkbox("u", "Can they help another robot climb? ")
+    checkbox("u", "Can they help another robot climb?")
 
     header("v", "Other")
     counter("w", "Subjective quality assessment (?/5)") {
-        count = 0
         unit = "⭐"
     }
     text("x", "What is something special you want us to know about your robot?")
