@@ -6,10 +6,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
-import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
+import com.supercilex.robotscouter.ActivityViewCreationListener
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ValueSeeker
-import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.animatePopReveal
@@ -17,20 +17,16 @@ import com.supercilex.robotscouter.core.ui.isInTabletMode
 import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
-internal class TabletScoutListFragment : ScoutListFragmentBase() {
+internal class TabletScoutListFragment : ScoutListFragmentBase(), ActivityViewCreationListener {
     private val noContentHint by ValueSeeker {
         requireActivity().findOptional<View>(RC.id.noTeamSelectedHint)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (!requireContext().isInTabletMode()) {
-            val listener = context as TeamSelectionListener
-            val bundle = bundle
-            mainHandler.post { listener.onTeamSelected(bundle) }
+    override fun onActivityViewCreated(listener: TeamSelectionListener) {
+        if (requireContext().isInTabletMode()) return
 
-            removeFragment()
-        }
+        listener.onTeamSelected(bundle)
+        removeFragment()
     }
 
     override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
@@ -90,7 +86,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
 
     private fun removeFragment() {
         val parent = requireParentFragment()
-        parent.requireFragmentManager().commit { remove(parent) }
+        parent.requireFragmentManager().commitNow { remove(parent) }
     }
 
     companion object {

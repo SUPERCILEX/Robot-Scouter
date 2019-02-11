@@ -74,10 +74,16 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        if (savedInstanceState == null) supportFragmentManager.commit {
-            add(R.id.content,
-                TeamListFragmentCompanion().getInstance(supportFragmentManager),
-                TeamListFragmentCompanion.TAG)
+        if (savedInstanceState == null) {
+            supportFragmentManager.commit {
+                add(R.id.content,
+                    TeamListFragmentCompanion().getInstance(supportFragmentManager),
+                    TeamListFragmentCompanion.TAG)
+            }
+        } else {
+            supportFragmentManager.fragments
+                    .filterIsInstance<ActivityViewCreationListener>()
+                    .forEach { it.onActivityViewCreated(this) }
         }
 
         permHandler.apply {

@@ -5,12 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.commitNow
+import com.supercilex.robotscouter.ActivityViewCreationListener
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
+import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ui.FragmentBase
 
 @Bridge
-internal class TabletScoutListContainer : FragmentBase() {
+internal class TabletScoutListContainer : FragmentBase(), ActivityViewCreationListener {
+    override fun onActivityViewCreated(
+            listener: TeamSelectionListener
+    ) = childFragmentManager.fragments
+            .filterIsInstance<ActivityViewCreationListener>()
+            .forEach { it.onActivityViewCreated(listener) }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,

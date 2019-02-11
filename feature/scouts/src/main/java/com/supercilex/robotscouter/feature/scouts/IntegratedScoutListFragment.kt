@@ -15,11 +15,11 @@ import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.appbar.AppBarLayout
+import com.supercilex.robotscouter.ActivityViewCreationListener
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.IntegratedScoutListFragmentCompanion
 import com.supercilex.robotscouter.ScoutListFragmentCompanionBase.Companion.TAG
 import com.supercilex.robotscouter.TeamSelectionListener
-import com.supercilex.robotscouter.core.data.mainHandler
 import com.supercilex.robotscouter.core.ui.animateRawColorChange
 import com.supercilex.robotscouter.core.ui.colorPrimaryDark
 import com.supercilex.robotscouter.core.ui.isInTabletMode
@@ -29,21 +29,20 @@ import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
+internal class IntegratedScoutListFragment : ScoutListFragmentBase(), ActivityViewCreationListener {
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private val drawer by unsafeLazy { requireActivity().find<DrawerLayout>(RC.id.drawerLayout) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (requireContext().isInTabletMode()) {
-            val listener = context as TeamSelectionListener
-            val bundle = bundle
-            mainHandler.post { listener.onTeamSelected(bundle) }
+        if (sharedElementEnterTransition != null) postponeEnterTransition()
+    }
 
-            removeFragment()
-        } else if (sharedElementEnterTransition != null) {
-            postponeEnterTransition()
-        }
+    override fun onActivityViewCreated(listener: TeamSelectionListener) {
+        if (!requireContext().isInTabletMode()) return
+
+        listener.onTeamSelected(bundle)
+        removeFragment()
     }
 
     override fun onCreateView(
@@ -60,7 +59,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (sharedElementEnterTransition == null) {
-            mainHandler.post { appBar.setExpanded(false) }
+            appBar.post { appBar.setExpanded(false) }
         }
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
@@ -133,7 +132,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     override fun onTeamDeleted() = removeFragment()
 
     private fun removeFragment() {
-        requireFragmentManager().popBackStack()
+        requireFragmentManager().popBackStackImmediate()
     }
 
     private fun updateStatusBarColor(@ColorInt color: Int) {
