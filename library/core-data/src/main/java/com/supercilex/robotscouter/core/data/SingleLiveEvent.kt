@@ -18,23 +18,14 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 class SingleLiveEvent<T> : MutableLiveData<T>() {
     private val observerStatuses = ConcurrentHashMap<Class<out Observer<*>>, AtomicBoolean>()
-    private val observers = mutableListOf<EventFilterObserver>()
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         observerStatuses.putIfAbsent(observer.javaClass, AtomicBoolean())
-        EventFilterObserver(observer).let {
-            observers.add(0, it)
-            super.observe(owner, it)
-        }
+        super.observe(owner, EventFilterObserver(observer))
     }
 
-    override fun removeObserver(observer: Observer<in T>) {
-        (observer as? EventFilterObserver
-                ?: observers.map { it.originalObserver }.single { it === observer }).let {
-            observers.remove(it)
-            super.removeObserver(it)
-        }
-    }
+    override fun removeObserver(observer: Observer<in T>) = super.removeObserver(
+            observer as? EventFilterObserver ?: error("Cannot manually remove observers"))
 
     override fun setValue(t: T?) {
         observerStatuses.values.forEach { it.set(true) }
@@ -42,14 +33,9 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     }
 
     private inner class EventFilterObserver(val originalObserver: Observer<in T>) : Observer<T> {
-        private val newestObserver: Observer<in T>
-            get() = observers.map { it.originalObserver }.single {
-                it.javaClass == this.originalObserver.javaClass
-            }
-
         override fun onChanged(t: T?) {
             if (observerStatuses.getValue(originalObserver.javaClass).compareAndSet(true, false)) {
-                newestObserver.onChanged(t)
+                originalObserver.onChanged(t)
             }
         }
     }
