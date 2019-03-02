@@ -142,7 +142,7 @@ interface TeamSelectionListener {
 }
 
 interface ActivityViewCreationListener {
-    fun onActivityViewCreated(listener: TeamSelectionListener)
+    fun onActivityViewCreated(context: Context, listener: TeamSelectionListener)
 }
 
 interface NewTeamDialogCompanion : InstalledBridgeCompanion {

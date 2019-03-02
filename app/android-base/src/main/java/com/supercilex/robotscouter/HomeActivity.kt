@@ -83,7 +83,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         } else {
             supportFragmentManager.fragments
                     .filterIsInstance<ActivityViewCreationListener>()
-                    .forEach { it.onActivityViewCreated(this) }
+                    .forEach { it.onActivityViewCreated(this, this) }
         }
 
         permHandler.apply {

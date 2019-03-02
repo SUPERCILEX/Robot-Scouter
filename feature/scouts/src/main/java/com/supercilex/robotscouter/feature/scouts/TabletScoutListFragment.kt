@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.feature.scouts
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -25,8 +26,8 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), ActivityViewCr
         requireActivity().findOptional<View>(RC.id.noTeamSelectedHint)
     }
 
-    override fun onActivityViewCreated(listener: TeamSelectionListener) {
-        if (requireContext().isInTabletMode()) return
+    override fun onActivityViewCreated(context: Context, listener: TeamSelectionListener) {
+        if (context.isInTabletMode()) return
 
         listener.onTeamSelected(bundle)
         removeFragment(true)

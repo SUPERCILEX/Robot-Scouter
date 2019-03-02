@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.feature.scouts
 
+import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,8 +39,8 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase(), ActivityVi
         if (sharedElementEnterTransition != null) postponeEnterTransition()
     }
 
-    override fun onActivityViewCreated(listener: TeamSelectionListener) {
-        if (!requireContext().isInTabletMode()) return
+    override fun onActivityViewCreated(context: Context, listener: TeamSelectionListener) {
+        if (!context.isInTabletMode()) return
 
         listener.onTeamSelected(bundle)
         removeFragment(true)
