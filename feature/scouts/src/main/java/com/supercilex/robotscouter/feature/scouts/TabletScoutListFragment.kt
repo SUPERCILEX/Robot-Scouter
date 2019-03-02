@@ -9,6 +9,7 @@ import android.view.Window
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.observe
 import com.supercilex.robotscouter.ActivityViewCreationListener
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ValueSeeker
@@ -47,13 +48,9 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), ActivityViewCr
         }
     }
 
-    override fun onChanged(team: Team?) {
-        super.onChanged(team)
-        select(team)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dataHolder.teamListener.observe(viewLifecycleOwner) { select(it) }
         noContentHint?.animatePopReveal(false)
     }
 
