@@ -71,8 +71,6 @@ abstract class TabPagerAdapterBase(
     }
 
     override fun onDataChanged() {
-        if (fragment.view == null) return // Potential race condition
-
         currentScouts = holder.scouts.toList()
         if (currentScouts.isNotEmpty() && currentScouts.size == oldScouts.size) {
             if (currentScouts == oldScouts) {

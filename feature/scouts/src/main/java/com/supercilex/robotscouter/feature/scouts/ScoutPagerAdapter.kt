@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.shared.scouting.TabPagerAdapterBase
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.findOptional
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutPagerAdapter(
@@ -20,7 +21,7 @@ internal class ScoutPagerAdapter(
 ) : TabPagerAdapterBase(fragment, team.scoutsRef) {
     override val editTabNameRes = R.string.scout_edit_name_title
     override val tabs by fragment.LifecycleAwareLazy {
-        fragment.requireActivity().find<TabLayout>(R.id.tabs)
+        fragment.findOptional<TabLayout>(R.id.tabs) ?: fragment.requireActivity().find(R.id.tabs)
     } onDestroy {
         it.setupWithViewPager(null)
     }
