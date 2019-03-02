@@ -21,7 +21,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -107,7 +106,8 @@ internal open class AppBarViewHolderBase(
         Glide.with(fragment)
                 .asBitmap()
                 .load(team.media)
-                .apply(RequestOptions.centerCropTransform().error(RC.drawable.ic_person_grey_96dp))
+                .centerCrop()
+                .error(RC.drawable.ic_person_grey_96dp)
                 .apply {
                     if (fragment.sharedElementEnterTransition == null) {
                         transition(BitmapTransitionOptions.withCrossFade())

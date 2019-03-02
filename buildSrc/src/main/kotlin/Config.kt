@@ -7,7 +7,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.30-dev-1477"
+    private const val kotlinVersion = "1.3.30-dev-1936"
 
     fun RepositoryHandler.deps() {
         fun MavenArtifactRepository.ensureGroups(
@@ -57,7 +57,7 @@ object Config {
 
         val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.1.0"
         val PluginDependenciesSpec.versionChecker
-            get() = id("com.github.ben-manes.versions") version "0.20.0"
+            get() = id("com.github.ben-manes.versions") version "0.21.0"
     }
 
     object Libs {
@@ -86,7 +86,7 @@ object Config {
 
         object Jetpack {
             private const val lifecycleVersion = "2.1.0-alpha02"
-            private const val workVersion = "1.0.0-beta05"
+            private const val workVersion = "1.0.0-rc02"
 
             val core = "androidx.core:core-ktx:1.1.0-alpha04"
             val multidex = "androidx.multidex:multidex:2.0.1"
@@ -102,7 +102,7 @@ object Config {
             val pref = "androidx.preference:preference:1.1.0-alpha03"
             val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha03"
 
-            val material = "com.google.android.material:material:1.1.0-alpha03"
+            val material = "com.google.android.material:material:1.1.0-alpha04"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
@@ -116,21 +116,21 @@ object Config {
             val core = "com.google.firebase:firebase-core:16.0.7"
             val auth = "com.google.firebase:firebase-auth:16.1.0"
             val firestore = "com.google.firebase:firebase-firestore:17.1.5"
-            val functions = "com.google.firebase:firebase-functions:16.1.3"
-            val storage = "com.google.firebase:firebase-storage:16.0.5"
+            val functions = "com.google.firebase:firebase-functions:16.2.0"
+            val storage = "com.google.firebase:firebase-storage:16.1.0"
             val config = "com.google.firebase:firebase-config:16.3.0"
             val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
-            val messaging = "com.google.firebase:firebase-messaging:17.3.4"
+            val messaging = "com.google.firebase:firebase-messaging:17.4.0"
             val invites = "com.google.firebase:firebase-invites:16.1.0"
             val perf = "com.google.firebase:firebase-perf:16.2.3"
 
-            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.8"
+            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         }
 
         object PlayServices {
             val auth = "com.google.android.gms:play-services-auth:16.0.1"
             val nearby = "com.google.android.gms:play-services-nearby:16.0.0"
-            val playCore = "com.google.android.play:core:1.3.6"
+            val playCore = "com.google.android.play:core:1.4.0"
         }
 
         object FirebaseUi {
@@ -148,7 +148,7 @@ object Config {
             private const val retrofitVersion = "2.5.0"
             private const val poiVersion = "3.17"
 
-            private const val glideVersion = "4.8.0"
+            private const val glideVersion = "4.9.0"
 
             val leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
             val leakCanaryFragments =

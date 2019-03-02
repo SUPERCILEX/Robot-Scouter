@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.data.getScoutBundle
 import com.supercilex.robotscouter.core.model.Team
@@ -121,17 +120,13 @@ internal class TeamViewHolder(
                 context: Context,
                 team: Team
         ): RequestBuilder<Drawable> = if (isItemSelected) {
-            // TODO https://github.com/bumptech/glide/pull/3308
-            // Glide.with(context).load(R.drawable.ic_check_circle_grey_56dp)
-            Glide.with(context)
-                    .load(null as String?)
-                    .apply(RequestOptions.placeholderOf(R.drawable.ic_check_circle_grey_56dp))
+            Glide.with(context).load(R.drawable.ic_check_circle_grey_56dp)
         } else {
             Glide.with(context)
                     .load(team.media)
-                    .apply(RequestOptions.circleCropTransform()
-                                   .placeholder(RC.drawable.ic_person_grey_96dp)
-                                   .error(RC.drawable.ic_person_grey_96dp))
+                    .circleCrop()
+                    .placeholder(RC.drawable.ic_person_grey_96dp)
+                    .error(RC.drawable.ic_person_grey_96dp)
                     .transition(DrawableTransitionOptions.withCrossFade())
         }
     }

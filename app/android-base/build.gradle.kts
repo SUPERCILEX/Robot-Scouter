@@ -56,15 +56,6 @@ android {
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     file("proguard-rules.pro")
             ))
-
-            // TODO Crashlytics doesn't support the new DSL yet so we need to downgrade
-//            postprocessing {
-//                removeUnusedCode true
-//                removeUnusedResources true
-//                obfuscate true
-//                optimizeCode true
-//                proguardFile 'proguard-rules.pro'
-//            }
         }
     }
 
