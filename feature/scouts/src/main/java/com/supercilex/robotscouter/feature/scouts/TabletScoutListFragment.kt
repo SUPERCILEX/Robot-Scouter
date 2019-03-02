@@ -6,6 +6,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import com.supercilex.robotscouter.ActivityViewCreationListener
 import com.supercilex.robotscouter.TeamSelectionListener
@@ -26,7 +28,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), ActivityViewCr
         if (requireContext().isInTabletMode()) return
 
         listener.onTeamSelected(bundle)
-        removeFragment()
+        removeFragment(true)
     }
 
     override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
@@ -63,7 +65,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), ActivityViewCr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_move_window) {
             startActivity(ScoutListActivity.createIntent(bundle))
-            removeFragment()
+            removeFragment(true)
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -84,9 +86,12 @@ internal class TabletScoutListFragment : ScoutListFragmentBase(), ActivityViewCr
                 ?.onTeamSelected(team?.toBundle() ?: Bundle.EMPTY)
     }
 
-    private fun removeFragment() {
+    private fun removeFragment(now: Boolean = false) {
         val parent = requireParentFragment()
-        parent.requireFragmentManager().commitNow { remove(parent) }
+        val transaction: FragmentTransaction.() -> Unit = { remove(parent) }
+        parent.requireFragmentManager().apply {
+            if (now) commitNow(body = transaction) else commit(body = transaction)
+        }
     }
 
     companion object {
