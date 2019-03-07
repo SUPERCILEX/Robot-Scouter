@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:width="144dp"
     android:height="144dp"
-    android:viewportHeight="5120.0"
-    android:viewportWidth="5120.0">
+    android:viewportWidth="5120.0"
+    android:viewportHeight="5120.0">
 
     <path
         android:fillColor="#E62E00"

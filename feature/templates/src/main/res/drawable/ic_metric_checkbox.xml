@@ -2,8 +2,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="@dimen/square_view_hw"
     android:height="@dimen/square_view_hw"
-    android:viewportHeight="24.0"
-    android:viewportWidth="24.0">
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
 
     <path
         android:fillColor="@color/night_grey"
