@@ -30,7 +30,9 @@
 
     <!-- Link activity -->
     <string name="link_teams_imported_message">Teams successfully imported</string>
-    <string name="link_uri_parse_error">Error: couldn’t parse URL</string>
+    <string name="link_uri_parse_error">
+        Error: couldn’t parse URL. Check your internet connection.
+    </string>
 
     <!-- Shortcuts -->
     <string name="team_new_title">New team/scout</string>

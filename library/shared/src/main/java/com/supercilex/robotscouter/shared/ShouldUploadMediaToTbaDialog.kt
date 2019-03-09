@@ -13,18 +13,18 @@ import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import com.supercilex.robotscouter.core.ui.create
 import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.dialog_should_upload_media.*
+import kotlinx.android.synthetic.main.dialog_should_upload_media.view.*
 import org.jetbrains.anko.find
 
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
-    override val containerView: View by unsafeLazy {
+    private val rootView: View by unsafeLazy {
         View.inflate(context, R.layout.dialog_should_upload_media, null)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
             .setTitle(R.string.media_should_upload_title)
             .setMessage(getText(R.string.media_should_upload_rationale).trim())
-            .setView(containerView)
+            .setView(rootView)
             .setPositiveButton(R.string.yes, this)
             .setNegativeButton(R.string.no, this)
             .create {
@@ -35,7 +35,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
     override fun onClick(dialog: DialogInterface, which: Int) {
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
-        if (save.isChecked) shouldUploadMediaToTba = isYes
+        if (rootView.save.isChecked) shouldUploadMediaToTba = isYes
         (parentFragment as CaptureTeamMediaListener).startCapture(isYes)
     }
 

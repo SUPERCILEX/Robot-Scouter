@@ -161,7 +161,8 @@ internal class SpinnerTemplateViewHolder(
 
             itemView.longSnackbar(RC.string.deleted, RC.string.undo) {
                 parent.metric.update(parent.metric.value.toMutableList().apply {
-                    add(position, items[position])
+                    val item = items[position]
+                    if (position <= size) add(position, item) else add(item)
                 })
                 parent.itemsAdapter.notifyItemInserted(position)
             }

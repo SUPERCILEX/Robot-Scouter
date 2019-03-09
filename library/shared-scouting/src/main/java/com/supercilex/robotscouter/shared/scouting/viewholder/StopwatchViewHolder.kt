@@ -360,6 +360,7 @@ open class StopwatchViewHolder(
             val rawPosition = adapterPosition
 
             val newCycles = metric.value.toMutableList()
+            if (position >= newCycles.size) return false
             val deletedCycle = newCycles.removeAt(position)
             metric.remove(deletedCycle)
 

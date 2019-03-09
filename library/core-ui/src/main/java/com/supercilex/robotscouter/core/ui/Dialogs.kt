@@ -29,20 +29,6 @@ fun DialogFragment.show(
 }
 
 abstract class DialogFragmentBase : DialogFragment() {
-    protected open val containerView: View? = null
-
-    // We're only overriding getView to make Kotlin synthetics work, but it will screw with
-    // onActivityCreated.
-    private var isCreatingActivity = false
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        isCreatingActivity = true
-        super.onActivityCreated(savedInstanceState)
-        isCreatingActivity = false
-    }
-
-    override fun getView() = if (isCreatingActivity) null else containerView
-
     override fun onResume() {
         super.onResume()
         val screenName = javaClass.simpleName
@@ -125,7 +111,7 @@ abstract class KeyboardDialogBase : ManualDismissDialog() {
         dialog?.window?.setKeyboardModeVisible()
     }
 
-    protected fun createDialog(@StringRes title: Int, savedInstanceState: Bundle?) =
+    protected fun createDialog(view: View, @StringRes title: Int, savedInstanceState: Bundle?) =
             AlertDialog.Builder(requireContext())
                     .setView(view)
                     .setTitle(title)

@@ -47,7 +47,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
         View.OnClickListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
-    val pagerAdapter: TemplatePagerAdapter by unsafeLazy {
+    private val _pagerAdapter = unsafeLazy {
         object : TemplatePagerAdapter(this@TemplateListFragment) {
             override fun onDataChanged() {
                 super.onDataChanged()
@@ -59,6 +59,7 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
             }
         }
     }
+    val pagerAdapter by _pagerAdapter
     val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private val tabs by LifecycleAwareLazy {
@@ -127,7 +128,13 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
         }
     }
 
-    override fun handleArgs(args: Bundle) = handleArgs(args, null)
+    override fun handleArgs(args: Bundle) {
+        if (_pagerAdapter.isInitialized()) {
+            handleArgs(args, null)
+        } else {
+            arguments = (arguments ?: Bundle()).apply { putAll(args) }
+        }
+    }
 
     private fun handleArgs(args: Bundle?, savedInstanceState: Bundle?) {
         val templateId = getTabId(args)

@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.findOptional
+import org.jetbrains.anko.support.v4.findOptional
 import kotlin.math.roundToInt
 import androidx.palette.graphics.Target as PaletteTarget
 import com.supercilex.robotscouter.R as RC
@@ -61,7 +62,8 @@ internal open class AppBarViewHolderBase(
         OnActivityResult, Saveable, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
-    final override val containerView = fragment.requireActivity().find<View>(R.id.header)
+    final override val containerView = fragment.findOptional<View>(R.id.header)
+            ?: fragment.requireActivity().find(R.id.header)
     val toolbar: Toolbar = scoutsToolbar
     private val toolbarHeight =
             fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)

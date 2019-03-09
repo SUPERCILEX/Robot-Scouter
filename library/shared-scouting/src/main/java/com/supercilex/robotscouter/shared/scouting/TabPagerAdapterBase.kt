@@ -129,7 +129,7 @@ abstract class TabPagerAdapterBase(
         (0 until tabs.tabCount).map {
             checkNotNull(tabs.getTabAt(it))
         }.forEachIndexed { index, tab ->
-            tab.text = currentScouts[index].name ?: getPageTitle(index)
+            tab.text = currentScouts.getOrNull(index)?.name ?: getPageTitle(index)
 
             val tabView = (tabs.getChildAt(0) as LinearLayout).getChildAt(index)
             tabView.setOnLongClickListenerCompat(this@TabPagerAdapterBase)

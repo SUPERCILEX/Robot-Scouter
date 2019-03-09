@@ -7,24 +7,24 @@ import android.widget.EditText
 import androidx.annotation.StringRes
 import com.supercilex.robotscouter.core.ui.KeyboardDialogBase
 import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.dialog_value.*
+import kotlinx.android.synthetic.main.dialog_value.view.*
 
 internal abstract class ValueDialogBase<out T> : KeyboardDialogBase() {
-    override val containerView: View by unsafeLazy {
+    private val rootView: View by unsafeLazy {
         View.inflate(context, R.layout.dialog_value, null)
     }
-    override val lastEditText by unsafeLazy { valueView as EditText }
+    override val lastEditText: EditText by unsafeLazy { rootView.valueView }
 
     protected abstract val value: T?
     @get:StringRes protected abstract val title: Int
     @get:StringRes protected abstract val hint: Int
 
     override fun onCreateDialog(savedInstanceState: Bundle?) =
-            createDialog(title, savedInstanceState)
+            createDialog(rootView, title, savedInstanceState)
 
     override fun onShow(dialog: DialogInterface, savedInstanceState: Bundle?) {
         super.onShow(dialog, savedInstanceState)
-        valueLayout.hint = getString(hint)
+        rootView.valueLayout.hint = getString(hint)
         lastEditText.apply {
             setText(requireArguments().getString(CURRENT_VALUE))
             if (savedInstanceState == null) post { selectAll() }

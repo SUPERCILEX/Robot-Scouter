@@ -48,16 +48,18 @@ internal val prefParser = SnapshotParser<Any?> {
 
 val prefStore = object : PreferenceDataStore() {
     override fun putString(key: String, value: String?) {
-        if (value != null) {
-            val ref = userPrefs.document(key)
-            ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures(ref, value)
-        }
+        if (value == null || !isSignedIn) return
+
+        val ref = userPrefs.document(key)
+        ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures(ref, value)
     }
 
     override fun getString(key: String, defValue: String?): String? =
             localPrefs.getString(key, defValue)
 
     override fun putBoolean(key: String, value: Boolean) {
+        if (!isSignedIn) return
+
         val ref = userPrefs.document(key)
         ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures(ref, value)
     }
