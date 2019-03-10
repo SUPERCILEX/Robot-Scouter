@@ -108,6 +108,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menuHelper.onCreateOptionsMenu(menu, inflater)
+        menuHelper.onTrashCountUpdate(holder.trashListener.value.orEmpty().isNotEmpty())
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = menuHelper.onOptionsItemSelected(item)
