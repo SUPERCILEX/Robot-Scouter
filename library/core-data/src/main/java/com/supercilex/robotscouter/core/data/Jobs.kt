@@ -13,8 +13,6 @@ private const val NUMBER = "number"
 private const val ID = "id"
 private const val OWNER_KEYS = "owner_keys"
 private const val OWNER_VALUES = "owner_values"
-private const val ACTIVE_TOKENS_KEYS = "active_tokens_keys"
-private const val ACTIVE_TOKENS_VALUES = "active_tokens_values"
 private const val TEMPLATE_ID = "template_id"
 private const val NAME = "name"
 private const val MEDIA = "media"
@@ -40,8 +38,6 @@ internal fun Data.parseTeam() = Team(
         checkNotNull(getString(ID)),
         checkNotNull(getStringArray(OWNER_KEYS))
                 .zip(checkNotNull(getLongArray(OWNER_VALUES)).toTypedArray()).toMap(),
-        checkNotNull(getStringArray(ACTIVE_TOKENS_KEYS))
-                .zip(checkNotNull(getLongArray(ACTIVE_TOKENS_VALUES)).map { Date(it) }).toMap(),
         checkNotNull(getString(TEMPLATE_ID)),
         getString(NAME),
         getString(MEDIA),
@@ -59,8 +55,6 @@ internal fun Team.toWorkData() = workDataOf(
         ID to id,
         OWNER_KEYS to owners.map { it.key }.toTypedArray(),
         OWNER_VALUES to owners.map { it.value }.toTypedArray(),
-        ACTIVE_TOKENS_KEYS to activeTokens.map { it.key }.toTypedArray(),
-        ACTIVE_TOKENS_VALUES to activeTokens.map { it.value.time }.toTypedArray(),
         TEMPLATE_ID to templateId,
         NAME to name,
         MEDIA to media,

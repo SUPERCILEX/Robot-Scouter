@@ -29,12 +29,6 @@ data class Team(
         @Exclude
         @get:Keep
         @set:Keep
-        @set:RestrictTo(RestrictTo.Scope.TESTS)
-        var activeTokens: Map<String, Date> = emptyMap(),
-
-        @Exclude
-        @get:Keep
-        @set:Keep
         var templateId: String = TemplateType.DEFAULT.id.toString(),
 
         @SerializedName("nickname")

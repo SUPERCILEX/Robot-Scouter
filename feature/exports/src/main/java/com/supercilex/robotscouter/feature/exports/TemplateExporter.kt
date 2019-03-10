@@ -791,7 +791,7 @@ internal class TemplateExporter(
         val scoutJson = JsonObject()
 
         scoutJson.addProperty("name", scout.name)
-        scoutJson.addProperty("timestamp", scout.timestamp.time)
+        scoutJson.addProperty("timestamp", scout.timestamp.toDate().time)
 
         val metricsJson = JsonObject()
         var currentHeader: Metric.Header? = null

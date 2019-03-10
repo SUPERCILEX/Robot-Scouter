@@ -46,7 +46,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.5.0-alpha03"
+        val android = "com.android.tools.build:gradle:3.5.0-alpha06"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
@@ -55,7 +55,7 @@ object Config {
 
         val ktlint = "com.github.shyiko:ktlint:0.30.0"
 
-        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.1.0"
+        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.1.1"
         val PluginDependenciesSpec.versionChecker
             get() = id("com.github.ben-manes.versions") version "0.21.0"
     }
@@ -86,7 +86,6 @@ object Config {
 
         object Jetpack {
             private const val lifecycleVersion = "2.1.0-alpha02"
-            private const val workVersion = "1.0.0-rc02"
 
             val core = "androidx.core:core-ktx:1.1.0-alpha04"
             val multidex = "androidx.multidex:multidex:2.0.1"
@@ -109,13 +108,13 @@ object Config {
             val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
 
-            val work = "android.arch.work:work-runtime-ktx:$workVersion"
+            val work = "androidx.work:work-runtime-ktx:2.0.0-rc01"
         }
 
         object Firebase {
             val core = "com.google.firebase:firebase-core:16.0.7"
             val auth = "com.google.firebase:firebase-auth:16.1.0"
-            val firestore = "com.google.firebase:firebase-firestore:17.1.5"
+            val firestore = "com.google.firebase:firebase-firestore:18.1.0"
             val functions = "com.google.firebase:firebase-functions:16.2.0"
             val storage = "com.google.firebase:firebase-storage:16.1.0"
             val config = "com.google.firebase:firebase-config:16.3.0"
@@ -139,7 +138,7 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.40.0"
+            val facebook = "com.facebook.android:facebook-login:4.41.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
@@ -167,7 +166,7 @@ object Config {
             val snap = "com.github.rubensousa:gravitysnaphelper:2.0"
             val permissions = "pub.devrel:easypermissions:3.0.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.14.0"
-            val billing = "com.android.billingclient:billing:1.2"
+            val billing = "com.android.billingclient:billing:1.2.1"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.2.2"
         }
     }

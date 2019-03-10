@@ -4,6 +4,7 @@ import android.util.Patterns
 import androidx.annotation.WorkerThread
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.android.gms.tasks.Task
+import com.google.firebase.Timestamp
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -120,7 +121,7 @@ internal fun Team.add() {
 
 internal fun Team.update(newTeam: Team) {
     if (this == newTeam) {
-        val timestamp = Date()
+        val timestamp = Timestamp.now()
         ref.update(FIRESTORE_TIMESTAMP, timestamp).logFailures(ref, timestamp)
         return
     }

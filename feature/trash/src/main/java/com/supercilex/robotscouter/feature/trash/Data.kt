@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -16,9 +17,8 @@ import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.data.ListenerRegistrationLifecycleOwner
 import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.model.userDeletionQueue
-import java.util.Date
 
-internal data class Trash(val id: String, val timestamp: Date, val type: DeletionType)
+internal data class Trash(val id: String, val timestamp: Timestamp, val type: DeletionType)
 
 internal class TrashHolder : ViewModelBase<Unit?>(), DefaultLifecycleObserver,
         EventListener<DocumentSnapshot> {
@@ -50,7 +50,7 @@ internal class TrashHolder : ViewModelBase<Unit?>(), DefaultLifecycleObserver,
                 item as Map<String, Any>
                 Trash(
                         id,
-                        item[FIRESTORE_TIMESTAMP] as Date,
+                        item[FIRESTORE_TIMESTAMP] as Timestamp,
                         DeletionType.valueOf(item[FIRESTORE_TYPE] as Long)
                 )
             }

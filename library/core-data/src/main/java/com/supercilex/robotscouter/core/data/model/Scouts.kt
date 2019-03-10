@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.data.model
 
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -36,7 +37,7 @@ val scoutParser = SnapshotParser { snapshot ->
     Scout(snapshot.id,
           checkNotNull(snapshot.getString(FIRESTORE_TEMPLATE_ID)),
           snapshot.getString(FIRESTORE_NAME),
-          checkNotNull(snapshot.getDate(FIRESTORE_TIMESTAMP)),
+          checkNotNull(snapshot.getTimestamp(FIRESTORE_TIMESTAMP)),
           @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
           (snapshot[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
               parseMetric(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
@@ -48,7 +49,7 @@ val Team.scoutsRef get() = ref.collection(FIRESTORE_SCOUTS)
 
 fun Team.getScoutsQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         FIRESTORE_TIMESTAMP.let {
-            scoutsRef.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
+            scoutsRef.whereGreaterThanOrEqualTo(it, Timestamp(0, 0)).orderBy(it, direction)
         }
 
 fun Team.getScoutMetricsRef(id: String) = scoutsRef.document(id).collection(FIRESTORE_METRICS)

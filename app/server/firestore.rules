@@ -24,7 +24,7 @@ service cloud.firestore {
       allow get: if resource == null || isExistingOwner();
       allow list: if isExistingOwner();
       allow create: if isValidTeam();
-      allow update: if (isExistingOwner() || hasPendingApproval()) && isValidTeam();
+      allow update: if isExistingOwner() && isValidTeam();
       allow delete: if isExistingOwner();
 
       match /scouts/{scoutId} {
@@ -57,7 +57,7 @@ service cloud.firestore {
       allow get: if resource == null || isExistingOwner();
       allow list: if isExistingOwner();
       allow create: if isValidTemplate();
-      allow update: if (isExistingOwner() || hasPendingApproval()) && isValidTemplate();
+      allow update: if isExistingOwner() && isValidTemplate();
       allow delete: if isExistingOwner();
 
       match /metrics/{metricId} {
@@ -121,11 +121,6 @@ service cloud.firestore {
       allow read, write: if uid == request.auth.uid;
     }
   }
-}
-
-// TODO remove after 3.0 has shipped
-function hasPendingApproval() {
-  return request.resource.data.pendingApprovals[request.auth.uid] in resource.data.activeTokens.keys();
 }
 
 function isValidScout() {

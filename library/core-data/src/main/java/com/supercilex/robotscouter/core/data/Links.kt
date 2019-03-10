@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.data
 
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import com.google.firebase.Timestamp
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.Indexable
 import com.google.firebase.appindexing.Scope
@@ -75,7 +76,7 @@ internal suspend fun List<DocumentReference>.share(
 ): String {
     val token = generateToken()
     val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
-    val timestamp = Date()
+    val timestamp = Timestamp.now()
 
     val update = firestoreBatch {
         forEach { update(it, tokenPath, timestamp) }

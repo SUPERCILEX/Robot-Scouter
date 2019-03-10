@@ -10,6 +10,7 @@ import com.firebase.ui.firestore.ChangeEventListener
 import com.firebase.ui.firestore.FirestoreArray
 import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser
+import com.google.firebase.Timestamp
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -53,7 +54,6 @@ import kotlinx.coroutines.sync.withLock
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.lang.reflect.Field
-import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -76,7 +76,7 @@ private val updateLastLogin = object : Runnable {
     }
 
     private fun update() {
-        val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Date())
+        val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Timestamp.now())
         userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
     }
 }
@@ -255,7 +255,7 @@ internal sealed class QueuedDeletion(
 ) {
     val data = mapOf(id to mapOf(
             FIRESTORE_TYPE to type.id,
-            FIRESTORE_TIMESTAMP to Date(),
+            FIRESTORE_TIMESTAMP to Timestamp.now(),
             *extras
     ))
 

@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.core.data.model
 
+import com.google.firebase.Timestamp
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -41,7 +42,7 @@ import kotlin.math.abs
 
 fun getTemplatesQuery(direction: Query.Direction = Query.Direction.ASCENDING): Query =
         "$FIRESTORE_OWNERS.${checkNotNull(uid)}".let {
-            templatesRef.whereGreaterThanOrEqualTo(it, Date(0)).orderBy(it, direction)
+            templatesRef.whereGreaterThanOrEqualTo(it, Timestamp(0, 0)).orderBy(it, direction)
         }
 
 fun getTemplateRef(id: String) = templatesRef.document(id)

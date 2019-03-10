@@ -1,8 +1,8 @@
 package com.supercilex.robotscouter.core.model
 
 import androidx.annotation.Keep
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Exclude
-import java.util.Date
 
 data class Scout(
         @Exclude
@@ -19,7 +19,7 @@ data class Scout(
 
         @Exclude
         @get:Keep
-        val timestamp: Date = Date(),
+        val timestamp: Timestamp = Timestamp.now(),
 
         @Exclude
         @get:Exclude
