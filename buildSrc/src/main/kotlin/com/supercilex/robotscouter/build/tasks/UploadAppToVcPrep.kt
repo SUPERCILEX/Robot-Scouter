@@ -17,7 +17,7 @@ open class UploadAppToVcPrep : DefaultTask() {
         // Copy APK generated from real signing key to upload to version history.
         File(buildDir, "outputs/apk/release/android-base-release.apk")
                 .copyTo(File(outer, "app-base.tmp"))
-        File(buildDir, "outputs/bundle/release/android-base.aab")
+        File(buildDir, "outputs/bundle/release/android-base-release.aab")
                 .copyTo(File(outer, "app-release.tmp"))
     }
 }
