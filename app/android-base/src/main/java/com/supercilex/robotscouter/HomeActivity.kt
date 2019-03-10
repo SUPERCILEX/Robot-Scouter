@@ -15,10 +15,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.observe
 import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
@@ -70,6 +71,36 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         )
     }
 
+    /**
+     * Properly handling tablet mode changes is one of the hardest problems to solve in Robot
+     * Scouter. The main issue arises from there being so many dependent fragment transactions and
+     * simultaneous UI changes. These will be broken down here.
+     *
+     * ### Phone -> tablet
+     *
+     * 1. In the activity's super.onCreate, the [IntegratedScoutListFragmentCompanion]'s
+     *    [Fragment.onCreate] will realize it's no longer valid and must be replaced by its
+     *    [TabletScoutListFragmentCompanion] counterpart. The fragment will call [onTeamSelected]
+     *    which will kick of a series of transactions.
+     * 1. The back stack will be popped to remove the integrated fragment.
+     * 1. The tablet fragment will replace anything in the [R.id.scoutList] container.
+     * 1. The [R.id.content] container will be forced to be a [TeamListFragmentCompanion].
+     * 1. The bottom nav will attempt to be updated to point to the teams fragment, but it will be
+     *    null b/c we're still in [onCreate] and haven't called [setContentView] yet.
+     * 1. This flag will be flipped which re-triggers a bottom nav update in [onStart].
+     *
+     * ### Tablet -> phone
+     *
+     * Everything is the same as above except for the fragment transactions.
+     *
+     * 1. The integrated fragment is still popped.
+     * 1. A new integrated fragment is created and added while the teams fragment is detached. These
+     *    transactions are now added to the back stack.
+     * 1. Another transaction is created to remove any non-team fragments currently in the content
+     *    container which isn't added to the back stack.
+     */
+    private var bottomNavStatusNeedsUpdatingHack = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
@@ -80,10 +111,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                     TeamListFragmentCompanion().getInstance(supportFragmentManager),
                     TeamListFragmentCompanion.TAG)
             }
-        } else {
-            supportFragmentManager.fragments
-                    .filterIsInstance<ActivityViewCreationListener>()
-                    .forEach { it.onActivityViewCreated(this, this) }
+        } else if (bottomNavStatusNeedsUpdatingHack) {
+            updateBottomNavStatusAfterTeamSelection()
         }
 
         permHandler.apply {
@@ -105,6 +134,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         drawer.setNavigationItemSelectedListener(this)
         if (enableAutoScout) bottomNavigation.menu.findItem(R.id.autoScout).isVisible = true
         bottomNavigation.setOnNavigationItemSelectedListener listener@{
+            if (bottomNavStatusNeedsUpdatingHack) return@listener true
+
             val manager = supportFragmentManager
 
             val currentFragment = checkNotNull(manager.findFragmentById(R.id.content))
@@ -128,11 +159,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
                 setCustomAnimations(R.anim.pop_fade_in, R.anim.fade_out)
                 detach(currentFragment)
-                if (newFragment.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-                    attach(newFragment)
-                } else {
-                    add(R.id.content, newFragment, newTag)
-                }
+                addOrAttachContent(newFragment, newTag)
             }
 
             true
@@ -175,6 +202,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         TemplateListFragmentCompanion.TAG -> TemplateListFragmentCompanion().getInstance(
                 this, intent.extras?.getBundle(TEMPLATE_ARGS_KEY))
         else -> error("Unknown tag: $tag")
+    }
+
+    private fun FragmentTransaction.addOrAttachContent(
+            fragment: Fragment,
+            tag: String
+    ) = if (fragment.isDetached) {
+        attach(fragment)
+    } else {
+        add(R.id.content, fragment, tag)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -253,27 +289,35 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
     }
 
+    /** @see bottomNavStatusNeedsUpdatingHack */
     override fun onTeamSelected(args: Bundle, transitionView: View?) {
         args.getTeam().logSelect()
 
         val manager = supportFragmentManager
-        manager.commit {
-            val existing = IntegratedScoutListFragmentCompanion().getInstance(manager)?.also {
-                manager.popBackStack()
-            }
+        val existingScoutFragment = IntegratedScoutListFragmentCompanion().getInstance(manager)
+        val existingContainerFragment = checkNotNull(manager.findFragmentById(R.id.content))
 
-            if (isInTabletMode()) {
+        if (existingScoutFragment != null) manager.popBackStack()
+
+        if (isInTabletMode()) {
+            manager.commit {
                 setCustomAnimations(R.anim.pop_fade_in_right, R.anim.fade_out)
                 replace(R.id.scoutList,
                         TabletScoutListFragmentCompanion().newInstance(args),
                         ScoutListFragmentCompanionBase.TAG)
-            } else {
+
+                val teamsTag = TeamListFragmentCompanion.TAG
+                if (existingContainerFragment.tag != teamsTag) {
+                    addOrAttachContent(TeamListFragmentCompanion().getInstance(manager), teamsTag)
+                    detach(existingContainerFragment)
+                }
+            }
+        } else {
+            manager.commit {
                 val fragment = IntegratedScoutListFragmentCompanion().newInstance(args)
 
                 setReorderingAllowed(true)
-                if (bottomNavigation.selectedItemId != R.id.teams) {
-                    bottomNavigation.selectedItemId = R.id.teams
-                } else if (existing != null) {
+                if (existingScoutFragment != null) {
                     setReorderingAllowed(false)
                 } else if (
                     transitionView != null &&
@@ -291,11 +335,29 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 )
 
                 add(R.id.content, fragment, ScoutListFragmentCompanionBase.TAG)
-                if (existing == null) detach(checkNotNull(manager.findFragmentById(R.id.content)))
                 detach(TeamListFragmentCompanion().getInstance(manager))
 
                 addToBackStack(null)
             }
+
+            // Don't include detaching non-team fragments in the back stack
+            if (
+                existingScoutFragment == null &&
+                existingContainerFragment.tag != TeamListFragmentCompanion.TAG
+            ) manager.commit { detach(existingContainerFragment) }
+        }
+
+        updateBottomNavStatusAfterTeamSelection()
+    }
+
+    /** @see bottomNavStatusNeedsUpdatingHack */
+    private fun updateBottomNavStatusAfterTeamSelection() {
+        bottomNavStatusNeedsUpdatingHack = true
+
+        val nav = bottomNavigation ?: return
+        nav.post {
+            nav.selectedItemId = R.id.teams
+            bottomNavStatusNeedsUpdatingHack = false
         }
     }
 

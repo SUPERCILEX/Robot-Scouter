@@ -141,10 +141,6 @@ interface TeamSelectionListener {
     fun onTeamSelected(args: Bundle, transitionView: View? = null)
 }
 
-interface ActivityViewCreationListener {
-    fun onActivityViewCreated(context: Context, listener: TeamSelectionListener)
-}
-
 interface NewTeamDialogCompanion : InstalledBridgeCompanion {
     fun show(manager: FragmentManager)
 

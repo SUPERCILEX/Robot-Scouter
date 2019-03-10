@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import androidx.core.view.postDelayed
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.appbar.AppBarLayout
-import com.supercilex.robotscouter.ActivityViewCreationListener
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.IntegratedScoutListFragmentCompanion
 import com.supercilex.robotscouter.ScoutListFragmentCompanionBase.Companion.TAG
@@ -30,20 +28,20 @@ import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class IntegratedScoutListFragment : ScoutListFragmentBase(), ActivityViewCreationListener {
+internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private val drawer by unsafeLazy { requireActivity().find<DrawerLayout>(RC.id.drawerLayout) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (sharedElementEnterTransition != null) postponeEnterTransition()
-    }
-
-    override fun onActivityViewCreated(context: Context, listener: TeamSelectionListener) {
-        if (!context.isInTabletMode()) return
-
-        listener.onTeamSelected(bundle)
-        removeFragment(true)
+        val activity = requireActivity()
+        if (activity.isInTabletMode()) {
+            val bundle = bundle
+            removeFragment()
+            (activity as TeamSelectionListener).onTeamSelected(bundle)
+        } else if (sharedElementEnterTransition != null) {
+            postponeEnterTransition()
+        }
     }
 
     override fun onCreateView(
@@ -109,7 +107,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase(), ActivityVi
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_move_window) {
             startActivity(ScoutListActivity.createIntent(bundle))
-            removeFragment(true)
+            removeFragment()
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -132,17 +130,8 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase(), ActivityVi
 
     override fun onTeamDeleted() = removeFragment()
 
-    private fun removeFragment(now: Boolean = false) {
-        // This one is super tricky. If the user tries to open a team, but it is invalid for
-        // whatever reason, the fragment will be immediately removed. However, there's a bug in the
-        // Fragments API where removing a fragment doesn't get rid of the pending animations.
-        // Consequentially, the next state restoration will cause these pending transactions to get
-        // executed and thus break a ton of stuff. Here, we ensure that the pending animations are
-        // executed.
-        super.startPostponedEnterTransition()
-
-        val manager = requireFragmentManager()
-        if (now) manager.popBackStackImmediate() else manager.popBackStack()
+    private fun removeFragment() {
+        requireFragmentManager().popBackStack()
     }
 
     private fun updateStatusBarColor(@ColorInt color: Int) {
