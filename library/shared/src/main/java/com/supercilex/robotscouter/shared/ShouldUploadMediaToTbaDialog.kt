@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.supercilex.robotscouter.core.data.shouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
+import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import com.supercilex.robotscouter.core.ui.create
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -44,10 +45,17 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
 
         fun <F> show(
                 fragment: F
-        ) where F : Fragment, F : CaptureTeamMediaListener = if (shouldAskToUploadMediaToTba) {
-            ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
-        } else {
-            fragment.startCapture(shouldUploadMediaToTba)
+        ) where F : Fragment, F : CaptureTeamMediaListener {
+            if (isInTestMode) {
+                fragment.startCapture(false)
+                return
+            }
+
+            if (shouldAskToUploadMediaToTba) {
+                ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
+            } else {
+                fragment.startCapture(shouldUploadMediaToTba)
+            }
         }
     }
 }
