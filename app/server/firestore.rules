@@ -12,7 +12,6 @@ service cloud.firestore {
         return request.resource.data.number is int
                  && request.resource.data.owners[request.auth.uid] is int
                  && request.resource.data.templateId is string
-                 && request.resource.data.activeTokens is map
                  && request.resource.data.hasCustomName is bool
                  && request.resource.data.hasCustomMedia is bool
                  && request.resource.data.hasCustomWebsite is bool
