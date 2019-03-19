@@ -46,14 +46,14 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.5.0-alpha06"
+        val android = "com.android.tools.build:gradle:3.5.0-alpha07"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
         val firebase = "com.google.firebase:perf-plugin:1.1.5"
-        val fabric = "io.fabric.tools:gradle:1.27.1"
+        val fabric = "io.fabric.tools:gradle:1.28.1"
 
-        val ktlint = "com.github.shyiko:ktlint:0.30.0"
+        val ktlint = "com.github.shyiko:ktlint:0.31.0"
 
         val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.1.1"
         val PluginDependenciesSpec.versionChecker
@@ -85,21 +85,21 @@ object Config {
         }
 
         object Jetpack {
-            private const val lifecycleVersion = "2.1.0-alpha02"
+            private const val lifecycleVersion = "2.1.0-alpha03"
 
-            val core = "androidx.core:core-ktx:1.1.0-alpha04"
+            val core = "androidx.core:core-ktx:1.1.0-alpha05"
             val multidex = "androidx.multidex:multidex:2.0.1"
             val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha02"
-            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha04"
-            val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha02"
+            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha05"
+            val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha03"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-alpha01"
             val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
             val cardView = "androidx.cardview:cardview:1.0.0"
             val palette = "androidx.palette:palette-ktx:1.0.0"
             val emoji = "androidx.emoji:emoji-appcompat:1.0.0"
             val browser = "androidx.browser:browser:1.0.0"
-            val pref = "androidx.preference:preference:1.1.0-alpha03"
-            val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha03"
+            val pref = "androidx.preference:preference:1.1.0-alpha04"
+            val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha04"
 
             val material = "com.google.android.material:material:1.1.0-alpha04"
 
@@ -112,16 +112,16 @@ object Config {
         }
 
         object Firebase {
-            val core = "com.google.firebase:firebase-core:16.0.7"
-            val auth = "com.google.firebase:firebase-auth:16.1.0"
+            val core = "com.google.firebase:firebase-analytics:16.4.0"
+            val auth = "com.google.firebase:firebase-auth:16.2.0"
             val firestore = "com.google.firebase:firebase-firestore:18.1.0"
-            val functions = "com.google.firebase:firebase-functions:16.2.0"
+            val functions = "com.google.firebase:firebase-functions:16.3.0"
             val storage = "com.google.firebase:firebase-storage:16.1.0"
-            val config = "com.google.firebase:firebase-config:16.3.0"
+            val config = "com.google.firebase:firebase-config:16.4.0"
             val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
             val messaging = "com.google.firebase:firebase-messaging:17.4.0"
-            val invites = "com.google.firebase:firebase-invites:16.1.0"
-            val perf = "com.google.firebase:firebase-perf:16.2.3"
+            val invites = "com.google.firebase:firebase-invites:16.1.1"
+            val perf = "com.google.firebase:firebase-perf:16.2.4"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         }
@@ -155,6 +155,8 @@ object Config {
             val leakCanaryNoop =
                     "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
             val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
+            val retrofitCoroutines =
+                    "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
             val retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
             val gson = "com.google.code.gson:gson:2.8.5"
             val poi = "com.github.SUPERCILEX.poi-android:poi:$poiVersion"
@@ -166,7 +168,7 @@ object Config {
             val snap = "com.github.rubensousa:gravitysnaphelper:2.0"
             val permissions = "pub.devrel:easypermissions:3.0.0"
             val mttp = "uk.co.samuelwall:material-tap-target-prompt:2.14.0"
-            val billing = "com.android.billingclient:billing:1.2.1"
+            val billing = "com.android.billingclient:billing:1.2.2"
             val licenses = "net.yslibrary.licenseadapter:licenseadapter:2.2.2"
         }
     }

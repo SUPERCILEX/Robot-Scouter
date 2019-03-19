@@ -8,5 +8,5 @@ internal abstract class TeamServiceBase<out T>(
 ) : TbaServiceBase<T>(clazz) {
     protected val team: Team = team.copy()
 
-    abstract fun execute(): Team?
+    abstract suspend fun execute(): Team?
 }

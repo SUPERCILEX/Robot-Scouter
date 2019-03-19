@@ -56,5 +56,5 @@ internal abstract class TeamWorker(
         }
     }
 
-    abstract fun startTask(latestTeam: Team, originalTeam: Team): Team?
+    abstract suspend fun startTask(latestTeam: Team, originalTeam: Team): Team?
 }

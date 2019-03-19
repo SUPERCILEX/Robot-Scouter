@@ -31,5 +31,6 @@ dependencies {
     implementation(Config.Libs.Jetpack.work)
 
     implementation(Config.Libs.Misc.retrofit)
+    implementation(Config.Libs.Misc.retrofitCoroutines)
     implementation(Config.Libs.Misc.retrofitGson)
 }

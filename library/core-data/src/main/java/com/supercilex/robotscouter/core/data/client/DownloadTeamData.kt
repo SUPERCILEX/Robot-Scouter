@@ -36,7 +36,7 @@ internal class DownloadTeamDataWorker(
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.update(newTeam) }
 
-    override fun startTask(latestTeam: Team, originalTeam: Team) = if (latestTeam.isStale) {
+    override suspend fun startTask(latestTeam: Team, originalTeam: Team) = if (latestTeam.isStale) {
         TeamDetailsDownloader.load(latestTeam)
     } else {
         null

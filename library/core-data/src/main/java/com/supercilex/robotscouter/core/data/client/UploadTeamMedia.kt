@@ -44,7 +44,7 @@ internal class UploadTeamMediaWorker(
     override val updateTeam: (team: Team, newTeam: Team) -> Unit
         get() = { team, newTeam -> team.updateMedia(newTeam) }
 
-    override fun startTask(latestTeam: Team, originalTeam: Team) =
+    override suspend fun startTask(latestTeam: Team, originalTeam: Team) =
             TeamMediaUploader.upload(latestTeam.apply { copyMediaInfo(originalTeam) })
 }
 

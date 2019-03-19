@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.core.data.remote
 
-import androidx.annotation.WorkerThread
 import com.bumptech.glide.Glide
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.ChiefDelphi
@@ -9,8 +8,9 @@ import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Unsupported
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.YouTube
 import com.supercilex.robotscouter.core.model.Team
-import org.jetbrains.anko.runOnUiThread
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Calendar
@@ -18,18 +18,18 @@ import java.util.Calendar
 internal class TeamDetailsDownloader private constructor(
         team: Team
 ) : TeamServiceBase<TeamDetailsApi>(team, TeamDetailsApi::class.java) {
-    override fun execute(): Team? {
+    override suspend fun execute(): Team? {
         getTeamInfo()
         getTeamMedia(Calendar.getInstance().get(Calendar.YEAR))
         return team
     }
 
-    private fun getTeamInfo() {
-        val response: Response<Team> = api.getInfo(team.number.toString(), tbaApiKey).execute()
-
-        if (cannotContinue(response)) return
-
-        val newTeam = checkNotNull(response.body())
+    private suspend fun getTeamInfo() {
+        val newTeam = try {
+            api.getInfoAsync(team.number.toString(), tbaApiKey).await()
+        } catch (e: HttpException) {
+            if (e.code() == ERROR_404) return else throw e
+        }
 
         if (team.name == newTeam.name) {
             team.hasCustomName = false
@@ -43,13 +43,14 @@ internal class TeamDetailsDownloader private constructor(
         }
     }
 
-    private fun getTeamMedia(year: Int) {
-        val response: Response<List<TeamDetailsApi.Media>> =
-                api.getMedia(team.number.toString(), year, tbaApiKey).execute()
+    private suspend fun getTeamMedia(year: Int) {
+        val response = try {
+            api.getMediaAsync(team.number.toString(), year, tbaApiKey).await()
+        } catch (e: HttpException) {
+            if (e.code() == ERROR_404) return else throw e
+        }
 
-        if (cannotContinue(response)) return
-
-        val media = checkNotNull(response.body()).map { (type, key, preferred, details) ->
+        val media = response.map { (type, key, preferred, details) ->
             when (type) {
                 Imgur.ID -> Imgur("https://i.imgur.com/$key.png", preferred)
                 YouTube.ID -> YouTube("https://img.youtube.com/vi/$key/0.jpg", preferred)
@@ -78,15 +79,15 @@ internal class TeamDetailsDownloader private constructor(
         }
     }
 
-    private fun setAndCacheMedia(url: String, year: Int) {
+    private suspend fun setAndCacheMedia(url: String, year: Int) {
         if (team.media == url) {
             team.hasCustomMedia = false
         } else {
             team.media = url
         }
         team.mediaYear = year
-        RobotScouter.runOnUiThread {
-            Glide.with(this).load(url).preload()
+        withContext(Dispatchers.Main) {
+            Glide.with(RobotScouter).load(url).preload()
         }
     }
 
@@ -144,7 +145,6 @@ internal class TeamDetailsDownloader private constructor(
     companion object {
         private const val MAX_HISTORY = 2000
 
-        @WorkerThread
-        fun load(team: Team) = TeamDetailsDownloader(team).execute()
+        suspend fun load(team: Team) = TeamDetailsDownloader(team).execute()
     }
 }

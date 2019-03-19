@@ -1,40 +1,38 @@
 package com.supercilex.robotscouter.core.data.remote
 
-import androidx.annotation.WorkerThread
-import com.google.gson.JsonObject
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.R
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import retrofit2.Response
 import retrofit2.create
 import java.io.File
 
 internal class TeamMediaUploader private constructor(
         team: Team
 ) : TeamServiceBase<TeamMediaApi>(team, TeamMediaApi::class.java) {
-    override fun execute(): Team? {
-        if (!File(team.media ?: return null).exists()) return null
+    override suspend fun execute(): Team? {
+        withContext(Dispatchers.IO) {
+            team.media?.takeIf { File(it).exists() }
+        } ?: return null
 
         uploadToImgur()
         return team
     }
 
-    private fun uploadToImgur() {
-        val response: Response<JsonObject> = TeamMediaApi.IMGUR_RETROFIT
+    private suspend fun uploadToImgur() {
+        val response = TeamMediaApi.IMGUR_RETROFIT
                 .create<TeamMediaApi>()
-                .postToImgur(
+                .postToImgurAsync(
                         RobotScouter.getString(R.string.imgur_client_id),
                         team.toString(),
                         RequestBody.create(MediaType.parse("image/*"), File(team.media))
                 )
-                .execute()
+                .await()
 
-        if (cannotContinue(response)) error(response.toString())
-
-        var link: String =
-                checkNotNull(response.body()).get("data").asJsonObject.get("link").asString
+        var link: String = response.get("data").asJsonObject.get("link").asString
         // Oh Imgur, why don't you use https by default? 😢
         link = if (link.startsWith("https://")) link else link.replace("http://", "https://")
         // And what about pngs?
@@ -50,7 +48,6 @@ internal class TeamMediaUploader private constructor(
             ".${url.split(".").dropLastWhile(String::isEmpty).last()}"
 
     companion object {
-        @WorkerThread
-        fun upload(team: Team) = TeamMediaUploader(team).execute()
+        suspend fun upload(team: Team) = TeamMediaUploader(team).execute()
     }
 }

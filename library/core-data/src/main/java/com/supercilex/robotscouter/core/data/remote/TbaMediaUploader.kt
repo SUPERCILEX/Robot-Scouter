@@ -1,40 +1,33 @@
 package com.supercilex.robotscouter.core.data.remote
 
-import androidx.annotation.WorkerThread
-import com.google.gson.JsonObject
 import com.supercilex.robotscouter.core.model.Team
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import retrofit2.Response
 import java.util.Calendar
 
 internal class TbaMediaUploader private constructor(
         private val team: Team
 ) : TbaServiceBase<TeamMediaApi>(TeamMediaApi::class.java) {
-    fun execute() {
+    suspend fun execute() {
         if (team.shouldUploadMediaToTba) uploadToTba()
     }
 
-    private fun uploadToTba() {
-        val response: Response<JsonObject> = api.postToTba(
+    private suspend fun uploadToTba() {
+        val response = api.postToTbaAsync(
                 team.number.toString(),
                 Calendar.getInstance().get(Calendar.YEAR),
                 tbaApiKey,
                 RequestBody.create(MediaType.parse("text/*"), checkNotNull(team.media))
-        ).execute()
+        ).await()
 
-        if (cannotContinue(response)) return
-
-        val body: JsonObject = checkNotNull(response.body())
-        check(body.get("success").asBoolean || body.get("message").asString.let {
+        check(response.get("success").asBoolean || response.get("message").asString.let {
             it == "media_exists" || it == "suggestion_exists"
         }) {
-            "Failed to upload suggestion: $body"
+            "Failed to upload suggestion: $response"
         }
     }
 
     companion object {
-        @WorkerThread
-        fun upload(team: Team) = TbaMediaUploader(team).execute()
+        suspend fun upload(team: Team) = TbaMediaUploader(team).execute()
     }
 }

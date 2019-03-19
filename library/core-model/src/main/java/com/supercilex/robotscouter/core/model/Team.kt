@@ -42,7 +42,6 @@ data class Team(
         @set:Keep
         var media: String? = null,
 
-        @SerializedName("website")
         @Exclude
         @get:Keep
         @set:Keep

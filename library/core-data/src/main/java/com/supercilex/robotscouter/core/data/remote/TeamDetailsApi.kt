@@ -2,24 +2,24 @@ package com.supercilex.robotscouter.core.data.remote
 
 import com.google.gson.annotations.SerializedName
 import com.supercilex.robotscouter.core.model.Team
-import retrofit2.Call
+import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface TeamDetailsApi {
     @GET("team/frc{number}")
-    fun getInfo(
+    fun getInfoAsync(
             @Path("number") number: String,
             @Query("X-TBA-Auth-Key") auth: String
-    ): Call<Team>
+    ): Deferred<Team>
 
     @GET("team/frc{number}/media/{year}")
-    fun getMedia(
+    fun getMediaAsync(
             @Path("number") number: String,
             @Path("year") year: Int,
             @Query("X-TBA-Auth-Key") auth: String
-    ): Call<List<Media>>
+    ): Deferred<List<Media>>
 
     data class Media(
             @SerializedName("type") var type: String = "null",
