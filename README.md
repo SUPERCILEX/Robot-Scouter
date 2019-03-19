@@ -113,5 +113,5 @@ throughout the file and send a pull request with your changes.
 ## Psst... 🤐
 
 If you want to get the latest build from master, you can join the
-[alpha testers community](https://plus.google.com/communities/111840458526472018249)
+[alpha testers group](https://groups.google.com/forum/#!forum/supercilex-alpha-testers)
 and the [beta](https://play.google.com/apps/testing/com.supercilex.robotscouter).
