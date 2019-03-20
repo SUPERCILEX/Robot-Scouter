@@ -43,11 +43,11 @@ internal abstract class TeamWorker(
 
             if (existingTeam.isTrashed != false) return Result.failure()
 
-            val newTeam = startTask(existingTeam, team) ?: return Result.failure()
+            val newTeam = startTask(existingTeam.copy(), team.copy()) ?: return Result.failure()
             // Recheck since things could have changed since the last check
-            if (!team.owners.contains(uid)) return Result.failure()
+            if (!existingTeam.owners.contains(uid)) return Result.failure()
 
-            updateTeam(team, newTeam)
+            updateTeam(existingTeam, newTeam)
 
             return Result.success(newTeam.toWorkData())
         } else {

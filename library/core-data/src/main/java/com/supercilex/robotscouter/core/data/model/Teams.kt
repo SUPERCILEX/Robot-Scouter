@@ -126,12 +126,25 @@ internal fun Team.update(newTeam: Team) {
         return
     }
 
-    if (!hasCustomName) name = newTeam.name
-    if (!hasCustomMedia) {
-        media = newTeam.media
-        mediaYear = newTeam.mediaYear
+    if (name == newTeam.name) {
+        hasCustomName = false
+    } else if (!hasCustomName) {
+        name = newTeam.name
     }
-    if (!hasCustomWebsite) website = newTeam.website
+
+    if (media == newTeam.media) {
+        hasCustomMedia = false
+    } else if (!hasCustomMedia) {
+        media = newTeam.media
+    }
+    mediaYear = newTeam.mediaYear
+
+    if (website == newTeam.website) {
+        hasCustomWebsite = false
+    } else if (!hasCustomWebsite) {
+        website = newTeam.website
+    }
+
     forceUpdate()
 }
 

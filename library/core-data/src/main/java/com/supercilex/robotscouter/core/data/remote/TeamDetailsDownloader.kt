@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.data.remote
 
 import com.bumptech.glide.Glide
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.data.model.teamWithSafeDefaults
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.ChiefDelphi
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Imgur
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.Instagram
@@ -31,16 +32,8 @@ internal class TeamDetailsDownloader private constructor(
             if (e.code() == ERROR_404) return else throw e
         }
 
-        if (team.name == newTeam.name) {
-            team.hasCustomName = false
-        } else {
-            team.name = newTeam.name
-        }
-        if (team.website == newTeam.website) {
-            team.hasCustomWebsite = false
-        } else {
-            team.website = newTeam.website
-        }
+        team.name = newTeam.name
+        team.website = newTeam.website
     }
 
     private suspend fun getTeamMedia(year: Int) {
@@ -80,11 +73,7 @@ internal class TeamDetailsDownloader private constructor(
     }
 
     private suspend fun setAndCacheMedia(url: String, year: Int) {
-        if (team.media == url) {
-            team.hasCustomMedia = false
-        } else {
-            team.media = url
-        }
+        team.media = url
         team.mediaYear = year
         withContext(Dispatchers.Main) {
             Glide.with(RobotScouter).load(url).preload()
@@ -145,6 +134,7 @@ internal class TeamDetailsDownloader private constructor(
     companion object {
         private const val MAX_HISTORY = 2000
 
-        suspend fun load(team: Team) = TeamDetailsDownloader(team).execute()
+        suspend fun load(team: Team) =
+                TeamDetailsDownloader(teamWithSafeDefaults(team.number, team.id)).execute()
     }
 }
