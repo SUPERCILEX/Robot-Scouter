@@ -14,6 +14,7 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.data.getScoutBundle
+import com.supercilex.robotscouter.core.data.model.displayableMedia
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
@@ -123,7 +124,7 @@ internal class TeamViewHolder(
             Glide.with(context).load(R.drawable.ic_check_circle_grey_56dp)
         } else {
             Glide.with(context)
-                    .load(team.media)
+                    .load(team.displayableMedia)
                     .circleCrop()
                     .placeholder(RC.drawable.ic_person_grey_96dp)
                     .error(RC.drawable.ic_person_grey_96dp)

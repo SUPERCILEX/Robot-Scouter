@@ -21,7 +21,10 @@ import com.supercilex.robotscouter.common.second
 import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.QueuedDeletion
+import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
+import com.supercilex.robotscouter.core.data.client.saveLocalMedia
 import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
+import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.core.data.deepLink
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.firestoreBatch
@@ -36,10 +39,12 @@ import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -69,6 +74,8 @@ val Team.ref: DocumentReference get() = teamsRef.document(id)
 
 val Team.isOutdatedMedia: Boolean
     get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
+
+val Team.displayableMedia get() = retrieveLocalMedia() ?: media
 
 private const val TEAM_FRESHNESS_DAYS = 4
 internal val Team.isStale: Boolean
@@ -155,12 +162,6 @@ internal fun Team.updateTemplateId(id: String) {
     ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures(ref, templateId)
 }
 
-internal fun Team.updateMedia(newTeam: Team) {
-    media = newTeam.media
-    shouldUploadMediaToTba = false
-    forceUpdate()
-}
-
 fun Team.forceUpdate(refresh: Boolean = false) {
     rawSet(refresh, false)
 }
@@ -176,6 +177,15 @@ fun Team.copyMediaInfo(newTeam: Team) {
     hasCustomMedia = newTeam.hasCustomMedia
     shouldUploadMediaToTba = newTeam.shouldUploadMediaToTba
     mediaYear = newTeam.mediaYear
+}
+
+suspend fun Team.processPotentialMediaUpload() = withContext(Dispatchers.IO) {
+    if (media == null || !File(media).exists()) return@withContext
+
+    startUploadMediaJob()
+    saveLocalMedia()
+    media = null
+    hasCustomMedia = false
 }
 
 fun Team.trash() {

@@ -26,9 +26,11 @@ import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.logEditDetails
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
+import com.supercilex.robotscouter.core.data.model.displayableMedia
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.formatAsTeamUri
 import com.supercilex.robotscouter.core.data.model.isValidTeamUri
+import com.supercilex.robotscouter.core.data.model.processPotentialMediaUpload
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
@@ -115,7 +117,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
         progress.show()
         Glide.with(this)
-                .load(team.media)
+                .load(team.displayableMedia)
                 .circleCrop()
                 .error(R.drawable.ic_person_grey_96dp)
                 .transition(DrawableTransitionOptions.withCrossFade())
@@ -145,7 +147,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         name.text = team.toString()
 
         nameEdit.setText(team.name)
-        mediaEdit.setText(team.media)
+        mediaEdit.setText(team.displayableMedia)
         websiteEdit.setText(team.website)
     }
 
@@ -195,7 +197,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(Dispatchers.Default) { media?.formatAsTeamUri() }.also {
+            withContext(Dispatchers.IO) { media?.formatAsTeamUri() }.also {
                 if (it != team.media) {
                     team.media = it
                     team.hasCustomMedia = !it.isNullOrBlank()
@@ -203,13 +205,14 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(Dispatchers.Default) { website?.formatAsTeamUri() }.also {
+            withContext(Dispatchers.IO) { website?.formatAsTeamUri() }.also {
                 if (it != team.website) {
                     team.website = it
                     team.hasCustomWebsite = !it.isNullOrBlank()
                 }
             }
 
+            team.processPotentialMediaUpload()
             team.forceUpdate(true)
 
             // If we are being called from TeamListFragment, reset the menu if the click was consumed

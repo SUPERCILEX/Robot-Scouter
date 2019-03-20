@@ -15,7 +15,6 @@ service cloud.firestore {
                  && request.resource.data.hasCustomName is bool
                  && request.resource.data.hasCustomMedia is bool
                  && request.resource.data.hasCustomWebsite is bool
-                 && request.resource.data.shouldUploadMediaToTba is bool
                  && request.resource.data.mediaYear is int
                  && request.resource.data.timestamp is timestamp;
       }

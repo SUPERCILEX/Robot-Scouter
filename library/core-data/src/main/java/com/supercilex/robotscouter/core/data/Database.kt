@@ -32,6 +32,7 @@ import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
 import com.supercilex.robotscouter.core.data.model.add
@@ -54,6 +55,7 @@ import kotlinx.coroutines.sync.withLock
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.lang.reflect.Field
+import java.util.Calendar
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -127,9 +129,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
         val team = teams[newIndex]
         GlobalScope.async(Dispatchers.IO) {
             val media = team.media
-            if (!media.isNullOrBlank() && File(media).exists()) {
-                team.startUploadMediaJob()
-            } else if (media == null || media.isValidTeamUri()) {
+            if (media == null || media.isValidTeamUri()) {
                 team.fetchLatestData()
                 team.indexable.let { FirebaseAppIndex.getInstance().update(it).logFailures(it) }
             } else {
@@ -137,6 +137,16 @@ private val teamUpdater = object : ChangeEventListenerBase {
                     hasCustomMedia = false
                     this.media = null
                     forceUpdate(true)
+                }
+            }
+
+            val localMedia = team.retrieveLocalMedia()
+            if (localMedia != null && localMedia.isValidTeamUri()) {
+                team.copy().apply {
+                    this.media = localMedia
+                    hasCustomMedia = true
+                    mediaYear = Calendar.getInstance().get(Calendar.YEAR)
+                    startUploadMediaJob()
                 }
             }
         }.logFailures()

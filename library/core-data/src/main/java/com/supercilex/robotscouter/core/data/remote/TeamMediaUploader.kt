@@ -39,6 +39,7 @@ internal class TeamMediaUploader private constructor(
         link = if (link.endsWith(".png")) link else link.replace(getFileExtension(link), ".png")
 
         team.media = link
+        team.hasCustomMedia = true
     }
 
     /**

@@ -63,8 +63,7 @@ data class Team(
         var hasCustomWebsite: Boolean = false,
 
         @Exclude
-        @get:Keep
-        @set:Keep
+        @get:Exclude
         var shouldUploadMediaToTba: Boolean = false,
 
         @Exclude

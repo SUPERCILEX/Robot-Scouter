@@ -29,8 +29,11 @@ import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
 import com.supercilex.robotscouter.core.data.model.copyMediaInfo
+import com.supercilex.robotscouter.core.data.model.displayableMedia
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
+import com.supercilex.robotscouter.core.data.model.processPotentialMediaUpload
+import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
@@ -43,6 +46,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.find
@@ -81,8 +85,11 @@ internal open class AppBarViewHolderBase(
         mediaCapture.apply {
             init(permissionHandler to savedInstanceState)
             onMediaCaptured.observe(fragment) {
-                team.copyMediaInfo(it)
-                team.forceUpdate()
+                GlobalScope.async {
+                    team.copyMediaInfo(it)
+                    team.processPotentialMediaUpload()
+                    team.forceUpdate(true)
+                }.logFailures()
             }
         }
 
@@ -107,7 +114,7 @@ internal open class AppBarViewHolderBase(
         progress.show()
         Glide.with(fragment)
                 .asBitmap()
-                .load(team.media)
+                .load(team.displayableMedia)
                 .centerCrop()
                 .error(RC.drawable.ic_person_grey_96dp)
                 .apply {
