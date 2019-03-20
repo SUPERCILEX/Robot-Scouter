@@ -262,15 +262,15 @@ interface SettingsActivityCompanion : InstalledBridgeCompanion {
     }
 }
 
-abstract class InstalledBridgeFinderCompanion<T : InstalledBridgeCompanion>
-    : BridgeFinderCompanion {
+abstract class InstalledBridgeFinderCompanion<T : InstalledBridgeCompanion> :
+        BridgeFinderCompanion {
     abstract val instance: T
 
     operator fun invoke() = instance
 }
 
-abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion>
-    : BridgeFinderCompanion {
+abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion> :
+        BridgeFinderCompanion {
     abstract val instance: T?
 
     operator fun invoke(): Task<T> {

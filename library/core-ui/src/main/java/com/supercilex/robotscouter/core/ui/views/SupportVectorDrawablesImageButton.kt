@@ -16,8 +16,8 @@ open class SupportVectorDrawablesImageButton : AppCompatImageButton {
         applyDrawable(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
+            super(context, attrs, defStyleAttr) {
         applyDrawable(attrs)
     }
 

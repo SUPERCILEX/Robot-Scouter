@@ -18,8 +18,8 @@ class CardMetricConstraintLayout : ConstraintLayout, CardMetric {
         helper.init()
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
+            super(context, attrs, defStyleAttr) {
         helper.init()
     }
 

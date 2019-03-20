@@ -10,16 +10,14 @@ import com.supercilex.robotscouter.core.ui.CardMetricHelper
 class CardMetricFlexboxLayout : FlexboxLayout, CardMetric {
     override val helper = CardMetricHelper(this)
 
-    constructor(context: Context) : super(context) {
-        helper.init()
-    }
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        helper.init()
-    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
+            super(context, attrs, defStyleAttr)
+
+    init {
         helper.init()
     }
 
