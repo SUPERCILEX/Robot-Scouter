@@ -25,10 +25,10 @@ import com.google.android.play.core.splitinstall.SplitInstallSessionState
 import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
 import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.ValueSeeker
 import com.supercilex.robotscouter.core._globalContext
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
 import com.supercilex.robotscouter.core.fastAddOnSuccessListener
 import com.supercilex.robotscouter.core.model.Team
@@ -38,6 +38,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.asTask
+import kotlinx.coroutines.tasks.await
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
@@ -289,7 +290,7 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
                     RobotScouter.runOnUiThread {
                         if (isNetworkError) toast(R.string.no_connection) else toast(R.string.error_unknown)
                     }
-                    throw if (isNetworkError) CancellationException() else e
+                    throw if (isNetworkError) CancellationException() else InvocationMarker(e)
                 }
             } else {
                 existingRequests.first().sessionId()

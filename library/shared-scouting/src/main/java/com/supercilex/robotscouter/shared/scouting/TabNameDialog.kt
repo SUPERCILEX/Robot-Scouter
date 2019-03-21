@@ -26,7 +26,7 @@ internal class TabNameDialog : ValueDialogBase<String>() {
 
     override fun onAttemptDismiss(): Boolean {
         val ref = requireArguments().getRef()
-        ref.update(FIRESTORE_NAME, value).logFailures(ref, value)
+        ref.update(FIRESTORE_NAME, value).logFailures("updateTabName", ref, value)
         return true
     }
 

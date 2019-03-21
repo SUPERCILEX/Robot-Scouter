@@ -1,12 +1,11 @@
 package com.supercilex.robotscouter.core.data
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.supercilex.robotscouter.core.await
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.InvocationMarker
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 
 // Mirrored in remote_config_defaults.xml
@@ -34,17 +33,16 @@ fun initRemoteConfig() {
                                   .build())
 
         activateFetched()
-        GlobalScope.async {
+        GlobalScope.launch {
             try {
                 fetch(if (info.configSettings.isDeveloperModeEnabled) {
                     0
                 } else {
                     TimeUnit.HOURS.toSeconds(12)
                 }).await()
-            } catch (e: FirebaseRemoteConfigFetchException) {
-                // Ignore throttling since it shouldn't happen on release builds and isn't really a public
-                // API error.
+            } catch (e: Exception) {
+                throw InvocationMarker(e)
             }
-        }.logFailures()
+        }
     }
 }

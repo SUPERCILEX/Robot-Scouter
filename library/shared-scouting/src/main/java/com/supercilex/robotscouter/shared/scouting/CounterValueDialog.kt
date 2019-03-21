@@ -30,7 +30,7 @@ internal class CounterValueDialog : ValueDialogBase<Long>() {
             return false
         }
         val ref = requireArguments().getRef()
-        ref.update(FIRESTORE_VALUE, number).logFailures(ref, number)
+        ref.update(FIRESTORE_VALUE, number).logFailures("updateCounterValue", ref, number)
         return true
     }
 

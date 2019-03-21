@@ -18,7 +18,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_POSITION
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logFailures
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.OrderedRemoteModel
 import com.supercilex.robotscouter.core.ui.isItemInRange
 import com.supercilex.robotscouter.core.ui.maxAnimationDuration
@@ -238,15 +237,15 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
             firestoreBatch {
                 updatePositions(itemsBelow, -1)
                 delete(deletedRef)
-            }.logFailures(deletedRef, itemsBelow)
+            }.logFailures("onSwiped:deleteMetric", deletedRef, itemsBelow)
 
             rootView.longSnackbar(RC.string.deleted, RC.string.undo) {
                 firestoreBatch {
                     set(deletedRef, checkNotNull(snapshot.data))
                     updatePositions(itemsBelow, 1)
-                }.logFailures(deletedRef, itemsBelow)
+                }.logFailures("onSwiped:addMetric", deletedRef, itemsBelow)
             }
-        }.logFailures(deletedRef)
+        }.logFailures("onSwiped:getMetric", deletedRef)
     }
 
     override fun onChildDraw(
@@ -291,7 +290,7 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
             recyclerView.post { recyclerView.itemAnimator = null }
             firestoreBatch {
                 updatePositions(localItems)
-            }.logFailures()
+            }.logFailures("clearView:updatePositions", localItems.map { it.ref })
         }
     }
 

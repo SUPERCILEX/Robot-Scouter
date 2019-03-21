@@ -3,7 +3,7 @@ package com.supercilex.robotscouter.core.data.client
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.supercilex.robotscouter.core.logCrashLog
+import com.supercilex.robotscouter.core.logBreadcrumb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,7 +17,7 @@ internal abstract class WorkerBase(
         return try {
             withContext(Dispatchers.IO) { doBlockingWork() }
         } catch (e: Exception) {
-            logCrashLog("$javaClass errored: $e")
+            logBreadcrumb("$javaClass errored: $e")
             Result.retry()
         }
     }

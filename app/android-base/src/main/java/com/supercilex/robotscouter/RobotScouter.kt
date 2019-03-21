@@ -16,11 +16,10 @@ import com.supercilex.robotscouter.core.data.initIo
 import com.supercilex.robotscouter.core.data.initNotifications
 import com.supercilex.robotscouter.core.data.initPrefs
 import com.supercilex.robotscouter.core.data.initRemoteConfig
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.longToast
 
 internal class RobotScouter : MultiDexApplication() {
@@ -38,14 +37,14 @@ internal class RobotScouter : MultiDexApplication() {
 
         GlobalScope.apply {
             // Prep slow init calls
-            async(Dispatchers.IO) { initIo() }.logFailures()
-            async { Dispatchers.Main }.logFailures()
-            async { initBridges() }.logFailures()
-            async { Glide.get(RobotScouter) }.logFailures()
+            launch(Dispatchers.IO) { initIo() }
+            launch { Dispatchers.Main }
+            launch { initBridges() }
+            launch { Glide.get(RobotScouter) }
 
-            async { initAnalytics() }.logFailures()
-            async { initRemoteConfig() }.logFailures()
-            async { initNotifications() }.logFailures()
+            launch { initAnalytics() }
+            launch { initRemoteConfig() }
+            launch { initNotifications() }
         }
 
         // These calls must occur synchronously

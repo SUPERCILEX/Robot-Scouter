@@ -11,11 +11,11 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.CachingSharer
 import com.supercilex.robotscouter.core.data.getTemplateLink
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logShareTemplate
 import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
-import com.supercilex.robotscouter.core.logFailures
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -89,7 +89,7 @@ internal class TemplateSharer private constructor(
                             .setObject(templateName, getTemplateLink(templateId))
                             .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
                             .build()
-            ).logFailures()
+            ).logFailures("shareTemplate:addAction")
 
             TemplateSharer(fragment, templateId, templateName)
 

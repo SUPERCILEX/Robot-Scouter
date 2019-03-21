@@ -34,12 +34,12 @@ import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.ioPerms
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logSelect
 import com.supercilex.robotscouter.core.data.minimumAppVersion
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.fullVersionCode
 import com.supercilex.robotscouter.core.isOnline
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.isInTabletMode
@@ -51,7 +51,7 @@ import com.supercilex.robotscouter.shared.launchUrl
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 
@@ -181,7 +181,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
 
         handleModuleInstalls(moduleInstallProgress)
-        authHelper.init().logFailures().addOnSuccessListener(this) {
+        authHelper.init().logFailures("authInit").addOnSuccessListener(this) {
             handleIntent()
         }
 
@@ -394,7 +394,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 .map { it.selectedTeams }
                 .singleOrNull { it.isNotEmpty() } ?: emptyList()
 
-        moduleRequestHolder += ExportServiceCompanion().logFailures() to listOf(selectedTeams)
+        moduleRequestHolder += ExportServiceCompanion().logFailures("downloadExportModule") to
+                listOf(selectedTeams)
     }
 
     private fun sendBackEventToChildren() = supportFragmentManager.fragments
@@ -437,7 +438,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
         }.addOnFailureListener(this) {
             longToast(R.string.link_uri_parse_error)
-        }.logFailures()
+        }.logFailures("getDynamicLink")
 
         intent = Intent() // Consume Intent
     }
@@ -463,7 +464,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
         init {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                GlobalScope.async { fragmentTransition }.logFailures()
+                GlobalScope.launch { fragmentTransition }
             }
         }
     }

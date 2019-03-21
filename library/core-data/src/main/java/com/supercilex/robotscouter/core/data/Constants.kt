@@ -1,8 +1,6 @@
 package com.supercilex.robotscouter.core.data
 
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.supercilex.robotscouter.common.FIRESTORE_DEFAULT_TEMPLATES
@@ -12,9 +10,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_USERS
 import com.supercilex.robotscouter.core.fullVersionName
-
-val mainHandler = Handler(Looper.getMainLooper())
-val Thread.isMain get() = this === mainHandler.looper.thread
 
 val user get() = FirebaseAuth.getInstance().currentUser
 val uid get() = user?.uid

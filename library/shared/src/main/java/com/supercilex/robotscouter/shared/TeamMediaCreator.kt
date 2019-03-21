@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
@@ -21,14 +22,11 @@ import com.supercilex.robotscouter.core.data.logTakeMedia
 import com.supercilex.robotscouter.core.data.mediaFolder
 import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.unhide
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.longToast
@@ -83,7 +81,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
         team.logTakeMedia()
 
         val ref = host.asLifecycleReference()
-        GlobalScope.launch(Dispatchers.Main) {
+        viewModelScope.launch {
             val file = withContext(Dispatchers.IO) {
                 try {
                     File(mediaFolder, "${team}_${System.currentTimeMillis()}.jpg")
@@ -113,7 +111,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
 
         val photoFile = checkNotNull(photoFile)
         if (resultCode == Activity.RESULT_OK) {
-            GlobalScope.launch(Dispatchers.Main) {
+            viewModelScope.launch {
                 val contentUri = withContext(Dispatchers.IO) { photoFile.unhide()?.toUri() }
                 if (contentUri == null) {
                     RobotScouter.longToast(R.string.error_unknown)
@@ -134,7 +132,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 })
             }
         } else {
-            GlobalScope.async(Dispatchers.IO) { photoFile.delete() }.logFailures()
+            viewModelScope.launch(Dispatchers.IO) { photoFile.delete() }
         }
     }
 

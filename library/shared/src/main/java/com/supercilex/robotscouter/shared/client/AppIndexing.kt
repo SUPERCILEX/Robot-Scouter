@@ -6,8 +6,8 @@ import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.google.firebase.appindexing.FirebaseAppIndex
 import com.supercilex.robotscouter.core.CrashLogger
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.getTemplateIndexable
 import com.supercilex.robotscouter.core.data.indexable
 import com.supercilex.robotscouter.core.data.model.getTemplateName
@@ -18,6 +18,7 @@ import com.supercilex.robotscouter.core.data.waitForChange
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 
 internal class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
@@ -29,7 +30,7 @@ internal class AppIndexingService : JobIntentService() {
                 awaitAll(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
             }
         } catch (e: Exception) {
-            CrashLogger.onFailure(e)
+            CrashLogger.onFailure(InvocationMarker(e))
         }
     }
 

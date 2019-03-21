@@ -187,7 +187,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         val isWebsiteValid = validateUrl(website, websiteLayout)
 
         val ref = asLifecycleReference()
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch {
             if (!isWebsiteValid.await() || !isMediaValid.await()) return@launch
 
             name.nullOrFull().also {
@@ -197,7 +197,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(Dispatchers.IO) { media?.formatAsTeamUri() }.also {
+            media?.formatAsTeamUri().also {
                 if (it != team.media) {
                     team.media = it
                     team.hasCustomMedia = !it.isNullOrBlank()
@@ -205,7 +205,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                 }
             }
 
-            withContext(Dispatchers.IO) { website?.formatAsTeamUri() }.also {
+            website?.formatAsTeamUri().also {
                 if (it != team.website) {
                     team.website = it
                     team.hasCustomWebsite = !it.isNullOrBlank()
@@ -215,10 +215,12 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             team.processPotentialMediaUpload()
             team.forceUpdate(true)
 
-            // If we are being called from TeamListFragment, reset the menu if the click was consumed
-            (ref().parentFragment as? OnBackPressedCallback)?.handleOnBackPressed()
+            withContext(Dispatchers.Main) {
+                // If we are being called from TeamListFragment, reset the menu if the click was consumed
+                (ref().parentFragment as? OnBackPressedCallback)?.handleOnBackPressed()
 
-            ref().dismiss()
+                ref().dismiss()
+            }
         }
     }
 
@@ -255,10 +257,12 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         if (url == null) return CompletableDeferred(true)
 
         val inputRef = inputLayout.asLifecycleReference(this)
-        return GlobalScope.async(Dispatchers.Main) {
-            val isValid = withContext(Dispatchers.Default) { url.isValidTeamUri() }
-            inputRef().error =
-                    if (isValid) null else getString(R.string.details_malformed_url_error)
+        return GlobalScope.async {
+            val isValid = url.isValidTeamUri()
+            withContext(Dispatchers.Main) {
+                inputRef().error =
+                        if (isValid) null else getString(R.string.details_malformed_url_error)
+            }
             isValid
         }
     }

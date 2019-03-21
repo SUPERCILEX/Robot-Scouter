@@ -25,27 +25,27 @@ import com.supercilex.robotscouter.core.data.activitiesRegistry
 import com.supercilex.robotscouter.core.data.cleanup
 import com.supercilex.robotscouter.core.data.nightMode
 import com.supercilex.robotscouter.core.data.prefs
-import com.supercilex.robotscouter.core.logCrashLog
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.shared.client.idpSignOut
 import com.supercilex.robotscouter.shared.client.onSignedIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import java.util.concurrent.CopyOnWriteArrayList
 
 private val visibleActivities = CopyOnWriteArrayList<Activity>()
 
 fun initUi() {
-    GlobalScope.async {
+    GlobalScope.launch {
         // Disk I/O sometimes occurs in these
         AuthUI.getInstance()
         GoogleSignIn.getLastSignedInAccount(RobotScouter)
 
         onSignedIn()
-    }.logFailures()
+    }
 
     FirebaseAuth.getInstance().addAuthStateListener {
         it.currentUser?.reload()?.addOnFailureListener f@{
@@ -54,16 +54,16 @@ fun initUi() {
                 it.errorCode != "ERROR_USER_NOT_FOUND" && it.errorCode != "ERROR_USER_DISABLED"
             ) return@f
 
-            logCrashLog("User deleted or disabled. Re-initializing Robot Scouter.")
-            GlobalScope.async {
+            logBreadcrumb("User deleted or disabled. Re-initializing Robot Scouter.")
+            GlobalScope.launch {
                 cleanup()
                 idpSignOut()
                 onSignedIn()
-                RobotScouter.runOnUiThread {
-                    longToast("User account deleted due to inactivity. " +
-                                      "Starting a fresh session.")
+                withContext(Dispatchers.Main) {
+                    RobotScouter.longToast(
+                            "User account deleted due to inactivity. Starting a fresh session.")
                 }
-            }.logFailures()
+            }
         }
     }
 
@@ -89,7 +89,7 @@ fun initUi() {
                     R.array.com_google_android_gms_fonts_certs)).registerInitCallback(
             object : EmojiCompat.InitCallback() {
                 override fun onFailed(t: Throwable?) =
-                        logCrashLog("EmojiCompat failed to initialize with error: $t")
+                        logBreadcrumb("EmojiCompat failed to initialize with error: $t")
             }))
 }
 

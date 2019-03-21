@@ -20,7 +20,7 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.data.uid
-import com.supercilex.robotscouter.core.logCrashLog
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_donate.*
@@ -108,7 +108,7 @@ internal class DonateDialog : BottomSheetDialogFragmentBase(), View.OnClickListe
     ): Task<Unit?> = billingClientReadyTask.task.continueWithTask(Continuation<Int, Task<Unit?>> {
         val purchaseStartTask = TaskCompletionSource<Unit?>()
 
-        logCrashLog("Starting purchase flow for sku: $sku")
+        logBreadcrumb("Starting purchase flow for sku: $sku")
         @Suppress("DEPRECATION")
         val result = billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
                 .setSku(sku)

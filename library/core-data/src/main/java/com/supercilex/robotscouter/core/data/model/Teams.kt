@@ -1,9 +1,7 @@
 package com.supercilex.robotscouter.core.data.model
 
 import android.util.Patterns
-import androidx.annotation.WorkerThread
 import com.firebase.ui.firestore.SnapshotParser
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseAppIndex
@@ -18,7 +16,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.isSingleton
 import com.supercilex.robotscouter.common.second
-import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
@@ -36,7 +34,7 @@ import com.supercilex.robotscouter.core.data.teamDuplicatesRef
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.user
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +42,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
@@ -123,13 +123,13 @@ internal fun Team.add() {
                     .setObject(toString(), deepLink)
                     .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
                     .build()
-    ).logFailures()
+    ).logFailures("addTeam:addAction")
 }
 
 internal fun Team.update(newTeam: Team) {
     if (this == newTeam) {
         val timestamp = Timestamp.now()
-        ref.update(FIRESTORE_TIMESTAMP, timestamp).logFailures(ref, timestamp)
+        ref.update(FIRESTORE_TIMESTAMP, timestamp).logFailures("updateTeam", ref, timestamp)
         return
     }
 
@@ -159,7 +159,7 @@ internal fun Team.updateTemplateId(id: String) {
     if (id == templateId) return
 
     templateId = id
-    ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures(ref, templateId)
+    ref.update(FIRESTORE_TEMPLATE_ID, templateId).logFailures("updateTeamTemplate", ref, templateId)
 }
 
 fun Team.forceUpdate(refresh: Boolean = false) {
@@ -189,7 +189,7 @@ suspend fun Team.processPotentialMediaUpload() = withContext(Dispatchers.IO) {
 }
 
 fun Team.trash() {
-    FirebaseAppIndex.getInstance().remove(deepLink).logFailures()
+    FirebaseAppIndex.getInstance().remove(deepLink).logFailures("trashTeam:delIndex")
     firestoreBatch {
         val newNumber = if (number == 0L) {
             -1 // Fatal flaw in our trashing architecture: -0 isn't a thing.
@@ -202,21 +202,26 @@ fun Team.trash() {
             mapOf(id to newNumber),
             SetOptions.merge())
         set(userDeletionQueue, QueuedDeletion.Team(ref.id).data, SetOptions.merge())
-    }.logFailures(ref, this)
+    }.logFailures("trashTeam", ref, this)
 }
 
 fun untrashTeam(id: String) {
-    GlobalScope.async {
+    GlobalScope.launch {
         val ref = teamsRef.document(id)
-        val snapshot = ref.get().logFailures(ref).await()
+        val snapshot = try {
+            ref.get().await()
+        } catch (e: Exception) {
+            logBreadcrumb("untrashTeam:get: ${ref.path}")
+            throw InvocationMarker(e)
+        }
 
         val newNumber = abs(checkNotNull(snapshot.getLong(FIRESTORE_NUMBER)))
         firestoreBatch {
             update(ref, "$FIRESTORE_OWNERS.${checkNotNull(uid)}", newNumber)
             update(teamDuplicatesRef.document(checkNotNull(uid)), id, newNumber)
             update(userDeletionQueue, id, FieldValue.delete())
-        }.logFailures(id)
-    }.logFailures()
+        }.logFailures("untrashTeam:set", id)
+    }
 }
 
 internal fun Team.fetchLatestData() {
@@ -234,17 +239,18 @@ suspend fun Team.getScouts(): List<Scout> = coroutineScope {
     }
 }
 
-@WorkerThread
-fun CharSequence.isValidTeamUri() = toString().formatAsTeamUri().let {
-    it == null || Patterns.WEB_URL.matcher(it).matches() || File(it).exists()
+suspend fun CharSequence.isValidTeamUri(): Boolean {
+    val uri = toString().formatAsTeamUri() ?: return true
+    if (Patterns.WEB_URL.matcher(uri).matches()) return true
+    if (withContext(Dispatchers.IO) { File(uri).exists() }) return true
+    return false
 }
 
-@WorkerThread
-fun String.formatAsTeamUri(): String? {
+suspend fun String.formatAsTeamUri(): String? {
     val trimmedUrl = trim()
     if (trimmedUrl.isBlank()) return null
 
-    if (File(this).exists()) return this
+    if (withContext(Dispatchers.IO) { File(this@formatAsTeamUri).exists() }) return this
 
     return if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
         trimmedUrl
@@ -253,10 +259,10 @@ fun String.formatAsTeamUri(): String? {
     }
 }
 
-private fun Team.rawSet(refresh: Boolean, new: Boolean): Task<*> {
+private fun Team.rawSet(refresh: Boolean, new: Boolean) {
     timestamp = if (refresh) Date(0) else Date()
 
-    return if (new) {
+    if (new) {
         firestoreBatch {
             set(ref, this@rawSet)
             set(teamDuplicatesRef.document(checkNotNull(uid)),
@@ -265,5 +271,5 @@ private fun Team.rawSet(refresh: Boolean, new: Boolean): Task<*> {
         }
     } else {
         ref.set(this)
-    }.logFailures(ref, this)
+    }.logFailures("setTeam", ref, this)
 }

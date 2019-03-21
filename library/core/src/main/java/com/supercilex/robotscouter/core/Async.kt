@@ -3,25 +3,14 @@ package com.supercilex.robotscouter.core
 import android.app.Activity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.tasks.await
 import org.jetbrains.anko.coroutines.experimental.Ref
 import org.jetbrains.anko.coroutines.experimental.asReference
 
-suspend fun <T> Task<T>.await(): T {
-    val trace = generateStackTrace()
-    return try {
-        await()
-    } catch (t: Throwable) {
-        throw t.injectRoot(trace)
-    }
-}
-
-inline fun <T> Task<T>.fastAddOnSuccessListener(
+fun <T> Task<T>.fastAddOnSuccessListener(
         activity: Activity? = null,
-        crossinline listener: (T) -> Unit
+        listener: (T) -> Unit
 ): Task<T> {
     if (isSuccessful) { // Fast path
         @Suppress("UNCHECKED_CAST") // Let the caller decide nullability
@@ -29,11 +18,10 @@ inline fun <T> Task<T>.fastAddOnSuccessListener(
         return this
     }
 
-    val crossedListener = OnSuccessListener<T> { listener(it) }
     return if (activity == null) {
-        addOnSuccessListener(crossedListener)
+        addOnSuccessListener(listener)
     } else {
-        addOnSuccessListener(activity, crossedListener)
+        addOnSuccessListener(activity, listener)
     }
 }
 

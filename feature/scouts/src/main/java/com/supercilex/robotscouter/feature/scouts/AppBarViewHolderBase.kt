@@ -33,7 +33,6 @@ import com.supercilex.robotscouter.core.data.model.displayableMedia
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
 import com.supercilex.robotscouter.core.data.model.processPotentialMediaUpload
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.Saveable
@@ -46,7 +45,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.find
@@ -85,11 +83,11 @@ internal open class AppBarViewHolderBase(
         mediaCapture.apply {
             init(permissionHandler to savedInstanceState)
             onMediaCaptured.observe(fragment) {
-                GlobalScope.async {
+                GlobalScope.launch {
                     team.copyMediaInfo(it)
                     team.processPotentialMediaUpload()
                     team.forceUpdate(true)
-                }.logFailures()
+                }
             }
         }
 
@@ -138,34 +136,35 @@ internal open class AppBarViewHolderBase(
 
         if (resource?.isRecycled == false) {
             val holderRef = asLifecycleReference(fragment.viewLifecycleOwner)
-            GlobalScope.launch(Dispatchers.Main) {
-                val palette = withContext(Dispatchers.Default) { Palette.from(resource).generate() }
+            GlobalScope.launch {
+                val palette = Palette.from(resource).generate()
 
-                val holder = holderRef()
-                val update: Palette.Swatch.() -> Unit = { holder.updateScrim(rgb) }
+                val update: suspend Palette.Swatch.() -> Unit = {
+                    withContext(Dispatchers.Main) { holderRef().updateScrim(rgb) }
+                }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }
 
-            GlobalScope.launch(Dispatchers.Main) {
-                val swatch = withContext(Dispatchers.Default) {
-                    val paletteTarget = PaletteTarget.Builder()
-                            .setExclusive(false)
-                            .setTargetLightness(1f)
-                            .setMinimumLightness(0.8f)
-                            .setLightnessWeight(1f)
-                            .setTargetSaturation(0f)
-                            .setMaximumSaturation(0f)
-                            .build()
-                    Palette.from(resource)
-                            .addTarget(paletteTarget)
-                            .setRegion(0, 0, resource.width, toolbarHeight)
-                            .generate()[paletteTarget]
-                } ?: return@launch
+            GlobalScope.launch {
+                val paletteTarget = PaletteTarget.Builder()
+                        .setExclusive(false)
+                        .setTargetLightness(1f)
+                        .setMinimumLightness(0.8f)
+                        .setLightnessWeight(1f)
+                        .setTargetSaturation(0f)
+                        .setMaximumSaturation(0f)
+                        .build()
+                val swatch = Palette.from(resource)
+                        .addTarget(paletteTarget)
+                        .setRegion(0, 0, resource.width, toolbarHeight)
+                        .generate()[paletteTarget] ?: return@launch
 
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.
                 if (swatch.hsl.first() == 0f) {
-                    holderRef().header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
+                    withContext(Dispatchers.Main) {
+                        holderRef().header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
+                    }
                 }
             }
         }

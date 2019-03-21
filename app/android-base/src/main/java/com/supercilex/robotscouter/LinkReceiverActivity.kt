@@ -7,7 +7,7 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.isSingleton
-import com.supercilex.robotscouter.core.await
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.data.ACTION_FROM_DEEP_LINK
 import com.supercilex.robotscouter.core.data.KEYS
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
@@ -18,7 +18,7 @@ import com.supercilex.robotscouter.core.data.model.teamWithSafeDefaults
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.data.updateOwner
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.shared.client.onSignedIn
@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_link_receiver.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.await
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.longToast
 import java.util.Date
@@ -53,8 +54,11 @@ internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
                 templatesRef.id -> processTemplates(link, token)
                 else -> showErrorAndContinue()
             }
-        }.logFailures().invokeOnCompletion {
-            if (it != null) showErrorAndContinue()
+        }.invokeOnCompletion {
+            if (it != null) {
+                logBreadcrumb("processIncomingLinks", InvocationMarker(it))
+                showErrorAndContinue()
+            }
             finish()
         }
     }

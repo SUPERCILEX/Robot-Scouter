@@ -23,13 +23,13 @@ import com.supercilex.robotscouter.core.data.getScoutBundle
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.getTeam
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.addScout
 import com.supercilex.robotscouter.core.data.model.ownsTemplateTask
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.data.viewAction
 import com.supercilex.robotscouter.core.isOffline
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.FragmentBase
@@ -130,12 +130,12 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     override fun onStart() {
         super.onStart()
-        FirebaseUserActions.getInstance().start(team.viewAction).logFailures()
+        FirebaseUserActions.getInstance().start(team.viewAction).logFailures("startScoutingAction")
     }
 
     override fun onStop() {
         super.onStop()
-        FirebaseUserActions.getInstance().end(team.viewAction).logFailures()
+        FirebaseUserActions.getInstance().end(team.viewAction).logFailures("endScoutingAction")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -170,7 +170,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
                     return true
                 }
 
-                ownsTemplateTask(templateId).logFailures().addOnSuccessListener(requireActivity()) {
+                ownsTemplateTask(templateId).addOnSuccessListener(requireActivity()) {
                     if (it) {
                         startActivity(intent)
                     } else if (view != null) {

@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.supercilex.robotscouter.core.mainHandler
 
 private val activitiesLifecycleOwner: LifecycleOwner = LifecycleOwner { activitiesRegistry }
 val activitiesRegistry = LifecycleRegistry(activitiesLifecycleOwner)

@@ -14,13 +14,13 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.CachingSharer
 import com.supercilex.robotscouter.core.data.getTeamsLink
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logShare
 import com.supercilex.robotscouter.core.data.model.TeamCache
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.model.ref
 import com.supercilex.robotscouter.core.data.model.shareTeams
 import com.supercilex.robotscouter.core.isOffline
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -128,7 +128,7 @@ class TeamSharer private constructor(
                             .setObject(teams.getNames(), teams.getTeamsLink())
                             .setActionStatus(Action.Builder.STATUS_TYPE_COMPLETED)
                             .build()
-            ).logFailures()
+            ).logFailures("shareTeams:addAction")
 
             TeamSharer(fragment, teams)
 

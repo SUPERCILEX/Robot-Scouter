@@ -18,12 +18,12 @@ import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.getTemplateViewAction
+import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logSelectTemplate
 import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.deleteMetrics
 import com.supercilex.robotscouter.core.data.model.getTemplateMetricsRef
 import com.supercilex.robotscouter.core.data.model.restoreMetrics
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.animatePopReveal
@@ -144,7 +144,7 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
             FirebaseUserActions.getInstance().start(getTemplateViewAction(currentTabId, tabName))
         } else {
             FirebaseUserActions.getInstance().end(getTemplateViewAction(currentTabId, tabName))
-        }.logFailures()
+        }.logFailures("startOrEndTemplateAction")
     }
 
     companion object {

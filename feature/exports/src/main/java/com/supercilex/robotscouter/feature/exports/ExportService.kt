@@ -12,8 +12,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.ExportServiceCompanion
 import com.supercilex.robotscouter.core.CrashLogger
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.exportsFolder
 import com.supercilex.robotscouter.core.data.getTeamListExtra
 import com.supercilex.robotscouter.core.data.logExport
@@ -39,6 +39,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.asTask
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.find
@@ -125,7 +126,7 @@ class ExportService : IntentService(TAG) {
         val templatesSnapshot: List<DocumentSnapshot> = try {
             getTemplatesQuery().get().await().documents
         } catch (e: Exception) {
-            CrashLogger.onFailure(e)
+            CrashLogger.onFailure(InvocationMarker(e))
             emptyList()
         }
         val allPossibleTemplateNames: Map<String, String?> = templatesSnapshot.associate {

@@ -76,7 +76,7 @@ internal class TrashViewHolder(
                 if (
                     e is FirebaseFirestoreException && e.code == Code.UNAVAILABLE &&
                     hasRetried.compareAndSet(false, true)
-                ) ref.get().logFailures(ref, trash.id).addOnCompleteListener(this)
+                ) ref.get().logFailures("getTrashedTeam", ref, trash.id).addOnCompleteListener(this)
 
                 return
             }

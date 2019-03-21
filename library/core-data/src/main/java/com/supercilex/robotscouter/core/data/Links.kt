@@ -19,9 +19,11 @@ import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
 import com.supercilex.robotscouter.common.FIRESTORE_REF
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.model.userDeletionQueue
 import com.supercilex.robotscouter.core.model.Team
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.tasks.asDeferred
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.util.Date
 
@@ -81,7 +83,7 @@ internal suspend fun List<DocumentReference>.share(
     val update = firestoreBatch {
         forEach { update(it, tokenPath, timestamp) }
         set(userDeletionQueue, deletionGenerator(token, map { it.id }).data, SetOptions.merge())
-    }.logFailures(this, token)
+    }.logFailures("share", this, token)
 
     if (block) update.await()
 
@@ -106,10 +108,9 @@ suspend fun updateOwner(
                         else -> error("Unknown data type (${value.javaClass}): $value")
                     }
             ))
-            .logFailures(ref, "Token: $token, from user: $prevUid")
-}.forEach {
-    it.await()
-}
+            .logFailures("updateOwner", ref, "Token: $token, from user: $prevUid")
+            .asDeferred()
+}.awaitAll()
 
 private inline fun <T> List<T>.generateUrl(
         linkBase: String,

@@ -31,10 +31,8 @@ import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
-import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
 import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.fetchLatestData
 import com.supercilex.robotscouter.core.data.model.forceUpdate
@@ -44,14 +42,16 @@ import com.supercilex.robotscouter.core.data.model.teamsQueryGenerator
 import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefsQueryGenerator
 import com.supercilex.robotscouter.core.data.model.userRef
-import com.supercilex.robotscouter.core.logCrashLog
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.isMain
+import com.supercilex.robotscouter.core.logBreadcrumb
+import com.supercilex.robotscouter.core.mainHandler
 import com.supercilex.robotscouter.core.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.tasks.await
 import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.lang.reflect.Field
@@ -71,7 +71,7 @@ val prefs = LifecycleAwareFirestoreArray(userPrefsQueryGenerator, prefParser)
 
 private val updateLastLogin = object : Runnable {
     override fun run() {
-        if (isSignedIn) GlobalScope.async { update() }.logFailures()
+        if (isSignedIn) update()
 
         mainHandler.removeCallbacks(this)
         mainHandler.postDelayed(this, TimeUnit.DAYS.toMillis(1))
@@ -79,7 +79,8 @@ private val updateLastLogin = object : Runnable {
 
     private fun update() {
         val lastLogin = mapOf(FIRESTORE_LAST_LOGIN to Timestamp.now())
-        userRef.set(lastLogin, SetOptions.merge()).logFailures(userRef, lastLogin)
+        userRef.set(lastLogin, SetOptions.merge())
+                .logFailures("updateLastLogin", userRef, lastLogin)
     }
 }
 
@@ -127,11 +128,13 @@ private val teamUpdater = object : ChangeEventListenerBase {
         if (type != ChangeEventType.ADDED && type != ChangeEventType.CHANGED) return
 
         val team = teams[newIndex]
-        GlobalScope.async(Dispatchers.IO) {
+        GlobalScope.launch {
             val media = team.media
             if (media == null || media.isValidTeamUri()) {
                 team.fetchLatestData()
-                team.indexable.let { FirebaseAppIndex.getInstance().update(it).logFailures(it) }
+                team.indexable.let {
+                    FirebaseAppIndex.getInstance().update(it).logFailures("teamUpdater", it)
+                }
             } else {
                 team.apply {
                     hasCustomMedia = false
@@ -149,7 +152,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
                     startUploadMediaJob()
                 }
             }
-        }.logFailures()
+        }
     }
 }
 
@@ -163,9 +166,9 @@ fun initDatabase() {
     FirebaseAuth.getInstance().addAuthStateListener {
         val user = it.currentUser
         if (user == null) {
-            GlobalScope.async(Dispatchers.IO) {
+            GlobalScope.launch(Dispatchers.IO) {
                 dbCacheLock.withLock { dbCache.deleteRecursively() }
-            }.logFailures()
+            }
         } else {
             updateLastLogin.run()
 
@@ -241,7 +244,7 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
 
 private inline fun <reified T> T.smartWrite(file: File, crossinline write: (t: T) -> Unit) {
     val new = this
-    GlobalScope.async(Dispatchers.IO) {
+    GlobalScope.launch(Dispatchers.IO) {
         val cache = {
             write(new)
             file.safeCreateNewFile().writeText(Gson().toJson(new))
@@ -255,7 +258,7 @@ private inline fun <reified T> T.smartWrite(file: File, crossinline write: (t: T
                 cache()
             }
         }
-    }.logFailures()
+    }
 }
 
 internal sealed class QueuedDeletion(
@@ -305,7 +308,7 @@ interface ChangeEventListenerBase : ChangeEventListener {
     override fun onDataChanged() = Unit
 
     override fun onError(e: FirebaseFirestoreException) {
-        logCrashLog("Snapshot listener failure for $javaClass")
+        logBreadcrumb("Snapshot listener failure for $javaClass")
         CrashLogger.onFailure(e)
     }
 }

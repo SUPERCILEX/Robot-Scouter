@@ -12,17 +12,16 @@ import com.supercilex.robotscouter.common.FIRESTORE_SELECTED_VALUE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.FIRESTORE_UNIT
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
-import com.supercilex.robotscouter.core.await
 import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logAdd
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logUpdate
-import com.supercilex.robotscouter.core.logFailures
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.MetricType
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.asTask
+import kotlinx.coroutines.tasks.await
 
 val metricParser = SnapshotParser { parseMetric(checkNotNull(it.data), it.reference) }
 
@@ -78,45 +77,45 @@ internal fun parseMetric(fields: Map<String, Any?>, ref: DocumentReference): Met
 }
 
 fun deleteMetrics(ref: CollectionReference) = GlobalScope.async {
-    val metrics = ref.get().logFailures(ref).await()
+    val metrics = ref.get().logFailures("deleteMetrics:get", ref).await()
 
     firestoreBatch {
         for (metric in metrics) delete(metric.reference)
-    }.logFailures(metrics.map { it.reference }, metrics)
+    }.logFailures("deleteMetrics:del", metrics.map { it.reference }, metrics)
 
     metrics
-}.logFailures().asTask()
+}.asTask()
 
 fun restoreMetrics(metrics: QuerySnapshot) {
     firestoreBatch {
         for (metric in metrics) set(metric.reference, metric.data)
-    }.logFailures(metrics.map { it.reference }, metrics)
+    }.logFailures("restoreMetrics", metrics.map { it.reference }, metrics)
 }
 
 fun Metric<*>.add() {
     logAdd()
-    ref.set(this).logFailures(ref, this)
+    ref.set(this).logFailures("addMetric", ref, this)
 }
 
 fun <T> Metric<T>.update(new: T) {
     if (value != new) {
         value = new
         logUpdate()
-        ref.update(FIRESTORE_VALUE, new).logFailures(ref, new)
+        ref.update(FIRESTORE_VALUE, new).logFailures("updateMetric", ref, new)
     }
 }
 
 fun Metric<*>.updateName(new: String) {
     if (name != new) {
         name = new
-        ref.update(FIRESTORE_NAME, new).logFailures(ref, new)
+        ref.update(FIRESTORE_NAME, new).logFailures("updateMetricName", ref, new)
     }
 }
 
 fun Metric.Number.updateUnit(new: String?) {
     if (unit != new) {
         unit = new
-        ref.update(FIRESTORE_UNIT, new).logFailures(ref, new)
+        ref.update(FIRESTORE_UNIT, new).logFailures("updateMetricUnit", ref, new)
     }
 }
 
@@ -128,7 +127,7 @@ fun Metric.Stopwatch.add(index: Int, lap: Long) {
         FieldValue.arrayUnion(lap)
     } else { // Insert
         value // No APIs for this yet, just rewrite the whole array
-    }).logFailures(ref, "Adding lap at position $index: $lap")
+    }).logFailures("addMetricLap", ref, "Adding lap at position $index: $lap")
 }
 
 fun Metric.Stopwatch.remove(lap: Long) {
@@ -136,7 +135,7 @@ fun Metric.Stopwatch.remove(lap: Long) {
     logUpdate()
 
     ref.update(FIRESTORE_VALUE, FieldValue.arrayRemove(lap))
-            .logFailures(ref, "Removing lap: $lap")
+            .logFailures("removeMetricLap", ref, "Removing lap: $lap")
 }
 
 fun Metric.List.update(items: List<Metric.List.Item>) {
@@ -145,7 +144,7 @@ fun Metric.List.update(items: List<Metric.List.Item>) {
 
         ref.update(FIRESTORE_VALUE, items.map {
             mapOf(FIRESTORE_ID to it.id, FIRESTORE_NAME to it.name)
-        }).logFailures(ref, "Updating items: $items")
+        }).logFailures("updateMetricItems", ref, "Updating items: $items")
     }
 }
 
@@ -155,6 +154,6 @@ fun Metric.List.updateSelectedValueId(new: String) {
         logUpdate()
 
         ref.update(FIRESTORE_SELECTED_VALUE_ID, new)
-                .logFailures(ref, "Updated selected value: $new")
+                .logFailures("updateMetricSelectedId", ref, "Updated selected value: $new")
     }
 }

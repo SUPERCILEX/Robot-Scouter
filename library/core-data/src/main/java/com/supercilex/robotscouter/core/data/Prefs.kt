@@ -18,15 +18,13 @@ import com.supercilex.robotscouter.common.FIRESTORE_PREF_NIGHT_MODE
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_SHOULD_SHOW_RATING_DIALOG
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_UPLOAD_MEDIA_TO_TBA
 import com.supercilex.robotscouter.common.FIRESTORE_VALUE
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.data.logFailures // ktlint-disable
 import com.supercilex.robotscouter.core.data.model.updateTemplateId
 import com.supercilex.robotscouter.core.data.model.userPrefs
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.model.TemplateType
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 internal val prefParser = SnapshotParser<Any?> {
@@ -51,7 +49,7 @@ val prefStore = object : PreferenceDataStore() {
         if (value == null || !isSignedIn) return
 
         val ref = userPrefs.document(key)
-        ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures(ref, value)
+        ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures("prefStore:putS", ref, value)
     }
 
     override fun getString(key: String, defValue: String?): String? =
@@ -61,7 +59,7 @@ val prefStore = object : PreferenceDataStore() {
         if (!isSignedIn) return
 
         val ref = userPrefs.document(key)
-        ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures(ref, value)
+        ref.set(mapOf(FIRESTORE_VALUE to value)).logFailures("prefStore:putB", ref, value)
     }
 
     override fun getBoolean(key: String, defValue: Boolean): Boolean =
@@ -167,18 +165,25 @@ fun <T> ObservableSnapshotArray<*>.getPrefOrDefault(id: String, defValue: T): T 
 }
 
 fun clearPrefs() {
-    GlobalScope.async {
-        for (pref in userPrefs.getInBatches()) {
-            val ref = pref.reference
-            ref.delete().logFailures(ref, pref.data)
+    GlobalScope.launch {
+        val prefs = try {
+            userPrefs.getInBatches()
+        } catch (e: Exception) {
+            logBreadcrumb("clearPrefs: " + userPrefs.path)
+            throw InvocationMarker(e)
         }
 
-        localPrefs.edit(true) { clear() }
-    }.logFailures()
+        for (pref in prefs) {
+            val ref = pref.reference
+            ref.delete().logFailures("clearPrefs", pref)
+        }
+
+        localPrefs.edit { clear() }
+    }
 }
 
 private fun updateTeamTemplateIds() {
-    GlobalScope.launch(Dispatchers.Main) {
+    GlobalScope.launch {
         for (team in teams.waitForChange()) team.updateTemplateId(defaultTemplateId)
     }
 }

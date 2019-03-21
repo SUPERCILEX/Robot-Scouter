@@ -14,13 +14,12 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.isInTestMode
-import com.supercilex.robotscouter.core.logCrashLog
-import com.supercilex.robotscouter.core.logFailures
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -68,7 +67,7 @@ fun initAnalytics() {
         val user = it.currentUser
 
         // Log uid to help debug db crashes
-        logCrashLog("User id: ${user?.uid}")
+        logBreadcrumb("User id: ${user?.uid}")
         Crashlytics.setUserIdentifier(user?.uid)
         Crashlytics.setUserEmail(user?.email)
         Crashlytics.setUserName(user?.displayName)
@@ -122,25 +121,25 @@ fun Team.logTakeMedia() = analytics.logEvent(
 )
 
 fun List<Team>.logShare() {
-    GlobalScope.async {
+    GlobalScope.launch {
         safeLog(this@logShare) { ids, name ->
             analytics.logEvent(
                     "share_teams",
                     bundleOf(ITEM_ID to ids, ITEM_NAME to name)
             )
         }
-    }.logFailures()
+    }
 }
 
 fun List<Team>.logExport() {
-    GlobalScope.async {
+    GlobalScope.launch {
         safeLog(this@logExport) { ids, name ->
             analytics.logEvent(
                     "export_teams",
                     bundleOf(ITEM_ID to ids, ITEM_NAME to name)
             )
         }
-    }.logFailures()
+    }
 }
 
 internal fun Team.logAddScout(scoutId: String, templateId: String) = analytics.logEvent(

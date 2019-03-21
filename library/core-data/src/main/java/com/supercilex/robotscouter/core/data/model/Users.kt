@@ -18,7 +18,7 @@ val userDeletionQueue get() = deletionQueueRef.document(checkNotNull(uid))
 
 internal fun User.add() {
     val ref = getUserRef(uid)
-    ref.set(this, SetOptions.merge()).logFailures(ref, this)
+    ref.set(this, SetOptions.merge()).logFailures("addUser", ref, this)
 }
 
 private fun getUserRef(uid: String) = usersRef.document(uid)
