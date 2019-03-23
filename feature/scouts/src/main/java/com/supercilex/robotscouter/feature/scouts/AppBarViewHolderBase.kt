@@ -146,22 +146,33 @@ internal open class AppBarViewHolderBase(
             }
 
             GlobalScope.launch {
-                val paletteTarget = PaletteTarget.Builder()
-                        .setExclusive(false)
+                val targetPalette = PaletteTarget.Builder()
                         .setTargetLightness(1f)
-                        .setMinimumLightness(0.8f)
+                        .setMinimumLightness(0.95f)
                         .setLightnessWeight(1f)
-                        .setTargetSaturation(0f)
-                        .setMaximumSaturation(0f)
                         .build()
-                val swatch = Palette.from(resource)
-                        .addTarget(paletteTarget)
+                val paletteBase = Palette.from(resource)
+                        .clearFilters()
+                        .clearTargets()
+                        .addTarget(targetPalette)
+
+                val topPalette = paletteBase
                         .setRegion(0, 0, resource.width, toolbarHeight)
-                        .generate()[paletteTarget] ?: return@launch
+                        .generate()
+                val bottomPalette = paletteBase
+                        .setRegion(
+                                0, resource.height - toolbarHeight, resource.width, resource.height)
+                        .generate()
+
+                val top = topPalette[targetPalette]
+                val bottom = bottomPalette[targetPalette]
+                val isMostlyWhite: Palette.Swatch?.() -> Boolean = {
+                    this != null && population > 2500
+                }
 
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.
-                if (swatch.hsl.first() == 0f) {
+                if (top.isMostlyWhite() || bottom.isMostlyWhite()) {
                     withContext(Dispatchers.Main) {
                         holderRef().header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
                     }
