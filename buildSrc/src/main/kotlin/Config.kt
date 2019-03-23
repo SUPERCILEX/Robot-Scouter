@@ -1,38 +1,31 @@
 import org.gradle.api.artifacts.dsl.RepositoryHandler
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository
-import org.gradle.api.artifacts.repositories.RepositoryContentDescriptor
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.version
 import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.30-dev-1936"
+    private const val kotlinVersion = "1.3.30-eap-99"
 
     fun RepositoryHandler.deps() {
-        fun MavenArtifactRepository.ensureGroups(
-                block: RepositoryContentDescriptor.() -> Unit
-        ) = content(block)
-
-        google().ensureGroups {
+        google().content {
             includeGroupByRegex("com\\.android\\..*")
             includeGroupByRegex("com\\.google\\..*")
             includeGroupByRegex("androidx\\..*")
 
-            includeGroup("android.arch.work")
             includeGroup("com.crashlytics.sdk.android")
             includeGroup("io.fabric.sdk.android")
         }
 
-        maven("https://dl.bintray.com/kotlin/kotlin-dev/").ensureGroups {
+        maven("https://dl.bintray.com/kotlin/kotlin-dev/").content {
             includeGroup("org.jetbrains.kotlin")
         }
 
-        maven("https://maven.fabric.io/public").ensureGroups {
+        maven("https://maven.fabric.io/public").content {
             includeGroup("io.fabric.tools")
         }
 
-        maven("https://jitpack.io").ensureGroups {
+        maven("https://jitpack.io").content {
             includeGroupByRegex("com.github.SUPERCILEX\\..*")
         }
 
@@ -89,7 +82,7 @@ object Config {
 
             val core = "androidx.core:core-ktx:1.1.0-alpha05"
             val multidex = "androidx.multidex:multidex:2.0.1"
-            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha02"
+            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha03"
             val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha05"
             val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha03"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-alpha01"
@@ -108,7 +101,7 @@ object Config {
             val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
 
-            val work = "androidx.work:work-runtime-ktx:2.0.0-rc01"
+            val work = "androidx.work:work-runtime-ktx:2.0.0"
         }
 
         object Firebase {
@@ -117,9 +110,9 @@ object Config {
             val firestore = "com.google.firebase:firebase-firestore:18.1.0"
             val functions = "com.google.firebase:firebase-functions:16.3.0"
             val storage = "com.google.firebase:firebase-storage:16.1.0"
-            val config = "com.google.firebase:firebase-config:16.4.0"
+            val config = "com.google.firebase:firebase-config:16.4.1"
             val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
-            val messaging = "com.google.firebase:firebase-messaging:17.4.0"
+            val messaging = "com.google.firebase:firebase-messaging:17.5.0"
             val invites = "com.google.firebase:firebase-invites:16.1.1"
             val perf = "com.google.firebase:firebase-perf:16.2.4"
 

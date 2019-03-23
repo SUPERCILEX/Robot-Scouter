@@ -3,10 +3,6 @@ package com.supercilex.robotscouter.shared
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import android.os.Debug
-import android.view.View
-import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NavUtils
 import androidx.core.app.TaskStackBuilder
@@ -32,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -73,8 +68,6 @@ fun initUi() {
     prefs.addChangeEventListener(object : ChangeEventListenerBase {
         override fun onDataChanged() {
             AppCompatDelegate.setDefaultNightMode(nightMode)
-            visibleActivities.filterIsInstance<AppCompatActivity>()
-                    .forEach { it.delegate.setLocalNightMode(nightMode) }
         }
     })
 
@@ -104,17 +97,6 @@ fun Activity.handleUpNavigation() = if (
 }
 
 private object ActivityHandler : Application.ActivityLifecycleCallbacks {
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        if (BuildConfig.DEBUG) {
-            val window = activity.window
-            if (Debug.isDebuggerConnected()) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            } else {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
-        }
-    }
-
     override fun onActivityStarted(activity: Activity) {
         if (visibleActivities.isEmpty()) {
             activitiesRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START)
@@ -122,20 +104,18 @@ private object ActivityHandler : Application.ActivityLifecycleCallbacks {
         visibleActivities += activity
     }
 
-    override fun onActivityResumed(activity: Activity) {
-        activity.find<View>(android.R.id.content).post {
-            (activity as? AppCompatActivity)?.delegate?.setLocalNightMode(nightMode)
-        }
-    }
-
-    override fun onActivityPaused(activity: Activity) = Unit
-
     override fun onActivityStopped(activity: Activity) {
         visibleActivities -= activity
         if (visibleActivities.isEmpty()) {
             activitiesRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
         }
     }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+
+    override fun onActivityResumed(activity: Activity) = Unit
+
+    override fun onActivityPaused(activity: Activity) = Unit
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
 

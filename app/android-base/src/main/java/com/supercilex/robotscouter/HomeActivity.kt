@@ -12,6 +12,7 @@ import android.view.ViewOutlineProvider
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
@@ -166,6 +167,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
         prefs.asLiveData().observe(this) {
             bottomNavigation.menu.findItem(R.id.templates).isEnabled = isTemplateEditingAllowed
+            if (isSignedIn) delegate.setLocalNightMode(AppCompatDelegate.getDefaultNightMode())
         }
 
         if (isInTabletMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

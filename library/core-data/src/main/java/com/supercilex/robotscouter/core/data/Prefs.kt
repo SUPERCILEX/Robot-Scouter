@@ -79,7 +79,7 @@ var defaultTemplateId: String
 @get:AppCompatDelegate.NightMode
 val nightMode: Int
     get() = when (val mode = prefStore.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")) {
-        "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO
+        "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
         "yes" -> AppCompatDelegate.MODE_NIGHT_YES
         "no" -> AppCompatDelegate.MODE_NIGHT_NO
         else -> error("Unknown night mode value: $mode")

@@ -133,7 +133,7 @@ fun Project.configureAndroid() {
     }
 
     configure<AndroidExtensionsExtension> {
-        configure(delegateClosureOf<AndroidExtensionsExtension> { isExperimental = true })
+        isExperimental = true
         defaultCacheImplementation = CacheImplementation.SPARSE_ARRAY
     }
 }

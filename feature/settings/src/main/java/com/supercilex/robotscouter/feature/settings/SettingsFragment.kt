@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.DrawableCompat
@@ -44,6 +45,9 @@ internal class SettingsFragment : PreferenceFragmentBase(),
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         settingsModel.init(null)
+        settingsModel.nightModeChanged.observe(this) {
+            (requireActivity() as AppCompatActivity).delegate.localNightMode = it
+        }
         settingsModel.signOutListener.observe(this) {
             if (it == null) {
                 FirebaseAuth.getInstance().signInAnonymously()
