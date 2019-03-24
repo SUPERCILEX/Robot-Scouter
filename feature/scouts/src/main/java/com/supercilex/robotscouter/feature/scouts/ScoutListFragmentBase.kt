@@ -52,7 +52,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         KeyboardShortcutListener {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
-    protected var viewHolder: AppBarViewHolderBase by LifecycleAwareLazy()
+    protected lateinit var viewHolder: AppBarViewHolderBase
         private set
 
     protected val dataHolder by viewModels<TeamHolder>()
@@ -85,8 +85,8 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         savedState = savedInstanceState
 
         val state = savedInstanceState ?: requireArguments()
-        dataHolder.init(state)
         team = state.getTeam()
+        dataHolder.init(state)
         dataHolder.teamListener.observe(this, this)
     }
 

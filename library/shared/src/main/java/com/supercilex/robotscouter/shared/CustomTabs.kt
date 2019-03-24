@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.shared
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -8,21 +9,29 @@ import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.colorPrimary
+import org.jetbrains.anko.browse
 
 fun Team.launchTba(context: Context) =
         launchUrl(context, "http://www.thebluealliance.com/team/$number".toUri())
 
 fun Team.launchWebsite(context: Context) = launchUrl(context, requireNotNull(website).toUri())
 
-fun launchUrl(context: Context, url: Uri) = CustomTabsIntent.Builder()
-        .setToolbarColor(colorPrimary)
-        .setShowTitle(true)
-        .addDefaultShareMenuItem()
-        .enableUrlBarHiding()
-        .setStartAnimations(context, R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
-        .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
-        .buildWithReferrer()
-        .launchUrl(context, url)
+fun launchUrl(context: Context, url: Uri) {
+    val intent = CustomTabsIntent.Builder()
+            .setToolbarColor(colorPrimary)
+            .setShowTitle(true)
+            .addDefaultShareMenuItem()
+            .enableUrlBarHiding()
+            .setStartAnimations(context, R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
+            .setExitAnimations(context, R.anim.slide_in_left, R.anim.slide_out_right)
+            .buildWithReferrer()
+
+    try {
+        intent.launchUrl(context, url)
+    } catch (e: ActivityNotFoundException) {
+        context.browse(url.toString())
+    }
+}
 
 private fun CustomTabsIntent.Builder.buildWithReferrer(): CustomTabsIntent {
     val customTabsIntent: CustomTabsIntent = build()

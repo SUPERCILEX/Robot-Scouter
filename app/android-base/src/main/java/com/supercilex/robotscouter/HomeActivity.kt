@@ -148,7 +148,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
             if (
                 it.itemId == R.id.teams &&
-                currentFragment.tag === ScoutListFragmentCompanionBase.TAG
+                currentFragment.tag == ScoutListFragmentCompanionBase.TAG
             ) {
                 manager.popBackStack()
                 return@listener true
@@ -242,7 +242,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     }
 
     override fun toggle(enabled: Boolean) {
-        checkNotNull(drawerToggle).isDrawerIndicatorEnabled = enabled
+        drawerToggle.isDrawerIndicatorEnabled = enabled
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

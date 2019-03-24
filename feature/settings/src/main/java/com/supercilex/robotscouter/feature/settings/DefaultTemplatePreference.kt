@@ -30,6 +30,10 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
 
     constructor(context: Context) : super(context)
 
+    init {
+        isEnabled = false
+    }
+
     override fun onAttached() {
         super.onAttached()
         FirebaseAuth.getInstance().addAuthStateListener(this)
@@ -62,6 +66,7 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
                 *namesListener.map { it.id }.toTypedArray()
         )
         value = defaultTemplateId
+        isEnabled = true
         notifyChanged()
 
         isPersistent = true

@@ -17,7 +17,7 @@ internal class DeleteTemplateDialog : ManualDismissDialog() {
             .setMessage(R.string.template_delete_message)
             .setPositiveButton(RC.string.delete, null)
             .setNegativeButton(android.R.string.cancel, null)
-            .createAndSetup(savedInstanceState)
+            .create()
 
     override fun onAttemptDismiss(): Boolean {
         trashTemplate(requireArguments().getRef().id)

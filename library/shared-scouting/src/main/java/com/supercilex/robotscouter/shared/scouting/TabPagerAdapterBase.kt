@@ -67,7 +67,7 @@ abstract class TabPagerAdapterBase(
     override fun getItemId(position: Int) = currentScouts[position].id
 
     override fun onTabSelected(tab: TabLayout.Tab) {
-        _currentTabId = currentScouts[tab.position].id
+        _currentTabId = currentScouts.getOrNull(tab.position)?.id
     }
 
     override fun onDataChanged() {
