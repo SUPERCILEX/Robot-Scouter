@@ -33,7 +33,6 @@
     <item
         android:id="@+id/action_edit_template"
         android:icon="@drawable/ic_mode_edit_colorable_24dp"
-        android:title="@string/scout_edit_template_title"
-        app:showAsAction="ifRoom" />
+        android:title="@string/scout_edit_template_title" />
 
 </menu>
