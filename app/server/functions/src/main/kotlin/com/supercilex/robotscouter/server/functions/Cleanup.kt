@@ -230,7 +230,7 @@ private suspend fun CoroutineScope.processDeletion(
 
     val requests = request.data().sanitizedDeletionRequestData()
     val results = requests.toMap<Json>().map { (key, data) ->
-        val deletionTime = data[FIRESTORE_TIMESTAMP] as Timestamp
+        val deletionTime = data[FIRESTORE_TIMESTAMP].unsafeCast<Timestamp>()
         if (
             (moment().diff(deletionTime.toDate(), "days") as Int) < TRASH_TIMEOUT_DAYS &&
             (ids == null || ids.isNotEmpty() && !ids.contains(key))
