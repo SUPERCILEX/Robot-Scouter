@@ -73,7 +73,8 @@ val teamsQuery get() = teamsQueryGenerator(checkNotNull(user))
 val Team.ref: DocumentReference get() = teamsRef.document(id)
 
 val Team.isOutdatedMedia: Boolean
-    get() = mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank()
+    get() = retrieveLocalMedia() == null &&
+            (mediaYear < Calendar.getInstance().get(Calendar.YEAR) || media.isNullOrBlank())
 
 val Team.displayableMedia get() = retrieveLocalMedia() ?: media
 
