@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.server.require
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.Timestamps
 import com.supercilex.robotscouter.server.utils.types.admin
 import kotlin.js.Date
 
@@ -37,7 +38,7 @@ val duplicateTeams: CollectionReference
 val deletionQueue: CollectionReference
     get() = firestore.collection(FIRESTORE_DELETION_QUEUE)
 
-val epoch: Date by lazy { Date(0) }
+private val epoch by lazy { Timestamps.fromDate(Date(0)) }
 
 fun getTeamsQuery(uid: String): Query = teams.where("$FIRESTORE_OWNERS.$uid", ">=", 0)
 

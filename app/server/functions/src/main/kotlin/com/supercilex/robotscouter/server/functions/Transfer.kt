@@ -27,6 +27,7 @@ import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.SetOptions
+import com.supercilex.robotscouter.server.utils.types.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
@@ -140,7 +141,9 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
                                         .mapValues { (_, metric) -> metric.await().docs }
                             }
                             .toList()
-                            .sortedBy { (team) -> team.get<Date>(FIRESTORE_TIMESTAMP).getTime() }
+                            .sortedBy { (team) ->
+                                team.get<Timestamp>(FIRESTORE_TIMESTAMP).nanoseconds
+                            }
 
                     val (keep) = teams.first()
                     val merges = teams.subList(1, teams.size)

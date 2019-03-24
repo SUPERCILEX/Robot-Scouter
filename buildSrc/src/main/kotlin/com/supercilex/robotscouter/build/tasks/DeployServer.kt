@@ -48,7 +48,7 @@ open class DeployServer : DefaultTask() {
                 rename("common.js", "index.js")
             }
         }
-        shell("npm install") { directory(functionsProject.projectDir) }
+        shell("npm ci") { directory(functionsProject.projectDir) }
 
         transpiledJs.copyTo(targetJs, true)
 

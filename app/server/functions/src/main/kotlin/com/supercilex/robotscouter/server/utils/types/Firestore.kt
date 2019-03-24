@@ -196,10 +196,10 @@ class FieldPaths {
 }
 
 external class Timestamp(seconds: Number, nanoseconds: Number) {
-    var seconds: Number = definedExternally
-    var nanoseconds: Number = definedExternally
+    var seconds: Int = definedExternally
+    var nanoseconds: Int = definedExternally
     fun toDate(): Date = definedExternally
-    fun toMillis(): Number = definedExternally
+    fun toMillis(): Int = definedExternally
     fun isEqual(other: Timestamp): Boolean = definedExternally
 }
 

@@ -54,8 +54,8 @@ open class Setup : DefaultTask() {
     }
 
     private fun prepForReleaseBuild() {
-        shell("npm install -gq npm@6.4.1")
-        shell("npm install -gq firebase-tools@6.1.1")
-        shell("npm install -q") { directory(project.child("functions").projectDir) }
+        shell("npm install -gq npm@6.9.0")
+        shell("npm install -gq firebase-tools@6.5.0")
+        shell("npm ci -q") { directory(project.child("functions").projectDir) }
     }
 }

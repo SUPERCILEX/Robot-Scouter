@@ -40,6 +40,7 @@ import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.SetOptions
 import com.supercilex.robotscouter.server.utils.types.Timestamp
+import com.supercilex.robotscouter.server.utils.types.Timestamps
 import com.supercilex.robotscouter.server.utils.userPrefs
 import com.supercilex.robotscouter.server.utils.users
 import kotlinx.coroutines.CompletableDeferred
@@ -70,14 +71,15 @@ fun deleteUnusedData(): Promise<*>? = GlobalScope.async {
         deleteUnusedData(users.where(
                 FIRESTORE_LAST_LOGIN,
                 "<",
-                moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate()
+                Timestamps.fromDate(moment().subtract(MAX_INACTIVE_USER_DAYS, "days").toDate())
         ))
     }
     val anonymousUser = async {
         deleteUnusedData(users.where(
                 FIRESTORE_LAST_LOGIN,
                 "<",
-                moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate()
+                Timestamps.fromDate(
+                        moment().subtract(MAX_INACTIVE_ANONYMOUS_USER_DAYS, "days").toDate())
         ).where(
                 FIRESTORE_EMAIL, "==", null
         ).where(
@@ -94,7 +96,7 @@ fun emptyTrash(): Promise<*>? = GlobalScope.async {
     deletionQueue.where(
             FIRESTORE_BASE_TIMESTAMP,
             "<",
-            moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate()
+            Timestamps.fromDate(moment().subtract(TRASH_TIMEOUT_DAYS, "days").toDate())
     ).processInBatches(10) { processDeletion(it) }
 }.asPromise()
 
@@ -228,9 +230,9 @@ private suspend fun CoroutineScope.processDeletion(
 
     val requests = request.data().sanitizedDeletionRequestData()
     val results = requests.toMap<Json>().map { (key, data) ->
-        val deletionTime = data[FIRESTORE_TIMESTAMP] as Date
+        val deletionTime = data[FIRESTORE_TIMESTAMP] as Timestamp
         if (
-            (moment().diff(deletionTime, "days") as Int) < TRASH_TIMEOUT_DAYS &&
+            (moment().diff(deletionTime.toDate(), "days") as Int) < TRASH_TIMEOUT_DAYS &&
             (ids == null || ids.isNotEmpty() && !ids.contains(key))
         ) return@map CompletableDeferred(null as String?)
 
