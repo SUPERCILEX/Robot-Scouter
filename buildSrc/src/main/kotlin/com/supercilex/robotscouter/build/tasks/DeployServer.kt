@@ -54,7 +54,11 @@ open class DeployServer : DefaultTask() {
 
         var command = "firebase deploy --non-interactive"
         only?.let { command += " --only $only" }
-        shell(command) { directory(project.child("server").projectDir) }
+        shell(command) {
+            directory(project.child("server").projectDir)
+            // The admin SDK will try to read the PubSub cred file, but it's in the wrong directory
+            environment() -= "GOOGLE_APPLICATION_CREDENTIALS"
+        }
 
         if (isRelease || updateTemplates) {
             Thread.sleep(30_000) // Wait to ensure function has redeployed
