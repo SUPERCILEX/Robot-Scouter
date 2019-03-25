@@ -32,6 +32,6 @@ internal class TeamDetails(
 
         val (left) = location
         val right = left + media.width
-        return e.rawX.roundToInt() in left..right // Include vertical space for #FatFingers
+        return e.x.roundToInt() in left..right // Include vertical space for #FatFingers
     }
 }
