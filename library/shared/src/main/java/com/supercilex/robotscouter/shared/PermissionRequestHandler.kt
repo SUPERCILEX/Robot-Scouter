@@ -15,8 +15,8 @@ import pub.devrel.easypermissions.EasyPermissions
 
 class PermissionRequestHandler(state: SavedStateHandle) : ViewModelBase<List<String>>(state),
         OnActivityResult {
-    private val _onGranted = SingleLiveEvent<List<String>>()
-    val onGranted: LiveData<List<String>> get() = _onGranted
+    private val _onGranted = SingleLiveEvent<Any>()
+    val onGranted: LiveData<Any?> get() = _onGranted
 
     lateinit var perms: List<String>
         private set
@@ -34,12 +34,12 @@ class PermissionRequestHandler(state: SavedStateHandle) : ViewModelBase<List<Str
 
     fun requestPerms(host: FragmentActivity, @StringRes rationaleId: Int) {
         EasyPermissions.requestPermissions(
-                host, RobotScouter.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
+                host, RobotScouter.getString(rationaleId), RC, *perms.toTypedArray())
     }
 
     fun requestPerms(host: Fragment, @StringRes rationaleId: Int) {
         EasyPermissions.requestPermissions(
-                host, RobotScouter.getString(rationaleId), WRITE_RC, *perms.toTypedArray())
+                host, RobotScouter.getString(rationaleId), RC, *perms.toTypedArray())
     }
 
     fun onRequestPermissionsResult(
@@ -66,23 +66,23 @@ class PermissionRequestHandler(state: SavedStateHandle) : ViewModelBase<List<Str
             permissions,
             grantResults,
             object : EasyPermissions.PermissionCallbacks {
-                override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-                    if (requestCode == WRITE_RC) _onGranted.value = perms
+                override fun onPermissionsGranted(requestCode: Int, currentPerms: List<String>) {
+                    if (requestCode == RC && perms == currentPerms) _onGranted.value = currentPerms
                 }
 
                 override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-                    if (requestCode == WRITE_RC) {
-                        if (host is FragmentActivity) {
-                            if (EasyPermissions.somePermissionPermanentlyDenied(host, perms)) {
-                                AppSettingsDialog.Builder(host).build().show()
-                            }
-                        } else if (host is Fragment) {
-                            if (EasyPermissions.somePermissionPermanentlyDenied(host, perms)) {
-                                AppSettingsDialog.Builder(host).build().show()
-                            }
-                        } else {
-                            error("Unknown type: $host")
+                    if (requestCode != RC) return
+
+                    if (host is FragmentActivity) {
+                        if (EasyPermissions.somePermissionPermanentlyDenied(host, perms)) {
+                            AppSettingsDialog.Builder(host).build().show()
                         }
+                    } else if (host is Fragment) {
+                        if (EasyPermissions.somePermissionPermanentlyDenied(host, perms)) {
+                            AppSettingsDialog.Builder(host).build().show()
+                        }
+                    } else {
+                        error("Unknown type: $host")
                     }
                 }
 
@@ -95,6 +95,6 @@ class PermissionRequestHandler(state: SavedStateHandle) : ViewModelBase<List<Str
     )
 
     private companion object {
-        const val WRITE_RC = 8653
+        const val RC = 8653
     }
 }
