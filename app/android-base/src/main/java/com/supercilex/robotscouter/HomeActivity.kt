@@ -116,10 +116,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             updateBottomNavStatusAfterTeamSelection()
         }
 
-        permHandler.apply {
-            init(ioPerms)
-            onGranted.observe(this@HomeActivity) { export() }
-        }
+        permHandler.init(ioPerms)
+        permHandler.onGranted.observe(this) { export() }
         moduleRequestHolder.onSuccess.observe(this) { (comp, args) ->
             @Suppress("UNCHECKED_CAST") // We know our inputs
             when (comp) {

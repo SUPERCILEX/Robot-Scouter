@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -24,7 +25,10 @@ import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.addScout
+import com.supercilex.robotscouter.core.data.model.copyMediaInfo
+import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.ownsTemplateTask
+import com.supercilex.robotscouter.core.data.model.processPotentialMediaUpload
 import com.supercilex.robotscouter.core.data.viewAction
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.model.Team
@@ -36,11 +40,15 @@ import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.home
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
+import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
+import com.supercilex.robotscouter.shared.TeamMediaCreator
 import com.supercilex.robotscouter.shared.TeamSharer
 import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.fragment_scout_list.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.findOptional
@@ -50,8 +58,11 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         KeyboardShortcutListener {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
-    protected lateinit var viewHolder: AppBarViewHolderBase
+    protected var viewHolder: AppBarViewHolderBase by LifecycleAwareLazy()
         private set
+
+    private val permissionHandler by stateViewModels<PermissionRequestHandler>()
+    private val mediaCapture by stateViewModels<TeamMediaCreator>()
 
     protected val dataHolder by stateViewModels<TeamHolder>()
     private lateinit var team: Team
@@ -81,6 +92,17 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         setHasOptionsMenu(true)
         savedState = savedInstanceState
 
+        permissionHandler.init(TeamMediaCreator.perms)
+        mediaCapture.init()
+        permissionHandler.onGranted.observe(this) { mediaCapture.capture(this) }
+        mediaCapture.onMediaCaptured.observe(this) {
+            GlobalScope.launch {
+                team.copyMediaInfo(it)
+                team.processPotentialMediaUpload()
+                team.forceUpdate(true)
+            }
+        }
+
         team = requireArguments().getTeam()
         dataHolder.init(team)
         dataHolder.teamListener.observe(this, this)
@@ -91,6 +113,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
             onTeamDeleted()
         } else {
             this.team = team
+            mediaCapture.team = team.copy()
             if (pagerAdapter == null) initScoutList()
         }
     }
@@ -139,13 +162,15 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
             requestCode: Int,
             permissions: Array<String>,
             grantResults: IntArray
-    ) = viewHolder.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    ) = permissionHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
 
     override fun startCapture(shouldUploadMediaToTba: Boolean) =
-            viewHolder.startCapture(shouldUploadMediaToTba)
+            mediaCapture.capture(this, shouldUploadMediaToTba)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
-            viewHolder.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        permissionHandler.onActivityResult(requestCode, resultCode, data)
+        mediaCapture.onActivityResult(requestCode, resultCode, data)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

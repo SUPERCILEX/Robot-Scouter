@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.feature.scouts
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.view.MenuItem
@@ -8,7 +7,6 @@ import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.view.postDelayed
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
@@ -22,19 +20,11 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.supercilex.robotscouter.core.asLifecycleReference
 import com.supercilex.robotscouter.core.data.isTemplateEditingAllowed
-import com.supercilex.robotscouter.core.data.model.copyMediaInfo
 import com.supercilex.robotscouter.core.data.model.displayableMedia
-import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isOutdatedMedia
-import com.supercilex.robotscouter.core.data.model.processPotentialMediaUpload
 import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
-import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
-import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
-import com.supercilex.robotscouter.shared.TeamMediaCreator
-import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.coroutines.Dispatchers
@@ -51,9 +41,7 @@ import com.supercilex.robotscouter.R as RC
 internal open class AppBarViewHolderBase(
         private val fragment: ScoutListFragmentBase,
         listener: LiveData<Team?>
-) : LayoutContainer, View.OnLongClickListener,
-        CaptureTeamMediaListener, ActivityCompat.OnRequestPermissionsResultCallback,
-        OnActivityResult, RequestListener<Bitmap> {
+) : LayoutContainer, View.OnLongClickListener, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
     final override val containerView = fragment.findOptional<View>(R.id.header)
@@ -62,29 +50,12 @@ internal open class AppBarViewHolderBase(
     private val toolbarHeight =
             fragment.resources.getDimensionPixelSize(RC.dimen.scout_toolbar_height)
 
-    private val permissionHandler by fragment.stateViewModels<PermissionRequestHandler>()
-    private val mediaCapture by fragment.stateViewModels<TeamMediaCreator>()
-
     private lateinit var newScoutItem: MenuItem
     private lateinit var addMediaItem: MenuItem
     private lateinit var editTemplateItem: MenuItem
 
     init {
-        permissionHandler.init(TeamMediaCreator.perms)
-        mediaCapture.apply {
-            init()
-            onMediaCaptured.observe(fragment) {
-                GlobalScope.launch {
-                    team.copyMediaInfo(it)
-                    team.processPotentialMediaUpload()
-                    team.forceUpdate(true)
-                }
-            }
-        }
-
         backdrop.setOnLongClickListenerCompat(this)
-
-        permissionHandler.onGranted.observe(fragment) { mediaCapture.capture(fragment) }
         listener.observe(fragment.viewLifecycleOwner) {
             team = it ?: return@observe
             bind()
@@ -94,7 +65,6 @@ internal open class AppBarViewHolderBase(
     @CallSuper
     protected open fun bind() {
         toolbar.title = team.toString()
-        mediaCapture.team = team.copy()
         loadImages()
         bindMenu()
     }
@@ -231,23 +201,6 @@ internal open class AppBarViewHolderBase(
         }
         return true
     }
-
-    override fun startCapture(shouldUploadMediaToTba: Boolean) =
-            mediaCapture.capture(fragment, shouldUploadMediaToTba)
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        permissionHandler.onActivityResult(requestCode, resultCode, data)
-        mediaCapture.onActivityResult(requestCode, resultCode, data)
-    }
-
-    @CallSuper
-    override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<String>,
-            grantResults: IntArray
-    ) = permissionHandler.onRequestPermissionsResult(
-            fragment, requestCode, permissions, grantResults
-    )
 
     private companion object {
         /**
