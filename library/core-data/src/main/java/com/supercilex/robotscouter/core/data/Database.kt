@@ -32,10 +32,12 @@ import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
+import com.supercilex.robotscouter.core.data.client.retrieveShouldUpload
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.fetchLatestData
 import com.supercilex.robotscouter.core.data.model.forceUpdate
+import com.supercilex.robotscouter.core.data.model.isStale
 import com.supercilex.robotscouter.core.data.model.isValidTeamUri
 import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.model.teamsQueryGenerator
@@ -143,10 +145,12 @@ private val teamUpdater = object : ChangeEventListenerBase {
                 }
             }
 
+            if (team.isStale) return@launch // Vague attempt at overwrite prevention
             val localMedia = team.retrieveLocalMedia()
             if (localMedia != null && localMedia.isValidTeamUri()) {
                 team.copy().apply {
                     this.media = localMedia
+                    shouldUploadMediaToTba = retrieveShouldUpload()
                     hasCustomMedia = true
                     mediaYear = Calendar.getInstance().get(Calendar.YEAR)
                     startUploadMediaJob()

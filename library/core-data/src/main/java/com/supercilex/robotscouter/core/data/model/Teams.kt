@@ -22,7 +22,6 @@ import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
 import com.supercilex.robotscouter.core.data.client.saveLocalMedia
 import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
-import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.core.data.deepLink
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.firestoreBatch
@@ -183,7 +182,6 @@ fun Team.copyMediaInfo(newTeam: Team) {
 suspend fun Team.processPotentialMediaUpload() = withContext(Dispatchers.IO) {
     if (media == null || !File(media).exists()) return@withContext
 
-    startUploadMediaJob()
     saveLocalMedia()
     media = null
     hasCustomMedia = false

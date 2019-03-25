@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.WorkerParameters
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreException.Code
+import com.google.firebase.firestore.Source
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.isTrashed
 import com.supercilex.robotscouter.core.data.model.ref
@@ -27,7 +28,7 @@ internal abstract class TeamWorker(
         if (!team.owners.contains(uid)) return Result.failure()
 
         val snapshot = try {
-            team.ref.get().logFailures("TeamWorker", team.ref, team).await()
+            team.ref.get(Source.SERVER).logFailures("TeamWorker", team.ref, team).await()
         } catch (e: FirebaseFirestoreException) {
             if (e.code == Code.PERMISSION_DENIED) {
                 return Result.failure() // Don't reschedule job

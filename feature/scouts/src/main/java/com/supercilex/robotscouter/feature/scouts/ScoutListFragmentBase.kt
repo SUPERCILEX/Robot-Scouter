@@ -97,6 +97,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         permissionHandler.onGranted.observe(this) { mediaCapture.capture(this) }
         mediaCapture.onMediaCaptured.observe(this) {
             GlobalScope.launch {
+                val team = team.copy()
                 team.copyMediaInfo(it)
                 team.processPotentialMediaUpload()
                 team.forceUpdate(true)

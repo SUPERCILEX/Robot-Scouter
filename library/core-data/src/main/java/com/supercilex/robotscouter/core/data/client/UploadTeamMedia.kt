@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.core.data.toWorkData
 import com.supercilex.robotscouter.core.model.Team
 
 internal const val TEAM_MEDIA_UPLOAD = "team_media_upload"
+private const val SHOULD_UPLOAD_KEY = "should_upload_media"
 
 private val localMediaPrefs: SharedPreferences by lazy {
     RobotScouter.getSharedPreferences("local_media_prefs", Context.MODE_PRIVATE)
@@ -46,14 +47,20 @@ internal fun Team.startUploadMediaJob() {
 
 internal fun Team.retrieveLocalMedia() = localMediaPrefs.getString(id, null)
 
+internal fun Team.retrieveShouldUpload() = localMediaPrefs.getBoolean(id + SHOULD_UPLOAD_KEY, false)
+
 internal fun Team.saveLocalMedia() {
     localMediaPrefs.edit(true) {
         putString(id, checkNotNull(media))
+        putBoolean(id + SHOULD_UPLOAD_KEY, shouldUploadMediaToTba)
     }
 }
 
 private fun Team.deleteLocalMedia() {
-    localMediaPrefs.edit { remove(id) }
+    localMediaPrefs.edit {
+        remove(id)
+        remove(id + SHOULD_UPLOAD_KEY)
+    }
 }
 
 internal class UploadTeamMediaWorker(
