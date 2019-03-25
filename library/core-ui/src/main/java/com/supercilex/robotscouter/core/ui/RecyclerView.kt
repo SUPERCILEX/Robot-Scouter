@@ -74,7 +74,7 @@ abstract class SavedStateAdapter<T, VH : RecyclerView.ViewHolder>(
         options: FirestoreRecyclerOptions<T>,
         savedInstanceState: Bundle?,
         protected val recyclerView: RecyclerView
-) : FirestoreRecyclerAdapter<T, VH>(options), Saveable {
+) : FirestoreRecyclerAdapter<T, VH>(options) {
     private var state: Parcelable?
     private val RecyclerView.state get() = layoutManager?.onSaveInstanceState()
 
@@ -82,7 +82,7 @@ abstract class SavedStateAdapter<T, VH : RecyclerView.ViewHolder>(
         state = savedInstanceState?.getParcelable(SAVED_STATE_KEY)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(SAVED_STATE_KEY, recyclerView.state)
     }
 

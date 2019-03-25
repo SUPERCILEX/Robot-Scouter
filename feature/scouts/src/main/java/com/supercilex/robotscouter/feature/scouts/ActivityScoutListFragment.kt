@@ -7,7 +7,6 @@ import android.view.MenuItem
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.colorPrimary
@@ -20,12 +19,8 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
         FirebaseAuth.getInstance().addAuthStateListener(this)
     }
 
-    override fun newViewModel(savedInstanceState: Bundle?): AppBarViewHolderBase =
-            ActivityAppBarViewHolder(
-                    savedInstanceState,
-                    dataHolder.teamListener,
-                    onScoutingReadyTask.task
-            )
+    override fun newViewModel(): AppBarViewHolderBase =
+            ActivityAppBarViewHolder(dataHolder.teamListener)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -54,15 +49,8 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
     override fun onTeamDeleted() = requireActivity().finish()
 
     private inner class ActivityAppBarViewHolder(
-            savedInstanceState: Bundle?,
-            listener: LiveData<Team?>,
-            onScoutingReadyTask: Task<Nothing?>
-    ) : AppBarViewHolderBase(
-            this@ActivityScoutListFragment,
-            savedInstanceState,
-            listener,
-            onScoutingReadyTask
-    ) {
+            listener: LiveData<Team?>
+    ) : AppBarViewHolderBase(this@ActivityScoutListFragment, listener) {
         override fun bind() {
             super.bind()
             checkNotNull((activity as AppCompatActivity).supportActionBar).title = team.toString()

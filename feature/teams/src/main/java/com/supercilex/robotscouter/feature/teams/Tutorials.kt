@@ -5,11 +5,12 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.distinctUntilChanged
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_ADD_TEAM_TUTORIAL
 import com.supercilex.robotscouter.common.FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
-import com.supercilex.robotscouter.core.data.ViewModelBase
+import com.supercilex.robotscouter.core.data.SimpleViewModelBase
 import com.supercilex.robotscouter.core.data.getPrefOrDefault
 import com.supercilex.robotscouter.core.data.hasShownAddTeamTutorial
 import com.supercilex.robotscouter.core.data.hasShownSignInTutorial
@@ -90,7 +91,8 @@ private abstract class TutorialObserverBase<T>(owner: Fragment) : Observer<T>,
     }
 }
 
-internal class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase {
+internal class TutorialHelper(state: SavedStateHandle) : SimpleViewModelBase(state),
+        ChangeEventListenerBase {
     private val _hasShownAddTeamTutorial = MutableLiveData<Boolean?>()
     val hasShownAddTeamTutorial = _hasShownAddTeamTutorial.distinctUntilChanged()
     private val _hasShownSignInTutorial = MutableLiveData<Boolean?>()
@@ -104,7 +106,7 @@ internal class TutorialHelper : ViewModelBase<Unit?>(), ChangeEventListenerBase 
         }
     }
 
-    override fun onCreate(args: Unit?) {
+    override fun onCreate() {
         prefs.keepAlive = true
         prefs.addChangeEventListener(this)
     }

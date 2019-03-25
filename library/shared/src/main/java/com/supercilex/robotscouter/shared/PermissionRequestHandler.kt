@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
 import com.supercilex.robotscouter.core.data.ViewModelBase
@@ -12,7 +13,8 @@ import com.supercilex.robotscouter.core.ui.OnActivityResult
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
-class PermissionRequestHandler : ViewModelBase<List<String>>(), OnActivityResult {
+class PermissionRequestHandler(state: SavedStateHandle) : ViewModelBase<List<String>>(state),
+        OnActivityResult {
     private val _onGranted = SingleLiveEvent<List<String>>()
     val onGranted: LiveData<List<String>> get() = _onGranted
 

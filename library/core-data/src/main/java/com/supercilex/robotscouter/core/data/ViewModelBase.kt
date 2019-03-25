@@ -1,10 +1,11 @@
 package com.supercilex.robotscouter.core.data
 
 import androidx.annotation.CallSuper
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class ViewModelBase<in T> : ViewModel() {
+abstract class ViewModelBase<in T>(protected val state: SavedStateHandle) : ViewModel() {
     private val isInitialized = AtomicBoolean()
 
     fun init(args: T) {

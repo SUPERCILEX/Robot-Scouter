@@ -12,7 +12,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.observe
 import androidx.recyclerview.selection.SelectionTracker
@@ -27,6 +26,7 @@ import com.supercilex.robotscouter.core.data.model.untrashTemplate
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
+import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.fragment_trash.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
@@ -35,7 +35,7 @@ import com.supercilex.robotscouter.R as RC
 
 internal class TrashFragment : FragmentBase(), View.OnClickListener,
         OnBackPressedCallback, KeyboardShortcutListener {
-    private val holder by viewModels<TrashHolder>()
+    private val holder by stateViewModels<TrashHolder>()
     private val allItems get() = holder.trashListener.value.orEmpty()
 
     private lateinit var selectionTracker: SelectionTracker<String>
@@ -44,7 +44,7 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        holder.init(null)
+        holder.init()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

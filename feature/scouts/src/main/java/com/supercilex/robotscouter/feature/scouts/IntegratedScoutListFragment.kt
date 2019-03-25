@@ -70,11 +70,9 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
         }
     }
 
-    override fun newViewModel(savedInstanceState: Bundle?) = object : AppBarViewHolderBase(
+    override fun newViewModel() = object : AppBarViewHolderBase(
             this@IntegratedScoutListFragment,
-            savedInstanceState,
-            dataHolder.teamListener,
-            onScoutingReadyTask.task
+            dataHolder.teamListener
     ) {
         override fun bind() {
             super.bind()

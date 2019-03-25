@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.PagerAdapter
@@ -18,18 +17,17 @@ import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.model.ScoutsHolder
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
-import com.supercilex.robotscouter.core.ui.Saveable
 import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.MovableFragmentStatePagerAdapter
+import com.supercilex.robotscouter.shared.stateViewModels
 import org.jetbrains.anko.support.v4.find
 
 abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,
         private val dataRef: CollectionReference
-) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager),
-        Saveable, ChangeEventListenerBase,
+) : MovableFragmentStatePagerAdapter(fragment.childFragmentManager), ChangeEventListenerBase,
         View.OnLongClickListener, TabLayout.OnTabSelectedListener, DefaultLifecycleObserver {
     @get:StringRes protected abstract val editTabNameRes: Int
     protected abstract val tabs: TabLayout
@@ -37,7 +35,7 @@ abstract class TabPagerAdapterBase(
         fragment.find<View>(R.id.noTabsHint)
     }
 
-    val holder by fragment.viewModels<ScoutsHolder>()
+    val holder by fragment.stateViewModels<ScoutsHolder>()
     private var oldScouts: List<Scout> = emptyList()
     protected var currentScouts: List<Scout> = emptyList()
 
@@ -137,8 +135,7 @@ abstract class TabPagerAdapterBase(
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) =
-            outState.putAll(getTabIdBundle(currentTabId))
+    fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(currentTabId))
 
     private fun selectTab(index: Int) {
         val tabs = tabs

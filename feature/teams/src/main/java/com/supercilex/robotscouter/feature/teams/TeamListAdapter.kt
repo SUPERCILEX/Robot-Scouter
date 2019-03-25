@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.distinctUntilChanged
 import androidx.recyclerview.selection.SelectionTracker
@@ -28,7 +27,7 @@ import java.util.Collections
 internal class TeamListAdapter(
         savedInstanceState: Bundle?,
         private val fragment: Fragment,
-        private val selectedTeamIdListener: MutableLiveData<Team?>
+        private val holder: TeamListHolder
 ) : SavedStateAdapter<Team, TeamViewHolder>(
         FirestoreRecyclerOptions.Builder<Team>()
                 .setSnapshotArray(teams)
@@ -49,7 +48,8 @@ internal class TeamListAdapter(
 
     private val cardListHelper = CardListHelper(this, recyclerView)
 
-    private val distinctSelectedTeamIdListener = selectedTeamIdListener.distinctUntilChanged()
+    private val distinctSelectedTeamIdListener =
+            holder.selectedTeamIdListener.distinctUntilChanged()
     private var selectedTeamId: String? = null
     private var hasSelectedTeamChanged = false
 
@@ -138,8 +138,8 @@ internal class TeamListAdapter(
         if (type == ChangeEventType.REMOVED) {
             val id = snapshot.id
 
-            if (selectedTeamIdListener.value?.id == id) {
-                selectedTeamIdListener.value = null
+            if (holder.selectedTeamIdListener.value?.id == id) {
+                holder.selectTeam(null)
             }
 
             if (selectionTracker.isSelected(id)) {

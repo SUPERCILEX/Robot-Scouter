@@ -1,13 +1,12 @@
 package com.supercilex.robotscouter.core.data.model
 
-import android.os.Bundle
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.distinctUntilChanged
 import com.firebase.ui.common.ChangeEventType
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
+import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.ViewModelBase
-import com.supercilex.robotscouter.core.data.getTeam
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.data.uid
@@ -17,27 +16,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class TeamHolder : ViewModelBase<Bundle>(), ChangeEventListenerBase {
-    private val _teamListener = MutableLiveData<Team?>()
+class TeamHolder(state: SavedStateHandle) : ViewModelBase<Team>(state), ChangeEventListenerBase {
+    private val _teamListener = state.getLiveData<Team?>(TEAM_KEY)
     val teamListener = _teamListener.distinctUntilChanged()
 
-    override fun onCreate(args: Bundle) {
-        val team = args.getTeam()
-        if (isSignedIn && team.owners.contains(uid)) {
-            if (team.id.isBlank()) {
+    override fun onCreate(args: Team) {
+        if (isSignedIn && args.owners.contains(uid)) {
+            if (args.id.isBlank()) {
                 GlobalScope.launch(Dispatchers.Main) {
                     for (potentialTeam in teams.waitForChange()) {
-                        if (team.number == potentialTeam.number) {
+                        if (args.number == potentialTeam.number) {
                             _teamListener.value = potentialTeam.copy()
                             return@launch
                         }
                     }
 
-                    team.add()
-                    _teamListener.value = team.copy()
+                    args.add()
+                    _teamListener.value = args.copy()
                 }
             } else {
-                _teamListener.value = team
+                _teamListener.value = args
             }
         } else {
             _teamListener.value = null

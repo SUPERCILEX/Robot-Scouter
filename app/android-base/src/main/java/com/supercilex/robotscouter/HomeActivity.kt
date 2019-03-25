@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
@@ -49,6 +48,7 @@ import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.launchUrl
+import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import kotlinx.coroutines.GlobalScope
@@ -59,8 +59,8 @@ import org.jetbrains.anko.longToast
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, DrawerToggler, TeamExporter, SignInResolver {
     private val authHelper by unsafeLazy { AuthHelper(this) }
-    private val permHandler by viewModels<PermissionRequestHandler>()
-    private val moduleRequestHolder by viewModels<ModuleRequestHolder>()
+    private val permHandler by stateViewModels<PermissionRequestHandler>()
+    private val moduleRequestHolder by stateViewModels<ModuleRequestHolder>()
 
     private val drawerToggle by unsafeLazy {
         ActionBarDrawerToggle(

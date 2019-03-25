@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.annotation.CallSuper
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.TextViewCompat
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +32,7 @@ import kotlinx.android.synthetic.main.dialog_template_selector.*
 import kotlin.math.roundToInt
 
 open class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
-    private val holder by viewModels<ScoutsHolder>()
+    private val holder by stateViewModels<ScoutsHolder>()
 
     override val containerView: View by unsafeLazy {
         View.inflate(context, R.layout.dialog_template_selector, null)

@@ -100,6 +100,7 @@ object Config {
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
             val liveData = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+            val viewModelState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01"
 
             val work = "androidx.work:work-runtime-ktx:2.0.0"
         }

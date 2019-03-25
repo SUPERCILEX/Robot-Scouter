@@ -1,34 +1,26 @@
 package com.supercilex.robotscouter.feature.teams
 
-import android.os.Bundle
-import androidx.lifecycle.MutableLiveData
-import com.supercilex.robotscouter.core.data.ViewModelBase
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import com.supercilex.robotscouter.core.data.SimpleViewModelBase
+import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.teams
-import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
-import com.supercilex.robotscouter.core.ui.Saveable
 
-internal class TeamListHolder : ViewModelBase<Bundle?>(), Saveable {
-    val selectedTeamIdListener = MutableLiveData<Team?>()
+internal class TeamListHolder(state: SavedStateHandle) : SimpleViewModelBase(state) {
+    private val _selectedTeamIdListener = state.getLiveData<Team?>(TEAM_KEY)
+    val selectedTeamIdListener: LiveData<Team?> get() = _selectedTeamIdListener
 
-    override fun onCreate(args: Bundle?) {
-        selectedTeamIdListener.value = args?.getParcelable(TEAM_KEY)
+    override fun onCreate() {
         teams.keepAlive = true
     }
 
     fun selectTeam(team: Team?) {
-        selectedTeamIdListener.value = team
+        _selectedTeamIdListener.value = team
     }
-
-    override fun onSaveInstanceState(outState: Bundle) =
-            outState.putAll(selectedTeamIdListener.value?.toBundle() ?: Bundle.EMPTY)
 
     override fun onCleared() {
         super.onCleared()
         teams.keepAlive = false
-    }
-
-    private companion object {
-        const val TEAM_KEY = "team_key"
     }
 }

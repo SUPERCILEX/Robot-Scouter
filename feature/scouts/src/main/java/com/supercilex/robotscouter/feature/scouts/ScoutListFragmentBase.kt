@@ -10,10 +10,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.core.data.KEY_ADD_SCOUT
@@ -27,7 +25,6 @@ import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.model.TeamHolder
 import com.supercilex.robotscouter.core.data.model.addScout
 import com.supercilex.robotscouter.core.data.model.ownsTemplateTask
-import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.data.viewAction
 import com.supercilex.robotscouter.core.isOffline
 import com.supercilex.robotscouter.core.model.Team
@@ -42,6 +39,7 @@ import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
+import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.fragment_scout_list.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
@@ -55,12 +53,11 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
     protected lateinit var viewHolder: AppBarViewHolderBase
         private set
 
-    protected val dataHolder by viewModels<TeamHolder>()
+    protected val dataHolder by stateViewModels<TeamHolder>()
     private lateinit var team: Team
     // It's not a lateinit because it could be used before initialization
     var pagerAdapter: ScoutPagerAdapter? = null
 
-    protected var onScoutingReadyTask = TaskCompletionSource<Nothing?>()
     private var savedState: Bundle? = null
 
     private val tabs by LifecycleAwareLazy {
@@ -84,9 +81,8 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         setHasOptionsMenu(true)
         savedState = savedInstanceState
 
-        val state = savedInstanceState ?: requireArguments()
-        team = state.getTeam()
-        dataHolder.init(state)
+        team = requireArguments().getTeam()
+        dataHolder.init(team)
         dataHolder.teamListener.observe(this, this)
     }
 
@@ -95,10 +91,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
             onTeamDeleted()
         } else {
             this.team = team
-            if (!onScoutingReadyTask.task.isComplete) {
-                initScoutList()
-                onScoutingReadyTask.setResult(null)
-            }
+            if (pagerAdapter == null) initScoutList()
         }
     }
 
@@ -121,7 +114,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewHolder = newViewModel(savedInstanceState)
+        viewHolder = newViewModel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -140,8 +133,6 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
 
     override fun onSaveInstanceState(outState: Bundle) {
         pagerAdapter?.onSaveInstanceState(outState)
-        if (view != null) viewHolder.onSaveInstanceState(outState)
-        outState.putAll(dataHolder.teamListener.value?.toBundle() ?: Bundle.EMPTY)
     }
 
     override fun onRequestPermissionsResult(
@@ -224,7 +215,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
         }
     }
 
-    protected abstract fun newViewModel(savedInstanceState: Bundle?): AppBarViewHolderBase
+    protected abstract fun newViewModel(): AppBarViewHolderBase
 
     protected abstract fun onTeamDeleted()
 

@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -42,6 +41,7 @@ import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.observeViewLifecycle
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.fragment_team_list.*
 import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
@@ -56,8 +56,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
             selectionTracker.selection.map { id -> adapter.snapshots.first { it.id == id } }
         }
 
-    private val holder by viewModels<TeamListHolder>()
-    private val tutorialHelper by viewModels<TutorialHelper>()
+    private val holder by stateViewModels<TeamListHolder>()
+    private val tutorialHelper by stateViewModels<TutorialHelper>()
 
     private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
@@ -72,8 +72,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        holder.init(savedInstanceState)
-        tutorialHelper.init(null)
+        holder.init()
+        tutorialHelper.init()
 
         if (!requireContext().isInTabletMode()) holder.selectTeam(null)
     }
@@ -107,11 +107,7 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
             }
         })
 
-        adapter = TeamListAdapter(
-                savedInstanceState,
-                this,
-                holder.selectedTeamIdListener
-        )
+        adapter = TeamListAdapter(savedInstanceState, this, holder)
         teamsView.adapter = adapter
 
         selectionTracker = run {
@@ -164,7 +160,6 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        holder.onSaveInstanceState(outState)
         if (view != null) {
             adapter.onSaveInstanceState(outState)
             selectionTracker.onSaveInstanceState(outState)

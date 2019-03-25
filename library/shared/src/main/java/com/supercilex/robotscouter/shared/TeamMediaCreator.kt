@@ -3,19 +3,21 @@ package com.supercilex.robotscouter.shared
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Gravity
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.get
 import androidx.lifecycle.viewModelScope
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
+import com.supercilex.robotscouter.core.data.SimpleViewModelBase
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
-import com.supercilex.robotscouter.core.data.ViewModelBase
 import com.supercilex.robotscouter.core.data.hidden
 import com.supercilex.robotscouter.core.data.ioPerms
 import com.supercilex.robotscouter.core.data.logTakeMedia
@@ -25,7 +27,6 @@ import com.supercilex.robotscouter.core.data.unhide
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
-import com.supercilex.robotscouter.core.ui.Saveable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,39 +41,31 @@ interface CaptureTeamMediaListener {
     fun startCapture(shouldUploadMediaToTba: Boolean)
 }
 
-class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(),
-        OnActivityResult, Saveable {
+class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), OnActivityResult {
     private val _onMediaCaptured = SingleLiveEvent<Team>()
     val onMediaCaptured: LiveData<Team> get() = _onMediaCaptured
     lateinit var team: Team
 
-    private lateinit var handler: PermissionRequestHandler
-    private var photoFile: File? = null
-    private var shouldUploadMediaToTba: Boolean? = null
-
-    override fun onCreate(args: Pair<PermissionRequestHandler, Bundle?>) {
-        handler = args.first
-        args.second?.let {
-            photoFile = it.getSerializable(PHOTO_FILE_KEY) as File?
-            shouldUploadMediaToTba = it.getBoolean(PHOTO_SHOULD_UPLOAD)
+    private var photoFile: File? = state.get(PHOTO_FILE_KEY)
+        set(value) {
+            field = value
+            state.set(PHOTO_FILE_KEY, value)
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.apply {
-            putSerializable(PHOTO_FILE_KEY, photoFile)
-            shouldUploadMediaToTba?.let { putBoolean(PHOTO_SHOULD_UPLOAD, it) }
+    private var shouldUpload: Boolean? = state.get(PHOTO_SHOULD_UPLOAD)
+        set(value) {
+            field = value
+            state.set(PHOTO_SHOULD_UPLOAD, value)
         }
-    }
 
     fun capture(host: Fragment, shouldUploadMediaToTba: Boolean? = null) {
-        shouldUploadMediaToTba?.let { this.shouldUploadMediaToTba = it }
+        shouldUploadMediaToTba?.let { shouldUpload = it }
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(RobotScouter.packageManager) == null) {
             RobotScouter.longToast(R.string.error_unknown)
             return
         }
+        val handler = ViewModelProviders.of(host).get<PermissionRequestHandler>()
         if (!EasyPermissions.hasPermissions(RobotScouter, *handler.perms.toTypedArray())) {
             handler.requestPerms(host, R.string.media_write_storage_rationale)
             return
@@ -99,7 +92,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
             ref().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
 
-            if (this@TeamMediaCreator.shouldUploadMediaToTba == true) {
+            if (shouldUpload == true) {
                 RobotScouter.longToast(RobotScouter.getText(R.string.media_upload_reminder).trim())
                         .setGravity(Gravity.CENTER, 0, 0)
             }
@@ -121,8 +114,7 @@ class TeamMediaCreator : ViewModelBase<Pair<PermissionRequestHandler, Bundle?>>(
                 _onMediaCaptured.value = team.copy().apply {
                     media = contentUri.path
                     hasCustomMedia = true
-                    shouldUploadMediaToTba =
-                            checkNotNull(this@TeamMediaCreator.shouldUploadMediaToTba)
+                    shouldUploadMediaToTba = checkNotNull(shouldUpload)
                     mediaYear = Calendar.getInstance().get(Calendar.YEAR)
                 }
 

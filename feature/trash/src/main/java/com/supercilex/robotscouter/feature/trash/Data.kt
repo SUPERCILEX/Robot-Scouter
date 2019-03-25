@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
@@ -14,20 +15,21 @@ import com.supercilex.robotscouter.common.FIRESTORE_BASE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.core.CrashLogger
+import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.data.ListenerRegistrationLifecycleOwner
-import com.supercilex.robotscouter.core.data.ViewModelBase
+import com.supercilex.robotscouter.core.data.SimpleViewModelBase
 import com.supercilex.robotscouter.core.data.model.userDeletionQueue
 
 internal data class Trash(val id: String, val timestamp: Timestamp, val type: DeletionType)
 
-internal class TrashHolder : ViewModelBase<Unit?>(), DefaultLifecycleObserver,
-        EventListener<DocumentSnapshot> {
+internal class TrashHolder(state: SavedStateHandle) : SimpleViewModelBase(state),
+        DefaultLifecycleObserver, EventListener<DocumentSnapshot> {
     private val _trashListener = MutableLiveData<List<Trash>?>()
     val trashListener: LiveData<List<Trash>?> = _trashListener
 
     private var registration: ListenerRegistration? = null
 
-    override fun onCreate(args: Unit?) {
+    override fun onCreate() {
         ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 
@@ -37,7 +39,7 @@ internal class TrashHolder : ViewModelBase<Unit?>(), DefaultLifecycleObserver,
 
     override fun onEvent(snapshot: DocumentSnapshot?, e: FirebaseFirestoreException?) {
         if (e != null) {
-            CrashLogger.onFailure(e)
+            CrashLogger.onFailure(InvocationMarker(e))
             _trashListener.value = null
             return
         }

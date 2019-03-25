@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
 import androidx.lifecycle.observe
@@ -54,8 +54,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         View.OnClickListener, View.OnFocusChangeListener {
     private lateinit var team: Team
 
-    private val permHandler by viewModels<PermissionRequestHandler>()
-    private val mediaCreator by viewModels<TeamMediaCreator>()
+    private val permHandler by stateViewModels<PermissionRequestHandler>()
+    private val mediaCreator by stateViewModels<TeamMediaCreator>()
 
     override val containerView by unsafeLazy {
         View.inflate(context, R.layout.dialog_team_details, null) as ViewGroup
@@ -63,7 +63,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        team = savedInstanceState?.getTeam() ?: requireArguments().getTeam()
+        team = requireArguments().getTeam()
         permHandler.apply {
             init(TeamMediaCreator.perms)
             onGranted.observe(this@TeamDetailsDialog) {
@@ -71,15 +71,15 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             }
         }
         mediaCreator.apply {
-            init(permHandler to savedInstanceState)
+            init()
             onMediaCaptured.observe(this@TeamDetailsDialog) {
                 team.copyMediaInfo(it)
                 updateUi()
             }
         }
-        ViewModelProviders.of(this).get<TeamHolder>().apply {
-            init(team.toBundle())
-            var firstOverwrite = savedInstanceState
+        ViewModelProviders.of(this, SavedStateVMFactory(this)).get<TeamHolder>().apply {
+            init(team)
+            var firstOverwrite = savedInstanceState == null
             teamListener.observe(this@TeamDetailsDialog) {
                 if (it == null) {
                     dismiss()
@@ -89,8 +89,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
                     // Skip the first UI update if this fragment is being restored since the views
                     // will know how to restore themselves.
-                    if (firstOverwrite == null) updateUi()
-                    firstOverwrite = null
+                    if (firstOverwrite) updateUi()
+                    firstOverwrite = true
                 }
             }
         }
@@ -223,11 +223,6 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             }
         }
     }
-
-    override fun onSaveInstanceState(outState: Bundle) = super.onSaveInstanceState(outState.apply {
-        putAll(team.toBundle())
-        mediaCreator.onSaveInstanceState(this)
-    })
 
     override fun onRequestPermissionsResult(
             requestCode: Int,
