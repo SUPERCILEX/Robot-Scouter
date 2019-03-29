@@ -10,7 +10,7 @@ import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader.Media.YouTube
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.invoke
 import retrofit2.HttpException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -75,7 +75,7 @@ internal class TeamDetailsDownloader private constructor(
     private suspend fun setAndCacheMedia(url: String, year: Int) {
         team.media = url
         team.mediaYear = year
-        withContext(Dispatchers.Main) {
+        Dispatchers.Main {
             Glide.with(RobotScouter).load(url).preload()
         }
     }

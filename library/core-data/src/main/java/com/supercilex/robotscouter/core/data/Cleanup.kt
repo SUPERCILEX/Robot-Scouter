@@ -6,12 +6,12 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.supercilex.robotscouter.core.RobotScouter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 fun cleanup() {
     GlobalScope.launch {
-        withContext(Dispatchers.IO) { Glide.get(RobotScouter).clearDiskCache() }
+        Dispatchers.IO { Glide.get(RobotScouter).clearDiskCache() }
         cleanupJobs()
     }
     FirebaseAppIndex.getInstance().removeAll().logFailures("cleanup")

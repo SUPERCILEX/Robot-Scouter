@@ -26,8 +26,8 @@ import com.supercilex.robotscouter.shared.client.idpSignOut
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.longToast
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -54,7 +54,7 @@ fun initUi() {
                 cleanup()
                 idpSignOut()
                 onSignedIn()
-                withContext(Dispatchers.Main) {
+                Dispatchers.Main {
                     RobotScouter.longToast(
                             "User account deleted due to inactivity. Starting a fresh session.")
                 }

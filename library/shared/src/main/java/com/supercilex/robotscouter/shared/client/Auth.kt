@@ -13,11 +13,11 @@ import com.supercilex.robotscouter.shared.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 const val RC_SIGN_IN = 100
 
@@ -81,5 +81,5 @@ fun Fragment.startLinkingSignIn() {
 
 suspend fun idpSignOut() {
     // Move to background since signOut sometimes does disk I/O
-    withContext(Dispatchers.IO) { AuthUI.getInstance().signOut(RobotScouter).await() }
+    Dispatchers.IO { AuthUI.getInstance().signOut(RobotScouter).await() }
 }

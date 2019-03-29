@@ -18,8 +18,8 @@ import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
@@ -32,7 +32,7 @@ internal class TemplateSharer private constructor(
         val fragmentRef = fragment.asLifecycleReference(fragment.viewLifecycleOwner)
         GlobalScope.launch(Dispatchers.Main) {
             val intent = try {
-                withContext(Dispatchers.Default) { generateIntent(templateId, templateName) }
+                Dispatchers.Default { generateIntent(templateId, templateName) }
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 fragmentRef().requireView().longSnackbar(RC.string.error_unknown)

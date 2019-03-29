@@ -4,13 +4,13 @@ import com.google.firebase.storage.FirebaseStorage
 import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.RobotScouter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 abstract class CachingSharer {
-    protected suspend fun loadFile(fileName: String) = withContext(Dispatchers.IO) {
+    protected suspend fun loadFile(fileName: String) = Dispatchers.IO {
         val shareTemplateFile = File(RobotScouter.cacheDir, fileName)
         if (shareTemplateFile.exists()) {
             val diff = TimeUnit.MILLISECONDS.toDays(

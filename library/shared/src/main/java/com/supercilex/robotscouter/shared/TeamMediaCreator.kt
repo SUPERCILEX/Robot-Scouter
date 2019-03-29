@@ -28,8 +28,8 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
@@ -75,7 +75,7 @@ class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), On
 
         val ref = host.asLifecycleReference()
         viewModelScope.launch {
-            val file = withContext(Dispatchers.IO) {
+            val file = Dispatchers.IO {
                 try {
                     File(mediaFolder, "${team}_${System.currentTimeMillis()}.jpg")
                             .hidden()
@@ -105,7 +105,7 @@ class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), On
         val photoFile = checkNotNull(photoFile)
         if (resultCode == Activity.RESULT_OK) {
             viewModelScope.launch {
-                val contentUri = withContext(Dispatchers.IO) { photoFile.unhide()?.toUri() }
+                val contentUri = Dispatchers.IO { photoFile.unhide()?.toUri() }
                 if (contentUri == null) {
                     RobotScouter.longToast(R.string.error_unknown)
                     return@launch

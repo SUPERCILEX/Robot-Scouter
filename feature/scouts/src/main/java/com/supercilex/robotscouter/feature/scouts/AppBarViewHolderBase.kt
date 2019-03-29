@@ -29,8 +29,8 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.findOptional
 import org.jetbrains.anko.support.v4.findOptional
@@ -101,7 +101,7 @@ internal open class AppBarViewHolderBase(
                 val palette = Palette.from(resource).generate()
 
                 val update: suspend Palette.Swatch.() -> Unit = {
-                    withContext(Dispatchers.Main) { holderRef().updateScrim(rgb) }
+                    Dispatchers.Main { holderRef().updateScrim(rgb) }
                 }
                 palette.vibrantSwatch?.update() ?: palette.dominantSwatch?.update()
             }
@@ -134,7 +134,7 @@ internal open class AppBarViewHolderBase(
                 // Find backgrounds that are pretty white and then display the scrim to ensure the
                 // text is visible.
                 if (top.isMostlyWhite() || bottom.isMostlyWhite()) {
-                    withContext(Dispatchers.Main) {
+                    Dispatchers.Main {
                         holderRef().header.post { header.scrimVisibleHeightTrigger = Int.MAX_VALUE }
                     }
                 }

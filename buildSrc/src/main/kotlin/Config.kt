@@ -39,11 +39,11 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.5.0-alpha07"
+        val android = "com.android.tools.build:gradle:3.5.0-alpha09"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
-        val firebase = "com.google.firebase:perf-plugin:1.1.5"
+        val firebase = "com.google.firebase:perf-plugin:1.2.0"
         val fabric = "io.fabric.tools:gradle:1.28.1"
 
         val ktlint = "com.github.shyiko:ktlint:0.31.0"
@@ -55,7 +55,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "1.1.1"
+            private const val coroutinesVersion = "1.2.0-alpha"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -94,7 +94,7 @@ object Config {
             val pref = "androidx.preference:preference:1.1.0-alpha04"
             val prefKtx = "androidx.preference:preference-ktx:1.1.0-alpha04"
 
-            val material = "com.google.android.material:material:1.1.0-alpha04"
+            val material = "com.google.android.material:material:1.1.0-alpha05"
 
             val common = "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
@@ -108,7 +108,7 @@ object Config {
         object Firebase {
             val core = "com.google.firebase:firebase-analytics:16.4.0"
             val auth = "com.google.firebase:firebase-auth:16.2.0"
-            val firestore = "com.google.firebase:firebase-firestore:18.1.0"
+            val firestore = "com.google.firebase:firebase-firestore:18.2.0"
             val functions = "com.google.firebase:firebase-functions:16.3.0"
             val storage = "com.google.firebase:firebase-storage:16.1.0"
             val config = "com.google.firebase:firebase-config:16.4.1"

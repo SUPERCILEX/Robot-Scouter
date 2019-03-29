@@ -5,7 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.supercilex.robotscouter.core.logBreadcrumb
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.invoke
 
 internal abstract class WorkerBase(
         context: Context,
@@ -15,7 +15,7 @@ internal abstract class WorkerBase(
         if (runAttemptCount >= MAX_RUN_ATTEMPTS) return Result.failure()
 
         return try {
-            withContext(Dispatchers.IO) { doBlockingWork() }
+            Dispatchers.IO { doBlockingWork() }
         } catch (e: Exception) {
             logBreadcrumb("$javaClass errored: $e")
             Result.retry()

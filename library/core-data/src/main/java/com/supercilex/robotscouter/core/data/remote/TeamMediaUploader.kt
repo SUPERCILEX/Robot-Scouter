@@ -4,7 +4,7 @@ import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.R
 import com.supercilex.robotscouter.core.model.Team
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.invoke
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.create
@@ -14,7 +14,7 @@ internal class TeamMediaUploader private constructor(
         team: Team
 ) : TeamServiceBase<TeamMediaApi>(team, TeamMediaApi::class.java) {
     override suspend fun execute(): Team? {
-        withContext(Dispatchers.IO) {
+        Dispatchers.IO {
             team.media?.takeIf { File(it).exists() }
         } ?: return null
 

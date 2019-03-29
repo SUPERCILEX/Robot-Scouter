@@ -45,8 +45,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Calendar
 import kotlin.math.hypot
 
@@ -211,7 +211,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             team.processPotentialMediaUpload()
             team.forceUpdate(true)
 
-            withContext(Dispatchers.Main) {
+            Dispatchers.Main {
                 // If we are being called from TeamListFragment, reset the menu if the click was consumed
                 (ref().parentFragment as? OnBackPressedCallback)?.handleOnBackPressed()
 
@@ -250,7 +250,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         val inputRef = inputLayout.asLifecycleReference(this)
         return GlobalScope.async {
             val isValid = url.isValidTeamUri()
-            withContext(Dispatchers.Main) {
+            Dispatchers.Main {
                 inputRef().error =
                         if (isValid) null else getString(R.string.details_malformed_url_error)
             }

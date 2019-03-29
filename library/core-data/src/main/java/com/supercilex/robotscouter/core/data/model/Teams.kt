@@ -41,9 +41,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -179,8 +179,8 @@ fun Team.copyMediaInfo(newTeam: Team) {
     mediaYear = newTeam.mediaYear
 }
 
-suspend fun Team.processPotentialMediaUpload() = withContext(Dispatchers.IO) {
-    if (media == null || !File(media).exists()) return@withContext
+suspend fun Team.processPotentialMediaUpload() = Dispatchers.IO {
+    if (media == null || !File(media).exists()) return@IO
 
     saveLocalMedia()
     media = null
@@ -241,7 +241,7 @@ suspend fun Team.getScouts(): List<Scout> = coroutineScope {
 suspend fun CharSequence.isValidTeamUri(): Boolean {
     val uri = toString().formatAsTeamUri() ?: return true
     if (Patterns.WEB_URL.matcher(uri).matches()) return true
-    if (withContext(Dispatchers.IO) { File(uri).exists() }) return true
+    if (Dispatchers.IO { File(uri).exists() }) return true
     return false
 }
 
@@ -249,7 +249,7 @@ suspend fun String.formatAsTeamUri(): String? {
     val trimmedUrl = trim()
     if (trimmedUrl.isBlank()) return null
 
-    if (withContext(Dispatchers.IO) { File(this@formatAsTeamUri).exists() }) return this
+    if (Dispatchers.IO { File(this@formatAsTeamUri).exists() }) return this
 
     return if (trimmedUrl.contains("http://") || trimmedUrl.contains("https://")) {
         trimmedUrl

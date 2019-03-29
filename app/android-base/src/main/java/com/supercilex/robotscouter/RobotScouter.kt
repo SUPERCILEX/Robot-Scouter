@@ -38,7 +38,6 @@ internal class RobotScouter : MultiDexApplication() {
         GlobalScope.apply {
             // Prep slow init calls
             launch(Dispatchers.IO) { initIo() }
-            launch { Dispatchers.Main }
             launch { initBridges() }
             launch { Glide.get(RobotScouter) }
 
