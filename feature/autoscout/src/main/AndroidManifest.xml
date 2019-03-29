@@ -4,6 +4,7 @@
     package="com.supercilex.robotscouter.feature.autoscout">
 
     <dist:module
+        dist:instant="true"
         dist:onDemand="false"
         dist:title="@string/feature_auto_scout_title">
         <dist:fusing dist:include="true" />

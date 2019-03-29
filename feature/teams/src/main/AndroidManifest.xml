@@ -3,6 +3,7 @@
     package="com.supercilex.robotscouter.feature.teams">
 
     <dist:module
+        dist:instant="true"
         dist:onDemand="false"
         dist:title="@string/feature_teams_title">
         <dist:fusing dist:include="true" />

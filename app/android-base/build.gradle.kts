@@ -82,6 +82,7 @@ dependencies {
     implementation(Config.Libs.Jetpack.multidex)
     implementation(Config.Libs.Jetpack.work)
     implementation(Config.Libs.PlayServices.playCore)
+    implementation(Config.Libs.PlayServices.instantApps)
 
     implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)

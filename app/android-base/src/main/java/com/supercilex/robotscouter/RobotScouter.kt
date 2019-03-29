@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter
 
-import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import android.os.strictmode.UntaggedSocketViolation
@@ -9,7 +8,6 @@ import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
-import com.google.android.play.core.splitcompat.SplitCompat
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.data.initAnalytics
@@ -25,11 +23,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 
 internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        SplitCompat.install(this)
-    }
-
     override fun onCreate() {
         super.onCreate()
         _globalContext = this

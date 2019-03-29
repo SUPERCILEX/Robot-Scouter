@@ -6,7 +6,7 @@
     android:installLocation="auto"
     package="com.supercilex.robotscouter">
 
-    <dist:module dist:instant="false" />
+    <dist:module dist:instant="true" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -78,6 +78,10 @@
                 <data android:host="supercilex.github.io" />
                 <data android:pathPrefix="/Robot-Scouter/data" />
             </intent-filter>
+
+            <meta-data
+                android:name="default-url"
+                android:value="https://supercilex.github.io/Robot-Scouter/data" />
 
         </activity>
 

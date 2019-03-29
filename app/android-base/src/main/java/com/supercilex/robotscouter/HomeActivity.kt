@@ -21,6 +21,7 @@ import androidx.fragment.app.commitNow
 import androidx.lifecycle.observe
 import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.instantapps.InstantApps
 import com.google.android.material.navigation.NavigationView
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
@@ -133,6 +134,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         setSupportActionBar(toolbar)
         drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
+        drawer.menu.findItem(R.id.action_install).isVisible = InstantApps.isInstantApp(this)
         drawer.setNavigationItemSelectedListener(this)
         if (enableAutoScout) bottomNavigation.menu.findItem(R.id.autoScout).isVisible = true
         bottomNavigation.setOnNavigationItemSelectedListener listener@{
@@ -260,6 +262,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (val id = item.itemId) {
+            R.id.action_install -> InstantApps.showInstallPrompt(this, home(), 7631, null)
             R.id.action_donate_patreon ->
                 launchUrl(this, "https://www.patreon.com/SUPERCILEX".toUri())
             else -> runIfSignedIn {

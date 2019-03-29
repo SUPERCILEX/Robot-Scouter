@@ -16,6 +16,7 @@
     <string name="anonymous_sign_in_failed_message">Anonymous sign in failed</string>
     <string name="sign_in_try_again_title">Try again</string>
 
+    <string name="install_full_app">Install</string>
     <string name="installing_module">Installing module…</string>
     <string name="donate_patreon_title">Support development</string>
 

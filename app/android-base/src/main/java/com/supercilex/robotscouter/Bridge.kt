@@ -17,6 +17,7 @@ import androidx.lifecycle.observe
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
+import com.google.android.instantapps.InstantApps
 import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
@@ -239,9 +240,29 @@ interface ExportServiceCompanion : DownloadableBridgeCompanion {
 
     companion object : DownloadableBridgeFinderCompanion<ExportServiceCompanion>() {
         override val moduleName = "exports"
-        override val instance by ValueSeeker {
+
+        private val _instance by ValueSeeker {
             getClass("com.supercilex.robotscouter.feature.exports.ExportService")
                     ?.get<ExportServiceCompanion>()
+        }
+        override val instance: ExportServiceCompanion? by ValueSeeker {
+            val inst = _instance
+            if (inst == null) null else Wrapper(inst)
+        }
+
+        private class Wrapper(
+                private val backing: ExportServiceCompanion
+        ) : ExportServiceCompanion {
+            override fun exportAndShareSpreadSheet(
+                    activity: FragmentActivity,
+                    permHandler: PermissionRequestHandler,
+                    teams: List<Team>
+            ) = if (InstantApps.isInstantApp(activity)) {
+                InstantApps.showInstallPrompt(activity, activity.home(), 7632, null)
+                false
+            } else {
+                backing.exportAndShareSpreadSheet(activity, permHandler, teams)
+            }
         }
     }
 }

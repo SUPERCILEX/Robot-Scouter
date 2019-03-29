@@ -3,6 +3,7 @@
     package="com.supercilex.robotscouter.feature.templates">
 
     <dist:module
+        dist:instant="true"
         dist:onDemand="false"
         dist:title="@string/feature_templates_title">
         <dist:fusing dist:include="true" />

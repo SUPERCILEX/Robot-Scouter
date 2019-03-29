@@ -125,10 +125,11 @@ object Config {
             val auth = "com.google.android.gms:play-services-auth:16.0.1"
             val nearby = "com.google.android.gms:play-services-nearby:16.0.0"
             val playCore = "com.google.android.play:core:1.5.0"
+            val instantApps = "com.google.android.instantapps:instantapps:1.1.0"
         }
 
         object FirebaseUi {
-            private const val version = "aa7a585303"
+            private const val version = "9fb0313100"
 
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"

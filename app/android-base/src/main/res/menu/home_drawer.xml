@@ -7,6 +7,11 @@
     <!-- The group ids are needed for the line separator to appear. -->
     <group android:id="@+id/one">
         <item
+            android:id="@+id/action_install"
+            android:icon="@drawable/ic_get_app_colorable_24dp"
+            android:title="@string/install_full_app"
+            android:visible="false" />
+        <item
             android:id="@+id/action_export_all_teams"
             android:icon="@drawable/ic_import_export_colorable_24dp"
             android:title="@string/export_all_teams_title" />

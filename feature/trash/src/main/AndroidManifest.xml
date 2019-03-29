@@ -4,6 +4,7 @@
     package="com.supercilex.robotscouter.feature.trash">
 
     <dist:module
+        dist:instant="true"
         dist:onDemand="false"
         dist:title="@string/feature_trash_title">
         <dist:fusing dist:include="true" />
