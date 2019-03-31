@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.observe
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -94,7 +93,6 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
         fab.show()
         showAddTeamTutorial(tutorialHelper, this)
 
-        teamsView.layoutManager = LinearLayoutManager(context)
         teamsView.setHasFixedSize(true)
         teamsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

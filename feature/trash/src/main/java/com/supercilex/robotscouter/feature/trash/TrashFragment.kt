@@ -17,7 +17,6 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.tasks.Task
 import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_DELETION_QUEUE
@@ -65,7 +64,6 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
             checkNotNull(supportActionBar).setDisplayHomeAsUpEnabled(true)
         }
 
-        trashList.layoutManager = LinearLayoutManager(requireContext())
         val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         divider.setDrawable(checkNotNull(AppCompatResources.getDrawable(
                 requireContext(), R.drawable.trash_item_divider)))

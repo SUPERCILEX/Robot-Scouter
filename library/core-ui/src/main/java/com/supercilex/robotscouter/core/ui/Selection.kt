@@ -67,7 +67,7 @@ abstract class MenuHelperBase<T>(
 
         onNormalMenuChanged(selection.isEmpty())
         onSingleSelectMenuChanged(selection.isSingleton)
-        onMultiSelectMenuChanged(!selection.isEmpty())
+        onMultiSelectMenuChanged(selection.isNotEmpty())
 
         updateToolbarTitle()
     }

@@ -34,7 +34,7 @@ internal class SnackbarSelectionObserver(
     }
 
     private fun snackbar(): Snackbar = Snackbar.make(
-            checkNotNull(rootView),
+            rootView,
             R.string.team_multiple_selected_message,
             Snackbar.LENGTH_INDEFINITE
     ).setAction(R.string.team_select_all_title) {

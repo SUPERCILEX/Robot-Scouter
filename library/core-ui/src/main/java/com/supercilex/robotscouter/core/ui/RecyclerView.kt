@@ -21,7 +21,7 @@ fun RecyclerView.isItemInRange(position: Int): Boolean {
     val first = manager.findFirstCompletelyVisibleItemPosition()
 
     // Only compute findLastCompletelyVisibleItemPosition if necessary
-    return position in first..(adapter.itemCount - 1) &&
+    return position in first until adapter.itemCount &&
             position in first..manager.findLastCompletelyVisibleItemPosition()
 }
 

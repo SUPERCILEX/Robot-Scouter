@@ -31,7 +31,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_template_selector.*
 import kotlin.math.roundToInt
 
-open class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
+abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
     private val holder by stateViewModels<ScoutsHolder>()
 
     override val containerView: View by unsafeLazy {
@@ -86,7 +86,6 @@ open class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
         progress.show()
 
-        templatesView.layoutManager = LinearLayoutManager(context)
         templatesView.adapter = adapter
         templatesView.addItemDecoration(object : DividerItemDecoration(
                 context,

@@ -17,6 +17,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/teamsView"
         style="@style/RobotScouter.List"
+        app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/team_list_row_layout" />
 
 </FrameLayout>

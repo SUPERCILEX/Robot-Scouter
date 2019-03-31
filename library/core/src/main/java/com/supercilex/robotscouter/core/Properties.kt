@@ -17,7 +17,7 @@ class LateinitVal<T : Any> : ReadWriteProperty<Any?, T> {
         check(this.value == null) {
             "Property ${property.name} is a val and cannot change its value."
         }
-        this.value = checkNotNull(value)
+        this.value = value
     }
 }
 

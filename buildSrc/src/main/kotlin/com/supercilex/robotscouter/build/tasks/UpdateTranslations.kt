@@ -28,9 +28,9 @@ open class UpdateTranslations : DefaultTask() {
         listOf(File(listings, "short-description.txt"), File(listings, "full-description.txt"))
     }
     @get:OutputFiles protected val stringFiles by lazy {
-        project.subprojects.map {
+        project.subprojects.mapNotNull {
             it.file("src/main/res/values/strings.xml").orNull()
-        }.filterNotNull().map {
+        }.map {
             File(it.parentFile.parentFile, "values-$language/strings.xml")
         }
     }

@@ -57,6 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/scout_template_spinner_item" />
 
 </com.supercilex.robotscouter.core.ui.views.CardMetricConstraintLayout>

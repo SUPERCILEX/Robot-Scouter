@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.model.update
@@ -47,7 +46,6 @@ internal class SpinnerTemplateViewHolder(
 
         newItem.setOnClickListener(this)
 
-        items.layoutManager = LinearLayoutManager(itemView.context)
         items.adapter = itemsAdapter
         items.setRecycledViewPool((fragment.parentFragment as RecyclerPoolHolder).recyclerPool)
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)

@@ -19,7 +19,7 @@ internal class TrashListAdapter : ListAdapter<Trash, TrashViewHolder>(differ) {
         holder.bind(trash, selectionTracker.isSelected(trash.id))
     }
 
-    public override fun getItem(position: Int) = super.getItem(position)
+    public override fun getItem(position: Int): Trash = super.getItem(position)
 
     private companion object {
         val differ = object : DiffUtil.ItemCallback<Trash>() {

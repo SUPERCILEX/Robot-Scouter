@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_licenses.*
@@ -57,10 +56,7 @@ internal class LicensesFragment : FragmentBase() {
                 Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter")
         )
 
-        licensesView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = LicenseAdapter(libraries)
-        }
+        licensesView.adapter = LicenseAdapter(libraries)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
