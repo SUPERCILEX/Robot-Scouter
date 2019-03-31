@@ -4,7 +4,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
@@ -47,12 +46,6 @@ internal class TeamMenuHelper(
                 val remaining = tracker.selection.toMutableList()
                 remaining.removeAll(teams.map(Team::id))
                 for (deleted in remaining) tracker.deselect(deleted)
-            }
-
-            override fun onDestroy(owner: LifecycleOwner) {
-                // The SelectionTracker holds a reference to some views somewhere down the stack.
-                // Make sure to clean up after ourselves.
-                activity.find<Toolbar>(RC.id.toolbar).setNavigationOnClickListener(null)
             }
         })
     }
