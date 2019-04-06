@@ -76,7 +76,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             dependsOn(presubmit)
             dependsOn(":app:server:functions:assemble")
             dependsOn(if (isRelease) {
-                ":app:android-base:bundleRelease"
+                listOf(":app:android-base:assembleRelease", ":app:android-base:bundleRelease")
             } else {
                 ":app:android-base:assembleDebug"
             })
