@@ -21,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
@@ -189,7 +191,7 @@ fun initDatabase() {
 
 inline fun firestoreBatch(
         transaction: WriteBatch.() -> Unit
-) = FirebaseFirestore.getInstance().batch().run {
+) = Firebase.firestore.batch().run {
     transaction()
     commit()
 }

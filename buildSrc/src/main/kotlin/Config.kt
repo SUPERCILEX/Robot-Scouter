@@ -5,7 +5,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.30-eap-99"
+    private const val kotlinVersion = "1.3.40-dev-1431"
 
     fun RepositoryHandler.deps() {
         google().content {
@@ -39,7 +39,7 @@ object Config {
     }
 
     object Plugins {
-        val android = "com.android.tools.build:gradle:3.5.0-alpha09"
+        val android = "com.android.tools.build:gradle:3.5.0-alpha10"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         val google = "com.google.gms:google-services:4.2.0"
@@ -55,7 +55,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "1.2.0-alpha"
+            private const val coroutinesVersion = "1.2.0-alpha-2"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -78,13 +78,13 @@ object Config {
         }
 
         object Jetpack {
-            private const val lifecycleVersion = "2.1.0-alpha03"
+            private const val lifecycleVersion = "2.1.0-alpha04"
 
             val core = "androidx.core:core-ktx:1.1.0-alpha05"
             val multidex = "androidx.multidex:multidex:2.0.1"
-            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha03"
-            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha05"
-            val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha03"
+            val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha04"
+            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha06"
+            val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha04"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-alpha01"
             val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
             val cardView = "androidx.cardview:cardview:1.0.0"
@@ -102,20 +102,21 @@ object Config {
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
             val viewModelState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01"
 
-            val work = "androidx.work:work-runtime-ktx:2.0.0"
+            val work = "androidx.work:work-runtime-ktx:2.0.1-rc01"
         }
 
         object Firebase {
             val core = "com.google.firebase:firebase-analytics:16.4.0"
-            val auth = "com.google.firebase:firebase-auth:16.2.0"
+            val auth = "com.google.firebase:firebase-auth:16.2.1"
             val firestore = "com.google.firebase:firebase-firestore:18.2.0"
+            val firestoreKtx = "com.google.firebase:firebase-firestore-ktx:18.2.0"
             val functions = "com.google.firebase:firebase-functions:16.3.0"
             val storage = "com.google.firebase:firebase-storage:16.1.0"
-            val config = "com.google.firebase:firebase-config:16.4.1"
+            val config = "com.google.firebase:firebase-config:16.5.0"
             val indexing = "com.google.firebase:firebase-appindexing:17.1.0"
-            val messaging = "com.google.firebase:firebase-messaging:17.5.0"
+            val messaging = "com.google.firebase:firebase-messaging:17.6.0"
             val invites = "com.google.firebase:firebase-invites:16.1.1"
-            val perf = "com.google.firebase:firebase-perf:16.2.4"
+            val perf = "com.google.firebase:firebase-perf:16.2.5"
 
             val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         }

@@ -1,9 +1,7 @@
 package com.supercilex.robotscouter.feature.settings
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -13,14 +11,8 @@ import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.Licenses
 import com.supercilex.robotscouter.R as RC
 
-internal class LicensesFragment : FragmentBase() {
+internal class LicensesFragment : FragmentBase(R.layout.fragment_licenses) {
     private val parentActivity by unsafeLazy { activity as AppCompatActivity }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_licenses, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val libraries: List<Library> = listOf(

@@ -1,12 +1,10 @@
 package com.supercilex.robotscouter.feature.templates
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -33,7 +31,8 @@ import kotlinx.android.synthetic.main.fragment_template_metric_list.*
 import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
-internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClickListener {
+internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_metric_list),
+        Refreshable, View.OnClickListener {
     override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(checkNotNull(getTabId(arguments)))
     }
@@ -42,12 +41,6 @@ internal class TemplateFragment : MetricListFragment(), Refreshable, View.OnClic
     private val itemTouchCallback by LifecycleAwareLazy {
         TemplateItemTouchCallback<Metric<*>>(requireView())
     }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_template_metric_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

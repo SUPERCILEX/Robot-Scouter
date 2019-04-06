@@ -9,6 +9,7 @@ import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
 import android.widget.EditText
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
@@ -70,7 +71,9 @@ abstract class ActivityBase : AppCompatActivity(), OnActivityResult, KeyboardSho
     }
 }
 
-abstract class FragmentBase : Fragment(), OnActivityResult {
+abstract class FragmentBase(
+        @LayoutRes contentLayoutId: Int = 0
+) : Fragment(contentLayoutId), OnActivityResult {
     override fun onResume() {
         super.onResume()
         val screenName = javaClass.simpleName

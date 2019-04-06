@@ -38,7 +38,7 @@
         android:layout_height="@dimen/scout_toolbar_height"
         android:gravity="top"
         app:layout_collapseMode="pin"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
         app:titleMarginTop="@dimen/spacing_large" />
 
     <com.google.android.material.tabs.TabLayout

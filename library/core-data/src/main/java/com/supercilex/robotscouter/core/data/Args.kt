@@ -4,7 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.core.model.Team
 
 const val TEAM_KEY = "com.supercilex.robotscouter.data.util.Team"
@@ -20,7 +21,7 @@ fun <T : CharSequence> T?.nullOrFull() = if (isNullOrBlank()) null else this
 
 fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
 
-fun Bundle.getRef() = FirebaseFirestore.getInstance().document(checkNotNull(getString(REF_KEY)))
+fun Bundle.getRef() = Firebase.firestore.document(checkNotNull(getString(REF_KEY)))
 
 fun Team.toBundle() = bundleOf(TEAM_KEY to this@toBundle)
 

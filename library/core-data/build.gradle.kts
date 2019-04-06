@@ -9,6 +9,7 @@ dependencies {
     api(project(":library:core-model"))
 
     api(Config.Libs.Firebase.firestore)
+    api(Config.Libs.Firebase.firestoreKtx)
     api(Config.Libs.Firebase.auth)
     api(Config.Libs.Firebase.indexing)
 

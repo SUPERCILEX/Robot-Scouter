@@ -1,12 +1,10 @@
 package com.supercilex.robotscouter.feature.scouts
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.core.view.ViewCompat
@@ -30,7 +28,8 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
-internal class ScoutFragment : MetricListFragment(), View.OnLayoutChangeListener {
+internal class ScoutFragment : MetricListFragment(R.layout.fragment_scout_metric_list),
+        View.OnLayoutChangeListener {
     private val team by unsafeLazy { requireArguments().getTeam() }
     private val scoutId by unsafeLazy { checkNotNull(getTabId(arguments)) }
     override val metricsRef by unsafeLazy { team.getScoutMetricsRef(scoutId) }
@@ -53,12 +52,6 @@ internal class ScoutFragment : MetricListFragment(), View.OnLayoutChangeListener
         resources.getDimensionPixelSize(RC.dimen.list_item_padding_horizontal_scout) to
                 resources.getDimensionPixelSize(RC.dimen.list_item_padding_vertical_scout)
     }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_scout_metric_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

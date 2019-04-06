@@ -3,12 +3,10 @@ package com.supercilex.robotscouter.feature.templates
 import android.animation.FloatEvaluator
 import android.os.Bundle
 import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.core.view.isVisible
@@ -43,8 +41,8 @@ import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge, Refreshable,
-        View.OnClickListener, RecyclerPoolHolder {
+internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_list),
+        TemplateListFragmentBridge, Refreshable, View.OnClickListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
     private val _pagerAdapter = unsafeLazy {
@@ -86,12 +84,6 @@ internal class TemplateListFragment : FragmentBase(), TemplateListFragmentBridge
     init {
         setHasOptionsMenu(true)
     }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_template_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         animateContainerMorph(2f / 3)

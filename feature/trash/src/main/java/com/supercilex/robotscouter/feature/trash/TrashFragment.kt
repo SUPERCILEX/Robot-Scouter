@@ -2,12 +2,10 @@ package com.supercilex.robotscouter.feature.trash
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -32,7 +30,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.longToast
 import com.supercilex.robotscouter.R as RC
 
-internal class TrashFragment : FragmentBase(), View.OnClickListener,
+internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnClickListener,
         OnBackPressedCallback, KeyboardShortcutListener {
     private val holder by stateViewModels<TrashHolder>()
     private val allItems get() = holder.trashListener.value.orEmpty()
@@ -48,14 +46,8 @@ internal class TrashFragment : FragmentBase(), View.OnClickListener,
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        requireActivity().addOnBackPressedCallback(this, this)
+        requireActivity().onBackPressedDispatcher.addCallback(this, this)
     }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_trash, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         actionEmptyTrash.setOnClickListener(this)

@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.shared.scouting
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.CollectionReference
@@ -11,7 +12,7 @@ import com.supercilex.robotscouter.core.ui.SavedStateAdapter
 import com.supercilex.robotscouter.shared.stateViewModels
 import org.jetbrains.anko.support.v4.find
 
-abstract class MetricListFragment : FragmentBase() {
+abstract class MetricListFragment(@LayoutRes contentLayoutId: Int) : FragmentBase(contentLayoutId) {
     protected val holder by stateViewModels<MetricListHolder>()
     abstract val metricsRef: CollectionReference
     abstract val dataId: String

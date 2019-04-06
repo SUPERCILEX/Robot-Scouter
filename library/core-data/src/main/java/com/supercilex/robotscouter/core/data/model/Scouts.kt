@@ -4,10 +4,11 @@ import com.firebase.ui.firestore.ObservableSnapshotArray
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_SCOUTS
@@ -42,7 +43,7 @@ val scoutParser = SnapshotParser { snapshot ->
           checkNotNull(snapshot.getTimestamp(FIRESTORE_TIMESTAMP)),
           @Suppress("UNCHECKED_CAST") // Our data is stored as a map of metrics
           (snapshot[FIRESTORE_METRICS] as Map<String, Any?>? ?: emptyMap()).map {
-              parseMetric(it.value as Map<String, Any?>, FirebaseFirestore.getInstance().document(
+              parseMetric(it.value as Map<String, Any?>, Firebase.firestore.document(
                       "${snapshot.reference.path}/$FIRESTORE_METRICS/${it.key}"))
           })
 }

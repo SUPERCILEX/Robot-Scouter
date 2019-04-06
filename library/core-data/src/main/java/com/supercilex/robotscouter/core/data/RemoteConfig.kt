@@ -32,9 +32,9 @@ fun initRemoteConfig() {
                                   .setDeveloperModeEnabled(BuildConfig.DEBUG)
                                   .build())
 
-        activateFetched()
         GlobalScope.launch {
             try {
+                activate().await()
                 fetch(if (info.configSettings.isDeveloperModeEnabled) {
                     0
                 } else {

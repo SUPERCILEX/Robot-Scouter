@@ -3,12 +3,10 @@ package com.supercilex.robotscouter.feature.scouts
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
@@ -53,8 +51,8 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.findOptional
 
-internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHolder,
-        TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener,
+internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_scout_list),
+        RecyclerPoolHolder, TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener,
         KeyboardShortcutListener {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
@@ -118,12 +116,6 @@ internal abstract class ScoutListFragmentBase : FragmentBase(), RecyclerPoolHold
             if (pagerAdapter == null) initScoutList()
         }
     }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_scout_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null && isOffline) {

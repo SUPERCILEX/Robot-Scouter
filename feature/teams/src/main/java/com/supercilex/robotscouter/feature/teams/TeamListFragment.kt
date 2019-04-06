@@ -2,12 +2,10 @@ package com.supercilex.robotscouter.feature.teams
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
@@ -46,8 +44,9 @@ import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class TeamListFragment : FragmentBase(), TeamSelectionListener, SelectedTeamsRetriever,
-        OnBackPressedCallback, KeyboardShortcutListener, Refreshable, View.OnClickListener {
+internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
+        TeamSelectionListener, SelectedTeamsRetriever, Refreshable,
+        OnBackPressedCallback, KeyboardShortcutListener, View.OnClickListener {
     override val selectedTeams: List<Team>
         get() = if (view == null) {
             emptyList()
@@ -79,14 +78,8 @@ internal class TeamListFragment : FragmentBase(), TeamSelectionListener, Selecte
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        observeViewLifecycle { requireActivity().addOnBackPressedCallback(it, this) }
+        observeViewLifecycle { requireActivity().onBackPressedDispatcher.addCallback(it, this) }
     }
-
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_team_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         fab.setOnClickListener(this)

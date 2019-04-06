@@ -10,9 +10,10 @@ import com.google.firebase.appindexing.builders.Actions
 import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
@@ -131,4 +132,4 @@ private inline fun <T> List<T>.generateUrl(
 private fun Uri.Builder.encodeToken(token: String?): Uri.Builder =
         token?.let { appendQueryParameter(FIRESTORE_ACTIVE_TOKENS, it) } ?: this
 
-private fun generateToken() = FirebaseFirestore.getInstance().collection("null").document().id
+private fun generateToken() = Firebase.firestore.collection("null").document().id

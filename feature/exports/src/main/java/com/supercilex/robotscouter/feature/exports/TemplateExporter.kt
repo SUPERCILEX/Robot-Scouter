@@ -7,7 +7,8 @@ import android.net.Uri
 import androidx.annotation.PluralsRes
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
@@ -527,7 +528,7 @@ internal class TemplateExporter(
             return 0 to if (topChart == null) {
                 Metric.Header(
                         position = 0,
-                        ref = FirebaseFirestore.getInstance().document("null/null")
+                        ref = Firebase.firestore.document("null/null")
                 )
             } else {
                 chart = topChart
