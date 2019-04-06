@@ -51,7 +51,8 @@ android {
 
         named("release") {
             signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = true
+            // TODO https://issuetracker.google.com/issues/125696148#comment8
+            isMinifyEnabled = false
             setProguardFiles(listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     file("proguard-rules.pro")
