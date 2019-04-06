@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.build.tasks
 
-import child
 import com.google.common.io.Files
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.shell
@@ -33,10 +32,11 @@ open class UploadAppToVc : DefaultTask() {
                         File(project.rootDir.parentFile, "app-release.tmp"),
                         File(uploadDir, "Robot-Scouter/app-release.aab")
                 )
-                File(
-                        project.child("android-base").buildDir,
-                        "outputs/mapping/release/mapping.txt"
-                ).copyTo(File(uploadDir, "Robot-Scouter/mapping.txt"), true)
+                // TODO see android-base/build.gradle.kts
+//                File(
+//                        project.child("android-base").buildDir,
+//                        "outputs/mapping/release/mapping.txt"
+//                ).copyTo(File(uploadDir, "Robot-Scouter/mapping.txt"), true)
 
                 patterns = setOf("Robot-Scouter")
                 update = true

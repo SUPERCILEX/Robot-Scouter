@@ -52,6 +52,7 @@ android {
         named("release") {
             signingConfig = signingConfigs.getByName("release")
             // TODO https://issuetracker.google.com/issues/125696148#comment8
+            // Also update UploadAppToVc
             isMinifyEnabled = false
             setProguardFiles(listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
