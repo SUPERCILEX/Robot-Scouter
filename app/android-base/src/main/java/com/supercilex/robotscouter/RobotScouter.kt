@@ -20,7 +20,7 @@ import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 
 internal class RobotScouter : MultiDexApplication() {
     override fun attachBaseContext(base: Context) {
@@ -72,7 +72,7 @@ internal class RobotScouter : MultiDexApplication() {
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 vmBuilder.penaltyListener(mainExecutor, StrictMode.OnVmViolationListener {
-                    longToast(it.message.orEmpty())
+                    toast(it.message.orEmpty())
                 })
             }
             StrictMode.setVmPolicy(vmBuilder.penaltyLog().build())
@@ -80,8 +80,7 @@ internal class RobotScouter : MultiDexApplication() {
             StrictMode.setThreadPolicy(
                     StrictMode.ThreadPolicy.Builder()
                             .detectAll()
-                            // TODO re-enable when we figure out how to ignore split loads
-//                            .penaltyDeath()
+                            .penaltyDeath()
                             .penaltyLog()
                             .build()
             )

@@ -4,13 +4,11 @@ import com.supercilex.robotscouter.server.functions.deleteUnusedData
 import com.supercilex.robotscouter.server.functions.emptyTrash
 import com.supercilex.robotscouter.server.functions.logUserData
 import com.supercilex.robotscouter.server.functions.mergeDuplicateTeams
-import com.supercilex.robotscouter.server.functions.mergeDuplicateTeamsCompat
 import com.supercilex.robotscouter.server.functions.sanitizeDeletionRequest
 import com.supercilex.robotscouter.server.functions.updateDefaultTemplates
 import com.supercilex.robotscouter.server.functions.updateOwners
 import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.duplicateTeams
-import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.types.admin
 import com.supercilex.robotscouter.server.utils.types.functions
 import kotlin.js.Json
@@ -44,6 +42,4 @@ fun main() {
             .onCall { data: Json, context -> updateOwners(data, context) }
     exports.mergeDuplicateTeams = functions.firestore.document("${duplicateTeams.id}/{uid}")
             .onWrite { event, _ -> mergeDuplicateTeams(event) }
-    exports.mergeDuplicateTeamsCompat = functions.firestore.document("${teams.id}/{id}")
-            .onCreate { snapshot, _ -> mergeDuplicateTeamsCompat(snapshot) }
 }

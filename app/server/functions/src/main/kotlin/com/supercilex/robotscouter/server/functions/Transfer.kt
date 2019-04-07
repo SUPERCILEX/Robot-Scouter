@@ -23,7 +23,6 @@ import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.types.CallableContext
 import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
-import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.SetOptions
@@ -208,12 +207,3 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
         }.asPromise()
     }
 }
-
-// TODO remove after v3.0 ships
-fun mergeDuplicateTeamsCompat(team: DocumentSnapshot) = GlobalScope.async {
-    val uid = team.get<Json>(FIRESTORE_OWNERS).toMap<Long>().map { it.key }.single()
-
-    duplicateTeams.doc(uid)
-            .set(json(team.id to team.get(FIRESTORE_NUMBER)), SetOptions.merge)
-            .await()
-}.asPromise()
