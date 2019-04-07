@@ -11,9 +11,7 @@ import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
@@ -27,6 +25,7 @@ import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.util.Date
+import java.util.UUID
 
 const val APP_LINK_BASE = "https://supercilex.github.io/Robot-Scouter/data/"
 const val ACTION_FROM_DEEP_LINK = "com.supercilex.robotscouter.action.FROM_DEEP_LINK"
@@ -77,7 +76,7 @@ internal suspend fun List<DocumentReference>.share(
         block: Boolean,
         deletionGenerator: (token: String, ids: List<String>) -> QueuedDeletion.ShareToken
 ): String {
-    val token = generateToken()
+    val token = UUID.randomUUID().toString()
     val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, token)
     val timestamp = Timestamp.now()
 
@@ -131,5 +130,3 @@ private inline fun <T> List<T>.generateUrl(
 
 private fun Uri.Builder.encodeToken(token: String?): Uri.Builder =
         token?.let { appendQueryParameter(FIRESTORE_ACTIVE_TOKENS, it) } ?: this
-
-private fun generateToken() = Firebase.firestore.collection("null").document().id

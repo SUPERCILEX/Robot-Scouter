@@ -3,26 +3,18 @@ package com.supercilex.robotscouter.shared.client
 import com.firebase.ui.auth.IdpResponse
 import com.firebase.ui.auth.util.accountlink.ManualMergeService
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.QuerySnapshot
-import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
-import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
-import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
+import com.google.firebase.firestore.SetOptions
+import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
 import com.supercilex.robotscouter.core.data.logFailures
-import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
-import com.supercilex.robotscouter.core.data.model.shareTeams
-import com.supercilex.robotscouter.core.data.model.shareTemplates
-import com.supercilex.robotscouter.core.data.model.teamsQuery
+import com.supercilex.robotscouter.core.data.model.transferUserData
+import com.supercilex.robotscouter.core.data.model.userRef
 import com.supercilex.robotscouter.core.data.uid
-import com.supercilex.robotscouter.core.data.updateOwner
 import com.supercilex.robotscouter.core.logBreadcrumb
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
 
 internal class AccountMergeService : ManualMergeService() {
@@ -33,75 +25,18 @@ internal class AccountMergeService : ManualMergeService() {
         logBreadcrumb("Migrating user data from $prevUid.")
 
         return GlobalScope.async {
-            lateinit var userPrefs: QuerySnapshot
-            lateinit var teams: QuerySnapshot
-            lateinit var templates: QuerySnapshot
-
-            awaitAll(
-                    async { userPrefs = userPrefsRef.get().await() },
-                    async { teams = teamsQuery.get().await() },
-                    async { templates = getTemplatesQuery().get().await() }
-            )
-
-            instance = Instance(
-                    prevUid,
-                    teams.map { it.reference }.shareTeams(true),
-                    templates.map { it.reference }.shareTemplates(true),
-                    userPrefs,
-                    teams,
-                    templates
-            )
+            val token = UUID.randomUUID().toString()
+            userRef.set(mapOf(FIRESTORE_TOKEN to token), SetOptions.merge()).await()
+            instance = Instance(prevUid, token)
         }.asTask().logFailures("loadDataForAccountMerge").continueWith { null }
     }
 
     override fun onTransferData(response: IdpResponse): Task<Void?>? {
-        val (prevUid, teamToken, templateToken, userPrefs, teams, templates) = instance
-
-        for (snapshot in userPrefs) {
-            userPrefsRef.document(snapshot.id).set(snapshot.data)
-                    .logFailures("mergeData:userPrefs", snapshot.reference, snapshot.data)
-        }
-
-        GlobalScope.launch {
-            val teamRefs = teams.map { it.reference }
-            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, teamToken)
-
-            updateOwner(teamRefs, teamToken, prevUid) { ref ->
-                checkNotNull(teams.first { it.reference.path == ref.path }
-                                     .getLong(FIRESTORE_NUMBER))
-            }
-            for (ref in teamRefs) {
-                ref.update(tokenPath, FieldValue.delete())
-                        .logFailures("mergeData:delTeamTokens", ref, teamToken)
-            }
-        }
-
-        GlobalScope.launch {
-            val templateRefs = templates.map { it.reference }
-            val tokenPath = FieldPath.of(FIRESTORE_ACTIVE_TOKENS, templateToken)
-
-            updateOwner(templateRefs, templateToken, prevUid) { ref ->
-                checkNotNull(templates.first { it.reference.path == ref.path }
-                                     .getDate(FIRESTORE_TIMESTAMP))
-            }
-            for (ref in templateRefs) {
-                ref.update(tokenPath, FieldValue.delete())
-                        .logFailures("mergeData:delTemplateTokens", ref, templateToken)
-            }
-        }
-
+        val (prevUid, token) = instance
+        transferUserData(prevUid, token)
         return null
     }
 
     /** Stores an immutable representation of the current invocation to prevent race conditions. */
-    data class Instance(
-            val prevUid: String,
-
-            val teamToken: String,
-            val templateToken: String,
-
-            val userPrefs: QuerySnapshot,
-            val teams: QuerySnapshot,
-            val templates: QuerySnapshot
-    )
+    data class Instance(val prevUid: String, val token: String)
 }

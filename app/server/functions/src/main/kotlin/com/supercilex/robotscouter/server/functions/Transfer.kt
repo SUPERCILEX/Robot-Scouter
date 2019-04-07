@@ -1,11 +1,13 @@
 package com.supercilex.robotscouter.server.functions
 
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
+import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
 import com.supercilex.robotscouter.common.FIRESTORE_MEDIA
 import com.supercilex.robotscouter.common.FIRESTORE_METRICS
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
+import com.supercilex.robotscouter.common.FIRESTORE_PREFS
 import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
 import com.supercilex.robotscouter.common.FIRESTORE_REF
 import com.supercilex.robotscouter.common.FIRESTORE_SCOUTS
@@ -15,8 +17,15 @@ import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
 import com.supercilex.robotscouter.common.FIRESTORE_WEBSITE
 import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.server.utils.batch
+import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.duplicateTeams
+import com.supercilex.robotscouter.server.utils.epoch
 import com.supercilex.robotscouter.server.utils.firestore
+import com.supercilex.robotscouter.server.utils.getTeamsQuery
+import com.supercilex.robotscouter.server.utils.getTemplatesQuery
+import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
+import com.supercilex.robotscouter.server.utils.getTrashedTemplatesQuery
+import com.supercilex.robotscouter.server.utils.processInBatches
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
@@ -25,8 +34,10 @@ import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.FieldValues
 import com.supercilex.robotscouter.server.utils.types.HttpsError
+import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.SetOptions
 import com.supercilex.robotscouter.server.utils.types.Timestamp
+import com.supercilex.robotscouter.server.utils.users
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
@@ -34,10 +45,89 @@ import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
 import kotlin.js.json
+
+fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
+    val auth = context.auth
+    val token = data[FIRESTORE_TOKEN] as? String
+    val prevUid = data[FIRESTORE_PREV_UID] as? String
+
+    if (auth == null) throw HttpsError("unauthenticated")
+    if (token == null || prevUid == null) throw HttpsError("invalid-argument")
+    if (prevUid == auth.uid) {
+        throw HttpsError("already-exists", "Cannot add and remove the same user")
+    }
+
+    suspend fun mergePrefs() {
+        users.doc(prevUid).collection(FIRESTORE_PREFS).processInBatches {
+            users.doc(auth.uid).collection(FIRESTORE_PREFS).doc(it.id).set(it.data()).await()
+        }
+    }
+
+    suspend fun mergeDeletionQueue() {
+        val queue = deletionQueue.doc(prevUid).get().await().data()
+        deletionQueue.doc(auth.uid).set(queue, SetOptions.merge).await()
+    }
+
+    suspend fun mergeShareables() {
+        val prevOwnerPath = "$FIRESTORE_OWNERS.$prevUid"
+        val newOwnerPath = "$FIRESTORE_OWNERS.${auth.uid}"
+
+        suspend fun Query.transfer(isTeam: Boolean) = processInBatches {
+            firestore.batch {
+                val number = it.get<Any>(prevOwnerPath)
+
+                update(it.ref, prevOwnerPath, FieldValues.delete())
+                update(it.ref, newOwnerPath, number)
+                if (isTeam) {
+                    set(duplicateTeams.doc(auth.uid), json(it.ref.id to number), SetOptions.merge)
+                }
+            }
+        }
+
+        suspend fun mergeTeams() = supervisorScope {
+            joinAll(
+                    launch { getTeamsQuery(prevUid).transfer(true) },
+                    launch { getTrashedTeamsQuery(prevUid).transfer(true) }
+            )
+        }
+
+        suspend fun mergeTemplates() = supervisorScope {
+            joinAll(
+                    launch { getTemplatesQuery(prevUid).transfer(false) },
+                    launch { getTrashedTemplatesQuery(prevUid).transfer(false) }
+            )
+        }
+
+        val scope = CoroutineScope(SupervisorJob())
+        joinAll(scope.launch { mergeTeams() }, scope.launch { mergeTemplates() })
+    }
+
+    suspend fun queueOldUserForDeletion() {
+        users.doc(prevUid).set(json(FIRESTORE_LAST_LOGIN to epoch), SetOptions.merge).await()
+    }
+
+    return GlobalScope.async {
+        val prevToken = users.doc(prevUid).get().await().get<String?>(FIRESTORE_TOKEN)
+        if (prevToken == null || token != prevToken) throw HttpsError("permission-denied")
+
+        // Since it's too late of the user to un-sign-in, we use a SupervisorJob to maximize the
+        // success rate of the overall operation.
+        val scope = CoroutineScope(SupervisorJob())
+        joinAll(
+                scope.launch { mergePrefs() },
+                scope.launch { mergeDeletionQueue() },
+                scope.launch { mergeShareables() }
+        )
+        queueOldUserForDeletion()
+    }.asPromise()
+}
 
 fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
     val auth = context.auth

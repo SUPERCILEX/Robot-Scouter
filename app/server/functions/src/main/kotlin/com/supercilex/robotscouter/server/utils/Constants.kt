@@ -38,7 +38,7 @@ val duplicateTeams: CollectionReference
 val deletionQueue: CollectionReference
     get() = firestore.collection(FIRESTORE_DELETION_QUEUE)
 
-private val epoch by lazy { Timestamps.fromDate(Date(0)) }
+val epoch by lazy { Timestamps.fromDate(Date(0)) }
 
 fun getTeamsQuery(uid: String): Query = teams.where("$FIRESTORE_OWNERS.$uid", ">=", 0)
 

@@ -1,7 +1,10 @@
 package com.supercilex.robotscouter.core.data.model
 
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.functions.FirebaseFunctions
 import com.supercilex.robotscouter.common.FIRESTORE_PREFS
+import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
+import com.supercilex.robotscouter.common.FIRESTORE_TOKEN
 import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.deletionQueueRef
 import com.supercilex.robotscouter.core.data.logFailures
@@ -15,6 +18,11 @@ internal val userPrefsQueryGenerator: QueryGenerator = { getUserPrefs(it.uid) }
 val userPrefs get() = getUserPrefs(checkNotNull(uid))
 
 val userDeletionQueue get() = deletionQueueRef.document(checkNotNull(uid))
+
+fun transferUserData(prevUid: String, token: String) = FirebaseFunctions.getInstance()
+        .getHttpsCallable("transferUserData")
+        .call(mapOf(FIRESTORE_PREV_UID to prevUid, FIRESTORE_TOKEN to token))
+        .logFailures("transferUserData", prevUid, token)
 
 internal fun User.add() {
     val ref = getUserRef(uid)
