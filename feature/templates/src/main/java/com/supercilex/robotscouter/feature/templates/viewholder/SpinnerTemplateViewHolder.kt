@@ -172,9 +172,7 @@ internal class SpinnerTemplateViewHolder(
             if (
                 !hasFocus && v === nameEditor && adapterPosition != -1 &&
                 metric.value.any { it.id == item.id }
-            ) {
-                metric.update(getUpdatedItems(metric.value))
-            }
+            ) metric.update(getUpdatedItems(metric.value))
         }
 
         fun getUpdatedItems(
@@ -212,6 +210,10 @@ internal class SpinnerTemplateViewHolder(
                 target: RecyclerView.ViewHolder
         ): Boolean {
             if (localItems == null) {
+                // Force a focus on any potential text input to get the most up-to-date data
+                nameEditor.requestFocus()
+                nameEditor.clearFocus()
+
                 localItems = metric.value.toMutableList()
                 items.setHasFixedSize(true)
             }
