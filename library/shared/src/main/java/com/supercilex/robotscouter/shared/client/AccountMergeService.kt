@@ -15,7 +15,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
-import com.supercilex.robotscouter.core.data.model.userPrefs as userPrefsRef
 
 internal class AccountMergeService : ManualMergeService() {
     private lateinit var instance: Instance

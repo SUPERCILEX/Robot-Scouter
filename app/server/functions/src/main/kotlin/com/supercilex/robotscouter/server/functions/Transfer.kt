@@ -110,7 +110,10 @@ fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
     }
 
     suspend fun queueOldUserForDeletion() {
-        users.doc(prevUid).set(json(FIRESTORE_LAST_LOGIN to epoch), SetOptions.merge).await()
+        users.doc(prevUid).set(json(
+                FIRESTORE_LAST_LOGIN to epoch,
+                FIRESTORE_TOKEN to FieldValues.delete()
+        ), SetOptions.merge).await()
     }
 
     return GlobalScope.async {
