@@ -45,8 +45,6 @@ import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlin.js.Date
 import kotlin.js.Json
@@ -63,6 +61,7 @@ fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
     if (prevUid == auth.uid) {
         throw HttpsError("already-exists", "Cannot add and remove the same user")
     }
+    console.log("Transferring data from $prevUid to ${auth.uid}")
 
     suspend fun mergePrefs() {
         users.doc(prevUid).collection(FIRESTORE_PREFS).processInBatches {
@@ -71,8 +70,8 @@ fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
     }
 
     suspend fun mergeDeletionQueue() {
-        val queue = deletionQueue.doc(prevUid).get().await().data()
-        deletionQueue.doc(auth.uid).set(queue, SetOptions.merge).await()
+        val queue = deletionQueue.doc(prevUid).get().await()
+        if (queue.exists) deletionQueue.doc(auth.uid).set(queue.data(), SetOptions.merge).await()
     }
 
     suspend fun mergeShareables() {
@@ -92,21 +91,21 @@ fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
         }
 
         suspend fun mergeTeams() = supervisorScope {
-            joinAll(
-                    launch { getTeamsQuery(prevUid).transfer(true) },
-                    launch { getTrashedTeamsQuery(prevUid).transfer(true) }
+            awaitAll(
+                    async { getTeamsQuery(prevUid).transfer(true) },
+                    async { getTrashedTeamsQuery(prevUid).transfer(true) }
             )
         }
 
         suspend fun mergeTemplates() = supervisorScope {
-            joinAll(
-                    launch { getTemplatesQuery(prevUid).transfer(false) },
-                    launch { getTrashedTemplatesQuery(prevUid).transfer(false) }
+            awaitAll(
+                    async { getTemplatesQuery(prevUid).transfer(false) },
+                    async { getTrashedTemplatesQuery(prevUid).transfer(false) }
             )
         }
 
         val scope = CoroutineScope(SupervisorJob())
-        joinAll(scope.launch { mergeTeams() }, scope.launch { mergeTemplates() })
+        awaitAll(scope.async { mergeTeams() }, scope.async { mergeTemplates() })
     }
 
     suspend fun queueOldUserForDeletion() {
@@ -123,10 +122,10 @@ fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
         // Since it's too late of the user to un-sign-in, we use a SupervisorJob to maximize the
         // success rate of the overall operation.
         val scope = CoroutineScope(SupervisorJob())
-        joinAll(
-                scope.launch { mergePrefs() },
-                scope.launch { mergeDeletionQueue() },
-                scope.launch { mergeShareables() }
+        awaitAll(
+                scope.async { mergePrefs() },
+                scope.async { mergeDeletionQueue() },
+                scope.async { mergeShareables() }
         )
         queueOldUserForDeletion()
     }.asPromise()
@@ -148,6 +147,7 @@ fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
         }
     }
     prevUid as String?
+    console.log("Transferring data from $prevUid to ${auth.uid}")
 
     val isTeam = path.contains(FIRESTORE_TEAMS)
     val value = run {
