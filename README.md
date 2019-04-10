@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://play.google.com/store/apps/details?id=com.supercilex.robotscouter&utm_source=https://github.com/SUPERCILEX/Robot-Scouter/">
-        <img alt="Logo" src="https://supercilex.github.io/Robot-Scouter/assets/logo.svg" width="30%" />
+        <img alt="Logo" src="assets/logo.svg" width="30%" />
     </a>
 </p>
 
@@ -27,7 +27,11 @@
 Robot Scouter is an open-source Android app with three core goals:
 to make FIRST competition robot scouting _easy_, _efficient_, and _collaborative_.
 
-<img src="docs/demo.gif" width="50%" height="50%" />
+<p align="center">
+    <a href="https://www.youtube.com/watch?v=0tYVCfPrdGY">
+        <img alt="Demo" src="assets/demo.gif" width="35%" height="35%" />
+    </a>
+</p>
 
 ## Table of Contents
 
@@ -104,7 +108,7 @@ throughout the file and send a pull request with your changes.
 
 1. Run `./gradlew setup`
 1. If you are working with Firestore or need access to other Firebase technologies,
-   [create your own Firebase project](https://firebase.google.com/docs/android/setup#manually_add_firebase)
+   [create your own Firebase project](https://firebase.google.com/docs/android/setup)
    and replace the dummy [google-services.json](ci-dummies/google-services.json) with the one
    created in your Firebase project
 1. Run `./gradlew presubmit` to make sure the Travis build will pass
