@@ -9,6 +9,7 @@ import com.google.firebase.appindexing.FirebaseUserActions
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.toObject
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_POSITION
@@ -51,7 +52,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.sign
 
-val teamParser = SnapshotParser { checkNotNull(it.toObject(Team::class.java)).apply { id = it.id } }
+val teamParser = SnapshotParser { checkNotNull(it.toObject<Team>()).apply { id = it.id } }
 
 val teamWithSafeDefaults: (number: Long, id: String) -> Team = { number, id ->
     Team().apply {

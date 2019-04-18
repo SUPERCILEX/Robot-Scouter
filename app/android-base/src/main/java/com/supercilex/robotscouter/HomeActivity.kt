@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewOutlineProvider
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
@@ -123,7 +122,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             when (comp) {
                 is ExportServiceCompanion -> if (
                     comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>)
-                ) sendBackEventToChildren()
+                ) onBackPressedDispatcher.onBackPressed()
             }
         }
 
@@ -397,10 +396,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         moduleRequestHolder += ExportServiceCompanion().logFailures("downloadExportModule") to
                 listOf(selectedTeams)
     }
-
-    private fun sendBackEventToChildren() = supportFragmentManager.fragments
-            .filterIsInstance<OnBackPressedCallback>()
-            .none { it.handleOnBackPressed() }
 
     private fun handleIntent() {
         intent.extras?.run {

@@ -11,6 +11,7 @@
 
 # Ignore Kotlin errors TODO https://youtrack.jetbrains.com/issue/KT-23172
 -dontwarn com.supercilex.robotscouter.**
+-dontwarn kotlinx.**
 
 # TODO https://issuetracker.google.com/issues/129220209
 -keepclassmembers,allowobfuscation class * extends androidx.lifecycle.ViewModel {

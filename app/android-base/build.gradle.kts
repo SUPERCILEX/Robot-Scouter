@@ -51,9 +51,7 @@ android {
 
         named("release") {
             signingConfig = signingConfigs.getByName("release")
-            // TODO https://issuetracker.google.com/issues/125696148#comment8
-            // Also update UploadAppToVc
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             setProguardFiles(listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     file("proguard-rules.pro")
@@ -82,6 +80,7 @@ dependencies {
     implementation(project(":library:shared-scouting"))
 
     implementation(Config.Libs.Jetpack.multidex)
+    implementation(Config.Libs.Jetpack.work)
     implementation(Config.Libs.PlayServices.playCore)
     implementation(Config.Libs.Misc.billing)
 

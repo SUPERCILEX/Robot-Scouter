@@ -6,7 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.observe
@@ -35,9 +35,9 @@ import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
-import com.supercilex.robotscouter.core.ui.observeViewLifecycle
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.fragment_team_list.*
 import org.jetbrains.anko.find
@@ -46,7 +46,7 @@ import com.supercilex.robotscouter.R as RC
 @Bridge
 internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
         TeamSelectionListener, SelectedTeamsRetriever, Refreshable,
-        OnBackPressedCallback, KeyboardShortcutListener, View.OnClickListener {
+        TeamDetailsDialog.Callback, KeyboardShortcutListener, View.OnClickListener {
     override val selectedTeams: List<Team>
         get() = if (view == null) {
             emptyList()
@@ -74,11 +74,6 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
         tutorialHelper.init()
 
         if (!requireContext().isInTabletMode()) holder.selectTeam(null)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        observeViewLifecycle { requireActivity().onBackPressedDispatcher.addCallback(it, this) }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -126,6 +121,14 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
                             notify()
                             appBar.setExpanded(true)
                         }
+                    }
+                })
+
+                val backPressedCallback = requireActivity().onBackPressedDispatcher
+                        .addCallback(viewLifecycleOwner, false) { onTeamModificationsComplete() }
+                addObserver(object : AllChangesSelectionObserver<String>() {
+                    override fun onSelectionChanged() {
+                        backPressedCallback.isEnabled = hasSelection()
                     }
                 })
 
@@ -191,7 +194,9 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
         teamsView.smoothScrollToPosition(0)
     }
 
-    override fun handleOnBackPressed() = selectionTracker.clearSelection()
+    override fun onTeamModificationsComplete() {
+        selectionTracker.clearSelection()
+    }
 
     companion object : TeamListFragmentCompanion {
         override fun getInstance(manager: FragmentManager) =

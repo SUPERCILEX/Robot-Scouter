@@ -83,7 +83,12 @@
 
         <provider
             android:name="com.facebook.internal.FacebookInitProvider"
-            android:authorities="com.supercilex.robotscouter.debug.FacebookInitProvider"
+            android:authorities="${applicationId}.FacebookInitProvider"
+            tools:node="remove" />
+
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
             tools:node="remove" />
 
     </application>

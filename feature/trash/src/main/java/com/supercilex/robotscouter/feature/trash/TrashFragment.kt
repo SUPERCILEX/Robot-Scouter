@@ -6,7 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
@@ -20,6 +20,7 @@ import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_DELETION_QUEUE
 import com.supercilex.robotscouter.core.data.model.untrashTeam
 import com.supercilex.robotscouter.core.data.model.untrashTemplate
+import com.supercilex.robotscouter.core.ui.AllChangesSelectionObserver
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
@@ -31,7 +32,7 @@ import org.jetbrains.anko.support.v4.longToast
 import com.supercilex.robotscouter.R as RC
 
 internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnClickListener,
-        OnBackPressedCallback, KeyboardShortcutListener {
+        KeyboardShortcutListener {
     private val holder by stateViewModels<TrashHolder>()
     private val allItems get() = holder.trashListener.value.orEmpty()
 
@@ -42,11 +43,6 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         holder.init()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this, this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,6 +69,15 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
         ).build().apply {
             adapter.selectionTracker = this
             addObserver(TrashMenuHelper(this@TrashFragment, this).also { menuHelper = it })
+
+            val backPressedCallback = requireActivity().onBackPressedDispatcher
+                    .addCallback(viewLifecycleOwner, false) { clearSelection() }
+            addObserver(object : AllChangesSelectionObserver<String>() {
+                override fun onSelectionChanged() {
+                    backPressedCallback.isEnabled = hasSelection()
+                }
+            })
+
             onRestoreInstanceState(savedInstanceState)
         }
 
@@ -115,8 +120,6 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
     override fun onClick(v: View) {
         emptyAll()
     }
-
-    override fun handleOnBackPressed() = selectionTracker.clearSelection()
 
     fun restoreItems() {
         val all = allItems

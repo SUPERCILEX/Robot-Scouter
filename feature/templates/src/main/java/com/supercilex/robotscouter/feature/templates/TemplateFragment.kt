@@ -79,6 +79,16 @@ internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_
         metricsView.smoothScrollToPosition(0)
     }
 
+    override fun onResume() {
+        super.onResume()
+        logAnalytics(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        logAnalytics(false)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             inflater.inflate(R.menu.template_options, menu)
 
@@ -126,13 +136,12 @@ internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_
         }.add()
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
+    private fun logAnalytics(isVisible: Boolean) {
         val pagerAdapter = (parentFragment as? TemplateListFragment ?: return).pagerAdapter
         val currentTabId = pagerAdapter.currentTabId ?: return
         val tabName = pagerAdapter.currentTab?.text.toString()
 
-        if (isVisibleToUser) {
+        if (isVisible) {
             logSelectTemplate(currentTabId, tabName)
             FirebaseUserActions.getInstance().start(getTemplateViewAction(currentTabId, tabName))
         } else {

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager.widget.PagerAdapter
 
 /**
@@ -53,8 +54,6 @@ abstract class MovableFragmentStatePagerAdapter(
             return f
         }
 
-        initTransaction()
-
         val fragment = getItem(position)
         fragmentsToItemIds[fragment] = itemId
         itemIdsToFragments[itemId] = fragment
@@ -63,9 +62,11 @@ abstract class MovableFragmentStatePagerAdapter(
             fragment.setInitialSavedState(it)
         }
         fragment.setMenuVisibility(false)
-        fragment.userVisibleHint = false
 
-        checkNotNull(currentTransaction).add(container.id, fragment)
+        initTransaction().apply {
+            add(container.id, fragment)
+            setMaxLifecycle(fragment, Lifecycle.State.STARTED)
+        }
 
         return fragment
     }
@@ -81,11 +82,12 @@ abstract class MovableFragmentStatePagerAdapter(
         if (fragment !== currentPrimaryItem) {
             currentPrimaryItem?.let {
                 it.setMenuVisibility(false)
-                it.userVisibleHint = false
+                initTransaction().setMaxLifecycle(it, Lifecycle.State.STARTED)
             }
 
             fragment.setMenuVisibility(true)
-            fragment.userVisibleHint = true
+            initTransaction().setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
+
             currentPrimaryItem = fragment
         }
     }
@@ -154,23 +156,22 @@ abstract class MovableFragmentStatePagerAdapter(
     }
 
     private fun Fragment.destroy() {
-        initTransaction()
-
         val itemId = fragmentsToItemIds.remove(this)
         itemIdsToFragments.remove(itemId)
         if (itemId != null && isAdded) {
             savedStates[itemId] = manager.saveFragmentInstanceState(this)
         }
 
-        checkNotNull(currentTransaction).remove(this)
+        initTransaction().remove(this)
     }
 
-    private fun initTransaction() {
+    private fun initTransaction(): FragmentTransaction {
         if (currentTransaction == null) {
             // We commit the transaction later
             @SuppressLint("CommitTransaction")
             currentTransaction = manager.beginTransaction()
         }
+        return currentTransaction!!
     }
 
     private companion object {

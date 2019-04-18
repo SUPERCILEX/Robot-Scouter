@@ -5,7 +5,7 @@ import org.gradle.plugin.use.PluginDependenciesSpec
 
 @Suppress("MayBeConstant") // Improve perf when changing values
 object Config {
-    private const val kotlinVersion = "1.3.40-dev-1431"
+    private const val kotlinVersion = "1.3.40-dev-2387"
 
     fun RepositoryHandler.deps() {
         google().content {
@@ -46,7 +46,7 @@ object Config {
         val firebase = "com.google.firebase:perf-plugin:1.2.0"
         val fabric = "io.fabric.tools:gradle:1.28.1"
 
-        val ktlint = "com.github.shyiko:ktlint:0.31.0"
+        val ktlint = "com.pinterest:ktlint:0.32.0"
 
         val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.2.0"
         val PluginDependenciesSpec.versionChecker
@@ -55,7 +55,7 @@ object Config {
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "1.2.0-alpha-2"
+            private const val coroutinesVersion = "1.2.1"
 
             val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -83,7 +83,7 @@ object Config {
             val core = "androidx.core:core-ktx:1.1.0-alpha05"
             val multidex = "androidx.multidex:multidex:2.0.1"
             val appCompat = "androidx.appcompat:appcompat:1.1.0-alpha04"
-            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha06"
+            val fragment = "androidx.fragment:fragment-ktx:1.1.0-alpha07"
             val rv = "androidx.recyclerview:recyclerview:1.1.0-alpha04"
             val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-alpha01"
             val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
@@ -102,7 +102,7 @@ object Config {
             val viewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
             val viewModelState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01"
 
-            val work = "androidx.work:work-runtime-ktx:2.0.1-rc01"
+            val work = "androidx.work:work-runtime-ktx:2.1.0-alpha01"
         }
 
         object Firebase {
@@ -124,7 +124,7 @@ object Config {
         object PlayServices {
             val auth = "com.google.android.gms:play-services-auth:16.0.1"
             val nearby = "com.google.android.gms:play-services-nearby:16.0.0"
-            val playCore = "com.google.android.play:core:1.4.0"
+            val playCore = "com.google.android.play:core:1.4.1"
         }
 
         object FirebaseUi {
@@ -133,22 +133,17 @@ object Config {
             val firestore =
                     "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-firestore:$version"
             val auth = "com.github.SUPERCILEX.FirebaseUI-Android:firebase-ui-auth:$version"
-            val facebook = "com.facebook.android:facebook-login:4.41.0"
+            val facebook = "com.facebook.android:facebook-login:4.42.0"
             val twitter = "com.twitter.sdk.android:twitter-core:3.3.0@aar"
         }
 
         object Misc {
-            private const val leakCanaryVersion = "1.6.3"
             private const val retrofitVersion = "2.5.0"
             private const val poiVersion = "3.17"
 
             private const val glideVersion = "4.9.0"
 
-            val leakCanary = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-            val leakCanaryFragments =
-                    "com.squareup.leakcanary:leakcanary-support-fragment:$leakCanaryVersion"
-            val leakCanaryNoop =
-                    "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+            val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.0-alpha-1"
             val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
             val retrofitCoroutines =
                     "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"

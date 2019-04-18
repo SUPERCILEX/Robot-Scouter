@@ -3,11 +3,13 @@ package com.supercilex.robotscouter
 import android.content.Context
 import android.os.Build
 import android.os.StrictMode
+import android.os.strictmode.UntaggedSocketViolation
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.play.core.splitcompat.SplitCompat
-import com.squareup.leakcanary.LeakCanary
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.data.initAnalytics
@@ -22,7 +24,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
 
-internal class RobotScouter : MultiDexApplication() {
+internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         SplitCompat.install(this)
@@ -30,9 +32,6 @@ internal class RobotScouter : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        if (LeakCanary.isInAnalyzerProcess(this)) return
-        LeakCanary.install(this)
-
         _globalContext = this
 
         GlobalScope.apply {
@@ -40,6 +39,7 @@ internal class RobotScouter : MultiDexApplication() {
             launch(Dispatchers.IO) { initIo() }
             launch { initBridges() }
             launch { Glide.get(RobotScouter) }
+            launch { WorkManager.getInstance(RobotScouter) }
 
             launch { initAnalytics() }
             launch { initRemoteConfig() }
@@ -53,26 +53,12 @@ internal class RobotScouter : MultiDexApplication() {
 
         if (BuildConfig.DEBUG) {
             // Purposefully put this after initialization since Google is terrible with disk I/O.
-            val vmBuilder = StrictMode.VmPolicy.Builder()
-                    .detectActivityLeaks()
-                    .detectLeakedClosableObjects()
-                    .detectLeakedRegistrationObjects()
-                    .detectLeakedSqlLiteObjects()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                vmBuilder.detectFileUriExposure()
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                vmBuilder.detectCleartextNetwork()
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                vmBuilder.penaltyDeathOnFileUriExposure()
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vmBuilder.detectContentUriWithoutPermission()
-            }
+            val vmBuilder = StrictMode.VmPolicy.Builder().detectAll()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 vmBuilder.penaltyListener(mainExecutor, StrictMode.OnVmViolationListener {
-                    toast(it.message.orEmpty())
+                    if (
+                        it !is UntaggedSocketViolation
+                    ) toast("StrictMode VM violation! See logs for more details.")
                 })
             }
             StrictMode.setVmPolicy(vmBuilder.penaltyLog().build())
@@ -86,6 +72,8 @@ internal class RobotScouter : MultiDexApplication() {
             )
         }
     }
+
+    override fun getWorkManagerConfiguration() = Configuration.Builder().build()
 
     companion object {
         init {

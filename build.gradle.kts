@@ -64,7 +64,7 @@ fun Project.configureKtlint() {
             return@register
         }
 
-        main = "com.github.shyiko.ktlint.Main"
+        main = "com.pinterest.ktlint.Main"
         classpath = ktlintConfig
         args = listOf("src/**/*.kt")
 
@@ -83,9 +83,6 @@ fun Project.configureKtlint() {
 fun Project.configureAndroid() {
     configurations.register("compileClasspath") // TODO see https://youtrack.jetbrains.com/issue/KT-27170
 
-    // Resource packaging breaks otherwise for some reason
-    tasks.matching { it.name.contains("Test") }.configureEach { enabled = false }
-
     val tree = (group as String).split(".")
     when {
         tree.contains("library") && name != "common" -> apply(plugin = "com.android.library")
@@ -95,6 +92,13 @@ fun Project.configureAndroid() {
     }
     apply(plugin = "kotlin-android")
     apply(plugin = "kotlin-android-extensions")
+
+    // Resource packaging breaks otherwise for some reason
+    tasks.matching { it.name.contains("Test") }.configureEach { enabled = false }
+
+    if (!isReleaseBuild) {
+        tasks.matching { it.name.contains("lintVitalRelease") }.configureEach { enabled = false }
+    }
 
     configure<BaseExtension> {
         compileSdkVersion(Config.SdkVersions.compile)

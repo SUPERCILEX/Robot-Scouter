@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.SavedStateVMFactory
 import androidx.lifecycle.ViewModelProviders
@@ -213,7 +212,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
 
             Dispatchers.Main {
                 // If we are being called from TeamListFragment, reset the menu if the click was consumed
-                (ref().parentFragment as? OnBackPressedCallback)?.handleOnBackPressed()
+                (ref().parentFragment as? Callback)?.onTeamModificationsComplete()
 
                 ref().dismiss()
             }
@@ -256,6 +255,10 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             }
             isValid
         }
+    }
+
+    interface Callback {
+        fun onTeamModificationsComplete()
     }
 
     companion object {

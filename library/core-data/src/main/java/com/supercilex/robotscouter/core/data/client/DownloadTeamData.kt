@@ -7,6 +7,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.model.isStale
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.data.remote.TeamDetailsDownloader
@@ -16,7 +17,7 @@ import com.supercilex.robotscouter.core.model.Team
 internal const val TEAM_DATA_DOWNLOAD = "team_data_download"
 
 internal fun Team.startDownloadDataJob() {
-    WorkManager.getInstance().enqueueUniqueWork(
+    WorkManager.getInstance(RobotScouter).enqueueUniqueWork(
             number.toString(),
             ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<DownloadTeamDataWorker>()

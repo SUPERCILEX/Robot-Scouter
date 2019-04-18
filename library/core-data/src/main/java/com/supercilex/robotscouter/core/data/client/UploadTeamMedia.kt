@@ -26,7 +26,7 @@ private val localMediaPrefs: SharedPreferences by lazy {
 }
 
 internal fun Team.startUploadMediaJob() {
-    WorkManager.getInstance().beginUniqueWork(
+    WorkManager.getInstance(RobotScouter).beginUniqueWork(
             checkNotNull(media),
             ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<UploadTeamMediaWorker>()
