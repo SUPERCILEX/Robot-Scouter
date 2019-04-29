@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.supercilex.robotscouter"
-        versionName = "3.1.0-dev"
+        versionName = "3.0.2"
         multiDexEnabled = true
     }
 
