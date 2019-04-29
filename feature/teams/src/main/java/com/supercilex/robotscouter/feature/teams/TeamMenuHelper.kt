@@ -3,7 +3,9 @@ package com.supercilex.robotscouter.feature.teams
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
@@ -39,6 +41,9 @@ internal class TeamMenuHelper(
 
     init {
         fragment.viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            private val toolbar = activity.find<Toolbar>(RC.id.toolbar)
+            private val fallback = FallbackNavigationClickListener(drawerLayout)
+
             override fun onStart(owner: LifecycleOwner) {
                 if (!tracker.hasSelection()) return
 
@@ -46,6 +51,10 @@ internal class TeamMenuHelper(
                 val remaining = tracker.selection.toMutableList()
                 remaining.removeAll(teams.map(Team::id))
                 for (deleted in remaining) tracker.deselect(deleted)
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                toolbar.setNavigationOnClickListener(fallback)
             }
         })
     }
@@ -124,6 +133,14 @@ internal class TeamMenuHelper(
                 toggler.toggle(false)
                 setDisplayHomeAsUpEnabled(true)
             }
+        }
+    }
+
+    private class FallbackNavigationClickListener(
+            private val drawer: DrawerLayout
+    ) : View.OnClickListener {
+        override fun onClick(v: View) {
+            drawer.openDrawer(GravityCompat.START)
         }
     }
 

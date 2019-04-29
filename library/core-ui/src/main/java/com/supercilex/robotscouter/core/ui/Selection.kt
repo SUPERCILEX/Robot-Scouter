@@ -19,6 +19,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.common.isSingleton
 import org.jetbrains.anko.find
+import java.lang.ref.WeakReference
 
 abstract class AllChangesSelectionObserver<T> : SelectionTracker.SelectionObserver<T>() {
     override fun onSelectionRefresh() = onSelectionChanged()
@@ -53,7 +54,7 @@ abstract class MenuHelperBase<T>(
     private var prevSelection = emptyList<T>()
 
     init {
-        toolbar.setNavigationOnClickListener(this)
+        toolbar.setNavigationOnClickListener(WeakNavigationClickListener(this))
 
         // Initialize ColorDrawables so no-ops can be performed
         toolbar.setBackgroundColor(colorPrimary)
@@ -159,6 +160,16 @@ abstract class MenuHelperBase<T>(
     internal abstract fun shouldUpdateStatusBarColor(@ColorRes new: Int): Boolean
 
     internal abstract fun updateStatusBarColor(@ColorInt value: Int)
+
+    private class WeakNavigationClickListener(
+            backing: View.OnClickListener
+    ) : View.OnClickListener {
+        private val weakListener = WeakReference(backing)
+
+        override fun onClick(v: View) {
+            weakListener.get()?.onClick(v)
+        }
+    }
 }
 
 abstract class ToolbarMenuHelperBase<T>(

@@ -120,10 +120,10 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     }
 
     override fun onStop() {
+        super.onStop()
         // This has to be done in onStop so fragment transactions from the view pager can be
         // committed. Only reset the adapter if the user is switching destinations.
         if (isDetached) pagerAdapter?.reset()
-        super.onStop()
     }
 
     override fun onTeamDeleted() = removeFragment()

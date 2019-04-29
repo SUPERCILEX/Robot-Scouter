@@ -66,6 +66,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
     private lateinit var team: Team
     // It's not a lateinit because it could be used before initialization
     var pagerAdapter: ScoutPagerAdapter? = null
+        private set
 
     private var savedState: Bundle? = null
 
@@ -128,6 +129,11 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewPager.adapter = null
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewHolder = newViewModel()
@@ -147,9 +153,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
         FirebaseUserActions.getInstance().end(team.viewAction).logFailures("endScoutingAction")
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        pagerAdapter?.onSaveInstanceState(outState)
-    }
+    override fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(scoutId))
 
     override fun onRequestPermissionsResult(
             requestCode: Int,

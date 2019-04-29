@@ -82,7 +82,7 @@ abstract class MovableFragmentStatePagerAdapter(
         if (fragment !== currentPrimaryItem) {
             currentPrimaryItem?.let {
                 it.setMenuVisibility(false)
-                initTransaction().setMaxLifecycle(it, Lifecycle.State.STARTED)
+                if (it.isAdded) initTransaction().setMaxLifecycle(it, Lifecycle.State.STARTED)
             }
 
             fragment.setMenuVisibility(true)

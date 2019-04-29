@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.shared.scouting
 
-import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
@@ -13,7 +12,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
 import com.supercilex.robotscouter.core.data.ListenerRegistrationLifecycleOwner
-import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.model.ScoutsHolder
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
@@ -51,7 +49,6 @@ abstract class TabPagerAdapterBase(
 
     fun init() {
         fragment.addViewLifecycleObserver(this)
-        ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 
     override fun getCount() = currentScouts.size
@@ -135,8 +132,6 @@ abstract class TabPagerAdapterBase(
         }
     }
 
-    fun onSaveInstanceState(outState: Bundle) = outState.putAll(getTabIdBundle(currentTabId))
-
     private fun selectTab(index: Int) {
         val tabs = tabs
         val select: () -> Unit = { tabs.getTabAt(index)?.select() }
@@ -148,6 +143,10 @@ abstract class TabPagerAdapterBase(
         //    the selection happens after the adapter has processed the notify call.
         select()
         tabs.post(select)
+    }
+
+    override fun onCreate(owner: LifecycleOwner) {
+        ListenerRegistrationLifecycleOwner.lifecycle.addObserver(this)
     }
 
     override fun onStart(owner: LifecycleOwner) {

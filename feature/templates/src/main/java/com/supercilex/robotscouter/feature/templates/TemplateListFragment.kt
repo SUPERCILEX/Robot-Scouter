@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.TemplateListFragmentCompanion.Companion.TAG
 import com.supercilex.robotscouter.core.data.TAB_KEY
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.getTabId
+import com.supercilex.robotscouter.core.data.getTabIdBundle
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.model.addTemplate
 import com.supercilex.robotscouter.core.model.TemplateType
@@ -45,7 +46,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
         TemplateListFragmentBridge, Refreshable, View.OnClickListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
-    private val _pagerAdapter = unsafeLazy {
+    val pagerAdapter by unsafeLazy {
         object : TemplatePagerAdapter(this@TemplateListFragment) {
             override fun onDataChanged() {
                 super.onDataChanged()
@@ -57,7 +58,6 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
             }
         }
     }
-    val pagerAdapter by _pagerAdapter
     val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
     private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
     private val tabs by LifecycleAwareLazy {
@@ -81,8 +81,15 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
         if (activity.isInTabletMode()) activity.find<Guideline>(RC.id.guideline) else null
     }
 
+    private var savedState: Bundle? = null
+
     init {
         setHasOptionsMenu(true)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        savedState = savedInstanceState
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,14 +111,15 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     }
 
     override fun onStop() {
+        super.onStop()
         // This has to be done in onStop so fragment transactions from the view pager can be
         // committed. Only reset the adapter if the user is switching destinations.
         if (isDetached) pagerAdapter.reset()
-        super.onStop()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewPager.adapter = null
         animateContainerMorph(1f / 3)
         fab.apply {
             setOnClickListener(null)
@@ -121,10 +129,10 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     }
 
     override fun handleArgs(args: Bundle) {
-        if (_pagerAdapter.isInitialized()) {
-            handleArgs(args, null)
-        } else {
+        if (view == null) {
             arguments = (arguments ?: Bundle()).apply { putAll(args) }
+        } else {
+            handleArgs(args, null)
         }
     }
 
@@ -145,7 +153,8 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) =
             inflater.inflate(R.menu.template_list_menu, menu)
 
-    override fun onSaveInstanceState(outState: Bundle) = pagerAdapter.onSaveInstanceState(outState)
+    override fun onSaveInstanceState(outState: Bundle) =
+            outState.putAll(getTabIdBundle(pagerAdapter.currentTabId ?: getTabId(savedState)))
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (!isSignedIn) {
