@@ -194,7 +194,7 @@ open class StopwatchViewHolder(
         // There's a bug pre-L where changing the view state doesn't update the vector drawable.
         // Because of that, calling View#setActivated(isRunning) doesn't update the background
         // color and we end up with unreadable text.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return
+        if (Build.VERSION.SDK_INT < 21) return
 
         stopwatch.isActivated = isRunning
 

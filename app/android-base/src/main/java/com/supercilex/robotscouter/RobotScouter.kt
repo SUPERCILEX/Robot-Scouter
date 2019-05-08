@@ -54,7 +54,7 @@ internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
         if (BuildConfig.DEBUG) {
             // Purposefully put this after initialization since Google is terrible with disk I/O.
             val vmBuilder = StrictMode.VmPolicy.Builder().detectAll()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (Build.VERSION.SDK_INT >= 28) {
                 vmBuilder.penaltyListener(mainExecutor, StrictMode.OnVmViolationListener {
                     if (
                         it !is UntaggedSocketViolation

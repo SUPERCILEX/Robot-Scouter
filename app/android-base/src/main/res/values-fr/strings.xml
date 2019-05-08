@@ -16,13 +16,6 @@
 
     <string name="installing_module">Installation du module…</string>
 
-    <!-- Donate dialog -->
-    <string name="donate_title">Faites un don</string>
-    <string name="donate_amount">%d€</string>
-    <string name="donate_monthly_message">Faire un don automatiquement chaque mois</string>
-    <string name="donate_cancel_message">Êtes-vous certains de ne pas vouloir faire de don ? Nous apprécions toute contribution, peu importe la taille !</string>
-    <string name="donate_thanks_message">Merci beaucoup ! Toute aide possible est grandement appréciée !</string>
-
     <!-- Link activity -->
     <string name="link_teams_imported_message">Équipes importées avec succès</string>
     <string name="link_uri_parse_error">Erreur : analyse de l\'URL impossible</string>

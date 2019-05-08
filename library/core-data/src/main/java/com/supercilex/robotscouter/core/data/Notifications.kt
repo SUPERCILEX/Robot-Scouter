@@ -48,7 +48,7 @@ fun initNotifications() {
             }
     )
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+    if (Build.VERSION.SDK_INT < 26) return
 
     notificationManager.createNotificationChannelGroups(
             listOf(NotificationChannelGroup(
@@ -61,7 +61,7 @@ fun initNotifications() {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(26)
 private fun getExportChannel(): NotificationChannel = NotificationChannel(
         EXPORT_CHANNEL,
         RobotScouter.getString(R.string.export_channel_title),
@@ -74,7 +74,7 @@ private fun getExportChannel(): NotificationChannel = NotificationChannel(
     enableLights(true)
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(26)
 private fun getExportInProgressChannel(): NotificationChannel = NotificationChannel(
         EXPORT_IN_PROGRESS_CHANNEL,
         RobotScouter.getString(R.string.export_progress_channel_title),
@@ -189,7 +189,7 @@ class NotificationIntentForwarder : Activity() {
         systemNotificationManager.apply {
             val notificationId = intent.getIntExtra(KEY_NOTIFICATION_ID, -1)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= 23) {
                 // Cancel group notification if there will only be one real notification left
                 activeNotifications.singleOrNull {
                     it.id == notificationId

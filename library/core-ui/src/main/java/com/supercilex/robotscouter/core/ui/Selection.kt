@@ -177,13 +177,13 @@ abstract class ToolbarMenuHelperBase<T>(
         tracker: SelectionTracker<T>
 ) : MenuHelperBase<T>(activity, tracker) {
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= 21) {
             activity.window.statusBarColor = colorPrimaryDark
         }
     }
 
     override fun shouldUpdateStatusBarColor(new: Int): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        return if (Build.VERSION.SDK_INT >= 21) {
             activity.window.statusBarColor != ContextCompat.getColor(activity, new)
         } else {
             false
@@ -191,7 +191,7 @@ abstract class ToolbarMenuHelperBase<T>(
     }
 
     override fun updateStatusBarColor(value: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= 21) {
             activity.window.statusBarColor = value
         }
     }

@@ -13,7 +13,7 @@ const val MIME_TYPE_ANY = "*/*"
 val ioPerms = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
 private val exports = Environment.getExternalStoragePublicDirectory(
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= 19) {
             Environment.DIRECTORY_DOCUMENTS
         } else {
             "Documents"

@@ -17,16 +17,7 @@
     <string name="sign_in_try_again_title">Try again</string>
 
     <string name="installing_module">Installing module…</string>
-
-    <!-- Donate dialog -->
-    <string name="donate_title">Donate</string>
     <string name="donate_patreon_title">Support development</string>
-    <string name="donate_amount">$%d</string>
-    <string name="donate_monthly_message">Automatically donate each month</string>
-    <string name="donate_cancel_message">
-        Are you sure you don’t want to donate? We appreciate any donation no matter how small!
-    </string>
-    <string name="donate_thanks_message">Thank you!!! Any and all help is greatly appreciated!</string>
 
     <!-- Link activity -->
     <string name="link_teams_imported_message">Teams successfully imported</string>

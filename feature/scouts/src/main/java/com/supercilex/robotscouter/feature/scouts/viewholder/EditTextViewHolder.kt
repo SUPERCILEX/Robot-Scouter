@@ -29,7 +29,7 @@ internal class EditTextViewHolder(
         textLayout.isHintAnimationEnabled = true
 
         if (
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            Build.VERSION.SDK_INT >= 26 &&
             metric.name.contains(View.AUTOFILL_HINT_NAME, true)
         ) {
             itemView.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_AUTO

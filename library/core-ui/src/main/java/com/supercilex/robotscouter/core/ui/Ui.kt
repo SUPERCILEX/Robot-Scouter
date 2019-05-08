@@ -32,7 +32,7 @@ fun Context.isInTabletMode(): Boolean {
 
 fun View.setOnLongClickListenerCompat(listener: View.OnLongClickListener) {
     setOnLongClickListener(listener)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    if (Build.VERSION.SDK_INT >= 23) {
         setOnContextClickListener { listener.onLongClick(this) }
     }
 }

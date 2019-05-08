@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.shared
 import android.app.Dialog
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -91,10 +90,6 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
                 context,
                 DividerItemDecoration.VERTICAL
         ) {
-            private val divider = DividerItemDecoration::class.java
-                    .getDeclaredField("mDivider")
-                    .apply { isAccessible = true }
-                    .get(this) as Drawable
             private val bounds = Rect()
 
             override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -104,7 +99,7 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
 
                 val left: Int
                 val right: Int
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && parent.clipToPadding) {
+                if (Build.VERSION.SDK_INT >= 21 && parent.clipToPadding) {
                     left = parent.paddingLeft
                     right = parent.width - parent.paddingRight
                     c.clipRect(left, parent.paddingTop, right, parent.height - parent.paddingBottom)
@@ -118,6 +113,7 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
                         parent.getChildAt(1 - (templatesView.layoutManager as LinearLayoutManager)
                                 .findFirstVisibleItemPosition()) ?: return
                 parent.getDecoratedBoundsWithMargins(child, bounds)
+                val divider = checkNotNull(drawable)
                 val bottom = bounds.bottom + child.translationY.roundToInt()
                 val top = bottom - divider.intrinsicHeight
                 divider.setBounds(left, top, right, bottom)

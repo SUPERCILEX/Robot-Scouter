@@ -165,7 +165,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
         notificationFilter.notify(
                 id, notification.setGroup(permanentGroupId.toString()).build(), true)
 
-        if (pendingTaskCount == nTemplates && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (pendingTaskCount == nTemplates && Build.VERSION.SDK_INT >= 24) {
             showExportedPermanentNotification()
         }
 

@@ -21,13 +21,8 @@
 
     <group android:id="@+id/three">
         <item
-            android:id="@+id/action_donate"
-            android:icon="@drawable/ic_donate_grey_24dp"
-            android:title="@string/donate_title" />
-
-        <item
             android:id="@+id/action_donate_patreon"
-            android:icon="@drawable/ic_launch_accent_24dp"
+            android:icon="@drawable/ic_donate_grey_24dp"
             android:title="@string/donate_patreon_title" />
 
         <item

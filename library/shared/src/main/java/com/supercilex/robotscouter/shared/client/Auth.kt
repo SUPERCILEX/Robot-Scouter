@@ -33,7 +33,7 @@ private val allProviders: List<AuthUI.IdpConfig> = listOf(
 
 private val unlinkedProviders: List<AuthUI.IdpConfig>
     get() {
-        val existingProviders = user?.providers.orEmpty()
+        val existingProviders = user?.providerData.orEmpty().map { it.providerId }
         return allProviders.filterNot { existingProviders.contains(it.providerId) }
     }
 

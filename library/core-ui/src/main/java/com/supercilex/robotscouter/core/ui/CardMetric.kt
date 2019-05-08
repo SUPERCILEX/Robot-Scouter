@@ -53,7 +53,7 @@ class CardMetricHelper(private val view: View) {
     private val rectF = AndroidRectF()
 
     private val provider by unsafeLazy {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @TargetApi(21)
         object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                 outline.setRoundRect(0, 0, view.width, view.height, cornerRadius)
@@ -75,7 +75,7 @@ class CardMetricHelper(private val view: View) {
     }
 
     fun onSizeChanged() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= 21) {
             view.outlineProvider = provider
         }
     }

@@ -10,7 +10,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
@@ -164,10 +163,9 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
         prefs.asLiveData().observe(this) {
             bottomNavigation.menu.findItem(R.id.templates).isEnabled = isTemplateEditingAllowed
-            if (isSignedIn) delegate.setLocalNightMode(AppCompatDelegate.getDefaultNightMode())
         }
 
-        if (isInTabletMode() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (isInTabletMode() && Build.VERSION.SDK_INT >= 21) {
             scoutList.outlineProvider = object : ViewOutlineProvider() {
                 private val padding = resources.getDimensionPixelSize(R.dimen.spacing_mini)
 
@@ -250,7 +248,6 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (val id = item.itemId) {
-            R.id.action_donate -> DonateDialog.show(supportFragmentManager)
             R.id.action_donate_patreon ->
                 launchUrl(this, "https://www.patreon.com/SUPERCILEX".toUri())
             else -> runIfSignedIn {
@@ -320,7 +317,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                     setReorderingAllowed(false)
                 } else if (
                     transitionView != null &&
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                    Build.VERSION.SDK_INT >= 21
                 ) {
                     addSharedElement(transitionView, "media")
                     fragment.sharedElementEnterTransition = fragmentTransition.clone()
@@ -412,7 +409,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                         bottomNavigation.selectedItemId = R.id.templates
                     }
                 }
-                containsKey(DONATE_EXTRA) -> DonateDialog.show(supportFragmentManager)
+                containsKey(DONATE_EXTRA) ->
+                    launchUrl(this@HomeActivity, "https://www.patreon.com/SUPERCILEX".toUri())
                 containsKey(UPDATE_EXTRA) -> showStoreListing()
             }
         }
@@ -458,7 +456,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         }
 
         init {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= 21) {
                 GlobalScope.launch { fragmentTransition }
             }
         }

@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.core.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.preference.PreferenceDataStore
@@ -79,7 +80,11 @@ var defaultTemplateId: String
 @get:AppCompatDelegate.NightMode
 val nightMode: Int
     get() = when (val mode = prefStore.getString(FIRESTORE_PREF_NIGHT_MODE, "auto")) {
-        "auto" -> AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+        "auto" -> if (Build.VERSION.SDK_INT >= 29) {
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        } else {
+            AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+        }
         "yes" -> AppCompatDelegate.MODE_NIGHT_YES
         "no" -> AppCompatDelegate.MODE_NIGHT_NO
         else -> error("Unknown night mode value: $mode")

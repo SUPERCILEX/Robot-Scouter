@@ -31,7 +31,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
         itemView.removeView(unit)
         itemView.addView(unit, itemView.childCount - 1)
         itemView.find<View>(RC.id.countContainer).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (Build.VERSION.SDK_INT >= 17) {
                 updatePaddingRelative(end = 0)
             } else {
                 updatePadding(right = 0)

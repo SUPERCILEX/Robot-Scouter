@@ -19,7 +19,7 @@ val fullVersionName: String by lazy {
 val fullVersionCode by lazy {
     // See fullVersionName
     RobotScouter.packageManager.getPackageInfo(RobotScouter.packageName, 0).run {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= 28) {
             longVersionCode
         } else {
             @Suppress("DEPRECATION")

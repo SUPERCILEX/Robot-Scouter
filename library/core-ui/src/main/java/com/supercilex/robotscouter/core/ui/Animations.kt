@@ -64,7 +64,7 @@ fun View.animateCircularReveal(
         centerY: Int,
         radius: Float
 ): Animator? = getRevealAnimation(visible) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT < 21) {
         isVisible = visible
         return@getRevealAnimation null
     }

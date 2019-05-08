@@ -25,6 +25,7 @@ import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 import org.jetbrains.anko.find
+import java.util.concurrent.TimeUnit
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
@@ -40,7 +41,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             removeFragment()
             (activity as TeamSelectionListener).onTeamSelected(bundle)
         } else if (sharedElementEnterTransition != null) {
-            postponeEnterTransition()
+            postponeEnterTransition(2, TimeUnit.SECONDS)
         }
     }
 
@@ -66,7 +67,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     override fun startPostponedEnterTransition() {
         super.startPostponedEnterTransition()
         appBar.postDelayed(transitionAnimationDuration) {
-            appBar.setExpanded(false)
+            if (isAdded) appBar.setExpanded(false)
         }
     }
 

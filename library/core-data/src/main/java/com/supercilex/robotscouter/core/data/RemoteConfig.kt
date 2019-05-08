@@ -6,7 +6,6 @@ import com.supercilex.robotscouter.core.InvocationMarker
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.concurrent.TimeUnit
 
 // Mirrored in remote_config_defaults.xml
 private const val KEY_MINIMUM_APP_VERSION = "minimum_app_version"
@@ -28,18 +27,16 @@ val enableAutoScout
 fun initRemoteConfig() {
     FirebaseRemoteConfig.getInstance().apply {
         setDefaults(R.xml.remote_config_defaults)
-        setConfigSettings(FirebaseRemoteConfigSettings.Builder()
-                                  .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                                  .build())
+        if (BuildConfig.DEBUG) {
+            setConfigSettingsAsync(FirebaseRemoteConfigSettings.Builder()
+                                           .setMinimumFetchIntervalInSeconds(0)
+                                           .build())
+        }
 
         GlobalScope.launch {
             try {
                 activate().await()
-                fetch(if (info.configSettings.isDeveloperModeEnabled) {
-                    0
-                } else {
-                    TimeUnit.HOURS.toSeconds(12)
-                }).await()
+                fetch().await()
             } catch (e: Exception) {
                 throw InvocationMarker(e)
             }
