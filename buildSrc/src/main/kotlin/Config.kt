@@ -118,7 +118,7 @@ object Config {
             val invites = "com.google.firebase:firebase-invites:17.0.0"
             val perf = "com.google.firebase:firebase-perf:17.0.0"
 
-            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.0"
+            val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         }
 
         object PlayServices {
