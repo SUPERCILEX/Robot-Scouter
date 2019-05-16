@@ -4,7 +4,7 @@ exemptLabels:
   - feature
   - enhancement
   - bug
-  - fix-implemented
+  - refactor
 staleLabel: stale
 markComment: >
   This issue has been automatically marked as stale because it has not had
