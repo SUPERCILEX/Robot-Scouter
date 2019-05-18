@@ -14,7 +14,12 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.gradle.kotlin.dsl.submit
+import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.workers.WorkerExecutor
 import java.io.File
+import java.io.Serializable
+import javax.inject.Inject
 
 open class DeployServer : DefaultTask() {
     @Option(description = "See firebase help documentation")
@@ -25,50 +30,84 @@ open class DeployServer : DefaultTask() {
     @get:Input
     var updateTemplates: Boolean = false
 
-    @get:InputFile protected val transpiledJs: File
-    @get:OutputFile protected val targetJs: File
-
-    private val functionsProject = project.child("functions")
+    @get:InputFile
+    protected val transpiledJs = File(project.buildDir, "classes/kotlin/main/functions.js")
+    @get:OutputFile
+    protected val targetJs = File(project.projectDir, "index.js")
 
     init {
-        transpiledJs = File(functionsProject.buildDir, "classes/kotlin/main/functions.js")
-        targetJs = File(functionsProject.projectDir, "index.js")
-        inputs.file(File(functionsProject.projectDir, "package-lock.json"))
+        inputs.file(File(project.projectDir, "package-lock.json"))
     }
 
     @TaskAction
     fun deploy() {
-        for (file in functionsProject.configurations.getByName("compile")) {
-            functionsProject.copy {
+        for (file in project.configurations.getByName("compile")) {
+            project.copy {
                 includeEmptyDirs = false
 
-                from(functionsProject.zipTree(file.absolutePath))
+                from(project.zipTree(file.absolutePath))
                 into("common")
                 include { it.name == "common.js" }
                 rename("common.js", "index.js")
             }
         }
-        shell("npm ci") { directory(functionsProject.projectDir) }
-
         transpiledJs.copyTo(targetJs, true)
 
-        var command = "firebase deploy --non-interactive"
-        only?.let { command += " --only $only" }
-        shell(command) {
-            directory(project.child("server").projectDir)
-            // The admin SDK will try to read the PubSub cred file, but it's in the wrong directory
-            environment() -= "GOOGLE_APPLICATION_CREDENTIALS"
+        project.serviceOf<WorkerExecutor>().submit(Deployer::class) {
+            params(Deployer.Params(
+                    project.projectDir,
+                    project.rootProject.child("server").projectDir,
+                    only,
+                    updateTemplates
+            ))
+        }
+    }
+
+    private class Deployer @Inject constructor(private val p: Params) : Runnable {
+        override fun run() {
+            installIfNeeded("npm -v", "npm", "6.9.0")
+            installIfNeeded("firebase -V", "firebase-tools", "6.10.0")
+            shell("npm ci") { directory(p.functionsDir) }
+
+            var command = "firebase deploy --non-interactive"
+            p.only?.let { command += " --only ${p.only}" }
+            shell(command) {
+                directory(p.serverDir)
+                // The admin SDK will try to read the PubSub cred file, but it's in the wrong
+                // directory
+                environment() -= "GOOGLE_APPLICATION_CREDENTIALS"
+            }
+
+            if (isRelease || p.updateTemplates) {
+                Thread.sleep(30_000) // Wait to ensure function has redeployed
+
+                val updateTemplates = ProjectTopicName.of(
+                        "robot-scouter-app", "update-default-templates")
+                val messageId = Publisher.newBuilder(updateTemplates).build()
+                        .publish(PubsubMessage.newBuilder()
+                                         .setData(ByteString.copyFromUtf8("{}"))
+                                         .build())
+                        .get()
+                println("Triggered default template updates with message id: $messageId")
+            }
         }
 
-        if (isRelease || updateTemplates) {
-            Thread.sleep(30_000) // Wait to ensure function has redeployed
+        private fun installIfNeeded(command: String, name: String, version: String) {
+            val existing = try {
+                shell(command)()
+            } catch (e: Exception) {
+                null
+            }
 
-            val updateTemplates = ProjectTopicName.of(
-                    "robot-scouter-app", "update-default-templates")
-            val messageId = Publisher.newBuilder(updateTemplates).build()
-                    .publish(PubsubMessage.newBuilder().setData(ByteString.copyFromUtf8("{}")).build())
-                    .get()
-            println("Triggered default template updates with message id: $messageId")
+            if (existing != version) shell("npm install -gq $name@$version")
         }
+
+        data class Params(
+                val functionsDir: File,
+                val serverDir: File,
+
+                val only: String?,
+                val updateTemplates: Boolean
+        ) : Serializable
     }
 }

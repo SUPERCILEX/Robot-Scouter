@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.build.tasks
 
-import child
 import com.supercilex.robotscouter.build.internal.isRelease
 import com.supercilex.robotscouter.build.internal.orNull
 import com.supercilex.robotscouter.build.internal.secrets
@@ -12,7 +11,6 @@ open class Setup : DefaultTask() {
     @TaskAction
     fun setup() {
         extractSecrets()
-        if (isRelease) prepForReleaseBuild()
     }
 
     private fun extractSecrets() {
@@ -51,11 +49,5 @@ open class Setup : DefaultTask() {
         }
 
         return true
-    }
-
-    private fun prepForReleaseBuild() {
-        shell("npm install -gq npm@6.9.0")
-        shell("npm install -gq firebase-tools@6.5.0")
-        shell("npm ci -q") { directory(project.child("functions").projectDir) }
     }
 }

@@ -37,22 +37,21 @@ open class UpdateTranslations : DefaultTask() {
 
     @TaskAction
     fun update() {
-        val translations = translationFolder.listFiles()
-
-        fun overwrite(files: List<File>, predicate: File.(String) -> Boolean) {
-            for (file in files) {
-                val from = translations.singleOrNull {
-                    // Transifex uses a 'foo_bar_resource-name_en.extension' format
-                    val normalized = it.nameWithoutExtension.split("_").run { get(lastIndex - 1) }
-                    file.predicate(normalized)
-                } ?: continue
-                Files.move(from, file)
-            }
-        }
-
         overwrite(playStoreFiles) { nameWithoutExtension.contains(it) }
         overwrite(stringFiles) { invariantSeparatorsPath.split("/").contains(it) }
 
         if (translationFolder.listFiles().isEmpty()) translationFolder.delete()
+    }
+
+    private fun overwrite(files: List<File>, predicate: File.(String) -> Boolean) {
+        val translations = translationFolder.listFiles()
+        for (file in files) {
+            val from = translations.singleOrNull {
+                // Transifex uses a 'foo_bar_resource-name_en.extension' format
+                val normalized = it.nameWithoutExtension.split("_").run { get(lastIndex - 1) }
+                file.predicate(normalized)
+            } ?: continue
+            Files.move(from, file)
+        }
     }
 }

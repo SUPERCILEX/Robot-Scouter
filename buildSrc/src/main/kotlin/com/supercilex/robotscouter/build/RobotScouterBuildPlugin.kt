@@ -37,13 +37,14 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         }
 
         val presubmit = project.tasks.register("presubmit")
-        val generateChangelog =
-                project.tasks.register<GenerateChangelog>("generateReleaseChangelog")
+        val generateChangelog = project.child("android-base").tasks
+                .register<GenerateChangelog>("generateReleaseChangelog")
         val deployAndroid = project.tasks.register("deployAndroid")
-        val uploadAppToVcPrep = project.tasks.register<UploadAppToVcPrep>("uploadAppToVcPrep")
-        val uploadAppToVc =
-                project.tasks.register<UploadAppToVc>("uploadAppToVersionHistory")
-        val deployServer = project.tasks.register<DeployServer>("deployServer")
+        val uploadAppToVcPrep = project.child("android-base").tasks
+                .register<UploadAppToVcPrep>("uploadAppToVcPrep")
+        val uploadAppToVc = project.child("android-base").tasks
+                .register<UploadAppToVc>("uploadAppToVersionHistory")
+        val deployServer = project.child("functions").tasks.register<DeployServer>("deployServer")
 
         val ciBuildLifecycle = project.tasks.register("ciBuild")
         val ciBuild = project.tasks.register("buildForCi")
@@ -57,9 +58,10 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             }
         }
 
-        fun deepFind(spec: (Task) -> Boolean) = project.allprojects.map { it.tasks.matching(spec) }
+        fun deepFind(matches: String.() -> Boolean) =
+                project.allprojects.map { it.tasks.matching { it.name.matches() } }
 
-        fun deepFind(name: String) = deepFind { it.name == name }
+        fun deepFind(name: String) = deepFind { this == name }
 
         fun List<TaskCollection<Task>>.mustRunAfter(vararg paths: Any) = onEach {
             it.configureEach { mustRunAfter(paths) }
@@ -93,9 +95,9 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         }
 
         run {
-            val publish = deepFind("publish").mustRunAfter(generateChangelog)
+            val publish = deepFind { startsWith("publish") }.mustRunAfter(generateChangelog)
             val promote = deepFind {
-                it.name.startsWith("promote") && it.name.endsWith("Artifact")
+                startsWith("promote") && endsWith("Artifact")
             }.mustRunAfter(publish)
 
             if (isRelease) {
@@ -131,7 +133,7 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             group = "publishing"
             description = "Deploys Robot Scouter to the Web and Backend."
 
-            dependsOn("app:server:functions:assemble")
+            dependsOn("assemble")
         }
     }
 }
