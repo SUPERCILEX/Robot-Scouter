@@ -95,7 +95,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         }
 
         run {
-            val publish = deepFind { startsWith("publish") }.mustRunAfter(generateChangelog)
+            deepFind { startsWith("publish") && endsWith("Bundle") }.mustRunAfter(generateChangelog)
+            val publish = deepFind("publish")
             val promote = deepFind {
                 startsWith("promote") && endsWith("Artifact")
             }.mustRunAfter(publish)
