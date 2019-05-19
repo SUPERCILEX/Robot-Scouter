@@ -22,6 +22,9 @@ import androidx.lifecycle.observe
 import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.SCOUT_ARGS_KEY
@@ -36,8 +39,8 @@ import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.logSelect
 import com.supercilex.robotscouter.core.data.minimumAppVersion
 import com.supercilex.robotscouter.core.data.prefs
+import com.supercilex.robotscouter.core.fastAddOnSuccessListener
 import com.supercilex.robotscouter.core.fullVersionCode
-import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.isInTabletMode
@@ -59,6 +62,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     private val authHelper by unsafeLazy { AuthHelper(this) }
     private val permHandler by stateViewModels<PermissionRequestHandler>()
     private val moduleRequestHolder by stateViewModels<ModuleRequestHolder>()
+
+    private val updateManager by lazy { AppUpdateManagerFactory.create(this) }
 
     private val drawerToggle by unsafeLazy {
         ActionBarDrawerToggle(
@@ -218,8 +223,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     override fun onStart() {
         super.onStart()
-        if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion && isOnline) {
-            UpdateDialog.show(supportFragmentManager)
+        if (!BuildConfig.DEBUG && fullVersionCode < minimumAppVersion) {
+            updateManager.appUpdateInfo.asRealTask().fastAddOnSuccessListener(this) {
+                val availability = it.updateAvailability()
+                val isUpdateAvailable = availability == UpdateAvailability.UPDATE_AVAILABLE ||
+                        availability == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                if (isUpdateAvailable && it.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                    updateManager.startUpdateFlowForResult(it, AppUpdateType.IMMEDIATE, this, 1958)
+                }
+            }
         }
     }
 

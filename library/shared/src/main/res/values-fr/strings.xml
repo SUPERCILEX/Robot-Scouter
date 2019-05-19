@@ -48,8 +48,4 @@
     <string name="rate_positive">Évaluez</string>
     <string name="rate_negative">Pas maintenant</string>
     <string name="rate_neutral">Me le rappeler plus tard</string>
-
-    <!-- Update dialog -->
-    <string name="update_title">Mise à jour</string>
-    <string name="update_required_title">Mettre Robot Scouter à jour</string>
 </resources>

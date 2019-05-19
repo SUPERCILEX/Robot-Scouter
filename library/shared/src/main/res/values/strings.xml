@@ -62,8 +62,4 @@
     <string name="rate_positive">Rate</string>
     <string name="rate_negative">Never mind</string>
     <string name="rate_neutral">Remind me later</string>
-
-    <!-- Update dialog -->
-    <string name="update_title">Update</string>
-    <string name="update_required_title">Update Robot Scouter</string>
 </resources>

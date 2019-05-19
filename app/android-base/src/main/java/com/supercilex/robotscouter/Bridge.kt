@@ -52,6 +52,8 @@ import com.google.android.play.core.tasks.Task as PlayTask
 
 private val moduleStatus = MutableLiveData<SplitInstallSessionState?>()
 
+fun Context.home(vararg params: Pair<String, Any?>) = intentFor<HomeActivity>(*params)
+
 internal fun initBridges() {
     TeamListFragmentCompanion()
     IntegratedScoutListFragmentCompanion()
@@ -89,7 +91,10 @@ internal fun ActivityBase.handleModuleInstalls(
     }
 }.let { Unit }
 
-fun Context.home(vararg params: Pair<String, Any?>) = intentFor<HomeActivity>(*params)
+internal fun <T> PlayTask<T>.asRealTask() = TaskCompletionSource<T>().apply {
+    addOnSuccessListener { setResult(it) }
+    addOnFailureListener { setException(it) }
+}.task
 
 interface SelectedTeamsRetriever {
     val selectedTeams: List<Team>
@@ -352,11 +357,6 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
     }
 
     private suspend fun <T> PlayTask<T>.await() = asRealTask().await()
-
-    private fun <T> PlayTask<T>.asRealTask() = TaskCompletionSource<T>().apply {
-        addOnSuccessListener { setResult(it) }
-        addOnFailureListener { setException(it) }
-    }.task
 
     private companion object {
         val manager: SplitInstallManager = SplitInstallManagerFactory.create(RobotScouter)

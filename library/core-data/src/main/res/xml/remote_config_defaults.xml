@@ -4,10 +4,6 @@
         <key>minimum_app_version</key>
         <value>-1</value>
     </entry>
-    <entry>
-        <key>update_required_message</key>
-        <value>An update is required for Robot Scouter to work correctly.</value>
-    </entry>
 
     <entry>
         <key>show_rating_dialog</key>
