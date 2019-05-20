@@ -122,12 +122,12 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         permHandler.init(ioPerms)
         permHandler.onGranted.observe(this) { export() }
         moduleRequestHolder.onSuccess.observe(this) { (comp, args) ->
-            @Suppress("UNCHECKED_CAST") // We know our inputs
-            when (comp) {
-                is ExportServiceCompanion -> if (
-                    comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>)
-                ) onBackPressedDispatcher.onBackPressed()
-            }
+            if (
+                comp is ExportServiceCompanion &&
+                @Suppress("UNCHECKED_CAST") // We know our inputs
+                comp.exportAndShareSpreadSheet(this, permHandler, args.single() as List<Team>) &&
+                onBackPressedDispatcher.hasEnabledCallbacks()
+            ) onBackPressedDispatcher.onBackPressed()
         }
 
         setSupportActionBar(toolbar)
@@ -400,7 +400,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         val selectedTeams = supportFragmentManager.fragments
                 .filterIsInstance<SelectedTeamsRetriever>()
                 .map { it.selectedTeams }
-                .singleOrNull { it.isNotEmpty() } ?: emptyList()
+                .singleOrNull { it.isNotEmpty() }
+                .orEmpty()
 
         moduleRequestHolder += ExportServiceCompanion().logFailures("downloadExportModule") to
                 listOf(selectedTeams)
