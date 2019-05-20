@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.google.android.play.core.splitcompat.SplitCompat
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core._globalContext
+import com.supercilex.robotscouter.core.data.client.initWork
 import com.supercilex.robotscouter.core.data.initAnalytics
 import com.supercilex.robotscouter.core.data.initDatabase
 import com.supercilex.robotscouter.core.data.initIo
@@ -37,6 +38,9 @@ internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
         GlobalScope.apply {
             // Prep slow init calls
             launch(Dispatchers.IO) { initIo() }
+            launch(Dispatchers.IO) { initWork() }
+
+            launch { Dispatchers.Main }
             launch { initBridges() }
             launch { Glide.get(RobotScouter) }
             launch { WorkManager.getInstance(RobotScouter) }

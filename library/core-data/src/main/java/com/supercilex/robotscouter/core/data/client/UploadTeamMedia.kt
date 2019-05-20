@@ -25,6 +25,10 @@ private val localMediaPrefs: SharedPreferences by lazy {
     RobotScouter.getSharedPreferences("local_media_prefs", Context.MODE_PRIVATE)
 }
 
+fun initWork() {
+    localMediaPrefs
+}
+
 internal fun Team.startUploadMediaJob() {
     WorkManager.getInstance(RobotScouter).beginUniqueWork(
             checkNotNull(media),
