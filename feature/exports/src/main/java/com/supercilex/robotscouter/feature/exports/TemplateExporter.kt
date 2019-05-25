@@ -345,7 +345,7 @@ internal class TemplateExporter(
         val header = teamSheet.createRow(0)
         header.createCell(0) // Create empty top left corner cell
 
-        var hasOutdatedMetrics = false
+        val outdatedMetrics = mutableSetOf<String>()
         for (i in scouts.lastIndex downTo 0) {
             val scout = scouts[i]
 
@@ -364,7 +364,7 @@ internal class TemplateExporter(
                 } else {
                     val metricIndex = metricCache[metric.ref.id]
                     if (metricIndex == null) {
-                        if (!hasOutdatedMetrics) {
+                        if (outdatedMetrics.isEmpty()) {
                             teamSheet.createRow(teamSheet.lastRowNum + 2).also {
                                 it.createCell(0).apply {
                                     setCellValue("Outdated metrics")
@@ -377,7 +377,7 @@ internal class TemplateExporter(
                         setupRow(metric, teamSheet.lastRowNum + 1)
                                 .also { setRowValue(metric, it, i + 1) }
 
-                        hasOutdatedMetrics = true
+                        outdatedMetrics += metric.ref.id
                     } else {
                         setRowValue(metric, teamSheet.getRow(metricIndex), i + 1)
                     }
@@ -389,10 +389,14 @@ internal class TemplateExporter(
                 team,
                 teamSheet.getRow(0).lastCellNum + if (scouts.isPolynomial) 0 else -1
         )
-        if (scouts.isPolynomial) buildCalculatedTeamSheetColumns(teamSheet, team)
+        if (scouts.isPolynomial) buildCalculatedTeamSheetColumns(teamSheet, team, outdatedMetrics)
     }
 
-    private fun buildCalculatedTeamSheetColumns(sheet: Sheet, team: Team) {
+    private fun buildCalculatedTeamSheetColumns(
+            sheet: Sheet,
+            team: Team,
+            ignoredMetrics: Set<String>
+    ) {
         fun createHeader(column: Int, title: String) {
             sheet.getRow(0).getCell(column, CREATE_NULL_AS_BLANK).apply {
                 setCellValue(title)
@@ -420,7 +424,8 @@ internal class TemplateExporter(
         val chartPool = mutableMapOf<Metric<*>, Chart>()
 
         for (i in 1..sheet.lastRowNum) {
-            val type = (cache.getRootMetric(team, i) ?: continue).type
+            val metric = cache.getRootMetric(team, i) ?: continue
+            val type = metric.type
             val row = sheet.getRow(i)
 
             val averageCell = row.createCellWithStyle(averageColumn)
@@ -445,7 +450,6 @@ internal class TemplateExporter(
                     averageCell.cellFormula = "AVERAGE($address)"
                     medianCell.cellFormula = "MEDIAN($address)"
                     maxCell.cellFormula = "MAX($address)"
-                    buildTeamChart(row, team, chartData, chartPool)
                 }
                 MetricType.STOPWATCH -> {
                     val computeIfPresent: (String) -> String = {
@@ -454,7 +458,6 @@ internal class TemplateExporter(
                     averageCell.cellFormula = computeIfPresent("AVERAGE($address)")
                     medianCell.cellFormula = computeIfPresent("MEDIAN($address)")
                     maxCell.cellFormula = computeIfPresent("MAX($address)")
-                    buildTeamChart(row, team, chartData, chartPool)
                 }
                 MetricType.TEXT ->
                     listOf(averageCell, medianCell, maxCell).forEach { it.cellFormula = "NA()" }
@@ -468,6 +471,11 @@ internal class TemplateExporter(
                     maxCell.cellFormula = "NA()"
                 }
             }
+
+            if (
+                (type == MetricType.NUMBER || type == MetricType.STOPWATCH) &&
+                !ignoredMetrics.contains(metric.ref.id)
+            ) buildTeamChart(row, team, chartData, chartPool)
         }
 
         for (chart in chartData.keys) {
