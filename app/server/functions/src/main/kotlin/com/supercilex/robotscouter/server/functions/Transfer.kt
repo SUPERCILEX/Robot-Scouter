@@ -226,7 +226,7 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
                     val teams = ids.map { teams.doc(it).get() }
                             .map { it.await() }
                             .apply { if (any { !it.exists }) return@inner }
-                            .associate { it to it.ref.collection(FIRESTORE_SCOUTS).get() }
+                            .associateWith { it.ref.collection(FIRESTORE_SCOUTS).get() }
                             .mapValues { (_, scout) -> scout.await().docs }
                             .mapValues { (_, scouts) ->
                                 scouts.associate { it to it.ref.collection(FIRESTORE_METRICS).get() }
