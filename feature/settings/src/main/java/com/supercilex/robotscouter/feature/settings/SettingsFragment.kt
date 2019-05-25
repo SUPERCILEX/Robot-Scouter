@@ -24,12 +24,14 @@ import androidx.preference.forEach
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.clearPrefs
 import com.supercilex.robotscouter.core.data.debugInfo
 import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.logLoginEvent
 import com.supercilex.robotscouter.core.data.prefStore
+import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.fullVersionName
 import com.supercilex.robotscouter.core.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
@@ -62,7 +64,23 @@ internal class SettingsFragment : PreferenceFragmentBase(),
 
         preferenceManager.preferenceDataStore = prefStore
         addPreferencesFromResource(R.xml.app_preferences)
-        onPreferenceChange(preferenceScreen, null)
+
+        val screen = preferenceScreen
+        onPreferenceChange(screen, null)
+        prefs.asLiveData().observe(this) {
+            notifyChanged(screen)
+        }
+    }
+
+    private fun notifyChanged(preference: Preference) {
+        if (preference is PreferenceGroup) {
+            preference.forEach { notifyChanged(it) }
+            return
+        }
+
+        Preference::class.java.getDeclaredMethod("dispatchSetInitialValue").apply {
+            isAccessible = true
+        }.invoke(preference)
     }
 
     override fun onCreateAdapter(
