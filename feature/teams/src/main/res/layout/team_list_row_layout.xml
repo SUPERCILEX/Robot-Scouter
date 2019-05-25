@@ -47,6 +47,7 @@
         android:layout_marginRight="@dimen/spacing_normal"
         android:layout_marginTop="2dp"
         android:textAppearance="?attr/textAppearanceListItem"
+        android:textDirection="locale"
         android:textIsSelectable="false"
         android:textSize="@dimen/text_size_normal"
         app:layout_constraintStart_toEndOf="@id/media"

@@ -10,6 +10,7 @@
         style="@style/TextAppearance.AppCompat"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textDirection="locale"
         android:textIsSelectable="false"
         android:textSize="@dimen/text_size_normal"
         app:layout_constraintStart_toStartOf="parent"

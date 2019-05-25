@@ -177,6 +177,7 @@
             android:id="@+id/save"
             style="@style/RobotScouter.BottomSheet.Button.Compat"
             android:text="@string/save"
+            android:textDirection="locale"
             app:drawableStartCompat="@drawable/ic_check_grey_24dp" />
 
     </LinearLayout>

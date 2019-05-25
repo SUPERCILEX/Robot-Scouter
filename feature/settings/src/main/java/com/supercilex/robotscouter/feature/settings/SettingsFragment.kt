@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.util.TypedValue
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.getSystemService
@@ -150,8 +152,10 @@ internal class SettingsFragment : PreferenceFragmentBase(),
             super.onBindViewHolder(holder, position)
             if (getItem(position).key == KEY_ABOUT) {
                 holder.itemView.isClickable = false
-                (holder.findViewById(android.R.id.title) as TextView)
-                        .movementMethod = LinkMovementMethod.getInstance()
+                (holder.findViewById(android.R.id.title) as TextView).apply {
+                    movementMethod = LinkMovementMethod.getInstance()
+                    if (Build.VERSION.SDK_INT >= 17) textDirection = View.TEXT_DIRECTION_LOCALE
+                }
             }
         }
     }

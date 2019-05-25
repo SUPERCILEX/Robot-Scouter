@@ -46,6 +46,7 @@
         android:layout_marginLeft="@dimen/spacing_checkbox_margin_hack"
         android:layout_marginTop="@dimen/spacing_normal"
         android:text="@string/template_set_default_title"
+        android:textDirection="locale"
         tools:ignore="NegativeMargin" />
 
 </LinearLayout>

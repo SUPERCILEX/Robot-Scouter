@@ -134,6 +134,11 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
         private lateinit var listener: TemplateSelectorDialog
         private lateinit var id: String
 
+        init {
+            itemView as TextView
+            if (Build.VERSION.SDK_INT >= 17) itemView.textDirection = View.TEXT_DIRECTION_LOCALE
+        }
+
         fun bind(listener: TemplateSelectorDialog, scout: Scout, id: String) {
             this.listener = listener
             this.id = id

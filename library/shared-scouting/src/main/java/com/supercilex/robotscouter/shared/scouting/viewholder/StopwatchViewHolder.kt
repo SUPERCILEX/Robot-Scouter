@@ -73,7 +73,7 @@ open class StopwatchViewHolder(
 
         cycles.layoutManager = LinearLayoutManager(
                 itemView.context,
-                LinearLayoutManager.HORIZONTAL,
+                RecyclerView.HORIZONTAL,
                 false
         ).apply {
             initialPrefetchItemCount = 6
@@ -327,8 +327,8 @@ open class StopwatchViewHolder(
 
     private abstract class DataHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
             View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
-        protected val title: TextView = itemView.find(android.R.id.text1)
-        protected val value: TextView = itemView.find(android.R.id.text2)
+        protected val title: TextView = itemView.find(R.id.title)
+        protected val value: TextView = itemView.find(R.id.value)
 
         /**
          * The outclass's instance. Used indirectly since this ViewHolder may be recycled across
