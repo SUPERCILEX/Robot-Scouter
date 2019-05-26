@@ -19,7 +19,6 @@ import com.google.android.material.tabs.TabLayout
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.Refreshable
 import com.supercilex.robotscouter.SignInResolver
-import com.supercilex.robotscouter.TemplateListFragmentBridge
 import com.supercilex.robotscouter.TemplateListFragmentCompanion
 import com.supercilex.robotscouter.TemplateListFragmentCompanion.Companion.TAG
 import com.supercilex.robotscouter.core.data.TAB_KEY
@@ -42,8 +41,8 @@ import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_list),
-        TemplateListFragmentBridge, Refreshable, View.OnClickListener, RecyclerPoolHolder {
+internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_list), Refreshable,
+        View.OnClickListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
     val pagerAdapter by unsafeLazy {
@@ -128,7 +127,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
         }
     }
 
-    override fun handleArgs(args: Bundle) {
+    fun handleArgs(args: Bundle) {
         if (view == null) {
             arguments = (arguments ?: Bundle()).apply { putAll(args) }
         } else {
@@ -208,7 +207,8 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
         ): TemplateListFragment {
             val instance = manager.findFragmentByTag(TAG) as TemplateListFragment?
                     ?: TemplateListFragment()
-            return instance.apply { arguments = args }
+            args?.let { instance.handleArgs(args) }
+            return instance
         }
     }
 }

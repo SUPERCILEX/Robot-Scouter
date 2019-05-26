@@ -225,10 +225,6 @@ interface TemplateListFragmentCompanion : InstalledBridgeCompanion {
     }
 }
 
-interface TemplateListFragmentBridge {
-    fun handleArgs(args: Bundle)
-}
-
 interface ExportServiceCompanion : DownloadableBridgeCompanion {
     /** @return true if an export was attempted, false otherwise */
     fun exportAndShareSpreadSheet(

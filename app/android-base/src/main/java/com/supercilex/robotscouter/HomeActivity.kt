@@ -408,16 +408,15 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     }
 
     private fun handleIntent() {
-        intent.extras?.run {
+        intent.extras?.apply {
             when {
                 containsKey(SCOUT_ARGS_KEY) ->
                     onTeamSelected(checkNotNull(getBundle(SCOUT_ARGS_KEY)))
                 containsKey(TEMPLATE_ARGS_KEY) -> {
                     val args = checkNotNull(getBundle(TEMPLATE_ARGS_KEY))
                     if (bottomNavigation.selectedItemId == R.id.templates) {
-                        (TemplateListFragmentCompanion()
-                                .getInstance(supportFragmentManager) as TemplateListFragmentBridge)
-                                .handleArgs(args)
+                        // Handles args
+                        TemplateListFragmentCompanion().getInstance(supportFragmentManager, args)
                     } else {
                         bottomNavigation.selectedItemId = R.id.templates
                     }
