@@ -24,10 +24,10 @@ internal class AppIndexingService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         try {
             runBlocking {
-                onSignedIn()
                 FirebaseAppIndex.getInstance().removeAll().await()
-
-                awaitAll(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
+                onSignedIn {
+                    awaitAll(async { getUpdateTeamsTask() }, async { getUpdateTemplatesTask() })
+                }
             }
         } catch (e: Exception) {
             CrashLogger.onFailure(InvocationMarker(e))

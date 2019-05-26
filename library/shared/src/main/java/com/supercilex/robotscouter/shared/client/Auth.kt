@@ -54,13 +54,13 @@ private val signInBuilder
 
 private val signInLock = Mutex()
 
-suspend fun onSignedIn(): FirebaseUser = signInLock.withLock {
-    user ?: try {
+suspend fun onSignedIn(block: suspend (FirebaseUser) -> Unit = {}) = signInLock.withLock {
+    block(user ?: try {
         AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).await()
     } catch (e: Exception) {
         // Ignore any exceptions since we don't care about credential fetch errors
         FirebaseAuth.getInstance().signInAnonymously().await()
-    }.user
+    }.user)
 }
 
 fun onSignedInTask() = GlobalScope.async { onSignedIn() }.asTask()
@@ -81,5 +81,7 @@ fun Fragment.startLinkingSignIn() {
 
 suspend fun idpSignOut() {
     // Move to background since signOut sometimes does disk I/O
-    Dispatchers.IO { AuthUI.getInstance().signOut(RobotScouter).await() }
+    Dispatchers.IO {
+        signInLock.withLock { AuthUI.getInstance().signOut(RobotScouter).await() }
+    }
 }

@@ -42,17 +42,17 @@ internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
         handleModuleInstalls(progress)
 
         async {
-            onSignedIn()
-
             val dynamicLink: PendingDynamicLinkData? =
                     FirebaseDynamicLinks.getInstance().getDynamicLink(intent).await()
             val link: Uri = dynamicLink?.link ?: intent.data ?: Uri.EMPTY
             val token: String? = link.getQueryParameter(FIRESTORE_ACTIVE_TOKENS)
 
-            when (link.lastPathSegment) {
-                teamsRef.id -> processTeams(link, token)
-                templatesRef.id -> processTemplates(link, token)
-                else -> showErrorAndContinue()
+            onSignedIn {
+                when (link.lastPathSegment) {
+                    teamsRef.id -> processTeams(link, token)
+                    templatesRef.id -> processTemplates(link, token)
+                    else -> showErrorAndContinue()
+                }
             }
         }.invokeOnCompletion {
             if (it != null) {
