@@ -9,19 +9,15 @@ dependencies {
     api(project(":library:core-model"))
 
     api(Config.Libs.Firebase.firestore)
-    api(Config.Libs.Firebase.firestoreKtx)
     api(Config.Libs.Firebase.auth)
     api(Config.Libs.Firebase.indexing)
 
-    api(Config.Libs.Jetpack.common)
-    api(Config.Libs.Jetpack.extensions)
-    api(Config.Libs.Jetpack.liveData)
-    api(Config.Libs.Jetpack.viewModel)
+    Config.Libs.Jetpack.lifecycle.forEach { api(it) }
     api(Config.Libs.Jetpack.viewModelState)
 
     implementation(Config.Libs.Anko.common)
     implementation(Config.Libs.Jetpack.appCompat) { isTransitive = false }
-    implementation(Config.Libs.Jetpack.pref) { isTransitive = false }
+    implementation(Config.Libs.Jetpack.pref)
     implementation(Config.Libs.Misc.glide) { isTransitive = false }
 
     implementation(Config.Libs.PlayServices.auth) { isTransitive = false }
@@ -33,6 +29,5 @@ dependencies {
     implementation(Config.Libs.Jetpack.work)
 
     implementation(Config.Libs.Misc.retrofit)
-    implementation(Config.Libs.Misc.retrofitCoroutines)
     implementation(Config.Libs.Misc.retrofitGson)
 }

@@ -16,7 +16,7 @@ internal class AddMetricDialog : BottomSheetDialogFragmentBase(), View.OnClickLi
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        BottomSheetBehavior.from(dialog.find<View>(com.google.android.material.R.id.design_bottom_sheet))
+        BottomSheetBehavior.from(dialog.find(com.google.android.material.R.id.design_bottom_sheet))
                 .state = BottomSheetBehavior.STATE_EXPANDED
         listOf(addHeader, addCheckBox, addStopwatch, addNote, addCounter, addSpinner).forEach {
             it.setOnClickListener(this)

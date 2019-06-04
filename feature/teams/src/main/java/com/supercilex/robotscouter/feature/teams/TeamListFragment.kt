@@ -97,7 +97,7 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
         teamsView.adapter = adapter
 
         selectionTracker = run {
-            SelectionTracker.Builder<String>(
+            SelectionTracker.Builder(
                     FIRESTORE_TEAMS,
                     teamsView,
                     TeamKeyProvider(adapter),

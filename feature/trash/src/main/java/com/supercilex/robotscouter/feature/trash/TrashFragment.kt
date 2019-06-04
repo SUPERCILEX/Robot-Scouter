@@ -60,7 +60,7 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
         val adapter = TrashListAdapter()
         trashList.adapter = adapter
 
-        selectionTracker = SelectionTracker.Builder<String>(
+        selectionTracker = SelectionTracker.Builder(
                 FIRESTORE_DELETION_QUEUE,
                 trashList,
                 TrashKeyProvider(holder.trashListener),

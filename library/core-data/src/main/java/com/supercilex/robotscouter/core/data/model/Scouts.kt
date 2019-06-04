@@ -73,8 +73,8 @@ fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<S
                 val scout = scoutParser.parseSnapshot(
                         defaultTemplatesRef.document(type.id.toString()).get().await())
 
-                val metrics = scout.metrics.associate {
-                    metricsRef.document(it.ref.id) to it
+                val metrics = scout.metrics.associateBy {
+                    metricsRef.document(it.ref.id)
                 }
                 firestoreBatch {
                     for ((metricRef, metric) in metrics) set(metricRef, metric)

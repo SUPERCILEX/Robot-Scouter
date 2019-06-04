@@ -56,16 +56,10 @@ fun File.hidden() = File(parentFile, ".$name")
 fun File.unhidden() = File(parentFile, name.substring(1))
 
 @WorkerThread
-fun File.hide(): File? {
-    val hidden = hidden()
-    return if (!renameTo(hidden)) null else hidden
-}
+fun File.hide() = hidden().takeIf { renameTo(it) }
 
 @WorkerThread
-fun File.unhide(): File? {
-    val unhidden = unhidden()
-    return if (!renameTo(unhidden)) null else unhidden
-}
+fun File.unhide() = unhidden().takeIf { renameTo(it) }
 
 private fun File.get(): File {
     check(Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {

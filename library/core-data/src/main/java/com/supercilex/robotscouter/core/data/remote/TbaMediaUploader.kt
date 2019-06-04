@@ -18,7 +18,7 @@ internal class TbaMediaUploader private constructor(
                 Calendar.getInstance().get(Calendar.YEAR),
                 tbaApiKey,
                 RequestBody.create(MediaType.parse("text/*"), checkNotNull(team.media))
-        ).await()
+        )
 
         check(response.get("success").asBoolean || response.get("message").asString.let {
             it == "media_exists" || it == "suggestion_exists"

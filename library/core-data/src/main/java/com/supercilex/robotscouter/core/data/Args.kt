@@ -17,7 +17,7 @@ const val TEMPLATE_ARGS_KEY = "template_args"
 const val KEY_ADD_SCOUT = "add_scout"
 const val KEY_OVERRIDE_TEMPLATE_KEY = "override_template_key"
 
-fun <T : CharSequence> T?.nullOrFull() = if (isNullOrBlank()) null else this
+fun <T : CharSequence> T?.nullOrFull() = takeUnless { isNullOrBlank() }
 
 fun Bundle.putRef(ref: DocumentReference) = putString(REF_KEY, ref.path)
 

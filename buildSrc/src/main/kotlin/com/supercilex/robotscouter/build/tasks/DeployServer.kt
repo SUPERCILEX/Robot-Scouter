@@ -65,8 +65,8 @@ open class DeployServer : DefaultTask() {
 
     private class Deployer @Inject constructor(private val p: Params) : Runnable {
         override fun run() {
-            installIfNeeded("npm -v", "npm", "6.9.0")
-            installIfNeeded("firebase -V", "firebase-tools", "6.10.0")
+            installIfNeeded("npm -v", "npm", "6.9.2")
+            installIfNeeded("firebase -V", "firebase-tools", "7.0.2")
             shell("npm ci") { directory(p.functionsDir) }
 
             var command = "firebase deploy --non-interactive"

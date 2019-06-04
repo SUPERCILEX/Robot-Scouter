@@ -30,7 +30,6 @@ internal class TeamMediaUploader private constructor(
                         team.toString(),
                         RequestBody.create(MediaType.parse("image/*"), File(team.media))
                 )
-                .await()
 
         var link: String = response.get("data").asJsonObject.get("link").asString
         // Oh Imgur, why don't you use https by default? 😢

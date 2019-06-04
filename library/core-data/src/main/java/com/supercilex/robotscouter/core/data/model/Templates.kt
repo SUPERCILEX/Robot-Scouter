@@ -84,8 +84,8 @@ fun addTemplate(type: TemplateType): String {
             throw InvocationMarker(e)
         }
 
-        val metrics = scoutParser.parseSnapshot(templateSnapshot).metrics.associate {
-            getTemplateMetricsRef(id).document(it.ref.id) to it
+        val metrics = scoutParser.parseSnapshot(templateSnapshot).metrics.associateBy {
+            getTemplateMetricsRef(id).document(it.ref.id)
         }
         firestoreBatch {
             for ((metricRef, metric) in metrics) set(metricRef, metric)

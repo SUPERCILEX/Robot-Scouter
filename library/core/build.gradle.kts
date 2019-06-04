@@ -13,6 +13,7 @@ dependencies {
     api(Config.Libs.Anko.coroutines)
     api(Config.Libs.Firebase.core)
     api(Config.Libs.Firebase.crashlytics)
-    debugApi(Config.Libs.Misc.leakCanary)
     api(Config.Libs.Jetpack.core)
+
+    debugImplementation(Config.Libs.Misc.leakCanary)
 }

@@ -2,14 +2,12 @@ package com.supercilex.robotscouter.build
 
 import child
 import com.supercilex.robotscouter.build.internal.isRelease
-import com.supercilex.robotscouter.build.internal.secrets
 import com.supercilex.robotscouter.build.tasks.DeployServer
 import com.supercilex.robotscouter.build.tasks.GenerateChangelog
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UpdateTranslations
 import com.supercilex.robotscouter.build.tasks.UploadAppToVc
-import com.supercilex.robotscouter.build.tasks.UploadAppToVcPrep
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -40,23 +38,12 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         val generateChangelog = project.child("android-base").tasks
                 .register<GenerateChangelog>("generateReleaseChangelog")
         val deployAndroid = project.tasks.register("deployAndroid")
-        val uploadAppToVcPrep = project.child("android-base").tasks
-                .register<UploadAppToVcPrep>("uploadAppToVcPrep")
         val uploadAppToVc = project.child("android-base").tasks
                 .register<UploadAppToVc>("uploadAppToVersionHistory")
         val deployServer = project.child("functions").tasks.register<DeployServer>("deployServer")
 
         val ciBuildLifecycle = project.tasks.register("ciBuild")
         val ciBuild = project.tasks.register("buildForCi")
-
-        project.gradle.taskGraph.whenReady {
-            val creds = project.secrets.single { it.name.contains("publish") }
-            val metadataTasks = allTasks.filter { it.name == "processReleaseMetadata" }
-
-            if (metadataTasks.isNotEmpty() && !creds.exists()) {
-                metadataTasks.forEach { it.enabled = false }
-            }
-        }
 
         fun deepFind(matches: String.() -> Boolean) =
                 project.allprojects.map { it.tasks.matching { it.name.matches() } }
@@ -123,11 +110,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
                 dependsOn(deepFind("crashlyticsUploadDeobs"))
             }
         }
-        uploadAppToVcPrep {
-            dependsOn(ciBuild)
-        }
         uploadAppToVc {
-            dependsOn(uploadAppToVcPrep)
+            dependsOn(ciBuild)
         }
 
         deployServer {

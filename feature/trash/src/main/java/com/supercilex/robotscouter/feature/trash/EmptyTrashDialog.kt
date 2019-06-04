@@ -23,7 +23,7 @@ internal class EmptyTrashDialog : DialogFragmentBase(), DialogInterface.OnClickL
 
     override fun onClick(dialog: DialogInterface, which: Int) {
         (parentFragment as TrashFragment)
-                .onEmptyTrashConfirmed(ids, emptyTrash(if (emptyAll) null else ids))
+                .onEmptyTrashConfirmed(ids, emptyTrash(ids.takeUnless { emptyAll }))
     }
 
     companion object {

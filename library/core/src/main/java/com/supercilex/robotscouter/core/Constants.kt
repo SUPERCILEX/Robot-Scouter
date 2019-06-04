@@ -1,6 +1,5 @@
 package com.supercilex.robotscouter.core
 
-import android.app.ActivityManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -30,8 +29,7 @@ val fullVersionCode by lazy {
 val providerAuthority: String by lazy { "${RobotScouter.packageName}.provider" }
 
 val isLowRamDevice: Boolean by lazy {
-    ActivityManagerCompat.isLowRamDevice(
-            checkNotNull(RobotScouter.getSystemService<ActivityManager>()))
+    ActivityManagerCompat.isLowRamDevice(checkNotNull(RobotScouter.getSystemService()))
 }
 val isInTestMode: Boolean by lazy {
     Settings.System.getString(RobotScouter.contentResolver, "firebase.test.lab") == "true"

@@ -675,7 +675,7 @@ internal class TemplateExporter(
                                 evaluator.evaluate(metricRow.getCell(start + 2))?.formatAsString()
                         )
                     }.let {
-                        val naToNull: (String?) -> String? = { if (it == "#N/A") null else it }
+                        val naToNull: (String?) -> String? = { it.takeUnless { it == "#N/A" } }
                         it.map { it.first }.map(naToNull) to it.map { it.second }.map(naToNull)
                     }
 

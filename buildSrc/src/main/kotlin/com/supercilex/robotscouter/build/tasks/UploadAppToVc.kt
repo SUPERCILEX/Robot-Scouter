@@ -49,7 +49,7 @@ open class UploadAppToVc : DefaultTask() {
 
         private fun Grgit.stage(uploadDir: File) = add {
             Files.move(
-                    File(p.outerDir, "app-release.tmp"),
+                    File(p.buildDir, "outputs/bundle/release/android-base-release.aab"),
                     File(uploadDir, "Robot-Scouter/app-release.aab")
             )
             File(
@@ -64,13 +64,14 @@ open class UploadAppToVc : DefaultTask() {
         private fun Grgit.commitChanges() = commit {
             val buildToolsVersion = File("/usr/local/android-sdk/build-tools")
                     .listFiles()
+                    .orEmpty()
                     .sortedDescending()
                     .first().name
 
             val dump =
                     shell("/usr/local/android-sdk/build-tools/$buildToolsVersion/aapt" +
-                                  " dump badging app-base.tmp") {
-                        directory(p.outerDir)
+                                  " dump badging android-base-release.apk") {
+                        directory(File(p.buildDir, "outputs/apk/release"))
                     }()
             val versionCode = dump.substringAfter("versionCode='").substringBefore("'")
 

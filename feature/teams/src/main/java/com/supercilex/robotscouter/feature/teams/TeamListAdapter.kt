@@ -39,7 +39,7 @@ internal class TeamListAdapter(
     var selectionTracker: SelectionTracker<String> by LateinitVal()
 
     private val viewSizeProvider = ViewPreloadSizeProvider<Team>()
-    private val preloader = RecyclerViewPreloader<Team>(
+    private val preloader = RecyclerViewPreloader(
             Glide.with(fragment),
             this,
             viewSizeProvider,

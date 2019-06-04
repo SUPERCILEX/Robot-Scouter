@@ -1,7 +1,6 @@
 package com.supercilex.robotscouter.build.internal
 
 import child
-import org.gradle.api.Project
 import org.gradle.api.Task
 import java.io.File
 
@@ -10,8 +9,7 @@ internal val isMaster = System.getenv("TRAVIS_BRANCH") == "master"
 internal val isPr = System.getenv("TRAVIS_PULL_REQUEST") ?: "false" != "false"
 internal val isRelease = isMaster && !isPr
 
-internal val Task.secrets get() = project.secrets
-internal val Project.secrets: List<File>
+internal val Task.secrets: List<File>
     get() {
         val rootProject = project.rootProject
         val android = rootProject.child("android-base").projectDir

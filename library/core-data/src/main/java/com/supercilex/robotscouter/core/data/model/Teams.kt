@@ -33,7 +33,6 @@ import com.supercilex.robotscouter.core.data.share
 import com.supercilex.robotscouter.core.data.teamDuplicatesRef
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.uid
-import com.supercilex.robotscouter.core.data.user
 import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
@@ -68,7 +67,6 @@ internal val teamsQueryGenerator: QueryGenerator = {
         teamsRef.whereGreaterThanOrEqualTo(it, 0).orderBy(it)
     }
 }
-val teamsQuery get() = teamsQueryGenerator(checkNotNull(user))
 
 val Team.ref: DocumentReference get() = teamsRef.document(id)
 

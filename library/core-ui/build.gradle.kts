@@ -17,7 +17,7 @@ androidExtensions {
 dependencies {
     api(project(":library:core"))
 
-    api(Config.Libs.Jetpack.common)
+    api(Config.Libs.Jetpack.lifecycle.first())
     api(Config.Libs.Jetpack.fragment)
     api(Config.Libs.Jetpack.material)
     api(Config.Libs.Jetpack.emoji)

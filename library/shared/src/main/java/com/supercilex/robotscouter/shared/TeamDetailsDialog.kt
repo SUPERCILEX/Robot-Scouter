@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.SavedStateVMFactory
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
 import androidx.lifecycle.observe
@@ -72,7 +72,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             team.copyMediaInfo(it)
             updateUi()
         }
-        ViewModelProviders.of(this, SavedStateVMFactory(this)).get<TeamHolder>().apply {
+        ViewModelProviders.of(this, SavedStateViewModelFactory(this)).get<TeamHolder>().apply {
             init(team)
             var firstOverwrite = savedInstanceState == null
             teamListener.observe(this@TeamDetailsDialog) {

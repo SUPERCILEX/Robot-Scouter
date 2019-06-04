@@ -1,8 +1,8 @@
-import com.google.gms.googleservices.GoogleServicesPlugin
 import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
+    id("com.google.gms.google-services")
     id("io.fabric")
     Config.Plugins.run { publishing }
 }
@@ -68,12 +68,16 @@ android {
 }
 
 play {
-    serviceAccountCredentials = file("google-play-auto-publisher.json")
+    val creds = file("google-play-auto-publisher.json")
+    isEnabled = creds.exists()
+    serviceAccountCredentials = creds
     defaultToAppBundles = true
 
     resolutionStrategy = "auto"
     outputProcessor { versionNameOverride = "$versionNameOverride.$versionCode" }
 }
+
+googleServices { disableVersionCheck = true }
 
 dependencies {
     implementation(project(":library:shared"))
@@ -86,6 +90,3 @@ dependencies {
     implementation(Config.Libs.Firebase.perf)
     implementation(Config.Libs.Firebase.invites)
 }
-
-apply(plugin = "com.google.gms.google-services")
-GoogleServicesPlugin.config.disableVersionCheck = true

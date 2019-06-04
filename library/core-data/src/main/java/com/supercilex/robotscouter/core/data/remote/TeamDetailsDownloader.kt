@@ -27,7 +27,7 @@ internal class TeamDetailsDownloader private constructor(
 
     private suspend fun getTeamInfo() {
         val newTeam = try {
-            api.getInfoAsync(team.number.toString(), tbaApiKey).await()
+            api.getInfoAsync(team.number.toString(), tbaApiKey)
         } catch (e: HttpException) {
             if (e.code() == ERROR_404) return else throw e
         }
@@ -38,7 +38,7 @@ internal class TeamDetailsDownloader private constructor(
 
     private suspend fun getTeamMedia(year: Int) {
         val response = try {
-            api.getMediaAsync(team.number.toString(), year, tbaApiKey).await()
+            api.getMediaAsync(team.number.toString(), year, tbaApiKey)
         } catch (e: HttpException) {
             if (e.code() == ERROR_404) return else throw e
         }
