@@ -45,12 +45,12 @@ internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
             launch { Glide.get(RobotScouter) }
             launch { WorkManager.getInstance(RobotScouter) }
 
-            launch { initAnalytics() }
             launch { initRemoteConfig() }
             launch { initNotifications() }
         }
 
         // These calls must occur synchronously
+        initAnalytics()
         initDatabase()
         initPrefs()
         initUi()
