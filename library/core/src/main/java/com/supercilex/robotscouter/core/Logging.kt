@@ -59,19 +59,14 @@ internal class LoggingHandler : AbstractCoroutineContextElement(CoroutineExcepti
             if (isMain) return@apply
 
             val removed = uncaughtExceptionHandler
-            uncaughtExceptionHandler = if (removed == null) {
-                ResettingHandler
-            } else {
-                Thread.UncaughtExceptionHandler { t, _ ->
+            uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, _ ->
+                // The AndroidExceptionPreHandler breaks out assumption that this will be the last
+                // method call. This check ensures that we've made it to the end of the exception
+                // handler loop.
+                if (t.stackTrace.orEmpty()[3].methodName == "handleCoroutineExceptionImpl") {
                     t.uncaughtExceptionHandler = removed
                 }
             }
-        }
-    }
-
-    private object ResettingHandler : Thread.UncaughtExceptionHandler {
-        override fun uncaughtException(t: Thread, e: Throwable) {
-            t.uncaughtExceptionHandler = null
         }
     }
 }
