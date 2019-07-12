@@ -209,12 +209,14 @@ internal class SpinnerTemplateViewHolder(
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
         ): Boolean {
+            var localItems = localItems
             if (localItems == null) {
                 // Force a focus on any potential text input to get the most up-to-date data
                 nameEditor.requestFocus()
                 nameEditor.clearFocus()
 
                 localItems = metric.value.toMutableList()
+                this.localItems = localItems
                 items.setHasFixedSize(true)
             }
 

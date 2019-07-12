@@ -45,7 +45,7 @@ fun File.safeMkdirs() = apply {
 }
 
 fun File.safeCreateNewFile() = apply {
-    parentFile.safeMkdirs()
+    parentFile?.safeMkdirs()
     check(exists() || createNewFile()) { "Unable to create $this" }
 }
 

@@ -14,21 +14,22 @@ internal class TeamMediaUploader private constructor(
         team: Team
 ) : TeamServiceBase<TeamMediaApi>(team, TeamMediaApi::class.java) {
     override suspend fun execute(): Team? {
+        val media = team.media
         Dispatchers.IO {
-            team.media?.takeIf { File(it).exists() }
+            media?.takeIf { File(it).exists() }
         } ?: return null
 
-        uploadToImgur()
+        uploadToImgur(checkNotNull(media))
         return team
     }
 
-    private suspend fun uploadToImgur() {
+    private suspend fun uploadToImgur(media: String) {
         val response = TeamMediaApi.IMGUR_RETROFIT
                 .create<TeamMediaApi>()
                 .postToImgurAsync(
                         RobotScouter.getString(R.string.imgur_client_id),
                         team.toString(),
-                        RequestBody.create(MediaType.parse("image/*"), File(team.media))
+                        RequestBody.create(MediaType.parse("image/*"), File(media))
                 )
 
         var link: String = response.get("data").asJsonObject.get("link").asString

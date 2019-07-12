@@ -114,7 +114,7 @@ fun Collection<Team>.getNames(): String {
 
 internal fun Team.add() {
     id = teamsRef.document().id
-    rawSet(true, true)
+    rawSet(refresh = true, new = true)
 
     logAdd()
     FirebaseUserActions.getInstance().end(
@@ -179,7 +179,8 @@ fun Team.copyMediaInfo(newTeam: Team) {
 }
 
 suspend fun Team.processPotentialMediaUpload() = Dispatchers.IO {
-    if (media == null || !File(media).exists()) return@IO
+    val url = media
+    if (url == null || !File(url).exists()) return@IO
 
     saveLocalMedia()
     media = null

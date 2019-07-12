@@ -29,7 +29,7 @@ fun Intent.putExtra(teams: List<Team>): Intent = putExtra(TEAMS_KEY, ArrayList(t
 
 fun Bundle.getTeam(): Team = checkNotNull(getParcelable(TEAM_KEY))
 
-fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra(TEAMS_KEY)
+fun Intent.getTeamListExtra(): List<Team> = getParcelableArrayListExtra<Team>(TEAMS_KEY).orEmpty()
 
 fun getTabIdBundle(key: String?) = bundleOf(TAB_KEY to key)
 
