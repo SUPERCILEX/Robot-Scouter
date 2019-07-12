@@ -14,7 +14,9 @@
 
     <application>
 
-        <service android:name=".ExportService" />
+        <service
+            android:name=".ExportService"
+            android:foregroundServiceType="dataSync" />
 
     </application>
 

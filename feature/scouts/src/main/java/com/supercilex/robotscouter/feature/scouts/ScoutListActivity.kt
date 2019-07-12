@@ -22,7 +22,8 @@ internal class ScoutListActivity : ActivityBase() {
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 add(R.id.scoutList,
-                    ActivityScoutListFragment.newInstance(intent.getBundleExtra(SCOUT_ARGS_KEY)),
+                    ActivityScoutListFragment.newInstance(
+                            checkNotNull(intent.getBundleExtra(SCOUT_ARGS_KEY))),
                     ActivityScoutListFragment.TAG)
             }
         }

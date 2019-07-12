@@ -38,7 +38,7 @@ object Config {
     }
 
     object SdkVersions {
-        val compile = 28
+        val compile = 29
         val target = 28
         val min = 16
     }

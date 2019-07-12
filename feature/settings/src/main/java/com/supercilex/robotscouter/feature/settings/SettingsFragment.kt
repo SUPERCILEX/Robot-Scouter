@@ -134,9 +134,9 @@ internal class SettingsFragment : PreferenceFragmentBase(),
                     "https://www.transifex.com/supercilex/robot-scouter/".toUri()
             )
             KEY_VERSION -> {
-                checkNotNull(activity.getSystemService<ClipboardManager>()).primaryClip =
-                        ClipData.newPlainText(
-                                getString(R.string.settings_debug_info_title), debugInfo)
+                checkNotNull(activity.getSystemService<ClipboardManager>())
+                        .setPrimaryClip(ClipData.newPlainText(
+                                getString(R.string.settings_debug_info_title), debugInfo))
                 toast(R.string.settings_debug_info_copied_message)
             }
             else -> return false

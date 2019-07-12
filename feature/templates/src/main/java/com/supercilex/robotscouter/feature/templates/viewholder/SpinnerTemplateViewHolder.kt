@@ -190,7 +190,7 @@ internal class SpinnerTemplateViewHolder(
     ) {
         var itemTouchHelper: ItemTouchHelper by LateinitVal()
         var pendingScrollPosition: Int = RecyclerView.NO_POSITION
-        private var localItems: List<Metric.List.Item>? = null
+        private var localItems: MutableList<Metric.List.Item>? = null
 
         fun getItem(position: Int): Metric.List.Item =
                 if (localItems == null) metric.value[position] else checkNotNull(localItems)[position]

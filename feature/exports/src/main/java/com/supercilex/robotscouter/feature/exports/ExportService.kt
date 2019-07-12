@@ -56,12 +56,12 @@ class ExportService : IntentService(TAG) {
     }
 
     @RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    override fun onHandleIntent(intent: Intent) {
+    override fun onHandleIntent(intent: Intent?) {
         val notificationManager = ExportNotificationManager(this)
 
         if (isOffline) showToast(getString(R.string.export_offline_rationale))
 
-        val teams: List<Team> = intent.getTeamListExtra().toMutableList().apply { sort() }
+        val teams: List<Team> = intent?.getTeamListExtra().orEmpty().sorted()
         val chunks = teams.chunked(SYNCHRONOUS_QUERY_CHUNK)
         notificationManager.onStartLoading(chunks.size)
 
