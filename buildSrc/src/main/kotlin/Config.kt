@@ -22,10 +22,6 @@ object Config {
             includeGroup("org.jetbrains.kotlin")
         }
 
-        maven("https://oss.sonatype.org/content/repositories/snapshots").content {
-            includeGroup("com.github.triplet.gradle")
-        }
-
         maven("https://maven.fabric.io/public").content {
             includeGroup("io.fabric.tools")
         }
@@ -47,13 +43,13 @@ object Config {
         val android = "com.android.tools.build:gradle:3.6.0-alpha04"
         val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
-        val gpp = "com.github.triplet.gradle:play-publisher:2.3.0-SNAPSHOT"
         val google = "com.google.gms:google-services:4.3.0"
         val firebase = "com.google.firebase:perf-plugin:1.2.1"
         val fabric = "io.fabric.tools:gradle:1.29.0"
 
         val ktlint = "com.pinterest:ktlint:0.33.0"
 
+        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.3.0"
         val PluginDependenciesSpec.versionChecker
             get() = id("com.github.ben-manes.versions") version "0.21.0"
     }

@@ -10,7 +10,6 @@ buildscript {
     dependencies {
         classpath(Config.Plugins.android)
         classpath(Config.Plugins.kotlin)
-        classpath(Config.Plugins.gpp)
         classpath(Config.Plugins.google)
         classpath(Config.Plugins.firebase)
         classpath(Config.Plugins.fabric)
