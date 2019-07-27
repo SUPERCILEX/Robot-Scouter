@@ -70,6 +70,7 @@ fun Project.configureKtlint() {
         main = "com.pinterest.ktlint.Main"
         classpath = ktlintConfig
         args = listOf("src/**/*.kt")
+        maxHeapSize = "100m"
 
         val output = File(buildDir, "reports/ktlint/log.txt")
         inputs.dir(fileTree("src").apply { include("**/*.kt") })

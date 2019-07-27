@@ -62,14 +62,14 @@ open class UploadAppToVc : DefaultTask() {
         }
 
         private fun Grgit.commitChanges() = commit {
-            val buildToolsVersion = File("/usr/local/android-sdk/build-tools")
+            val buildTools = File("${System.getenv("ANDROID_HOME")}/build-tools")
                     .listFiles()
                     .orEmpty()
                     .sortedDescending()
-                    .first().name
+                    .first()
 
             val dump =
-                    shell("/usr/local/android-sdk/build-tools/$buildToolsVersion/aapt" +
+                    shell("${buildTools.absolutePath}/aapt" +
                                   " dump badging android-base-release.apk") {
                         directory(File(p.buildDir, "outputs/apk/release"))
                     }()
@@ -78,7 +78,7 @@ open class UploadAppToVc : DefaultTask() {
             message = """
                 |$versionCode
 
-                |https://github.com/SUPERCILEX/Robot-Scouter/compare/${System.getenv("TRAVIS_COMMIT_RANGE")}
+                |${File("CIRCLE_COMPARE_URL.txt").readText()}
 
                 |Full dump:
                 |$dump

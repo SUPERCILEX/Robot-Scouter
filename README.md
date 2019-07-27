@@ -13,8 +13,8 @@
 </h4>
 
 <p align="center">
-    <a href="https://travis-ci.org/SUPERCILEX/Robot-Scouter">
-        <img src="https://img.shields.io/travis/SUPERCILEX/Robot-Scouter/master.svg?style=flat-square" />
+    <a href="https://circleci.com/gh/SUPERCILEX/Robot-Scouter">
+        <img src="https://circleci.com/gh/SUPERCILEX/Robot-Scouter.svg?style=svg" />
     </a>
 </p>
 
@@ -111,7 +111,7 @@ throughout the file and send a pull request with your changes.
    [create your own Firebase project](https://firebase.google.com/docs/android/setup)
    and replace the dummy [google-services.json](ci-dummies/google-services.json) with the one
    created in your Firebase project
-1. Run `./gradlew presubmit` to make sure the Travis build will pass
+1. Run `./gradlew presubmit` to make sure the CI build will pass
 1. That's it! 🚀
 
 ## Psst... 🤐

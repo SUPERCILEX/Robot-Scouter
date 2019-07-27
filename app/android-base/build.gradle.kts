@@ -77,6 +77,11 @@ play {
     outputProcessor { versionNameOverride = "$versionNameOverride.$versionCode" }
 }
 
+// TODO remove when GPP v2.4.0 is shipped
+tasks.matching { it.name.startsWith("publish") }.configureEach {
+    outputs.file(File(rootProject.buildDir, "gpp-hack"))
+}
+
 googleServices { disableVersionCheck = true }
 
 dependencies {

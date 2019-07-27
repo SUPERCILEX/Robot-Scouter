@@ -23,16 +23,16 @@ open class Setup : DefaultTask() {
 
     private fun extractRawSecrets(): Boolean {
         val secrets = project.file("secrets.tar").orNull() ?: return false
-        shell("tar -xvf ${secrets.name}")
+        shell("tar -xvf ${secrets.name}", false)
         return true
     }
 
     private fun extractEncryptedSecrets(): Boolean {
         val secrets = project.file("secrets.tar.enc").orNull() ?: return false
-        val key = System.getenv("encrypted_c4fd8e842577_key") ?: return false
-        val iv = System.getenv("encrypted_c4fd8e842577_iv") ?: return false
+        val password = System.getenv("SECRETS_PASS") ?: return false
 
-        shell("openssl aes-256-cbc -K $key -iv $iv -in ${secrets.name} -out ${secrets.nameWithoutExtension} -d",
+        shell("openssl aes-256-cbc -md sha256 -d -k '$password'" +
+                      " -in ${secrets.name} -out ${secrets.nameWithoutExtension}",
               false)
 
         return extractRawSecrets()
@@ -44,7 +44,7 @@ open class Setup : DefaultTask() {
         val dummies = project.file("ci-dummies").listFiles() ?: return false
 
         for (dummy in dummies) {
-            val dest = secrets.first { it.name == dummy.name }
+            val dest = secrets.full.first { it.name == dummy.name }
             if (!dest.exists()) dummy.copyTo(dest)
         }
 

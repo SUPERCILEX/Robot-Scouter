@@ -3,8 +3,10 @@ package com.supercilex.robotscouter.build.tasks
 import org.ajoberstar.grgit.Grgit
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.submit
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -15,12 +17,9 @@ import javax.inject.Inject
 
 @CacheableTask
 open class GenerateChangelog : DefaultTask() {
-    @get:Input
-    protected val commitRange by lazy {
-        checkNotNull(System.getenv("TRAVIS_COMMIT_RANGE")) {
-            "This action cannot be performed in a dev build."
-        }
-    }
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFile
+    protected val commitRange = project.rootProject.file("CIRCLE_COMPARE_URL.txt")
     @get:OutputFiles
     protected val files: List<File>
 
@@ -38,14 +37,19 @@ open class GenerateChangelog : DefaultTask() {
 
     private class Generator @Inject constructor(private val p: Params) : Runnable {
         override fun run() {
-            val (old, head) = p.commitRange.run { substringBefore(".") to substringAfterLast(".") }
+            val base = p.commitRange.readText().substringBefore(".")
 
             Grgit.open().use {
-                val changelog = it.log {
-                    range(old, head)
-                }.reversed().map {
-                    "- ${it.shortMessage}"
-                }.generate()
+                val recentCommits = it.log {
+                    maxCommits = 10
+                }
+                val baseIndex = recentCommits.indexOfFirst { it.id.startsWith(base) }
+
+                val changelog = recentCommits
+                        .take(baseIndex.coerceAtLeast(1))
+                        .reversed()
+                        .map { "- ${it.shortMessage}" }
+                        .generate()
 
                 for (output in p.files) output.writeText(changelog)
             }
@@ -63,6 +67,6 @@ open class GenerateChangelog : DefaultTask() {
             return if (candidate.length > 500) subList(1, size).generate() else candidate
         }
 
-        data class Params(val commitRange: String, val files: List<File>) : Serializable
+        data class Params(val commitRange: File, val files: List<File>) : Serializable
     }
 }
