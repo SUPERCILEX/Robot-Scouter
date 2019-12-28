@@ -56,11 +56,11 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
             }
         }
     }
-    val fab by unsafeLazy {
-        requireActivity().findViewById<FloatingActionButton>(RC.id.fab)
+    val fab: FloatingActionButton by unsafeLazy {
+        requireActivity().findViewById(RC.id.fab)
     }
-    private val appBar by unsafeLazy {
-        requireActivity().findViewById<AppBarLayout>(RC.id.appBar)
+    private val appBar: AppBarLayout by unsafeLazy {
+        requireActivity().findViewById(RC.id.appBar)
     }
     private val tabs by LifecycleAwareLazy {
         val tabs = TabLayout(ContextThemeWrapper(
@@ -78,9 +78,9 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     } onDestroy {
         appBar.removeView(it)
     }
-    private val homeDivider by unsafeLazy {
+    private val homeDivider: Guideline? by unsafeLazy {
         val activity = requireActivity()
-        if (activity.isInTabletMode()) activity.findViewById<Guideline>(RC.id.guideline) else null
+        if (activity.isInTabletMode()) activity.findViewById(RC.id.guideline) else null
     }
 
     private var savedState: Bundle? = null

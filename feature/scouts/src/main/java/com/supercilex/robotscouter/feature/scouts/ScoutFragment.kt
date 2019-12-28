@@ -35,7 +35,7 @@ internal class ScoutFragment : MetricListFragment(R.layout.fragment_scout_metric
 
     private val toolbar by unsafeLazy { requireActivity().scoutsToolbar }
 
-    private val homeDivider by unsafeLazy {
+    private val homeDivider: Guideline? by unsafeLazy {
         if (requireContext().isInTabletMode()) {
             requireActivity().findViewById<Guideline>(RC.id.guideline)
         } else {

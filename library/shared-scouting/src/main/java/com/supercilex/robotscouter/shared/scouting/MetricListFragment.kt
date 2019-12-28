@@ -16,8 +16,8 @@ abstract class MetricListFragment(@LayoutRes contentLayoutId: Int) : FragmentBas
     abstract val metricsRef: CollectionReference
     abstract val dataId: String
 
-    protected val metricsView by LifecycleAwareLazy {
-        requireView().findViewById<RecyclerView>(R.id.metricsView)
+    protected val metricsView: RecyclerView by LifecycleAwareLazy {
+        requireView().findViewById(R.id.metricsView)
     }
     protected var adapter: SavedStateAdapter<*, *> by LifecycleAwareLazy()
         private set

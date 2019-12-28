@@ -13,7 +13,7 @@ import com.supercilex.robotscouter.R as RC
 internal open class TemplatePagerAdapter(fragment: Fragment) :
         TabPagerAdapterBase(fragment, templatesRef) {
     override val editTabNameRes = R.string.template_edit_name_title
-    override val tabs by fragment.LifecycleAwareLazy {
+    override val tabs: TabLayout by fragment.LifecycleAwareLazy {
         fragment.requireActivity().findViewById<TabLayout>(R.id.tabs)
     } onDestroy {
         it.setupWithViewPager(null)

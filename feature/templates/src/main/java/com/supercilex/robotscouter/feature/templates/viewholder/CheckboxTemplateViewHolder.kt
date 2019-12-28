@@ -17,7 +17,7 @@ internal class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(i
     override val reorderView: ImageView by unsafeLazy { reorder }
     override val nameEditor = name as EditText
 
-    private val checkBox = containerView.findViewById<CheckBox>(RC.id.checkBox)
+    private val checkBox: CheckBox = containerView.findViewById(RC.id.checkBox)
 
     init {
         init()

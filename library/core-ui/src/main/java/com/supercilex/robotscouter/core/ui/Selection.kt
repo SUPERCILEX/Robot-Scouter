@@ -48,7 +48,7 @@ abstract class MenuHelperBase<T>(
         private val activity: AppCompatActivity,
         private val tracker: SelectionTracker<T>
 ) : AllChangesSelectionObserver<T>(), View.OnClickListener {
-    private val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
+    private val toolbar: Toolbar = activity.findViewById(R.id.toolbar)
 
     private var prevSelection = emptyList<T>()
 
@@ -200,7 +200,7 @@ abstract class DrawerMenuHelperBase<T>(
         activity: AppCompatActivity,
         tracker: SelectionTracker<T>
 ) : MenuHelperBase<T>(activity, tracker) {
-    private val drawer = activity.findViewById<DrawerLayout>(R.id.drawerLayout)
+    private val drawer: DrawerLayout = activity.findViewById(R.id.drawerLayout)
 
     init {
         drawer.setStatusBarBackgroundColor(colorPrimaryDark)

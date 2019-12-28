@@ -28,8 +28,8 @@ abstract class TabPagerAdapterBase(
         View.OnLongClickListener, TabLayout.OnTabSelectedListener, DefaultLifecycleObserver {
     @get:StringRes protected abstract val editTabNameRes: Int
     protected abstract val tabs: TabLayout
-    private val noTabsHint by fragment.LifecycleAwareLazy {
-        fragment.requireView().findViewById<View>(R.id.noTabsHint)
+    private val noTabsHint: View by fragment.LifecycleAwareLazy {
+        fragment.requireView().findViewById(R.id.noTabsHint)
     }
 
     val holder by fragment.viewModels<ScoutsHolder>()

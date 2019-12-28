@@ -18,7 +18,7 @@ internal class ScoutPagerAdapter(
         private val team: Team
 ) : TabPagerAdapterBase(fragment, team.scoutsRef) {
     override val editTabNameRes = R.string.scout_edit_name_title
-    override val tabs by fragment.LifecycleAwareLazy {
+    override val tabs: TabLayout by fragment.LifecycleAwareLazy {
         fragment.view?.findViewById<TabLayout>(R.id.tabs)
                 ?: fragment.requireActivity().findViewById(R.id.tabs)
     } onDestroy {

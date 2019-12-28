@@ -37,7 +37,7 @@ internal class TrashMenuHelper(
         private val fragment: TrashFragment,
         tracker: SelectionTracker<String>
 ) : ToolbarMenuHelperBase<String>(fragment.requireActivity() as AppCompatActivity, tracker) {
-    private val toolbar = fragment.requireActivity().findViewById<Toolbar>(RC.id.toolbar)
+    private val toolbar: Toolbar = fragment.requireActivity().findViewById(RC.id.toolbar)
     private val defaultNavIcon = toolbar.navigationIcon
 
     private val normalMenuItems = mutableListOf<MenuItem>()

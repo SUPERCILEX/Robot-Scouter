@@ -31,8 +31,8 @@ internal class TeamMenuHelper(
         private val tracker: SelectionTracker<String>,
         private val activity: AppCompatActivity = fragment.requireActivity() as AppCompatActivity
 ) : DrawerMenuHelperBase<String>(activity, tracker) {
-    private val fab = activity.findViewById<FloatingActionButton>(RC.id.fab)
-    private val drawerLayout = activity.findViewById<DrawerLayout>(RC.id.drawerLayout)
+    private val fab: FloatingActionButton = activity.findViewById(RC.id.fab)
+    private val drawerLayout: DrawerLayout = activity.findViewById(RC.id.drawerLayout)
 
     private val teamMenuItems = mutableListOf<MenuItem>()
     private val teamsMenuItems = mutableListOf<MenuItem>()
@@ -40,7 +40,7 @@ internal class TeamMenuHelper(
 
     init {
         fragment.viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            private val toolbar = activity.findViewById<Toolbar>(RC.id.toolbar)
+            private val toolbar: Toolbar = activity.findViewById(RC.id.toolbar)
             private val fallback = FallbackNavigationClickListener(drawerLayout)
 
             override fun onStart(owner: LifecycleOwner) {

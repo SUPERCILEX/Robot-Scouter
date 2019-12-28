@@ -40,7 +40,7 @@ internal open class AppBarViewHolderBase(
 ) : LayoutContainer, View.OnLongClickListener, RequestListener<Bitmap> {
     protected lateinit var team: Team
 
-    final override val containerView = fragment.view?.findViewById<View>(R.id.header)
+    final override val containerView: View = fragment.view?.findViewById<View>(R.id.header)
             ?: fragment.requireActivity().findViewById(R.id.header)
     val toolbar: Toolbar = scoutsToolbar
     private val toolbarHeight =

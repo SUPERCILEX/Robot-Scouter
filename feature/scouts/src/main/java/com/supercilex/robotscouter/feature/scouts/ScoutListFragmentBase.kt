@@ -67,8 +67,8 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
 
     private var savedState: Bundle? = null
 
-    private val tabs by LifecycleAwareLazy {
-        view?.findViewById<TabLayout>(R.id.tabs) ?: requireActivity().findViewById(R.id.tabs)
+    private val tabs: TabLayout by LifecycleAwareLazy {
+        view?.findViewById(R.id.tabs) ?: requireActivity().findViewById(R.id.tabs)
     }
 
     private val scoutId: String?

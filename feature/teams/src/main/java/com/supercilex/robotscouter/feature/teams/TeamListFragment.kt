@@ -55,11 +55,11 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
     private val holder by viewModels<TeamListHolder>()
     private val tutorialHelper by viewModels<TutorialHelper>()
 
-    private val fab by unsafeLazy {
-        requireActivity().findViewById<FloatingActionButton>(RC.id.fab)
+    private val fab: FloatingActionButton by unsafeLazy {
+        requireActivity().findViewById(RC.id.fab)
     }
-    private val appBar by unsafeLazy {
-        requireActivity().findViewById<AppBarLayout>(RC.id.appBar)
+    private val appBar: AppBarLayout by unsafeLazy {
+        requireActivity().findViewById(RC.id.appBar)
     }
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
     private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
