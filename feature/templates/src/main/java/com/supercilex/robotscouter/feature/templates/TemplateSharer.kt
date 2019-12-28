@@ -16,11 +16,11 @@ import com.supercilex.robotscouter.core.data.logShareTemplate
 import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateSharer private constructor(

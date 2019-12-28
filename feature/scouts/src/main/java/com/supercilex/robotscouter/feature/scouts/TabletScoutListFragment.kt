@@ -7,19 +7,17 @@ import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import androidx.fragment.app.commit
-import androidx.lifecycle.observe
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ValueSeeker
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.isInTabletMode
-import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
 internal class TabletScoutListFragment : ScoutListFragmentBase() {
-    private val noContentHint by ValueSeeker {
-        requireActivity().findOptional<View>(RC.id.noTeamSelectedHint)
+    private val noContentHint: View? by ValueSeeker {
+        requireActivity().findViewById<View>(RC.id.noTeamSelectedHint)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +81,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
 
     private fun removeFragment() {
         val parent = requireParentFragment()
-        parent.requireFragmentManager().commit { remove(parent) }
+        parent.parentFragmentManager.commit { remove(parent) }
     }
 
     companion object {

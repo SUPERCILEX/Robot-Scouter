@@ -32,7 +32,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.CrashLogger
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
 import com.supercilex.robotscouter.core.data.client.retrieveShouldUpload
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
@@ -52,11 +51,11 @@ import com.supercilex.robotscouter.core.mainHandler
 import com.supercilex.robotscouter.core.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
-import org.jetbrains.anko.runOnUiThread
 import java.io.File
 import java.lang.reflect.Field
 import java.util.Calendar
@@ -211,9 +210,8 @@ suspend fun Query.getInBatches(batchSize: Long = 100): List<DocumentSnapshot> {
     return docs
 }
 
-suspend fun <T> ObservableSnapshotArray<T>.waitForChange(): List<T> = suspendCoroutine {
-    // Ensure we're on the same thread that receives db callbacks to prevent CMEs
-    RobotScouter.runOnUiThread {
+suspend fun <T> ObservableSnapshotArray<T>.waitForChange(): List<T> = Dispatchers.Main {
+    suspendCoroutine {
         addChangeEventListener(object : ChangeEventListenerBase {
             override fun onDataChanged() {
                 it.resume(toList())

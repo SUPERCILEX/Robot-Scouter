@@ -13,8 +13,10 @@ import com.supercilex.robotscouter.core.data.model.updateSelectedValueId
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.getDrawableCompat
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.showKeyboard
+import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
@@ -24,9 +26,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
 import kotlinx.android.synthetic.main.scout_template_spinner.*
 import kotlinx.android.synthetic.main.scout_template_spinner_item.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.design.snackbar
-import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.properties.Delegates
 import com.supercilex.robotscouter.R as RC
@@ -100,7 +99,7 @@ internal class SpinnerTemplateViewHolder(
     ) : RecyclerView.ViewHolder(containerView), LayoutContainer,
             TemplateViewHolder, View.OnClickListener {
         override val reorderView: ImageView by unsafeLazy { reorder }
-        override val nameEditor: EditText = itemView.find(RC.id.name)
+        override val nameEditor: EditText = itemView.findViewById(RC.id.name)
 
         private lateinit var parent: SpinnerTemplateViewHolder
         private lateinit var item: Metric.List.Item

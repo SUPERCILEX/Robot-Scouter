@@ -30,6 +30,7 @@ import com.supercilex.robotscouter.core.isOnline
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
+import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.RatingDialog
 import kotlinx.coroutines.CancellationException
@@ -41,9 +42,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
-import org.jetbrains.anko.design.snackbar
-import org.jetbrains.anko.find
-import org.jetbrains.anko.intentFor
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -194,7 +192,7 @@ class ExportService : IntentService(TAG) {
                 return false
             }
 
-            activity.find<View>(RC.id.root)
+            activity.findViewById<View>(RC.id.root)
                     .snackbar(RobotScouter.getString(R.string.export_progress_hint))
 
             if (teams.isEmpty()) {
@@ -205,7 +203,7 @@ class ExportService : IntentService(TAG) {
                 exportedTeams.logExport()
                 ContextCompat.startForegroundService(
                         RobotScouter,
-                        RobotScouter.intentFor<ExportService>().putExtra(exportedTeams)
+                        Intent(RobotScouter, ExportService::class.java).putExtra(exportedTeams)
                 )
             }.addOnSuccessListener(activity) {
                 if (it.size >= MIN_TEAMS_TO_RATE && isOnline && shouldShowRatingDialog) {

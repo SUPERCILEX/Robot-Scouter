@@ -8,7 +8,6 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.observe
 import com.supercilex.robotscouter.core.data.asLiveData
 import com.supercilex.robotscouter.core.data.getTabId
 import com.supercilex.robotscouter.core.data.getTabIdBundle
@@ -20,12 +19,11 @@ import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.isInTabletMode
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 import kotlinx.android.synthetic.main.fragment_scout_metric_list.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.findOptional
 import com.supercilex.robotscouter.R as RC
 
 internal class ScoutFragment : MetricListFragment(R.layout.fragment_scout_metric_list),
@@ -39,7 +37,7 @@ internal class ScoutFragment : MetricListFragment(R.layout.fragment_scout_metric
 
     private val homeDivider by unsafeLazy {
         if (requireContext().isInTabletMode()) {
-            requireActivity().findOptional<Guideline>(RC.id.guideline)
+            requireActivity().findViewById<Guideline>(RC.id.guideline)
         } else {
             null
         }

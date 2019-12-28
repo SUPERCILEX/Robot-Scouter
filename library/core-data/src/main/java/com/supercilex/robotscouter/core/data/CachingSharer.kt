@@ -1,6 +1,7 @@
 package com.supercilex.robotscouter.core.data
 
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.supercilex.robotscouter.core.InvocationMarker
 import com.supercilex.robotscouter.core.RobotScouter
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +38,7 @@ abstract class CachingSharer {
 
     private suspend fun getShareTemplateFromServer(to: File): String {
         try {
-            FirebaseStorage.getInstance().reference.child(to.name).getFile(to).await()
+            Firebase.storage.reference.child(to.name).getFile(to).await()
         } catch (e: Exception) {
             throw InvocationMarker(e)
         }

@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewOutlineProvider
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
@@ -18,7 +19,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
-import androidx.lifecycle.observe
 import androidx.transition.TransitionInflater
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
@@ -41,6 +41,7 @@ import com.supercilex.robotscouter.core.data.minimumAppVersion
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.fastAddOnSuccessListener
 import com.supercilex.robotscouter.core.fullVersionCode
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.isInTabletMode
@@ -49,19 +50,16 @@ import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.launchUrl
-import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.activity_home_base.*
 import kotlinx.android.synthetic.main.activity_home_content.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.longToast
 
 internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener,
         TeamSelectionListener, DrawerToggler, TeamExporter, SignInResolver {
     private val authHelper by unsafeLazy { AuthHelper(this) }
-    private val permHandler by stateViewModels<PermissionRequestHandler>()
-    private val moduleRequestHolder by stateViewModels<ModuleRequestHolder>()
+    private val permHandler by viewModels<PermissionRequestHandler>()
+    private val moduleRequestHolder by viewModels<ModuleRequestHolder>()
 
     private val updateManager by lazy { AppUpdateManagerFactory.create(this) }
 
@@ -439,7 +437,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         // along to the LinkReceiverActivity
         FirebaseDynamicLinks.getInstance().getDynamicLink(intent).addOnSuccessListener(this) {
             it?.link?.let {
-                startActivity(intentFor<LinkReceiverActivity>().setData(it))
+                startActivity(Intent(this, LinkReceiverActivity::class.java).setData(it))
             }
         }.addOnFailureListener(this) {
             longToast(R.string.link_uri_parse_error)

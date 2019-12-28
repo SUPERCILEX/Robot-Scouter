@@ -7,7 +7,6 @@ import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.TrashActivityCompanion
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.ui.ActivityBase
-import org.jetbrains.anko.intentFor
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
@@ -24,6 +23,6 @@ internal class TrashActivity : ActivityBase() {
     }
 
     companion object : TrashActivityCompanion {
-        override fun createIntent(): Intent = RobotScouter.intentFor<TrashActivity>()
+        override fun createIntent(): Intent = Intent(RobotScouter, TrashActivity::class.java)
     }
 }

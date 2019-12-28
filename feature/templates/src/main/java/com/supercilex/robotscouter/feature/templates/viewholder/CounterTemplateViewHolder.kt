@@ -16,7 +16,6 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.viewholder.CounterViewHolder
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
 import kotlinx.android.synthetic.main.scout_template_counter.*
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
@@ -30,7 +29,7 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
         itemView as LinearLayout
         itemView.removeView(unit)
         itemView.addView(unit, itemView.childCount - 1)
-        itemView.find<View>(RC.id.countContainer).apply {
+        itemView.findViewById<View>(RC.id.countContainer).apply {
             if (Build.VERSION.SDK_INT >= 17) {
                 updatePaddingRelative(end = 0)
             } else {

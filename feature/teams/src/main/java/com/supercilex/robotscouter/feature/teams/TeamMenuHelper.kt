@@ -21,10 +21,9 @@ import com.supercilex.robotscouter.core.data.model.untrashTeam
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.DrawerMenuHelperBase
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamSharer
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 internal class TeamMenuHelper(
@@ -32,8 +31,8 @@ internal class TeamMenuHelper(
         private val tracker: SelectionTracker<String>,
         private val activity: AppCompatActivity = fragment.requireActivity() as AppCompatActivity
 ) : DrawerMenuHelperBase<String>(activity, tracker) {
-    private val fab = activity.find<FloatingActionButton>(RC.id.fab)
-    private val drawerLayout = activity.find<DrawerLayout>(RC.id.drawerLayout)
+    private val fab = activity.findViewById<FloatingActionButton>(RC.id.fab)
+    private val drawerLayout = activity.findViewById<DrawerLayout>(RC.id.drawerLayout)
 
     private val teamMenuItems = mutableListOf<MenuItem>()
     private val teamsMenuItems = mutableListOf<MenuItem>()
@@ -41,7 +40,7 @@ internal class TeamMenuHelper(
 
     init {
         fragment.viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            private val toolbar = activity.find<Toolbar>(RC.id.toolbar)
+            private val toolbar = activity.findViewById<Toolbar>(RC.id.toolbar)
             private val fallback = FallbackNavigationClickListener(drawerLayout)
 
             override fun onStart(owner: LifecycleOwner) {

@@ -18,7 +18,6 @@ import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.common.isSingleton
-import org.jetbrains.anko.find
 import java.lang.ref.WeakReference
 
 abstract class AllChangesSelectionObserver<T> : SelectionTracker.SelectionObserver<T>() {
@@ -49,7 +48,7 @@ abstract class MenuHelperBase<T>(
         private val activity: AppCompatActivity,
         private val tracker: SelectionTracker<T>
 ) : AllChangesSelectionObserver<T>(), View.OnClickListener {
-    private val toolbar = activity.find<Toolbar>(R.id.toolbar)
+    private val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
 
     private var prevSelection = emptyList<T>()
 
@@ -201,7 +200,7 @@ abstract class DrawerMenuHelperBase<T>(
         activity: AppCompatActivity,
         tracker: SelectionTracker<T>
 ) : MenuHelperBase<T>(activity, tracker) {
-    private val drawer = activity.find<DrawerLayout>(R.id.drawerLayout)
+    private val drawer = activity.findViewById<DrawerLayout>(R.id.drawerLayout)
 
     init {
         drawer.setStatusBarBackgroundColor(colorPrimaryDark)

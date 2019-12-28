@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.PagerAdapter
@@ -19,8 +20,6 @@ import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.shared.MovableFragmentStatePagerAdapter
-import com.supercilex.robotscouter.shared.stateViewModels
-import org.jetbrains.anko.support.v4.find
 
 abstract class TabPagerAdapterBase(
         protected val fragment: Fragment,
@@ -30,10 +29,10 @@ abstract class TabPagerAdapterBase(
     @get:StringRes protected abstract val editTabNameRes: Int
     protected abstract val tabs: TabLayout
     private val noTabsHint by fragment.LifecycleAwareLazy {
-        fragment.find<View>(R.id.noTabsHint)
+        fragment.requireView().findViewById<View>(R.id.noTabsHint)
     }
 
-    val holder by fragment.stateViewModels<ScoutsHolder>()
+    val holder by fragment.viewModels<ScoutsHolder>()
     private var oldScouts: List<Scout> = emptyList()
     protected var currentScouts: List<Scout> = emptyList()
 

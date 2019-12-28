@@ -23,7 +23,6 @@ val enableAutoScout
 
 fun initRemoteConfig() {
     FirebaseRemoteConfig.getInstance().apply {
-        setDefaults(R.xml.remote_config_defaults)
         if (BuildConfig.DEBUG) {
             setConfigSettingsAsync(FirebaseRemoteConfigSettings.Builder()
                                            .setMinimumFetchIntervalInSeconds(0)
@@ -32,6 +31,7 @@ fun initRemoteConfig() {
 
         GlobalScope.launch {
             try {
+                setDefaultsAsync(R.xml.remote_config_defaults).await()
                 activate().await()
                 fetch().await()
             } catch (e: Exception) {

@@ -2,7 +2,8 @@ package com.supercilex.robotscouter.core.data
 
 import com.bumptech.glide.Glide
 import com.google.firebase.appindexing.FirebaseAppIndex
-import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.core.RobotScouter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -17,7 +18,7 @@ fun cleanup() {
     FirebaseAppIndex.getInstance().removeAll().logFailures("cleanup")
 }
 
-fun emptyTrash(ids: List<String>? = null) = FirebaseFunctions.getInstance()
+fun emptyTrash(ids: List<String>? = null) = Firebase.functions
         .getHttpsCallable("emptyTrash")
         .call(ids)
         .logFailures("emptyTrash", ids)

@@ -7,9 +7,9 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.colorPrimary
-import org.jetbrains.anko.browse
 
 fun Team.launchTba(context: Context) =
         launchUrl(context, "http://www.thebluealliance.com/team/$number".toUri())
@@ -29,7 +29,13 @@ fun launchUrl(context: Context, url: Uri) {
     try {
         intent.launchUrl(context, url)
     } catch (e: ActivityNotFoundException) {
-        context.browse(url.toString())
+        try {
+            val intentCompat = Intent(Intent.ACTION_VIEW)
+            intentCompat.data = Uri.parse(url.toString())
+            context.startActivity(intentCompat)
+        } catch (e: ActivityNotFoundException) {
+            longToast(R.string.error_unknown)
+        }
     }
 }
 

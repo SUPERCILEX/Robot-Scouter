@@ -5,7 +5,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.appindexing.FirebaseUserActions
@@ -25,10 +24,10 @@ import com.supercilex.robotscouter.core.data.model.restoreMetrics
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.animatePopReveal
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import kotlinx.android.synthetic.main.fragment_template_metric_list.*
-import org.jetbrains.anko.design.longSnackbar
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_metric_list),

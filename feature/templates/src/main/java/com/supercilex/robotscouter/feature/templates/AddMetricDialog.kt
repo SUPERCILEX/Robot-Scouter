@@ -8,7 +8,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.dialog_add_metric.*
-import org.jetbrains.anko.find
 
 internal class AddMetricDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
     override val containerView: View by unsafeLazy {
@@ -16,8 +15,9 @@ internal class AddMetricDialog : BottomSheetDialogFragmentBase(), View.OnClickLi
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        BottomSheetBehavior.from(dialog.find(com.google.android.material.R.id.design_bottom_sheet))
-                .state = BottomSheetBehavior.STATE_EXPANDED
+        BottomSheetBehavior.from(
+                dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
+        ).state = BottomSheetBehavior.STATE_EXPANDED
         listOf(addHeader, addCheckBox, addStopwatch, addNote, addCounter, addSpinner).forEach {
             it.setOnClickListener(this)
         }

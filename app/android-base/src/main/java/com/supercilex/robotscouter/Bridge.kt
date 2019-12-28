@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.observe
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
@@ -31,7 +30,10 @@ import com.supercilex.robotscouter.core.ValueSeeker
 import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.data.SingleLiveEvent
 import com.supercilex.robotscouter.core.fastAddOnSuccessListener
+import com.supercilex.robotscouter.core.longToast
+import com.supercilex.robotscouter.core.mainHandler
 import com.supercilex.robotscouter.core.model.Team
+import com.supercilex.robotscouter.core.toast
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.coroutines.CancellationException
@@ -39,10 +41,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.tasks.await
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.toast
 import java.lang.reflect.Modifier
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -52,7 +50,7 @@ import com.google.android.play.core.tasks.Task as PlayTask
 
 private val moduleStatus = MutableLiveData<SplitInstallSessionState?>()
 
-fun Context.home(vararg params: Pair<String, Any?>) = intentFor<HomeActivity>(*params)
+fun Context.home() = Intent(this, HomeActivity::class.java)
 
 internal fun initBridges() {
     TeamListFragmentCompanion()
@@ -288,8 +286,12 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
                 } catch (e: Exception) {
                     val isNetworkError = e is SplitInstallException &&
                             e.errorCode == SplitInstallErrorCode.NETWORK_ERROR
-                    RobotScouter.runOnUiThread {
-                        if (isNetworkError) toast(R.string.no_connection) else toast(R.string.error_unknown)
+                    mainHandler.post {
+                        if (isNetworkError) {
+                            toast(R.string.no_connection)
+                        } else {
+                            toast(R.string.error_unknown)
+                        }
                     }
                     throw if (isNetworkError) CancellationException() else InvocationMarker(e)
                 }
@@ -297,7 +299,7 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
                 existingRequests.first().sessionId()
             }
 
-            RobotScouter.runOnUiThread { longToast(R.string.installing_module) }
+            mainHandler.post { longToast(R.string.installing_module) }
             suspendCoroutine { c: Continuation<T> ->
                 manager.registerListener(object : SplitInstallStateUpdatedListener {
                     override fun onStateUpdate(state: SplitInstallSessionState) {
@@ -323,7 +325,7 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
                         cleanup()
                         val instance = instance
                         if (instance == null) {
-                            RobotScouter.runOnUiThread { toast(R.string.error_unknown) }
+                            mainHandler.post { toast(R.string.error_unknown) }
                             c.resumeWithException(IllegalStateException(
                                     "Module should be installed, but classpath is unavailable."))
                         } else {
@@ -335,7 +337,7 @@ abstract class DownloadableBridgeFinderCompanion<T : DownloadableBridgeCompanion
 
                     private fun failure(e: Exception) {
                         cleanup()
-                        RobotScouter.runOnUiThread { toast(R.string.error_unknown) }
+                        mainHandler.post { toast(R.string.error_unknown) }
                         c.resumeWithException(e)
                     }
 

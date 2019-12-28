@@ -20,12 +20,11 @@ import com.supercilex.robotscouter.core.data.firestoreBatch
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.model.OrderedRemoteModel
 import com.supercilex.robotscouter.core.ui.isItemInRange
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.maxAnimationDuration
 import com.supercilex.robotscouter.core.ui.showKeyboard
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.feature.templates.viewholder.TemplateViewHolder
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
 import java.util.Collections
 import kotlin.math.roundToInt
 import com.supercilex.robotscouter.R as RC
@@ -36,8 +35,9 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
         ItemTouchHelper.START
 ) {
-    private val recyclerView: RecyclerView = rootView.find(RC.id.metricsView)
-    private val appBar: AppBarLayout = (rootView.context as FragmentActivity).find(RC.id.appBar)
+    private val recyclerView: RecyclerView = rootView.findViewById(RC.id.metricsView)
+    private val appBar: AppBarLayout =
+            (rootView.context as FragmentActivity).findViewById(RC.id.appBar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 

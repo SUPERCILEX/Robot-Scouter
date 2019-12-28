@@ -9,7 +9,7 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.observe
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.RecyclerView
@@ -38,9 +38,7 @@ import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
-import com.supercilex.robotscouter.shared.stateViewModels
 import kotlinx.android.synthetic.main.fragment_team_list.*
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
@@ -54,11 +52,15 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
             selectionTracker.selection.map { id -> adapter.snapshots.first { it.id == id } }
         }
 
-    private val holder by stateViewModels<TeamListHolder>()
-    private val tutorialHelper by stateViewModels<TutorialHelper>()
+    private val holder by viewModels<TeamListHolder>()
+    private val tutorialHelper by viewModels<TutorialHelper>()
 
-    private val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
-    private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
+    private val fab by unsafeLazy {
+        requireActivity().findViewById<FloatingActionButton>(RC.id.fab)
+    }
+    private val appBar by unsafeLazy {
+        requireActivity().findViewById<AppBarLayout>(RC.id.appBar)
+    }
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
     private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
         savedSelection = Bundle().apply { it.onSaveInstanceState(this) }

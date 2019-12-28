@@ -23,8 +23,6 @@ dependencies {
     api(Config.Libs.Jetpack.emoji)
     api(Config.Libs.Jetpack.constraint)
     api(Config.Libs.FirebaseUi.firestore)
-    api(Config.Libs.Anko.design)
-    api(Config.Libs.Anko.appCompat)
     api(Config.Libs.Jetpack.rv)
     api(Config.Libs.Jetpack.rvSelection)
 

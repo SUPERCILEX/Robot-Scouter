@@ -1,11 +1,12 @@
 import com.android.build.gradle.BaseExtension
 import org.apache.commons.io.output.TeeOutputStream
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
 import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
 buildscript {
-    Config.run { repositories.deps() }
+    repositories.deps()
 
     dependencies {
         classpath(Config.Plugins.android)
@@ -17,8 +18,8 @@ buildscript {
 }
 
 plugins {
+    `lifecycle-base`
     id("com.supercilex.robotscouter.build")
-    `build-scan`
     Config.Plugins.run { versionChecker }
 }
 
@@ -31,7 +32,7 @@ buildScan {
 }
 
 allprojects {
-    Config.run { repositories.deps() }
+    repositories.deps()
 
     configureGeneral()
     configureKtlint()
@@ -40,10 +41,6 @@ allprojects {
 
 tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
-}
-
-tasks.register<Delete>("clean") {
-    delete("build")
 }
 
 fun Project.configureGeneral() {
@@ -137,6 +134,10 @@ fun Project.configureAndroid() {
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
+        }
+
+        (this as ExtensionAware).configure<KotlinJvmOptions> {
+            jvmTarget = "1.8"
         }
     }
 

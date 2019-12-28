@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_SCOUTS
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATE_ID
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.core.InvocationMarker
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.R
 import com.supercilex.robotscouter.core.data.defaultTemplatesRef
@@ -24,15 +23,16 @@ import com.supercilex.robotscouter.core.data.logAddScout
 import com.supercilex.robotscouter.core.data.logFailures
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.logBreadcrumb
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.model.TemplateType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 import kotlin.math.abs
 
@@ -113,7 +113,7 @@ fun Team.addScout(overrideId: String?, existingScouts: ObservableSnapshotArray<S
             }
         } catch (e: Exception) {
             scoutRef.delete().logFailures("addScout:abort", scoutRef)
-            RobotScouter.runOnUiThread { longToast(R.string.scout_add_template_not_cached_error) }
+            Dispatchers.Main { longToast(R.string.scout_add_template_not_cached_error) }
             throw InvocationMarker(e)
         } ?: return@launch
 

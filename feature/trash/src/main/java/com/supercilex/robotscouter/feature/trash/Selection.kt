@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.ui.ItemDetailsBase
 import com.supercilex.robotscouter.core.ui.ItemDetailsLookupBase
 import com.supercilex.robotscouter.core.ui.ToolbarMenuHelperBase
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 internal class TrashKeyProvider(
@@ -38,7 +37,7 @@ internal class TrashMenuHelper(
         private val fragment: TrashFragment,
         tracker: SelectionTracker<String>
 ) : ToolbarMenuHelperBase<String>(fragment.requireActivity() as AppCompatActivity, tracker) {
-    private val toolbar = fragment.requireActivity().find<Toolbar>(RC.id.toolbar)
+    private val toolbar = fragment.requireActivity().findViewById<Toolbar>(RC.id.toolbar)
     private val defaultNavIcon = toolbar.navigationIcon
 
     private val normalMenuItems = mutableListOf<MenuItem>()

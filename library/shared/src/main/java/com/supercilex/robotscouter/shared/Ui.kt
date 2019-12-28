@@ -18,13 +18,13 @@ import com.supercilex.robotscouter.core.data.cleanup
 import com.supercilex.robotscouter.core.data.nightMode
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.logBreadcrumb
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.shared.client.idpSignOut
 import com.supercilex.robotscouter.shared.client.onSignedIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.longToast
 
 fun initUi() {
     GlobalScope.launch {
@@ -48,8 +48,7 @@ fun initUi() {
                 idpSignOut()
                 onSignedIn()
                 Dispatchers.Main {
-                    RobotScouter.longToast(
-                            "User account deleted due to inactivity. Starting a fresh session.")
+                    longToast("User account deleted due to inactivity. Starting a fresh session.")
                 }
             }
         }

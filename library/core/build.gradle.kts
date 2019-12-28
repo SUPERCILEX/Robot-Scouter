@@ -10,7 +10,6 @@ dependencies {
     api(Config.Libs.Kotlin.jvm)
     api(Config.Libs.Kotlin.coroutinesAndroid)
     api(Config.Libs.Kotlin.coroutinesTasks)
-    api(Config.Libs.Anko.coroutines)
     api(Config.Libs.Firebase.core)
     api(Config.Libs.Firebase.crashlytics)
     api(Config.Libs.Jetpack.core)

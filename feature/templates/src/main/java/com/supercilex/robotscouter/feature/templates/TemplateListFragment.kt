@@ -33,11 +33,10 @@ import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.animateChange
 import com.supercilex.robotscouter.core.ui.isInTabletMode
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_template_list.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
@@ -57,8 +56,12 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
             }
         }
     }
-    val fab by unsafeLazy { requireActivity().find<FloatingActionButton>(RC.id.fab) }
-    private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
+    val fab by unsafeLazy {
+        requireActivity().findViewById<FloatingActionButton>(RC.id.fab)
+    }
+    private val appBar by unsafeLazy {
+        requireActivity().findViewById<AppBarLayout>(RC.id.appBar)
+    }
     private val tabs by LifecycleAwareLazy {
         val tabs = TabLayout(ContextThemeWrapper(
                 requireContext(),
@@ -77,7 +80,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     }
     private val homeDivider by unsafeLazy {
         val activity = requireActivity()
-        if (activity.isInTabletMode()) activity.find<Guideline>(RC.id.guideline) else null
+        if (activity.isInTabletMode()) activity.findViewById<Guideline>(RC.id.guideline) else null
     }
 
     private var savedState: Bundle? = null

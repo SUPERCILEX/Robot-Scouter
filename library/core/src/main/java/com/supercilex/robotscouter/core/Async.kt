@@ -5,8 +5,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.CancellationException
-import org.jetbrains.anko.coroutines.experimental.Ref
-import org.jetbrains.anko.coroutines.experimental.asReference
+import java.lang.ref.WeakReference
+import kotlin.coroutines.intrinsics.intercepted
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 
 fun <T> Task<T>.fastAddOnSuccessListener(
         activity: Activity? = null,
@@ -25,6 +26,8 @@ fun <T> Task<T>.fastAddOnSuccessListener(
     }
 }
 
+fun <T : Any> T.asReference() = Ref(this)
+
 fun <T : LifecycleOwner> T.asLifecycleReference(
         minState: Lifecycle.State = Lifecycle.State.STARTED
 ) = asLifecycleReference(this, minState)
@@ -42,5 +45,16 @@ class LifecycleOwnerRef<out T : Any>(
     suspend operator fun invoke(): T {
         if (!owner().lifecycle.currentState.isAtLeast(minState)) throw CancellationException()
         return obj()
+    }
+}
+
+class Ref<out T : Any> internal constructor(obj: T) {
+    private val weakRef = WeakReference(obj)
+
+    suspend operator fun invoke(): T {
+        return suspendCoroutineUninterceptedOrReturn {
+            it.intercepted()
+            weakRef.get() ?: throw CancellationException()
+        }
     }
 }

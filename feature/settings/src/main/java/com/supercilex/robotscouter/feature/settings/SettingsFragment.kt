@@ -14,7 +14,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.getSystemService
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.net.toUri
-import androidx.lifecycle.observe
+import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroup
 import androidx.preference.PreferenceGroupAdapter
@@ -33,17 +33,16 @@ import com.supercilex.robotscouter.core.data.logLoginEvent
 import com.supercilex.robotscouter.core.data.prefStore
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.fullVersionName
+import com.supercilex.robotscouter.core.toast
 import com.supercilex.robotscouter.core.ui.PreferenceFragmentBase
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
 import com.supercilex.robotscouter.shared.client.startLinkingSignIn
 import com.supercilex.robotscouter.shared.launchUrl
-import com.supercilex.robotscouter.shared.stateViewModels
-import org.jetbrains.anko.support.v4.toast
 import com.supercilex.robotscouter.R as RC
 
 internal class SettingsFragment : PreferenceFragmentBase(),
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
-    private val settingsModel by stateViewModels<SettingsViewModel>()
+    private val settingsModel by viewModels<SettingsViewModel>()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

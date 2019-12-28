@@ -10,8 +10,8 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.observe
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,20 +20,18 @@ import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_DELETION_QUEUE
 import com.supercilex.robotscouter.core.data.model.untrashTeam
 import com.supercilex.robotscouter.core.data.model.untrashTemplate
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.ui.AllChangesSelectionObserver
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
 import com.supercilex.robotscouter.core.ui.animatePopReveal
-import com.supercilex.robotscouter.shared.stateViewModels
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import kotlinx.android.synthetic.main.fragment_trash.*
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
-import org.jetbrains.anko.support.v4.longToast
 import com.supercilex.robotscouter.R as RC
 
 internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnClickListener,
         KeyboardShortcutListener {
-    private val holder by stateViewModels<TrashHolder>()
+    private val holder by viewModels<TrashHolder>()
     private val allItems get() = holder.trashListener.value.orEmpty()
 
     private lateinit var selectionTracker: SelectionTracker<String>
@@ -48,7 +46,7 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         actionEmptyTrash.setOnClickListener(this)
         (activity as AppCompatActivity).apply {
-            setSupportActionBar(find(RC.id.toolbar))
+            setSupportActionBar(findViewById(RC.id.toolbar))
             checkNotNull(supportActionBar).setDisplayHomeAsUpEnabled(true)
         }
 

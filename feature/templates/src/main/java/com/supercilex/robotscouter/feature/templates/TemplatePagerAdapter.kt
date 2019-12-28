@@ -8,14 +8,13 @@ import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.shared.scouting.TabPagerAdapterBase
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 internal open class TemplatePagerAdapter(fragment: Fragment) :
         TabPagerAdapterBase(fragment, templatesRef) {
     override val editTabNameRes = R.string.template_edit_name_title
     override val tabs by fragment.LifecycleAwareLazy {
-        fragment.requireActivity().find<TabLayout>(R.id.tabs)
+        fragment.requireActivity().findViewById<TabLayout>(R.id.tabs)
     } onDestroy {
         it.setupWithViewPager(null)
     }

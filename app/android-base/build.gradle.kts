@@ -73,13 +73,10 @@ play {
     serviceAccountCredentials = creds
     defaultToAppBundles = true
 
+    promoteTrack = "alpha"
+
     resolutionStrategy = "auto"
     outputProcessor { versionNameOverride = "$versionNameOverride.$versionCode" }
-}
-
-// TODO remove when GPP v2.4.0 is shipped
-tasks.matching { it.name.startsWith("publish") }.configureEach {
-    outputs.file(File(rootProject.buildDir, "gpp-hack"))
 }
 
 googleServices { disableVersionCheck = true }
@@ -89,7 +86,7 @@ dependencies {
     implementation(project(":library:shared-scouting"))
 
     implementation(Config.Libs.Jetpack.multidex)
-    implementation(Config.Libs.Jetpack.work)
+    implementation(Config.Libs.Jetpack.work.first())
     implementation(Config.Libs.PlayServices.playCore)
 
     implementation(Config.Libs.Firebase.perf)

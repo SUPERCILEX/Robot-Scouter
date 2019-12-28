@@ -11,7 +11,8 @@ import com.google.firebase.appindexing.builders.Indexables
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.common.FIRESTORE_ACTIVE_TOKENS
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
 import com.supercilex.robotscouter.common.FIRESTORE_PREV_UID
@@ -96,7 +97,7 @@ suspend fun updateOwner(
         prevUid: String?,
         newValue: (DocumentReference) -> Any
 ) = refs.map { ref ->
-    FirebaseFunctions.getInstance()
+    Firebase.functions
             .getHttpsCallable("updateOwners")
             .call(mapOf(
                     FIRESTORE_TOKEN to token,

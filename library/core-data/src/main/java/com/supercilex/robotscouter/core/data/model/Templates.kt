@@ -30,15 +30,16 @@ import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.data.uid
 import com.supercilex.robotscouter.core.data.waitForChange
 import com.supercilex.robotscouter.core.logBreadcrumb
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.TemplateType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.tasks.await
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import java.util.Date
 import kotlin.math.abs
 
@@ -78,7 +79,7 @@ fun addTemplate(type: TemplateType): String {
             defaultRef.get().await()
         } catch (e: Exception) {
             ref.delete().logFailures("addTemplate:delete", ref)
-            RobotScouter.runOnUiThread { longToast(R.string.scout_add_template_not_cached_error) }
+            Dispatchers.Main { longToast(R.string.scout_add_template_not_cached_error) }
 
             logBreadcrumb("addTemplate:getDefaultTemplate: ${defaultRef.path}")
             throw InvocationMarker(e)

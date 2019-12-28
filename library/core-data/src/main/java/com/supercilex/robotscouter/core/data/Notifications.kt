@@ -18,7 +18,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.intentFor
 import java.util.LinkedList
 import java.util.Queue
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -216,10 +215,11 @@ class NotificationIntentForwarder : Activity() {
         private const val KEY_INTENT = "intent"
         private const val KEY_NOTIFICATION_ID = "notification_id"
 
-        fun getCancelIntent(notificationId: Int, forwardedIntent: Intent): Intent =
-                RobotScouter.intentFor<NotificationIntentForwarder>(
-                        KEY_INTENT to forwardedIntent,
-                        KEY_NOTIFICATION_ID to notificationId
-                )
+        fun getCancelIntent(
+                notificationId: Int,
+                forwardedIntent: Intent
+        ): Intent = Intent(RobotScouter, NotificationIntentForwarder::class.java)
+                .putExtra(KEY_INTENT, forwardedIntent)
+                .putExtra(KEY_NOTIFICATION_ID, notificationId)
     }
 }

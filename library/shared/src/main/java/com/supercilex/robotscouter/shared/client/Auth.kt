@@ -55,12 +55,12 @@ private val signInBuilder
 private val signInLock = Mutex()
 
 suspend fun onSignedIn(block: suspend (FirebaseUser) -> Unit = {}) = signInLock.withLock {
-    block(user ?: try {
+    block(checkNotNull(user ?: try {
         AuthUI.getInstance().silentSignIn(RobotScouter, allProviders).await()
     } catch (e: Exception) {
         // Ignore any exceptions since we don't care about credential fetch errors
         FirebaseAuth.getInstance().signInAnonymously().await()
-    }.user)
+    }.user))
 }
 
 fun onSignedInTask() = GlobalScope.async { onSignedIn() }.asTask()
