@@ -2,7 +2,6 @@ package com.supercilex.robotscouter.build.tasks
 
 import child
 import com.google.common.io.Files
-import com.supercilex.robotscouter.build.internal.orNull
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -41,10 +40,10 @@ internal abstract class UpdateTranslations : DefaultTask() {
     }
     @get:OutputFiles
     protected val resourceFiles by lazy {
-        project.subprojects.mapNotNull {
-            it.file("src/main/res/values/strings.xml").orNull()
+        project.subprojects.filter {
+            it.file("src/main/res/values/strings.xml").exists()
         }.map {
-            project.layout.projectDirectory.file("src/main/res/values-$language/strings.xml")
+            it.layout.projectDirectory.file("src/main/res/values-$language/strings.xml")
         }
     }
 
