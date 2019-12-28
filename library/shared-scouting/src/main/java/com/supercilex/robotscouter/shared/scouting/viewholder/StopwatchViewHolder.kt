@@ -80,7 +80,8 @@ open class StopwatchViewHolder(
         cycles.adapter = cyclesAdapter
         GravitySnapHelper(Gravity.START).attachToRecyclerView(cycles)
 
-        cycles.setRecycledViewPool((fragment.parentFragment as RecyclerPoolHolder).recyclerPool)
+        cycles.setRecycledViewPool(
+                (fragment.requireParentFragment() as RecyclerPoolHolder).recyclerPool)
     }
 
     override fun bind() {

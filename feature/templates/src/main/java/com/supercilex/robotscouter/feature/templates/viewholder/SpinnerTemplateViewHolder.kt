@@ -46,7 +46,8 @@ internal class SpinnerTemplateViewHolder(
         newItem.setOnClickListener(this)
 
         items.adapter = itemsAdapter
-        items.setRecycledViewPool((fragment.parentFragment as RecyclerPoolHolder).recyclerPool)
+        items.setRecycledViewPool(
+                (fragment.requireParentFragment() as RecyclerPoolHolder).recyclerPool)
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
         itemTouchHelper.attachToRecyclerView(items)

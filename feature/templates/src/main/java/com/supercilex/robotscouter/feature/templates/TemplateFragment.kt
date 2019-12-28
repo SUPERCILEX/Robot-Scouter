@@ -43,7 +43,7 @@ internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val parent = parentFragment as TemplateListFragment
+        val parent = requireParentFragment() as TemplateListFragment
         val fab = parent.fab
 
         noMetricsHint.animatePopReveal(true)

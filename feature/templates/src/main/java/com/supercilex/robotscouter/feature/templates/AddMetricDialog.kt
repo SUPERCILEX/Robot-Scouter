@@ -24,7 +24,7 @@ internal class AddMetricDialog : BottomSheetDialogFragmentBase(), View.OnClickLi
     }
 
     override fun onClick(v: View) {
-        (parentFragment as View.OnClickListener).onClick(v)
+        (requireParentFragment() as View.OnClickListener).onClick(v)
         dismiss()
     }
 

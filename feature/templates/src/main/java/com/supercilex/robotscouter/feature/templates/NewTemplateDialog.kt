@@ -17,7 +17,7 @@ internal class NewTemplateDialog : DialogFragmentBase(), DialogInterface.OnClick
             .create()
 
     override fun onClick(dialog: DialogInterface, which: Int) {
-        (parentFragment as TemplateListFragment)
+        (requireParentFragment() as TemplateListFragment)
                 .onTemplateCreated(addTemplate(TemplateType.valueOf(which)))
     }
 

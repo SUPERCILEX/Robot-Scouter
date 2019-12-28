@@ -53,7 +53,8 @@ internal class ScoutFragment : MetricListFragment(R.layout.fragment_scout_metric
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        metricsView.setRecycledViewPool((parentFragment as RecyclerPoolHolder).recyclerPool)
+        metricsView.setRecycledViewPool(
+                (requireParentFragment() as RecyclerPoolHolder).recyclerPool)
         metricsView.addOnLayoutChangeListener(this)
 
         emptyScoutHint.show()
@@ -79,10 +80,10 @@ internal class ScoutFragment : MetricListFragment(R.layout.fragment_scout_metric
 
     override fun onOptionsItemSelected(item: MenuItem) = if (item.itemId == R.id.action_delete) {
         team.trashScout(scoutId)
+        val adapter = checkNotNull((requireParentFragment() as ScoutListFragmentBase).pagerAdapter)
         toolbar.longSnackbar(R.string.scout_delete_message, RC.string.undo) {
             team.untrashScout(scoutId)
-            checkNotNull((parentFragment as ScoutListFragmentBase).pagerAdapter)
-                    .currentTabId = scoutId
+            adapter.currentTabId = scoutId
         }
         true
     } else {

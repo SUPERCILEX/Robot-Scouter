@@ -32,7 +32,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
         if (requireDialog().save.isChecked) shouldUploadMediaToTba = isYes
-        (parentFragment as CaptureTeamMediaListener).startCapture(isYes)
+        (requireParentFragment() as CaptureTeamMediaListener).startCapture(isYes)
     }
 
     companion object {

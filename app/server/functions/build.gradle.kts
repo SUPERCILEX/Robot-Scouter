@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":library:common"))
+    implementation(project(":library:common"))
 
     implementation(Config.Libs.Kotlin.js)
     implementation(Config.Libs.Kotlin.coroutinesJs)
