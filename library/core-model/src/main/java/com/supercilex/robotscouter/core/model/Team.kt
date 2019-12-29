@@ -18,7 +18,9 @@ data class Team(
         var number: Long,
 
         @Exclude
+        @get:Keep
         @get:DocumentId
+        @set:Keep
         var id: String,
 
         @Exclude
