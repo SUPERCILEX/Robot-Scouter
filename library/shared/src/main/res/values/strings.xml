@@ -35,8 +35,8 @@
         <item quantity="other">Share teams %s</item>
     </plurals>
     <plurals name="team_share_message">
-        <item quantity="one">You’re invited to edit team %s with me in Robot Scouter!</item>
-        <item quantity="other">You’re invited to edit teams %s with me in Robot Scouter!</item>
+        <item quantity="one">Join me in scouting team %s with Robot Scouter!</item>
+        <item quantity="other">Join me in scouting teams %s with Robot Scouter!</item>
     </plurals>
     <plurals name="team_share_cta">
         <item quantity="one">Import team %s into Robot Scouter</item>

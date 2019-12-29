@@ -90,5 +90,5 @@ dependencies {
     implementation(Config.Libs.PlayServices.playCore)
 
     implementation(Config.Libs.Firebase.perf)
-    implementation(Config.Libs.Firebase.invites)
+    implementation(Config.Libs.Firebase.links)
 }

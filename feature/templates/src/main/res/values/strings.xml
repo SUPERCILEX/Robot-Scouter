@@ -11,9 +11,9 @@
 
     <string name="template_share_title">Share the %s template</string>
     <string name="template_share_message">
-        You’re invited to edit the %s template with me in Robot Scouter!
+        Join me in building the %s template with me in Robot Scouter!
     </string>
-    <string name="template_share_cta">Import the %s scouting template into Robot Scouter</string>
+    <string name="template_share_cta">Import the %s template into Robot Scouter</string>
 
     <string name="template_move_cancelled_rationale">
         Move cancelled: another user updated the template while you were reordering items.

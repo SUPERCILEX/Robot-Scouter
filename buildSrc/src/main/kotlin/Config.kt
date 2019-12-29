@@ -112,7 +112,7 @@ object Config {
             const val config = "com.google.firebase:firebase-config-ktx:19.1.0"
             const val indexing = "com.google.firebase:firebase-appindexing:19.0.0"
             const val messaging = "com.google.firebase:firebase-messaging:20.1.0"
-            const val invites = "com.google.firebase:firebase-invites:17.0.0"
+            const val links = "com.google.firebase:firebase-dynamic-links:19.0.0"
             const val perf = "com.google.firebase:firebase-perf:19.0.4"
 
             const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"

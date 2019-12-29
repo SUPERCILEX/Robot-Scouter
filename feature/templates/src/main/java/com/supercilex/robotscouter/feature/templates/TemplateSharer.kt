@@ -3,9 +3,10 @@ package com.supercilex.robotscouter.feature.templates
 import android.content.Intent
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import com.google.android.gms.appinvite.AppInviteInvitation
 import com.google.firebase.appindexing.Action
 import com.google.firebase.appindexing.FirebaseUserActions
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.asLifecycleReference
@@ -16,11 +17,13 @@ import com.supercilex.robotscouter.core.data.logShareTemplate
 import com.supercilex.robotscouter.core.data.model.shareTemplates
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.isOffline
+import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.ui.longSnackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import com.supercilex.robotscouter.R as RC
 
 internal class TemplateSharer private constructor(
@@ -31,44 +34,54 @@ internal class TemplateSharer private constructor(
     init {
         val fragmentRef = fragment.asLifecycleReference(fragment.viewLifecycleOwner)
         GlobalScope.launch(Dispatchers.Main) {
-            val intent = try {
-                Dispatchers.Default { generateIntent(templateId, templateName) }
+            try {
+                val intent = Dispatchers.Default { generateIntent(templateId, templateName) }
+                fragmentRef().startActivityForResult(intent, RC_SHARE)
             } catch (e: Exception) {
                 CrashLogger.onFailure(e)
                 fragmentRef().requireView().longSnackbar(RC.string.error_unknown)
                 return@launch
             }
-            fragmentRef().startActivityForResult(intent, RC_SHARE)
         }
     }
 
     private suspend fun generateIntent(templateId: String, templateName: String): Intent {
-        // Called first to skip token generation if task failed
-        val htmlTemplate = loadFile(FILE_NAME)
         val token = listOf(templatesRef.document(templateId)).shareTemplates()
 
-        return getInvitationIntent(
-                getTemplateLink(templateId, token),
-                templateName,
-                htmlTemplate.format(RobotScouter.getString(
-                        R.string.template_share_cta, templateName))
-        )
+        return getInvitationIntent(getTemplateLink(templateId, token), templateName)
     }
 
-    private fun getInvitationIntent(deepLink: String, templateName: String, html: String) =
-            AppInviteInvitation.IntentBuilder(RobotScouter.getString(
-                    R.string.template_share_title, templateName))
-                    .setMessage(RobotScouter.getString(
-                            R.string.template_share_message, templateName))
-                    .setDeepLink(deepLink.toUri())
-                    .setEmailSubject(RobotScouter.getString(
-                            R.string.template_share_cta, templateName))
-                    .setEmailHtmlContent(html)
-                    .build()
+    private suspend fun getInvitationIntent(deepLink: String, templateName: String): Intent {
+        val cta = RobotScouter.getString(R.string.template_share_cta, templateName)
+        val message = RobotScouter.getString(R.string.template_share_message, templateName)
+        val link = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(deepLink.toUri())
+                .setDomainUriPrefix("https://robotscouter.page.link")
+                .setSocialMetaTagParameters(
+                        DynamicLink.SocialMetaTagParameters.Builder()
+                                .setTitle(cta)
+                                .setDescription(message)
+                                .build()
+                )
+                .buildShortDynamicLink()
+                .await()
+        // TODO https://github.com/firebase/firebase-android-sdk/pull/1084
+        @Suppress("UselessCallOnNotNull")
+        if (link.warnings.orEmpty().isNotEmpty()) {
+            val warnings = link.warnings.joinToString { it.message.toString() }
+            logBreadcrumb("Dynamic link warnings: $warnings")
+        }
+
+        val shareIntent = Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_SUBJECT, cta)
+                .putExtra(Intent.EXTRA_TEXT, message + "\n\n" + link.shortLink)
+        return Intent.createChooser(shareIntent, RobotScouter.getString(
+                R.string.template_share_title, templateName))
+    }
 
     companion object {
         private const val RC_SHARE = 975
-        private const val FILE_NAME = "share_template_template.html"
 
         /**
          * @return true if a share intent was launched, false otherwise
