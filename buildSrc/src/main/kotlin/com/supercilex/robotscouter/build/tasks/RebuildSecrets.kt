@@ -4,7 +4,6 @@ import com.supercilex.robotscouter.build.internal.secrets
 import org.ajoberstar.grgit.Grgit
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
@@ -48,7 +47,6 @@ internal abstract class RebuildSecrets : DefaultTask() {
     }
 
     abstract class SecretsCreator @Inject constructor(
-            private val fileOps: FileSystemOperations,
             private val execOps: ExecOperations
     ) : WorkAction<SecretsCreator.Params> {
         override fun execute() {
@@ -72,8 +70,6 @@ internal abstract class RebuildSecrets : DefaultTask() {
             }.use {
                 it.add { patterns = setOf(output.name) }
             }
-
-            fileOps.delete { delete(rawSecrets) }
         }
 
         interface Params : WorkParameters {

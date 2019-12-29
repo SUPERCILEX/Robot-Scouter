@@ -80,7 +80,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     }
     private val homeDivider: Guideline? by unsafeLazy {
         val activity = requireActivity()
-        if (activity.isInTabletMode()) activity.findViewById(RC.id.guideline) else null
+        if (activity.isInTabletMode()) activity.findViewById<Guideline>(RC.id.guideline) else null
     }
 
     private var savedState: Bundle? = null
