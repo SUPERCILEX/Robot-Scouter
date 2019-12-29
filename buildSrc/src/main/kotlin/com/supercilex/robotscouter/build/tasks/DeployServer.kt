@@ -40,20 +40,22 @@ internal abstract class DeployServer : DefaultTask() {
     protected val transpiledJs = project.layout.buildDirectory
             .file("classes/kotlin/main/functions.js")
     @get:OutputFile
-    protected val targetJs = project.layout.projectDirectory.file("index.js")
+    protected val targetJs = project.layout.projectDirectory.file("upload/index.js")
 
     init {
-        inputs.file(project.file("package-lock.json"))
+        inputs.file(project.file("upload/package-lock.json"))
     }
 
     @TaskAction
     fun deploy() {
-        for (file in project.configurations.getByName("compile")) {
+        project.configurations.getByName("compileClasspath").filter {
+            it.absolutePath.contains(project.rootDir.absolutePath)
+        }.forEach { file ->
             project.copy {
                 includeEmptyDirs = false
 
                 from(project.zipTree(file.absolutePath))
-                into("common")
+                into("upload/common")
                 include { it.name == "common.js" }
                 rename("common.js", "index.js")
             }
@@ -61,7 +63,7 @@ internal abstract class DeployServer : DefaultTask() {
         transpiledJs.get().asFile.copyTo(targetJs.asFile, true)
 
         project.serviceOf<WorkerExecutor>().noIsolation().submit(Deployer::class) {
-            functionsDir.set(project.projectDir)
+            functionsDir.set(project.layout.projectDirectory.dir("upload"))
             serverDir.set(project.rootProject.child("server").projectDir)
             onlyFlag.set(only)
             updateTemplatesFlag.set(updateTemplates)
