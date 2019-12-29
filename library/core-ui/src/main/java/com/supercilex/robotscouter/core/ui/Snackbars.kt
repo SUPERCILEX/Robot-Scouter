@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE", "unused")
 
 package com.supercilex.robotscouter.core.ui
 
@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
  *
  * @param message the message text resource.
  */
-inline fun View.snackbar(@StringRes message: Int) = Snackbar
+inline fun View.snackbar(@StringRes message: Int): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_SHORT)
         .apply { show() }
 
@@ -20,7 +20,7 @@ inline fun View.snackbar(@StringRes message: Int) = Snackbar
  *
  * @param message the message text resource.
  */
-inline fun View.longSnackbar(@StringRes message: Int) = Snackbar
+inline fun View.longSnackbar(@StringRes message: Int): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_LONG)
         .apply { show() }
 
@@ -29,7 +29,7 @@ inline fun View.longSnackbar(@StringRes message: Int) = Snackbar
  *
  * @param message the message text resource.
  */
-inline fun View.indefiniteSnackbar(@StringRes message: Int) = Snackbar
+inline fun View.indefiniteSnackbar(@StringRes message: Int): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_INDEFINITE)
         .apply { show() }
 
@@ -38,7 +38,7 @@ inline fun View.indefiniteSnackbar(@StringRes message: Int) = Snackbar
  *
  * @param message the message text.
  */
-inline fun View.snackbar(message: CharSequence) = Snackbar
+inline fun View.snackbar(message: CharSequence): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_SHORT)
         .apply { show() }
 
@@ -47,7 +47,7 @@ inline fun View.snackbar(message: CharSequence) = Snackbar
  *
  * @param message the message text.
  */
-inline fun View.longSnackbar(message: CharSequence) = Snackbar
+inline fun View.longSnackbar(message: CharSequence): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_LONG)
         .apply { show() }
 
@@ -56,7 +56,7 @@ inline fun View.longSnackbar(message: CharSequence) = Snackbar
  *
  * @param message the message text.
  */
-inline fun View.indefiniteSnackbar(message: CharSequence) = Snackbar
+inline fun View.indefiniteSnackbar(message: CharSequence): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_INDEFINITE)
         .apply { show() }
 
@@ -68,7 +68,7 @@ inline fun View.indefiniteSnackbar(message: CharSequence) = Snackbar
 inline fun View.snackbar(
         message: Int, @StringRes actionText: Int,
         noinline action: (View) -> Unit
-) = Snackbar
+): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_SHORT)
         .setAction(actionText, action)
         .apply { show() }
@@ -78,22 +78,28 @@ inline fun View.snackbar(
  *
  * @param message the message text resource.
  */
-inline fun View.longSnackbar(@StringRes message: Int, @StringRes actionText: Int, noinline action: (View) -> Unit) =
-        Snackbar
-                .make(this, message, Snackbar.LENGTH_LONG)
-                .setAction(actionText, action)
-                .apply { show() }
+inline fun View.longSnackbar(
+        @StringRes message: Int,
+        @StringRes actionText: Int,
+        noinline action: (View) -> Unit
+): Snackbar = Snackbar
+        .make(this, message, Snackbar.LENGTH_LONG)
+        .setAction(actionText, action)
+        .apply { show() }
 
 /**
  * Display Snackbar with the [Snackbar.LENGTH_INDEFINITE] duration.
  *
  * @param message the message text resource.
  */
-inline fun View.indefiniteSnackbar(@StringRes message: Int, @StringRes actionText: Int, noinline action: (View) -> Unit) =
-        Snackbar
-                .make(this, message, Snackbar.LENGTH_INDEFINITE)
-                .setAction(actionText, action)
-                .apply { show() }
+inline fun View.indefiniteSnackbar(
+        @StringRes message: Int,
+        @StringRes actionText: Int,
+        noinline action: (View) -> Unit
+): Snackbar = Snackbar
+        .make(this, message, Snackbar.LENGTH_INDEFINITE)
+        .setAction(actionText, action)
+        .apply { show() }
 
 /**
  * Display the Snackbar with the [Snackbar.LENGTH_SHORT] duration.
@@ -104,7 +110,7 @@ inline fun View.snackbar(
         message: CharSequence,
         actionText: CharSequence,
         noinline action: (View) -> Unit
-) = Snackbar
+): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_SHORT)
         .setAction(actionText, action)
         .apply { show() }
@@ -118,7 +124,7 @@ inline fun View.longSnackbar(
         message: CharSequence,
         actionText: CharSequence,
         noinline action: (View) -> Unit
-) = Snackbar
+): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_LONG)
         .setAction(actionText, action)
         .apply { show() }
@@ -132,7 +138,7 @@ inline fun View.indefiniteSnackbar(
         message: CharSequence,
         actionText: CharSequence,
         noinline action: (View) -> Unit
-) = Snackbar
+): Snackbar = Snackbar
         .make(this, message, Snackbar.LENGTH_INDEFINITE)
         .setAction(actionText, action)
         .apply { show() }

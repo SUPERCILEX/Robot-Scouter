@@ -11,9 +11,7 @@ import android.widget.Toast
  */
 inline fun toast(message: Int): Toast = Toast
         .makeText(RobotScouter, message, Toast.LENGTH_SHORT)
-        .apply {
-            show()
-        }
+        .apply { show() }
 
 /**
  * Display the simple Toast message with the [Toast.LENGTH_SHORT] duration.
@@ -22,9 +20,7 @@ inline fun toast(message: Int): Toast = Toast
  */
 inline fun toast(message: CharSequence): Toast = Toast
         .makeText(RobotScouter, message, Toast.LENGTH_SHORT)
-        .apply {
-            show()
-        }
+        .apply { show() }
 
 /**
  * Display the simple Toast message with the [Toast.LENGTH_LONG] duration.
@@ -33,9 +29,7 @@ inline fun toast(message: CharSequence): Toast = Toast
  */
 inline fun longToast(message: Int): Toast = Toast
         .makeText(RobotScouter, message, Toast.LENGTH_LONG)
-        .apply {
-            show()
-        }
+        .apply { show() }
 
 /**
  * Display the simple Toast message with the [Toast.LENGTH_LONG] duration.
@@ -44,6 +38,4 @@ inline fun longToast(message: Int): Toast = Toast
  */
 inline fun longToast(message: CharSequence): Toast = Toast
         .makeText(RobotScouter, message, Toast.LENGTH_LONG)
-        .apply {
-            show()
-        }
+        .apply { show() }
