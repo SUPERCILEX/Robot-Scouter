@@ -8,10 +8,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.SavedStateViewModelFactory
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
-import androidx.lifecycle.observe
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -53,8 +52,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         View.OnClickListener, View.OnFocusChangeListener {
     private lateinit var team: Team
 
-    private val permHandler by stateViewModels<PermissionRequestHandler>()
-    private val mediaCreator by stateViewModels<TeamMediaCreator>()
+    private val permHandler by viewModels<PermissionRequestHandler>()
+    private val mediaCreator by viewModels<TeamMediaCreator>()
 
     override val containerView by unsafeLazy {
         View.inflate(context, R.layout.dialog_team_details, null) as ViewGroup
@@ -72,7 +71,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             team.copyMediaInfo(it)
             updateUi()
         }
-        ViewModelProviders.of(this, SavedStateViewModelFactory(this)).get<TeamHolder>().apply {
+        ViewModelProvider(this).get<TeamHolder>().apply {
             init(team)
             var firstOverwrite = savedInstanceState == null
             teamListener.observe(this@TeamDetailsDialog) {

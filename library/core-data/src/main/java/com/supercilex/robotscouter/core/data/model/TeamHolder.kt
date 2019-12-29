@@ -17,7 +17,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class TeamHolder(state: SavedStateHandle) : ViewModelBase<Team>(state), ChangeEventListenerBase {
-    private val _teamListener = state.getLiveData<Team?>(TEAM_KEY)
+    private val _teamListener = state.getLiveData<Team?>("$TEAM_KEY:holder")
     val teamListener = _teamListener.distinctUntilChanged()
 
     override fun onCreate(args: Team) {

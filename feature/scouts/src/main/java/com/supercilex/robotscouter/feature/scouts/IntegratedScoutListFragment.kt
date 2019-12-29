@@ -24,14 +24,17 @@ import com.supercilex.robotscouter.core.ui.colorPrimaryDark
 import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
-import org.jetbrains.anko.find
 import java.util.concurrent.TimeUnit
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
 internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
-    private val appBar by unsafeLazy { requireActivity().find<AppBarLayout>(RC.id.appBar) }
-    private val drawer by unsafeLazy { requireActivity().find<DrawerLayout>(RC.id.drawerLayout) }
+    private val appBar by unsafeLazy {
+        requireActivity().findViewById<AppBarLayout>(RC.id.appBar)
+    }
+    private val drawer by unsafeLazy {
+        requireActivity().findViewById<DrawerLayout>(RC.id.drawerLayout)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +54,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             savedInstanceState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.activity_scout_list, container, false)
-        root.find<FrameLayout>(R.id.scoutList).addView(
+        root.findViewById<FrameLayout>(R.id.scoutList).addView(
                 inflater.inflate(R.layout.fragment_scout_list, container, false))
         return root
     }
@@ -91,7 +94,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
         val activity = activity as AppCompatActivity
         viewHolder.toolbar.apply {
             navigationIcon = checkNotNull(activity.drawerToggleDelegate).themeUpIndicator
-            setNavigationOnClickListener { requireFragmentManager().popBackStack() }
+            setNavigationOnClickListener { parentFragmentManager.popBackStack() }
             setOnMenuItemClickListener {
                 forceRecursiveMenuItemSelection(it) || onOptionsItemSelected(it)
             }
@@ -130,7 +133,7 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     override fun onTeamDeleted() = removeFragment()
 
     private fun removeFragment() {
-        requireFragmentManager().popBackStack()
+        parentFragmentManager.popBackStack()
     }
 
     private fun updateStatusBarColor(@ColorInt color: Int) {

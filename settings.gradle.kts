@@ -1,3 +1,7 @@
+plugins {
+    `gradle-enterprise`
+}
+
 include(
         ":app:android-base", "app:server:functions",
 

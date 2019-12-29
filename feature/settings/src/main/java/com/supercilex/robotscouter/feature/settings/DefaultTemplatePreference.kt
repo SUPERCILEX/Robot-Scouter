@@ -3,8 +3,7 @@ package com.supercilex.robotscouter.feature.settings
 import android.content.Context
 import android.util.AttributeSet
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.SavedStateViewModelFactory
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.ListPreference
 import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.data.ChangeEventListenerBase
@@ -80,8 +79,7 @@ internal class DefaultTemplatePreference : ListPreference, ChangeEventListenerBa
         }
         holder = uid?.let {
             val activity = context as FragmentActivity
-            ViewModelProviders
-                    .of(activity, SavedStateViewModelFactory(activity))
+            ViewModelProvider(activity)
                     // Ensure our instance is unique since we're mutating the listener
                     .get(javaClass.name + it, ScoutsHolder::class.java)
                     .apply { init { getTemplatesQuery() } }

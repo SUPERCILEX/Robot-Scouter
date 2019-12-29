@@ -10,7 +10,6 @@ import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.viewholder.CheckboxViewHolder
 import kotlinx.android.synthetic.main.scout_template_base_reorder.*
-import org.jetbrains.anko.find
 import com.supercilex.robotscouter.R as RC
 
 internal class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(itemView),
@@ -18,7 +17,7 @@ internal class CheckboxTemplateViewHolder(itemView: View) : CheckboxViewHolder(i
     override val reorderView: ImageView by unsafeLazy { reorder }
     override val nameEditor = name as EditText
 
-    private val checkBox = containerView.find<CheckBox>(RC.id.checkBox)
+    private val checkBox: CheckBox = containerView.findViewById(RC.id.checkBox)
 
     init {
         init()

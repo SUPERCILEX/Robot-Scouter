@@ -18,7 +18,6 @@ import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.prefs
 import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.ui.addViewLifecycleObserver
-import org.jetbrains.anko.find
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import com.supercilex.robotscouter.R as RC
 
@@ -29,7 +28,7 @@ internal fun showAddTeamTutorial(helper: TutorialHelper, owner: Fragment) {
             val activity = owner.requireActivity()
             MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial)
                     .setTarget(RC.id.fab)
-                    .setClipToView(activity.find(RC.id.root))
+                    .setClipToView(activity.findViewById(RC.id.root))
                     .setPrimaryText(R.string.tutorial_create_first_team_title)
                     .setAutoDismiss(false)
                     .setPromptStateChangeListener { _, state ->
@@ -54,7 +53,7 @@ internal fun showSignInTutorial(helper: TutorialHelper, owner: Fragment) {
                 val activity = owner.requireActivity()
                 MaterialTapTargetPrompt.Builder(activity, R.style.RobotScouter_Tutorial_Menu)
                         .setTarget(RC.id.action_sign_in)
-                        .setClipToView(activity.find(RC.id.root))
+                        .setClipToView(activity.findViewById(RC.id.root))
                         .setPrimaryText(R.string.tutorial_sign_in_title)
                         .setSecondaryText(R.string.tutorial_sign_in_rationale)
                         .setPromptStateChangeListener { _, state ->
@@ -102,7 +101,7 @@ internal class TutorialHelper(state: SavedStateHandle) : SimpleViewModelBase(sta
         override fun onDataChanged() {
             _hasShownSignInTutorial.value =
                     prefs.getPrefOrDefault(FIRESTORE_PREF_HAS_SHOWN_SIGN_IN_TUTORIAL, false) ||
-                    teams.size < MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL
+                            teams.size < MIN_TEAMS_TO_SHOW_SIGN_IN_TUTORIAL
         }
     }
 

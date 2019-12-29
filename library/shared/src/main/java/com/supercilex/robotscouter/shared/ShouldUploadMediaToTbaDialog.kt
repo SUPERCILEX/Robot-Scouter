@@ -12,7 +12,6 @@ import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import kotlinx.android.synthetic.main.dialog_should_upload_media.*
-import org.jetbrains.anko.find
 
 class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnClickListener {
     override fun onCreateDialog(savedInstanceState: Bundle?) = AlertDialog.Builder(requireContext())
@@ -25,7 +24,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
 
     override fun onStart() {
         super.onStart()
-        requireDialog().find<TextView>(android.R.id.message).movementMethod =
+        requireDialog().findViewById<TextView>(android.R.id.message).movementMethod =
                 LinkMovementMethod.getInstance()
     }
 
@@ -33,7 +32,7 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
         if (requireDialog().save.isChecked) shouldUploadMediaToTba = isYes
-        (parentFragment as CaptureTeamMediaListener).startCapture(isYes)
+        (requireParentFragment() as CaptureTeamMediaListener).startCapture(isYes)
     }
 
     companion object {

@@ -18,15 +18,14 @@ import com.supercilex.robotscouter.core.data.isFullUser
 import com.supercilex.robotscouter.core.data.isSignedIn
 import com.supercilex.robotscouter.core.data.logLoginEvent
 import com.supercilex.robotscouter.core.ui.OnActivityResult
+import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.shared.client.RC_SIGN_IN
 import com.supercilex.robotscouter.shared.client.onSignedInTask
 import com.supercilex.robotscouter.shared.client.startSignIn
-import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.find
 
 internal class AuthHelper(private val activity: AppCompatActivity) : (View) -> Unit,
         DefaultLifecycleObserver, FirebaseAuth.AuthStateListener, OnActivityResult {
-    private val rootView: View = activity.find(R.id.root)
+    private val rootView: View = activity.findViewById(R.id.root)
 
     private var signInMenuItem: MenuItem? = null
 

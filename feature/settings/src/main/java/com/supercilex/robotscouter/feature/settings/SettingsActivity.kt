@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.feature.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.FragmentTransaction
@@ -11,7 +12,6 @@ import com.supercilex.robotscouter.SettingsActivityCompanion
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.shared.handleUpNavigation
-import org.jetbrains.anko.intentFor
 
 @Bridge
 class SettingsActivity : ActivityBase(),
@@ -58,6 +58,6 @@ class SettingsActivity : ActivityBase(),
     }
 
     companion object : SettingsActivityCompanion {
-        override fun createIntent() = RobotScouter.intentFor<SettingsActivity>()
+        override fun createIntent() = Intent(RobotScouter, SettingsActivity::class.java)
     }
 }

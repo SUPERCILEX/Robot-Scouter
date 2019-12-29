@@ -6,7 +6,7 @@ import com.supercilex.robotscouter.shared.TemplateSelectorDialog
 internal class ScoutTemplateSelectorDialog : TemplateSelectorDialog() {
     override fun onItemSelected(id: String) {
         super.onItemSelected(id)
-        (parentFragment as TemplateSelectionListener).onTemplateSelected(id)
+        (requireParentFragment() as TemplateSelectionListener).onTemplateSelected(id)
     }
 
     companion object {

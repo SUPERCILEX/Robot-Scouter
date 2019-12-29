@@ -10,8 +10,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.supercilex.robotscouter.core.RobotScouter
-import org.jetbrains.anko.configuration
-import org.jetbrains.anko.landscape
 
 val colorPrimary by lazy {
     ContextCompat.getColor(RobotScouter, R.color.colorPrimary)
@@ -25,8 +23,9 @@ private val LATEST_APK_URI =
         "https://github.com/SUPERCILEX/app-version-history/blob/master/Robot-Scouter/app-release.aab".toUri()
 
 fun Context.isInTabletMode(): Boolean {
-    val size: Int = configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
-    return size == Configuration.SCREENLAYOUT_SIZE_LARGE && configuration.landscape ||
+    val size: Int = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+    return size == Configuration.SCREENLAYOUT_SIZE_LARGE &&
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
             size > Configuration.SCREENLAYOUT_SIZE_LARGE
 }
 

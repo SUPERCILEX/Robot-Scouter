@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.viewModelScope
 import com.supercilex.robotscouter.core.CrashLogger
@@ -24,14 +24,13 @@ import com.supercilex.robotscouter.core.data.logTakeMedia
 import com.supercilex.robotscouter.core.data.mediaFolder
 import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.unhide
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 import java.util.Calendar
@@ -62,10 +61,10 @@ class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), On
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(RobotScouter.packageManager) == null) {
-            RobotScouter.longToast(R.string.error_unknown)
+            longToast(R.string.error_unknown)
             return
         }
-        val handler = ViewModelProviders.of(host).get<PermissionRequestHandler>()
+        val handler = ViewModelProvider(host).get<PermissionRequestHandler>()
         if (!EasyPermissions.hasPermissions(RobotScouter, *handler.perms.toTypedArray())) {
             handler.requestPerms(host, R.string.media_write_storage_rationale)
             return
@@ -75,16 +74,16 @@ class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), On
 
         val ref = host.asLifecycleReference()
         viewModelScope.launch {
-            val file = Dispatchers.IO {
-                try {
+            val file = try {
+                Dispatchers.IO {
                     File(mediaFolder, "${team}_${System.currentTimeMillis()}.jpg")
                             .hidden()
                             .safeCreateNewFile()
-                } catch (e: Exception) {
-                    CrashLogger.onFailure(e)
-                    RobotScouter.runOnUiThread { longToast(e.toString()) }
-                    null
                 }
+            } catch (e: Exception) {
+                CrashLogger.onFailure(e)
+                longToast(e.toString())
+                null
             } ?: return@launch
 
             photoFile = file
@@ -93,7 +92,7 @@ class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), On
             ref().startActivityForResult(takePictureIntent, TAKE_PHOTO_RC)
 
             if (shouldUpload == true) {
-                RobotScouter.longToast(RobotScouter.getText(R.string.media_upload_reminder).trim())
+                longToast(RobotScouter.getText(R.string.media_upload_reminder).trim())
                         .setGravity(Gravity.CENTER, 0, 0)
             }
         }
@@ -107,7 +106,7 @@ class TeamMediaCreator(state: SavedStateHandle) : SimpleViewModelBase(state), On
             viewModelScope.launch {
                 val contentUri = Dispatchers.IO { photoFile.unhide()?.toUri() }
                 if (contentUri == null) {
-                    RobotScouter.longToast(R.string.error_unknown)
+                    longToast(R.string.error_unknown)
                     return@launch
                 }
 

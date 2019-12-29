@@ -2,6 +2,9 @@ package com.supercilex.robotscouter.build.tasks
 
 import org.ajoberstar.grgit.Grgit
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFiles
@@ -10,34 +13,33 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.submit
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import java.io.File
-import java.io.Serializable
-import javax.inject.Inject
 
 @CacheableTask
-open class GenerateChangelog : DefaultTask() {
+internal abstract class GenerateChangelog : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
-    protected val commitRange = project.rootProject.file("CIRCLE_COMPARE_URL.txt")
+    protected val baseCommit = project.rootProject.layout.projectDirectory
+            .file("BASE_COMPARE_COMMIT.txt")
     @get:OutputFiles
-    protected val files: List<File>
-
-    init {
-        val base = project.file("src/main/play/release-notes/en-US")
-        files = listOf(File(base, "internal.txt"), File(base, "alpha.txt"))
+    protected val files by lazy {
+        val base = project.layout.projectDirectory.dir("src/main/play/release-notes/en-US")
+        listOf(base.file("internal.txt"), base.file("alpha.txt"))
     }
 
     @TaskAction
     fun generateChangelog() {
-        project.serviceOf<WorkerExecutor>().submit(Generator::class) {
-            params(Generator.Params(commitRange, files))
+        project.serviceOf<WorkerExecutor>().noIsolation().submit(Generator::class) {
+            baseCommitFile.set(baseCommit)
+            changelogFiles.set(files)
         }
     }
 
-    private class Generator @Inject constructor(private val p: Params) : Runnable {
-        override fun run() {
-            val base = p.commitRange.readText().substringBefore(".")
+    abstract class Generator : WorkAction<Generator.Params> {
+        override fun execute() {
+            val base = parameters.baseCommitFile.get().asFile.readText().take(20)
 
             Grgit.open().use {
                 val recentCommits = it.log {
@@ -51,7 +53,9 @@ open class GenerateChangelog : DefaultTask() {
                         .map { "- ${it.shortMessage}" }
                         .generate()
 
-                for (output in p.files) output.writeText(changelog)
+                for (output in parameters.changelogFiles.get()) {
+                    output.asFile.writeText(changelog)
+                }
             }
         }
 
@@ -67,6 +71,9 @@ open class GenerateChangelog : DefaultTask() {
             return if (candidate.length > 500) subList(1, size).generate() else candidate
         }
 
-        data class Params(val commitRange: File, val files: List<File>) : Serializable
+        interface Params : WorkParameters {
+            val baseCommitFile: RegularFileProperty
+            val changelogFiles: ListProperty<RegularFile>
+        }
     }
 }

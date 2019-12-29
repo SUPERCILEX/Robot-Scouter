@@ -12,12 +12,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskCollection
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withGroovyBuilder
 
-class RobotScouterBuildPlugin : Plugin<Project> {
+internal class RobotScouterBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         check(project === project.rootProject) { "Cannot apply build plugin to subprojects." }
 
@@ -32,6 +30,8 @@ class RobotScouterBuildPlugin : Plugin<Project> {
         project.tasks.register<UpdateTranslations>("updateTranslations") {
             group = "build setup"
             description = "Overwrites existing translations with new ones."
+
+            translationDir.set(project.file("tmp-translations"))
         }
 
         val presubmit = project.tasks.register("presubmit")
@@ -87,18 +87,6 @@ class RobotScouterBuildPlugin : Plugin<Project> {
             val promote = deepFind {
                 startsWith("promote") && endsWith("Artifact")
             }.mustRunAfter(publish)
-
-            if (isRelease) {
-                for (collection in promote) {
-                    collection.configureEach {
-                        doFirst {
-                            project.child("android-base").extensions["play"].withGroovyBuilder {
-                                invokeMethod("setTrack", "alpha")
-                            }
-                        }
-                    }
-                }
-            }
 
             deployAndroid {
                 group = "publishing"

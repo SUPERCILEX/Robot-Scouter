@@ -3,6 +3,7 @@ package com.supercilex.robotscouter.core.model
 import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.annotation.RestrictTo
+import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.Exclude
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -17,7 +18,7 @@ data class Team(
         var number: Long,
 
         @Exclude
-        @get:Exclude
+        @get:DocumentId
         var id: String,
 
         @Exclude

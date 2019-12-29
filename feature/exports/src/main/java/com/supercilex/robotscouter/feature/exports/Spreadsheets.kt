@@ -3,8 +3,9 @@ package com.supercilex.robotscouter.feature.exports
 import android.graphics.Paint
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.isLowRamDevice
+import com.supercilex.robotscouter.core.longToast
+import com.supercilex.robotscouter.core.mainHandler
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.model.Team
 import org.apache.poi.ss.usermodel.Cell
@@ -15,8 +16,6 @@ import org.apache.poi.ss.usermodel.Drawing
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.util.WorkbookUtil
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.runOnUiThread
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle
 
 private const val MAX_SHEET_LENGTH = 31
@@ -94,4 +93,4 @@ internal fun Drawing<*>.createChartAnchor(
 ): ClientAnchor =
         createAnchor(0, 0, 0, 0, startColumn, startRow, endColumn, startRow + endColumn / 2)
 
-internal fun showToast(message: String) = RobotScouter.runOnUiThread { longToast(message) }
+internal fun showToast(message: String) = mainHandler.post { longToast(message) }

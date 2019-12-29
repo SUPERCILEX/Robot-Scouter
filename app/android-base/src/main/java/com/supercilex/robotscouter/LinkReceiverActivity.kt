@@ -19,6 +19,7 @@ import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.data.updateOwner
 import com.supercilex.robotscouter.core.logBreadcrumb
+import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
 import com.supercilex.robotscouter.shared.client.onSignedIn
@@ -27,8 +28,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.longToast
 import java.util.Date
 
 @SuppressLint("GoogleAppIndexingApiWarning")
@@ -79,7 +78,7 @@ internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
                     id
             ))
 
-            startActivity(intentFor<HomeActivity>(SCOUT_ARGS_KEY to data)
+            startActivity(home().putExtra(SCOUT_ARGS_KEY, data)
                                   .addNewDocumentFlags()
                                   .setAction(ACTION_FROM_DEEP_LINK))
         } else {
@@ -95,15 +94,14 @@ internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
 
         if (token != null) updateOwner(refs, token, null) { Date() }
 
-        startActivity(intentFor<HomeActivity>(TEMPLATE_ARGS_KEY to getTabIdBundle(refs.single().id))
+        startActivity(home()
+                              .putExtra(TEMPLATE_ARGS_KEY, getTabIdBundle(refs.single().id))
                               .addNewDocumentFlags()
                               .setAction(ACTION_FROM_DEEP_LINK))
     }
 
     private fun startHomeActivityNoArgs() =
-            startActivity(intentFor<HomeActivity>()
-                                  .addNewDocumentFlags()
-                                  .setAction(ACTION_FROM_DEEP_LINK))
+            startActivity(home().addNewDocumentFlags().setAction(ACTION_FROM_DEEP_LINK))
 
     private fun showErrorAndContinue() {
         startHomeActivityNoArgs()

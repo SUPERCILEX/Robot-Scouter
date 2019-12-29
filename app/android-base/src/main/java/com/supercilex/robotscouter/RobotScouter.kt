@@ -19,11 +19,11 @@ import com.supercilex.robotscouter.core.data.initIo
 import com.supercilex.robotscouter.core.data.initNotifications
 import com.supercilex.robotscouter.core.data.initPrefs
 import com.supercilex.robotscouter.core.data.initRemoteConfig
+import com.supercilex.robotscouter.core.toast
 import com.supercilex.robotscouter.shared.initUi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.toast
 
 internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
     override fun attachBaseContext(base: Context) {
@@ -70,11 +70,16 @@ internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
             StrictMode.setThreadPolicy(
                     StrictMode.ThreadPolicy.Builder()
                             .detectAll()
-                            .penaltyDeath()
+                            .penaltyFlashScreen()
                             .penaltyLog()
                             .build()
             )
         }
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Glide.get(this).onTrimMemory(level)
     }
 
     override fun getWorkManagerConfiguration() = Configuration.Builder().build()
