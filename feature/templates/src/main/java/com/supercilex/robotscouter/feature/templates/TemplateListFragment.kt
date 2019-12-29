@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Guideline
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams
@@ -36,6 +37,7 @@ import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.shared.SharedLifecycleResource
 import kotlinx.android.synthetic.main.fragment_template_list.*
 import com.supercilex.robotscouter.R as RC
 
@@ -56,6 +58,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
             }
         }
     }
+    private val sharedResources by activityViewModels<SharedLifecycleResource>()
     val fab: FloatingActionButton by unsafeLazy {
         requireActivity().findViewById(RC.id.fab)
     }
@@ -95,6 +98,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        sharedResources.onCreate(fab)
         animateContainerMorph(2f / 3)
 
         tabs // Force init
@@ -123,10 +127,9 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
         super.onDestroyView()
         viewPager.adapter = null
         animateContainerMorph(1f / 3)
-        fab.apply {
+        sharedResources.onDestroy(fab) {
             setOnClickListener(null)
             hide()
-            isVisible = false // TODO hack: don't animate
         }
     }
 

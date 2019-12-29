@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import com.supercilex.robotscouter.TeamSelectionListener
 import com.supercilex.robotscouter.core.ValueSeeker
@@ -13,9 +14,11 @@ import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.isInTabletMode
+import com.supercilex.robotscouter.shared.SharedLifecycleResource
 import com.supercilex.robotscouter.R as RC
 
 internal class TabletScoutListFragment : ScoutListFragmentBase() {
+    private val sharedResources by activityViewModels<SharedLifecycleResource>()
     private val noContentHint: View? by ValueSeeker {
         requireActivity().findViewById<View>(RC.id.noTeamSelectedHint)
     }
@@ -46,6 +49,7 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedResources.onCreate(this)
         dataHolder.teamListener.observe(viewLifecycleOwner) { select(it) }
         noContentHint?.animatePopReveal(false)
     }
@@ -66,8 +70,10 @@ internal class TabletScoutListFragment : ScoutListFragmentBase() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        select(null)
-        noContentHint?.animatePopReveal(true)
+        sharedResources.onDestroy(this) {
+            select(null)
+            noContentHint?.animatePopReveal(true)
+        }
     }
 
     override fun onTeamDeleted() = removeFragment()

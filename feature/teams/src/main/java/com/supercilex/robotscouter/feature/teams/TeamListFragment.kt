@@ -7,8 +7,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.addCallback
-import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -37,6 +37,7 @@ import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.shared.SharedLifecycleResource
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import kotlinx.android.synthetic.main.fragment_team_list.*
 import com.supercilex.robotscouter.R as RC
@@ -55,6 +56,7 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
     private val holder by viewModels<TeamListHolder>()
     private val tutorialHelper by viewModels<TutorialHelper>()
 
+    private val sharedResources by activityViewModels<SharedLifecycleResource>()
     private val fab: FloatingActionButton by unsafeLazy {
         requireActivity().findViewById(RC.id.fab)
     }
@@ -79,6 +81,7 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        sharedResources.onCreate(fab)
         fab.setOnClickListener(this)
         fab.show()
         showAddTeamTutorial(tutorialHelper, this)
@@ -148,10 +151,9 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        fab.apply {
+        sharedResources.onDestroy(fab) {
             setOnClickListener(null)
             hide()
-            isVisible = false // TODO hack: don't animate
         }
     }
 
