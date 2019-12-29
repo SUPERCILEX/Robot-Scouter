@@ -7,7 +7,7 @@ import org.gradle.api.file.RegularFile
 internal val isCi = System.getenv("CI") != null
 internal val isMaster = System.getenv("CIRCLE_BRANCH") == "master"
 internal val isPr = System.getenv("CIRCLE_PULL_REQUEST") != null
-internal val isRelease = /*isMaster && !isPr*/true
+internal val isRelease = isMaster && !isPr
 
 internal val Task.secrets: Secrets
     get() {

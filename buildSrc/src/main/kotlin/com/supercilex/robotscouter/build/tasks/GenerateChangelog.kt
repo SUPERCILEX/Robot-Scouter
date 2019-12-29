@@ -21,8 +21,8 @@ import org.gradle.workers.WorkerExecutor
 internal abstract class GenerateChangelog : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
-    protected val commitRange = project.rootProject.layout.projectDirectory
-            .file("CIRCLE_COMPARE_URL.txt")
+    protected val baseCommit = project.rootProject.layout.projectDirectory
+            .file("BASE_COMPARE_COMMIT.txt")
     @get:OutputFiles
     protected val files by lazy {
         val base = project.layout.projectDirectory.dir("src/main/play/release-notes/en-US")
@@ -32,14 +32,14 @@ internal abstract class GenerateChangelog : DefaultTask() {
     @TaskAction
     fun generateChangelog() {
         project.serviceOf<WorkerExecutor>().noIsolation().submit(Generator::class) {
-            commitRangeFile.set(commitRange)
+            baseCommitFile.set(baseCommit)
             changelogFiles.set(files)
         }
     }
 
     abstract class Generator : WorkAction<Generator.Params> {
         override fun execute() {
-            val base = parameters.commitRangeFile.get().asFile.readText().substringBefore(".")
+            val base = parameters.baseCommitFile.get().asFile.readText().take(20)
 
             Grgit.open().use {
                 val recentCommits = it.log {
@@ -72,7 +72,7 @@ internal abstract class GenerateChangelog : DefaultTask() {
         }
 
         interface Params : WorkParameters {
-            val commitRangeFile: RegularFileProperty
+            val baseCommitFile: RegularFileProperty
             val changelogFiles: ListProperty<RegularFile>
         }
     }

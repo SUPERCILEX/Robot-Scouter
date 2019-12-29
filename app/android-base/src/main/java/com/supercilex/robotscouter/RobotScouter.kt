@@ -70,7 +70,7 @@ internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
             StrictMode.setThreadPolicy(
                     StrictMode.ThreadPolicy.Builder()
                             .detectAll()
-                            .penaltyDeath()
+                            .penaltyFlashScreen()
                             .penaltyLog()
                             .build()
             )
