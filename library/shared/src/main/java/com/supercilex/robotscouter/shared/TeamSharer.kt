@@ -85,6 +85,7 @@ class TeamSharer private constructor(
         val link = FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(deepLink.toUri())
                 .setDomainUriPrefix("https://robotscouter.page.link")
+                .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
                 .setSocialMetaTagParameters(
                         DynamicLink.SocialMetaTagParameters.Builder()
                                 .setTitle(cache.shareCta)
