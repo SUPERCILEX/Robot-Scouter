@@ -37,7 +37,7 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:4.0.0-alpha07"
+        const val android = "com.android.tools.build:gradle:4.0.0-alpha09"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:4.3.3"
@@ -70,17 +70,17 @@ object Config {
             const val core = "androidx.core:core-ktx:1.2.0-rc01"
             const val multidex = "androidx.multidex:multidex:2.0.1"
             const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha01"
-            const val fragment = "androidx.fragment:fragment-ktx:1.2.0-rc04"
+            const val fragment = "androidx.fragment:fragment-ktx:1.2.0-rc05"
             const val rv = "androidx.recyclerview:recyclerview:1.2.0-alpha01"
             const val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-beta01"
-            const val constraint = "androidx.constraintlayout:constraintlayout:1.1.3"
+            const val constraint = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
             const val cardView = "androidx.cardview:cardview:1.0.0"
             const val palette = "androidx.palette:palette-ktx:1.0.0"
             const val emoji = "androidx.emoji:emoji-appcompat:1.0.0"
-            const val browser = "androidx.browser:browser:1.2.0"
+            const val browser = "androidx.browser:browser:1.3.0-alpha01"
             const val pref = "androidx.preference:preference-ktx:1.1.0"
 
-            const val material = "com.google.android.material:material:1.2.0-alpha03"
+            const val material = "com.google.android.material:material:1.2.0-alpha04"
 
             val lifecycle by lazy {
                 val version = "2.2.0-rc03"
@@ -95,7 +95,7 @@ object Config {
                     "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc03"
 
             val work by lazy {
-                val version = "2.3.0-beta02"
+                val version = "2.3.0-rc01"
                 listOf(
                         "androidx.work:work-runtime-ktx:$version",
                         "androidx.work:work-gcm:$version"
@@ -104,7 +104,7 @@ object Config {
         }
 
         object Firebase {
-            const val core = "com.google.firebase:firebase-analytics:17.2.1"
+            const val core = "com.google.firebase:firebase-analytics:17.2.2"
             const val auth = "com.google.firebase:firebase-auth:19.2.0"
             const val firestore = "com.google.firebase:firebase-firestore-ktx:21.3.1"
             const val functions = "com.google.firebase:firebase-functions-ktx:19.0.1"
@@ -113,7 +113,7 @@ object Config {
             const val indexing = "com.google.firebase:firebase-appindexing:19.0.0"
             const val messaging = "com.google.firebase:firebase-messaging:20.1.0"
             const val links = "com.google.firebase:firebase-dynamic-links:19.0.0"
-            const val perf = "com.google.firebase:firebase-perf:19.0.4"
+            const val perf = "com.google.firebase:firebase-perf:19.0.5"
 
             const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         }
@@ -135,12 +135,12 @@ object Config {
         }
 
         object Misc {
-            private const val retrofitVersion = "2.7.0"
+            private const val retrofitVersion = "2.7.1"
             private const val poiVersion = "3.17"
 
-            private const val glideVersion = "4.10.0"
+            private const val glideVersion = "4.11.0"
 
-            const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.0"
+            const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.1"
             const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
             const val retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
             const val gson = "com.google.code.gson:gson:2.8.6"
@@ -149,7 +149,7 @@ object Config {
 
             const val glide = "com.github.bumptech.glide:glide:$glideVersion"
             const val glideRv = "com.github.bumptech.glide:recyclerview-integration:$glideVersion"
-            const val flexbox = "com.google.android:flexbox:2.0.0"
+            const val flexbox = "com.google.android:flexbox:2.0.1"
             const val snap = "com.github.rubensousa:gravitysnaphelper:2.2.0"
             const val permissions = "pub.devrel:easypermissions:3.0.0"
             const val mttp = "uk.co.samuelwall:material-tap-target-prompt:3.0.0"
