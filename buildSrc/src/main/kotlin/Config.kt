@@ -135,7 +135,8 @@ object Config {
         }
 
         object Misc {
-            private const val retrofitVersion = "2.7.1"
+            // TODO(#282): upgrade when the min API level is 21
+            private const val retrofitVersion = "2.6.4"
             private const val poiVersion = "3.17"
 
             private const val glideVersion = "4.11.0"
