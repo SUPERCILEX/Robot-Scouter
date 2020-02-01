@@ -23,7 +23,6 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import com.supercilex.robotscouter.common.DeletionType
 import com.supercilex.robotscouter.common.FIRESTORE_CONTENT_ID
 import com.supercilex.robotscouter.common.FIRESTORE_LAST_LOGIN
@@ -35,7 +34,6 @@ import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
 import com.supercilex.robotscouter.core.data.client.retrieveShouldUpload
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
-import com.supercilex.robotscouter.core.data.model.add
 import com.supercilex.robotscouter.core.data.model.fetchLatestData
 import com.supercilex.robotscouter.core.data.model.forceUpdate
 import com.supercilex.robotscouter.core.data.model.isStale
@@ -48,15 +46,11 @@ import com.supercilex.robotscouter.core.data.model.userRef
 import com.supercilex.robotscouter.core.isMain
 import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.mainHandler
-import com.supercilex.robotscouter.core.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
-import java.io.File
 import java.lang.reflect.Field
 import java.util.Calendar
 import java.util.concurrent.CopyOnWriteArrayList
@@ -161,8 +155,6 @@ private val teamUpdater = object : ChangeEventListenerBase {
     }
 }
 
-private val dbCacheLock = Mutex()
-
 fun initDatabase() {
     if (BuildConfig.DEBUG) FirebaseFirestore.setLoggingEnabled(true)
     teams.addChangeEventListener(teamTemplateIdUpdater)
@@ -170,20 +162,8 @@ fun initDatabase() {
 
     FirebaseAuth.getInstance().addAuthStateListener {
         val user = it.currentUser
-        if (user == null) {
-            GlobalScope.launch(Dispatchers.IO) {
-                dbCacheLock.withLock { dbCache.deleteRecursively() }
-            }
-        } else {
+        if (user != null) {
             updateLastLogin.run()
-
-            User(
-                    user.uid,
-                    user.email.nullOrFull(),
-                    user.phoneNumber.nullOrFull(),
-                    user.displayName.nullOrFull(),
-                    user.photoUrl?.toString()
-            ).smartWrite(userCache) { it.add() }
         }
     }
 }
@@ -241,25 +221,6 @@ fun <T> ObservableSnapshotArray<T>.asLiveData(): LiveData<ObservableSnapshotArra
                 value = this@asLiveData
             } else {
                 postValue(this@asLiveData)
-            }
-        }
-    }
-}
-
-private inline fun <reified T> T.smartWrite(file: File, crossinline write: (t: T) -> Unit) {
-    val new = this
-    GlobalScope.launch(Dispatchers.IO) {
-        val cache = {
-            write(new)
-            file.safeCreateNewFile().writeText(Gson().toJson(new))
-        }
-
-        dbCacheLock.withLock {
-            if (file.exists()) {
-                val cached = Gson().fromJson(file.readText(), T::class.java)
-                if (new != cached) cache()
-            } else {
-                cache()
             }
         }
     }

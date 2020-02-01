@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Environment
 import androidx.annotation.RequiresPermission
 import androidx.annotation.WorkerThread
-import com.supercilex.robotscouter.core.RobotScouter
 import java.io.File
 
 const val MIME_TYPE_ANY = "*/*"
@@ -21,9 +20,6 @@ private val exports = Environment.getExternalStoragePublicDirectory(
 )
 private val media: File =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-
-internal val dbCache = File(RobotScouter.cacheDir, "db")
-internal val userCache = File(dbCache, "user.json")
 
 @get:WorkerThread
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)

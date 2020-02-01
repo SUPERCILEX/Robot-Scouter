@@ -77,6 +77,7 @@ external class Functions {
     val firestore: NamespaceBuilder = definedExternally
     val pubsub: Pubsub = definedExternally
     val https: Https = definedExternally
+    val auth: FunctionsAuth = definedExternally
     fun runWith(options: dynamic): Functions
 }
 

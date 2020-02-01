@@ -18,6 +18,7 @@ import kotlin.js.Date
 
 const val FIRESTORE_EMAIL = "email"
 const val FIRESTORE_PHONE_NUMBER = "phoneNumber"
+const val FIRESTORE_PHOTO_URL = "photoUrl"
 
 val firestore by lazy { admin.firestore() }
 val auth by lazy { admin.auth() }

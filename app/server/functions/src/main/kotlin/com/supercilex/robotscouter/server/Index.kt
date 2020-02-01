@@ -2,6 +2,7 @@ package com.supercilex.robotscouter.server
 
 import com.supercilex.robotscouter.server.functions.deleteUnusedData
 import com.supercilex.robotscouter.server.functions.emptyTrash
+import com.supercilex.robotscouter.server.functions.initUser
 import com.supercilex.robotscouter.server.functions.logUserData
 import com.supercilex.robotscouter.server.functions.mergeDuplicateTeams
 import com.supercilex.robotscouter.server.functions.sanitizeDeletionRequest
@@ -47,4 +48,8 @@ fun main() {
             .runWith(json("timeoutSeconds" to 300, "memory" to "256MB"))
             .firestore.document("${duplicateTeams.id}/{uid}")
             .onWrite { event, _ -> mergeDuplicateTeams(event) }
+
+    exports.initUser = functions.auth.user().onCreate { user ->
+        initUser(user)
+    }
 }

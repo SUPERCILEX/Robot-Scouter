@@ -10,6 +10,14 @@ package com.supercilex.robotscouter.server.utils.types
 
 import kotlin.js.Promise
 
+external class FunctionsAuth {
+    fun user(): UserBuilder = definedExternally
+}
+
+external class UserBuilder {
+    fun onCreate(handler: (UserInfo) -> Promise<*>?): dynamic = definedExternally
+}
+
 external interface UserMetadata {
     val lastSignInTime: String
     val creationTime: String
@@ -28,14 +36,14 @@ external interface UserInfo {
 
 external interface UserRecord {
     val uid: String
-    val email: String
+    val email: String?
     val emailVerified: Boolean
-    val displayName: String
-    val phoneNumber: String
-    val photoURL: String
+    val displayName: String?
+    val phoneNumber: String?
+    val photoURL: String?
     val disabled: Boolean
     val metadata: UserMetadata
-    val providerData: Array<UserInfo>
+    val providerData: Array<UserInfo>?
     val passwordHash: String? get() = definedExternally
     val passwordSalt: String? get() = definedExternally
     val customClaims: Any? get() = definedExternally
