@@ -32,6 +32,7 @@ import com.supercilex.robotscouter.server.utils.templates
 import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
 import com.supercilex.robotscouter.server.utils.toTemplateString
+import com.supercilex.robotscouter.server.utils.types.AuthContext
 import com.supercilex.robotscouter.server.utils.types.CallableContext
 import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
@@ -103,8 +104,14 @@ fun emptyTrash(): Promise<*>? = GlobalScope.async {
     ).processInBatches(10) { processDeletion(it) }
 }.asPromise()
 
-fun emptyTrash(data: Array<String>?, context: CallableContext): Promise<*>? {
+fun emptyTrash(data: Json, context: CallableContext): Promise<*>? {
     val auth = context.auth ?: throw HttpsError("unauthenticated")
+    return emptyTrash(auth, data)
+}
+
+fun emptyTrash(auth: AuthContext, data: Json): Promise<*>? {
+    @Suppress("UNCHECKED_CAST")
+    val ids = data["ids"] as? Array<String>?
 
     console.log("Emptying trash for ${auth.uid}.")
     return GlobalScope.async {
@@ -115,7 +122,7 @@ fun emptyTrash(data: Array<String>?, context: CallableContext): Promise<*>? {
             return@async
         }
 
-        processDeletion(requests, data.orEmpty().toList())
+        processDeletion(requests, ids.orEmpty().toList())
     }.asPromise()
 }
 

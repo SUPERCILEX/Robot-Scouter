@@ -29,6 +29,7 @@ import com.supercilex.robotscouter.server.utils.processInBatches
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.toMap
 import com.supercilex.robotscouter.server.utils.toTeamString
+import com.supercilex.robotscouter.server.utils.types.AuthContext
 import com.supercilex.robotscouter.server.utils.types.CallableContext
 import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
@@ -52,11 +53,14 @@ import kotlin.js.Promise
 import kotlin.js.json
 
 fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
-    val auth = context.auth
+    val auth = context.auth ?: throw HttpsError("unauthenticated")
+    return transferUserData(auth, data)
+}
+
+fun transferUserData(auth: AuthContext, data: Json): Promise<*>? {
     val token = data[FIRESTORE_TOKEN] as? String
     val prevUid = data[FIRESTORE_PREV_UID] as? String
 
-    if (auth == null) throw HttpsError("unauthenticated")
     if (token == null || prevUid == null) throw HttpsError("invalid-argument")
     if (prevUid == auth.uid) {
         throw HttpsError("already-exists", "Cannot add and remove the same user")
@@ -132,12 +136,15 @@ fun transferUserData(data: Json, context: CallableContext): Promise<*>? {
 }
 
 fun updateOwners(data: Json, context: CallableContext): Promise<*>? {
-    val auth = context.auth
+    val auth = context.auth ?: throw HttpsError("unauthenticated")
+    return updateOwners(auth, data)
+}
+
+fun updateOwners(auth: AuthContext, data: Json): Promise<*>? {
     val token = data[FIRESTORE_TOKEN] as? String
     val path = data[FIRESTORE_REF] as? String
     val prevUid = data[FIRESTORE_PREV_UID]
 
-    if (auth == null) throw HttpsError("unauthenticated")
     if (token == null || path == null) throw HttpsError("invalid-argument")
     if (prevUid != null) {
         if (prevUid !is String) {

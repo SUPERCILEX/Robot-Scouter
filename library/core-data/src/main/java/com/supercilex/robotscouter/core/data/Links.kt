@@ -98,8 +98,9 @@ suspend fun updateOwner(
         newValue: (DocumentReference) -> Any
 ) = refs.map { ref ->
     Firebase.functions
-            .getHttpsCallable("updateOwners")
+            .getHttpsCallable("clientApi")
             .call(mapOf(
+                    "operation" to "update-owners",
                     FIRESTORE_TOKEN to token,
                     FIRESTORE_REF to ref.path,
                     FIRESTORE_PREV_UID to prevUid,

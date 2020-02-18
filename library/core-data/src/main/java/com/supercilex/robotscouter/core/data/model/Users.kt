@@ -19,8 +19,12 @@ val userPrefs get() = getUserPrefs(checkNotNull(uid))
 val userDeletionQueue get() = deletionQueueRef.document(checkNotNull(uid))
 
 fun transferUserData(prevUid: String, token: String) = Firebase.functions
-        .getHttpsCallable("transferUserData")
-        .call(mapOf(FIRESTORE_PREV_UID to prevUid, FIRESTORE_TOKEN to token))
+        .getHttpsCallable("clientApi")
+        .call(mapOf(
+                "operation" to "transfer-user-data",
+                FIRESTORE_PREV_UID to prevUid,
+                FIRESTORE_TOKEN to token
+        ))
         .logFailures("transferUserData", prevUid, token)
 
 private fun getUserRef(uid: String) = usersRef.document(uid)

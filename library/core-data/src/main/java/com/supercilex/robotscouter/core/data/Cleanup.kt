@@ -19,6 +19,6 @@ fun cleanup() {
 }
 
 fun emptyTrash(ids: List<String>? = null) = Firebase.functions
-        .getHttpsCallable("emptyTrash")
-        .call(ids)
+        .getHttpsCallable("clientApi")
+        .call(mapOf("operation" to "empty-trash", "ids" to ids))
         .logFailures("emptyTrash", ids)

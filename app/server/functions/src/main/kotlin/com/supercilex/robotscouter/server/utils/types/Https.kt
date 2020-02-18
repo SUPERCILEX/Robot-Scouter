@@ -11,10 +11,9 @@ package com.supercilex.robotscouter.server.utils.types
 import kotlin.js.Promise
 
 @Suppress("FunctionName", "UNUSED_PARAMETER", "UNUSED_VARIABLE") // Fake class
-fun HttpsError(code: String, message: String? = null, details: Any? = null): Nothing {
+fun HttpsError(code: String, message: String? = null, details: Any? = null): Throwable {
     val functions = functions
-    js("throw new functions.https.HttpsError(code, message, details)")
-    throw Exception() // Never going to get called
+    return js("new functions.https.HttpsError(code, message, details)")
 }
 
 external class Https {
