@@ -153,6 +153,10 @@ open class StopwatchViewHolder(
             cyclesAdapter.notifyItemChanged(0)
 
             updateCycleNames(position, size)
+
+            if (size >= LIST_SIZE_WITH_AVERAGE) {
+                cycles.post { cycles.smoothScrollToPosition(position) }
+            }
         }
     }
 
@@ -403,6 +407,7 @@ open class StopwatchViewHolder(
         val TIMERS = ConcurrentHashMap<DocumentReference, Timer>()
 
         const val LIST_SIZE_WITH_AVERAGE = 2
+
         // Don't conflict with metric types since the pool is shared
         const val DATA_ITEM = 1000
         const val AVERAGE_ITEM = 1001
