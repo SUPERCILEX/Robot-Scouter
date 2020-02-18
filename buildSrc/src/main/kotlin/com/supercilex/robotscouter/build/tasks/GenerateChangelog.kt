@@ -2,14 +2,10 @@ package com.supercilex.robotscouter.build.tasks
 
 import org.ajoberstar.grgit.Grgit
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFiles
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.submit
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -17,12 +13,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
 
-@CacheableTask
 internal abstract class GenerateChangelog : DefaultTask() {
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputFile
-    protected val baseCommit = project.rootProject.layout.projectDirectory
-            .file("BASE_COMPARE_COMMIT.txt")
     @get:OutputFiles
     protected val files by lazy {
         val base = project.layout.projectDirectory.dir("src/main/play/release-notes/en-US")
@@ -32,24 +23,21 @@ internal abstract class GenerateChangelog : DefaultTask() {
     @TaskAction
     fun generateChangelog() {
         project.serviceOf<WorkerExecutor>().noIsolation().submit(Generator::class) {
-            baseCommitFile.set(baseCommit)
+            projectDir.set(project.projectDir)
             changelogFiles.set(files)
         }
     }
 
     abstract class Generator : WorkAction<Generator.Params> {
         override fun execute() {
-            val base = parameters.baseCommitFile.get().asFile.readText().take(20)
-
-            Grgit.open().use {
+            Grgit.open {
+                currentDir = parameters.projectDir.get().asFile
+            }.use {
                 val recentCommits = it.log {
                     maxCommits = 10
                 }
-                val baseIndex = recentCommits.indexOfFirst { it.id.startsWith(base) }
 
                 val changelog = recentCommits
-                        .take(baseIndex.coerceAtLeast(1))
-                        .reversed()
                         .map { "- ${it.shortMessage}" }
                         .generate()
 
@@ -61,6 +49,7 @@ internal abstract class GenerateChangelog : DefaultTask() {
 
         private tailrec fun List<String>.generate(): String {
             val candidate = """
+                |Recent changes:
                 |${joinToString("\n")}
 
                 |Report bugs and view the full changelog here:
@@ -72,7 +61,7 @@ internal abstract class GenerateChangelog : DefaultTask() {
         }
 
         interface Params : WorkParameters {
-            val baseCommitFile: RegularFileProperty
+            val projectDir: DirectoryProperty
             val changelogFiles: ListProperty<RegularFile>
         }
     }

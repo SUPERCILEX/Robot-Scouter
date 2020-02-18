@@ -13,8 +13,8 @@
 </h4>
 
 <p align="center">
-    <a href="https://circleci.com/gh/SUPERCILEX/Robot-Scouter">
-        <img src="https://circleci.com/gh/SUPERCILEX/Robot-Scouter.svg?style=svg" />
+    <a href="https://github.com/SUPERCILEX/Robot-Scouter/actions">
+        <img src="https://github.com/SUPERCILEX/Robot-Scouter/workflows/CI/CD/badge.svg" />
     </a>
 </p>
 

@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.supercilex.robotscouter"
-        versionName = "3.1.0-dev"
+        versionName = "dev"
         multiDexEnabled = true
     }
 
@@ -76,7 +76,6 @@ play {
     promoteTrack = "alpha"
 
     resolutionStrategy = "auto"
-    outputProcessor { versionNameOverride = "$versionNameOverride.$versionCode" }
 }
 
 googleServices { disableVersionCheck = true }

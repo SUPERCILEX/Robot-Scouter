@@ -13,7 +13,6 @@ dependencies {
     api(Config.Libs.Firebase.indexing)
 
     Config.Libs.Jetpack.lifecycle.forEach { api(it) }
-    api(Config.Libs.Jetpack.viewModelState)
 
     implementation(Config.Libs.Jetpack.appCompat) { isTransitive = false }
     implementation(Config.Libs.Jetpack.pref)

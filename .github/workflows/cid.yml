@@ -1,0 +1,180 @@
+name: CI/CD
+
+on: [push, pull_request]
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
+  CI: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch tags and history
+        run: |
+          git fetch --depth=1 --progress origin +refs/tags/*:refs/tags/*
+          git fetch --prune --unshallow --progress
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Gradle Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-v2-gradle-
+      - name: Validate Gradle integrity
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup debug environment
+        run: ./gradlew setup -S
+        if: github.ref != 'refs/heads/master'
+      - name: Setup release environment
+        run: ./gradlew setup -S
+        if: github.ref == 'refs/heads/master'
+        env:
+          ROBOT_SCOUTER_RELEASE: true
+          SECRETS_PASS: ${{ secrets.SECRETS_PASS }}
+      - name: Build debug project
+        run: ./gradlew :app:server:functions:assemble assembleDebug bundleDebug -S
+        if: github.ref != 'refs/heads/master'
+      - name: Build release project
+        run: |
+          ./gradlew -S :app:server:functions:assemble \
+            assembleRelease bundleRelease \
+            crashlyticsUploadDeobs
+        if: github.ref == 'refs/heads/master'
+        env:
+          ROBOT_SCOUTER_RELEASE: true
+      - name: Upload outputs
+        uses: actions/upload-artifact@v1
+        with:
+          name: outputs
+          path: app/android-base/build/outputs
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache Gradle
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-v2-gradle-
+      - name: Setup environment
+        run: ./gradlew setup -S
+      - name: Run tests
+        run: ./gradlew check test ktlint lint -S
+
+  deploy_snapshot:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    env:
+      ROBOT_SCOUTER_RELEASE: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch history
+        run: git fetch --prune --unshallow --progress
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Gradle Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-v2-gradle-
+      - name: Download outputs
+        uses: actions/download-artifact@v1
+        with:
+          name: outputs
+          path: app/android-base/build/outputs
+      - name: Setup environment
+        run: ./gradlew setup generateChangelog -S
+        env:
+          SECRETS_PASS: ${{ secrets.SECRETS_PASS }}
+      - name: Publish snapshot
+        run: |
+          ./gradlew -S \
+            publishBundle --artifact-dir=app/android-base/build/outputs/bundle/release \
+            promoteArtifact
+
+  deploy_server:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    env:
+      ROBOT_SCOUTER_RELEASE: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Install NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Gradle Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-v2-gradle-
+      - name: Setup environment
+        run: ./gradlew setup -S
+        env:
+          SECRETS_PASS: ${{ secrets.SECRETS_PASS }}
+      - name: Deploy server
+        run: ./gradlew deployServer -S
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: app/android-base/google-play-auto-publisher.json
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  deploy_release:
+    needs: [deploy_snapshot, deploy_server]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    env:
+      ROBOT_SCOUTER_RELEASE: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch tags
+        run: git fetch --depth=1 --progress origin +refs/tags/*:refs/tags/*
+      - name: Install JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Gradle Cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-v2-gradle-
+      - name: Setup environment
+        run: ./gradlew setup -S
+        env:
+          SECRETS_PASS: ${{ secrets.SECRETS_PASS }}
+      - name: Publish beta release
+        run: |
+          if [ ! -z $(git tag -l --points-at HEAD) ]
+          then
+            ./gradlew promoteArtifact --from-track alpha --promote-track beta
+          fi

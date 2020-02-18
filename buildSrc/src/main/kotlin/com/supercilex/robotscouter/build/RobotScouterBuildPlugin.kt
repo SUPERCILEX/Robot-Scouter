@@ -1,19 +1,20 @@
 package com.supercilex.robotscouter.build
 
 import child
-import com.supercilex.robotscouter.build.internal.isRelease
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.AppPlugin
+import com.supercilex.robotscouter.build.tasks.ConfigureVersioning
 import com.supercilex.robotscouter.build.tasks.DeployServer
 import com.supercilex.robotscouter.build.tasks.GenerateChangelog
 import com.supercilex.robotscouter.build.tasks.RebuildSecrets
 import com.supercilex.robotscouter.build.tasks.Setup
 import com.supercilex.robotscouter.build.tasks.UpdateTranslations
-import com.supercilex.robotscouter.build.tasks.UploadAppToVc
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskCollection
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.withType
 
 internal class RobotScouterBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -34,75 +35,30 @@ internal class RobotScouterBuildPlugin : Plugin<Project> {
             translationDir.set(project.file("tmp-translations"))
         }
 
-        val presubmit = project.tasks.register("presubmit")
-        val generateChangelog = project.child("android-base").tasks
-                .register<GenerateChangelog>("generateReleaseChangelog")
-        val deployAndroid = project.tasks.register("deployAndroid")
-        val uploadAppToVc = project.child("android-base").tasks
-                .register<UploadAppToVc>("uploadAppToVersionHistory")
-        val deployServer = project.child("functions").tasks.register<DeployServer>("deployServer")
+        applyAndroidBase(project.child("android-base"))
+        applyFunctions(project.child("functions"))
+    }
 
-        val ciBuildLifecycle = project.tasks.register("ciBuild")
-        val ciBuild = project.tasks.register("buildForCi")
+    private fun applyAndroidBase(project: Project) {
+        project.tasks.register<GenerateChangelog>("generateChangelog")
 
-        fun deepFind(matches: String.() -> Boolean) =
-                project.allprojects.map { it.tasks.matching { it.name.matches() } }
+        project.plugins.withType<AppPlugin> {
+            val android = project.the<AppExtension>()
 
-        fun deepFind(name: String) = deepFind { this == name }
+            android.applicationVariants.configureEach v@{
+                if (buildType.isDebuggable) return@v
 
-        fun List<TaskCollection<Task>>.mustRunAfter(vararg paths: Any) = onEach {
-            it.configureEach { mustRunAfter(paths) }
-        }
-
-        presubmit {
-            group = "verification"
-            description = "Runs a tailored set of checks for the build to pass."
-
-            dependsOn(deepFind("ktlint"))
-            dependsOn(":app:android-base:lint" + if (isRelease) "Release" else "Debug")
-        }
-        ciBuild {
-            dependsOn(presubmit)
-            dependsOn(":app:server:functions:assemble")
-            dependsOn(if (isRelease) {
-                listOf(":app:android-base:assembleRelease", ":app:android-base:bundleRelease")
-            } else {
-                ":app:android-base:assembleDebug"
-            })
-        }
-
-        ciBuildLifecycle {
-            group = "build"
-            description = "Runs a specialized build for CI."
-
-            dependsOn(ciBuild)
-            if (isRelease) {
-                dependsOn(deployAndroid, deployServer, uploadAppToVc)
+                val configMetadata = project.tasks.register<ConfigureVersioning>(
+                        "configure${name.capitalize()}Versions",
+                        this
+                )
+                preBuildProvider { dependsOn(configMetadata) }
             }
         }
+    }
 
-        run {
-            deepFind { startsWith("publish") && endsWith("Bundle") }.mustRunAfter(generateChangelog)
-            val publish = deepFind("publish")
-            val promote = deepFind {
-                startsWith("promote") && endsWith("Artifact")
-            }.mustRunAfter(publish)
-
-            deployAndroid {
-                group = "publishing"
-                description = "Deploys Robot Scouter to the Play Store."
-
-                dependsOn(generateChangelog)
-                dependsOn(publish)
-                dependsOn(promote)
-                dependsOn(deepFind("crashlyticsUploadDeobs"))
-            }
-        }
-        uploadAppToVc {
-            dependsOn(ciBuild)
-        }
-
-        deployServer {
+    private fun applyFunctions(project: Project) {
+        project.tasks.register<DeployServer>("deployServer") {
             group = "publishing"
             description = "Deploys Robot Scouter to the Web and Backend."
 

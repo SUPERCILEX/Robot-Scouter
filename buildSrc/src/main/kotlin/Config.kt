@@ -12,6 +12,8 @@ fun RepositoryHandler.deps() {
         includeGroupByRegex("androidx\\..*")
 
         includeGroup("com.android")
+        includeGroup("android.arch.lifecycle")
+        includeGroup("android.arch.core")
         includeGroup("com.crashlytics.sdk.android")
         includeGroup("io.fabric.sdk.android")
     }
@@ -67,35 +69,34 @@ object Config {
         }
 
         object Jetpack {
-            const val core = "androidx.core:core-ktx:1.2.0-rc01"
+            const val core = "androidx.core:core-ktx:1.3.0-alpha01"
             const val multidex = "androidx.multidex:multidex:2.0.1"
-            const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha01"
-            const val fragment = "androidx.fragment:fragment-ktx:1.2.0-rc05"
+            const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha02"
+            const val fragment = "androidx.fragment:fragment-ktx:1.2.1"
             const val rv = "androidx.recyclerview:recyclerview:1.2.0-alpha01"
-            const val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-beta01"
+            const val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
             const val constraint = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
             const val cardView = "androidx.cardview:cardview:1.0.0"
             const val palette = "androidx.palette:palette-ktx:1.0.0"
-            const val emoji = "androidx.emoji:emoji-appcompat:1.0.0"
+            const val emoji = "androidx.emoji:emoji-appcompat:1.1.0-alpha01"
             const val browser = "androidx.browser:browser:1.3.0-alpha01"
             const val pref = "androidx.preference:preference-ktx:1.1.0"
 
             const val material = "com.google.android.material:material:1.2.0-alpha04"
 
             val lifecycle by lazy {
-                val version = "2.2.0-rc03"
+                val version = "2.2.0"
                 listOf(
                         "androidx.lifecycle:lifecycle-common-java8:$version",
                         "androidx.lifecycle:lifecycle-extensions:$version",
                         "androidx.lifecycle:lifecycle-livedata-ktx:$version",
-                        "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
+                        "androidx.lifecycle:lifecycle-viewmodel-ktx:$version",
+                        "androidx.lifecycle:lifecycle-viewmodel-savedstate:$version"
                 )
             }
-            const val viewModelState =
-                    "androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc03"
 
             val work by lazy {
-                val version = "2.3.0-rc01"
+                val version = "2.3.1"
                 listOf(
                         "androidx.work:work-runtime-ktx:$version",
                         "androidx.work:work-gcm:$version"
@@ -104,15 +105,15 @@ object Config {
         }
 
         object Firebase {
-            const val core = "com.google.firebase:firebase-analytics:17.2.2"
+            const val analytics = "com.google.firebase:firebase-analytics:17.2.2"
             const val auth = "com.google.firebase:firebase-auth:19.2.0"
-            const val firestore = "com.google.firebase:firebase-firestore-ktx:21.3.1"
-            const val functions = "com.google.firebase:firebase-functions-ktx:19.0.1"
-            const val storage = "com.google.firebase:firebase-storage-ktx:19.1.0"
-            const val config = "com.google.firebase:firebase-config-ktx:19.1.0"
-            const val indexing = "com.google.firebase:firebase-appindexing:19.0.0"
+            const val firestore = "com.google.firebase:firebase-firestore-ktx:21.4.0"
+            const val functions = "com.google.firebase:firebase-functions-ktx:19.0.2"
+            const val storage = "com.google.firebase:firebase-storage-ktx:19.1.1"
+            const val config = "com.google.firebase:firebase-config-ktx:19.1.1"
+            const val indexing = "com.google.firebase:firebase-appindexing:19.1.0"
             const val messaging = "com.google.firebase:firebase-messaging:20.1.0"
-            const val links = "com.google.firebase:firebase-dynamic-links:19.0.0"
+            const val links = "com.google.firebase:firebase-dynamic-links-ktx:19.1.0"
             const val perf = "com.google.firebase:firebase-perf:19.0.5"
 
             const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
@@ -121,7 +122,7 @@ object Config {
         object PlayServices {
             const val auth = "com.google.android.gms:play-services-auth:17.0.0"
             const val nearby = "com.google.android.gms:play-services-nearby:17.0.0"
-            const val playCore = "com.google.android.play:core-ktx:1.6.4"
+            const val playCore = "com.google.android.play:core-ktx:1.6.5"
         }
 
         object FirebaseUi {
@@ -141,7 +142,7 @@ object Config {
 
             private const val glideVersion = "4.11.0"
 
-            const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.1"
+            const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.2"
             const val retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
             const val retrofitGson = "com.squareup.retrofit2:converter-gson:$retrofitVersion"
             const val gson = "com.google.code.gson:gson:2.8.6"

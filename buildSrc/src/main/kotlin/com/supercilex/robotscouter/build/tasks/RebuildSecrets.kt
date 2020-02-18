@@ -66,7 +66,7 @@ internal abstract class RebuildSecrets : DefaultTask() {
                         "-in $rawSecrets -out ${output.name}")
             }
             Grgit.open {
-                dir = parameters.projectDir.get().asFile
+                currentDir = parameters.projectDir.get().asFile
             }.use {
                 it.add { patterns = setOf(output.name) }
             }
