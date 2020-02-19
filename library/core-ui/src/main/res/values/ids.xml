@@ -2,5 +2,5 @@
 <resources>
     <item name="root" type="id" />
     <item name="toolbar" type="id" />
-    <item name="drawerLayout" type="id" />
+    <item name="drawer_layout" type="id" />
 </resources>

@@ -32,7 +32,7 @@ internal class TeamMenuHelper(
         private val activity: AppCompatActivity = fragment.requireActivity() as AppCompatActivity
 ) : DrawerMenuHelperBase<String>(activity, tracker) {
     private val fab: FloatingActionButton = activity.findViewById(RC.id.fab)
-    private val drawerLayout: DrawerLayout = activity.findViewById(RC.id.drawerLayout)
+    private val drawerLayout: DrawerLayout = activity.findViewById(RC.id.drawer_layout)
 
     private val teamMenuItems = mutableListOf<MenuItem>()
     private val teamsMenuItems = mutableListOf<MenuItem>()

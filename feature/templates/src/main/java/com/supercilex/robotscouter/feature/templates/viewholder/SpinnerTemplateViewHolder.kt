@@ -20,12 +20,10 @@ import com.supercilex.robotscouter.core.ui.snackbar
 import com.supercilex.robotscouter.core.ui.swap
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
+import com.supercilex.robotscouter.feature.templates.databinding.ScoutTemplateSpinnerBinding
+import com.supercilex.robotscouter.feature.templates.databinding.ScoutTemplateSpinnerItemBinding
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.scout_template_base_reorder.*
-import kotlinx.android.synthetic.main.scout_template_spinner.*
-import kotlinx.android.synthetic.main.scout_template_spinner_item.*
 import java.util.Collections
 import kotlin.properties.Delegates
 import com.supercilex.robotscouter.R as RC
@@ -35,7 +33,9 @@ internal class SpinnerTemplateViewHolder(
         fragment: MetricListFragment
 ) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>>(itemView),
         MetricTemplateViewHolder<Metric.List, List<Metric.List.Item>>, View.OnClickListener {
-    override val reorderView: ImageView by unsafeLazy { reorder }
+    private val binding = ScoutTemplateSpinnerBinding.bind(itemView)
+
+    override val reorderView: ImageView by unsafeLazy { itemView.findViewById(R.id.reorder) }
     override val nameEditor = name as EditText
     private val itemTouchCallback = ItemTouchCallback()
     private val itemsAdapter = Adapter()
@@ -43,14 +43,14 @@ internal class SpinnerTemplateViewHolder(
     init {
         init()
 
-        newItem.setOnClickListener(this)
+        binding.newItem.setOnClickListener(this)
 
-        items.adapter = itemsAdapter
-        items.setRecycledViewPool(
+        binding.items.adapter = itemsAdapter
+        binding.items.setRecycledViewPool(
                 (fragment.requireParentFragment() as RecyclerPoolHolder).recyclerPool)
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchCallback.itemTouchHelper = itemTouchHelper
-        itemTouchHelper.attachToRecyclerView(items)
+        itemTouchHelper.attachToRecyclerView(binding.items)
     }
 
     override fun bind() {
@@ -69,7 +69,7 @@ internal class SpinnerTemplateViewHolder(
     }
 
     private fun getLatestItems(): List<Metric.List.Item> {
-        val rv = items
+        val rv = binding.items
         var items: List<Metric.List.Item> = metric.value
         for (i in 0 until itemsAdapter.itemCount) {
             val holder = rv.findViewHolderForAdapterPosition(i) as ItemHolder?
@@ -96,10 +96,11 @@ internal class SpinnerTemplateViewHolder(
     }
 
     private class ItemHolder(
-            override val containerView: View
-    ) : RecyclerView.ViewHolder(containerView), LayoutContainer,
-            TemplateViewHolder, View.OnClickListener {
-        override val reorderView: ImageView by unsafeLazy { reorder }
+            itemView: View
+    ) : RecyclerView.ViewHolder(itemView), TemplateViewHolder, View.OnClickListener {
+        private val binding = ScoutTemplateSpinnerItemBinding.bind(itemView)
+
+        override val reorderView: ImageView by unsafeLazy { itemView.findViewById(R.id.reorder) }
         override val nameEditor: EditText = itemView.findViewById(RC.id.name)
 
         private lateinit var parent: SpinnerTemplateViewHolder
@@ -108,9 +109,10 @@ internal class SpinnerTemplateViewHolder(
 
         init {
             init()
-            defaultView.setOnClickListener(this)
-            delete.setOnClickListener(this)
-            defaultView.setImageDrawable(itemView.context.getDrawableCompat(R.drawable.ic_default_24dp))
+            binding.defaultView.setOnClickListener(this)
+            binding.delete.setOnClickListener(this)
+            binding.defaultView.setImageDrawable(
+                    itemView.context.getDrawableCompat(R.drawable.ic_default_24dp))
         }
 
         fun bind(parent: SpinnerTemplateViewHolder, item: Metric.List.Item, isDefault: Boolean) {
@@ -119,13 +121,13 @@ internal class SpinnerTemplateViewHolder(
             this.isDefault = isDefault
 
             nameEditor.setText(item.name)
-            defaultView.isActivated = isDefault
+            binding.defaultView.isActivated = isDefault
         }
 
         override fun onClick(v: View) {
             val items = parent.getLatestItems()
             when (val id = v.id) {
-                R.id.defaultView -> updateDefaultStatus(items)
+                R.id.default_view -> updateDefaultStatus(items)
                 R.id.delete -> delete(items)
                 else -> error("Unknown id: $id")
             }
@@ -140,13 +142,13 @@ internal class SpinnerTemplateViewHolder(
             val metric = parent.metric
             val oldDefaultId = metric.selectedValueId
             metric.updateSelectedValueId(item.id)
-            parent.items.notifyItemsNoChangeAnimation {
-                parent.items.setHasFixedSize(true)
+            parent.binding.items.notifyItemsNoChangeAnimation {
+                parent.binding.items.setHasFixedSize(true)
                 notifyItemChanged(items.indexOfFirst { it.id == oldDefaultId }.let {
                     if (it == -1) 0 else it
                 })
                 notifyItemChanged(adapterPosition)
-                parent.items.setHasFixedSize(false)
+                parent.binding.items.setHasFixedSize(false)
             }
         }
 
@@ -217,7 +219,7 @@ internal class SpinnerTemplateViewHolder(
 
                 localItems = metric.value.toMutableList()
                 this.localItems = localItems
-                items.setHasFixedSize(true)
+                binding.items.setHasFixedSize(true)
             }
 
             itemsAdapter.swap(viewHolder, target) { i, j ->
@@ -229,7 +231,7 @@ internal class SpinnerTemplateViewHolder(
 
         override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
             super.clearView(recyclerView, viewHolder)
-            items.setHasFixedSize(false)
+            binding.items.setHasFixedSize(false)
             localItems?.let {
                 metric.update(it)
                 localItems = null

@@ -20,7 +20,7 @@ import com.supercilex.robotscouter.R as RC
 internal class TabletScoutListFragment : ScoutListFragmentBase() {
     private val sharedResources by activityViewModels<SharedLifecycleResource>()
     private val noContentHint: View? by ValueSeeker {
-        requireActivity().findViewById<View>(RC.id.noTeamSelectedHint)
+        requireActivity().findViewById<View>(RC.id.no_team_selected_hint)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -10,21 +10,21 @@
     tools:context=".ScoutListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/neededToSaveState"
+        android:id="@+id/needed_to_save_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <include layout="@layout/fragment_scout_list_toolbar" />
+        <include layout="@layout/scout_list_toolbar_fragment" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
-        android:id="@+id/scoutList"
+        android:id="@+id/scout_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout="@layout/fragment_scout_list" />
+        tools:layout="@layout/scout_list_fragment" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

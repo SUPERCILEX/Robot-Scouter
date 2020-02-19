@@ -7,7 +7,7 @@ import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.core.ui.FragmentBase
 
 @Bridge
-internal class AutoScoutFragment : FragmentBase(R.layout.fragment_auto_scout) {
+internal class AutoScoutFragment : FragmentBase(R.layout.auto_scout_fragment) {
     companion object : AutoScoutFragmentCompanion {
         override fun getInstance(manager: FragmentManager) =
                 manager.findFragmentByTag(TAG) as AutoScoutFragment? ?: AutoScoutFragment()

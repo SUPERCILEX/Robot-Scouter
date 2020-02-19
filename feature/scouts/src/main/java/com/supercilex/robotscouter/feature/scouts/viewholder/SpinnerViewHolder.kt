@@ -5,36 +5,38 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.supercilex.robotscouter.core.data.model.updateSelectedValueId
 import com.supercilex.robotscouter.core.model.Metric
+import com.supercilex.robotscouter.feature.scouts.databinding.ScoutSpinnerBinding
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
-import kotlinx.android.synthetic.main.scout_spinner.*
 
 internal class SpinnerViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.List, List<Metric.List.Item>>(itemView),
         AdapterView.OnItemSelectedListener {
+    private val binding = ScoutSpinnerBinding.bind(itemView)
+
     init {
-        spinner.adapter = ArrayAdapter<String>(
+        binding.spinner.adapter = ArrayAdapter<String>(
                 itemView.context,
                 android.R.layout.simple_spinner_item
         ).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        spinner.setBackgroundResource(
+        binding.spinner.setBackgroundResource(
                 com.google.android.material.R.drawable.abc_spinner_mtrl_am_alpha)
-        spinner.onItemSelectedListener = this
+        binding.spinner.onItemSelectedListener = this
     }
 
     public override fun bind() {
         super.bind()
         updateAdapter()
-        spinner.setSelection(metric.selectedValueId?.let { id ->
+        binding.spinner.setSelection(metric.selectedValueId?.let { id ->
             metric.value.indexOfFirst { it.id == id }
         } ?: 0)
     }
 
     private fun updateAdapter() {
         @Suppress("UNCHECKED_CAST") // We know the metric type
-        (spinner.adapter as ArrayAdapter<String>).apply {
+        (binding.spinner.adapter as ArrayAdapter<String>).apply {
             clear()
             addAll(metric.value.map { it.name })
         }

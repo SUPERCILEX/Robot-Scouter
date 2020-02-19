@@ -29,7 +29,7 @@ abstract class TabPagerAdapterBase(
     @get:StringRes protected abstract val editTabNameRes: Int
     protected abstract val tabs: TabLayout
     private val noTabsHint: View by fragment.LifecycleAwareLazy {
-        fragment.requireView().findViewById(R.id.noTabsHint)
+        fragment.requireView().findViewById(R.id.no_tabs_hint)
     }
 
     val holder by fragment.viewModels<ScoutsHolder>()

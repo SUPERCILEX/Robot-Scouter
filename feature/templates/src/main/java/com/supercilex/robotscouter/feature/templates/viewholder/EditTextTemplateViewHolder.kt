@@ -6,29 +6,31 @@ import android.widget.ImageView
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.templates.R
+import com.supercilex.robotscouter.feature.templates.databinding.ScoutTemplateNotesBinding
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
-import kotlinx.android.synthetic.main.scout_template_base_reorder.*
-import kotlinx.android.synthetic.main.scout_template_notes.*
 
 internal class EditTextTemplateViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.Text, String?>(itemView),
         MetricTemplateViewHolder<Metric.Text, String?> {
-    override val reorderView: ImageView by unsafeLazy { reorder }
+    private val binding = ScoutTemplateNotesBinding.bind(itemView)
+
+    override val reorderView: ImageView by unsafeLazy { itemView.findViewById(R.id.reorder) }
     override val nameEditor = name as EditText
 
     init {
         init()
-        text.onFocusChangeListener = this
+        binding.text.onFocusChangeListener = this
     }
 
     override fun bind() {
         super.bind()
-        text.setText(metric.value)
+        binding.text.setText(metric.value)
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
-        if (!hasFocus && v === text) metric.update(text.text.toString())
+        if (!hasFocus && v === binding.text) metric.update(binding.text.text.toString())
     }
 }

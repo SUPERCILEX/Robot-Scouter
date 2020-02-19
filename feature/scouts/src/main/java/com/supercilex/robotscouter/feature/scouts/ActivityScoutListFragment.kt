@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.colorPrimary
 import com.supercilex.robotscouter.shared.handleUpNavigation
-import kotlinx.android.synthetic.main.fragment_scout_list_toolbar.*
 
 internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth.AuthStateListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +58,7 @@ internal class ActivityScoutListFragment : ScoutListFragmentBase(), FirebaseAuth
 
         override fun updateScrim(color: Int) {
             super.updateScrim(color)
-            header.setStatusBarScrimColor(color)
+            binding.header.setStatusBarScrimColor(color)
             setTaskDescription(color)
         }
 

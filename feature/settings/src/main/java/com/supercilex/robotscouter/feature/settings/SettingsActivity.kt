@@ -19,7 +19,7 @@ class SettingsActivity : ActivityBase(),
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_Settings)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        setContentView(R.layout.settings_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 add(R.id.settings, SettingsFragment.newInstance(), SettingsFragment.TAG)

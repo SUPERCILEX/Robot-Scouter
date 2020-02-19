@@ -16,7 +16,7 @@
         tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/countContainer"
+        android:id="@+id/count_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

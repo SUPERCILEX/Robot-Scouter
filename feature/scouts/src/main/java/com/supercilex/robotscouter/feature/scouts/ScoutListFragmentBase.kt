@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.appindexing.FirebaseUserActions
 import com.supercilex.robotscouter.core.data.KEY_ADD_SCOUT
@@ -37,6 +38,7 @@ import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.RecyclerPoolHolder
 import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.scouts.databinding.ScoutListFragmentBinding
 import com.supercilex.robotscouter.home
 import com.supercilex.robotscouter.shared.CaptureTeamMediaListener
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
@@ -44,11 +46,10 @@ import com.supercilex.robotscouter.shared.ShouldUploadMediaToTbaDialog
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
 import com.supercilex.robotscouter.shared.TeamMediaCreator
 import com.supercilex.robotscouter.shared.TeamSharer
-import kotlinx.android.synthetic.main.fragment_scout_list.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_scout_list),
+internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.scout_list_fragment),
         RecyclerPoolHolder, TemplateSelectionListener, Observer<Team?>, CaptureTeamMediaListener,
         KeyboardShortcutListener {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
@@ -67,6 +68,9 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
 
     private var savedState: Bundle? = null
 
+    private val viewPager: ViewPager by LifecycleAwareLazy {
+        requireView().findViewById(R.id.scouts)
+    }
     private val tabs: TabLayout by LifecycleAwareLazy {
         view?.findViewById(R.id.tabs) ?: requireActivity().findViewById(R.id.tabs)
     }

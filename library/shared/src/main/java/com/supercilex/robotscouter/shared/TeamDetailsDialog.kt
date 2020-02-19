@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -33,11 +32,11 @@ import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.animateCircularReveal
 import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
-import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.dialog_team_details.*
+import com.supercilex.robotscouter.shared.databinding.TeamDetailsDialogBinding
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -55,8 +54,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     private val permHandler by viewModels<PermissionRequestHandler>()
     private val mediaCreator by viewModels<TeamMediaCreator>()
 
-    override val containerView by unsafeLazy {
-        View.inflate(context, R.layout.dialog_team_details, null) as ViewGroup
+    private val binding by LifecycleAwareLazy {
+        TeamDetailsDialogBinding.bind(requireDialog().findViewById(R.id.root))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,25 +90,27 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        media.setOnClickListener(this)
-        editNameButton.setOnClickListener(this)
-        linkTba.setOnClickListener(this)
-        linkWebsite.setOnClickListener(this)
-        save.setOnClickListener(this)
+        dialog.setContentView(R.layout.team_details_dialog)
 
-        mediaEdit.onFocusChangeListener = this
-        websiteEdit.onFocusChangeListener = this
-        websiteEdit.setImeOnDoneListener { save() }
+        binding.media.setOnClickListener(this)
+        binding.editNameButton.setOnClickListener(this)
+        binding.linkTba.setOnClickListener(this)
+        binding.linkWebsite.setOnClickListener(this)
+        binding.save.setOnClickListener(this)
+
+        binding.mediaEdit.onFocusChangeListener = this
+        binding.websiteEdit.onFocusChangeListener = this
+        binding.websiteEdit.setImeOnDoneListener { save() }
 
         updateUi()
     }
 
     private fun updateUi() {
-        linkWebsite.isEnabled = !team.website.isNullOrBlank()
+        binding.linkWebsite.isEnabled = !team.website.isNullOrBlank()
 
-        TransitionManager.beginDelayedTransition(containerView)
+        TransitionManager.beginDelayedTransition(binding.root)
 
-        progress.show()
+        binding.progress.show()
         Glide.with(this)
                 .load(team.displayableMedia)
                 .circleCrop()
@@ -123,7 +124,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                             dataSource: DataSource,
                             isFirstResource: Boolean
                     ): Boolean {
-                        progress.hide(true)
+                        binding.progress.hide(true)
                         return false
                     }
 
@@ -133,28 +134,32 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                             target: Target<Drawable>,
                             isFirstResource: Boolean
                     ): Boolean {
-                        progress.hide(true)
+                        binding.progress.hide(true)
                         return false
                     }
                 })
-                .into(media)
-        name.text = team.toString()
+                .into(binding.media)
+        binding.name.text = team.toString()
 
-        nameEdit.setText(team.name)
-        mediaEdit.setText(team.displayableMedia)
-        websiteEdit.setText(team.website)
+        binding.nameEdit.setText(team.name)
+        binding.mediaEdit.setText(team.displayableMedia)
+        binding.websiteEdit.setText(team.website)
     }
 
     override fun onClick(v: View) = when (val id = v.id) {
         R.id.media -> ShouldUploadMediaToTbaDialog.show(this)
-        R.id.editNameButton -> revealNameEditor()
-        R.id.linkTba -> team.launchTba(view.context)
-        R.id.linkWebsite -> team.launchWebsite(view.context)
+        R.id.edit_name_button -> revealNameEditor()
+        R.id.link_tba -> team.launchTba(requireView().context)
+        R.id.link_website -> team.launchWebsite(requireView().context)
         R.id.save -> save()
         else -> error("Unknown id: $id")
     }
 
     private fun revealNameEditor() {
+        val name = binding.name
+        val nameLayout = binding.nameLayout
+        val editNameButton = binding.editNameButton
+
         val editNameAnimator = editNameButton.animateCircularReveal(
                 false, 0, editNameButton.height / 2, editNameButton.width.toFloat())
         val nameAnimator = name.animateCircularReveal(
@@ -173,12 +178,12 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     private fun save() {
-        val name = nameEdit.text?.toString()
-        val media = mediaEdit.text?.toString()
-        val website = websiteEdit.text?.toString()
+        val name = binding.nameEdit.text?.toString()
+        val media = binding.mediaEdit.text?.toString()
+        val website = binding.websiteEdit.text?.toString()
 
-        val isMediaValid = validateUrl(media, mediaLayout)
-        val isWebsiteValid = validateUrl(website, websiteLayout)
+        val isMediaValid = validateUrl(media, binding.mediaLayout)
+        val isWebsiteValid = validateUrl(website, binding.websiteLayout)
 
         val ref = asLifecycleReference()
         GlobalScope.launch {
@@ -238,8 +243,8 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         if (hasFocus) return // Only consider views losing focus
 
-        validateUrl(mediaEdit.text, mediaLayout)
-        validateUrl(websiteEdit.text, websiteLayout)
+        validateUrl(binding.mediaEdit.text, binding.mediaLayout)
+        validateUrl(binding.websiteEdit.text, binding.websiteLayout)
     }
 
     private fun validateUrl(url: CharSequence?, inputLayout: TextInputLayout): Deferred<Boolean> {

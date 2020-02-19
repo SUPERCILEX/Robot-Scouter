@@ -27,15 +27,16 @@ import com.supercilex.robotscouter.core.data.model.getTemplatesQuery
 import com.supercilex.robotscouter.core.model.Scout
 import com.supercilex.robotscouter.core.model.TemplateType
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.dialog_template_selector.*
+import com.supercilex.robotscouter.shared.databinding.TemplateSelectorDialogBinding
 import kotlin.math.roundToInt
 
 abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
     private val holder by viewModels<ScoutsHolder>()
 
-    override val containerView: View by unsafeLazy {
-        View.inflate(context, R.layout.dialog_template_selector, null)
+    private val binding by LifecycleAwareLazy {
+        TemplateSelectorDialogBinding.bind(requireDialog().findViewById(R.id.root))
     }
     private val adapter by unsafeLazy {
         val options = FirestoreRecyclerOptions.Builder<Scout>()
@@ -61,7 +62,7 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
                     oldIndex: Int
             ) = super.onChildChanged(type, snapshot, newIndex + EXTRA_ITEMS, oldIndex + EXTRA_ITEMS)
 
-            override fun onDataChanged() = progress.hide()
+            override fun onDataChanged() = binding.progress.hide()
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
                     ItemViewHolder(LayoutInflater.from(parent.context).inflate(
@@ -84,13 +85,12 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
-        progress.show()
+        dialog.setContentView(R.layout.template_selector_dialog)
 
-        templatesView.adapter = adapter
-        templatesView.addItemDecoration(object : DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-        ) {
+        binding.progress.show()
+
+        binding.templatesView.adapter = adapter
+        binding.templatesView.addItemDecoration(object : DividerItemDecoration(context, VERTICAL) {
             private val bounds = Rect()
 
             override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -110,9 +110,8 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
                 }
 
                 // Only draw the divider for the second item i.e. the last native template
-                val child =
-                        parent.getChildAt(1 - (templatesView.layoutManager as LinearLayoutManager)
-                                .findFirstVisibleItemPosition()) ?: return
+                val manager = (binding.templatesView.layoutManager as LinearLayoutManager)
+                val child = parent.getChildAt(1 - manager.findFirstVisibleItemPosition()) ?: return
                 parent.getDecoratedBoundsWithMargins(child, bounds)
                 val divider = checkNotNull(drawable)
                 val bottom = bounds.bottom + child.translationY.roundToInt()
@@ -127,7 +126,7 @@ abstract class TemplateSelectorDialog : BottomSheetDialogFragmentBase() {
 
     @CallSuper
     protected open fun onItemSelected(id: String) {
-        if (setAsDefault.isChecked) defaultTemplateId = id
+        if (binding.setAsDefault.isChecked) defaultTemplateId = id
     }
 
     private class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),

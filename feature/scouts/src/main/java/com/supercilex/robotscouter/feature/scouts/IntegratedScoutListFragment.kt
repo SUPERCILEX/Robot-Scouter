@@ -30,10 +30,10 @@ import com.supercilex.robotscouter.R as RC
 @Bridge
 internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
     private val appBar by unsafeLazy {
-        requireActivity().findViewById<AppBarLayout>(RC.id.appBar)
+        requireActivity().findViewById<AppBarLayout>(RC.id.app_bar)
     }
     private val drawer by unsafeLazy {
-        requireActivity().findViewById<DrawerLayout>(RC.id.drawerLayout)
+        requireActivity().findViewById<DrawerLayout>(RC.id.drawer_layout)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +53,9 @@ internal class IntegratedScoutListFragment : ScoutListFragmentBase() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        val root = inflater.inflate(R.layout.activity_scout_list, container, false)
-        root.findViewById<FrameLayout>(R.id.scoutList).addView(
-                inflater.inflate(R.layout.fragment_scout_list, container, false))
+        val root = inflater.inflate(R.layout.scout_list_activity, container, false)
+        root.findViewById<FrameLayout>(R.id.scout_list).addView(
+                inflater.inflate(R.layout.scout_list_fragment, container, false))
         return root
     }
 

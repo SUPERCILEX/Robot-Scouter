@@ -13,23 +13,25 @@ import com.supercilex.robotscouter.core.data.model.updateUnit
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.templates.R
+import com.supercilex.robotscouter.feature.templates.databinding.ScoutTemplateCounterBinding
 import com.supercilex.robotscouter.shared.scouting.viewholder.CounterViewHolder
-import kotlinx.android.synthetic.main.scout_template_base_reorder.*
-import kotlinx.android.synthetic.main.scout_template_counter.*
 import com.supercilex.robotscouter.R as RC
 
 internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(itemView),
         MetricTemplateViewHolder<Metric.Number, Long> {
-    override val reorderView: ImageView by unsafeLazy { reorder }
+    private val binding = ScoutTemplateCounterBinding.bind(itemView)
+
+    override val reorderView: ImageView by unsafeLazy { itemView.findViewById(R.id.reorder) }
     override val nameEditor = name as EditText
 
     init {
         init()
 
         itemView as LinearLayout
-        itemView.removeView(unit)
-        itemView.addView(unit, itemView.childCount - 1)
-        itemView.findViewById<View>(RC.id.countContainer).apply {
+        itemView.removeView(binding.unit)
+        itemView.addView(binding.unit, itemView.childCount - 1)
+        itemView.findViewById<View>(RC.id.count_container).apply {
             if (Build.VERSION.SDK_INT >= 17) {
                 updatePaddingRelative(end = 0)
             } else {
@@ -37,12 +39,12 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
             }
         }
 
-        unit.onFocusChangeListener = this
+        binding.unit.onFocusChangeListener = this
     }
 
     override fun bind() {
         super.bind()
-        unit.setText(metric.unit)
+        binding.unit.setText(metric.unit)
     }
 
     override fun onClick(v: View) {
@@ -56,8 +58,8 @@ internal class CounterTemplateViewHolder(itemView: View) : CounterViewHolder(ite
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {
         super.onFocusChange(v, hasFocus)
-        if (!hasFocus && v === unit) {
-            metric.updateUnit(unit.text.nullOrFull()?.toString())
+        if (!hasFocus && v === binding.unit) {
+            metric.updateUnit(binding.unit.text.nullOrFull()?.toString())
         }
     }
 }

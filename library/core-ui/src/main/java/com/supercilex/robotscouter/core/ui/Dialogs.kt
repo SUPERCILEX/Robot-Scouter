@@ -3,7 +3,6 @@ package com.supercilex.robotscouter.core.ui
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.annotation.LayoutRes
@@ -36,8 +35,6 @@ abstract class DialogFragmentBase : DialogFragment() {
 
 abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
         DialogInterface.OnShowListener {
-    protected abstract val containerView: View
-
     override fun onCreateDialog(
             savedInstanceState: Bundle?
     ): Dialog = object : BottomSheetDialog(requireContext(), R.style.RobotScouter_Tmp_72076683),
@@ -59,8 +56,6 @@ abstract class BottomSheetDialogFragmentBase : BottomSheetDialogFragment(),
             this@BottomSheetDialogFragmentBase.onShow(dialog)
         }
     }
-
-    override fun getView() = containerView
 
     open fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) = Unit
 

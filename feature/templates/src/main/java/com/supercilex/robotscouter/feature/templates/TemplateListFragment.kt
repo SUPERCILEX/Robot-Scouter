@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,11 +38,10 @@ import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.SharedLifecycleResource
-import kotlinx.android.synthetic.main.fragment_template_list.*
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_list), Refreshable,
+internal class TemplateListFragment : FragmentBase(R.layout.template_list_fragment), Refreshable,
         View.OnClickListener, RecyclerPoolHolder {
     override val recyclerPool by LifecycleAwareLazy { RecyclerView.RecycledViewPool() }
 
@@ -62,7 +62,7 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
         requireActivity().findViewById(RC.id.fab)
     }
     private val appBar: AppBarLayout by unsafeLazy {
-        requireActivity().findViewById(RC.id.appBar)
+        requireActivity().findViewById(RC.id.app_bar)
     }
     private val tabs by LifecycleAwareLazy {
         val tabs = TabLayout(ContextThemeWrapper(
@@ -83,6 +83,9 @@ internal class TemplateListFragment : FragmentBase(R.layout.fragment_template_li
     private val homeDivider: Guideline? by unsafeLazy {
         val activity = requireActivity()
         if (activity.isInTabletMode()) activity.findViewById<Guideline>(RC.id.guideline) else null
+    }
+    private val viewPager: ViewPager by LifecycleAwareLazy {
+        requireView().findViewById(R.id.templates)
     }
 
     private var savedState: Bundle? = null

@@ -35,9 +35,9 @@ internal class TemplateItemTouchCallback<T : OrderedRemoteModel>(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN,
         ItemTouchHelper.START
 ) {
-    private val recyclerView: RecyclerView = rootView.findViewById(RC.id.metricsView)
+    private val recyclerView: RecyclerView = rootView.findViewById(RC.id.metrics)
     private val appBar: AppBarLayout =
-            (rootView.context as FragmentActivity).findViewById(RC.id.appBar)
+            (rootView.context as FragmentActivity).findViewById(RC.id.app_bar)
     var adapter: FirestoreRecyclerAdapter<T, *> by LateinitVal()
     var itemTouchHelper: ItemTouchHelper by LateinitVal()
 

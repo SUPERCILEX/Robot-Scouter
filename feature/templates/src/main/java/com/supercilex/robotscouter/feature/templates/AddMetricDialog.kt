@@ -6,19 +6,28 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
-import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.dialog_add_metric.*
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
+import com.supercilex.robotscouter.feature.templates.databinding.AddMetricDialogBinding
 
 internal class AddMetricDialog : BottomSheetDialogFragmentBase(), View.OnClickListener {
-    override val containerView: View by unsafeLazy {
-        View.inflate(context, R.layout.dialog_add_metric, null)
+    private val binding by LifecycleAwareLazy {
+        AddMetricDialogBinding.bind(requireDialog().findViewById(R.id.root))
     }
 
     override fun onDialogCreated(dialog: Dialog, savedInstanceState: Bundle?) {
+        dialog.setContentView(R.layout.add_metric_dialog)
+
         BottomSheetBehavior.from(
                 dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet)
         ).state = BottomSheetBehavior.STATE_EXPANDED
-        listOf(addHeader, addCheckBox, addStopwatch, addNote, addCounter, addSpinner).forEach {
+        listOf(
+                binding.addHeader,
+                binding.addCheckbox,
+                binding.addStopwatch,
+                binding.addNote,
+                binding.addCounter,
+                binding.addSpinner
+        ).forEach {
             it.setOnClickListener(this)
         }
     }

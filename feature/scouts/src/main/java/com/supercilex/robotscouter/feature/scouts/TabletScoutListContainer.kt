@@ -8,11 +8,11 @@ import com.supercilex.robotscouter.TabletScoutListFragmentCompanion
 import com.supercilex.robotscouter.core.ui.FragmentBase
 
 @Bridge
-internal class TabletScoutListContainer : FragmentBase(R.layout.activity_scout_list) {
+internal class TabletScoutListContainer : FragmentBase(R.layout.scout_list_activity) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             childFragmentManager.commitNow {
-                add(R.id.scoutList,
+                add(R.id.scout_list,
                     TabletScoutListFragment.newInstance(requireArguments()),
                     TabletScoutListFragment.TAG)
             }

@@ -27,10 +27,9 @@ import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.longSnackbar
 import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
-import kotlinx.android.synthetic.main.fragment_template_metric_list.*
 import com.supercilex.robotscouter.R as RC
 
-internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_metric_list),
+internal class TemplateFragment : MetricListFragment(R.layout.template_metric_list_fragment),
         Refreshable, View.OnClickListener {
     override val metricsRef: CollectionReference by unsafeLazy {
         getTemplateMetricsRef(checkNotNull(getTabId(arguments)))
@@ -46,6 +45,7 @@ internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_
         val parent = requireParentFragment() as TemplateListFragment
         val fab = parent.fab
 
+        val noMetricsHint = view.findViewById<View>(R.id.no_metrics_hint)
         noMetricsHint.animatePopReveal(true)
         holder.metrics.asLiveData().observe(viewLifecycleOwner) {
             val noMetrics = it.isEmpty()
@@ -125,12 +125,12 @@ internal class TemplateFragment : MetricListFragment(R.layout.fragment_template_
         itemTouchCallback.addItemToScrollQueue(position)
 
         when (val id = v.id) {
-            R.id.addHeader -> Metric.Header(position = position, ref = metricRef)
-            R.id.addCheckBox -> Metric.Boolean(position = position, ref = metricRef)
-            R.id.addCounter -> Metric.Number(position = position, ref = metricRef)
-            R.id.addStopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
-            R.id.addNote -> Metric.Text(position = position, ref = metricRef)
-            R.id.addSpinner -> Metric.List(position = position, ref = metricRef)
+            R.id.add_header -> Metric.Header(position = position, ref = metricRef)
+            R.id.add_checkbox -> Metric.Boolean(position = position, ref = metricRef)
+            R.id.add_counter -> Metric.Number(position = position, ref = metricRef)
+            R.id.add_stopwatch -> Metric.Stopwatch(position = position, ref = metricRef)
+            R.id.add_note -> Metric.Text(position = position, ref = metricRef)
+            R.id.add_spinner -> Metric.List(position = position, ref = metricRef)
             else -> error("Unknown view id: $id")
         }.add()
     }

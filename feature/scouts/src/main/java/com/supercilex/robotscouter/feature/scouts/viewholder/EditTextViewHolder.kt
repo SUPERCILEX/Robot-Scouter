@@ -6,13 +6,15 @@ import android.view.View
 import com.supercilex.robotscouter.core.data.model.update
 import com.supercilex.robotscouter.core.model.Metric
 import com.supercilex.robotscouter.core.ui.hideKeyboard
+import com.supercilex.robotscouter.feature.scouts.databinding.ScoutNotesBinding
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
-import kotlinx.android.synthetic.main.scout_notes.*
 
 internal class EditTextViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.Text, String?>(itemView),
         View.OnFocusChangeListener {
+    private val binding = ScoutNotesBinding.bind(itemView)
+
     init {
         name.onFocusChangeListener = this
     }
@@ -23,10 +25,10 @@ internal class EditTextViewHolder(
     // We set the text to the value instead of the name because the name goes in the hint
     @SuppressLint("MissingSuperCall")
     public override fun bind() {
-        textLayout.isHintAnimationEnabled = false
+        binding.textLayout.isHintAnimationEnabled = false
         name.text = metric.value
-        textLayout.hint = metric.name
-        textLayout.isHintAnimationEnabled = true
+        binding.textLayout.hint = metric.name
+        binding.textLayout.isHintAnimationEnabled = true
 
         if (
             Build.VERSION.SDK_INT >= 26 &&

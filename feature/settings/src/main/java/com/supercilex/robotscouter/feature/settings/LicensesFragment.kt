@@ -4,15 +4,20 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.supercilex.robotscouter.core.ui.FragmentBase
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.synthetic.main.fragment_licenses.*
+import com.supercilex.robotscouter.feature.settings.databinding.LicensesFragmentBinding
 import net.yslibrary.licenseadapter.Library
 import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.Licenses
 import com.supercilex.robotscouter.R as RC
 
-internal class LicensesFragment : FragmentBase(R.layout.fragment_licenses) {
+internal class LicensesFragment : FragmentBase(R.layout.licenses_fragment) {
     private val parentActivity by unsafeLazy { activity as AppCompatActivity }
+
+    private val binding by LifecycleAwareLazy {
+        LicensesFragmentBinding.bind(requireView())
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val libraries: List<Library> = listOf(
@@ -48,7 +53,7 @@ internal class LicensesFragment : FragmentBase(R.layout.fragment_licenses) {
                 Licenses.fromGitHubApacheV2("Yshrsmz/LicenseAdapter")
         )
 
-        licensesView.adapter = LicenseAdapter(libraries)
+        binding.licensesView.adapter = LicenseAdapter(libraries)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

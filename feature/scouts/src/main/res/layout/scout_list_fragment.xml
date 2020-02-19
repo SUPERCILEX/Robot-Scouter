@@ -7,15 +7,15 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@id/noTabsHint"
+        android:id="@id/no_tabs_hint"
         style="@style/RobotScouter.NoContentHint"
         android:layout_gravity="center"
-        android:text="@string/template_tutorial_no_templates_hint"
-        app:drawableTopCompat="@drawable/ic_content_paste_grey_96dp"
+        android:text="@string/scout_tutorial_no_scouts_hint"
+        app:drawableTopCompat="@drawable/ic_assignment_grey_96dp"
         tools:visibility="visible" />
 
-    <com.supercilex.robotscouter.core.ui.views.UnscrollableViewPager
-        android:id="@+id/viewPager"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/scouts"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

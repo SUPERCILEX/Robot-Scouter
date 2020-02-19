@@ -200,7 +200,7 @@ abstract class DrawerMenuHelperBase<T>(
         activity: AppCompatActivity,
         tracker: SelectionTracker<T>
 ) : MenuHelperBase<T>(activity, tracker) {
-    private val drawer: DrawerLayout = activity.findViewById(R.id.drawerLayout)
+    private val drawer: DrawerLayout = activity.findViewById(R.id.drawer_layout)
 
     init {
         drawer.setStatusBarBackgroundColor(colorPrimaryDark)

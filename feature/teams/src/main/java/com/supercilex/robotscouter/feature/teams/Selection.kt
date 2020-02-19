@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.supercilex.robotscouter.core.data.nullOrFull
 import com.supercilex.robotscouter.core.ui.ItemDetailsBase
 import com.supercilex.robotscouter.core.ui.ItemDetailsLookupBase
-import kotlinx.android.synthetic.main.team_list_row_layout.*
 import kotlin.math.roundToInt
 
 internal class TeamKeyProvider(

@@ -20,7 +20,7 @@ import com.supercilex.robotscouter.core.ui.shortAnimationDuration
 import com.supercilex.robotscouter.shared.scouting.CounterValueDialog
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
-import kotlinx.android.synthetic.main.scout_base_counter.*
+import com.supercilex.robotscouter.shared.scouting.databinding.ScoutBaseCounterBinding
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -28,15 +28,17 @@ open class CounterViewHolder(
         itemView: View
 ) : MetricViewHolderBase<Metric.Number, Long>(itemView),
         View.OnClickListener, View.OnLongClickListener {
-    private var count = count1
-    private var tmpCount = count2
+    private val binding = ScoutBaseCounterBinding.bind(itemView)
+
+    private var count = binding.count1
+    private var tmpCount = binding.count2
 
     private var countAnimation: Animator? = null
 
     init {
-        increment.setOnClickListener(this)
-        decrement.setOnClickListener(this)
-        countContainer.setOnLongClickListenerCompat(this)
+        binding.increment.setOnClickListener(this)
+        binding.decrement.setOnClickListener(this)
+        binding.countContainer.setOnLongClickListenerCompat(this)
     }
 
     public override fun bind() {
@@ -63,7 +65,7 @@ open class CounterViewHolder(
     }
 
     private fun update(animate: Boolean, up: Boolean = false) {
-        decrement.isEnabled = metric.value > 0 // No negative values
+        binding.decrement.isEnabled = metric.value > 0 // No negative values
 
         if (!animate || countAnimation != null) {
             bindValue(count)

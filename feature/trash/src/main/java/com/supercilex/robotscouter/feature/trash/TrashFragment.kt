@@ -24,18 +24,23 @@ import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.ui.AllChangesSelectionObserver
 import com.supercilex.robotscouter.core.ui.FragmentBase
 import com.supercilex.robotscouter.core.ui.KeyboardShortcutListener
+import com.supercilex.robotscouter.core.ui.LifecycleAwareLazy
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.longSnackbar
-import kotlinx.android.synthetic.main.fragment_trash.*
+import com.supercilex.robotscouter.feature.trash.databinding.TrashFragmentBinding
 import com.supercilex.robotscouter.R as RC
 
-internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnClickListener,
+internal class TrashFragment : FragmentBase(R.layout.trash_fragment), View.OnClickListener,
         KeyboardShortcutListener {
     private val holder by viewModels<TrashHolder>()
     private val allItems get() = holder.trashListener.value.orEmpty()
 
     private lateinit var selectionTracker: SelectionTracker<String>
     private lateinit var menuHelper: TrashMenuHelper
+
+    private val binding by LifecycleAwareLazy {
+        TrashFragmentBinding.bind(requireView())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +49,7 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        actionEmptyTrash.setOnClickListener(this)
+        binding.actionEmptyTrash.setOnClickListener(this)
         (activity as AppCompatActivity).apply {
             setSupportActionBar(findViewById(RC.id.toolbar))
             checkNotNull(supportActionBar).setDisplayHomeAsUpEnabled(true)
@@ -53,16 +58,16 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
         val divider = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         divider.setDrawable(checkNotNull(AppCompatResources.getDrawable(
                 requireContext(), R.drawable.trash_item_divider)))
-        trashList.addItemDecoration(divider)
+        binding.garbage.addItemDecoration(divider)
 
         val adapter = TrashListAdapter()
-        trashList.adapter = adapter
+        binding.garbage.adapter = adapter
 
         selectionTracker = SelectionTracker.Builder(
                 FIRESTORE_DELETION_QUEUE,
-                trashList,
+                binding.garbage,
                 TrashKeyProvider(holder.trashListener),
-                TrashDetailsLookup(trashList),
+                TrashDetailsLookup(binding.garbage),
                 StorageStrategy.createStringStorage()
         ).build().apply {
             adapter.selectionTracker = this
@@ -82,8 +87,8 @@ internal class TrashFragment : FragmentBase(R.layout.fragment_trash), View.OnCli
         holder.trashListener.observe(viewLifecycleOwner) {
             val hasTrash = it.orEmpty().isNotEmpty()
 
-            noTrashHint.animatePopReveal(!hasTrash)
-            notice.isVisible = hasTrash
+            binding.noTrashHint.animatePopReveal(!hasTrash)
+            binding.notice.isVisible = hasTrash
             menuHelper.onTrashCountUpdate(hasTrash)
 
             if (it != null) for (i in 0 until adapter.itemCount) {

@@ -30,7 +30,7 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.MetricViewHolderBase
 import com.supercilex.robotscouter.shared.scouting.R
-import kotlinx.android.synthetic.main.scout_base_stopwatch.*
+import com.supercilex.robotscouter.shared.scouting.databinding.ScoutBaseStopwatchBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -49,6 +49,8 @@ open class StopwatchViewHolder(
         fragment: MetricListFragment
 ) : MetricViewHolderBase<Metric.Stopwatch, List<Long>>(itemView),
         View.OnClickListener, View.OnLongClickListener {
+    private val binding = ScoutBaseStopwatchBinding.bind(itemView)
+
     private var timer: Timer? = null
     private var undoAddSnackbar: Snackbar? = null
 
@@ -67,26 +69,26 @@ open class StopwatchViewHolder(
     private val cyclesAdapter = Adapter()
 
     init {
-        stopwatch.setOnClickListener(this)
-        stopwatch.setOnLongClickListenerCompat(this)
+        binding.stopwatch.setOnClickListener(this)
+        binding.stopwatch.setOnLongClickListenerCompat(this)
 
-        cycles.layoutManager = LinearLayoutManager(
+        binding.cycles.layoutManager = LinearLayoutManager(
                 itemView.context,
                 RecyclerView.HORIZONTAL,
                 false
         ).apply {
             initialPrefetchItemCount = 6
         }
-        cycles.adapter = cyclesAdapter
-        GravitySnapHelper(Gravity.START).attachToRecyclerView(cycles)
+        binding.cycles.adapter = cyclesAdapter
+        GravitySnapHelper(Gravity.START).attachToRecyclerView(binding.cycles)
 
-        cycles.setRecycledViewPool(
+        binding.cycles.setRecycledViewPool(
                 (fragment.requireParentFragment() as RecyclerPoolHolder).recyclerPool)
     }
 
     override fun bind() {
         super.bind()
-        cycles.setHasFixedSize(false)
+        binding.cycles.setHasFixedSize(false)
         cyclesAdapter.notifyDataSetChanged()
 
         val timer = TIMERS[metric.ref]
@@ -139,7 +141,7 @@ open class StopwatchViewHolder(
 
     private fun notifyCycleAdded(position: Int, size: Int) {
         // Force RV to request layout when adding first item
-        cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
+        binding.cycles.setHasFixedSize(size >= LIST_SIZE_WITH_AVERAGE)
 
         if (size == LIST_SIZE_WITH_AVERAGE) {
             updateFirstCycleName()
@@ -155,14 +157,14 @@ open class StopwatchViewHolder(
             updateCycleNames(position, size)
 
             if (size >= LIST_SIZE_WITH_AVERAGE) {
-                cycles.post { cycles.smoothScrollToPosition(position) }
+                binding.cycles.post { binding.cycles.smoothScrollToPosition(position) }
             }
         }
     }
 
     private fun notifyCycleRemoved(position: Int, size: Int, hadAverage: Boolean) {
         // Force RV to request layout when removing last item
-        cycles.setHasFixedSize(size > 0)
+        binding.cycles.setHasFixedSize(size > 0)
 
         cyclesAdapter.notifyItemRemoved(if (hadAverage) position + 1 else position)
         if (hadAverage && size == 1) {
@@ -175,22 +177,22 @@ open class StopwatchViewHolder(
     }
 
     private fun updateFirstCycleName() =
-            cycles.notifyItemsNoChangeAnimation { notifyItemChanged(0) }
+            binding.cycles.notifyItemsNoChangeAnimation { notifyItemChanged(0) }
 
     private fun updateCycleNames(position: Int, size: Int) {
         if (size >= LIST_SIZE_WITH_AVERAGE) {
-            cycles.notifyItemsNoChangeAnimation {
+            binding.cycles.notifyItemsNoChangeAnimation {
                 notifyItemRangeChanged(position + 1, size - position)
             }
         }
     }
 
     private fun setStartTitle() {
-        stopwatch.text = startStopwatchTitle
+        binding.stopwatch.text = startStopwatchTitle
     }
 
     private fun setStopTitle(formattedTime: String) {
-        stopwatch.text = itemView.resources
+        binding.stopwatch.text = itemView.resources
                 .getString(R.string.metric_stopwatch_stop_title, formattedTime)
     }
 
@@ -200,15 +202,16 @@ open class StopwatchViewHolder(
         // color and we end up with unreadable text.
         if (Build.VERSION.SDK_INT < 21) return
 
-        stopwatch.isActivated = isRunning
+        binding.stopwatch.isActivated = isRunning
 
         if (animate) {
             val drawable = if (isRunning) onToOffIcon else offToOnIcon
 
-            stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null)
+            binding.stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    drawable, null, null, null)
             drawable.start()
         } else {
-            stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(if (isRunning) {
+            binding.stopwatch.setCompoundDrawablesRelativeWithIntrinsicBounds(if (isRunning) {
                 R.drawable.ic_timer_off_24dp
             } else {
                 R.drawable.ic_timer_on_24dp

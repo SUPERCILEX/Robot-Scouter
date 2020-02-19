@@ -2,19 +2,20 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     style="@style/RobotScouter.Dialog"
     tools:layout_height="match_parent"
     tools:layout_width="match_parent">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/valueLayout"
+        android:id="@+id/value_layout"
         style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:hint="Value">
 
         <androidx.emoji.widget.EmojiAppCompatEditText
-            android:id="@+id/valueView"
+            android:id="@+id/value_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

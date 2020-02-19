@@ -19,19 +19,21 @@ import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.animatePopReveal
 import com.supercilex.robotscouter.core.ui.setOnLongClickListenerCompat
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.teams.databinding.TeamListRowLayoutBinding
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.team_list_row_layout.*
 import com.supercilex.robotscouter.R as RC
 
 internal class TeamViewHolder(
-        override val containerView: View,
+        itemView: View,
         private val fragment: Fragment
-) : RecyclerView.ViewHolder(containerView), LayoutContainer,
+) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener, View.OnLongClickListener {
     private val unknownName: String by unsafeLazy {
         itemView.context.getString(R.string.team_unknown_team_title)
     }
+
+    private val binding = TeamListRowLayoutBinding.bind(itemView)
+    val media = binding.media
 
     lateinit var team: Team
         private set
@@ -43,9 +45,9 @@ internal class TeamViewHolder(
     private var lastUnselectTimestampHack = 0L
 
     init {
-        media.setOnLongClickListenerCompat(this)
-        newScout.setOnClickListener(this)
-        newScout.setOnLongClickListenerCompat(this)
+        binding.media.setOnLongClickListenerCompat(this)
+        binding.newScout.setOnClickListener(this)
+        binding.newScout.setOnLongClickListenerCompat(this)
         itemView.setOnClickListener(this)
     }
 
@@ -77,18 +79,18 @@ internal class TeamViewHolder(
     }
 
     private fun setTeamNumber() {
-        number.text = team.number.toString()
+        binding.number.text = team.number.toString()
     }
 
     private fun setTeamName() {
-        name.text = if (team.name.isNullOrBlank()) unknownName else team.name
+        binding.name.text = if (team.name.isNullOrBlank()) unknownName else team.name
     }
 
     private fun updateItemStatus() {
-        getTeamMediaRequestBuilder(isItemSelected, media.context, team).into(media)
-        ViewCompat.setTransitionName(media, team.id)
+        getTeamMediaRequestBuilder(isItemSelected, binding.media.context, team).into(binding.media)
+        ViewCompat.setTransitionName(binding.media, team.id)
 
-        newScout.animatePopReveal(!couldItemBeSelected)
+        binding.newScout.animatePopReveal(!couldItemBeSelected)
         itemView.isActivated = !isItemSelected && !couldItemBeSelected && isScouting
         itemView.isSelected = isItemSelected
     }
@@ -97,7 +99,7 @@ internal class TeamViewHolder(
         if (System.currentTimeMillis() - lastUnselectTimestampHack < 50) return
         if (!isItemSelected && !couldItemBeSelected) {
             (itemView.context as TeamSelectionListener)
-                    .onTeamSelected(getScoutBundle(team, v.id == R.id.newScout), media)
+                    .onTeamSelected(getScoutBundle(team, v.id == R.id.new_scout), binding.media)
         }
     }
 
@@ -106,7 +108,7 @@ internal class TeamViewHolder(
 
         when {
             v.id == R.id.media -> TeamDetailsDialog.show(fragment.childFragmentManager, team)
-            v.id == R.id.newScout -> TeamTemplateSelectorDialog.show(
+            v.id == R.id.new_scout -> TeamTemplateSelectorDialog.show(
                     fragment.childFragmentManager, team)
             else -> return false
         }

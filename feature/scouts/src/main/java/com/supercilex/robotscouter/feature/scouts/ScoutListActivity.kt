@@ -16,10 +16,10 @@ internal class ScoutListActivity : ActivityBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(RC.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scout_list)
+        setContentView(R.layout.scout_list_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                add(R.id.scoutList,
+                add(R.id.scout_list,
                     ActivityScoutListFragment.newInstance(
                             checkNotNull(intent.getBundleExtra(SCOUT_ARGS_KEY))),
                     ActivityScoutListFragment.TAG)

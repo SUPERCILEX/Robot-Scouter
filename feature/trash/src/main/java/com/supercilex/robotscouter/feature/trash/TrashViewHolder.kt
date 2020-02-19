@@ -16,15 +16,14 @@ import com.supercilex.robotscouter.core.data.model.teamParser
 import com.supercilex.robotscouter.core.data.teamsRef
 import com.supercilex.robotscouter.core.data.templatesRef
 import com.supercilex.robotscouter.core.unsafeLazy
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.trash_item.*
+import com.supercilex.robotscouter.feature.trash.databinding.TrashItemBinding
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 import com.supercilex.robotscouter.R as RC
 
 internal class TrashViewHolder(
-        override val containerView: View
-) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+        itemView: View
+) : RecyclerView.ViewHolder(itemView) {
     private val unknownName: String by unsafeLazy {
         itemView.context.getString(R.string.trash_unnamed_item)
     }
@@ -35,6 +34,8 @@ internal class TrashViewHolder(
         itemView.context.getString(R.string.trash_deleting_item)
     }
 
+    private val binding = TrashItemBinding.bind(itemView)
+
     lateinit var trash: Trash
 
     fun bind(trash: Trash, selected: Boolean) {
@@ -43,8 +44,8 @@ internal class TrashViewHolder(
         if (this::trash.isInitialized && this.trash == trash) return
         this.trash = trash
 
-        name.text = loadingName
-        type.setImageResource(when (trash.type) {
+        binding.name.text = loadingName
+        binding.type.setImageResource(when (trash.type) {
             DeletionType.TEAM -> RC.drawable.ic_person_grey_96dp
             DeletionType.TEMPLATE -> RC.drawable.ic_content_paste_grey_96dp
             else -> error("Unsupported type: ${trash.type}")
@@ -84,11 +85,11 @@ internal class TrashViewHolder(
             val snapshot = checkNotNull(task.result)
             if (snapshot.id != trash.id) return // Holder might have changed
             if (!snapshot.exists()) {
-                holder.name.text = holder.deletingName
+                holder.binding.name.text = holder.deletingName
                 return
             }
 
-            holder.name.text = when (val type = trash.type) {
+            holder.binding.name.text = when (val type = trash.type) {
                 DeletionType.TEAM -> teamParser.parseSnapshot(snapshot).toString()
                 DeletionType.TEMPLATE ->
                     scoutParser.parseSnapshot(snapshot).name ?: holder.unknownName

@@ -7,7 +7,7 @@
         android:title="@string/home_teams_title" />
 
     <item
-        android:id="@+id/autoScout"
+        android:id="@+id/auto_scout"
         android:icon="@drawable/ic_auto_fix_colorable_24dp"
         android:title="@string/home_autoscout_title"
         android:visible="false" />

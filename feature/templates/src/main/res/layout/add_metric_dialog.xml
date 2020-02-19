@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     style="@style/RobotScouter.Dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,65 +28,65 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/addHeader"
+                android:id="@+id/add_header"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_header_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/addCheckBox"
+                app:layout_constraintEnd_toStartOf="@id/add_checkbox"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/addNote"
+                app:layout_constraintBottom_toTopOf="@id/add_note"
                 app:drawableTopCompat="@drawable/ic_metric_header"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
-                android:id="@+id/addCheckBox"
+                android:id="@+id/add_checkbox"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_checkbox_title"
-                app:layout_constraintStart_toEndOf="@id/addHeader"
-                app:layout_constraintEnd_toStartOf="@id/addStopwatch"
+                app:layout_constraintStart_toEndOf="@id/add_header"
+                app:layout_constraintEnd_toStartOf="@id/add_stopwatch"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/addCounter"
+                app:layout_constraintBottom_toTopOf="@id/add_counter"
                 app:drawableTopCompat="@drawable/ic_metric_checkbox"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
-                android:id="@+id/addStopwatch"
+                android:id="@+id/add_stopwatch"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_stopwatch_title"
-                app:layout_constraintStart_toEndOf="@id/addCheckBox"
+                app:layout_constraintStart_toEndOf="@id/add_checkbox"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/addSpinner"
+                app:layout_constraintBottom_toTopOf="@id/add_spinner"
                 app:drawableTopCompat="@drawable/ic_metric_stopwatch"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
-                android:id="@+id/addNote"
+                android:id="@+id/add_note"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_note_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/addCounter"
-                app:layout_constraintTop_toBottomOf="@id/addHeader"
+                app:layout_constraintEnd_toStartOf="@id/add_counter"
+                app:layout_constraintTop_toBottomOf="@id/add_header"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:drawableTopCompat="@drawable/ic_metric_notes" />
 
             <TextView
-                android:id="@+id/addCounter"
+                android:id="@+id/add_counter"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_counter_title"
-                app:layout_constraintStart_toEndOf="@id/addNote"
-                app:layout_constraintEnd_toStartOf="@id/addSpinner"
-                app:layout_constraintTop_toBottomOf="@id/addCheckBox"
+                app:layout_constraintStart_toEndOf="@id/add_note"
+                app:layout_constraintEnd_toStartOf="@id/add_spinner"
+                app:layout_constraintTop_toBottomOf="@id/add_checkbox"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:drawableTopCompat="@drawable/ic_metric_counter" />
 
             <TextView
-                android:id="@+id/addSpinner"
+                android:id="@+id/add_spinner"
                 style="@style/RobotScouter.AddMetric"
                 android:text="@string/metric_spinner_title"
-                app:layout_constraintStart_toEndOf="@id/addCounter"
+                app:layout_constraintStart_toEndOf="@id/add_counter"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/addStopwatch"
+                app:layout_constraintTop_toBottomOf="@id/add_stopwatch"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:drawableTopCompat="@drawable/ic_header_spinner" />
 

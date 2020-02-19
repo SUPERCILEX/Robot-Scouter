@@ -48,10 +48,10 @@ import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.showStoreListing
 import com.supercilex.robotscouter.core.ui.transitionAnimationDuration
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.databinding.HomeActivityContentBinding
+import com.supercilex.robotscouter.databinding.HomeActivityNormalBinding
 import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import com.supercilex.robotscouter.shared.launchUrl
-import kotlinx.android.synthetic.main.activity_home_base.*
-import kotlinx.android.synthetic.main.activity_home_content.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -63,11 +63,17 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     private val updateManager by lazy { AppUpdateManagerFactory.create(this) }
 
+    private val binding by unsafeLazy {
+        HomeActivityNormalBinding.bind(findViewById(R.id.drawer_layout))
+    }
+    private val contentBinding by unsafeLazy {
+        HomeActivityContentBinding.bind(findViewById(R.id.root))
+    }
     private val drawerToggle by unsafeLazy {
         ActionBarDrawerToggle(
                 this,
-                drawerLayout,
-                toolbar,
+                binding.drawerLayout,
+                contentBinding.toolbar,
                 R.string.navigation_drawer_open_desc,
                 R.string.navigation_drawer_close_desc
         )
@@ -85,7 +91,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
      *    [TabletScoutListFragmentCompanion] counterpart. The fragment will call [onTeamSelected]
      *    which will kick of a series of transactions.
      * 1. The back stack will be popped to remove the integrated fragment.
-     * 1. The tablet fragment will replace anything in the [R.id.scoutList] container.
+     * 1. The tablet fragment will replace anything in the [R.id.scout_list] container.
      * 1. The [R.id.content] container will be forced to be a [TeamListFragmentCompanion].
      * 1. The bottom nav will attempt to be updated to point to the teams fragment, but it will be
      *    null b/c we're still in [onCreate] and haven't called [setContentView] yet.
@@ -106,7 +112,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.RobotScouter_NoActionBar_TransparentStatusBar)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.home_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 add(R.id.content,
@@ -128,12 +134,14 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             ) onBackPressedDispatcher.onBackPressed()
         }
 
-        setSupportActionBar(toolbar)
-        drawerLayout.addDrawerListener(drawerToggle)
+        setSupportActionBar(contentBinding.toolbar)
+        binding.drawerLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
-        drawer.setNavigationItemSelectedListener(this)
-        if (enableAutoScout) bottomNavigation.menu.findItem(R.id.autoScout).isVisible = true
-        bottomNavigation.setOnNavigationItemSelectedListener listener@{
+        binding.drawer.setNavigationItemSelectedListener(this)
+        if (enableAutoScout) {
+            binding.bottomNavigation.menu.findItem(R.id.auto_scout).isVisible = true
+        }
+        binding.bottomNavigation.setOnNavigationItemSelectedListener listener@{
             if (bottomNavStatusNeedsUpdatingHack) return@listener true
 
             val manager = supportFragmentManager
@@ -153,7 +161,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                 return@listener true
             }
 
-            appBar.setExpanded(true)
+            contentBinding.appBar.setExpanded(true)
             manager.commitNow {
                 val newFragment = manager.destTagToFragment(newTag)
 
@@ -165,22 +173,28 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             true
         }
         prefs.asLiveData().observe(this) {
-            bottomNavigation.menu.findItem(R.id.templates).isEnabled = isTemplateEditingAllowed
+            binding.bottomNavigation.menu.findItem(R.id.templates).isEnabled =
+                    isTemplateEditingAllowed
         }
 
         if (isInTabletMode() && Build.VERSION.SDK_INT >= 21) {
-            scoutList.outlineProvider = object : ViewOutlineProvider() {
+            findViewById<View>(R.id.scout_list).outlineProvider = object : ViewOutlineProvider() {
                 private val padding = resources.getDimensionPixelSize(R.dimen.spacing_mini)
 
                 override fun getOutline(view: View, outline: Outline) {
                     // Without negative starting values, the outline will show up on top of the
                     // toolbar.
-                    outline.setRect(-bottomNavigation.width - 100, -100, padding, view.height)
+                    outline.setRect(
+                            -binding.bottomNavigation.width - 100,
+                            -100,
+                            padding,
+                            view.height
+                    )
                 }
             }
         }
 
-        handleModuleInstalls(moduleInstallProgress)
+        handleModuleInstalls(findViewById(R.id.module_install_progress))
         authHelper.init().logFailures("authInit").addOnSuccessListener(this) {
             handleIntent()
         }
@@ -190,7 +204,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
 
     private fun destIdToTag(id: Int) = when (id) {
         R.id.teams -> TeamListFragmentCompanion.TAG
-        R.id.autoScout -> AutoScoutFragmentCompanion.TAG
+        R.id.auto_scout -> AutoScoutFragmentCompanion.TAG
         R.id.templates -> TemplateListFragmentCompanion.TAG
         else -> error("Unknown id: $id")
     }
@@ -270,7 +284,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             }
         }
 
-        drawerLayout.closeDrawer(GravityCompat.START)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return false
     }
 
@@ -283,14 +297,14 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     }
 
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            val homeId = bottomNavigation.menu.children.first().itemId
-            if (bottomNavigation.selectedItemId == homeId) {
+            val homeId = binding.bottomNavigation.menu.children.first().itemId
+            if (binding.bottomNavigation.selectedItemId == homeId) {
                 super.onBackPressed()
             } else {
-                bottomNavigation.selectedItemId = homeId
+                binding.bottomNavigation.selectedItemId = homeId
             }
         }
     }
@@ -308,7 +322,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         if (isInTabletMode()) {
             manager.commit {
                 setCustomAnimations(R.anim.pop_fade_in_right, R.anim.fade_out)
-                replace(R.id.scoutList,
+                replace(R.id.scout_list,
                         TabletScoutListFragmentCompanion().newInstance(args),
                         ScoutListFragmentCompanionBase.TAG)
 
@@ -360,7 +374,7 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
     private fun updateBottomNavStatusAfterTeamSelection() {
         bottomNavStatusNeedsUpdatingHack = true
 
-        val nav = bottomNavigation ?: return
+        val nav = binding.bottomNavigation
         nav.post {
             nav.selectedItemId = R.id.teams
             bottomNavStatusNeedsUpdatingHack = false
@@ -380,8 +394,8 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
         super.onTrimMemory(level)
         if (level == TRIM_MEMORY_MODERATE || level == TRIM_MEMORY_RUNNING_LOW) {
             supportFragmentManager.apply {
-                val currentDestId = bottomNavigation.selectedItemId
-                val unfocusedFragments = bottomNavigation.menu.children
+                val currentDestId = binding.bottomNavigation.selectedItemId
+                val unfocusedFragments = binding.bottomNavigation.menu.children
                         .filterNot { it.itemId == currentDestId }
                         .map(MenuItem::getItemId)
                         .map(::destIdToTag)
@@ -412,11 +426,11 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
                     onTeamSelected(checkNotNull(getBundle(SCOUT_ARGS_KEY)))
                 containsKey(TEMPLATE_ARGS_KEY) -> {
                     val args = checkNotNull(getBundle(TEMPLATE_ARGS_KEY))
-                    if (bottomNavigation.selectedItemId == R.id.templates) {
+                    if (binding.bottomNavigation.selectedItemId == R.id.templates) {
                         // Handles args
                         TemplateListFragmentCompanion().getInstance(supportFragmentManager, args)
                     } else {
-                        bottomNavigation.selectedItemId = R.id.templates
+                        binding.bottomNavigation.selectedItemId = R.id.templates
                     }
                 }
                 containsKey(DONATE_EXTRA) ->

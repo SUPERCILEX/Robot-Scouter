@@ -33,7 +33,7 @@
         app:layout_collapseMode="parallax" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/scoutsToolbar"
+        android:id="@+id/scouts_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/scout_toolbar_height"
         android:gravity="top"

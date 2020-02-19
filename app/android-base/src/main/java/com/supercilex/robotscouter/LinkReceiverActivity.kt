@@ -22,8 +22,9 @@ import com.supercilex.robotscouter.core.logBreadcrumb
 import com.supercilex.robotscouter.core.longToast
 import com.supercilex.robotscouter.core.ui.ActivityBase
 import com.supercilex.robotscouter.core.ui.addNewDocumentFlags
+import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.databinding.LinkReceiverActivityBinding
 import com.supercilex.robotscouter.shared.client.onSignedIn
-import kotlinx.android.synthetic.main.activity_link_receiver.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -34,11 +35,15 @@ import java.util.Date
 internal class LinkReceiverActivity : ActivityBase(), CoroutineScope {
     override val coroutineContext = Job()
 
+    private val binding by unsafeLazy {
+        LinkReceiverActivityBinding.bind(findViewById(R.id.progress))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_link_receiver)
-        progress.show()
-        handleModuleInstalls(progress)
+        setContentView(R.layout.link_receiver_activity)
+        binding.progress.show()
+        handleModuleInstalls(binding.progress)
 
         async {
             val dynamicLink: PendingDynamicLinkData? =

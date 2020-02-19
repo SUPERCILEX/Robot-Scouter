@@ -3,7 +3,6 @@ import org.apache.commons.io.output.TeeOutputStream
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
-import org.jetbrains.kotlin.gradle.internal.CacheImplementation
 
 buildscript {
     repositories.deps()
@@ -131,6 +130,8 @@ fun Project.configureAndroid() {
             xmlOutput = file("$reportsDir/lint-results.xml")
         }
 
+        buildFeatures.viewBinding = true
+
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
@@ -142,7 +143,6 @@ fun Project.configureAndroid() {
     }
 
     configure<AndroidExtensionsExtension> {
-        isExperimental = true
-        defaultCacheImplementation = CacheImplementation.SPARSE_ARRAY
+        features = setOf("parcelize")
     }
 }

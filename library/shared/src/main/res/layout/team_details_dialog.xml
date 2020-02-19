@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     style="@style/RobotScouter.Dialog"
     tools:layout_height="match_parent"
     tools:layout_width="match_parent">
@@ -70,7 +71,7 @@
                 tools:text="2521 - SERT" />
 
             <com.supercilex.robotscouter.core.ui.views.SupportVectorDrawablesImageButton
-                android:id="@+id/editNameButton"
+                android:id="@+id/edit_name_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_normal"
@@ -86,7 +87,7 @@
                 app:layout_constraintHorizontal_bias="0" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/nameLayout"
+                android:id="@+id/name_layout"
                 style="@style/Widget.Design.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,7 +96,7 @@
                 android:visibility="gone">
 
                 <androidx.emoji.widget.EmojiAppCompatEditText
-                    android:id="@+id/nameEdit"
+                    android:id="@+id/name_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="textCapWords" />
@@ -111,7 +112,7 @@
             android:layout_marginBottom="@dimen/spacing_large">
 
             <Button
-                android:id="@+id/linkTba"
+                android:id="@+id/link_tba"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,7 +130,7 @@
                 app:layout_constraintGuide_percent="0.5" />
 
             <Button
-                android:id="@+id/linkWebsite"
+                android:id="@+id/link_website"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -142,7 +143,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/mediaLayout"
+            android:id="@+id/media_layout"
             style="@style/Widget.Design.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -151,7 +152,7 @@
             android:hint="@string/details_media_hint">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/mediaEdit"
+                android:id="@+id/media_edit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textUri" />
@@ -159,14 +160,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/websiteLayout"
+            android:id="@+id/website_layout"
             style="@style/Widget.Design.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/details_website_hint">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/websiteEdit"
+                android:id="@+id/website_edit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="textUri" />

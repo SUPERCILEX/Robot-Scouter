@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="noTabsHint" type="id" />
-    <item name="metricsView" type="id" />
+    <item name="name" type="id" />
+    <item name="no_tabs_hint" type="id" />
+    <item name="metrics" type="id" />
 </resources>

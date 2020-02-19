@@ -10,7 +10,6 @@ import com.supercilex.robotscouter.core.unsafeLazy
 import com.supercilex.robotscouter.feature.templates.R
 import com.supercilex.robotscouter.shared.scouting.MetricListFragment
 import com.supercilex.robotscouter.shared.scouting.viewholder.StopwatchViewHolder
-import kotlinx.android.synthetic.main.scout_template_base_reorder.*
 import com.supercilex.robotscouter.R as RC
 
 internal class StopwatchTemplateViewHolder(
@@ -18,7 +17,7 @@ internal class StopwatchTemplateViewHolder(
         fragment: MetricListFragment
 ) : StopwatchViewHolder(itemView, fragment),
         MetricTemplateViewHolder<Metric.Stopwatch, List<Long>> {
-    override val reorderView: ImageView by unsafeLazy { reorder }
+    override val reorderView: ImageView by unsafeLazy { itemView.findViewById(R.id.reorder) }
     override val nameEditor = name as EditText
 
     init {

@@ -37,13 +37,13 @@ import com.supercilex.robotscouter.core.ui.isInTabletMode
 import com.supercilex.robotscouter.core.ui.notifyItemsNoChangeAnimation
 import com.supercilex.robotscouter.core.ui.onDestroy
 import com.supercilex.robotscouter.core.unsafeLazy
+import com.supercilex.robotscouter.feature.teams.databinding.TeamListFragmentBinding
 import com.supercilex.robotscouter.shared.SharedLifecycleResource
 import com.supercilex.robotscouter.shared.TeamDetailsDialog
-import kotlinx.android.synthetic.main.fragment_team_list.*
 import com.supercilex.robotscouter.R as RC
 
 @Bridge
-internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
+internal class TeamListFragment : FragmentBase(R.layout.team_list_fragment),
         TeamSelectionListener, SelectedTeamsRetriever, Refreshable,
         TeamDetailsDialog.Callback, KeyboardShortcutListener, View.OnClickListener {
     override val selectedTeams: List<Team>
@@ -57,11 +57,14 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
     private val tutorialHelper by viewModels<TutorialHelper>()
 
     private val sharedResources by activityViewModels<SharedLifecycleResource>()
+    private val binding by LifecycleAwareLazy {
+        TeamListFragmentBinding.bind(requireView())
+    }
     private val fab: FloatingActionButton by unsafeLazy {
         requireActivity().findViewById(RC.id.fab)
     }
     private val appBar: AppBarLayout by unsafeLazy {
-        requireActivity().findViewById(RC.id.appBar)
+        requireActivity().findViewById(RC.id.app_bar)
     }
     private var adapter: TeamListAdapter by LifecycleAwareLazy()
     private var selectionTracker by LifecycleAwareLazy<SelectionTracker<String>>() onDestroy {
@@ -86,8 +89,8 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
         fab.show()
         showAddTeamTutorial(tutorialHelper, this)
 
-        teamsView.setHasFixedSize(true)
-        teamsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.teams.setHasFixedSize(true)
+        binding.teams.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0) {
                     // User scrolled down -> hide the FAB
@@ -99,14 +102,14 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
         })
 
         adapter = TeamListAdapter(savedInstanceState, this, holder)
-        teamsView.adapter = adapter
+        binding.teams.adapter = adapter
 
         selectionTracker = run {
             SelectionTracker.Builder(
                     FIRESTORE_TEAMS,
-                    teamsView,
+                    binding.teams,
                     TeamKeyProvider(adapter),
-                    TeamDetailsLookup(teamsView),
+                    TeamDetailsLookup(binding.teams),
                     StorageStrategy.createStringStorage()
             ).build().apply {
                 addObserver(TeamMenuHelper(this@TeamListFragment, this)
@@ -115,7 +118,7 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
                 addObserver(object : AllChangesSelectionObserver<String>() {
                     override fun onItemStateChanged(key: String, selected: Boolean) {
                         val notify = {
-                            teamsView.notifyItemsNoChangeAnimation(
+                            binding.teams.notifyItemsNoChangeAnimation(
                                     // Prevent recursive loop
                                     SelectionTracker.SELECTION_CHANGED_MARKER)
                         }
@@ -144,7 +147,7 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
 
         teams.asLiveData().observe(viewLifecycleOwner) {
             val noTeams = it.isEmpty()
-            noTeamsHint.animatePopReveal(noTeams)
+            binding.noTeamsHint.animatePopReveal(noTeams)
             if (noTeams) fab.show()
         }
     }
@@ -195,7 +198,7 @@ internal class TeamListFragment : FragmentBase(R.layout.fragment_team_list),
 
     override fun refresh() {
         selectionTracker.clearSelection()
-        teamsView.smoothScrollToPosition(0)
+        binding.teams.smoothScrollToPosition(0)
     }
 
     override fun onTeamModificationsComplete() {

@@ -7,17 +7,17 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/noTeamsHint"
+        android:id="@+id/no_metrics_hint"
         style="@style/RobotScouter.NoContentHint"
         android:layout_gravity="center"
-        android:text="@string/team_tutorial_no_teams_hint"
-        app:drawableTopCompat="@drawable/ic_group_grey_96dp"
-        tools:visibility="visible" />
+        android:text="@string/template_tutorial_no_metrics_hint"
+        app:drawableTopCompat="@drawable/ic_ruler_grey_96dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/teamsView"
-        style="@style/RobotScouter.List"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/team_list_row_layout" />
+        android:id="@id/metrics"
+        style="@style/RobotScouter.List.Scouting.Template"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/scout_template_counter" />
 
 </FrameLayout>

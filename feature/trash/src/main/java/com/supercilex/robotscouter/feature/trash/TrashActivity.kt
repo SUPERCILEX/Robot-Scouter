@@ -14,7 +14,7 @@ internal class TrashActivity : ActivityBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(RC.style.RobotScouter_NoActionBar)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_trash)
+        setContentView(R.layout.trash_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 add(R.id.trash, TrashFragment.newInstance(), TrashFragment.TAG)
