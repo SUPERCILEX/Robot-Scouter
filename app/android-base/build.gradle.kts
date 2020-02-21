@@ -5,6 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     id("io.fabric")
     Config.Plugins.run { publishing }
+    Config.Plugins.run { versioning }
 }
 if (isReleaseBuild) apply(plugin = "com.google.firebase.firebase-perf")
 crashlytics.alwaysUpdateBuildId = isReleaseBuild
@@ -76,6 +77,10 @@ play {
     promoteTrack = "alpha"
 
     resolutionStrategy = "auto"
+}
+
+versionMaster {
+    configureVersionCode.set(false)
 }
 
 googleServices { disableVersionCheck = true }
