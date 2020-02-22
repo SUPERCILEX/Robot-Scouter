@@ -48,11 +48,11 @@ object Config {
 
         const val ktlint = "com.pinterest:ktlint:0.33.0"
 
-        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.6.2"
+        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.7.1"
         val PluginDependenciesSpec.versioning
-            get() = id("com.supercilex.gradle.versions") version "0.2.0"
+            get() = id("com.supercilex.gradle.versions") version "0.3.0"
         val PluginDependenciesSpec.versionChecker
-            get() = id("com.github.ben-manes.versions") version "0.27.0"
+            get() = id("com.github.ben-manes.versions") version "0.28.0"
     }
 
     object Libs {
