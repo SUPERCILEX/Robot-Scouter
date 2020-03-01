@@ -12,11 +12,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.await
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlin.js.Json
 
 fun DocumentSnapshot.toTeamString() =
         "${data()[FIRESTORE_NUMBER]} - ${data()[FIRESTORE_NAME]}: $id"
 
 fun DocumentSnapshot.toTemplateString() = "${data()[FIRESTORE_NAME]}: $id"
+
+fun <T> DocumentSnapshot.getAsMap(fieldPath: String): Map<String, T> = get<Json>(fieldPath).toMap()
 
 suspend fun Firestore.batch(transaction: WriteBatch.() -> Unit) = batch().run {
     transaction()

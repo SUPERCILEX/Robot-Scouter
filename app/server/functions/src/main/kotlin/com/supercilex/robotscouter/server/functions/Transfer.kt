@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.duplicateTeams
 import com.supercilex.robotscouter.server.utils.epoch
 import com.supercilex.robotscouter.server.utils.firestore
+import com.supercilex.robotscouter.server.utils.getAsMap
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
@@ -177,7 +178,7 @@ fun updateOwners(auth: AuthContext, data: Json): Promise<*>? {
         val content = ref.get().await()
 
         if (!content.exists) throw HttpsError("not-found")
-        if (content.get<Json>(FIRESTORE_ACTIVE_TOKENS)[token] == null) {
+        if (content.getAsMap<Any?>(FIRESTORE_ACTIVE_TOKENS)[token] == null) {
             throw HttpsError("permission-denied", "Token $token is invalid for $path")
         }
 
@@ -295,7 +296,7 @@ fun mergeDuplicateTeams(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
                             }
                         }.awaitAll()
 
-                        for ((owner) in merge.get<Json>(FIRESTORE_OWNERS).toMap<Any>()) {
+                        for ((owner) in merge.getAsMap<Any>(FIRESTORE_OWNERS)) {
                             t.set(duplicateTeams.doc(owner),
                                   json(merge.id to FieldValues.delete()),
                                   SetOptions.merge)

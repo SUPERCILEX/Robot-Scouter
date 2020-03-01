@@ -21,6 +21,7 @@ import com.supercilex.robotscouter.server.utils.delete
 import com.supercilex.robotscouter.server.utils.deletionQueue
 import com.supercilex.robotscouter.server.utils.duplicateTeams
 import com.supercilex.robotscouter.server.utils.firestore
+import com.supercilex.robotscouter.server.utils.getAsMap
 import com.supercilex.robotscouter.server.utils.getTeamsQuery
 import com.supercilex.robotscouter.server.utils.getTemplatesQuery
 import com.supercilex.robotscouter.server.utils.getTrashedTeamsQuery
@@ -318,7 +319,7 @@ suspend fun deleteTeam(team: DocumentSnapshot) {
             it.ref.collection(FIRESTORE_METRICS).delete()
         }
 
-        team.get<Json>(FIRESTORE_OWNERS).toMap<Long>().map { (uid) ->
+        team.getAsMap<Long>(FIRESTORE_OWNERS).map { (uid) ->
             duplicateTeams.doc(uid)
                     .set(json(id to FieldValues.delete()), SetOptions.merge)
                     .asDeferred()
