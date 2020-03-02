@@ -372,7 +372,10 @@ internal class HomeActivity : ActivityBase(), NavigationView.OnNavigationItemSel
             grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (hasPermsOnRequestPermissionsResult(requestCode, permissions, grantResults)) {
+        if (
+            requestCode == ExportServiceCompanion.PERMS_RC &&
+            hasPermsOnRequestPermissionsResult(permissions, grantResults)
+        ) {
             export()
         }
     }

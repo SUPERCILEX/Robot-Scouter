@@ -152,7 +152,10 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
             permissions: Array<String>,
             grantResults: IntArray
     ) {
-        if (hasPermsOnRequestPermissionsResult(requestCode, permissions, grantResults)) {
+        if (
+            requestCode == PERMS_RC &&
+            hasPermsOnRequestPermissionsResult(permissions, grantResults)
+        ) {
             mediaCreator.capture()
         }
     }
@@ -206,7 +209,7 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
     private fun onViewActionRequested(action: TeamMediaCreator.ViewAction) {
         when (action) {
             is TeamMediaCreator.ViewAction.RequestPermissions ->
-                requestPerms(action.perms.toTypedArray(), action.rationaleId)
+                requestPerms(action.perms.toTypedArray(), action.rationaleId, PERMS_RC)
             is TeamMediaCreator.ViewAction.StartIntentForResult ->
                 startActivityForResult(action.intent, action.rc)
             is TeamMediaCreator.ViewAction.ShowTbaUploadDialog ->
@@ -259,6 +262,8 @@ internal abstract class ScoutListFragmentBase : FragmentBase(R.layout.fragment_s
     protected abstract fun onTeamDeleted()
 
     protected companion object {
+        private const val PERMS_RC = 5937
+
         private val performOptionsItemSelectedField by unsafeLazy {
             Fragment::class.java
                     .getDeclaredMethod("performOptionsItemSelected", MenuItem::class.java)

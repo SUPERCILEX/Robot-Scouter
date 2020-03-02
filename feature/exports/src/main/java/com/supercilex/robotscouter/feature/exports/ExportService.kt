@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.supercilex.robotscouter.Bridge
 import com.supercilex.robotscouter.ExportServiceCompanion
+import com.supercilex.robotscouter.ExportServiceCompanion.Companion.PERMS_RC
 import com.supercilex.robotscouter.ExportServiceCompanion.Companion.perms
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.InvocationMarker
@@ -221,7 +222,7 @@ class ExportService : IntentService(TAG) {
                 teams: List<Team>
         ): Boolean {
             if (!hasPerms(perms)) {
-                activity.requestPerms(perms, R.string.export_write_storage_rationale)
+                activity.requestPerms(perms, R.string.export_write_storage_rationale, PERMS_RC)
                 return false
             }
 

@@ -157,7 +157,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(),
     private fun onViewActionRequested(action: TeamMediaCreator.ViewAction) {
         when (action) {
             is TeamMediaCreator.ViewAction.RequestPermissions ->
-                requestPerms(action.perms.toTypedArray(), action.rationaleId)
+                requestPerms(action.perms.toTypedArray(), action.rationaleId, PERMS_RC)
             is TeamMediaCreator.ViewAction.StartIntentForResult ->
                 startActivityForResult(action.intent, action.rc)
             is TeamMediaCreator.ViewAction.ShowTbaUploadDialog ->
@@ -241,7 +241,10 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(),
             permissions: Array<String>,
             grantResults: IntArray
     ) {
-        if (hasPermsOnRequestPermissionsResult(requestCode, permissions, grantResults)) {
+        if (
+            requestCode == PERMS_RC &&
+            hasPermsOnRequestPermissionsResult(permissions, grantResults)
+        ) {
             mediaCreator.capture()
         }
     }
@@ -277,6 +280,7 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(),
 
     companion object {
         private const val TAG = "TeamDetailsDialog"
+        private const val PERMS_RC = 2048
 
         fun show(manager: FragmentManager, team: Team) {
             team.logEditDetails()

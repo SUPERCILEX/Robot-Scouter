@@ -244,6 +244,8 @@ interface ExportServiceCompanion : DownloadableBridgeCompanion {
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         val perms get() = _perms.copyOf()
+
+        const val PERMS_RC = 3383
     }
 }
 
