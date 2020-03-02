@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -34,6 +35,8 @@ import com.supercilex.robotscouter.core.data.toBundle
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.ui.BottomSheetDialogFragmentBase
 import com.supercilex.robotscouter.core.ui.animateCircularReveal
+import com.supercilex.robotscouter.core.ui.hasPermsOnRequestPermissionsResult
+import com.supercilex.robotscouter.core.ui.requestPerms
 import com.supercilex.robotscouter.core.ui.setImeOnDoneListener
 import com.supercilex.robotscouter.core.ui.show
 import com.supercilex.robotscouter.core.unsafeLazy
@@ -43,16 +46,16 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import kotlin.math.hypot
 
-class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListener,
+class TeamDetailsDialog : BottomSheetDialogFragmentBase(),
         View.OnClickListener, View.OnFocusChangeListener {
     private lateinit var team: Team
 
-    private val permHandler by viewModels<PermissionRequestHandler>()
     private val mediaCreator by viewModels<TeamMediaCreator>()
 
     override val containerView by unsafeLazy {
@@ -62,15 +65,6 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         team = requireArguments().getTeam()
-        permHandler.init(TeamMediaCreator.perms)
-        permHandler.onGranted.observe(this) {
-            mediaCreator.capture(this)
-        }
-        mediaCreator.init()
-        mediaCreator.onMediaCaptured.observe(this) {
-            team.copyMediaInfo(it)
-            updateUi()
-        }
         ViewModelProvider(this).get<TeamHolder>().apply {
             init(team)
             var firstOverwrite = savedInstanceState == null
@@ -79,7 +73,6 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
                     dismiss()
                 } else {
                     team = it
-                    mediaCreator.team = it
 
                     // Skip the first UI update if this fragment is being restored since the views
                     // will know how to restore themselves.
@@ -102,6 +95,13 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
         websiteEdit.setImeOnDoneListener { save() }
 
         updateUi()
+
+        lifecycleScope.launchWhenCreated {
+            mediaCreator.viewActions.collect { onViewActionRequested(it) }
+        }
+        mediaCreator.state.observe(this) {
+            onViewStateChanged(it)
+        }
     }
 
     private fun updateUi() {
@@ -146,12 +146,30 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
     }
 
     override fun onClick(v: View) = when (val id = v.id) {
-        R.id.media -> ShouldUploadMediaToTbaDialog.show(this)
+        R.id.media -> mediaCreator.capture()
         R.id.editNameButton -> revealNameEditor()
         R.id.linkTba -> team.launchTba(view.context)
         R.id.linkWebsite -> team.launchWebsite(view.context)
         R.id.save -> save()
         else -> error("Unknown id: $id")
+    }
+
+    private fun onViewActionRequested(action: TeamMediaCreator.ViewAction) {
+        when (action) {
+            is TeamMediaCreator.ViewAction.RequestPermissions ->
+                requestPerms(action.perms.toTypedArray(), action.rationaleId)
+            is TeamMediaCreator.ViewAction.StartIntentForResult ->
+                startActivityForResult(action.intent, action.rc)
+            is TeamMediaCreator.ViewAction.ShowTbaUploadDialog ->
+                ShouldUploadMediaToTbaDialog.show(childFragmentManager)
+        }
+    }
+
+    private fun onViewStateChanged(state: TeamMediaCreator.State) {
+        if (state.image != null) {
+            team.copyMediaInfo(state.image.media, state.image.shouldUploadMediaToTba)
+            updateUi()
+        }
     }
 
     private fun revealNameEditor() {
@@ -223,16 +241,13 @@ class TeamDetailsDialog : BottomSheetDialogFragmentBase(), CaptureTeamMediaListe
             permissions: Array<String>,
             grantResults: IntArray
     ) {
-        permHandler.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
+        if (hasPermsOnRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            mediaCreator.capture()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        permHandler.onActivityResult(requestCode, resultCode, data)
         mediaCreator.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun startCapture(shouldUploadMediaToTba: Boolean) {
-        mediaCreator.capture(this, shouldUploadMediaToTba)
     }
 
     override fun onFocusChange(v: View, hasFocus: Boolean) {

@@ -39,7 +39,7 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:4.0.0-alpha09"
+        const val android = "com.android.tools.build:gradle:4.0.0-beta01"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:4.3.3"
@@ -48,9 +48,9 @@ object Config {
 
         const val ktlint = "com.pinterest:ktlint:0.33.0"
 
-        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.7.1"
+        val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.7.2"
         val PluginDependenciesSpec.versioning
-            get() = id("com.supercilex.gradle.versions") version "0.3.0"
+            get() = id("com.supercilex.gradle.versions") version "0.4.0"
         val PluginDependenciesSpec.versionChecker
             get() = id("com.github.ben-manes.versions") version "0.28.0"
     }
@@ -74,7 +74,7 @@ object Config {
             const val core = "androidx.core:core-ktx:1.3.0-alpha01"
             const val multidex = "androidx.multidex:multidex:2.0.1"
             const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha02"
-            const val fragment = "androidx.fragment:fragment-ktx:1.2.1"
+            const val fragment = "androidx.fragment:fragment-ktx:1.2.2"
             const val rv = "androidx.recyclerview:recyclerview:1.2.0-alpha01"
             const val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
             const val constraint = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
@@ -84,7 +84,7 @@ object Config {
             const val browser = "androidx.browser:browser:1.3.0-alpha01"
             const val pref = "androidx.preference:preference-ktx:1.1.0"
 
-            const val material = "com.google.android.material:material:1.2.0-alpha04"
+            const val material = "com.google.android.material:material:1.2.0-alpha05"
 
             val lifecycle by lazy {
                 val version = "2.2.0"
@@ -98,7 +98,7 @@ object Config {
             }
 
             val work by lazy {
-                val version = "2.3.1"
+                val version = "2.3.2"
                 listOf(
                         "androidx.work:work-runtime-ktx:$version",
                         "androidx.work:work-gcm:$version"
@@ -107,14 +107,14 @@ object Config {
         }
 
         object Firebase {
-            const val analytics = "com.google.firebase:firebase-analytics:17.2.2"
+            const val analytics = "com.google.firebase:firebase-analytics:17.2.3"
             const val auth = "com.google.firebase:firebase-auth:19.2.0"
             const val firestore = "com.google.firebase:firebase-firestore-ktx:21.4.0"
             const val functions = "com.google.firebase:firebase-functions-ktx:19.0.2"
             const val storage = "com.google.firebase:firebase-storage-ktx:19.1.1"
-            const val config = "com.google.firebase:firebase-config-ktx:19.1.1"
+            const val config = "com.google.firebase:firebase-config-ktx:19.1.2"
             const val indexing = "com.google.firebase:firebase-appindexing:19.1.0"
-            const val messaging = "com.google.firebase:firebase-messaging:20.1.0"
+            const val messaging = "com.google.firebase:firebase-messaging:20.1.1"
             const val links = "com.google.firebase:firebase-dynamic-links-ktx:19.1.0"
             const val perf = "com.google.firebase:firebase-perf:19.0.5"
 

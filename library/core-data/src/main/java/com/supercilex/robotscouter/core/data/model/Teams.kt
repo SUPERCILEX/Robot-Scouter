@@ -1,5 +1,6 @@
 package com.supercilex.robotscouter.core.data.model
 
+import android.net.Uri
 import android.util.Patterns
 import com.firebase.ui.firestore.SnapshotParser
 import com.google.firebase.Timestamp
@@ -176,6 +177,13 @@ fun Team.copyMediaInfo(newTeam: Team) {
     hasCustomMedia = newTeam.hasCustomMedia
     shouldUploadMediaToTba = newTeam.shouldUploadMediaToTba
     mediaYear = newTeam.mediaYear
+}
+
+fun Team.copyMediaInfo(image: Uri, shouldUpload: Boolean) {
+    media = image.path
+    hasCustomMedia = true
+    shouldUploadMediaToTba = shouldUpload
+    mediaYear = Calendar.getInstance().get(Calendar.YEAR)
 }
 
 suspend fun Team.processPotentialMediaUpload() = Dispatchers.IO {

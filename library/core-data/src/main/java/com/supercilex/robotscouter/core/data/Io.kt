@@ -18,31 +18,29 @@ private val exports = Environment.getExternalStoragePublicDirectory(
             "Documents"
         }
 )
-private val media: File =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
 
 @get:WorkerThread
 @get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
 val exportsFolder
     get() = exports.get()
 
-@get:WorkerThread
-@get:RequiresPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE)
-val mediaFolder
-    get() = media.get()
-
 @WorkerThread
 fun initIo() {
     // Do nothing, this will initialize our static fields
 }
 
-fun File.safeMkdirs() = apply {
-    check(exists() || mkdirs()) { "Unable to create $this" }
+/** @return this directory after ensuring that it either already exists or was created */
+fun File.safeMkdirs(): File = apply {
+    val create = { exists() || mkdirs() }
+    check(create() || create()) { "Unable to create $this" }
 }
 
-fun File.safeCreateNewFile() = apply {
+/** @return this file after ensuring that it either already exists or was created */
+fun File.safeCreateNewFile(): File = apply {
     parentFile?.safeMkdirs()
-    check(exists() || createNewFile()) { "Unable to create $this" }
+
+    val create = { exists() || createNewFile() }
+    check(create() || create()) { "Unable to create $this" }
 }
 
 @WorkerThread

@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
-import com.supercilex.robotscouter.core.data.shouldAskToUploadMediaToTba
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
-import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.core.ui.DialogFragmentBase
 import kotlinx.android.synthetic.main.dialog_should_upload_media.*
 
@@ -32,25 +32,12 @@ class ShouldUploadMediaToTbaDialog : DialogFragmentBase(), DialogInterface.OnCli
         val isYes: Boolean = which == Dialog.BUTTON_POSITIVE
 
         if (requireDialog().save.isChecked) shouldUploadMediaToTba = isYes
-        (requireParentFragment() as CaptureTeamMediaListener).startCapture(isYes)
+        ViewModelProvider(requireParentFragment()).get<TeamMediaCreator>().capture(isYes)
     }
 
     companion object {
         private const val TAG = "ShouldUploadMediaToTbaD"
 
-        fun <F> show(
-                fragment: F
-        ) where F : Fragment, F : CaptureTeamMediaListener {
-            if (isInTestMode) {
-                fragment.startCapture(false)
-                return
-            }
-
-            if (shouldAskToUploadMediaToTba) {
-                ShouldUploadMediaToTbaDialog().show(fragment.childFragmentManager, TAG)
-            } else {
-                fragment.startCapture(shouldUploadMediaToTba)
-            }
-        }
+        fun show(manager: FragmentManager) = ShouldUploadMediaToTbaDialog().show(manager, TAG)
     }
 }

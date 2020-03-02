@@ -12,6 +12,7 @@
     <string name="number_too_big_error">Please enter a number between 0 and 2^63 – 1</string>
 
     <!-- Media upload -->
+    <string name="media_picker_title">Choose picture</string>
     <string name="media_upload_reminder">
         Take <b>clear</b> pictures of <b>robots</b> <i>only</i>.
     </string>

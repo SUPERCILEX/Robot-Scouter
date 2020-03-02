@@ -12,7 +12,6 @@ tasks.withType<ValidatePlugins>().configureEach {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:4.0.0-alpha09")
     implementation("org.ajoberstar.grgit:grgit-gradle:4.0.1")
     implementation("com.google.cloud:google-cloud-pubsub:1.102.0")
 
