@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.firebase.ui.common.BaseObservableSnapshotArray
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.firestore.ChangeEventListener
@@ -160,12 +161,16 @@ fun initDatabase() {
     teams.addChangeEventListener(teamTemplateIdUpdater)
     teams.addChangeEventListener(teamUpdater)
 
-    FirebaseAuth.getInstance().addAuthStateListener {
-        val user = it.currentUser
-        if (user != null) {
-            updateLastLogin.run()
+    ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+        override fun onStart(owner: LifecycleOwner) {
+            FirebaseAuth.getInstance().addAuthStateListener {
+                val user = it.currentUser
+                if (user != null) {
+                    updateLastLogin.run()
+                }
+            }
         }
-    }
+    })
 }
 
 inline fun firestoreBatch(
