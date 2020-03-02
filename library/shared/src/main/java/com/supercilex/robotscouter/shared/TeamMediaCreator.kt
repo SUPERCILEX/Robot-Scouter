@@ -19,11 +19,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
+import com.supercilex.robotscouter.core.data.TEAM_KEY
 import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.shouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
+import com.supercilex.robotscouter.core.data.teams
 import com.supercilex.robotscouter.core.isInTestMode
 import com.supercilex.robotscouter.core.longToast
+import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.providerAuthority
 import com.supercilex.robotscouter.core.ui.OnActivityResult
 import com.supercilex.robotscouter.core.ui.StateHolder
@@ -150,14 +153,18 @@ class TeamMediaCreator(private val savedState: SavedStateHandle) : ViewModel(), 
     }
 
     private suspend fun createImageFile(): File? = Dispatchers.IO {
+        val teamId = savedState.get<Team>(TEAM_KEY)?.id
+        val teamName = teams.find { it.id == teamId }?.toString()
+        val fileName = "${teamName}_${System.currentTimeMillis()}.jpg"
+
         try {
             if (Build.VERSION.SDK_INT >= 29) {
-                File(RobotScouter.filesDir, "Pictures/${System.currentTimeMillis()}.jpg")
+                File(RobotScouter.filesDir, "Pictures/$fileName")
             } else {
                 @Suppress("DEPRECATION")
                 val mediaDir = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_PICTURES)
-                File(mediaDir, "Robot Scouter/${System.currentTimeMillis()}.jpg")
+                File(mediaDir, "Robot Scouter/$fileName")
             }.safeCreateNewFile()
         } catch (e: Exception) {
             CrashLogger.onFailure(e)
