@@ -23,8 +23,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          key: ${{ runner.os }}-v2-gradle-build-${{ hashFiles('**/*') }}
           restore-keys: |
+            ${{ runner.os }}-v2-gradle-build-
             ${{ runner.os }}-v2-gradle-
       - name: Validate Gradle integrity
         uses: gradle/wrapper-validation-action@v1
@@ -67,8 +68,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          key: ${{ runner.os }}-v2-gradle-test-${{ hashFiles('**/*') }}
           restore-keys: |
+            ${{ runner.os }}-v2-gradle-test-
             ${{ runner.os }}-v2-gradle-
       - name: Setup environment
         run: ./gradlew setup -S
@@ -90,12 +92,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Gradle Cache
+      - name: Cache Gradle
         uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          key: ${{ runner.os }}-v2-gradle-deploy-snapshot-${{ hashFiles('**/*') }}
           restore-keys: |
+            ${{ runner.os }}-v2-gradle-deploy-snapshot-
+            ${{ runner.os }}-v2-gradle-deploy-
             ${{ runner.os }}-v2-gradle-
       - name: Download outputs
         uses: actions/download-artifact@v1
@@ -129,12 +133,14 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - name: Gradle Cache
+      - name: Cache Gradle
         uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          key: ${{ runner.os }}-v2-gradle-deploy-server-${{ hashFiles('**/*') }}
           restore-keys: |
+            ${{ runner.os }}-v2-gradle-deploy-server-
+            ${{ runner.os }}-v2-gradle-deploy-
             ${{ runner.os }}-v2-gradle-
       - name: Setup environment
         run: ./gradlew setup -S
@@ -161,12 +167,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Gradle Cache
+      - name: Cache Gradle
         uses: actions/cache@v1
         with:
           path: ~/.gradle
-          key: ${{ runner.os }}-v2-gradle-${{ hashFiles('**/*') }}
+          key: ${{ runner.os }}-v2-gradle-deploy-release-${{ hashFiles('**/*') }}
           restore-keys: |
+            ${{ runner.os }}-v2-gradle-deploy-release-
+            ${{ runner.os }}-v2-gradle-deploy-
             ${{ runner.os }}-v2-gradle-
       - name: Setup environment
         run: ./gradlew setup -S
