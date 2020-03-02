@@ -1,7 +1,9 @@
 package com.supercilex.robotscouter
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
@@ -35,7 +37,6 @@ import com.supercilex.robotscouter.core.mainHandler
 import com.supercilex.robotscouter.core.model.Team
 import com.supercilex.robotscouter.core.toast
 import com.supercilex.robotscouter.core.ui.ActivityBase
-import com.supercilex.robotscouter.shared.PermissionRequestHandler
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -227,7 +228,6 @@ interface ExportServiceCompanion : DownloadableBridgeCompanion {
     /** @return true if an export was attempted, false otherwise */
     fun exportAndShareSpreadSheet(
             activity: FragmentActivity,
-            permHandler: PermissionRequestHandler,
             @Size(min = 1) teams: List<Team>
     ): Boolean
 
@@ -237,6 +237,13 @@ interface ExportServiceCompanion : DownloadableBridgeCompanion {
             getClass("com.supercilex.robotscouter.feature.exports.ExportService")
                     ?.get<ExportServiceCompanion>()
         }
+
+        private val _perms = if (Build.VERSION.SDK_INT >= 29) {
+            arrayOf()
+        } else {
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        val perms get() = _perms.copyOf()
     }
 }
 

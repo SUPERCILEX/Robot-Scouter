@@ -5,5 +5,5 @@
         path="Pictures" />
     <external-path
         name="exports"
-        path="Documents" />
+        path="Download" />
 </paths>

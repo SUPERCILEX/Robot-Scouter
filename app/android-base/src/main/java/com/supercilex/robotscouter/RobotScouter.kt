@@ -15,7 +15,6 @@ import com.supercilex.robotscouter.core._globalContext
 import com.supercilex.robotscouter.core.data.client.initWork
 import com.supercilex.robotscouter.core.data.initAnalytics
 import com.supercilex.robotscouter.core.data.initDatabase
-import com.supercilex.robotscouter.core.data.initIo
 import com.supercilex.robotscouter.core.data.initNotifications
 import com.supercilex.robotscouter.core.data.initPrefs
 import com.supercilex.robotscouter.core.data.initRemoteConfig
@@ -37,7 +36,6 @@ internal class RobotScouter : MultiDexApplication(), Configuration.Provider {
 
         GlobalScope.apply {
             // Prep slow init calls
-            launch(Dispatchers.IO) { initIo() }
             launch(Dispatchers.IO) { initWork() }
 
             launch { Dispatchers.Main }

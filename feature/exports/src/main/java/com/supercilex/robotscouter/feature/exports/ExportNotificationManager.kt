@@ -11,7 +11,6 @@ import com.supercilex.robotscouter.core.LateinitVal
 import com.supercilex.robotscouter.core.data.EXPORT_CHANNEL
 import com.supercilex.robotscouter.core.data.EXPORT_IN_PROGRESS_CHANNEL
 import com.supercilex.robotscouter.core.data.FilteringNotificationManager
-import com.supercilex.robotscouter.core.data.MIME_TYPE_ANY
 import com.supercilex.robotscouter.core.data.model.getNames
 import com.supercilex.robotscouter.core.data.notificationManager
 import com.supercilex.robotscouter.core.model.Team
@@ -198,6 +197,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
     fun abort() {
         notificationFilter.stopNow()
         for ((_, holder) in exporters) notificationManager.cancel(holder.id)
+        exportFolder?.deleteRecursively()
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE)
     }
 
@@ -229,7 +229,7 @@ internal class ExportNotificationManager(private val service: ExportService) {
                             .setDataAndType(exportFolder, MIME_TYPE_FOLDER)
 
                     val openIntent = if (intent.resolveActivity(service.packageManager) == null) {
-                        intent.setDataAndType(exportFolder, MIME_TYPE_ANY)
+                        intent.setDataAndType(exportFolder, "*/*")
                         Intent.createChooser(
                                 intent, service.getString(R.string.export_browse_title))
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

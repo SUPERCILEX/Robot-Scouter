@@ -3,7 +3,4 @@
     <files-path
         name="team_media"
         path="Pictures" />
-    <external-path
-        name="exports"
-        path="Documents" />
 </paths>

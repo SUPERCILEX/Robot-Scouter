@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.TEAM_KEY
+import com.supercilex.robotscouter.core.data.mimeType
 import com.supercilex.robotscouter.core.data.safeCreateNewFile
 import com.supercilex.robotscouter.core.data.shouldAskToUploadMediaToTba
 import com.supercilex.robotscouter.core.data.shouldUploadMediaToTba
@@ -188,13 +189,13 @@ class TeamMediaCreator(private val savedState: SavedStateHandle) : ViewModel(), 
 
     private suspend fun insertFileIntoMediaStore(photoFile: File) = Dispatchers.IO {
         val imageDetails = ContentValues().apply {
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.TITLE, photoFile.name)
-            put(MediaStore.Images.Media.DISPLAY_NAME, photoFile.nameWithoutExtension)
-            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.MediaColumns.MIME_TYPE, photoFile.mimeType())
+            put(MediaStore.MediaColumns.TITLE, photoFile.name)
+            put(MediaStore.MediaColumns.DISPLAY_NAME, photoFile.nameWithoutExtension)
+            put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis())
             if (Build.VERSION.SDK_INT >= 29) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Robot Scouter")
-                put(MediaStore.Images.Media.IS_PENDING, 1)
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/Robot Scouter")
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
         }
 
@@ -210,7 +211,7 @@ class TeamMediaCreator(private val savedState: SavedStateHandle) : ViewModel(), 
             }
 
             resolver.update(photoUri, ContentValues().apply {
-                put(MediaStore.Audio.Media.IS_PENDING, 0)
+                put(MediaStore.MediaColumns.IS_PENDING, 0)
             }, null, null)
         }
     }
