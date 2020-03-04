@@ -232,7 +232,7 @@ open class StopwatchViewHolder(
         var holder: StopwatchViewHolder?
             get() = _holder.get()?.takeIf { it.metric.ref == metric.ref }
             set(holder) {
-                _holder = WeakReference(holder)
+                _holder = WeakReference(checkNotNull(holder))
             }
 
         /** @return the time since this class was instantiated in milliseconds */

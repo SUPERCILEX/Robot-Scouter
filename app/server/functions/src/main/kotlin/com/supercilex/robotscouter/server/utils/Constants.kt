@@ -8,21 +8,29 @@ import com.supercilex.robotscouter.common.FIRESTORE_PREFS
 import com.supercilex.robotscouter.common.FIRESTORE_TEAMS
 import com.supercilex.robotscouter.common.FIRESTORE_TEMPLATES
 import com.supercilex.robotscouter.common.FIRESTORE_USERS
-import com.supercilex.robotscouter.server.require
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
 import com.supercilex.robotscouter.server.utils.types.Timestamps
 import com.supercilex.robotscouter.server.utils.types.admin
+import org.w3c.fetch.RequestInit
+import org.w3c.fetch.Response
 import kotlin.js.Date
+import kotlin.js.Promise
 
 const val FIRESTORE_EMAIL = "email"
 const val FIRESTORE_PHONE_NUMBER = "phoneNumber"
 const val FIRESTORE_PHOTO_URL = "photoUrl"
 
+const val FIRESTORE_HAS_CUSTOM_NAME = "hasCustomName"
+const val FIRESTORE_HAS_CUSTOM_MEDIA = "hasCustomMedia"
+const val FIRESTORE_HAS_CUSTOM_WEBSITE = "hasCustomWebsite"
+const val FIRESTORE_MEDIA_YEAR = "mediaYear"
+
 val firestore by lazy { admin.firestore() }
 val auth by lazy { admin.auth() }
-val moment: dynamic by lazy { require("moment") }
+val moment: dynamic by lazy { js("require('moment')") }
+private val fetchLib: dynamic by lazy { js("require('node-fetch')") }
 
 val defaultTemplates: CollectionReference
     get() = firestore.collection(FIRESTORE_DEFAULT_TEMPLATES)
@@ -50,3 +58,8 @@ fun getTemplatesQuery(uid: String): Query =
 
 fun getTrashedTemplatesQuery(uid: String): Query =
         templates.where("$FIRESTORE_OWNERS.$uid", "<", epoch)
+
+fun fetch(
+        input: dynamic,
+        init: RequestInit = RequestInit()
+): Promise<Response> = fetchLib(input, init)

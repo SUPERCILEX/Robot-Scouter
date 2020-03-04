@@ -27,10 +27,15 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 internal abstract class DeployServer : DefaultTask() {
+    @set:Option(option = "dev", description = "Skip sanity checks.")
+    @get:Input
+    var dev: Boolean = false
+
     @get:Optional
     @get:Input
     @set:Option(option = "only", description = "See firebase help documentation")
     var only: String? = null
+
     @get:Input
     @set:Option(option = "update-templates", description = "Trigger default templates update")
     var updateTemplates: Boolean = false
@@ -39,6 +44,7 @@ internal abstract class DeployServer : DefaultTask() {
     @get:InputFile
     protected val transpiledJs = project.layout.buildDirectory
             .file("classes/kotlin/main/functions.js")
+
     @get:OutputFile
     protected val targetJs = project.layout.projectDirectory.file("upload/index.js")
 
@@ -65,6 +71,7 @@ internal abstract class DeployServer : DefaultTask() {
         project.serviceOf<WorkerExecutor>().noIsolation().submit(Deployer::class) {
             functionsDir.set(project.layout.projectDirectory.dir("upload"))
             serverDir.set(project.rootProject.child("server").projectDir)
+            devFlag.set(dev)
             onlyFlag.set(only)
             updateTemplatesFlag.set(updateTemplates)
         }
@@ -74,11 +81,13 @@ internal abstract class DeployServer : DefaultTask() {
             private val execOps: ExecOperations
     ) : WorkAction<Deployer.Params> {
         override fun execute() {
-            installIfNeeded("npm -v", "npm", "6.13.4")
-            installIfNeeded("firebase -V", "firebase-tools", "7.11.0")
-            execOps.exec {
-                workingDir = parameters.functionsDir.get().asFile
-                commandLine("sh", "-c", "npm ci")
+            if (!parameters.devFlag.get()) {
+                installIfNeeded("npm -v", "npm", "6.14.2")
+                installIfNeeded("firebase -V", "firebase-tools", "7.14.0")
+                execOps.exec {
+                    workingDir = parameters.functionsDir.get().asFile
+                    commandLine("sh", "-c", "npm ci")
+                }
             }
 
             deployFirebase()
@@ -135,6 +144,7 @@ internal abstract class DeployServer : DefaultTask() {
             val functionsDir: DirectoryProperty
             val serverDir: DirectoryProperty
 
+            val devFlag: Property<Boolean>
             val onlyFlag: Property<String>
             val updateTemplatesFlag: Property<Boolean>
         }

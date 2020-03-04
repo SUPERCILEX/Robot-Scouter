@@ -30,7 +30,7 @@ fun RepositoryHandler.deps() {
 }
 
 object Config {
-    private const val kotlinVersion = "1.3.61"
+    private const val kotlinVersion = "1.3.70"
 
     object SdkVersions {
         const val compile = 29
@@ -114,7 +114,7 @@ object Config {
             const val storage = "com.google.firebase:firebase-storage-ktx:19.1.1"
             const val config = "com.google.firebase:firebase-config-ktx:19.1.2"
             const val indexing = "com.google.firebase:firebase-appindexing:19.1.0"
-            const val messaging = "com.google.firebase:firebase-messaging:20.1.1"
+            const val messaging = "com.google.firebase:firebase-messaging:20.1.2"
             const val links = "com.google.firebase:firebase-dynamic-links-ktx:19.1.0"
             const val perf = "com.google.firebase:firebase-perf:19.0.5"
 
