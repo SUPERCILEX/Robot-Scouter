@@ -23,7 +23,6 @@ import com.supercilex.robotscouter.core.data.QueryGenerator
 import com.supercilex.robotscouter.core.data.QueuedDeletion
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
 import com.supercilex.robotscouter.core.data.client.saveLocalMedia
-import com.supercilex.robotscouter.core.data.client.startDownloadDataJob
 import com.supercilex.robotscouter.core.data.deepLink
 import com.supercilex.robotscouter.core.data.defaultTemplateId
 import com.supercilex.robotscouter.core.data.firestoreBatch
@@ -232,7 +231,9 @@ fun untrashTeam(id: String) {
 }
 
 internal fun Team.fetchLatestData() {
-    if (isStale) startDownloadDataJob()
+    if (!isStale) return
+
+    ref.update(FIRESTORE_TIMESTAMP, Date(0)).logFailures("fetchLatestData", ref)
 }
 
 suspend fun Team.getScouts(): List<Scout> = coroutineScope {

@@ -5,7 +5,6 @@ import androidx.work.WorkManager
 import androidx.work.await
 import androidx.work.workDataOf
 import com.supercilex.robotscouter.core.RobotScouter
-import com.supercilex.robotscouter.core.data.client.TEAM_DATA_DOWNLOAD
 import com.supercilex.robotscouter.core.data.client.TEAM_MEDIA_UPLOAD
 import com.supercilex.robotscouter.core.model.Team
 import java.util.Date
@@ -27,7 +26,7 @@ private const val TIMESTAMP = "timestamp"
 
 internal suspend fun cleanupJobs() {
     WorkManager.getInstance(RobotScouter).apply {
-        listOf(TEAM_DATA_DOWNLOAD, TEAM_MEDIA_UPLOAD)
+        listOf(TEAM_MEDIA_UPLOAD)
                 .map { cancelAllWorkByTag(it) }
                 .forEach { it.result.await() }
         pruneWork()

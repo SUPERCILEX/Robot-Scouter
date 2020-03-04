@@ -30,7 +30,7 @@ import kotlin.js.json
 private const val TBA_API_BASE = "https://www.thebluealliance.com/api/v3"
 private const val MAX_TBA_MEDIA_HISTORY = 2000
 
-private val legalErrorMarker = json()
+private val legalErrorMarker: Any = json()
 private val tbaApiKey by lazy {
     functions.config().creds.tba_api_key.unsafeCast<String>()
 }
@@ -62,16 +62,20 @@ fun populateTeam(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
         return null
     }
 
-    val team = snapshot.data()
-    val updatableProperties = getUpdatableProperties(team)
+    return GlobalScope.async {
+        snapshot.ref.populateTeam(snapshot.data())
+    }.asPromise()
+}
+
+private suspend fun DocumentReference.populateTeam(oldTeam: Json) {
+    val updatableProperties = getUpdatableProperties(oldTeam)
     if (updatableProperties.isEmpty()) {
         console.log("No properties to update, updating timestamp.")
-        return snapshot.ref.set(json(FIRESTORE_TIMESTAMP to Timestamps.now()), SetOptions.merge)
+        set(json(FIRESTORE_TIMESTAMP to Timestamps.now()), SetOptions.merge).await()
+        return
     }
 
-    return GlobalScope.async {
-        snapshot.ref.populateTeam(team, updatableProperties)
-    }.asPromise()
+    populateTeam(oldTeam, updatableProperties)
 }
 
 private suspend fun DocumentReference.populateTeam(
