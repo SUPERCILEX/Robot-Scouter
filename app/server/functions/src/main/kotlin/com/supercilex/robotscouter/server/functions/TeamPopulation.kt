@@ -3,25 +3,32 @@ package com.supercilex.robotscouter.server.functions
 import com.supercilex.robotscouter.common.FIRESTORE_MEDIA
 import com.supercilex.robotscouter.common.FIRESTORE_NAME
 import com.supercilex.robotscouter.common.FIRESTORE_NUMBER
+import com.supercilex.robotscouter.common.FIRESTORE_OWNERS
 import com.supercilex.robotscouter.common.FIRESTORE_TIMESTAMP
 import com.supercilex.robotscouter.common.FIRESTORE_WEBSITE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_HAS_CUSTOM_MEDIA
 import com.supercilex.robotscouter.server.utils.FIRESTORE_HAS_CUSTOM_NAME
 import com.supercilex.robotscouter.server.utils.FIRESTORE_HAS_CUSTOM_WEBSITE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_MEDIA_YEAR
-import com.supercilex.robotscouter.server.utils.fetch
+import com.supercilex.robotscouter.server.utils.getAsMap
 import com.supercilex.robotscouter.server.utils.moment
+import com.supercilex.robotscouter.server.utils.teams
+import com.supercilex.robotscouter.server.utils.types.AuthContext
 import com.supercilex.robotscouter.server.utils.types.Change
 import com.supercilex.robotscouter.server.utils.types.DeltaDocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.DocumentReference
+import com.supercilex.robotscouter.server.utils.types.HttpsError
 import com.supercilex.robotscouter.server.utils.types.SetOptions
 import com.supercilex.robotscouter.server.utils.types.Timestamp
 import com.supercilex.robotscouter.server.utils.types.Timestamps
 import com.supercilex.robotscouter.server.utils.types.functions
+import com.supercilex.robotscouter.server.utils.types.superagent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
 import kotlinx.coroutines.await
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlin.js.Date
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -65,6 +72,40 @@ fun populateTeam(event: Change<DeltaDocumentSnapshot>): Promise<*>? {
     return GlobalScope.async {
         snapshot.ref.populateTeam(snapshot.data())
     }.asPromise()
+}
+
+suspend fun updateTeamMedia(auth: AuthContext, data: Json) {
+    val teamId = data["teamId"] as? String
+    val media = data["url"] as? String
+    val shouldUploadMediaToTba = data["shouldUploadMediaToTba"] as? Boolean ?: false
+
+    if (teamId == null || media == null) throw HttpsError("invalid-argument")
+
+    val team = teams.doc(teamId).get().await()
+
+    if (!team.exists) throw HttpsError("not-found")
+    if (auth.uid !in team.getAsMap<Any>(FIRESTORE_OWNERS).keys) {
+        throw HttpsError("permission-denied")
+    }
+
+    coroutineScope {
+        val year = Date().getFullYear()
+        val updateTeam = async {
+            team.ref.set(json(
+                    "media" to media,
+                    "mediaYear" to year,
+                    "hasCustomMedia" to true
+            ), SetOptions.merge)
+        }
+        val updateTba = async {
+            if (shouldUploadMediaToTba) {
+                val number = team.get<Int>(FIRESTORE_NUMBER)
+                suggestMediaToTba(number, year, media)
+            }
+        }
+
+        awaitAll(updateTeam, updateTba)
+    }
 }
 
 private suspend fun DocumentReference.populateTeam(oldTeam: Json) {
@@ -164,17 +205,17 @@ private suspend fun <IN, OUT> fetchWithCache(
         return if (cachedResult === legalErrorMarker) null else cachedResult
     }
 
-    val response = fetch(url).await()
-    if (response.status == 404.toShort()) {
+    val response = superagent.get(url).ok { true }.await()
+    if (response.status == 404) {
         cache.set(cacheKey, legalErrorMarker)
         return null
     }
     if (!response.ok) {
-        console.error(response.statusText)
+        console.error(response.status, response.error)
         return null
     }
 
-    val freshResult = mapper(response.json().await().asDynamic())
+    val freshResult = mapper(response.body.asDynamic())
     cache.set(cacheKey, freshResult ?: legalErrorMarker)
     return freshResult
 }
@@ -189,4 +230,19 @@ private fun getUpdatableProperties(team: Json): Set<String> {
             FIRESTORE_MEDIA.takeUnless { hasCustomMedia },
             FIRESTORE_WEBSITE.takeUnless { hasCustomWebsite }
     ).toSet()
+}
+
+private suspend fun suggestMediaToTba(number: Int, year: Int, media: String) {
+    val tbaUrl = "$TBA_API_BASE/suggest/media/team/frc$number/$year?X-TBA-Auth-Key=$tbaApiKey"
+    val response = superagent.post(tbaUrl).field("media_url", media).ok { true }.await()
+
+    if (response.ok) {
+        if (response.body["success"] == true) {
+            console.log("Successfully updated TBA media.")
+        } else {
+            console.error(response.body)
+        }
+    } else if (response.status != 404) {
+        console.error(response.status, response.error)
+    }
 }

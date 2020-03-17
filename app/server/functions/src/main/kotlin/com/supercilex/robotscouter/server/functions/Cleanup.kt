@@ -107,24 +107,26 @@ fun emptyTrash(): Promise<*>? = GlobalScope.async {
 
 fun emptyTrash(data: Json, context: CallableContext): Promise<*>? {
     val auth = context.auth ?: throw HttpsError("unauthenticated")
-    return emptyTrash(auth, data)
+    return GlobalScope.async {
+        emptyTrash(auth, data)
+    }.asPromise()
 }
 
-fun emptyTrash(auth: AuthContext, data: Json): Promise<*>? {
+suspend fun emptyTrash(auth: AuthContext, data: Json) {
     @Suppress("UNCHECKED_CAST")
     val ids = data["ids"] as? Array<String>?
 
     console.log("Emptying trash for ${auth.uid}.")
-    return GlobalScope.async {
-        val requests = deletionQueue.doc(auth.uid).get().await()
+    val requests = deletionQueue.doc(auth.uid).get().await()
 
-        if (!requests.exists) {
-            console.log("Nothing to delete")
-            return@async
-        }
+    if (!requests.exists) {
+        console.log("Nothing to delete")
+        return
+    }
 
+    coroutineScope {
         processDeletion(requests, ids.orEmpty().toList())
-    }.asPromise()
+    }
 }
 
 fun sanitizeDeletionRequest(event: Change<DeltaDocumentSnapshot>): Promise<*>? {

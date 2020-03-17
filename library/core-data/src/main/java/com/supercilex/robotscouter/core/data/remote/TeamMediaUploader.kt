@@ -1,34 +1,35 @@
 package com.supercilex.robotscouter.core.data.remote
 
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.R
-import com.supercilex.robotscouter.core.model.Team
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.invoke
+import com.supercilex.robotscouter.core.data.logFailures
+import kotlinx.coroutines.tasks.await
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.create
 import java.io.File
 
-internal class TeamMediaUploader private constructor(
-        team: Team
-) : TeamServiceBase<TeamMediaApi>(team, TeamMediaApi::class.java) {
-    override suspend fun execute(): Team? {
-        val media = team.media
-        Dispatchers.IO {
-            media?.takeIf { File(it).exists() }
-        } ?: return null
+internal class TeamMediaUploader(
+        private val id: String,
+        private val name: String,
+        private val media: String,
+        private val shouldUploadMediaToTba: Boolean
+) {
+    suspend fun execute() {
+        if (!File(media).exists()) return
 
-        uploadToImgur(checkNotNull(media))
-        return team
+        val imageUrl = uploadToImgur()
+        notifyBackend(imageUrl)
     }
 
-    private suspend fun uploadToImgur(media: String) {
+    private suspend fun uploadToImgur(): String {
         val response = TeamMediaApi.IMGUR_RETROFIT
                 .create<TeamMediaApi>()
                 .postToImgurAsync(
                         RobotScouter.getString(R.string.imgur_client_id),
-                        team.toString(),
+                        name,
                         RequestBody.create(MediaType.parse("image/*"), File(media))
                 )
 
@@ -38,8 +39,20 @@ internal class TeamMediaUploader private constructor(
         // And what about pngs?
         link = if (link.endsWith(".png")) link else link.replace(getFileExtension(link), ".png")
 
-        team.media = link
-        team.hasCustomMedia = true
+        return link
+    }
+
+    private suspend fun notifyBackend(url: String) {
+        Firebase.functions
+                .getHttpsCallable("clientApi")
+                .call(mapOf(
+                        "operation" to "update-team-media",
+                        "teamId" to id,
+                        "url" to url,
+                        "shouldUploadMediaToTba" to shouldUploadMediaToTba
+                ))
+                .logFailures("updateTeamMedia", url)
+                .await()
     }
 
     /**
@@ -47,8 +60,4 @@ internal class TeamMediaUploader private constructor(
      */
     private fun getFileExtension(url: String): String =
             ".${url.split(".").dropLastWhile(String::isEmpty).last()}"
-
-    companion object {
-        suspend fun upload(team: Team) = TeamMediaUploader(team).execute()
-    }
 }

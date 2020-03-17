@@ -1,28 +1,9 @@
 package com.supercilex.robotscouter.core.data
 
-import androidx.work.Data
 import androidx.work.WorkManager
 import androidx.work.await
-import androidx.work.workDataOf
 import com.supercilex.robotscouter.core.RobotScouter
 import com.supercilex.robotscouter.core.data.client.TEAM_MEDIA_UPLOAD
-import com.supercilex.robotscouter.core.model.Team
-import java.util.Date
-
-private const val NUMBER = "number"
-private const val ID = "id"
-private const val OWNER_KEYS = "owner_keys"
-private const val OWNER_VALUES = "owner_values"
-private const val TEMPLATE_ID = "template_id"
-private const val NAME = "name"
-private const val MEDIA = "media"
-private const val WEBSITE = "website"
-private const val CUSTOM_NAME = "custom_name"
-private const val CUSTOM_MEDIA = "custom_media"
-private const val CUSTOM_WEBSITE = "custom_website"
-private const val SHOULD_UPLOAD_MEDIA = "should_upload_media"
-private const val MEDIA_YEAR = "media_year"
-private const val TIMESTAMP = "timestamp"
 
 internal suspend fun cleanupJobs() {
     WorkManager.getInstance(RobotScouter).apply {
@@ -32,37 +13,3 @@ internal suspend fun cleanupJobs() {
         pruneWork()
     }
 }
-
-internal fun Data.parseTeam() = Team(
-        getLong(NUMBER, 0),
-        checkNotNull(getString(ID)),
-        checkNotNull(getStringArray(OWNER_KEYS))
-                .zip(checkNotNull(getLongArray(OWNER_VALUES)).toTypedArray()).toMap(),
-        checkNotNull(getString(TEMPLATE_ID)),
-        getString(NAME),
-        getString(MEDIA),
-        getString(WEBSITE),
-        getBoolean(CUSTOM_NAME, false),
-        getBoolean(CUSTOM_MEDIA, false),
-        getBoolean(CUSTOM_WEBSITE, false),
-        getBoolean(SHOULD_UPLOAD_MEDIA, false),
-        getInt(MEDIA_YEAR, 0),
-        Date(getLong(TIMESTAMP, 0))
-)
-
-internal fun Team.toWorkData() = workDataOf(
-        NUMBER to number,
-        ID to id,
-        OWNER_KEYS to owners.map { it.key }.toTypedArray(),
-        OWNER_VALUES to owners.map { it.value }.toTypedArray(),
-        TEMPLATE_ID to templateId,
-        NAME to name,
-        MEDIA to media,
-        WEBSITE to website,
-        CUSTOM_NAME to hasCustomName,
-        CUSTOM_MEDIA to hasCustomMedia,
-        CUSTOM_WEBSITE to hasCustomWebsite,
-        SHOULD_UPLOAD_MEDIA to shouldUploadMediaToTba,
-        MEDIA_YEAR to mediaYear,
-        TIMESTAMP to timestamp.time
-)

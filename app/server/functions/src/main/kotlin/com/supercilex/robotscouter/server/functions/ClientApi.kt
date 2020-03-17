@@ -26,6 +26,7 @@ fun processClientRequest(data: Json, context: CallableContext): Promise<Any?> {
             "EMPTY_TRASH" -> emptyTrash(auth, data)
             "TRANSFER_USER_DATA" -> transferUserData(auth, data)
             "UPDATE_OWNERS" -> updateOwners(auth, data)
+            "UPDATE_TEAM_MEDIA" -> updateTeamMedia(auth, data)
             else -> throw HttpsError("invalid-argument", "Unknown operation: $rawOperation")
         }
     }.asPromise()

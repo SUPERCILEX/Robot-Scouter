@@ -39,7 +39,7 @@ object Config {
     }
 
     object Plugins {
-        const val android = "com.android.tools.build:gradle:4.0.0-beta01"
+        const val android = "com.android.tools.build:gradle:4.0.0-beta02"
         const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         const val google = "com.google.gms:google-services:4.3.3"

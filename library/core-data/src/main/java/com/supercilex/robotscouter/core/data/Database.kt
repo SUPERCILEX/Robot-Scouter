@@ -33,7 +33,6 @@ import com.supercilex.robotscouter.common.FIRESTORE_TYPE
 import com.supercilex.robotscouter.common.isPolynomial
 import com.supercilex.robotscouter.core.CrashLogger
 import com.supercilex.robotscouter.core.data.client.retrieveLocalMedia
-import com.supercilex.robotscouter.core.data.client.retrieveShouldUpload
 import com.supercilex.robotscouter.core.data.client.startUploadMediaJob
 import com.supercilex.robotscouter.core.data.model.fetchLatestData
 import com.supercilex.robotscouter.core.data.model.forceUpdate
@@ -53,7 +52,6 @@ import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.lang.reflect.Field
-import java.util.Calendar
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -144,13 +142,7 @@ private val teamUpdater = object : ChangeEventListenerBase {
             if (team.isStale) return@launch // Vague attempt at overwrite prevention
             val localMedia = team.retrieveLocalMedia()
             if (localMedia != null && localMedia.isValidTeamUri()) {
-                team.copy().apply {
-                    this.media = localMedia
-                    shouldUploadMediaToTba = retrieveShouldUpload()
-                    hasCustomMedia = true
-                    mediaYear = Calendar.getInstance().get(Calendar.YEAR)
-                    startUploadMediaJob()
-                }
+                startUploadMediaJob(team.id, team.toString(), localMedia)
             }
         }
     }

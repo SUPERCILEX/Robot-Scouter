@@ -49,7 +49,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
-import kotlin.math.sign
 
 val teamParser = SnapshotParser { checkNotNull(it.toObject<Team>()) }
 
@@ -81,11 +80,6 @@ internal val Team.isStale: Boolean
     get() = TimeUnit.MILLISECONDS.toDays(
             System.currentTimeMillis() - timestamp.time
     ) >= TEAM_FRESHNESS_DAYS
-
-internal val Team.isTrashed: Boolean?
-    get() {
-        return owners[uid ?: return null]?.sign == -1
-    }
 
 fun Collection<Team>.getNames(): String {
     val sortedTeams = toMutableList()
@@ -171,13 +165,6 @@ suspend fun List<DocumentReference>.shareTeams(
     QueuedDeletion.ShareToken.Team(token, ids)
 }
 
-fun Team.copyMediaInfo(newTeam: Team) {
-    media = newTeam.media
-    hasCustomMedia = newTeam.hasCustomMedia
-    shouldUploadMediaToTba = newTeam.shouldUploadMediaToTba
-    mediaYear = newTeam.mediaYear
-}
-
 fun Team.copyMediaInfo(image: Uri, shouldUpload: Boolean) {
     media = image.path
     hasCustomMedia = true
@@ -231,7 +218,7 @@ fun untrashTeam(id: String) {
 }
 
 internal fun Team.fetchLatestData() {
-    if (!isStale) return
+    if (!isStale || timestamp.time == 0L) return
 
     ref.update(FIRESTORE_TIMESTAMP, Date(0)).logFailures("fetchLatestData", ref)
 }
