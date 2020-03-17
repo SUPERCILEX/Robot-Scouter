@@ -12,6 +12,7 @@ import com.supercilex.robotscouter.server.utils.FIRESTORE_HAS_CUSTOM_WEBSITE
 import com.supercilex.robotscouter.server.utils.FIRESTORE_MEDIA_YEAR
 import com.supercilex.robotscouter.server.utils.getAsMap
 import com.supercilex.robotscouter.server.utils.moment
+import com.supercilex.robotscouter.server.utils.superagent
 import com.supercilex.robotscouter.server.utils.teams
 import com.supercilex.robotscouter.server.utils.types.AuthContext
 import com.supercilex.robotscouter.server.utils.types.Change
@@ -22,7 +23,6 @@ import com.supercilex.robotscouter.server.utils.types.SetOptions
 import com.supercilex.robotscouter.server.utils.types.Timestamp
 import com.supercilex.robotscouter.server.utils.types.Timestamps
 import com.supercilex.robotscouter.server.utils.types.functions
-import com.supercilex.robotscouter.server.utils.types.superagent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async

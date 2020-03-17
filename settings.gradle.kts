@@ -14,3 +14,5 @@ include(
         ":feature:exports",
         ":feature:trash", ":feature:settings"
 )
+
+rootProject.name = "Robot-Scouter"

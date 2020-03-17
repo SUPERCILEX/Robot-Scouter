@@ -11,6 +11,7 @@ import com.supercilex.robotscouter.common.FIRESTORE_USERS
 import com.supercilex.robotscouter.server.utils.types.CollectionReference
 import com.supercilex.robotscouter.server.utils.types.DocumentSnapshot
 import com.supercilex.robotscouter.server.utils.types.Query
+import com.supercilex.robotscouter.server.utils.types.SuperAgentStatic
 import com.supercilex.robotscouter.server.utils.types.Timestamps
 import com.supercilex.robotscouter.server.utils.types.admin
 import kotlin.js.Date
@@ -27,6 +28,7 @@ const val FIRESTORE_MEDIA_YEAR = "mediaYear"
 val firestore by lazy { admin.firestore() }
 val auth by lazy { admin.auth() }
 val moment: dynamic by lazy { js("require('moment')") }
+val superagent: SuperAgentStatic by lazy { js("require('superagent')") }
 
 val defaultTemplates: CollectionReference
     get() = firestore.collection(FIRESTORE_DEFAULT_TEMPLATES)

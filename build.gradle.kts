@@ -49,6 +49,8 @@ fun Project.configureGeneral() {
             sourceSets.configureEach {
                 languageSettings.progressiveMode = true
                 languageSettings.enableLanguageFeature("NewInference")
+                languageSettings.useExperimentalAnnotation(
+                        "kotlinx.coroutines.ExperimentalCoroutinesApi")
             }
         }
     }

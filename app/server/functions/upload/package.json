@@ -3,7 +3,7 @@
   "description": "Cloud Functions for Firebase",
   "dependencies": {
     "@google-cloud/firestore": "3.7.1",
-    "common": "file:./common",
+    "Robot-Scouter-common-server": "file:./common",
     "firebase-admin": "8.10.0",
     "firebase-functions": "3.3.0",
     "kotlin": "1.3.70",

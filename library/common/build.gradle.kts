@@ -1,13 +1,13 @@
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-
 plugins {
-    id("kotlin-multiplatform")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 kotlin {
-    targets {
-        jvm("android")
-        js("server")
+    jvm("android")
+
+    js("server") {
+        useCommonJs()
+        nodejs()
     }
 
     sourceSets {
@@ -29,8 +29,4 @@ kotlin {
             }
         }
     }
-}
-
-tasks.withType<Kotlin2JsCompile>().configureEach {
-    kotlinOptions.moduleKind = "commonjs"
 }

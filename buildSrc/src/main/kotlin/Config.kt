@@ -50,14 +50,14 @@ object Config {
 
         val PluginDependenciesSpec.publishing get() = id("com.github.triplet.play") version "2.7.2"
         val PluginDependenciesSpec.versioning
-            get() = id("com.supercilex.gradle.versions") version "0.4.0"
+            get() = id("com.supercilex.gradle.versions") version "0.5.0"
         val PluginDependenciesSpec.versionChecker
             get() = id("com.github.ben-manes.versions") version "0.28.0"
     }
 
     object Libs {
         object Kotlin {
-            private const val coroutinesVersion = "1.3.3"
+            private const val coroutinesVersion = "1.3.4"
 
             const val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
             const val jvm = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -71,10 +71,10 @@ object Config {
         }
 
         object Jetpack {
-            const val core = "androidx.core:core-ktx:1.3.0-alpha01"
+            const val core = "androidx.core:core-ktx:1.3.0-alpha02"
             const val multidex = "androidx.multidex:multidex:2.0.1"
-            const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha02"
-            const val fragment = "androidx.fragment:fragment-ktx:1.2.2"
+            const val appCompat = "androidx.appcompat:appcompat:1.2.0-alpha03"
+            const val fragment = "androidx.fragment:fragment-ktx:1.3.0-alpha01"
             const val rv = "androidx.recyclerview:recyclerview:1.2.0-alpha01"
             const val rvSelection = "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
             const val constraint = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
@@ -87,10 +87,10 @@ object Config {
             const val material = "com.google.android.material:material:1.2.0-alpha05"
 
             val lifecycle by lazy {
-                val version = "2.2.0"
+                val version = "2.3.0-alpha01"
                 listOf(
                         "androidx.lifecycle:lifecycle-common-java8:$version",
-                        "androidx.lifecycle:lifecycle-extensions:$version",
+                        "androidx.lifecycle:lifecycle-process:$version",
                         "androidx.lifecycle:lifecycle-livedata-ktx:$version",
                         "androidx.lifecycle:lifecycle-viewmodel-ktx:$version",
                         "androidx.lifecycle:lifecycle-viewmodel-savedstate:$version"
@@ -98,7 +98,7 @@ object Config {
             }
 
             val work by lazy {
-                val version = "2.3.2"
+                val version = "2.4.0-alpha01"
                 listOf(
                         "androidx.work:work-runtime-ktx:$version",
                         "androidx.work:work-gcm:$version"
@@ -108,7 +108,7 @@ object Config {
 
         object Firebase {
             const val analytics = "com.google.firebase:firebase-analytics:17.2.3"
-            const val auth = "com.google.firebase:firebase-auth:19.2.0"
+            const val auth = "com.google.firebase:firebase-auth:19.3.0"
             const val firestore = "com.google.firebase:firebase-firestore-ktx:21.4.0"
             const val functions = "com.google.firebase:firebase-functions-ktx:19.0.2"
             const val storage = "com.google.firebase:firebase-storage-ktx:19.1.1"
@@ -124,7 +124,7 @@ object Config {
         object PlayServices {
             const val auth = "com.google.android.gms:play-services-auth:17.0.0"
             const val nearby = "com.google.android.gms:play-services-nearby:17.0.0"
-            const val playCore = "com.google.android.play:core-ktx:1.6.5"
+            const val playCore = "com.google.android.play:core-ktx:1.7.0"
         }
 
         object FirebaseUi {

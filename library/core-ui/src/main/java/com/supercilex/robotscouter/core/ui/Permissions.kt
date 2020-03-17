@@ -31,16 +31,17 @@ fun hasPermsOnActivityResult(perms: Array<String>, requestCode: Int): Boolean {
 fun FragmentActivity.hasPermsOnRequestPermissionsResult(
         permissions: Array<String>,
         grantResults: IntArray
-): Boolean = onRequestPermissionsResult(this as Any, permissions)
+): Boolean = onRequestPermissionsResult(this as Any, permissions, grantResults)
 
 fun Fragment.hasPermsOnRequestPermissionsResult(
         permissions: Array<String>,
         grantResults: IntArray
-): Boolean = onRequestPermissionsResult(this as Any, permissions)
+): Boolean = onRequestPermissionsResult(this as Any, permissions, grantResults)
 
 private fun onRequestPermissionsResult(
         host: Any,
-        permissions: Array<String>
+        permissions: Array<String>,
+        @Suppress("UNUSED_PARAMETER") grantResults: IntArray
 ): Boolean {
     if (EasyPermissions.hasPermissions(RobotScouter, *permissions)) {
         return true

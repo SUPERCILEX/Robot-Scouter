@@ -7,8 +7,6 @@ import org.w3c.xhr.XMLHttpRequest
 import kotlin.js.Json
 import kotlin.js.Promise
 
-val superagent: SuperAgentStatic = js("require('superagent')")
-
 typealias CallbackHandler = (err: Any?, res: Response) -> Unit
 
 typealias Serializer = (obj: Any) -> String
@@ -24,12 +22,6 @@ external interface SuperAgentRequest : Request {
 }
 
 external interface SuperAgentStatic : SuperAgent<SuperAgentRequest> {
-    @nativeInvoke
-    operator fun invoke(url: String): SuperAgentRequest
-
-    @nativeInvoke
-    operator fun invoke(method: String, url: String): SuperAgentRequest
-
     fun agent(): SuperAgentStatic /* this */
 }
 
