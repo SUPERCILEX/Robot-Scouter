@@ -1,0 +1,17 @@
+0,1,2,3,4,5,6
+0,1,2,3,4,5,6
+1410,1619,2945,3374,4418,4550,5690
+03-18-2022,03-16-2022,03-20-2022,03-20-2022,03-20-2022,03-20-2022,03-20-2022
+,JB,NG,NG,NG,NG,NG
+True,True,True,True,True,False,True
+Unknown ,Swerve ,Unknown ,Unknown ,Unknown ,Unknown ,Unknown 
+Unknown ,5-More than 2 Cargo combination,3-Shoot + Taxi only (1 Cargo),4-Shoot + Taxi + Intake (2 Cargo max),4-Shoot + Taxi + Intake (2 Cargo max),3-Shoot + Taxi only (1 Cargo),4-Shoot + Taxi + Intake (2 Cargo max)
+,Setup on the opposite side as the hangar in their Alliance's tarmac.,,,"Shoot low, then taxi to pick up another ball, then come back against the hub to shoot that ball. In some matches they didn't get points for the taxi. Not sure why. ",Changed their auto routine to shoot into the low hub partway through quals.,Looked like they were working on picking up a third ball from the terminal and shooting it during auto. 
+Unknown ,Upper Hub only,Upper Hub only,Upper Hub only,Lower Hub only ,Nowhere,Upper Hub only
+,They like the launchpad when heavily defended.  Otherwise typically just outside the tarmac.  They go to the opposite side of the field to gather cargo.,,,Typically shoot from up against the hub.,Did not pick up or shoot at all during teleop in AZ.,
+Unknown ,Traversal ,Mid,Mid,None,Traversal ,Mid
+,15 sec climb. They go into the Hangar with 30 seconds remaining.,Usually go in to climb with 30sec left.,,"Trying to climb to the mid bar, but they get stuck.","Enter hangar at 30sec. Have to enter the hangar from the side, they are too tall to go under the low bar.",
+False,False,True,False,False,True,True
+,Never seen them play defense.,Not very effective ,,,"Good at blocking. Never got penalties (except for that one time :). Not as mobile, so they have trouble blocking swerve robots. ",Did well in finals when playing defense 
+,,,"Shoot close to the tarmac tape.
+Can easily get rid of a wrong color ball.",,In the first couple qual matches their robot stopped working. Very bouncy and tippy when stopping.,It takes them awhile to line up to shoot. They always shoot from just outside the tarmac tape. It looks like they have trouble moving around when they are near the power cord on the floor. They don't do well when they have defense against them. 

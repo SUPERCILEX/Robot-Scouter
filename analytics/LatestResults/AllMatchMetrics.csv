@@ -1,0 +1,71 @@
+,Team,Timestamp,Name,Match,Upper Attempts,Upper % Made,AUTO Upper Attempts,AUTO Upper Made,TELEOP Upper Attempts,TELEOP Upper Made,Lower Attempts,Lower % Made,AUTO Lower Attempts,AUTO Lower Made,TELEOP Lower Attempts,TELEOP Lower Made,TELEOP Cargo Shooting Comments,AUTO Taxied,END GAME Climb Rung,TELEOP Speed Rating,END GAME Time To Hang,TELEOP Cargo Cycle Time,DEFENSE Rating,DEFENSE Comments,PENALTIES Incurred,PENALTIES Comments,RELIABILITY Robot Broke,RELIABILITY Robot Stalled,RELIABILITY Comments,Additional Comments
+0,1410,03-16-2022,MN,2022azfl,0,,0,0,0,0,0,,0,0,0,0,,False,Unknown ,Unknown,[],[],1,,False,,False,False,,
+1,1410,03-19-2022,Chris,Qual 42,0,,0,0,0,0,1,100.0,1,1,0,0,,True,Unknown ,Fast,[16780],[],5,"Pushed bots around, prevented them from shooting.",False,,False,False,,Very defensive towards the end of Arizona North
+2,1619,03-15-2022,Noreen,Okok-f2,9,77.8,2,1,7,6,0,,0,0,0,0,,True,Traversal ,Fast,[30724],[],1,,False,,False,False,,Dropped 1 ball
+3,1619,03-15-2022,Chris,Final 2,7,71.4,1,1,6,4,0,,0,0,0,0,No,True,Traversal ,Fast,[9959],[16893],3,,False,,False,False,Reliable,
+4,1619,03-15-2022,Noreen,Okok-f2,4,50.0,4,2,0,0,0,,0,0,0,0,,True,Unknown ,Unknown,[],"[14560, 25183]",1,,False,,False,False,,
+5,1619,03-15-2022,Noreen,Okok-f1,14,64.3,4,1,10,8,0,,0,0,0,0,Went across the field to their hanger corner to shoot,True,Traversal ,Unknown,[20874],"[23715, 14659]",1,,False,,False,False,,
+6,1619,03-15-2022,Chris,Final 1,14,85.7,5,3,9,9,0,,0,0,0,0,Only shoot from launch pad on their side of field,True,Unknown ,Fast,[18550],[28065],1,,False,,False,False,Reliable,
+7,1619,03-15-2022,JB,2022okok-f1,14,64.3,4,1,10,8,0,,0,0,0,0,,True,Traversal ,Unknown,[14111],[],1,,False,,False,False,,
+8,1619,03-16-2022,MN,2022okok-SF2,16,56.2,4,2,12,7,0,,0,0,0,0,Red launch pad. ,True,Traversal ,Fast,[19084],[9256],1,,False,,False,False,"Shooting power is good, accuracy is not. ",Defended by other team. 
+9,1619,03-16-2022,JB,2022okok-sf1-2,16,68.8,4,3,12,8,0,,0,0,0,0,"Yes, at their launchpad as there were defenders on them.",True,Traversal ,Average ,[17607],[17885],1,,False,,False,False,,
+10,1619,03-16-2022,JB,2022okok-sf1-1,17,76.5,4,3,13,10,0,,0,0,0,0,,True,Traversal ,Average ,[22923],[],1,,False,,False,False,,
+11,2083,03-19-2022,Chris,Qual 43,0,,0,0,0,0,2,50.0,1,0,1,1,,True,Mid,Average ,[19040],[],3,,False,,False,False,,Didn't do much in terms of offense
+12,2240,03-19-2022,Chris,Qual 40,2,0.0,2,0,0,0,6,83.3,0,0,6,5,,True,None,Average ,[35777],"[36019, 21650]",1,,False,,False,False,Somewhat reliable,"Just drove around hangar area, but never hung onto a rung."
+13,2486,03-19-2022,Chris,Qual 45,8,62.5,2,0,6,5,1,0.0,0,0,1,0,From just behind the tarmac,True,None,Fast,[8059],"[14990, 25829]",1,,False,,False,False,Reliable,Shot almost exclusively for the upper hub
+14,2945,03-19-2022,Chris,Qual 5,6,50.0,1,1,5,2,0,,0,0,0,0,From the red side,True,Mid,Average ,[21994],"[15536, 9176]",1,,False,,False,False,,"Really liked to shoot from really long range. (Namely, next to the red launch pad.)"
+15,2945,03-19-2022,NG,Caph q65,1,100.0,1,1,0,0,0,,0,0,0,0,,True,Mid,Average ,[21641],[],3,"Looked like they were only playing defense, but they didn't seem very effective ",True,Blocking an opponent ,False,False,,
+16,2945,03-19-2022,NG,Caph Qf3-1,1,100.0,1,1,0,0,0,,0,0,0,0,,True,None,Average ,[],[],3,Not always effective ,False,,False,False,,
+17,2945,03-19-2022,NG,Caph Qf3-2,1,100.0,1,1,0,0,0,,0,0,0,0,,True,None,Average ,[],[],3,More effective at defense this match,False,,False,False,,Changed their auto routine from the previous match to move out of the way of 973 so 973 could make more auto shots
+18,2945,03-19-2022,NG,Caph Q62,7,42.9,1,0,6,3,0,,0,0,0,0,Next to the hangar,True,Low,Average ,[5614],"[23089, 17982]",1,,False,,False,False,, Slow speed when trying to pick up balls
+19,2945,03-20-2022,NG,Caph q58,8,50.0,1,1,7,3,0,,0,0,0,0,,True,Mid,Average ,[13886],"[7719, 7387, 26467, 18581, 11313]",1,,False,,False,False,,"Most shots were only single balls.
+Had trouble picking up balls."
+20,3200,03-19-2022,CP,Azfl Q42,5,60.0,1,1,4,2,0,,0,0,0,0,,True,Low,Average ,[5282],"[31309, 30775]",1,,False,,False,False,"Intake reliable, shooter reliable",Shot almost exclusively for the upper hub
+21,3200,03-21-2022,NG,Azfl q10,0,,0,0,0,0,0,,0,0,0,0,,False,Unknown ,Unknown,[],[],1,,False,,False,False,,
+22,3374,03-19-2022,NG-CP,caph q62,3,100.0,1,1,2,2,0,,0,0,0,0,,True,Low,Average ,[5724],[],3,,True,"1 penalty for pinning
+1 penalty for field damage
+1 penalty for extending to climb before they were in the hangar area",False,False,,Chris - Didn't shoot much. Was defended very well.
+23,3374,03-19-2022,NG,caph q66,17,58.8,2,2,15,8,0,,0,0,0,0,,True,Low,Fast,[11548],"[10113, 15629, 17482, 10116, 8875, 8469, 5052, 15548]",1,,False,,False,False,,Handled being defended well
+24,3374,03-19-2022,NG,caph qf4m1,11,81.8,2,2,9,7,0,,0,0,0,0,Straddling the tarmac tape,True,Mid,Fast,[18337],"[12950, 7752, 20215, 44362]",1,,False,,False,False,,"Had trouble hooking on to the mid bar.
+Heavily defended against, so had trouble picking up balls.
+Many cargo shot cycles were single balls."
+25,3374,03-19-2022,NG,caph qf4m2,15,80.0,2,2,13,10,0,,0,0,0,0,From the outside tarmac tape,True,Mid,Fast,[12106],"[17765, 14921, 6000, 12684, 10844, 7953]",1,,False,,False,False,,They got stuck on one of their alliance members for 10sec
+26,3374,03-20-2022,NG,Caph q57,16,87.5,2,2,14,12,0,,0,0,0,0,,True,Mid,Fast,[9760],"[9376, 13384, 8337, 8974, 14221, 16810]",1,,False,,False,False,,Had an easy time getting rid of a wrong color ball and keeping one of the right color.
+27,3374,03-20-2022,NG,Caph q49,16,87.5,2,1,14,13,0,,0,0,0,0,,True,Mid,Fast,[9307],"[11011, 3258, 3757, 9477, 12012, 20286, 19616, 12517]",1,,False,,False,False,,
+28,4068,03-19-2022,Chris,Qual 9,2,50.0,2,1,0,0,20,100.0,0,0,20,20,,True,Mid,Fast,[3446],"[15500, 11913]",1,,False,,False,False,Very reliable,"Only shot for the lower hub. Trigger happy, shooting 20 times. Made all 20 shots."
+29,4293,03-19-2022,Chris,Qual 52,0,,0,0,0,0,7,57.1,1,1,6,3,,True,None,Fast,[],[6628],2,,False,,False,False,"Reliable intake, reliable lower hub shooter",Shot almost exclusively for the lower hub. Was defended decently.
+30,4418,03-19-2022,CP,Azfl Q33,0,,0,0,0,0,7,85.7,2,2,5,4,Up against the hub,True,None,Slow,[],"[25251, 30075, 67152]",1,,False,,False,False,,They had defense against them.
+31,4418,03-20-2022,NG,Azfl q52,0,,0,0,0,0,15,86.7,2,1,13,12,,True,None,Average ,[5533],"[11263, 13488, 12931, 32568]",1,,False,,False,False,,
+32,4418,03-20-2022,NG,Azfl q56,0,,0,0,0,0,14,92.9,2,2,12,11,Up against the hub.,True,None,Average ,[],"[21375, 28688, 22726, 13903]",1,,False,,False,False,,
+33,4418,03-20-2022,NG,Azfl q62,0,,0,0,0,0,11,100.0,2,2,9,9,,True,None,Average ,[20594],"[17124, 7637, 33301, 16642, 15841]",1,,False,,False,False,,Got one side stuck trying to hang on the mid bar
+34,4418,03-21-2022,NG,Azfl q6,0,,0,0,0,0,9,100.0,1,1,8,8,,True,None,Average ,[19569],"[18565, 10595, 25333, 14221, 37730]",1,,False,,False,False,,Got stuck on one bumper trying to hang.
+35,4418,03-21-2022,NG,Azfl q11,0,,0,0,0,0,12,91.7,2,1,10,10,,True,None,Average ,[16542],"[19567, 17209, 14356, 16324, 21854, 13319]",1,,False,,False,False,,Got a bumper stuck trying to hang.
+36,4418,03-21-2022,NG,Azfl q15,0,,0,0,0,0,14,92.9,1,1,13,12,,True,None,Average ,[18478],"[9509, 10944, 13651, 14575, 7570, 8792, 16508, 19749]",1,,False,,False,False,,"Didn't get stuck trying to hang, but couldn't get lined up."
+37,4418,03-21-2022,NG,Azfl q21,0,,0,0,0,0,10,100.0,2,2,8,8,,True,None,Average ,[23877],"[15138, 17578, 19313, 9022, 28590]",1,,False,,False,False,,Came in from the side to hang. Got stuck on a bumper. 
+38,4418,03-21-2022,NG,Azfl q28,0,,0,0,0,0,12,83.3,1,1,11,9,,True,None,Unknown,[],"[11312, 16075, 26782, 22925, 17913, 11914]",1,,False,,False,True,,
+39,4418,03-21-2022,NG,Azfl q40,0,,0,0,0,0,10,90.0,2,2,8,7,,True,Unknown ,Average ,[],"[21974, 33634, 9224, 23751]",1,,True,1 for holding 3 balls,False,False,,
+40,4418,03-21-2022,NG,Azfl q48,0,,0,0,0,0,9,88.9,2,2,7,6,,True,Mid,Average ,[9942],"[19014, 29459, 32966, 24912]",1,,False,,False,False,,"Looked like they were hanging, but it didn't count. Heavy defense against them this match."
+41,4550,03-19-2022,Chris,Azfl-q41,0,,0,0,0,0,3,100.0,1,1,2,2,,True,Low,Average ,[6354],[16977],4,Got real physical,False,,False,False,Reliable for low hub,
+42,4550,03-20-2022,NG,Azfl-q47,0,,0,0,0,0,1,0.0,1,0,0,0,,True,High,Average ,[29400],[],5,Did a good job,False,,False,False,,Tippy
+43,4550,03-20-2022,NG,Azfl-q51,0,,0,0,0,0,1,0.0,1,0,0,0,,True,Mid,Average ,[31028],[],5,,False,,False,False,,
+44,4550,03-20-2022,NG,Azfl-q57,0,,0,0,0,0,1,100.0,1,1,0,0,,True,Traversal ,Average ,[22741],[],4,,False,,False,False,,
+45,4550,03-20-2022,NG,Azfl-q32,0,,0,0,0,0,1,100.0,1,1,0,0,,True,None,Average ,[],[],4,,False,,False,True,,Stopped moving with 40sec remaining.
+46,4550,03-20-2022,NG,Azfl-q41,0,,0,0,0,0,1,0.0,1,0,0,0,,True,Mid,Average ,[32424],[],5,,False,,False,False,,
+47,4550,03-21-2022,NG,Azfl q1,0,,0,0,0,0,0,,0,0,0,0,,True,Traversal ,Average ,[22000],[],4,,False,,False,False,,
+48,4550,03-21-2022,NG,Azfl q10,0,,0,0,0,0,1,100.0,1,1,0,0,,True,None,Unknown,[],[],1,,False,,False,True,Didn't move after taxi for auto.,
+49,4550,03-21-2022,NG,Azfl-q15,0,,0,0,0,0,1,100.0,1,1,0,0,,True,None,Average ,[],[],5,,False,,False,True,Stopped moving with 40sec left,
+50,4550,03-21-2022,NG,Azfl-q19,0,,0,0,0,0,1,0.0,1,0,0,0,,True,Traversal ,Average ,[31653],[],5,,False,,False,False,,Went to hang with 1:05 left
+51,4550,03-21-2022,NG,Azfl-q25,0,,0,0,0,0,0,,0,0,0,0,,True,None,Average ,[28038],[],5,,False,,False,False,,Couldn't get lined up to hang. No one else in the hangar.
+52,5690,03-19-2022,NG,Mndu q2m2,11,81.8,1,0,10,9,0,,0,0,0,0,,True,Mid,Average ,[7846],[],1,,False,,False,False,,Tippy. Always shot with their front bumper just outside the tarmac
+53,5690,03-19-2022,NG,Mndu S1m1,7,57.1,2,1,5,3,0,,0,0,0,0,,True,Mid,Average ,[4061],[],4,,False,,False,False,,Shot from inside the tarmac tape a few times 
+54,5690,03-19-2022,NG,Mndu s1m2,2,50.0,2,1,0,0,0,,0,0,0,0,,True,Mid,Average ,[6833],[],5,"Didn't try to shoot, only played defense ",False,,False,False,,
+55,5690,03-19-2022,NG,Mndu s1m3,3,66.7,2,1,1,1,0,,0,0,0,0,,True,None,Average ,[],[],4,Concentrated on defense ,False,,False,False,,
+56,5690,03-19-2022,NG,Mndu Q80,16,75.0,3,2,13,10,0,,0,0,0,0,Always shot with their front bumper just outside the tarmac,True,Mid,Average ,[10257],[],1,,False,,False,False,,"After shooting in auto, they drive to near the terminal and back to near the tarmac. In one match, they picked up a ball near the terminal and tried to shoot it, and missed"
+57,5690,03-19-2022,NG,Mndu Q72,0,,0,0,0,0,0,,0,0,0,0,,True,None,Average ,[],[],5,,False,,False,True,Shooter didn't work. Stalled once. Stopped moving with 40sec left,
+58,5690,03-20-2022,NG,Mndu q64,14,64.3,2,1,12,8,0,,0,0,0,0,,True,None,Average ,[],"[19902, 16595, 20535, 29208, 8104, 11432]",1,,True,1 for holding a third ball,False,False,,
+59,5690,03-21-2022,NG,Mndu q2,10,10.0,2,0,8,1,0,,0,0,0,0,,True,Mid,Slow,[6016],[],1,,False,,False,False,,They took a long time to line up to shoot. Shooting from just outside the tarmac tape.
+60,5690,03-21-2022,NG,Mndu q13,13,76.9,2,2,11,8,0,,0,0,0,0,,True,Low,Average ,[6085],[],1,,False,,False,False,,
+61,5690,03-21-2022,NG,Mndu q20,7,71.4,1,0,6,5,1,100.0,0,0,1,1,,True,None,Average ,[],[],5,"Played defense for half the game, then switched to shooting.",False,,False,False,"First ball in auto didn't go far. Picked up a second ball in auto, but didn't shoot it",
+62,5690,03-21-2022,NG,Mndu q31,14,78.6,2,1,12,10,0,,0,0,0,0,,True,Mid,Slow,[7353],"[24083, 20520, 18697, 16597, 14989, 10261]",1,,False,,False,False,,They might have trouble getting over the power cord on the floor.
+63,5690,03-21-2022,NG,Mndu q39,11,81.8,2,2,9,7,0,,0,0,0,0,,True,Mid,Slow,[6613],"[18514, 16242, 21755, 28357, 21188]",1,,False,,False,False,,
+64,5690,03-21-2022,NG,Mndu q52,9,44.4,2,1,7,3,0,,0,0,0,0,,True,Mid,Slow,[5881],[],1,,True,I think they got 1 penalty. Not sure what for. ,False,False,,"They were heavily defended. Many times while they were lining up to shoot, they got pushed. Then they either didn't shoot or missed."
